@@ -75,7 +75,7 @@ it("adds one server-bound CAD task with a model output and editable prompt in on
     accepted.workflow.ports
       .filter((port) => port.ownerBlockId === task.id)
       .map((port) => port.name),
-  ).toEqual(["Task result", "CAD model"]);
+  ).toEqual(["Prompt", "Reference image", "Task result", "CAD model"]);
   const reopened = parseRecoveryAuthoringSource(
     formatRecoveryAuthoringSource(accepted.workflow).text,
     initialWorkflow,

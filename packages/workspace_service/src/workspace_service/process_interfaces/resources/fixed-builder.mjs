@@ -111,6 +111,10 @@ export function mount(node: Element, props: HostProps) {
         {find: /^react$/, replacement: requireInstalled.resolve('react')},
         {find: /^react\/jsx-runtime$/, replacement: requireInstalled.resolve('react/jsx-runtime')},
         {find: /^react-dom\/client$/, replacement: requireInstalled.resolve('react-dom/client')},
+        // The installed kit's document reader also resolves from this explicit
+        // toolchain, independent of the packaged public source directory.
+        {find: /^react-markdown$/, replacement: requireInstalled.resolve('react-markdown')},
+        {find: /^remark-gfm$/, replacement: requireInstalled.resolve('remark-gfm')},
         // Installed public sources can be outside the dependency root. Resolve
         // the kit's qualified geometry dependencies from the trusted toolchain.
         {find: /^three$/, replacement: path.join(request.dependencyRoot, 'node_modules/three/build/three.module.js')},

@@ -43,6 +43,33 @@ verdicts. Representative pass, fail, mixed, blocked, error, stale, and repair
 records are in [`examples/`](examples/). `repair.report.md` and
 `repair.rtm.csv` are projections of `repair.report.json`.
 
+### Recorded uncertainty and review obligations
+
+The requirement's `review_required` flag is independent of a measurement's check
+state and does not grant review authority. The readable report and Markdown export
+show that flag beside the requirement/check. They also show the uncertainty
+allowance copied from each recorded numeric measurement, in its **observed** unit
+and frame. A zero allowance can be the measurement contract's default; it does
+not establish zero measurement error, calibrated accuracy or physical validation.
+Non-numeric observations are labelled not applicable, and missing measurements
+are labelled missing rather than assigned a zero allowance.
+
+As of the 10 October 2026 report improvement, RTM CSV appends these columns to the
+existing columns (consume columns by header, not position):
+
+- `review_required`: the pinned baseline requirement's boolean flag.
+- `measurement_uncertainties`: a JSON array in the same measurement order as the
+  row's observations. Each entry carries `measurement_id`, exact `uncertainty`,
+  `unit`, `frame`, and `numeric`. `numeric` distinguishes a numeric observation
+  from a boolean, string or other value; uncertainty does not quantify those
+  non-numeric checks. An empty array means no measurement was recorded.
+- `uncertainty_note`: the interpretation above, retained in the portable CSV.
+
+Join `assessment.checks[].measurement_ids` to `assessment.measurements[].id` to
+obtain this information from the existing JSON contract. No JSON schema or stored
+assessment changes are needed. Old exported snapshots and examples retain their
+original columns; the new columns do not retroactively alter their evidence.
+
 ## Authenticated operations
 
 All HTTP operations use the existing Wright control-plane authentication and

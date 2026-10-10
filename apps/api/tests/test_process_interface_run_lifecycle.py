@@ -22,7 +22,8 @@ from packages.workspace_service.tests.test_process_input_readiness import (
 PREFIX = "/api/workspace/process-interfaces"
 
 
-def test_legacy_run_denies_viewer_before_resolving_workspace():
+@pytest.mark.parametrize("operation", ["run", "resume"])
+def test_legacy_run_denies_viewer_before_resolving_workspace(operation):
     from fastapi import FastAPI, Request
     from api.routers.workspace import router
 
@@ -40,11 +41,20 @@ def test_legacy_run_denies_viewer_before_resolving_workspace():
     probe.include_router(router, prefix="/api/workspace")
     with TestClient(probe) as client:
         response = client.post(
-            "/api/workspace/workflow-sources/run",
+            "/api/workspace/workflow-sources/run"
+            if operation == "run"
+            else "/api/workspace/workflow-runs/other-run/resume",
             json={
                 "session_id": "other",
                 "path": "workflows/test.workflow.wflow",
                 "expected_storage_digest": "0" * 64,
+            }
+            if operation == "run"
+            else {
+                "session_id": "other",
+                "checkpoint_id": "other-checkpoint",
+                "subject_digest": "0" * 64,
+                "request_id": "unauthorized-resume",
             },
         )
     assert response.status_code == 403
@@ -388,7 +398,11 @@ def test_legacy_json_retry_uses_same_durable_run(lifecycle_case):
     assert retry.status_code == 200
     assert retry.json() == result
     assert len(case.calls) == 1
-    assert result["steps"][0]["format_instructions"]
+    # This legacy controlled adapter emits no instruction capture. Do not
+    # reconstruct a historical format prompt from today's packaged defaults.
+    assert result["steps"][0]["response"] == "Actual controlled API artifact"
+    assert "instructions" not in result["steps"][0]
+    assert "format_instructions" not in result["steps"][0]
 
 
 def test_legacy_actual_ndjson_disconnect_detaches_observer(lifecycle_case):

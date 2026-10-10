@@ -43,6 +43,9 @@ class BuildToolchain:
             "vite": self.dependency_root / "node_modules/vite/package.json",
             "react": self.dependency_root / "node_modules/react/package.json",
             "react-dom": self.dependency_root / "node_modules/react-dom/package.json",
+            "react-markdown": self.dependency_root
+            / "node_modules/react-markdown/package.json",
+            "remark-gfm": self.dependency_root / "node_modules/remark-gfm/package.json",
             "three": self.dependency_root / "node_modules/three/package.json",
             "@types/react": self.dependency_root
             / "node_modules/@types/react/package.json",

@@ -11,6 +11,7 @@ from core.process_interactions import (
     InlineJSON,
 )
 from core.process_validation import Contract, Digest, Identifier
+from core.workflow_bundle import ImportedInterfaceReference
 
 
 class ProcessSourceRequest(Contract):
@@ -41,6 +42,7 @@ class ProcessInputResponseRequest(ProcessSourceRequest):
     subject_digest: Digest
     value: InlineJSON
     request_id: Identifier
+    auto: bool = Field(default=False, strict=True)
 
 
 class ProcessReviewDecisionRequest(ProcessSourceRequest):
@@ -59,8 +61,9 @@ class ProcessRepresentationRequest(ProcessSourceRequest):
     reference: ArtifactRef
     run_id: Identifier | None = None
     input_snapshot_id: Identifier | None = None
-    preview: Literal["toolpaths"] | None = None
+    preview: Literal["toolpaths", "pdf-page", "validation-report"] | None = None
     archive_entry: Locator | None = None
+    page: int | None = Field(default=None, strict=True, ge=1, le=200)
 
 
 class ProcessNavigationRequest(ProcessSourceRequest):
@@ -75,6 +78,7 @@ class ProcessUIAuthoringRequest(ProcessSourceRequest):
     )
     ui_id: Identifier | None = None
     base_revision: Identifier | None = None
+    imported_interface: ImportedInterfaceReference | None = None
 
 
 class ProcessUISaveRequest(ProcessSourceRequest):

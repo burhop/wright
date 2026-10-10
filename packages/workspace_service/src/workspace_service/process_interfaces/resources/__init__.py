@@ -8,7 +8,7 @@ import json
 from core.process_interfaces import InterfaceManifest, SourceEnvelope
 from core.process_validation import Contract
 
-RESOURCE_VERSION = "process-ui-author-1"
+RESOURCE_VERSION = "process-ui-author-2"
 
 
 class AuthoringOutput(Contract):

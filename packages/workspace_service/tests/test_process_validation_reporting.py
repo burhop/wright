@@ -167,6 +167,26 @@ def test_reports_escape_markdown_and_neutralize_csv_formulas(tmp_path):
     assert row["requirement_text"].startswith("'=")
 
 
+@pytest.mark.parametrize(
+    ("text", "escaped"),
+    [
+        (
+            "Required reader 'probe' is unavailable.",
+            "Required reader &#x27;probe&#x27; is unavailable.",
+        ),
+        (
+            '"P2" & <raw> [link](https://invalid) #tag_1',
+            "&quot;P2&quot; &amp; &lt;raw&gt; \\[link\\](https://invalid) \\#tag\\_1",
+        ),
+        ("Literal &#x27; and &lt;", "Literal &amp;\\#x27; and &amp;lt;"),
+    ],
+)
+def test_report_escaping_keeps_generated_entities_intact(text, escaped):
+    from workspace_service.process_validation.reporting import _markdown
+
+    assert _markdown(text) == escaped
+
+
 def test_currentness_and_finding_pages_use_latest_authoritative_attempt(tmp_path):
     profile = _profile()
     service = _service(tmp_path)

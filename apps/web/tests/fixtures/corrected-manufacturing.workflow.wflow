@@ -1,0 +1,877 @@
+workflow retained_consumer_003
+  name: "3D Printed Replacement Part — retained geometry consumer"
+  purpose: "Create and verify a dimensioned printable replacement from an original image, then stop for exact printer-transfer authorization."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+task repair_measure_orient_retained_consumer_003
+  name: "Repair, measure, and orient mesh"
+  purpose: "Produce a manifold, correctly scaled mesh that fits the P1S build volume."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"repair_measure_orient_retained_consumer_003_exact_arguments","name":"repair measure orient retained consumer 003 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repair_measure_orient_retained_consumer_003_actual_source","name":"repair measure orient retained consumer 003 actual source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"repair_measure_orient_retained_consumer_003_result","name":"repair measure orient retained consumer 003 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"source_mesh","name":"source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"repaired_mesh","name":"repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"mesh_preview","name":"mesh preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-blender-wheel-continuation-002","mcp_tool":"proof-083-blender-wheel-continuation-002__execute_blender_code","mcp_schema_digest":"b415d9956aefd5339292ed17cec102e46713da01afdde146ad8d71d2a4853978","mcp_arguments_source":"connection","mcp_arguments_input":"repair_measure_orient_retained_consumer_003_exact_arguments","mcp_arguments":"{}","timeout_seconds":360,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/mesh-repair-report.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/source_mesh.stl\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/repaired_mesh.stl\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/mesh-preview.png","mcp_file_dependencies":{"repair_measure_orient_retained_consumer_003_actual_source":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/retained-source.stl"},"expected_file_ports":{"source_mesh":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/source_mesh.stl","repaired_mesh":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/repaired_mesh.stl","mesh_preview":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/mesh-preview.png"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+task supports_and_slice_retained_consumer_003
+  name: "Generate supports and slice"
+  purpose: "Create support-bearing toolpaths and retain process, machine, and material profiles."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"supports_and_slice_retained_consumer_003_exact_arguments","name":"supports and slice retained consumer 003 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_retained_consumer_003_selected_geometry","name":"supports and slice retained consumer 003 selected geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_retained_consumer_003_machine_configuration","name":"supports and slice retained consumer 003 machine configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_retained_consumer_003_process_configuration","name":"supports and slice retained consumer 003 process configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"supports_and_slice_retained_consumer_003_filament_configuration","name":"supports and slice retained consumer 003 filament configuration","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"supports_and_slice_retained_consumer_003_result","name":"supports and slice retained consumer 003 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"slice_package","name":"slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Slice for the selected P1S profile, preserve the support preview and final 3MF, and verify valid toolpaths and declared material compatibility."
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-slicer-wheel-continuation-002","mcp_tool":"proof-083-slicer-wheel-continuation-002__slice_model_file","mcp_schema_digest":"9aabeddbe03c7dfdb8158a7be297e3fe59116fa992c39b84170ee30d08aa991e","mcp_arguments_source":"connection","mcp_arguments_input":"supports_and_slice_retained_consumer_003_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slicer-execution.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice_package.gcode.3mf","mcp_file_dependencies":{"supports_and_slice_retained_consumer_003_selected_geometry":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/repaired_mesh.stl","supports_and_slice_retained_consumer_003_machine_configuration":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/machine-profile.json","supports_and_slice_retained_consumer_003_process_configuration":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/process-profile.json","supports_and_slice_retained_consumer_003_filament_configuration":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/filament-profile.json"},"expected_file_ports":{"slice_package":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice_package.gcode.3mf"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+task authorize_transfer_retained_consumer_003
+  name: "Authorize exact package transfer"
+  purpose: "Pause before transfer and bind the engineer decision to the package, printer, material, and process profile."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"authorize_transfer_retained_consumer_003_exact_package","name":"authorize transfer retained consumer 003 exact package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_consumer_003_preparation_review","name":"authorize transfer retained consumer 003 preparation review","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_consumer_003_machine_profile","name":"authorize transfer retained consumer 003 machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_consumer_003_process_profile","name":"authorize transfer retained consumer 003 process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_consumer_003_filament_profile","name":"authorize transfer retained consumer 003 filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"receipt","name":"receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Review exact digests and destination identity. Transfer authorization does not claim that the physical print succeeded."
+  settings: {"authoring_template":"external-action-approval","action_kind":"printer_transfer","approval_binding":{"server":"wright","tool":"test_handoff","schema":"f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d"},"approval_destination":{"kind":"integration_test","id":"test://083-private-digital-wheel-retained-consumer-003/printer/printed-replacement-part-01"},"approval_settings":{"material":"PETG","nozzle_mm":"0.4","package_path":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice_package.gcode.3mf","receipt_path":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/simulated-transfer-receipt.json","simulation":true},"approval_action":{"kind":"printer_transfer","mode":"transfer_only","simulation":true}}
+  tool: null
+  reusable_step: null
+end
+
+connection repair_to_slice_retained_consumer_003
+  type: "order"
+  from: "repair_measure_orient_retained_consumer_003"
+  to: "supports_and_slice_retained_consumer_003"
+  label: "geometry checks pass"
+  when: null
+end
+
+connection slice_to_transfer_retained_consumer_003
+  type: "order"
+  from: "supports_and_slice_retained_consumer_003"
+  to: "authorize_transfer_retained_consumer_003"
+  label: "exact package ready"
+  when: null
+end
+
+input input_concept_png_retained_consumer_003
+  name: "concept.png"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_png_retained_consumer_003_out","name":"input concept png retained consumer 003 out","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/concept.png"}
+  tool: null
+  reusable_step: null
+end
+
+input input_concept_svg_retained_consumer_003
+  name: "concept.svg"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_svg_retained_consumer_003_out","name":"input concept svg retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/concept.svg"}
+  tool: null
+  reusable_step: null
+end
+
+input input_context_md_retained_consumer_003
+  name: "context.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_context_md_retained_consumer_003_out","name":"input context md retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/context.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_prompt_txt_retained_consumer_003
+  name: "prompt.txt"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_prompt_txt_retained_consumer_003_out","name":"input prompt txt retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/prompt.txt"}
+  tool: null
+  reusable_step: null
+end
+
+input input_scenario_json_retained_consumer_003
+  name: "scenario.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_scenario_json_retained_consumer_003_out","name":"input scenario json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/scenario.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_user_profile_md_retained_consumer_003
+  name: "user-profile.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_user_profile_md_retained_consumer_003_out","name":"input user profile md retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/user-profile.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_requirements_md_retained_consumer_003
+  name: "requirements.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_requirements_md_retained_consumer_003_out","name":"input requirements md retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/requirements.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_machine_profile_json_retained_consumer_003
+  name: "machine-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_machine_profile_json_retained_consumer_003_out","name":"input machine profile json retained consumer 003 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/machine-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_process_profile_json_retained_consumer_003
+  name: "process-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_process_profile_json_retained_consumer_003_out","name":"input process profile json retained consumer 003 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/process-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_filament_profile_json_retained_consumer_003
+  name: "filament-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_filament_profile_json_retained_consumer_003_out","name":"input filament profile json retained consumer 003 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/filament-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+task define_geometry_basis_retained_consumer_003
+  name: "Interpret the original wheel and manufacturing requirements"
+  purpose: "Interpret the original wheel and manufacturing requirements"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"define_geometry_basis_retained_consumer_003_supplied_geometry_basis","name":"define geometry basis retained consumer 003 supplied geometry basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_concept_png","name":"define geometry basis retained consumer 003 concept png","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_concept_svg","name":"define geometry basis retained consumer 003 concept svg","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_context_md","name":"define geometry basis retained consumer 003 context md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_prompt_txt","name":"define geometry basis retained consumer 003 prompt txt","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_scenario_json","name":"define geometry basis retained consumer 003 scenario json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_user_profile_md","name":"define geometry basis retained consumer 003 user profile md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_geometry_basis_retained_consumer_003_mandatory_requirements","name":"define geometry basis retained consumer 003 mandatory requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"define_geometry_basis_retained_consumer_003_result","name":"define geometry basis retained consumer 003 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/geometry-basis.json","file_policy":"overwrite"}
+  tool: null
+  reusable_step: null
+  prompt: "Prepare a complete proposed digital geometry design for the next declared review, separating supplied requirements from your proposed construction choices. Preserve the 38 mm maximum diameter, 18 mm overall height including 2 mm front hub, six equally spaced shallow scallops, >=33 mm minimum grip, nominal 1 mm exposed rounds and subtle grip dots. The D socket uses the 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and flat clearance, 10 mm blind depth and >=3 mm material above it. No insert, set screw, taper or keyway. Preserve PETG/P1S 0.4/0.20 mm/four walls/35% profiles, proposed +/-0.25 mm non-mating tolerance and original human-review requirements. Propose explicit numeric scallop profile/depth/phase, hub diameter, dot count/dimensions/placement and exposed-edge treatment within the original limits; derive and record the D-boundary/flat construction and depth direction. These are design proposals, not additional requirements or verified fit. Distinguish decisions that must be resolved at this declared basis review from later inspection of actual geometry, supports and final package. Do not leave a predictable construction choice to a later unattended question. No geometry, fit, strength, standards or print-success claim yet. Do not ask runtime questions; output one complete proposal for the declared review. Keep the entire response below 3000 characters. Return only one valid JSON object, with no markdown, comments or trailing commas. Use these keys: supplied_requirements (short object), proposed_geometry (numeric dimensions plus short construction descriptions for scallops, hub, dots, rounds, socket and orientation), basis_review (short list of proposed choices requiring this review), remaining_verification (short list), engineering_acceptance (false). Expressions must be JSON strings; do not put equations in numeric values. Do not repeat input documents or provide lengthy rationale. This run supplies an explicit prior proposed geometry basis. Retain its numeric construction choices exactly instead of proposing replacements. It remains a proposal for this run's declared review, not engineering acceptance. Actual geometry and all original mandatory checks still follow."
+end
+
+input input_configured_geometry_basis_json_retained_consumer_003
+  name: "configured-geometry-basis.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_configured_geometry_basis_json_retained_consumer_003_out","name":"input configured geometry basis json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/configured-geometry-basis.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_supplied_geometry_basis
+  type: "item"
+  from: "input_configured_geometry_basis_json_retained_consumer_003.input_configured_geometry_basis_json_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_supplied_geometry_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_concept_png
+  type: "item"
+  from: "input_concept_png_retained_consumer_003.input_concept_png_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_concept_png"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_concept_svg
+  type: "item"
+  from: "input_concept_svg_retained_consumer_003.input_concept_svg_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_concept_svg"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_context_md
+  type: "item"
+  from: "input_context_md_retained_consumer_003.input_context_md_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_context_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_prompt_txt
+  type: "item"
+  from: "input_prompt_txt_retained_consumer_003.input_prompt_txt_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_prompt_txt"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_scenario_json
+  type: "item"
+  from: "input_scenario_json_retained_consumer_003.input_scenario_json_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_scenario_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_user_profile_md
+  type: "item"
+  from: "input_user_profile_md_retained_consumer_003.input_user_profile_md_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_user_profile_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_geometry_basis_retained_consumer_003_mandatory_requirements
+  type: "item"
+  from: "input_requirements_md_retained_consumer_003.input_requirements_md_retained_consumer_003_out"
+  to: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_mandatory_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task review_basis_retained_consumer_003
+  name: "Review wheel dimensions, socket interpretation and original limits"
+  purpose: "Review wheel dimensions, socket interpretation and original limits"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_basis_retained_consumer_003_basis","name":"review basis retained consumer 003 basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_basis_retained_consumer_003"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success."
+end
+
+connection bind_review_basis_retained_consumer_003_basis
+  type: "item"
+  from: "define_geometry_basis_retained_consumer_003.define_geometry_basis_retained_consumer_003_result"
+  to: "review_basis_retained_consumer_003.review_basis_retained_consumer_003_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_slice_call_json_retained_consumer_003
+  name: "slice-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_slice_call_json_retained_consumer_003_out","name":"input slice call json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/slice-call.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_supports_and_slice_retained_consumer_003_exact_arguments
+  type: "item"
+  from: "input_slice_call_json_retained_consumer_003.input_slice_call_json_retained_consumer_003_out"
+  to: "supports_and_slice_retained_consumer_003.supports_and_slice_retained_consumer_003_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_retained_consumer_003_selected_geometry
+  type: "item"
+  from: "repair_measure_orient_retained_consumer_003.repaired_mesh"
+  to: "supports_and_slice_retained_consumer_003.supports_and_slice_retained_consumer_003_selected_geometry"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_retained_consumer_003_machine_configuration
+  type: "item"
+  from: "input_machine_profile_json_retained_consumer_003.input_machine_profile_json_retained_consumer_003_out"
+  to: "supports_and_slice_retained_consumer_003.supports_and_slice_retained_consumer_003_machine_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_retained_consumer_003_process_configuration
+  type: "item"
+  from: "input_process_profile_json_retained_consumer_003.input_process_profile_json_retained_consumer_003_out"
+  to: "supports_and_slice_retained_consumer_003.supports_and_slice_retained_consumer_003_process_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_supports_and_slice_retained_consumer_003_filament_configuration
+  type: "item"
+  from: "input_filament_profile_json_retained_consumer_003.input_filament_profile_json_retained_consumer_003_out"
+  to: "supports_and_slice_retained_consumer_003.supports_and_slice_retained_consumer_003_filament_configuration"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task retain_slice_response_retained_consumer_003
+  name: "Retain the actual slicer response for package inspection"
+  purpose: "Retain the actual slicer response for package inspection"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"retain_slice_response_retained_consumer_003_actual_response","name":"retain slice response retained consumer 003 actual response","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"retain_slice_response_retained_consumer_003_result","name":"retain slice response retained consumer 003 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"provider_response","name":"provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"wright-workspace-files","mcp_tool":"wright-workspace-files__write_text_document","mcp_schema_digest":"66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12","mcp_arguments_source":"fields","mcp_arguments_input":"retain_slice_response_retained_consumer_003_actual_response","mcp_arguments":"{\"relativePath\": \"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-provider-response.json\", \"mediaType\": \"application/json\", \"overwrite\": false}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/response-retention-receipt.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-provider-response.json","mcp_argument_ports":"{\"retain_slice_response_retained_consumer_003_actual_response\": \"content\"}","expected_file_ports":{"provider_response":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-provider-response.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection bind_retain_slice_response_retained_consumer_003_actual_response
+  type: "item"
+  from: "supports_and_slice_retained_consumer_003.supports_and_slice_retained_consumer_003_result"
+  to: "retain_slice_response_retained_consumer_003.retain_slice_response_retained_consumer_003_actual_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_passive_representations_py_retained_consumer_003
+  name: "passive-representations.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_passive_representations_py_retained_consumer_003_out","name":"input passive representations py retained consumer 003 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/passive-representations.py"}
+  tool: null
+  reusable_step: null
+end
+
+input input_inspect_manufacturing_package_py_retained_consumer_003
+  name: "inspect_manufacturing_package.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_inspect_manufacturing_package_py_retained_consumer_003_out","name":"input inspect manufacturing package py retained consumer 003 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/inspect_manufacturing_package.py"}
+  tool: null
+  reusable_step: null
+end
+
+task inspect_slice_handoff_retained_consumer_003
+  name: "Inspect actual package, profile and nominal toolpath correspondence"
+  purpose: "Inspect actual package, profile and nominal toolpath correspondence"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"inspect_slice_handoff_retained_consumer_003_exact_arguments","name":"inspect slice handoff retained consumer 003 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_slice_package","name":"inspect slice handoff retained consumer 003 slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_provider_response","name":"inspect slice handoff retained consumer 003 provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_slice_source","name":"inspect slice handoff retained consumer 003 slice source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_reader","name":"inspect slice handoff retained consumer 003 reader","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_operation","name":"inspect slice handoff retained consumer 003 operation","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_machine","name":"inspect slice handoff retained consumer 003 machine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_process","name":"inspect slice handoff retained consumer 003 process","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"inspect_slice_handoff_retained_consumer_003_filament","name":"inspect slice handoff retained consumer 003 filament","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"inspect_slice_handoff_retained_consumer_003_result","name":"inspect slice handoff retained consumer 003 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"slice_evidence","name":"slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"support_preview","name":"support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"machine_profile","name":"machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"process_profile","name":"process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"filament_profile","name":"filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"toolpath_summary","name":"toolpath summary","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-oasis","mcp_tool":"proof-083-oasis__run_simulation","mcp_schema_digest":"d00af216c4eccc4b64ad13c0aee9da9ced7260edc8347e4be471e0c8ead48646","mcp_arguments_source":"connection","mcp_arguments_input":"inspect_slice_handoff_retained_consumer_003_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/package-inspection-result.json","file_policy":"overwrite","expected_files":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-evidence.json\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/support-preview.json\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/toolpath-summary.json\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/machine-profile.json\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/process-profile.json\nprocess-proofs/printed-replacement-part/retained-consumer-003/outputs/filament-profile.json","mcp_file_dependencies":{"inspect_slice_handoff_retained_consumer_003_slice_package":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice_package.gcode.3mf","inspect_slice_handoff_retained_consumer_003_provider_response":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-provider-response.json","inspect_slice_handoff_retained_consumer_003_slice_source":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/repaired_mesh.stl","inspect_slice_handoff_retained_consumer_003_reader":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/passive-representations.py","inspect_slice_handoff_retained_consumer_003_operation":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/inspect_manufacturing_package.py","inspect_slice_handoff_retained_consumer_003_machine":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/machine-profile.json","inspect_slice_handoff_retained_consumer_003_process":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/process-profile.json","inspect_slice_handoff_retained_consumer_003_filament":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/filament-profile.json"},"expected_file_ports":{"slice_evidence":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/slice-evidence.json","support_preview":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/support-preview.json","machine_profile":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/machine-profile.json","process_profile":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/process-profile.json","filament_profile":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/filament-profile.json","toolpath_summary":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/toolpath-summary.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+input input_inspection_call_json_retained_consumer_003
+  name: "inspection-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_inspection_call_json_retained_consumer_003_out","name":"input inspection call json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/inspection-call.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_exact_arguments
+  type: "item"
+  from: "input_inspection_call_json_retained_consumer_003.input_inspection_call_json_retained_consumer_003_out"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_slice_package
+  type: "item"
+  from: "supports_and_slice_retained_consumer_003.slice_package"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_slice_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_provider_response
+  type: "item"
+  from: "retain_slice_response_retained_consumer_003.provider_response"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_provider_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_slice_source
+  type: "item"
+  from: "repair_measure_orient_retained_consumer_003.repaired_mesh"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_slice_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_reader
+  type: "item"
+  from: "input_passive_representations_py_retained_consumer_003.input_passive_representations_py_retained_consumer_003_out"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_reader"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_operation
+  type: "item"
+  from: "input_inspect_manufacturing_package_py_retained_consumer_003.input_inspect_manufacturing_package_py_retained_consumer_003_out"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_operation"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_machine
+  type: "item"
+  from: "input_machine_profile_json_retained_consumer_003.input_machine_profile_json_retained_consumer_003_out"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_machine"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_process
+  type: "item"
+  from: "input_process_profile_json_retained_consumer_003.input_process_profile_json_retained_consumer_003_out"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_process"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_inspect_slice_handoff_retained_consumer_003_filament
+  type: "item"
+  from: "input_filament_profile_json_retained_consumer_003.input_filament_profile_json_retained_consumer_003_out"
+  to: "inspect_slice_handoff_retained_consumer_003.inspect_slice_handoff_retained_consumer_003_filament"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task summarize_preparation_retained_consumer_003
+  name: "Record measured preparation facts and outstanding engineering review"
+  purpose: "Record measured preparation facts and outstanding engineering review"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"summarize_preparation_retained_consumer_003_construction","name":"summarize preparation retained consumer 003 construction","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_retained_consumer_003_repair","name":"summarize preparation retained consumer 003 repair","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_retained_consumer_003_slice_evidence","name":"summarize preparation retained consumer 003 slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_retained_consumer_003_toolpath_summary","name":"summarize preparation retained consumer 003 toolpath summary","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_retained_consumer_003_requirements","name":"summarize preparation retained consumer 003 requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_preparation_retained_consumer_003_retained_producer_origin","name":"summarize preparation retained consumer 003 retained producer origin","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"summarize_preparation_retained_consumer_003_result","name":"summarize preparation retained consumer 003 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-consumer-003/outputs/source-report.json","file_policy":"overwrite","authoring_template":"mcp-task","mcp_server":"wright-workspace-files","max_tool_calls":2,"timeout_seconds":360,"expected_files":"","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.","mcp_task_tools":["inspect_file"]}
+  tool: null
+  reusable_step: null
+  prompt: "The connected construction and repair results and original requirements are supplied reference material. Read those results directly; do not guess report filenames or reread supplied content. Use inspect_file exactly once for each connected slice_evidence and toolpath_summary workspace-file reference, using its verified relative path with includeText=true and maxTextBytes=65536. Those bounded records contain the actual package/mesh identity and profile observations; do not read raw profiles, G-code or the full support preview. Return the report after those two inspections; Wright saves it, so do not call a writing tool. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict. Return one compact JSON object under 6000 characters, with artifact_lineage, geometry_observations, preparation_observations, outstanding_requirements, limitations and engineering_acceptance=false. Construction belongs to the supplied retained producer, not this consumer. Describe its exact run/source/artifact lineage and terminal status without claiming the failed producer completed. This run performs new repair/slicing and full original assessment; input origin records are supplied evidence, not authenticated engineering acceptance. The repair operation must actually import the retained STL and export the unmodified imported geometry as this consumer's source_mesh.stl before repair. That native export is derived geometry, not byte identity with the retained STL."
+end
+
+connection bind_summarize_preparation_retained_consumer_003_construction
+  type: "item"
+  from: "input_retained_construction_observations_json_retained_consumer_003.input_retained_construction_observations_json_retained_consumer_003_out"
+  to: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_construction"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_retained_consumer_003_repair
+  type: "item"
+  from: "repair_measure_orient_retained_consumer_003.repair_measure_orient_retained_consumer_003_result"
+  to: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_repair"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_retained_consumer_003_slice_evidence
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.slice_evidence"
+  to: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_slice_evidence"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_retained_consumer_003_toolpath_summary
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.toolpath_summary"
+  to: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_toolpath_summary"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_retained_consumer_003_requirements
+  type: "item"
+  from: "input_requirements_md_retained_consumer_003.input_requirements_md_retained_consumer_003_out"
+  to: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_retained_consumer_003_exact_package
+  type: "item"
+  from: "supports_and_slice_retained_consumer_003.slice_package"
+  to: "authorize_transfer_retained_consumer_003.authorize_transfer_retained_consumer_003_exact_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_retained_consumer_003_preparation_review
+  type: "item"
+  from: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_result"
+  to: "authorize_transfer_retained_consumer_003.authorize_transfer_retained_consumer_003_preparation_review"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_retained_consumer_003_machine_profile
+  type: "item"
+  from: "input_machine_profile_json_retained_consumer_003.input_machine_profile_json_retained_consumer_003_out"
+  to: "authorize_transfer_retained_consumer_003.authorize_transfer_retained_consumer_003_machine_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_retained_consumer_003_process_profile
+  type: "item"
+  from: "input_process_profile_json_retained_consumer_003.input_process_profile_json_retained_consumer_003_out"
+  to: "authorize_transfer_retained_consumer_003.authorize_transfer_retained_consumer_003_process_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_authorize_transfer_retained_consumer_003_filament_profile
+  type: "item"
+  from: "input_filament_profile_json_retained_consumer_003.input_filament_profile_json_retained_consumer_003_out"
+  to: "authorize_transfer_retained_consumer_003.authorize_transfer_retained_consumer_003_filament_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_retained_source_stl_retained_consumer_003
+  name: "retained-source.stl"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_retained_source_stl_retained_consumer_003_out","name":"input retained source stl retained consumer 003 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/retained-source.stl"}
+  tool: null
+  reusable_step: null
+end
+
+input input_retained_construction_observations_json_retained_consumer_003
+  name: "retained-construction-observations.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_retained_construction_observations_json_retained_consumer_003_out","name":"input retained construction observations json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/retained-construction-observations.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_retained_producer_origin_json_retained_consumer_003
+  name: "retained-producer-origin.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_retained_producer_origin_json_retained_consumer_003_out","name":"input retained producer origin json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/retained-producer-origin.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_retained_repair_call_json_retained_consumer_003
+  name: "retained-repair-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_retained_repair_call_json_retained_consumer_003_out","name":"input retained repair call json retained consumer 003 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-consumer-003/inputs/retained-repair-call.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_repair_measure_orient_retained_consumer_003_exact_arguments
+  type: "item"
+  from: "input_retained_repair_call_json_retained_consumer_003.input_retained_repair_call_json_retained_consumer_003_out"
+  to: "repair_measure_orient_retained_consumer_003.repair_measure_orient_retained_consumer_003_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_repair_measure_orient_retained_consumer_003_actual_source
+  type: "item"
+  from: "input_retained_source_stl_retained_consumer_003.input_retained_source_stl_retained_consumer_003_out"
+  to: "repair_measure_orient_retained_consumer_003.repair_measure_orient_retained_consumer_003_actual_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_summarize_preparation_retained_consumer_003_retained_producer_origin
+  type: "item"
+  from: "input_retained_producer_origin_json_retained_consumer_003.input_retained_producer_origin_json_retained_consumer_003_out"
+  to: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_retained_producer_origin"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task validate_outputs_retained_consumer_003
+  name: "Check exact current engineering outputs"
+  purpose: "Check exact current engineering outputs"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"validate_source_mesh","name":"validate source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_repaired_mesh","name":"validate repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_slice_package","name":"validate slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_slice_evidence","name":"validate slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_support_preview","name":"validate support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_machine_profile","name":"validate machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_process_profile","name":"validate process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_filament_profile","name":"validate filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_source_report","name":"validate source report","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_transfer_receipt","name":"validate transfer receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"assessment","name":"assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":"printed-replacement-part-01","reference":{"id":"printed-replacement-part-01-full","version":"1","sha256":"d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"}},"baseline":{"id":"printed-replacement-part-01-basis","version":"1","sha256":"26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"},"subjects":{"source_mesh":"validate_source_mesh","repaired_mesh":"validate_repaired_mesh","slice_package":"validate_slice_package","slice_evidence":"validate_slice_evidence","support_preview":"validate_support_preview","machine_profile":"validate_machine_profile","process_profile":"validate_process_profile","filament_profile":"validate_filament_profile","source_report":"validate_source_report","transfer_receipt":"validate_transfer_receipt"},"budget":{"max_bytes":16777216,"max_entities":1000000,"timeout_seconds":120,"memory_limit_mb":512}}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection validate_bind_source_mesh_retained_consumer_003
+  type: "item"
+  from: "repair_measure_orient_retained_consumer_003.source_mesh"
+  to: "validate_outputs_retained_consumer_003.validate_source_mesh"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_repaired_mesh_retained_consumer_003
+  type: "item"
+  from: "repair_measure_orient_retained_consumer_003.repaired_mesh"
+  to: "validate_outputs_retained_consumer_003.validate_repaired_mesh"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_slice_package_retained_consumer_003
+  type: "item"
+  from: "supports_and_slice_retained_consumer_003.slice_package"
+  to: "validate_outputs_retained_consumer_003.validate_slice_package"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_slice_evidence_retained_consumer_003
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.slice_evidence"
+  to: "validate_outputs_retained_consumer_003.validate_slice_evidence"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_support_preview_retained_consumer_003
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.support_preview"
+  to: "validate_outputs_retained_consumer_003.validate_support_preview"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_machine_profile_retained_consumer_003
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.machine_profile"
+  to: "validate_outputs_retained_consumer_003.validate_machine_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_process_profile_retained_consumer_003
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.process_profile"
+  to: "validate_outputs_retained_consumer_003.validate_process_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_filament_profile_retained_consumer_003
+  type: "item"
+  from: "inspect_slice_handoff_retained_consumer_003.filament_profile"
+  to: "validate_outputs_retained_consumer_003.validate_filament_profile"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_source_report_retained_consumer_003
+  type: "item"
+  from: "summarize_preparation_retained_consumer_003.summarize_preparation_retained_consumer_003_result"
+  to: "validate_outputs_retained_consumer_003.validate_source_report"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_transfer_receipt_retained_consumer_003
+  type: "item"
+  from: "authorize_transfer_retained_consumer_003.receipt"
+  to: "validate_outputs_retained_consumer_003.validate_transfer_receipt"
+  label: "exact current validation subject"
+  when: null
+end
+
+task review_preparation_retained_consumer_003
+  name: "Review final digital preparation and exact engineering findings"
+  purpose: "Review final digital preparation and exact engineering findings"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_preparation_retained_consumer_003_assessment","name":"review preparation retained consumer 003 assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_preparation_retained_consumer_003"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review the original socket, grip, orientation/support, tolerance and action-scope requirements against exact outputs. This process cannot certify fit, strength, accuracy or a physical print."
+end
+
+connection bind_review_preparation_retained_consumer_003_assessment
+  type: "item"
+  from: "validate_outputs_retained_consumer_003.assessment"
+  to: "review_preparation_retained_consumer_003.review_preparation_retained_consumer_003_assessment"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection sequence_review_basis_retained_consumer_003
+  type: "order"
+  from: "define_geometry_basis_retained_consumer_003"
+  to: "review_basis_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_repair_measure_orient_retained_consumer_003
+  type: "order"
+  from: "review_basis_retained_consumer_003"
+  to: "repair_measure_orient_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_retain_slice_response_retained_consumer_003
+  type: "order"
+  from: "supports_and_slice_retained_consumer_003"
+  to: "retain_slice_response_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_inspect_slice_handoff_retained_consumer_003
+  type: "order"
+  from: "retain_slice_response_retained_consumer_003"
+  to: "inspect_slice_handoff_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_summarize_preparation_retained_consumer_003
+  type: "order"
+  from: "inspect_slice_handoff_retained_consumer_003"
+  to: "summarize_preparation_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_authorize_transfer_retained_consumer_003
+  type: "order"
+  from: "summarize_preparation_retained_consumer_003"
+  to: "authorize_transfer_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_validate_outputs_retained_consumer_003
+  type: "order"
+  from: "authorize_transfer_retained_consumer_003"
+  to: "validate_outputs_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_review_preparation_retained_consumer_003
+  type: "order"
+  from: "validate_outputs_retained_consumer_003"
+  to: "review_preparation_retained_consumer_003"
+  label: "accepted process order"
+  when: null
+end

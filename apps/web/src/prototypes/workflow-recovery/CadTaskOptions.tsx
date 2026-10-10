@@ -82,7 +82,7 @@ export function cadCommands(
           : []),
         ...value.exports.map((e, i) => ({
           id: exportPortId(block, workflow, e, "cad"),
-          name: `Export file ${i + 1}`,
+          name: e.format ? exportFormatLabel(e.format) : `Export file ${i + 1}`,
           typeId: "type.file.workspace",
         })),
       ]
@@ -118,12 +118,32 @@ export function cadCommands(
             : "Verified file produced by this step in the workspace.",
       },
     });
-  if (value?.source !== "upstream")
+  const inputPort = cadPortId(block, "input");
+  if (value?.source === "upstream") {
+    if (!findPort(workflow, inputPort))
+      commands.push({
+        kind: "add_port",
+        port: {
+          id: inputPort,
+          ownerBlockId: block.id,
+          direction: "input",
+          name: "CAD model",
+          typeId: "type.geometry.brep",
+          required: false,
+          cardinality: "optional",
+          artifactContractId: null,
+          description: "Continue editing the upstream open document.",
+        },
+      });
+  } else {
     commands.push(
       ...workflow.relationships
-        .filter((e) => e.targetId === cadPortId(block, "input"))
+        .filter((e) => e.targetId === inputPort)
         .map((e) => ({ kind: "disconnect" as const, relationshipId: e.id })),
     );
+    if (findPort(workflow, inputPort))
+      commands.push({ kind: "delete_port", portId: inputPort });
+  }
   commands.push({
     kind: "set_block_configuration",
     blockId: block.id,
@@ -254,21 +274,6 @@ export function CadTaskOptions({
       ? [{ kind: "disconnect", relationshipId: connected.id }]
       : [];
     if (sourceId) {
-      if (!findPort(workflow, id))
-        commands.push({
-          kind: "add_port",
-          port: {
-            id,
-            ownerBlockId: block.id,
-            direction: "input",
-            name: "CAD model",
-            typeId: "type.geometry.brep",
-            required: false,
-            cardinality: "optional",
-            artifactContractId: null,
-            description: "Continue editing the upstream open document.",
-          },
-        });
       commands.push({
         kind: "connect",
         relationship: {
@@ -282,8 +287,8 @@ export function CadTaskOptions({
       });
     }
     onApply([
-      ...commands,
       ...cadCommands(block, workflow, { ...cad, from_port: sourceKey(id) }),
+      ...commands,
     ]);
   }
   const pending = cad?.exports.find((ex) => ex.id === pendingExport?.id);
@@ -564,6 +569,10 @@ export function CadTaskOptions({
             </>
           )}
           <h3>Exports</h3>
+          <small>
+            To use the model in an AI rendering step, export an image and
+            connect it to that step's Reference image input.
+          </small>
           {pending && pendingExport && (
             <section
               className="recovery-export-impact"
@@ -633,7 +642,9 @@ export function CadTaskOptions({
                     <option value={ex.format}>{ex.format} · unavailable</option>
                   )}
                   {caps?.formats.map((f) => (
-                    <option key={f}>{f}</option>
+                    <option key={f} value={f}>
+                      {exportFormatLabel(f)}
+                    </option>
                   ))}
                 </select>
               </label>
@@ -726,6 +737,36 @@ export function CadTaskOptions({
           >
             Add export
           </button>
+          {caps?.formats.some((format) =>
+            ["screenshot_jpeg", "screenshot_png"].includes(format),
+          ) && (
+            <button
+              type="button"
+              data-testid="workflow-recovery-cad-add-image"
+              disabled={readOnly || cad.exports.length >= 12}
+              onClick={() => {
+                const format = caps.formats.find((value) =>
+                  ["screenshot_jpeg", "screenshot_png"].includes(value),
+                )!;
+                update({
+                  exports: [
+                    ...cad.exports,
+                    {
+                      id: `export-${crypto.randomUUID().slice(0, 8)}`,
+                      format,
+                      path: exportFilename(
+                        `model-view-${cad.exports.length + 1}`,
+                        format,
+                      ),
+                      policy: "indexed",
+                    },
+                  ],
+                });
+              }}
+            >
+              Add model image
+            </button>
+          )}
           <small>
             The CAD model connection passes the open document. File outputs are
             saved in this workspace.

@@ -57,10 +57,13 @@ An `approval` connection from validator task ID to consumer task ID uses
 checks. A consumer that also needs the original output keeps its ordinary data
 connection from that producer. A `revision` connection uses `when: revise`;
 the bounded-rework compiler validates its safety. For a local validator, it may
-target only the one preceding ordinary-AI text/structured producer that owns all
-checked subjects. The producer must use indexed policy. MCP/tool effects,
-application edits, reviews, external actions, overwrite policy, unrelated
-outputs, multi-step segments and arbitrary back-edges are rejected. Selecting a
+target one preceding producer that owns all checked subjects: an ordinary AI
+text/structured producer with indexed files, a create-new CAD task with indexed
+native outputs, or an explicitly isolated AI MCP file producer. The file producer
+requires `revision_policy: create_new_files`, indexed response publication,
+named file outputs, and the attempt allocation contract below. Exact tool calls,
+existing-document application edits, reviews, external actions, overwrite policy,
+unrelated outputs, multi-step segments and arbitrary back-edges are rejected. Selecting a
 target in the editor sets an initial limit of one; selecting zero disconnects the
 revision path. A nonzero limit alone never schedules a producer.
 
@@ -77,3 +80,42 @@ fields, executable configuration, ambiguous/missing subjects, collections,
 wrong performer, mixed MCP settings and unsafe file policies. Runtime evidence
 is published under the verification/diagnostic artifact roles before a gate
 stops downstream work; a transport success is not a validation pass.
+
+## 9 October 2026 — preserve corrected file attempts
+
+A controlled canonical-runtime regression exposed that the former
+`create_new_files` compiler gate alone did not allocate new output paths: the
+second attempt could overwrite the file behind the first assessment. Historical
+source/run evidence is retained. Starting a legacy literal-path automatic MCP
+file loop now reports a readiness defect; updating it requires a visible source
+revision, not an implicit filename rewrite.
+
+The producer declares `run_path_template: wright.run-path/2`. Each saved response
+and expected output has one `{{wright.run_id}}` directory followed by one
+`{{wright.producer_attempt}}` directory, for example
+`outputs/{{wright.run_id}}/design/{{wright.producer_attempt}}/part.step`.
+Expected-file port mappings use those same templates. Version 1 retains its
+existing semantics and rejects the attempt token. Version 2 is scoped to isolated
+create-new AI MCP file tasks; approval, validation, existing-document and process
+input configuration cannot be templated with the attempt identity.
+
+The existing preparer binds the run identity. The canonical runner binds the
+attempt from retained producer records, exclusively reserves its output
+directories before model/tool dispatch, records the resolved file binding, and
+retains every prior attempt. An existing directory prevents uncertain replay.
+Previous files are checked before/after correction and on durable continuation.
+A changed/missing prior file holds downstream work. These checks do not sandbox
+an arbitrary external provider's filesystem access or repair damaged evidence.
+
+A downstream MCP file input can declare
+`mcp_file_dependencies: {"input_port": {"source": "connected_output"}}`.
+It receives the exact connected output's confined path, hash and source port;
+the usual byte verification still applies. It does not guess which attempt
+passed or read a model-authored path. Literal-path dependency maps retain their
+strict equality checks. The editor preserves both forms on save/reopen.
+
+Controlled tests exercise failed/corrected JSON files through the real validator,
+historical/current assessments, no progress, revision exhaustion, downstream MCP
+handoff, file mutation, directory collisions, and durable review continuation.
+Live engineering-provider and served-workspace qualification of this new version
+remain separate requirements; these tests do not establish native CAD capability.

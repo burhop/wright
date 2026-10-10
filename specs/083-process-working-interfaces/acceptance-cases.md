@@ -131,3 +131,89 @@ model generation; served browser verification; live provider digital outputs;
 engineering checked scope; test decisions; human acceptance; physical execution.
 Required missing live proof leaves the feature incomplete, with unaffected work
 and precise resource/authority request documented. Do not inflate qualification.
+# Workspace acceptance regression — 7 October 2026
+
+User annotations reopened workspace acceptance. Before handing a served build to
+a user, repeat the ordinary workspace journey using the configured agent/model
+and existing independent tools. Focused component or provider proofs alone do
+not satisfy this gate.
+
+1. Open a workspace through its normal entry. Verify settings, model list and
+   LLM connection, installed MCP selection and actual gateway connection.
+2. Click Workflows twice. Each action must create a distinct empty source, with
+   no sample blocks. Reload must restore the selected tab without creating a
+   file. Opening a missing existing file must show an error and never create it.
+3. Select an existing workflow file through Workspace Files or Open workflow.
+   Preserve source, diagram, inspectors, authoring and exact file identity.
+4. Verify Git status/history/diff and local commit/branch operations in a fresh
+   disposable workspace. No automatic commit, pull, push or fake clean status.
+5. Verify there is no injected Rivet provider, gateway management tool or
+   dedicated BREP launcher. Independent providers use the common registry path.
+6. Start a fresh digital engineering run through the ordinary UI. Record the
+   accepted run identity, real tool transitions and exact output bytes/hashes.
+   Reload must restore that run's status and outputs without another execution.
+7. Exercise unavailable credentials/tools and failed settings/status requests.
+   The UI must distinguish failed loading from an empty configured set and must
+   preserve known state and exact evidence rather than claiming readiness.
+
+Use `scripts/recovery/capture_workspace_feedback_walkthrough.mjs` for the
+specific reported focus-wheel workspace reproduction. Supply the existing local
+browser-context file explicitly; it contains credentials and must stay out of
+reports and version control. Run only against the dedicated digital test setup,
+with a fresh artifact directory. This reference check does not qualify other
+providers, physical manufacturing or engineering acceptance. Do not enroll the
+host in integration-test authority or answer protected review subjects.
+
+### Manual authoring regression
+
+1. Author a text-input-to-MCP task by hand. The palette and Inspector must show
+   actual enabled workspace MCPs with readable registry names; internal Wright
+   file/validation services must not appear as unnamed server choices. Provider
+   names are presentation metadata; bindings preserve exact server/tool IDs and
+   schemas. A failed registry request is an error, not an empty successful set.
+2. Add a task with **Choose server later**. Preserve its unbound state until the
+   user chooses a provider; readiness must still require the binding. Inventory
+   refresh must not silently replace a selected unavailable provider. Losing the
+   workspace scope clears previous options.
+3. Save the connected definition and reload it. Preserve the prompt, exact
+   provider and edge. **Open working view** must require saved edits, open the
+   same source revision in a distinctly named workspace tab, and submit no run.
+   Creating another workflow from that tab must produce a distinct blank editor.
+
+### Drawn prompts and final image deliverables
+
+The user clarified the intended journey: design text → CAD model and screenshot
+→ AI transformation using that screenshot → final realistic image. Execution uses
+an independent CAD MCP and the configured AI connection's native image output
+(or an explicitly selected image MCP). Wright owns the accepted source, readiness,
+execution, file/result identities, evidence and workspace views.
+
+1. Draw a text output directly to a new AI/MCP task's Prompt socket without
+   first selecting an Inspector source. Preserve type/cycle/cardinality checks,
+   Undo/Redo and the exact binding after save/reopen.
+2. Use a selected CAD provider's declared image export. Expose that file as its
+   own output, and draw it to the rendering task's Reference image socket.
+   Retain the written rendering instructions. A known image output must not
+   silently become instruction text.
+3. Select Image (PNG/JPEG) and declare a matching filename. An AI prompt uses the
+   configured Codex connection without requiring an image MCP. Readiness qualifies
+   native output and pins its model/configuration/SDK identity; drift fails without
+   switching model. Explicit image configuration may add a missing image socket to an
+   older block; merely loading its source must not modify it. Unbound steps must
+   remain editable and fail readiness before a run.
+4. Use the existing durable workflow runner and exact file mappings; retain the
+   server-scoped tool path when an MCP was explicitly selected. The final
+   deliverable must contain actual image bytes with the recorded digest, not a
+   text response with an image extension. Reject absent, unchanged, mislabeled
+   or invalid-header files. Keep activity summaries separate from the image.
+5. Resolve run-scoped output paths without overwriting another run. Reject
+   filename/format changes on connected outputs until explicitly disconnected.
+   Reopening a view must not execute a task again.
+6. Record served authoring evidence separately from mocked runtime tests, live
+   CAD/image-provider execution and user acceptance. File verification alone
+   does not establish image quality or preservation of engineering geometry.
+7. Prove text plus a real reference image through the served workspace and the
+   configured Codex account, not just a synthetic adapter response. Save one real
+   image result and show it through the shared viewer. Reload without another
+   execution; record exact file/hash/run and resolved model provenance. Keep
+   this proof separate from a fresh Solid Edge screenshot-export execution.

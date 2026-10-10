@@ -321,7 +321,15 @@ def _rivet_gateway_tools() -> list[tuple[GatewayManagementToolSpec, object]]:
 
 @lru_cache(maxsize=1)
 def workspace_service() -> WorkspaceService:
-    return build_workspace_service(DATABASE_PATH, notifier=GatewayWorkspaceNotifier())
+    from agent_adapters.report_generation import workflow_image_capabilities
+    from agent_adapters.workflow_model_routing import workflow_model_capabilities
+
+    return build_workspace_service(
+        DATABASE_PATH,
+        notifier=GatewayWorkspaceNotifier(),
+        workflow_image_capabilities=workflow_image_capabilities,
+        workflow_model_capabilities=workflow_model_capabilities,
+    )
 
 
 @lru_cache(maxsize=1)
@@ -473,7 +481,7 @@ def build_api_gateway_service(
             "workspace_id": session.workspace_id,
             "session_id": session.binding_session_id or session.session_id,
         },
-        extra_tools=_rivet_gateway_tools(),
+        extra_tools=[],
     )
     ui_reader = EngineMcpUiResourceReader(engine)
     ui_resources = McpUiResourceStore(ui_reader)

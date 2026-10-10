@@ -1,15 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 export function NativeConfirmDialog({
   title,
   children,
   stay,
   proceed,
+  stayLabel = "Stay and keep editing",
+  proceedLabel = "Continue",
+  proceedDisabled = false,
 }: {
   title: string;
   children: React.ReactNode;
   stay: () => void;
   proceed: () => void;
+  stayLabel?: string;
+  proceedLabel?: string;
+  proceedDisabled?: boolean;
 }) {
+  const titleId = useId();
   const dialog = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const original =
@@ -24,7 +31,9 @@ export function NativeConfirmDialog({
       }
       if (event.key !== "Tab") return;
       const controls = Array.from(
-        dialog.current?.querySelectorAll<HTMLButtonElement>("button") ?? [],
+        dialog.current?.querySelectorAll<HTMLButtonElement>(
+          "button:not(:disabled)",
+        ) ?? [],
       );
       const first = controls[0],
         last = controls.at(-1);
@@ -55,17 +64,21 @@ export function NativeConfirmDialog({
       ref={dialog}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="native-leave-title"
+      aria-labelledby={titleId}
       className="native-dialog"
     >
       <div>
-        <h2 id="native-leave-title">{title}</h2>
+        <h2 id={titleId}>{title}</h2>
         {children}
         <button data-testid="native-stay" onClick={stay}>
-          Stay and keep editing
+          {stayLabel}
         </button>
-        <button data-testid="native-leave" onClick={proceed}>
-          Continue
+        <button
+          data-testid="native-leave"
+          onClick={proceed}
+          disabled={proceedDisabled}
+        >
+          {proceedLabel}
         </button>
       </div>
     </div>

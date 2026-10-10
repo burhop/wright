@@ -185,7 +185,7 @@ def test_declared_input_round_trips_existing_source_storage_and_compiler(tmp_pat
 @pytest.mark.parametrize(
     "key,value",
     [
-        ("version", 2),
+        ("version", 4),
         ("version", True),
         ("kind", "approval"),
         ("instructions", "  "),

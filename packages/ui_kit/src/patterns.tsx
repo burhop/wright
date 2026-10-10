@@ -11,7 +11,7 @@ import type {
   InteractionSnapshot,
   JsonValue,
 } from "@wright/process-client";
-import { SchemaField } from "./inputs";
+import { SchemaField, schemaFieldError } from "./inputs";
 
 export const UI_KIT_VERSION = "1.0.0";
 export type Navigate = (target: NavigationTarget) => void;
@@ -150,12 +150,14 @@ export function ActionButton({
   busy = false,
   readOnly = false,
   onNavigate,
+  compactReasons = false,
 }: {
   action: Action;
   onAction?: (action: Action) => void;
   busy?: boolean;
   readOnly?: boolean;
   onNavigate?: Navigate;
+  compactReasons?: boolean;
 }) {
   const id = useId();
   const enabled = action.enabled && !!onAction && !busy && !readOnly;
@@ -173,7 +175,17 @@ export function ActionButton({
       >
         {busy ? "Working…" : action.title}
       </button>
-      {!enabled && (
+      {!enabled && compactReasons ? (
+        <details id={id} className="wp-action-reasons">
+          <summary>Why unavailable</summary>
+          {(action.reasons ?? []).map((reason, index) => (
+            <ReasonNotice key={`${reason.code}-${index}`} reason={reason} tone="info" onNavigate={onNavigate} />
+          ))}
+          {!action.reasons?.length && <p className="wp-muted">
+            {readOnly ? "This view is read-only." : busy ? "Waiting for Wright to confirm the request." : !onAction ? "This action is unavailable in this view." : "The process has not permitted this action."}
+          </p>}
+        </details>
+      ) : !enabled && (
         <div id={id}>
           {(action.reasons ?? []).map((reason, index) => (
             <ReasonNotice
@@ -236,7 +248,7 @@ export function ReadinessPanel({
             : readiness.state === "ready"
               ? "Ready to start"
               : readiness.state === "blocked"
-                ? "Inputs need attention"
+                  ? "Not ready to start"
                 : "This process needs a supported configuration"}
       </strong>
       {(readiness?.reasons ?? []).map((reason, index) => (
@@ -273,6 +285,18 @@ const stateLabels: Record<InteractionSnapshot["state"], string> = {
   completed: "Process completed",
   failed: "Process needs attention",
   cancelled: "Process cancelled",
+  cancellation_requested: "Cancellation requested",
+};
+const observationStateLabels: Record<Observation["state"], string> = {
+  preparing: "Preparing",
+  ready: "Ready",
+  running: "Running",
+  waiting_human: "Waiting for a review or response",
+  waiting_external: "Waiting for an external operation",
+  reconciliation_required: "Needs reconciliation",
+  completed: "Completed",
+  failed: "Failed",
+  cancelled: "Cancelled",
   cancellation_requested: "Cancellation requested",
 };
 export function ProgressPanel({
@@ -341,7 +365,9 @@ export function ProgressPanel({
             : null;
         return (
           <div className="wp-observation" key={observation.observation_id}>
-            <p>{observation.activity || stateLabels[observation.state]}</p>
+            <p className="wp-muted">Reported by {observation.provider_binding}</p>
+            <p>Observed state: {observationStateLabels[observation.state]}</p>
+            {observation.activity && <p>{observation.activity}</p>}
             {stale ? (
               <p className="wp-muted">
                 This status needs a fresh observation; progress and time are
@@ -370,7 +396,11 @@ export function ProgressPanel({
                     remaining (observed estimate)
                   </p>
                 )}
-                {percent === null && remaining === null && (
+                {percent === null &&
+                  remaining === null &&
+                  ["running", "waiting_external", "cancellation_requested"].includes(
+                    observation.state,
+                  ) && (
                   <p className="wp-muted">
                     The provider has not supplied a percentage or remaining
                     time.
@@ -412,19 +442,22 @@ export function EvidenceReference({
   reference: ArtifactRef;
   onOpen?: (reference: ArtifactRef) => void;
 }) {
+  const filename = reference.artifact_ref.split(/[\\/]/).filter(Boolean).at(-1)
+    || reference.artifact_ref;
   return (
     <div className="wp-evidence">
-      <span>{reference.artifact_ref}</span>
+      <span>{filename}</span>
       <button
         type="button"
         className="wp-link"
         disabled={!onOpen}
         onClick={() => onOpen?.(reference)}
       >
-        Open representation
+        Open file
       </button>
       <details>
-        <summary>Identity</summary>
+        <summary>File details</summary>
+        <p><code>{reference.artifact_ref}</code></p>
         <code>{reference.sha256}</code>
         {reference.result_id && <p>{reference.result_id}</p>}
       </details>
@@ -457,7 +490,7 @@ export function ResultCard({
       tabIndex={-1}
     >
       <h3>{output.title}</h3>
-      <p className="wp-muted">{output.role}</p>
+      <p className="wp-muted">{output.role === "previous_attempt" ? "Historical evidence · superseded output" : output.role}</p>
       {children}
       {(output.representations ?? []).map((reference) => (
         <EvidenceReference
@@ -577,6 +610,14 @@ export function CheckpointCard({
 }) {
   const reasonId = useId();
   const [confirmedSubject, setConfirmedSubject] = useState<string>();
+  const responseError = interaction.kind === "input" && response?.value !== undefined && interaction.response_schema
+    ? schemaFieldError(interaction.response_schema, response.value, true)
+    : undefined;
+  const responseBlockedReason = response?.blockedReason ?? (responseError ? {
+    code: "INPUT_REQUIRED",
+    message: responseError,
+    correction: "Correct the response fields above before submitting.",
+  } : undefined);
   const matching = actions.filter(
     (action) =>
       action.checkpoint_id === interaction.checkpoint_id &&
@@ -632,13 +673,18 @@ export function CheckpointCard({
           )}
         </div>
       )}
-      {(interaction.evidence ?? []).map((reference) => (
+      <div className={`wp-checkpoint-content${interaction.evidence?.length ? " wp-checkpoint-content--with-evidence" : ""}`}>
+      {!!interaction.evidence?.length && <div className="wp-checkpoint-evidence">
+      <h4>Files for this review</h4>
+      {interaction.evidence.map((reference) => (
         <EvidenceReference
           key={`${reference.artifact_ref}:${reference.sha256}`}
           reference={reference}
           onOpen={onOpen}
         />
       ))}
+      </div>}
+      <div className="wp-checkpoint-controls">
       {children}
       {review &&
         interaction.decisions?.some(
@@ -656,7 +702,7 @@ export function CheckpointCard({
           )) &&
         matching.some((item) => item.operation === "review") &&
         !!interaction.decisions?.length && (
-          <div className="wp-field">
+          <div className="wp-field wp-review-controls">
             <label htmlFor={reasonId}>Review reason</label>
             <textarea
               id={reasonId}
@@ -695,6 +741,7 @@ export function CheckpointCard({
                         : undefined);
                     return (
                       <ActionButton
+                        compactReasons
                         key={`${item.action_id}:${choice}`}
                         action={{
                           ...item,
@@ -772,17 +819,18 @@ export function CheckpointCard({
         )
         .map((action) => (
           <ActionButton
+            compactReasons={interaction.kind !== "input"}
             key={action.action_id}
             action={
               action.operation === "respond" &&
               response &&
               action.enabled &&
-              (response.blockedReason || response.value === undefined)
+              (responseBlockedReason || response.value === undefined)
                 ? {
                     ...action,
                     enabled: false,
                     reasons: [
-                      response.blockedReason ?? {
+                      responseBlockedReason ?? {
                         code: "INPUT_REQUIRED",
                         message:
                           "Provide the declared response before submitting.",
@@ -834,6 +882,8 @@ export function CheckpointCard({
           No permitted response action is available in this view.
         </p>
       )}
+      </div>
+      </div>
       <details>
         <summary>Checkpoint identity</summary>
         <code>{interaction.checkpoint_id}</code>

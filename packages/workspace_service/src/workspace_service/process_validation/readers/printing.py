@@ -107,9 +107,14 @@ def _stl(content: bytes, context, *, measure_topology: bool = False) -> dict:
             degenerate += 1
         if measure_topology:
             a, b, c = vertices
-            volumes.append((a[0] * (b[1]*c[2] - b[2]*c[1])
-                            + a[1] * (b[2]*c[0] - b[0]*c[2])
-                            + a[2] * (b[0]*c[1] - b[1]*c[0])) / 6)
+            volumes.append(
+                (
+                    a[0] * (b[1] * c[2] - b[2] * c[1])
+                    + a[1] * (b[2] * c[0] - b[0] * c[2])
+                    + a[2] * (b[0] * c[1] - b[1] * c[0])
+                )
+                / 6
+            )
         for left, right in (
             (vertices[0], vertices[1]),
             (vertices[1], vertices[2]),
@@ -151,7 +156,9 @@ def _stl(content: bytes, context, *, measure_topology: bool = False) -> dict:
                     if neighbor in remaining:
                         remaining.remove(neighbor)
                         stack.append(neighbor)
-        measured.update(connected_components=components, signed_volume_mm3=math.fsum(volumes))
+        measured.update(
+            connected_components=components, signed_volume_mm3=math.fsum(volumes)
+        )
     return measured
 
 
@@ -244,7 +251,11 @@ class PrintingArtifactReader:
                 ],
                 "version": 5,
                 "slice_operation_policy": "explicit-profile-operation",
-                "mesh_metrics": ["triangle_count", "connected_components", "signed_volume_mm3"],
+                "mesh_metrics": [
+                    "triangle_count",
+                    "connected_components",
+                    "signed_volume_mm3",
+                ],
                 "stl_entity_accounting": "triangles-plus-unique-edges",
             }
         ),
@@ -270,13 +281,21 @@ class PrintingArtifactReader:
                     "STL checks require a source-backed millimetre unit convention.",
                     category="source_conflict",
                 )
-            mesh = _stl(snapshot.content, context, measure_topology=operation == "mesh_metric")
+            mesh = _stl(
+                snapshot.content, context, measure_topology=operation == "mesh_metric"
+            )
             if operation == "mesh_metric":
                 metric = check.selector.removeprefix("mesh/")
                 if check.selector != "mesh/" + metric or metric not in {
-                    "triangle_count", "connected_components", "signed_volume_mm3"
+                    "triangle_count",
+                    "connected_components",
+                    "signed_volume_mm3",
                 }:
-                    raise ValidationIssue("profile.printing_selector", "Choose a declared exact-STL mesh metric.", category="source_conflict")
+                    raise ValidationIssue(
+                        "profile.printing_selector",
+                        "Choose a declared exact-STL mesh metric.",
+                        category="source_conflict",
+                    )
                 observed = mesh[metric]
                 unit = "mm3" if metric == "signed_volume_mm3" else "1"
             elif operation == "mesh_integrity":
@@ -341,7 +360,10 @@ class PrintingArtifactReader:
             )
         elif operation == "slice_binding":
             expected_operation = check.parameters.get("expected_operation")
-            if not isinstance(expected_operation, str) or not expected_operation.strip():
+            if (
+                not isinstance(expected_operation, str)
+                or not expected_operation.strip()
+            ):
                 raise ValidationIssue(
                     "profile.printing_slice_operation",
                     "Slice binding requires an explicit nonempty expected operation.",

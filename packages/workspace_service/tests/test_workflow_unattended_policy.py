@@ -6,7 +6,12 @@ from dataclasses import replace
 import pytest
 
 from agent_adapters.report_generation import WorkflowGeneratedResponse
-from core.workflow_step_outcomes import UNATTENDED_STEP_POLICY, InvalidStepOutcomeError
+from core.workflow_step_outcomes import InvalidStepOutcomeError
+from agent_adapters.workflow_instructions import (
+    embedded_asset,
+    embedded_instruction_set,
+)
+
 from packages.workspace_service.tests.test_workflow_mcp_integration_restriction import (
     Gateway,
     runtime,
@@ -28,6 +33,11 @@ from workspace_service.workflow_source_execution import (
     compile_prompt_workflow,
     execute_prompt_workflow,
 )
+
+
+STRICT_POLICY_BODY = embedded_asset(
+    embedded_instruction_set(), "policy.require-specified"
+).body
 
 
 def generated(response, *, status="completed", reason=None):
@@ -97,7 +107,8 @@ async def test_plain_step_question_fails_before_formatting_outputs_or_downstream
 @pytest.mark.asyncio
 @pytest.mark.parametrize("when", ["before", "after", "mixed", "repair"])
 async def test_mcp_question_has_no_new_form_default_retry_or_tool_dispatch(when):
-    item = tool()
+    # Preserve strict legacy policy for a qualified read-only test operation.
+    item = tool(annotations={"readOnlyHint": True})
     gateway = Gateway([item])
     runner = runtime(gateway)
     events, decisions = [], []
@@ -107,7 +118,7 @@ async def test_mcp_question_has_no_new_form_default_retry_or_tool_dispatch(when)
 
     async def decide(messages, schemas, **kwargs):
         decisions.append(schemas)
-        assert UNATTENDED_STEP_POLICY in messages[0]["content"]
+        assert STRICT_POLICY_BODY in messages[0]["content"]
         call = {
             "id": "operation-1",
             "function": {"name": "tool_0", "arguments": "{}"},

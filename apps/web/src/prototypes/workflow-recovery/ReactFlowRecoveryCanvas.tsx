@@ -724,7 +724,7 @@ function ResultBlockNode({ data, selected }: NodeProps<ResultFlowNode>) {
           data.onSelect(data.result.id);
         }}
       >
-        {available ? "View results" : "View expected files"} ↗
+        {available ? "View results" : "View output status"} ↗
       </button>
     </article>
   );

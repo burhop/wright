@@ -34,6 +34,8 @@ _TYPES = {
 _INDEX = b"""<!doctype html><html><head><meta charset="utf-8">
 <meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wright process interface</title><link rel="stylesheet" href="/style.css">
+<style>body{margin:0;font:14px/1.4 system-ui,sans-serif;color:var(--color-primary,#eee);background:var(--color-neutral,#101624)}
+#wright-process-connection{margin:0;padding:6px 12px;font-size:12px;color:var(--color-text-muted,#aaa)}</style>
 </head><body><p id="wright-process-connection" role="status">Connecting to Wright...</p>
 <main id="wright-process-ui" aria-live="polite">Opening process interface...</main>
 <script type="module" src="/wright-runtime.js"></script></body></html>"""

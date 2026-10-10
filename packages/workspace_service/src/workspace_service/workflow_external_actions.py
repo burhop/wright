@@ -154,6 +154,9 @@ class WorkflowExternalActionService:
         checkpoint = self._required(checkpoint_id, workspace_id)
         self._validate_current(checkpoint, expected_subject_digest)
         target = "approved" if approved else "changes_requested"
+        # The owning scoped service supplies actor; browser payloads cannot
+        # assert test attribution or obtain automatic decision authority.
+        integration_test = actor.startswith("integration_test:")
         decision_receipt = (
             {
                 "request_id": request_id,
@@ -161,6 +164,7 @@ class WorkflowExternalActionService:
                 "actor": actor,
                 "decision": target,
                 "reason": reason,
+                "integration_test": integration_test,
             }
             if request_id is not None
             else None
@@ -174,7 +178,18 @@ class WorkflowExternalActionService:
             prior = checkpoint.continuation.get("decision_receipt")
             if prior is not None:
                 if (
-                    prior == decision_receipt
+                    (
+                        prior == decision_receipt
+                        or (
+                            "integration_test" not in prior
+                            and prior
+                            == {
+                                key: value
+                                for key, value in decision_receipt.items()
+                                if key != "integration_test"
+                            }
+                        )
+                    )
                     and checkpoint.actor == actor
                     and checkpoint.reason == reason
                 ):
@@ -201,8 +216,12 @@ class WorkflowExternalActionService:
                 continuation={
                     **checkpoint.continuation,
                     "decision_receipt": decision_receipt,
+                    "decision_attribution": {
+                        "actor": actor,
+                        "integration_test": integration_test,
+                    },
                 }
-                if decision_receipt is not None
+                if decision_receipt is not None or integration_test
                 else None,
             )
         except WorkflowContinuationStateConflict as error:

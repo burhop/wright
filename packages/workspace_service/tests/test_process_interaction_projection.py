@@ -101,6 +101,25 @@ def result(location="outputs/model.stl", digest=DIGEST):
     )
 
 
+def test_previous_attempt_is_read_only_evidence_with_separate_navigation_identity():
+    prior = replace(result(), id="history-previous-file", artifact_role="diagnostic")
+    snapshot = project_interactions(
+        facts(run=run("failed", previous_results=(("1", "run:model:part", prior),))),
+        scope(),
+    )
+    (output,) = snapshot.outputs
+    assert output.result_id == prior.id
+    assert output.role == "previous_attempt"
+    assert output.producer_attempt == "1"
+    assert output.title == "Attempt 1: Measured part"
+    assert output.representations[0].result_id == prior.id
+    assert output.representations[0].sha256 == DIGEST
+    assert not any(
+        action.enabled and action.operation in {"start", "action", "review"}
+        for action in snapshot.actions
+    )
+
+
 def test_preparation_and_recorded_run_use_same_snapshot_identity():
     prepared = project_interactions(facts(), scope())
     assert prepared.state == "ready" and prepared.context.run_id is None

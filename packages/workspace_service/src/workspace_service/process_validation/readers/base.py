@@ -13,6 +13,7 @@ from core.process_validation import (
     ReaderIdentity,
     ResourceBudget,
     SubjectBinding,
+    ValidationProfile,
 )
 from core.tracing import traced
 
@@ -105,9 +106,8 @@ class ReaderRegistry:
     def capabilities(self) -> tuple[ReaderIdentity, ...]:
         return tuple(reader.identity for _, reader in sorted(self._readers.items()))
 
-    @traced("workspace.process_validation.measure")
-    def measure(self, snapshot, check, context):
-        context.checkpoint()
+    def require_reader(self, check: CheckDefinition) -> Reader:
+        """Check registered capability only; do not read or evaluate an output."""
         reader = self._readers.get(check.reader)
         if reader is None:
             raise ValidationIssue(
@@ -123,6 +123,26 @@ class ReaderRegistry:
                 category="capability_unavailable",
                 action="restore_capability",
             )
+        return reader
+
+    def qualify_required_readers(self, profile: ValidationProfile) -> None:
+        """Resolve predictable capability gaps without requiring upstream files."""
+        mandatory = {
+            item.id for item in profile.baseline.requirements if item.mandatory
+        }
+        for check in profile.checks:
+            if (
+                check.applicability_reason
+                or check.constraint.operator == "review"
+                or not mandatory.intersection(check.requirement_ids)
+            ):
+                continue
+            self.require_reader(check)
+
+    @traced("workspace.process_validation.measure")
+    def measure(self, snapshot, check, context):
+        context.checkpoint()
+        reader = self.require_reader(check)
         if (
             reader.identity.formats
             and snapshot.subject.format not in reader.identity.formats

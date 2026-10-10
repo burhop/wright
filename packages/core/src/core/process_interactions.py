@@ -11,6 +11,7 @@ from pydantic import (
     Field,
     JsonValue,
     StrictBool,
+    StringConstraints,
     field_validator,
     model_validator,
 )
@@ -63,6 +64,12 @@ def checked_timestamp(value: str) -> str:
 
 Timestamp = Annotated[str, AfterValidator(checked_timestamp)]
 Locator = Annotated[Identifier, AfterValidator(relative_locator)]
+# Dependencies identify either an input block or a connected block.port pair.
+# Each source identifier is bounded to 160 characters; the joined address must
+# retain both components and its separator without truncating the source identity.
+InputDependencyIdentifier = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=321)
+]
 InlineJSON = Annotated[JsonValue, AfterValidator(checked_json)]
 Operation = Literal[
     "start", "respond", "review", "action", "cancel", "attach", "read", "navigate"
@@ -372,7 +379,7 @@ class Reason(Contract):
 
 
 class InputDependency(Contract):
-    binding_id: Identifier
+    binding_id: InputDependencyIdentifier
     classification: DependencyKind
     producer_step: Identifier | None = None
     producer_port: Identifier | None = None

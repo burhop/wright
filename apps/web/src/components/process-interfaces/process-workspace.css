@@ -50,6 +50,25 @@
   align-self: flex-start;
 }
 
+.process-interface-view > .wright-process-ui {
+  padding: 8px 16px;
+}
+.process-interface-view > .wright-process-ui .wp-button {
+  min-height: 36px;
+  padding: 6px 12px;
+}
+.process-interface-preview-note {
+  color: var(--color-text-muted, #94a3b8);
+  font-size: 0.875rem;
+}
+.process-workspace-view .process-surface-toolbar {
+  padding: 0;
+}
+.process-workspace-view .process-surface-toolbar > button {
+  min-height: 36px;
+  padding: 6px 12px;
+}
+
 .process-workspace-view [data-testid="surface-panel-host"] {
   border: 1px solid var(--color-border, #1e293b);
   border-radius: var(--radius-lg, 12px);

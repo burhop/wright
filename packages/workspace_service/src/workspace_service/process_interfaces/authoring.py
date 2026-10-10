@@ -32,6 +32,7 @@ from core.process_interfaces import (
 from core.process_interactions import Reason
 from core.process_validation import Identifier, canonical_digest, canonical_json
 from core.tracing import traced
+from core.workflow_bundle import ImportedInterfaceReference
 from data_vault.process_ui_artifacts import ImmutableFileSet
 
 from ..workspace_path import WorkspacePath
@@ -39,6 +40,7 @@ from ..workflow_resource_lease import ApplicationLease, lease_is_active
 from .build import BuildToolchain, build_interface, validate_manifest_bindings
 from .errors import ProcessInterfaceError
 from .inputs import _descriptors, _sections
+from .imported import ImportedInterfaceLibrary
 from .resources import AuthoringOutput, load_authoring_resources
 from .service import ProcessScope
 
@@ -146,6 +148,12 @@ class ProcessInterfaceAuthoring:
             updated, expected_digest=canonical_digest(job)
         )
 
+    async def imported_interfaces(self, scope, process):
+        scope.require(process)
+        resolved = await self.application.resolve_process(scope.process_scope, process)
+        library = ImportedInterfaceLibrary(resolved.workspace_dir, process.source_path)
+        return await asyncio.to_thread(library.list)
+
     @traced("process.ui.authoring.submit")
     async def submit(
         self,
@@ -158,6 +166,7 @@ class ProcessInterfaceAuthoring:
         ui_id=None,
         base_revision=None,
         trace_id=None,
+        imported_interface=None,
     ):
         scope.require(process)
         request_id = TypeAdapter(Identifier).validate_python(request_id)
@@ -184,6 +193,17 @@ class ProcessInterfaceAuthoring:
                 "An update needs its exact saved interface and revision.",
                 "Select the interface revision to update.",
             )
+        selected_import = (
+            ImportedInterfaceReference.model_validate(imported_interface)
+            if imported_interface is not None
+            else None
+        )
+        if selected_import is not None and ui_id is not None:
+            raise ProcessInterfaceError(
+                "RESPONSE_INVALID",
+                "Choose an imported source or a saved local interface.",
+                "Rebuild an imported source as a new local interface before updating it.",
+            )
         request = {
             "principal_id": scope.process_scope.principal_id,
             "process": process.model_dump(mode="json"),
@@ -192,6 +212,8 @@ class ProcessInterfaceAuthoring:
             "ui_id": ui_id,
             "base_revision": base_revision,
         }
+        if selected_import is not None:
+            request["imported_interface"] = selected_import.model_dump(mode="json")
         digest = canonical_digest(request)
         async with self._allocation:
             # Reconcile before any source/model/compiler reads. A lost HTTP reply
@@ -224,6 +246,13 @@ class ProcessInterfaceAuthoring:
             catalog = accepted_binding_catalog(resolved.document)
             previous = None
             previous_manifest = None
+            imported_reference = None
+            if selected_import is not None:
+                library = ImportedInterfaceLibrary(
+                    resolved.workspace_dir, process.source_path
+                )
+                imported = await asyncio.to_thread(library.read, selected_import)
+                imported_reference = imported.model_dump(mode="json")
             if ui_id:
                 ui = self.repository.get_ui(process.workspace_id, ui_id)
                 revision = self.repository.get_revision(
@@ -317,6 +346,7 @@ class ProcessInterfaceAuthoring:
                     "previous_manifest": previous_manifest.model_dump(mode="json")
                     if previous_manifest is not None
                     else None,
+                    "imported_reference": imported_reference,
                 },
             )
             if not ui_id:
@@ -435,12 +465,40 @@ class ProcessInterfaceAuthoring:
 
     async def _response(self, job, context, prompt, trace_id):
         text, attestation, ended, count = [], None, False, 0
+        invocation_count = 0
+
+        async def retain_sdk_invocation(invocation):
+            nonlocal invocation_count
+            from core.redaction import redact_mapping
+
+            if (
+                not isinstance(invocation, dict)
+                or invocation.get("schema_version") != "wright.workflow-invocation/1"
+                or invocation.get("capture_scope") != "provider_sdk_request"
+                or len(canonical_json(invocation).encode()) > 2_097_152
+                or invocation_count >= 8
+            ):
+                raise ValueError("Invalid confined SDK invocation evidence")
+            invocation_count += 1
+            self.repository.retain_authoring_record(
+                job.process.workspace_id,
+                job.job_id,
+                f"attempt-{job.repair_attempt}-invocation-{invocation_count}",
+                {
+                    "invocation": redact_mapping(invocation),
+                    "role": context.role,
+                    "instructions_version": context.instructions_version,
+                    "instructions_digest": context.instructions_digest,
+                },
+            )
+
         async with asyncio.timeout(150):
             async for event in self.engine.stream_chat(
                 AgentChatRequest(
                     session_id=job.job_id,
                     message=prompt,
                     invocation_context=context,
+                    invocation_observer=retain_sdk_invocation,
                     trace_id=trace_id,
                 )
             ):
@@ -454,6 +512,8 @@ class ProcessInterfaceAuthoring:
                     text.append(value)
                     if sum(len(part.encode()) for part in text) > 1_048_576:
                         raise ValueError("Authoring source exceeded its byte bound")
+                elif event.type == "progress" and "model_invocation" in event.data:
+                    await retain_sdk_invocation(event.data["model_invocation"])
                 elif (
                     event.type == "progress"
                     and "effective_instructions_digest" in event.data
@@ -547,6 +607,7 @@ class ProcessInterfaceAuthoring:
                 "reference_template": record["template"],
                 "previous_source": record["previous_source"],
                 "previous_manifest": record.get("previous_manifest"),
+                "imported_reference": record.get("imported_reference"),
             }
             correction = None
             job = self._transition(job, "generating")

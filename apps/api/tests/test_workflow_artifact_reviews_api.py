@@ -92,6 +92,16 @@ def test_native_stream_terminates_pending_review_without_waiting_or_autoapproval
     scope_service(tmp_path, svc)
     calls = []
 
+    async def read_bytes(workspace_dir, path, *, maximum_bytes):
+        from workspace_service.workspace_path import WorkspacePath
+
+        data = WorkspacePath(workspace_dir).resolve(path, must_exist=True).read_bytes()
+        if len(data) > maximum_bytes:
+            raise ValueError("Fixture input exceeds the declared bound")
+        return data
+
+    svc.files.read_bytes = read_bytes
+
     async def generate(prompt, fmt, **kwargs):
         calls.append(fmt)
         return (

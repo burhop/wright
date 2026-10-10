@@ -1,0 +1,41 @@
+{
+  "fixture_scope": "Selected observations copied from a retained native inspection. Regression mutations are synthetic and do not qualify new CAD geometry or human engineering acceptance.",
+  "provenance": {
+    "run_id": "3843a8c98e0f40e1a15f90790a33b6b8",
+    "producer_attempt": 2,
+    "source_path": "process-proofs/printed-replacement-part/native-focus-wheel-023b/outputs/3843a8c98e0f40e1a15f90790a33b6b8/design/2/engineering-measurements.json",
+    "source_sha256": "5afd7c60f2a9be31eb55d1d0005aa7d455847ff61f2fe46757043764c9c07686"
+  },
+  "observations": {
+    "valid_solid": true,
+    "measured_height_mm": 18.0000001,
+    "measured_max_y_envelope_mm": 38.0000002,
+    "sampled_minimum_grip_diameter_mm": 33.49999999999159,
+    "socket_sections": [
+      {"z_mm": 0.1, "round_radius_mm": 3.2, "flat_x_mm": -2.4},
+      {"z_mm": 5.0, "round_radius_mm": 3.2, "flat_x_mm": -2.4},
+      {"z_mm": 9.9, "round_radius_mm": 3.2, "flat_x_mm": -2.4}
+    ],
+    "roof_uncovered_volume_mm3": 0.0,
+    "native_step_symmetric_volume_difference_mm3": 2.0445440895855427e-09,
+    "mesh": {
+      "all_edges_two_facets": true,
+      "maximum_sampled_deviation_mm": 0.006367325538038882
+    },
+    "drawing": {
+      "linked_dimension_count": 10,
+      "dimension_values_mm": {
+        "Envelope": 38.0,
+        "ScallopRadius": 8.0,
+        "SocketRadius": 3.2000000000000006,
+        "OverallHeight": 18.0,
+        "SocketDepth": 10.0,
+        "SocketAcrossFlat": 5.600000000000236,
+        "HubHeight": 2.0,
+        "SocketRoofAtAxis": 8.0,
+        "GripAtSection": 33.5,
+        "ExposedRound": 1.0
+      }
+    }
+  }
+}

@@ -1,5 +1,106 @@
 # Feature 083 progress
 
+## Current user-testing checkpoint — native Codex images, 7 October UTC
+
+The user corrected the proposed image-MCP requirement: their configured Codex
+connection already supports images. A live native SDK probe confirmed text plus
+a reference image returns PNG. The AI image block now uses that same installed
+SDK resolver, inherited `openai-codex` / `gpt-5.6-sol` model and provider-side
+`image_generation` tool, with no additional MCP, model substitution or executor.
+An explicitly selected image MCP retains its existing execution path. Readiness
+pins native capability and model/configuration/SDK identity; the bounded adapter
+rejects drift and unsupported tools. The shared runtime validates and saves real
+PNG/JPEG bytes to an exact run output, publishes the existing image result, and
+records provider provenance separately from its activity summary.
+
+The normal workspace produced one actual 1,949,261-byte PNG from an uploaded
+washer image and brass-rendering text. Run `ce84e8253701486694fd65e5b6ec8a0e`
+completed in about 39 seconds. The
+[served continuation](../../artifacts/ui-walkthrough/workspace-feedback/20261007-native-image-continuation-002/report.html)
+passes nine steps, including opening the image in Wright's shared viewer tab
+and restoring the same run after reload with zero new executions. The
+[first capture](../../artifacts/ui-walkthrough/workspace-feedback/20261007-native-image-001/report.html)
+retains nine passed authoring steps and the capture script's NDJSON parsing
+failure after successful submission; it does not represent a failed workflow.
+The continuation observes the completed run without replaying generation.
+
+This supersedes the independent-image-provider requirement below. Fresh Solid
+Edge screenshot export and geometric/visual acceptance remain separate, open
+checks. The live rendering uses an uploaded reference image, not a new CAD
+document. No printer or protected engineering review was operated.
+
+Final focused checks pass 168 backend and 74 frontend cases, TypeScript, Python
+lint and whitespace checks. Native JPEG transport is covered with explicit SDK
+doubles; the live provider proof returned PNG. Exact image/result/model hashes
+and scope are recorded in the continuation's verification record. Auth values
+are redacted from retained browser archives and absent from text evidence.
+
+### Earlier image-MCP interpretation, superseded above
+
+The next clarification defines an image-producing workflow: design text → CAD
+model/screenshot → AI transformation using the screenshot → final realistic
+PNG/JPEG. New AI/MCP tasks expose Prompt and Reference image sockets immediately.
+Drawing uses the same command/type/cycle checks as Inspector bindings; image
+references remain separate from written instructions. CAD image exports are
+discoverable through provider-declared formats. Image response choices declare
+one exact tool-created file on the existing server-scoped runner, gateway,
+run-path and result mechanisms. Explicit image configuration supports older
+blocks without mutating accepted source on load. Connected output changes are
+guarded; repeated runs resolve separate image paths.
+
+The [final image-handoff walkthrough](../../artifacts/ui-walkthrough/workspace-feedback/20261007-image-handoff-final-004/report.html)
+passes all 14 served steps, including actual mouse connections, Undo/Redo,
+save/reopen and readiness's unbound rendering-step explanation. It captured no
+browser errors and submitted no execution. Earlier harness failures are retained
+with labeled continuations. The focused frontend selection passes 107 cases,
+TypeScript compilation passes and 124 backend cases pass. Runtime image-provider
+tests use explicit doubles and verify actual reference bytes, final-image
+classification, exact digest and missing/mislabeled/header-invalid failures.
+
+**Still open:** selecting an image-capable independent provider, live Solid Edge
+export and realistic rendering, visual/engineering quality review and user
+acceptance. No image capability is inferred from the configured chat model.
+Header/digest checks do not certify appearance or preserved geometry. No vendor
+image implementation, alternate executor, physical action or provider selection
+was added by this change.
+
+The subsequent manual-authoring feedback exposed another setup/selection gap:
+the isolated proof workspace did not contain the user's existing Solid Edge
+connection, and internal file/validation services appeared as duplicate unnamed
+MCP servers. The existing independent Solid Edge executable is now registered
+and enabled through ordinary APIs for this workspace's allowed root; its 27
+tools were discovered without creating or changing a CAD document. The palette
+and Inspector use actual enabled registry providers, explicit deferred binding,
+refresh/error states and exact unchanged server/tool identities. Internal
+operations remain available to execution. **Open working view** explains the
+same saved definition, requires saved edits, and names the separate tab clearly.
+
+The [manual-authoring continuation](../../artifacts/ui-walkthrough/workspace-feedback/20261007-manual-authoring-continuation-002/report.html)
+passes all 12 served steps: text prompt, Solid Edge selection, connection, save,
+reload, same-source working tab, then another blank workflow with deferred
+selection. No workflow execution was submitted and no browser errors were
+captured. The first capture's slow source loading and the next capture's
+incorrect option-visibility check are preserved separately; the later success
+does not explain or qualify general responsiveness. The focused frontend
+selection passes 137 cases and TypeScript compilation passes. Fresh CAD execution
+and user acceptance remain open.
+
+The nine workspace annotations exposed normal entry-point and integration gaps;
+the earlier completion scopes below remain historical evidence. Product
+acceptance is open. The corrected served workspace passes a ten-step browser
+walkthrough covering ordinary MCPs/settings/models/Git, two distinct blank
+workflows, explicit existing-file opening, fresh digital construction/repair and
+reload of that exact completed run. Five output files were verified against
+their recorded hashes. TypeScript, 65 focused frontend cases and focused backend
+checks pass. Earlier product and capture failures are preserved.
+
+See the [walkthrough](../../artifacts/ui-walkthrough/workspace-feedback/20261007-final-served-workspace/report.html)
+and [annotation ledger](../../artifacts/ui-walkthrough/workspace-feedback/20261007-final-served-workspace/feedback-resolution.json).
+Rivet's automatic advertisement/injection and dedicated BREP entry are removed;
+unused legacy source remains migration debt. BREP MCP qualification and complete
+printed-workflow readiness are not established by this digital proof. No
+physical action, protected review, push, merge or release was performed.
+
 ## Final local completion — 4 October UTC
 
 **All57tasks M0–M5 and all182 original semantic obligations are locally verified.**
@@ -3742,3 +3843,102 @@ disposes JOB-A-stage1 and US1-independent: **134 proved /48 awaiting review** of
 contracts/tasks/final documentation continue. No protected review, physical
 effect, push, merge, release or user acceptance. Owned API8063/UI5246/native19988
 remain running for scoped continuation; older retained hosts are not disturbed.
+# 7 October 2026 — workspace acceptance corrections
+
+The user's nine annotations reopened everyday workspace validation. Fixed blank
+workflow creation/explicit file opens, retired Rivet advertisement and BREP
+launcher, restored Git controls and workspace session scoping. Restored the owned
+test API's existing credential/model access and missing engineering processes.
+Fresh ordinary-UI mesh construction/repair completed with actual STL/preview
+evidence. Further inspection found UUID run filenames incorrectly ordered as
+history; recorded start times now govern latest-run restoration. Old failures,
+protected engineering proofs and prior completion evidence remain intact.
+
+Focused regression expectations now follow the intended user journey, replacing
+sample auto-open, missing-file auto-creation and Git-placeholder expectations.
+Product/engineering acceptance remains separate; full printed builtin-write
+readiness and complete unused legacy-code removal remain unclaimed. See the
+7 October section in completion.md and the live workspace walkthrough for the
+final scoped verification and retained failures.
+
+## 7 October 2026 — unavailable result navigation
+
+The user's image-result annotation exposed an unclear unavailable-output view.
+The common editor now projects the existing saved run's state alongside an
+unproduced result. A failed/cancelled run is labelled on the result card; its
+viewer explains the missing output and links to the exact recorded failed step
+and expanded run details. Step attribution requires an explicit failed event or
+a step diagnostic matching the recorded run error. Different source revisions
+remain detached. Inspector/run-detail navigation resets the scroll position so
+the explanation is visible; expected filenames remain unavailable file entries.
+No execution, retry, vendor protocol or additional state authority was added.
+
+Read-only inspection of the served UI5246 through Workspace Files opened
+`shape-to-realistic-image.workflow.wflow`, selected its unavailable image,
+followed its failed-step link and opened expanded run details. Both panels
+opened at scroll position0, no file-open button was offered for the missing
+image, no browser errors were recorded and no workflow start was submitted.
+The latest saved run `f44e49a694304e3d8e07f6869eed108b` remains failed because
+the CAD task requested additional input in an unattended step. This UI fix does
+not qualify that CAD operation or produce a final rendering. The earlier
+unsupported-recipe failure remains retained. Private inspection screenshots and
+receipt are in `.local-run/process-interfaces-083/user-testing-20261007/result-viewer/`.
+The frontend builds to a separate owned output directory; an initial default
+build encountered a Windows permission error while emptying existing dist assets.
+No software test suite or fresh workflow execution was run for this UI correction.
+
+The follow-up question about the missing error exposed a second presentation
+defect: restored run details start collapsed, leaving the complete failure inside
+that drawer. A persistent semantic alert now presents the recorded error above
+the diagram, independently of drawer visibility. Cancellation remains a status;
+older-source failures are labelled and have no current-block attribution. The
+banner and result inspector reuse the same recorded-step attribution and the
+same detail navigation. Read-only served-workspace inspection saw the complete
+unattended-step error with the drawer initially closed, opened its full details,
+collapsed them while retaining the banner, and selected the exact CAD step.
+Zero execution requests and browser errors were recorded. The private receipt
+and screenshots are in `user-testing-20261007/visible-run-error/` beneath the
+same `.local-run/process-interfaces-083` root. This change exposes the failure;
+it does not resolve the CAD task's request for additional input or generate an
+image.
+
+## 7 October 2026 — sheet-metal retry diagnosis
+
+The user's L-shaped sheet-metal retry is recorded as
+`f44e49a694304e3d8e07f6869eed108b`. It stopped before any tool call: the model
+reported an unspecified inside bend radius and bend-allowance basis. No CAD
+model, exported image or final rendering was produced. The detailed explanation
+was retained in the run file but omitted from the compact recovery projection.
+The projection now includes bounded `step_diagnostic.diagnostic` prose; the
+common editor/result viewer identifies it as a step-reported explanation, with
+the existing correction and canonical error in run details. This prose grants
+no action authority, creates no interaction and supplies no engineering default.
+Earlier-source attribution remains detached from current blocks.
+
+The accepted example was revision-checked through the existing source API from
+storage revision3 to4: native `shape-design.psm` replaces `shape-design.par`,
+selecting the existing independent MCP's sheet-metal recipe family. Its obsolete
+central-hole rendering instruction was removed. The user's design input,
+connections and saved runs were preserved. Bend-radius and bend-allowance values
+were requested explicitly; their selection remains pending. No process was
+started or tool operation submitted. Frontend compilation/build and diff
+whitespace checks passed; no test suite was added or run. The owned API was
+restarted after confirming the latest run remained failed. Read-only retrieval
+confirmed its compact diagnostic includes the exact missing parameters.
+
+## 7 October 2026 — portable instruction and interaction plan
+
+The subsequent user clarification permits AI to choose and document assumptions
+for delegated design choices and requires saved/exported workflows to carry
+their applicable prompts. The
+[code analysis and proposed plan](../../docs/architecture/workflow-instructions-and-interactions-plan.md)
+inventories code-injected instructions, prompt-dependent recovery behavior,
+incomplete execution-prompt provenance and the existing declared-input services.
+It also identifies the source-run compatibility route/schema/client omission of
+`waiting_human`, which can project a normal checkpoint as an error.
+
+The recommendation extends the existing input step and shared runtime, snapshots
+instructions with accepted definitions, and keeps assumption policy explicit.
+The vision and main roadmap now link this clarification. This turn changed
+planning documents only; runtime implementation and the plan's acceptance checks
+remain pending. Earlier CAD failures and evidence were preserved.

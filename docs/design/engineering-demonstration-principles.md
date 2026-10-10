@@ -154,6 +154,22 @@ validation rules. Describe demonstration suitability separately. A valid
 technical test can be a weak product demonstration; a compelling proposed
 process is not a verified execution.
 
+### Preserve observations when a design fails
+
+An inspection operation should retain an identifiable feature's measured value
+even when it differs from the required value. The pinned validation profile
+compares that observation with the requirement and holds dependent work. Failure
+to locate or measure a feature remains a distinct capability or inspection error.
+Do not turn every noncompliant dimension into a tool exception that loses its
+measurement and actionable engineering finding.
+
+A selector in a measurement report locates evidence; it is not permission to
+edit the observation to match the target. Correct the actual design through its
+declared producer, measure the new revision and regenerate affected deliverables.
+Retain the failed model, observations and assessment. Distinguish a controlled
+new-source/new-run correction from an automatically executed revision loop; the
+latter requires the runtime's supported ownership and revision bounds.
+
 For future example reviews, record at least: **engineering objective; existing
 tools and MCP servers; ordered substantive stages; actual artifact handoffs;
 engineering outcome; demonstration gap and smallest proposed adjustment**.

@@ -11,10 +11,14 @@ import json
 import hashlib
 import re
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import PurePosixPath
 from datetime import datetime, timezone
 from core.workflow_step_outcomes import InvalidStepOutcomeError
+from core.workflow_instructions import (
+    WorkflowInstructionSet,
+    WorkflowInstructionOverride,
+)
 
 from .workflow_sources import WorkflowSourceStorageError
 from .workflow_references import WorkflowReference, allows_binary_file_reference
@@ -180,10 +184,15 @@ class PromptStep:
     validation: dict | None = None
     validation_sources: tuple[tuple[str, str], ...] = ()
     revision_policy: str = ""
-    file_dependencies: dict[str, str] = field(default_factory=dict)
+    file_dependencies: dict[str, str | dict] = field(default_factory=dict)
     task_tool_allowlist: tuple[str, ...] = ()
     human_interaction: dict | None = None
     run_path_template: str = ""
+    native_image_format: str = ""
+    native_image_resolution: dict = field(default_factory=dict)
+    model_resolution: dict = field(default_factory=dict)
+    instruction_set: dict | None = None
+    instruction_override: dict | None = None
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -258,6 +267,8 @@ class PromptWorkflow:
     input_snapshot: object | None = None
     run_path_id: str = ""
     run_path_roots: tuple[str, ...] = ()
+    instruction_set: dict | None = None
+    review_only: bool = False
 
 
 def _invalid(
@@ -349,6 +360,18 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
     inputs = [s for s in sections if s["kind"] == "input"]
     if len(workflows) != 1 or not 1 <= len(tasks) <= 32:
         raise _invalid("Add between one and 32 AI prompt or MCP tool steps.")
+    instruction_set = None
+    if "instructions" in workflows[0]["fields"]:
+        try:
+            instruction_set = WorkflowInstructionSet.model_validate(
+                workflows[0]["fields"]["instructions"]
+            )
+        except (ValueError, TypeError) as error:
+            raise _invalid(
+                "The saved workflow instructions are incomplete or incompatible.",
+                "Inspect the workflow instruction collection, body digests, role bindings "
+                "and supported version. Use an explicit migration or default-update diff.",
+            ) from error
     if any(
         s["kind"] not in {"workflow", "task", "input", "connection", "group", "item"}
         for s in sections
@@ -580,7 +603,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             valid_receipt_output = not declared_outputs or (
                 action_kind != "local_review"
                 and isinstance(action_settings, dict)
-                and (receipt_path or isinstance(action_settings.get("receipt_path"), str))
+                and (
+                    receipt_path or isinstance(action_settings.get("receipt_path"), str)
+                )
                 and len(receipt_outputs) == 1
                 and receipt_outputs[0][1] == "workspace_file"
                 and receipt_outputs[0][0].endswith("receipt")
@@ -631,7 +656,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     "overwrite" if receipt_path else "indexed",
                     output_ports=receipt_outputs,
                     expected_files=(receipt_path,) if receipt_path else (),
-                    expected_file_ports={receipt_outputs[0][0]: receipt_path} if receipt_path else {},
+                    expected_file_ports={receipt_outputs[0][0]: receipt_path}
+                    if receipt_path
+                    else {},
                     run_path_template=receipt_declaration,
                     external_action={
                         "action_kind": action_kind,
@@ -689,6 +716,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             continue
         is_mcp = settings.get("authoring_template") == "mcp-tool"
         agent_task = settings.get("authoring_template") == "mcp-task"
+        native_image = (
+            bool(settings.get("image_output"))
+            and settings.get("authoring_template") == "ai-prompt"
+        )
         design_check = settings.get("design_check", False)
         max_revisions = settings.get("max_revisions", 0)
         if (
@@ -755,9 +786,11 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         expected_files = tuple(
             _safe_path(p.strip()) for p in raw_files.splitlines() if p.strip()
         )
-        if len(expected_files) > 16 or (expected_files and not (agent_task or is_mcp)):
+        if len(expected_files) > 32 or (
+            expected_files and not (agent_task or is_mcp or native_image)
+        ):
             raise _invalid(
-                f"{title}: declared tool-created files require an MCP tool or task (maximum 16)."
+                f"{title}: declared tool-created files require an MCP tool or task (maximum 32)."
             )
         file_ports = settings.get("expected_file_ports", {})
         if isinstance(file_ports, str):
@@ -784,6 +817,43 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 raise _invalid(
                     f"{title}: map each file output to one exact expected file."
                 )
+        image_output = settings.get("image_output", "")
+        if image_output:
+            try:
+                image_output = (
+                    json.loads(image_output)
+                    if isinstance(image_output, str)
+                    else image_output
+                )
+                image_path = _safe_path(image_output["path"])
+                image_port = image_output["port"]
+                image_format = image_output["format"]
+                extensions = {"png": {".png"}, "jpeg": {".jpg", ".jpeg"}}
+                if (
+                    not (agent_task or native_image)
+                    or cad
+                    or application
+                    or not isinstance(image_port, str)
+                    or image_format not in extensions
+                    or PurePosixPath(image_path).suffix.lower()
+                    not in extensions[image_format]
+                    or set(file_ports) != {image_port}
+                    or declared_file_ports != {image_port}
+                    or len(fields.get("outputs", [])) != 1
+                    or len(expected_files) != 1
+                    or (
+                        file_ports[image_port] != image_path
+                        and not file_ports[image_port].endswith("/" + image_path)
+                    )
+                    or PurePosixPath(file_ports[image_port]).suffix.lower()
+                    not in extensions[image_format]
+                ):
+                    raise ValueError("Invalid image output")
+            except (KeyError, TypeError, ValueError):
+                raise _invalid(
+                    f"{title}: configure one PNG or JPEG file output on an AI prompt or MCP task.",
+                    "Choose a matching .png or .jpg/.jpeg filename before running.",
+                ) from None
         if agent_task and (
             type(max_calls) is not int
             or not 1 <= max_calls <= 32
@@ -806,7 +876,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(f"{title}: select distinct tool names for an MCP task.")
         revision_policy = settings.get("revision_policy", "")
         if revision_policy not in {"", "create_new_files"} or (
-            revision_policy and not agent_task
+            revision_policy and not (agent_task or native_image)
         ):
             raise _invalid(
                 f"{title}: use the create-new file revision policy only for an MCP task."
@@ -921,9 +991,15 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             and application_from is None
         ):
             raise _invalid(f"{title}: connect the application resource to work on.")
-        save = (not outgoing[block_id] and not cad and not application) or settings.get(
-            "save_output", False
-        )
+        file_only_result = bool(file_ports) and set(file_ports) == {
+            port["key"] for port in fields.get("outputs", [])
+        }
+        save = (
+            not outgoing[block_id]
+            and not cad
+            and not application
+            and not file_only_result
+        ) or settings.get("save_output", False)
         filename = settings.get(
             "output_filename", f"{block_id.replace('_', '-')}{FORMATS[fmt]}"
         )
@@ -937,11 +1013,12 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
         file_dependencies = {}
         raw_dependencies = settings.get("mcp_file_dependencies", {})
         if not isinstance(raw_dependencies, dict) or any(
-            not isinstance(port, str) or not isinstance(path, str)
+            not isinstance(port, str)
+            or not (isinstance(path, str) or path == {"source": "connected_output"})
             for port, path in raw_dependencies.items()
         ):
             raise _invalid(
-                f"{title}: file dependencies must map input ports to workspace files."
+                f"{title}: file dependencies must map input ports to workspace files or an explicit connected-output binding."
             )
         if raw_dependencies and not (is_mcp or agent_task):
             raise _invalid(
@@ -958,7 +1035,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 or ports[connected[0]][2].get("kind") != "workspace_file"
             ):
                 raise _invalid(f"{title}: connect one named workspace file to {port}.")
-            file_dependencies[connected[0]] = _safe_path(path)
+            file_dependencies[connected[0]] = (
+                dict(path) if isinstance(path, dict) else _safe_path(path)
+            )
         if is_mcp:
             try:
                 arguments = json.loads(settings.get("mcp_arguments", "{}"))
@@ -1052,6 +1131,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 run_path_template=settings.get("run_path_template", ""),
                 file_dependencies=file_dependencies,
                 task_tool_allowlist=tuple(raw_task_tools),
+                native_image_format=image_output["format"] if native_image else "",
             )
         )
     from .workflow_design_check import validate_rework
@@ -1087,7 +1167,6 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             # Preserve existing single terminal document-review packages.
             steps = [step for step in steps if not step.human_review] + reviews
         else:
-            from dataclasses import replace
             import hashlib
 
             steps = [
@@ -1129,11 +1208,71 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                     "Give the steps different filenames or use indexed files for both.",
                 )
             names[key] = step.file_policy
+    if instruction_set is None and any(
+        blocks[step.id]["fields"].get("settings", {}).get("instruction_override")
+        is not None
+        for step in steps
+    ):
+        raise _invalid(
+            "Step instruction overrides require an embedded workflow instruction collection.",
+            "Make the workflow instructions explicit before applying step overrides.",
+        )
+    if instruction_set is not None:
+        bound_roles = {binding.role for binding in instruction_set.bindings}
+        retained_steps = []
+        for step in steps:
+            raw_override = (
+                blocks[step.id]["fields"]
+                .get("settings", {})
+                .get("instruction_override")
+            )
+            try:
+                override = (
+                    WorkflowInstructionOverride.model_validate(raw_override)
+                    if raw_override is not None
+                    else None
+                )
+            except (ValueError, TypeError) as error:
+                raise _invalid(
+                    f"{step.title}: the step instruction override is invalid."
+                ) from error
+            role = (
+                "mcp-task"
+                if step.agent_task
+                else "image-generation"
+                if step.native_image_format
+                else "workflow-task"
+            )
+            uses_ai = step.agent_task or (
+                not step.tool_name
+                and not step.human_interaction
+                and not step.human_review
+                and not step.external_action
+                and not step.validation
+            )
+            if uses_ai and role not in bound_roles:
+                raise _invalid(
+                    f"{step.title}: saved instructions do not include the {role} role.",
+                    "Explicitly update the workflow's instruction collection before starting.",
+                )
+            retained_steps.append(
+                replace(
+                    step,
+                    instruction_set=instruction_set.model_dump(mode="json"),
+                    instruction_override=override.model_dump(mode="json")
+                    if override
+                    else None,
+                )
+            )
+        steps = retained_steps
     return PromptWorkflow(
         str(workflows[0]["fields"].get("name", "Workflow")),
         tuple(steps),
         {str(s["id"]): s["fields"] for s in inputs},
         revisions,
+        instruction_set=instruction_set.model_dump(mode="json")
+        if instruction_set
+        else None,
     )
 
 
@@ -1254,6 +1393,25 @@ def validate_workspace_authoring_shape(source: str):
                     port_keys.add(port["key"])
 
 
+def _preflight_tools(runtime, steps, *, responses=None):
+    selected = tuple(step for step in steps if step.tool_name or step.agent_task)
+    if not selected:
+        return
+    batch = getattr(runtime, "preflight_many", None)
+    if callable(batch):
+        batch(selected, responses=responses)
+        return
+    # Preserve the existing contract for separately supplied runtime adapters.
+    for step in selected:
+        runtime.preflight(step)
+        if (
+            responses is not None
+            and step.tool_name
+            and hasattr(runtime, "preflight_values")
+        ):
+            runtime.preflight_values(step, responses)
+
+
 async def prepare_prompt_workflow(
     *,
     service,
@@ -1264,7 +1422,14 @@ async def prepare_prompt_workflow(
     workspace_id: str | None = None,
     input_snapshot=None,
     run_id=None,
+    review_only: bool = False,
 ) -> tuple[PromptWorkflow, dict[str, object]]:
+    """Validate accepted source/inputs; qualify live capabilities for execution.
+
+    The approval owner may prepare an inert review plan using frozen inputs.
+    Its files, instructions and criteria are still checked. It cannot execute;
+    continuation must prepare again with the default live qualification.
+    """
     from dataclasses import replace
 
     if input_snapshot is not None:
@@ -1312,9 +1477,113 @@ async def prepare_prompt_workflow(
         )
     validate_workspace_authoring_shape(document.source)
     plan = compile_prompt_workflow(document.source)
+    if plan.instruction_set is not None:
+        from agent_adapters.workflow_instructions import (
+            validate_workflow_instruction_dependencies,
+            embedded_asset,
+            validate_workflow_helper_instructions,
+        )
+
+        saved_instructions = WorkflowInstructionSet.model_validate(plan.instruction_set)
+
+        for step in plan.steps:
+            if step.agent_task or (
+                not step.tool_name
+                and not step.human_interaction
+                and not step.human_review
+                and not step.external_action
+                and not step.validation
+            ):
+                role = (
+                    "mcp-task"
+                    if step.agent_task
+                    else "image-generation"
+                    if step.native_image_format
+                    else "workflow-task"
+                )
+                try:
+                    validate_workflow_instruction_dependencies(
+                        plan.instruction_set, role, step.instruction_override
+                    )
+                    for helper_id in (
+                        *(("context.task-workspace",) if step.agent_task else ()),
+                        *(("validation.design-check",) if step.design_check else ()),
+                        *(
+                            ("validation.design-revision",)
+                            if step.id in plan.revisions.values()
+                            else ()
+                        ),
+                        *(
+                            ("context.expected-files",)
+                            if step.expected_files and not step.native_image_format
+                            else ()
+                        ),
+                    ):
+                        validate_workflow_helper_instructions(
+                            step.instruction_set, helper_id
+                        )
+                    for asset_id in (
+                        *(("context.cad",) if step.cad else ()),
+                        *(("context.application",) if step.application else ()),
+                        *(("validation.feedback",) if plan.revisions else ()),
+                    ):
+                        asset = embedded_asset(saved_instructions, asset_id)
+                        expected_role = (
+                            "validation"
+                            if asset_id == "validation.feedback"
+                            else "resource-context"
+                        )
+                        if asset.role != expected_role or asset.variables:
+                            raise ValueError(
+                                "Instruction helper asset has an incompatible role or variable contract"
+                            )
+                except (ValueError, TypeError) as error:
+                    raise _invalid(
+                        f"{step.title}: portable instruction dependencies are missing or incompatible.",
+                        "Inspect the saved role, policy, formatting and recovery assets. Update explicitly before starting.",
+                    ) from error
     from .workflow_run_paths import bind_run_paths, bind_run_input_values
 
     plan = bind_run_paths(plan, run_id)
+    qualified_image_resolutions = {}
+    if not review_only and any(step.native_image_format for step in plan.steps):
+        capability_reader = getattr(service, "workflow_image_capabilities", None)
+        if capability_reader is None:
+            raise _invalid(
+                "The configured AI image-output connection is unavailable.",
+                "Connect an AI adapter with native image output before starting.",
+            )
+        try:
+            capability = await capability_reader()
+            if not capability.get("available") or any(
+                step.native_image_format not in capability.get("formats", [])
+                for step in plan.steps
+                if step.native_image_format
+            ):
+                raise ValueError(
+                    "The configured AI connection does not support the requested image format."
+                )
+            from dataclasses import replace
+
+            plan = replace(
+                plan,
+                steps=tuple(
+                    replace(step, native_image_resolution=capability["resolution"])
+                    if step.native_image_format
+                    else step
+                    for step in plan.steps
+                ),
+            )
+            qualified_image_resolutions = {
+                step.id: step.native_image_resolution
+                for step in plan.steps
+                if step.native_image_format
+            }
+        except (OSError, ValueError, TimeoutError, KeyError) as error:
+            raise _invalid(
+                "The configured AI image-output connection is unavailable.",
+                "Check the AI connection and its native image capability before starting.",
+            ) from error
     if any(step.human_interaction for step in plan.steps) and not getattr(
         service, "process_interfaces", None
     ):
@@ -1350,7 +1619,7 @@ async def prepare_prompt_workflow(
         for step in plan.steps
         if (step.external_action or {}).get("action_kind") == "mcp-operation"
     ]
-    if (
+    if not review_only and (
         any(step.tool_name or step.agent_task for step in plan.steps)
         or option_sources
         or approved_operations
@@ -1362,9 +1631,7 @@ async def prepare_prompt_workflow(
                 "MCP execution is unavailable.",
                 "Check the MCP server connection and try again.",
             )
-        for step in plan.steps:
-            if step.tool_name or step.agent_task:
-                tool_runtime.preflight(step)
+        _preflight_tools(tool_runtime, plan.steps)
         if approved_operations:
             from .workflow_mcp_operations import qualify_operation
 
@@ -1377,9 +1644,11 @@ async def prepare_prompt_workflow(
     for step in plan.steps:
         if step.validation:
             from .process_validation.configuration import ValidatorConfiguration
+            from .process_validation.readers.base import ValidationIssue
+            from .process_validation.service import default_reader_registry
 
             try:
-                ValidatorConfiguration.model_validate(step.validation).load(
+                profile = ValidatorConfiguration.model_validate(step.validation).load(
                     workspace_dir
                 )
             except (OSError, ValueError) as exc:
@@ -1387,7 +1656,16 @@ async def prepare_prompt_workflow(
                     f"{step.title}: the pinned validation profile is unavailable or changed.",
                     "Select and save a matching profile, baseline and subject roles before running.",
                 ) from exc
-        if step.application:
+            if not review_only:
+                try:
+                    default_reader_registry().qualify_required_readers(profile)
+                except ValidationIssue as exc:
+                    raise _error(
+                        "PROCESS_VALIDATION_CAPABILITY_UNAVAILABLE",
+                        f"{step.title}: {exc}",
+                        "Restore the required validation reader and evidence method, then check readiness again. Keep the pinned requirements unchanged.",
+                    ) from exc
+        if step.application and not review_only:
             from .workflow_application_task import validate_application_connection
 
             validate_application_connection(tool_runtime, step, plan)
@@ -1396,21 +1674,22 @@ async def prepare_prompt_workflow(
         if step.cad:
             from .workflow_cad import capabilities, list_documents
 
-            caps = await capabilities(tool_runtime, step)
-            if not caps.get("supported") or not caps.get("can_list"):
-                raise _invalid(
-                    f"{step.title}: the server does not support CAD document selection."
-                )
-            if (
-                step.cad.get("save_native", True)
-                or step.cad["source"] == "new"
-                or step.cad.get("edit_mode") == "copy"
-            ) and not caps.get("can_save"):
-                raise _invalid(
-                    f"{step.title}: native model saving is unavailable on this server."
-                )
+            if not review_only:
+                caps = await capabilities(tool_runtime, step)
+                if not caps.get("supported") or not caps.get("can_list"):
+                    raise _invalid(
+                        f"{step.title}: the server does not support CAD document selection."
+                    )
+                if (
+                    step.cad.get("save_native", True)
+                    or step.cad["source"] == "new"
+                    or step.cad.get("edit_mode") == "copy"
+                ) and not caps.get("can_save"):
+                    raise _invalid(
+                        f"{step.title}: native model saving is unavailable on this server."
+                    )
             for export in step.cad.get("exports", []):
-                if export["format"] not in caps["formats"]:
+                if not review_only and export["format"] not in caps["formats"]:
                     raise _invalid(
                         f"{step.title}: export format {export['format']} is unavailable."
                     )
@@ -1425,7 +1704,7 @@ async def prepare_prompt_workflow(
                     raise _invalid(
                         f"{step.title}: select an existing CAD file in this workspace."
                     ) from error
-            if step.cad["source"] == "session":
+            if not review_only and step.cad["source"] == "session":
                 if not any(
                     d.get("documentId") == step.cad["document_id"]
                     for d in await list_documents(tool_runtime, step)
@@ -1448,6 +1727,11 @@ async def prepare_prompt_workflow(
                 "Typed process inputs require a registered workspace identity.",
                 "Run this process through its scoped Wright workspace service.",
             )
+        if review_only and option_sources and input_snapshot is None:
+            raise _invalid(
+                "Reviewing provider choices requires this run's frozen input snapshot.",
+                "Inspect the recorded inputs; do not substitute current choices for this review.",
+            )
         converted = await prepare_inputs(
             service=service,
             workspace_dir=workspace_dir,
@@ -1464,6 +1748,7 @@ async def prepare_prompt_workflow(
             created_at=input_snapshot.created_at if input_snapshot else None,
             review_snapshots=review_snapshots if review_snapshots else None,
             tool_runtime=tool_runtime,
+            review_snapshot=input_snapshot if review_only else None,
         )
         readiness = input_readiness(converted)
         if readiness.state != "ready":
@@ -1477,8 +1762,21 @@ async def prepare_prompt_workflow(
             )
         plan, values = bind_run_paths(converted.plan, run_id), converted.values
         values = bind_run_input_values(plan, values)
-        plan = replace(plan, input_snapshot=converted.snapshot)
-        if tool_runtime is not None:
+        # Input preparation recompiles the accepted source. Preserve the public
+        # adapter qualification just obtained for those exact source step IDs.
+        plan = replace(
+            plan,
+            input_snapshot=converted.snapshot,
+            steps=tuple(
+                replace(
+                    step, native_image_resolution=qualified_image_resolutions[step.id]
+                )
+                if step.id in qualified_image_resolutions
+                else step
+                for step in plan.steps
+            ),
+        )
+        if tool_runtime is not None and not review_only:
             connected_values = {
                 f"{key}.{port['key']}": (
                     values[key].text
@@ -1491,11 +1789,7 @@ async def prepare_prompt_workflow(
                 for port in fields.get("outputs", [])
                 if key in values
             }
-            for step in plan.steps:
-                if step.tool_name or step.agent_task:
-                    tool_runtime.preflight(step)
-                    if step.tool_name and hasattr(tool_runtime, "preflight_values"):
-                        tool_runtime.preflight_values(step, connected_values)
+            _preflight_tools(tool_runtime, plan.steps, responses=connected_values)
     for key, fields in () if converted is not None else plan.inputs.items():
         settings = fields.get("settings", {})
         if not isinstance(settings, dict):
@@ -1538,7 +1832,7 @@ async def prepare_prompt_workflow(
             raise _invalid(f"{fields['name']}: supply text before running.")
         values[key] = value
     values = bind_run_input_values(plan, values)
-    plan = replace(plan, definition_digest=expected_digest)
+    plan = replace(plan, definition_digest=expected_digest, review_only=review_only)
     if review_snapshots:
         from dataclasses import replace
 
@@ -1552,11 +1846,15 @@ async def prepare_prompt_workflow(
                         {
                             "path": value.path,
                             "sha256": value.sha256,
-                            **({
-                                "run_path_version": "wright.run-path/1",
-                                "run_id": value.run_path_id,
-                                "resolved_content_sha256": value.resolved_sha256,
-                            } if value.run_path_id else {}),
+                            **(
+                                {
+                                    "run_path_version": "wright.run-path/1",
+                                    "run_id": value.run_path_id,
+                                    "resolved_content_sha256": value.resolved_sha256,
+                                }
+                                if value.run_path_id
+                                else {}
+                            ),
                         }
                         if isinstance(value, WorkflowReference)
                         else value
@@ -1728,6 +2026,13 @@ async def execute_prompt_workflow(
     execution_context=None,
     run_id=None,
 ) -> dict:
+    if plan.review_only:
+        raise _error(
+            "WORKFLOW_NOT_READY",
+            "A review-only preparation cannot execute workflow steps.",
+            "Check current execution readiness before continuing this run.",
+        )
+    import asyncio
     from uuid import uuid4
     from dataclasses import replace
     from .workflow_results import (
@@ -1743,7 +2048,12 @@ async def execute_prompt_workflow(
 
         input_runtime_owner(service, plan)
     run_id = run_id or uuid4().hex
-    from .workflow_run_paths import reserve_run_paths
+    from .workflow_run_paths import (
+        ATTEMPT_VERSION,
+        bind_attempt_paths,
+        reserve_run_paths,
+        verify_prior_attempt_files,
+    )
 
     reserve_run_paths(plan, workspace_dir, run_id, continuing=continuation is not None)
     engineering_results = []
@@ -1753,7 +2063,79 @@ async def execute_prompt_workflow(
 
         validation_application = application_for_workspace(service, workspace_dir)
 
+    assumptions_by_step = {}
+    instructions_by_step = {}
+
     async def emit(kind, **data):
+        if kind == "instructions_resolved":
+            instructions_by_step[data["task_id"]] = data["instructions"]
+        if kind == "assumptions_recorded":
+            from core.workflow_instructions import WorkflowAssumption
+
+            owner = next(step for step in plan.steps if step.id == data["task_id"])
+            permitted_outputs = {key for key, _ in owner.output_ports}
+            protected = set(
+                (owner.instruction_set or {})
+                .get("policy", {})
+                .get("protected_requirements", ())
+            )
+            assumptions = [
+                WorkflowAssumption.model_validate(value).model_dump(mode="json")
+                for value in data["assumptions"]
+            ]
+            violations = [
+                {
+                    "parameter": value["parameter"],
+                    "protected_requirement": value["parameter"] in protected,
+                    "undeclared_outputs": sorted(
+                        set(value["affected_outputs"]) - permitted_outputs
+                    ),
+                }
+                for value in assumptions
+                if value["parameter"] in protected
+                or not set(value["affected_outputs"]).issubset(permitted_outputs)
+            ]
+            if violations:
+                from .process_interfaces.errors import safe_diagnostic
+
+                if on_event:
+                    await on_event(
+                        {
+                            "kind": "assumptions_rejected",
+                            "at": datetime.now(timezone.utc).isoformat(),
+                            "task_id": owner.id,
+                            "task_title": owner.title,
+                            "diagnostic": safe_diagnostic(
+                                {
+                                    "assumptions": assumptions,
+                                    "violations": violations,
+                                    "permitted_outputs": sorted(permitted_outputs),
+                                }
+                            ),
+                        }
+                    )
+                rejected = "; ".join(
+                    f"{value['parameter']}: "
+                    + (
+                        "protected requirement"
+                        if value["protected_requirement"]
+                        else ""
+                    )
+                    + (
+                        f" undeclared outputs {', '.join(value['undeclared_outputs'])}"
+                        if value["undeclared_outputs"]
+                        else ""
+                    )
+                    for value in violations
+                )
+                raise _error(
+                    "WORKFLOW_ASSUMPTION_INVALID",
+                    f"{owner.title}: rejected assumptions ({rejected}).",
+                    "Keep supplied requirements intact and bind assumptions to "
+                    f"this step's declared output ports: {', '.join(sorted(permitted_outputs))}. "
+                    "Inspect this run's assumptions_rejected evidence; no question or approval was created.",
+                )
+            assumptions_by_step[owner.id] = assumptions
         if on_event:
             await on_event(
                 {"kind": kind, "at": datetime.now(timezone.utc).isoformat(), **data}
@@ -2082,7 +2464,79 @@ async def execute_prompt_workflow(
         ):
             tool_runtime._verified_copy_sources = tuple(engineering_results)
         step = plan.steps[cursor]
+        producer_attempt = 1 + sum(1 for item in attempts if item["task_id"] == step.id)
+        declared_step = step
+        if step.run_path_template == ATTEMPT_VERSION:
+            await asyncio.to_thread(
+                verify_prior_attempt_files, step, attempts, workspace_dir
+            )
+            step = bind_attempt_paths(step, producer_attempt, workspace_dir)
+        assumptions_by_step.pop(step.id, None)
+        instructions_by_step.pop(step.id, None)
         if step.human_interaction:
+            from .workflow_human_input_runtime import (
+                evaluate_input_condition,
+                input_skip_result,
+            )
+
+            evaluation = evaluate_input_condition(step=step, responses=responses)
+            if evaluation is not None:
+                await emit(
+                    "input_condition_evaluated",
+                    task_id=step.id,
+                    task_title=step.title,
+                    evaluation=evaluation.model_dump(mode="json"),
+                )
+                if evaluation.decision == "skip":
+                    skipped_result, skipped_record = input_skip_result(
+                        step=step,
+                        plan=plan,
+                        run_id=run_id,
+                        evaluation=evaluation,
+                        responses=responses,
+                    )
+                    responses[f"{step.id}.{step.human_interaction['output_port']}"] = (
+                        json.loads(skipped_record["response"])
+                    )
+                    engineering_results.append(skipped_result)
+                    if validation_application:
+                        from .process_validation.process import register_outputs
+
+                        skipped_record["producer_attempt"] = 1 + sum(
+                            1 for item in attempts if item["task_id"] == step.id
+                        )
+                        register_outputs(
+                            validation_application,
+                            step,
+                            skipped_record,
+                            run_id,
+                            responses,
+                            artifacts_by_output,
+                            engineering_results,
+                        )
+                    records.append(skipped_record)
+                    await emit(
+                        "step_started",
+                        task_id=step.id,
+                        task_title=step.title,
+                        execution_kind="human_input_skipped",
+                    )
+                    await emit(
+                        "result_ready",
+                        task_id=step.id,
+                        task_title=step.title,
+                        engineering_result=skipped_result.to_dict(),
+                    )
+                    await emit(
+                        "step_completed",
+                        task_id=step.id,
+                        task_title=step.title,
+                        response=skipped_record["response"],
+                        output_format="json",
+                        condition_evaluation=evaluation.model_dump(mode="json"),
+                    )
+                    cursor += 1
+                    continue
             break  # Seal the declared response subject; never call an AI at this cursor.
         if step.human_review:
             break  # Terminal review is persisted by the run recorder after all outputs are sealed.
@@ -2296,7 +2750,15 @@ async def execute_prompt_workflow(
                     )
                     reference_records.extend(artifacts)
             if step.agent_task:
-                prompt += f"\n\nWorkspace directory: {workspace_dir}. File references are relative to this directory."
+                from agent_adapters.workflow_instructions import (
+                    workflow_helper_instructions,
+                )
+
+                prompt += "\n\n" + workflow_helper_instructions(
+                    step.instruction_set,
+                    "context.task-workspace",
+                    variables={"workspace_dir": workspace_dir},
+                )
             if step.id in feedback:
                 feedback_state = feedback[step.id]
                 if feedback_state.get("kind") == "process_validation":
@@ -2305,7 +2767,9 @@ async def execute_prompt_workflow(
 
                     packet = RepairFeedback.model_validate(feedback_state["packet"])
                     delivered_feedback = packet.model_dump(mode="json")
-                    prompt += "\n\n" + feedback_prompt(packet)
+                    prompt += "\n\n" + feedback_prompt(
+                        packet, instruction_set=step.instruction_set
+                    )
                     await emit(
                         "validation_feedback_delivered",
                         task_id=step.id,
@@ -2318,14 +2782,27 @@ async def execute_prompt_workflow(
                         complete_result_ref=packet.complete_result_ref,
                     )
                 else:
-                    prompt += (
-                        "\n\nPrevious design check — create a corrected new revision, preserving satisfied requirements:\n"
-                        + json.dumps(feedback_state)
+                    from agent_adapters.workflow_instructions import (
+                        workflow_design_revision_feedback,
                     )
-            if step.design_check:
-                from .workflow_design_check import CHECK_INSTRUCTIONS
 
-                prompt += "\n\n" + CHECK_INSTRUCTIONS
+                    try:
+                        prompt += "\n\n" + workflow_design_revision_feedback(
+                            feedback_state, instruction_set=step.instruction_set
+                        )
+                    except ValueError as error:
+                        raise _invalid(
+                            f"{step.title}: saved design revision guidance is unavailable or exceeds its bounded feedback contract.",
+                            "Inspect the saved design-revision resource and complete check report before starting a new run.",
+                        ) from error
+            if step.design_check:
+                from agent_adapters.workflow_instructions import (
+                    workflow_helper_instructions,
+                )
+
+                prompt += "\n\n" + workflow_helper_instructions(
+                    step.instruction_set, "validation.design-check"
+                )
             if len(prompt.encode()) > 1_048_576:
                 raise _invalid(
                     f"{step.title}: the assembled prompt exceeds 1 MiB.",
@@ -2338,9 +2815,16 @@ async def execute_prompt_workflow(
                 from .workflow_references import snapshot_task_files
 
                 prior_files = snapshot_task_files(workspace_dir, step.expected_files)
-                prompt += "\n\nCreate these files in this workspace: " + ", ".join(
-                    step.expected_files
-                )
+                if not step.native_image_format:
+                    from agent_adapters.workflow_instructions import (
+                        workflow_helper_instructions,
+                    )
+
+                    prompt += "\n\n" + workflow_helper_instructions(
+                        step.instruction_set,
+                        "context.expected-files",
+                        variables={"files": ", ".join(step.expected_files)},
+                    )
             await emit(
                 "step_started",
                 task_id=step.id,
@@ -2471,6 +2955,10 @@ async def execute_prompt_workflow(
                         response, calls = await tool_runtime.run_task(
                             step, prompt, action_generator, emit, images=images
                         )
+                    if step.run_path_template == ATTEMPT_VERSION:
+                        await asyncio.to_thread(
+                            verify_prior_attempt_files, step, attempts, workspace_dir
+                        )
                     response = validate_response(response, step.output_format)
                     from .workflow_references import verify_task_files
                     import asyncio
@@ -2486,13 +2974,114 @@ async def execute_prompt_workflow(
                         )
                         _bind_expected_file_ports(step, produced_files)
                 else:
+                    if step.instruction_set is not None:
+                        prompt += "\n\nwright_step_context: " + json.dumps(
+                            {
+                                "step_id": step.id,
+                                "outputs": [
+                                    {"output_id": key, "kind": kind}
+                                    for key, kind in step.output_ports
+                                ],
+                                "protected_requirement_identifiers": list(
+                                    step.instruction_set.get("policy", {}).get(
+                                        "protected_requirements", ()
+                                    )
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                    async def record_invocation(invocation):
+                        await emit(
+                            "model_invocation",
+                            task_id=step.id,
+                            task_title=step.title,
+                            invocation=invocation,
+                        )
+
+                    instruction_arguments = (
+                        {
+                            "instruction_set": step.instruction_set,
+                            "instruction_override": step.instruction_override,
+                            "invocation_observer": record_invocation,
+                        }
+                        if step.instruction_set is not None
+                        else {}
+                    )
+                    if step.model_resolution:
+                        instruction_arguments["expected_resolution"] = (
+                            step.model_resolution
+                        )
+                        instruction_arguments.setdefault(
+                            "invocation_observer", record_invocation
+                        )
                     generated = (
                         await response_generator(
-                            prompt, step.output_format, images=images
+                            prompt,
+                            f"image-{step.native_image_format}",
+                            images=images,
+                            expected_resolution=step.native_image_resolution,
+                            **instruction_arguments,
                         )
-                        if images
-                        else await response_generator(prompt, step.output_format)
+                        if step.native_image_format
+                        else (
+                            await response_generator(
+                                prompt,
+                                step.output_format,
+                                images=images,
+                                **instruction_arguments,
+                            )
+                            if images
+                            else await response_generator(
+                                prompt, step.output_format, **instruction_arguments
+                            )
+                        )
                     )
+                    for invocation in (
+                        getattr(generated, "wright_invocations", ())
+                        if not instruction_arguments
+                        else ()
+                    ):
+                        await emit(
+                            "model_invocation",
+                            task_id=step.id,
+                            task_title=step.title,
+                            invocation=invocation,
+                        )
+                    resolved_instructions = getattr(
+                        generated, "wright_instructions", None
+                    )
+                    if resolved_instructions is not None:
+                        await emit(
+                            "instructions_resolved",
+                            task_id=step.id,
+                            task_title=step.title,
+                            instructions=resolved_instructions,
+                        )
+                    assumptions = getattr(generated, "wright_assumptions", ())
+                    if assumptions:
+                        from core.workflow_instructions import WorkflowAssumption
+
+                        retained_assumptions = [
+                            WorkflowAssumption.model_validate(value).model_dump(
+                                mode="json"
+                            )
+                            for value in assumptions
+                        ]
+                        if (
+                            not isinstance(resolved_instructions, dict)
+                            or resolved_instructions.get("assumption_policy")
+                            != "document_reasonable"
+                        ):
+                            raise _invalid(
+                                f"{step.title}: assumptions are outside the saved instruction policy."
+                            )
+                        await emit(
+                            "assumptions_recorded",
+                            task_id=step.id,
+                            task_title=step.title,
+                            assumptions=retained_assumptions,
+                        )
                     usage = getattr(generated, "wright_usage", None)
                     if isinstance(usage, dict):
                         await emit(
@@ -2518,6 +3107,46 @@ async def execute_prompt_workflow(
                             step, disposition.model_dump(mode="json"), emit
                         )
                     response = validate_response(generated, step.output_format)
+                    if step.native_image_format:
+                        image = getattr(generated, "wright_image", None)
+                        if (
+                            not isinstance(image, dict)
+                            or image.get("format") != step.native_image_format
+                            or not isinstance(image.get("content"), bytes)
+                        ):
+                            raise ValueError(
+                                "The AI connection did not return the declared image bytes."
+                            )
+                        from .workflow_references import (
+                            image_media_type,
+                            verify_task_files,
+                        )
+
+                        image_path = step.expected_files[0]
+                        # Validate format before publishing; the shared file verifier checks dimensions/digest.
+                        from .workflow_mcp_images import _dimensions
+
+                        media = image_media_type(image_path, image["content"][:16])
+                        width, height = _dimensions(image["content"], media)
+                        if (
+                            not 0 < width <= 4096
+                            or not 0 < height <= 4096
+                            or len(image["content"]) > 12 * 1024 * 1024
+                        ):
+                            raise ValueError(
+                                "The AI image exceeds the supported output bounds."
+                            )
+                        actual = await service.files.write_generated_bytes(
+                            workspace_dir, image_path, image["content"], "indexed"
+                        )
+                        if actual != image_path:
+                            raise ValueError(
+                                "The image output path was already used. Inspect the recorded run before retrying."
+                            )
+                        produced_files = verify_task_files(
+                            workspace_dir, step.expected_files
+                        )
+                        _bind_expected_file_ports(step, produced_files)
             except TimeoutError as error:
                 raise _error(
                     "MODEL_TIMEOUT",
@@ -2539,14 +3168,24 @@ async def execute_prompt_workflow(
                 "prompt": prompt,
                 "response": response,
             }
+            if step.id in assumptions_by_step:
+                record["assumptions"] = assumptions_by_step[step.id]
+            if step.id in instructions_by_step:
+                record["instructions"] = instructions_by_step[step.id]
+            if step.instruction_set is not None:
+                record["instruction_set_digest"] = (
+                    WorkflowInstructionSet.model_validate(step.instruction_set).digest
+                )
             if reference_records:
                 record["references"] = reference_records
-            if step.agent_task:
+            if step.agent_task or step.native_image_format:
                 record.update(
-                    server=step.server_id,
-                    tool_calls=calls,
                     produced_files=produced_files,
                 )
+                if step.agent_task:
+                    record.update(server=step.server_id, tool_calls=calls)
+                else:
+                    record["image_generation"] = image.get("provenance", {})
                 if step.cad:
                     record["cad_document"] = {
                         "server_id": cad_document.server_id,
@@ -2630,6 +3269,7 @@ async def execute_prompt_workflow(
                             [s.prompt_from, s.cad_from, s.application_from]
                             + [r[1] for r in s.references]
                             + list(s.argument_sources.values())
+                            + list(s.file_dependencies)
                         )
                         for s in plan.steps
                     ):
@@ -2642,7 +3282,7 @@ async def execute_prompt_workflow(
                     cad_document
                     if step.cad and kind == "cad_model"
                     else (
-                        files[0]["output_path"]
+                        file_result(files[0], Provenance(run_id, step.id, key))
                         if step.cad and kind == "workspace_file"
                         else response
                     )
@@ -2655,6 +3295,14 @@ async def execute_prompt_workflow(
             output_path=None,
             output_bytes=0,
         )
+        if step.run_path_template == ATTEMPT_VERSION:
+            record["file_attempt_binding"] = {
+                "version": ATTEMPT_VERSION,
+                "run_id": run_id,
+                "producer_attempt": producer_attempt,
+                "declared_files": list(declared_step.expected_files),
+                "resolved_files": list(step.expected_files),
+            }
         if delivered_feedback is not None:
             record["repair_feedback"] = delivered_feedback
         if validation_application:
@@ -2693,7 +3341,12 @@ async def execute_prompt_workflow(
                         ),
                     ),
                     Provenance(run_id, step.id, key),
-                    artifact_role="verification" if step.validation else "deliverable",
+                    artifact_role="verification"
+                    if step.validation
+                    or all(
+                        key in step.expected_file_ports for key, _ in step.output_ports
+                    )
+                    else "deliverable",
                 )
             )
         if validation_application:
@@ -2804,6 +3457,11 @@ async def execute_prompt_workflow(
                         assessment,
                         target_step_id=target,
                         remaining_revisions=step.max_revisions - count,
+                        instruction_set=next(
+                            producer.instruction_set
+                            for producer in plan.steps
+                            if producer.id == target
+                        ),
                     )
                 except ValueError as exc:
                     raise _error(

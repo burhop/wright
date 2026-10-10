@@ -52,16 +52,37 @@ class IntegrationDocumentWriteAuthority:
             step.id: frozenset(step.expected_files) for step in self.plan.steps
         }
 
+    def _with_frozen_routing(self, policy_context):
+        """Retain separately qualified routing without changing enrolled authority."""
+        from .workflow_model_routing import validate_frozen_model_plan
+
+        try:
+            validate_frozen_model_plan(self.plan, self.context)
+        except (ValueError, TypeError):
+            _fail("The document authority's frozen model/adapter plan changed.")
+        # Policy authorization owns grants; model routing owns the already-frozen
+        # execution identity. Preserve only that validated field, never extra
+        # context keys or a model-supplied approval. The exact comparison below
+        # still checks every grant field, revocation, source and enrolled input.
+        if "model_routing" in self.context:
+            return {
+                **policy_context,
+                "model_routing": copy.deepcopy(self.context["model_routing"]),
+            }
+        return policy_context
+
     def _guard(self, step, tool, arguments, arguments_digest):
         from .workflow_mcp_execution import schema_digest
 
         context = self.context
         current = self.policies.get(context["integration_policy_digest"])
-        expected = {
-            **current,
-            "actor": "integration_test:" + current["campaign_id"],
-            "execution_kind": "integration",
-        }
+        expected = self._with_frozen_routing(
+            {
+                **current,
+                "actor": "integration_test:" + current["campaign_id"],
+                "execution_kind": "integration",
+            }
+        )
         if (
             expected != context
             or current["workspace_id"] != self.workspace_id
@@ -130,6 +151,7 @@ class IntegrationDocumentWriteAuthority:
             tool_runtime=self.runtime,
             files=self.files,
         )
+        context = self._with_frozen_routing(context)
         if context != self.context:
             _fail("Integration document context changed after run preparation.")
         identity = _digest(arguments)

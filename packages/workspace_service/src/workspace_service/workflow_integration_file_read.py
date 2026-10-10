@@ -13,11 +13,13 @@ class IntegrationFileReadAuthority(IntegrationDocumentWriteAuthority):
         from .workflow_mcp_execution import schema_digest
 
         current = self.policies.get(self.context["integration_policy_digest"])
-        expected = {
-            **current,
-            "actor": "integration_test:" + current["campaign_id"],
-            "execution_kind": "integration",
-        }
+        expected = self._with_frozen_routing(
+            {
+                **current,
+                "actor": "integration_test:" + current["campaign_id"],
+                "execution_kind": "integration",
+            }
+        )
         if expected != self.context or current["workspace_id"] != self.workspace_id:
             _fail("File observation requires current immutable integration authority.")
         identity = {
@@ -75,6 +77,7 @@ class IntegrationFileReadAuthority(IntegrationDocumentWriteAuthority):
             tool_runtime=self.runtime,
             files=self.files,
         )
+        context = self._with_frozen_routing(context)
         if context != self.context:
             _fail("Integration file observation context changed after run preparation.")
         digest = argument_digest(arguments)

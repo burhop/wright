@@ -26,6 +26,12 @@ http://localhost:8080
 
 - **Agent orchestration**: coordinate LLM-backed agents and deterministic
   engineering tools through a local API and web UI.
+- **Build and carry out processes**: edit blocks, typed connections and source;
+  use a common or saved AI-created working interface inside a workspace tab.
+- **Inspect engineering evidence**: open actual outputs, assumptions, findings
+  and review attachments, with links to the producing step and recorded run.
+- **Portable instructions and explicit interaction**: retain instruction bodies
+  and policy in saved workflows; declare input and review steps that wait durably.
 - **Engineering workflow templates**: create editable workspace workflows from
   ten versioned templates with explicit readiness and approval boundaries.
 - **MCP tool registry**: catalog, classify, and validate selected engineering
@@ -39,6 +45,13 @@ http://localhost:8080
   explicitly installed for that workflow.
 
 ## Alpha Boundaries
+
+This site describes the current source. Published releases can differ. The
+[working-view guide](workflows/process-working-interfaces.md) records required
+build flags and provider setup. A Codex MCP connection is available for calling
+Wright; replacing Wright's Hermes agent runtime with Codex is separate future work.
+Digital examples and passing software checks do not establish physical fit,
+manufacturing acceptance, supplier approval or qualification of every MCP server.
 
 Wright's base image includes the Wright API, static web UI, Hermes
 profile/bootstrap, and general validation tooling. It does not include selected
@@ -77,3 +90,6 @@ Selected MCP servers and engineering tools
 - [GB10 and DGX Workstations](getting-started/workstation-gb10-dgx.md)
 - [Existing Hermes Plugin](getting-started/hermes-plugin.md)
 - [Engineering Workflow Templates](workflows/engineering-workflow-templates.md)
+- [Engineering Workspace Tour](workflows/engineering-workspace-tour.md)
+- [Process Working Interfaces](workflows/process-working-interfaces.md)
+- [Output Validation](workflows/process-output-validation.md)

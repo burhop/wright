@@ -24,6 +24,48 @@ from packages.workspace_service.tests.test_process_ui_presentations import nativ
 PREFIX = "/api/workspace/process-interfaces"
 
 
+def test_imported_source_list_and_submission_use_normal_native_scope(case, tmp_path):
+    from packages.workspace_service.tests.test_process_imported_interfaces import (
+        candidate,
+    )
+
+    candidate(tmp_path, case.process.source_path)
+    response = case.client.get(PREFIX + "/imported-interfaces", params=case.query)
+    assert response.status_code == 200
+    assert response.headers["Cache-Control"] == "no-store"
+    choices = response.json()["candidates"]
+    assert len(choices) == 1 and "source" not in choices[0]
+    selection = {key: choices[0][key] for key in ("ui_id", "sha256")}
+    submitted = case.client.post(
+        PREFIX + "/authoring-jobs",
+        json={
+            **case.query,
+            "request_id": "from-import",
+            "instruction": "Reuse imported layout",
+            "imported_interface": selection,
+        },
+    )
+    assert submitted.status_code == 202
+    assert submitted.json()["base_revision"] is None
+    assert (
+        case.client.get(
+            PREFIX + "/imported-interfaces",
+            params={**case.query, "session_id": "foreign"},
+        ).status_code
+        != 200
+    )
+    invalid = case.client.post(
+        PREFIX + "/authoring-jobs",
+        json={
+            **case.query,
+            "request_id": "invalid-import",
+            "instruction": "Reuse",
+            "imported_interface": {**selection, "sha256": "bad"},
+        },
+    )
+    assert invalid.status_code == 422
+
+
 @pytest.fixture
 def case(tmp_path, monkeypatch):
     prepared = native_case(tmp_path, monkeypatch)

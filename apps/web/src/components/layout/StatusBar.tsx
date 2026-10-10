@@ -23,7 +23,7 @@ const DEFAULT_STATUSES: ServiceStatus[] = [
   },
   {
     serviceId: "llm-backend",
-    name: "LLM Backend",
+    name: "Agent model",
     endpoint: "/api/inference/health",
     state: "unknown",
     lastChecked: null,

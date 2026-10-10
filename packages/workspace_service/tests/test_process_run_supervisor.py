@@ -90,6 +90,40 @@ async def prepared_case(root, *, later=False):
     return application, process(text), prepared.snapshot
 
 
+@pytest.mark.asyncio
+async def test_completed_run_explains_finished_cancellation_without_remote_warning(
+    tmp_path,
+):
+    application, reference, frozen = await prepared_case(tmp_path)
+
+    async def generate(prompt, fmt):
+        return "Finished local calculation"
+
+    try:
+        receipt = await start(application, reference, frozen, generate)
+        await application.runs.wait(scope(), reference, receipt.run_id)
+        snapshot = await application.get_snapshot(
+            scope(), reference, run_id=receipt.run_id
+        )
+        action = next(a for a in snapshot.actions if a.operation == "cancel")
+        assert not action.enabled
+        assert action.reasons[0].code == "ACTION_NOT_PERMITTED"
+        assert "has completed" in action.reasons[0].message
+        assert (
+            action.reasons[0].correction
+            == "Open its saved results or prepare another run."
+        )
+        with pytest.raises(ProcessInterfaceError):
+            await application.runs.cancel(
+                scope("process.read", "process.cancel"),
+                reference,
+                receipt.run_id,
+                "finished-cancel",
+            )
+    finally:
+        await application.runs.close()
+
+
 async def start(application, reference, frozen, generate, request_id="start-one"):
     return await application.runs.start(
         scope(),
@@ -430,6 +464,67 @@ async def test_event_attachment_is_paged_scoped_and_never_replays(tmp_path):
         serialized = json.dumps(next_page)
         assert "Only one execution" not in serialized
         assert "engineering_result" not in serialized
+    finally:
+        await application.runs.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "title", ["Extended engineering observation " * 7, "測定" * 110]
+)
+async def test_event_pages_budget_defaulted_fields_and_preserve_all_history(
+    tmp_path, title
+):
+    from core.process_interactions import ProcessRunEventPage
+    from core.process_validation import canonical_json
+
+    application, reference, frozen = await prepared_case(tmp_path)
+    calls = []
+
+    async def generate(prompt, fmt):
+        calls.append(prompt)
+        return "One original execution"
+
+    try:
+        receipt = await start(application, reference, frozen, generate)
+        await application.runs.wait(scope(), reference, receipt.run_id)
+        path = tmp_path / receipt.run_log_path
+        record = json.loads(path.read_text(encoding="utf-8"))
+        record["events"].extend(
+            {
+                "kind": "model_invocation",
+                "at": "2026-10-09T16:00:00+00:00",
+                "task_id": "engineering_observation_" * 5,
+                "task_title": title,
+                "invocation": {"private_payload": "not progress data"},
+            }
+            for _ in range(300)
+        )
+        path.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+        original = path.read_bytes()
+        cursor, sequences, pages = None, [], 0
+        while True:
+            page = await application.runs.events(
+                scope(), reference, receipt.run_id, cursor=cursor
+            )
+            contract = ProcessRunEventPage.model_validate(page)
+            assert (
+                len(canonical_json(contract.model_dump(mode="json")).encode("utf-8"))
+                <= 65_536
+            )
+            assert "private_payload" not in json.dumps(page)
+            assert page["events"]
+            sequences.extend(event["sequence"] for event in page["events"])
+            pages += 1
+            assert pages < 20
+            if not page["has_more"]:
+                break
+            assert page["cursor"] != cursor
+            cursor = page["cursor"]
+        assert pages > 1
+        assert sequences == list(range(1, len(record["events"]) + 1))
+        assert path.read_bytes() == original
+        assert len(calls) == 1
     finally:
         await application.runs.close()
 

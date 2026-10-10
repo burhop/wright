@@ -416,7 +416,9 @@ it.each([null, undefined])(
       screen.getByRole("button", { name: "Check inputs and readiness" }),
     );
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Start process" })).toBeEnabled(),
+      expect(
+        screen.getByRole("button", { name: "Start process" }),
+      ).toBeEnabled(),
     );
     fireEvent.click(screen.getByRole("button", { name: "Start process" }));
     await waitFor(() => expect(c.start).toHaveBeenCalledTimes(1));

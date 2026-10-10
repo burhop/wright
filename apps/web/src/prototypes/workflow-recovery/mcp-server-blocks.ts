@@ -13,6 +13,9 @@ export interface McpServerChoice {
 export function mcpServerChoices(tools: WorkflowMcpTool[]): McpServerChoice[] {
   const servers = new Map<string, McpServerChoice>();
   for (const tool of tools) {
+    // Shared Wright operations are usable by their owning features, but are
+    // not independently configured workspace MCP servers.
+    if (tool.workspace_server === false) continue;
     if (!servers.has(tool.server_id))
       servers.set(tool.server_id, {
         id: tool.server_id,

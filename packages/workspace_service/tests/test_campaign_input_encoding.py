@@ -40,9 +40,19 @@ def test_normalized_context_keeps_original_unicode(
     manifest = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     config = json.loads(module.BINDING.read_text(encoding="utf-8"))
     if short == "robot":
-        allowed = config["allowed_tools"]
+        allowed = {
+            **config["allowed_tools"],
+            "agentcad": ["context", "docs", "run"],
+            "wright-workspace-files": ["write_text_document", "inspect_file"],
+            "calculix": [
+                "calculix_mesh_preflight",
+                "calculix_solve_static_recorded",
+                "calculix_run_get",
+            ],
+            "calculix-fields": ["export_recorded_fields_and_reactions"],
+        }
     elif short == "harness":
-        allowed = {"harness": config["allowed_tools"]}
+        allowed = {"harness": config["allowed_tools"], "kicad": config["kicad_tools"]}
     else:
         allowed = {
             "agentcad": ["context", "docs", "run", "inspect", "measure"],
@@ -66,8 +76,8 @@ def test_normalized_context_keeps_original_unicode(
         attempt="encoding-test",
         server_id="harness",
         initialize_agentcad=False,
-        solver_server_id="solver",
-        field_server_id="fields",
+        solver_server_id="calculix" if short == "robot" else "solver",
+        field_server_id="calculix-fields" if short == "robot" else "fields",
     )
     module.prepare(args, directory, tools)
     assembled = next((tmp_path / "workspace").rglob("assembled-context.md")).read_text(

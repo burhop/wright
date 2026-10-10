@@ -93,6 +93,16 @@ def test_static_hermes_config_uses_installed_native_gateway(tmp_path, monkeypatc
     assert config["terminal"]["cwd"] == str(workspace_root)
 
 
+def test_inaccessible_optional_config_is_not_a_workspace_load_failure(monkeypatch):
+    def denied(_path):
+        raise PermissionError("Host config location cannot be probed")
+
+    monkeypatch.setattr(Path, "exists", denied)
+    assert (
+        wright_gateway_sync._configured_gateway_binding("unrelated/config.yaml") is None
+    )
+
+
 def test_generic_wright_gateway_config_writer_uses_profile(tmp_path):
     config_path = tmp_path / "config.yaml"
     profile = wright_gateway_sync.default_hermes_gateway_profile("/workspace")

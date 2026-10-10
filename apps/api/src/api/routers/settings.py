@@ -1,6 +1,7 @@
 import sqlite3
 import structlog
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from pydantic import BaseModel, ConfigDict, Field
 
 from api.config import DATABASE_PATH
 from api.schemas.settings import GlobalSettingsRequest, GlobalSettingsResponse
@@ -9,6 +10,76 @@ from core.secrets import CredentialReference, default_secret_provider
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+
+
+class WorkflowInstructionDefaultsRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    instructions: dict
+    expected_revision: str = Field(min_length=1, max_length=160)
+
+
+class WorkflowInstructionUpgradeProposalRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    instructions: dict | None = None
+
+
+def workflow_instruction_application():
+    from api.composition import workspace_service
+
+    return workspace_service().workflow_instruction_settings
+
+
+@router.get("/workflow-instructions")
+async def get_workflow_instruction_defaults(
+    application=Depends(workflow_instruction_application),
+):
+    try:
+        return application.read()
+    except ValueError as error:
+        raise HTTPException(
+            422, detail={"code": "workflow_instructions_invalid", "message": str(error)}
+        ) from error
+
+
+@router.put("/workflow-instructions")
+async def replace_workflow_instruction_defaults(
+    body: WorkflowInstructionDefaultsRequest,
+    application=Depends(workflow_instruction_application),
+):
+    from data_vault.workflow_instruction_repository import (
+        WorkflowInstructionDefaultsConflict,
+    )
+
+    try:
+        return application.replace(
+            body.instructions, expected_revision=body.expected_revision
+        )
+    except WorkflowInstructionDefaultsConflict as error:
+        raise HTTPException(
+            409,
+            detail={"code": "workflow_instructions_conflict", "message": str(error)},
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            422, detail={"code": "workflow_instructions_invalid", "message": str(error)}
+        ) from error
+
+
+@router.post("/workflow-instructions/action-intent-upgrade")
+async def propose_workflow_action_intent_upgrade(
+    body: WorkflowInstructionUpgradeProposalRequest,
+    application=Depends(workflow_instruction_application),
+):
+    try:
+        return application.propose_action_intent_upgrade(body.instructions)
+    except ValueError as error:
+        raise HTTPException(
+            422,
+            detail={
+                "code": "workflow_instructions_invalid",
+                "message": "Instruction upgrade proposal is invalid. Check the saved instruction identities and action-intent resource dependencies.",
+            },
+        ) from error
 
 
 def get_db_setting(key: str, default: str) -> str:

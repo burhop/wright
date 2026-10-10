@@ -58,13 +58,21 @@ export function ResultRepresentation({
 
   if (!reference) return null;
   const current = state?.key === key ? state : undefined;
+  const filename = reference.artifact_ref.split(/[\\/]/).filter(Boolean).at(-1)
+    || reference.artifact_ref;
   return (
-    <div className="wp-result-representation">
-      {onClose && (
-        <button type="button" className="wp-link" onClick={onClose}>
-          Close representation
-        </button>
-      )}
+    <section className="wp-result-representation" aria-label="Selected file">
+      <div className="wp-result-representation__header">
+        <h3>{filename}</h3>
+        {member && runId && current?.blob && (
+          <RepresentationDownload blob={current.blob} name={reference.artifact_ref} />
+        )}
+        {onClose && (
+          <button type="button" className="wp-link" onClick={onClose}>
+            Close file
+          </button>
+        )}
+      </div>
       {!member || !runId ? (
         <p role="status">
           This representation is not part of the current recorded run. Refresh
@@ -79,17 +87,27 @@ export function ResultRepresentation({
         <>
           <RepresentationViewer
             blob={current.blob}
-            title={reference.artifact_ref}
+            title={filename}
             sourceSha256={reference.sha256}
+            readValidationReport={(signal) => client.getRepresentation(reference, {
+              runId, preview: "validation-report", signal,
+            })}
+            readPdfPage={(page, signal) => client.getRepresentation(reference, {
+              runId, preview: "pdf-page", page, signal,
+            })}
             readToolpaths={(signal) => client.getRepresentation(reference, {
               runId, preview: "toolpaths", signal,
             })}
           />
-          <RepresentationDownload blob={current.blob} name={reference.artifact_ref} />
         </>
       ) : (
-        <p role="status">Opening the exact result representation…</p>
+        <p role="status">Opening the exact file…</p>
       )}
-    </div>
+      <details>
+        <summary>File details</summary>
+        <p>{reference.artifact_ref}</p>
+        <p>SHA-256: {reference.sha256}</p>
+      </details>
+    </section>
   );
 }

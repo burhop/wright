@@ -89,11 +89,18 @@ def sdk(monkeypatch, tmp_path):
         "agent.auxiliary_client",
         SimpleNamespace(resolve_provider_client=resolve_client),
     )
-    for name in ("hermes_cli/runtime_provider.py", "agent/auxiliary_client.py"):
+    for name in (
+        "hermes_cli/runtime_provider.py",
+        "agent/auxiliary_client.py",
+        "agent/codex_runtime.py",
+        "agent/codex_responses_adapter.py",
+    ):
         path = tmp_path / name
         path.parent.mkdir(exist_ok=True)
         path.write_text("# Synthetic SDK identity\n")
-    return SimpleNamespace(root=tmp_path, calls=calls, state=state, runtime=runtime)
+    return SimpleNamespace(
+        root=tmp_path, calls=calls, state=state, runtime=runtime, client=client
+    )
 
 
 def request(resolution):

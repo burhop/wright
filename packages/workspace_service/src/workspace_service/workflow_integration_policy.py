@@ -256,6 +256,7 @@ class WorkflowIntegrationPolicyService:
         plan,
         tool_runtime,
         files,
+        review_only: bool = False,
     ) -> dict:
         grant = self.get(policy_digest)
         if (
@@ -323,13 +324,14 @@ class WorkflowIntegrationPolicyService:
                         "Every canonical input must have actual text or an enrolled file."
                     )
             allowed = {_tool_identity(t) for t in grant["allowed_tools"]}
-            available = (
-                {_tool_identity(t) for t in tool_runtime.available()}
-                if tool_runtime
-                else set()
-            )
-            if not allowed.issubset(available):
-                _fail("An enrolled tool is unavailable or its schema changed.")
+            if not review_only:
+                available = (
+                    {_tool_identity(t) for t in tool_runtime.available()}
+                    if tool_runtime
+                    else set()
+                )
+                if not allowed.issubset(available):
+                    _fail("An enrolled tool is unavailable or its schema changed.")
             for step in plan.steps:
                 if (
                     step.tool_name
@@ -363,7 +365,10 @@ class WorkflowIntegrationPolicyService:
                             "Every saved or expected output must be inside the enrolled output root."
                         )
                 if step.external_action:
-                    if step.external_action["action_kind"] == "mcp-operation":
+                    if (
+                        not review_only
+                        and step.external_action["action_kind"] == "mcp-operation"
+                    ):
                         from .workflow_mcp_operations import qualify_operation
 
                         qualify_operation(tool_runtime, step, integration=True)
@@ -385,6 +390,61 @@ class WorkflowIntegrationPolicyService:
             **grant,
             "actor": f"integration_test:{grant['campaign_id']}",
             "execution_kind": "integration",
+        }
+
+    def authorize_input_response(
+        self,
+        policy_digest: str,
+        *,
+        workspace_id: str,
+        checkpoint,
+        expected_subject_digest: str,
+    ) -> dict:
+        """Attribute an explicit test answer; grant no review or dispatch authority.
+
+        The input continuation owner still re-reads source, files, frozen model
+        configuration and actual upstream evidence before consuming the answer.
+        """
+        from .process_interfaces.interactions import input_subject, input_subject_digest
+
+        grant = self.get(policy_digest)
+        if grant["approval_mode"] != "auto":
+            _fail("Manual campaign responses require the workspace user's input.")
+        if checkpoint.checkpoint_kind != "input":
+            _fail("Automatic input attribution requires a declared input checkpoint.")
+        try:
+            subject = input_subject(checkpoint.subject)
+            actual_digest = input_subject_digest(checkpoint.subject)
+        except (TypeError, ValueError):
+            _fail("The declared input subject is invalid.")
+        context = checkpoint.continuation.get("execution_context", {}) or {}
+        if (
+            workspace_id != grant["workspace_id"]
+            or checkpoint.workspace_id != workspace_id
+            or checkpoint.workflow_id != grant["source_path"]
+            or checkpoint.step_id != subject.step_id
+            or checkpoint.subject_digest != expected_subject_digest
+            or actual_digest != expected_subject_digest
+            or subject.definition_digest != grant["source_digest"]
+            or context.get("integration_policy_digest") != policy_digest
+            or any(
+                context.get(key) != grant[key]
+                for key in (
+                    "dataset_digest",
+                    "dataset_id",
+                    "campaign_id",
+                )
+            )
+        ):
+            _fail("The input checkpoint does not match the enrolled run subject.")
+        if checkpoint.expires_at is not None and checkpoint.expires_at <= time.time():
+            _fail("The input checkpoint expired.")
+        for item in checkpoint.continuation.get("input_files", []):
+            if grant["input_files"].get(item.get("path")) != item.get("sha256"):
+                _fail("Checkpoint inputs do not match the enrolled dataset.")
+        return {
+            "actor": f"integration_test:{grant['campaign_id']}",
+            "reason": f"Declared input response in integration campaign {grant['campaign_id']} policy {policy_digest}",
         }
 
     def authorize_decision(

@@ -70,7 +70,8 @@ function identifier(value: unknown): value is string {
     typeof value === "string" &&
     value.length > 0 &&
     value.length <= 160 &&
-    !/[\s\u0000-\u001f]/.test(value)
+    !/\s/.test(value) &&
+    !Array.from(value).some((character) => character.charCodeAt(0) < 32)
   );
 }
 function jsonValue(value: unknown, depth = 0): value is JsonValue {

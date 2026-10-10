@@ -8,10 +8,17 @@ import pytest
 
 from agent_adapters import report_generation
 from core.workflow_step_outcomes import (
-    UNATTENDED_STEP_POLICY,
     InvalidStepOutcomeError,
     UnattendedStepOutcome,
 )
+from agent_adapters.workflow_instructions import (
+    embedded_asset,
+    embedded_instruction_set,
+)
+
+STRICT_POLICY_BODY = embedded_asset(
+    embedded_instruction_set(), "policy.require-specified"
+).body
 
 
 def outcome(response="A result", *, status="completed", reason=None):
@@ -76,7 +83,7 @@ async def test_closed_disposition_keeps_document_format_and_separate_usage(
     assert len(requests) == 1
     payload = requests[0]
     assert payload["tools"] == [] and payload["tool_choice"] == "none"
-    assert UNATTENDED_STEP_POLICY in payload["messages"][0]["content"]
+    assert STRICT_POLICY_BODY in payload["messages"][0]["content"]
     assert "wright.unattended-step/1" in payload["messages"][0]["content"]
     assert payload["messages"][1]["content"][1]["type"] == "image_url"
 

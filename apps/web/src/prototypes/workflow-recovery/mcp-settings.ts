@@ -23,6 +23,8 @@ export interface WorkflowMcpTool {
   name: string;
   server_id: string;
   server_name?: string;
+  /** Presentation membership only; the gateway still owns tool authority. */
+  workspace_server?: boolean;
   tool_name: string;
   title: string;
   description: string;
@@ -83,20 +85,21 @@ export async function listWorkflowMcpTools(
   sessionId: string,
 ): Promise<WorkflowMcpTool[]> {
   // Registry names are presentation metadata; tool/server IDs remain the binding keys.
-  const serverNames = fetch("/api/mcp/servers", { credentials: "same-origin" })
-    .then(async (response) => {
-      if (!response.ok) return new Map<string, string>();
-      const data = await response.json();
-      return new Map<string, string>(
-        (data.servers ?? []).map(
-          (server: { server_id: string; name: string }) => [
-            server.server_id,
-            server.name,
-          ],
-        ),
-      );
-    })
-    .catch(() => new Map<string, string>());
+  const serverNames = fetch("/api/mcp/servers", {
+    credentials: "same-origin",
+  }).then(async (response) => {
+    if (!response.ok)
+      throw new Error("Could not load the MCP server registry.");
+    const data = await response.json();
+    return new Map<string, string>(
+      (data.servers ?? []).map(
+        (server: { server_id: string; name: string }) => [
+          server.server_id,
+          server.name,
+        ],
+      ),
+    );
+  });
   const [response, names] = await Promise.all([
     fetch(
       `/api/workspace/workflow-sources/tools?session_id=${encodeURIComponent(sessionId)}`,
@@ -112,6 +115,7 @@ export async function listWorkflowMcpTools(
   return data.tools.map((tool) => ({
     ...tool,
     server_name: names.get(tool.server_id) ?? tool.server_name,
+    workspace_server: names.has(tool.server_id),
   }));
 }
 export function configureMcpTool(

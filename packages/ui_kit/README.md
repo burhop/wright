@@ -53,10 +53,18 @@ accepted-revision key; stale async replies must never enter another process/run.
 | WorkingControls | Shared preparation and declared-interaction controls over the supplied scoped client, with retained request identities. |
 | ResultCard, EvidenceReference | Exact result/representation/assessment links, currentness and producer navigation. |
 | FindingsPanel, NavigationButton | Owning-service findings/corrections and exact host navigation intents. |
-| RepresentationViewer, DataTable | Bounded bitmap/STL/plaintext/CSV views and paginated tables; unsupported-format fallback. |
+| RepresentationViewer, DataTable | Bounded bitmap/STL/plaintext/Markdown/CSV views and paginated tables; unsupported-format fallback. |
 | ResultRepresentation, RepresentationDownload | Exact scoped result reads, loading/errors, stale-read disposal, shared viewing and exact-file download. |
 | ThreeDViewer, ToolpathViewer | Neutral 3D orbit/zoom, all supported layers and reported categories; no device protocol. |
 | NumericPlot, ScalarFieldPlot | Supplied numeric profiles/samples, ranges and units; no analysis or acceptance verdict. |
+
+Markdown representations (`text/markdown` or `text/x-markdown`, up to 64 KiB)
+show headings, lists and tables with a **View source** disclosure. The original
+Markdown text stays available and exact downloads retain the supplied bytes.
+HTML is skipped, and links and
+embedded images are passive text: they cannot fetch files, navigate or obtain
+authority from document contents. Referenced evidence remains available through
+the existing scoped evidence controls. Plain text is not inferred to be Markdown.
 
 Schema editors show unsupported forms explicitly instead of dropping required
 fields. Defaults are shown only when present in backend bindings; schema constants
@@ -125,8 +133,13 @@ bridge independently recheck authority through the owning services.
 
 ## Theme and isolation
 
-The kit bundles the existing Wright tokens and scoped component CSS. Native
-`apps/web/src/tokens/design-tokens.css` imports the same public token resource,
+The kit bundles the existing Wright tokens and scoped component CSS.
+Result image readers default to a maximum height of `70vh`. A tailored view may
+set `--wright-result-image-max-height` on its reader container to fit a compact
+review layout. Images keep `object-fit: contain`; this affects presentation only,
+not the exact file, retrieval scope, evidence or review permissions.
+
+Native `apps/web/src/tokens/design-tokens.css` imports the same public token resource,
 so there is one owning palette/spacing/font fallback definition. `ProcessUI`
 accepts `theme="dark"` or `theme="light"`; an isolated host supplies theme through
 its reviewed handshake. Font stacks fall back locally without network requests.
@@ -168,6 +181,18 @@ data can use the same shared 3D viewer; ordinary JSON text remains bounded to
 1 MiB and is displayed as inert text in a scrollable pane. HTML/SVG is never
 embedded as executable document content.
 Larger/unsupported representations retain exact open/download fallback.
+PDFs use `readPdfPage(page, signal)` through the existing scoped result client.
+The server verifies exact membership and source bytes before rendering one page
+as passive PNG data (`wright.pdf.page.v1`). Limits are20MiB per PDF,200 pages,
+1800px per side and8MiB per page response. The reader preserves the original PDF
+download; the raster is a presentation, not a new engineering output. PDF forms,
+links and scripts are not activated. Missing/failed rendering shows a download
+fallback. The UI verifies source hash, page identity and PNG dimensions, discards
+stale reads and resets page selection when the original blob changes.
+**Enlarge drawing** displays the available page pixels inside a focusable,
+scrollable region; **Fit drawing** restores the page overview. Enlargement is
+local presentation state and resets for a different source blob. It does not
+request another engineering operation or change the original PDF.
 Numeric plots display supplied values with finite extents, at most 10,000
 samples; scalar fields do not invent interpolated geometry.
 
@@ -182,3 +207,21 @@ references absent from that current run's outputs, aborts reads on replacement
 or context change, and keeps loading/errors local to presentation. It does not
 attach, observe, execute or cancel process work. This allows AI-authored layouts
 to reuse the read lifecycle without reconstructing client signatures or recovery.
+
+Recorded validator assessments use the same reader. `RepresentationViewer` accepts
+`readValidationReport(signal)`, supplied by both the common view and
+`ResultRepresentation`. Recognizing assessment JSON is only a presentation hint:
+the scoped backend must match the exact bytes to its owning run's validation report.
+The reader presents HOLD/PASS, currentness, original checks, observations, units,
+methods and limitations from that report. It never evaluates or approves a result.
+The original JSON remains the download; source previews are collapsed and bounded
+to1MiB. A missing older-host capability leaves a visible download fallback. Late
+reads are aborted/ignored on file replacement. Saved UI bundles keep their existing
+reader until explicitly rebuilt; the common view supplies the current fallback.
+
+Review layouts adapt to the width of their containing panel. `CheckpointCard`
+stacks evidence and response controls when two readable columns will not fit;
+`EvidenceReference` keeps file details below its filename and Open file control.
+Verify generated layouts with an actual pending review inside a narrow panel,
+even when the full browser is wide. Empty-state previews cannot prove review
+readability. Layout changes do not alter the pending subject or review authority.

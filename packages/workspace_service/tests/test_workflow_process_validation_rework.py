@@ -58,8 +58,11 @@ def mcp_file_rework_source(*, revision_policy="create_new_files"):
         "mcp_server": "agentcad",
         "output_format": "json",
         "file_policy": "indexed",
-        "expected_files": "jig.step",
-        "expected_file_ports": {"jig_step": "jig.step"},
+        "expected_files": "outputs/{{wright.run_id}}/produce/{{wright.producer_attempt}}/jig.step",
+        "expected_file_ports": {
+            "jig_step": "outputs/{{wright.run_id}}/produce/{{wright.producer_attempt}}/jig.step"
+        },
+        "run_path_template": "wright.run-path/2",
         "revision_policy": revision_policy,
     }
     validation = {
@@ -361,7 +364,9 @@ def test_compile_accepts_explicit_isolated_create_new_mcp_file_rework():
     producer = plan.steps[0]
     assert producer.agent_task and producer.server_id == "agentcad"
     assert producer.revision_policy == "create_new_files"
-    assert producer.expected_file_ports == {"jig_step": "jig.step"}
+    assert producer.expected_file_ports == {
+        "jig_step": "outputs/{{wright.run_id}}/produce/{{wright.producer_attempt}}/jig.step"
+    }
     assert plan.revisions == {"inspect": "produce"}
 
 
@@ -384,6 +389,13 @@ def test_saved_engineering_processes_pin_loadable_profiles(tmp_path, filename):
         / "tests/datasets/process-validation/processes"
         / filename
     )
+    if filename == "jig-validation-loop.workflow.wflow":
+        # Retain this historical literal-path fixture. Its source does not
+        # allocate correction attempts; new runs must diagnose it, not silently
+        # rewrite an accepted process or overwrite its first measured file.
+        with pytest.raises(WorkflowSourceExecutionError, match="wright.run-path/2"):
+            compile_prompt_workflow(source_path.read_text(encoding="utf-8"))
+        return
     plan = compile_prompt_workflow(source_path.read_text(encoding="utf-8"))
     check = next(step for step in plan.steps if step.validation)
 

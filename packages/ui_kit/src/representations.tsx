@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { JsonValue } from "@wright/process-client";
 import { ImageThumbnail } from "./inputs";
 import { ThreeDViewer, ToolpathViewer } from "./geometry";
+import { MarkdownDocument } from "./documents";
+import { PdfPageViewer } from "./pdf";
+import { AssessmentReportViewer, isAssessmentRecord } from "./assessment";
 import {
   parseRecordedToolpaths,
   parseToolpaths,
@@ -159,6 +162,52 @@ export function parseCsv(text: string): {
     throw new Error("CSV needs consistent columns.");
   return { columns, rows: records };
 }
+// Display rounding never changes the plotted coordinates or retained data.
+function plotTicks(min: number, max: number) {
+  const values = min === max ? [min] : [...new Set(
+    Array.from({ length: 5 }, (_, index) =>
+      index === 4 ? max : min + (max - min) * (index / 4)),
+  )];
+  const rounded = values.map(value => String(Number(value.toPrecision(6))));
+  const distinct = new Set(rounded).size === values.length;
+  return values.map((value, index) => ({ value, label: distinct ? rounded[index] : String(value) }));
+}
+
+function plotPosition(value: number, min: number, max: number, start: number, end: number) {
+  return min === max ? (start + end) / 2 : start + ((value - min) / (max - min)) * (end - start);
+}
+
+function PlotAxes({ minX, maxX, minY, maxY, xLabel, yLabel }: {
+  minX: number; maxX: number; minY: number; maxY: number;
+  xLabel: string; yLabel: string;
+}) {
+  return <g fill="currentColor" fontSize="12">
+    <path d="M80 30V250H550" fill="none" stroke="currentColor" />
+    <g aria-label={`${xLabel} axis`}>
+      {plotTicks(minX, maxX).map(({ value, label }) => {
+        const x = plotPosition(value, minX, maxX, 80, 550);
+        return <g key={value}>
+          <title>{String(value)}</title>
+          <path d={`M${x} 250v6`} stroke="currentColor" />
+          <text x={x} y="273" textAnchor="middle">{label}</text>
+        </g>;
+      })}
+    </g>
+    <g aria-label={`${yLabel} axis`}>
+      {plotTicks(minY, maxY).map(({ value, label }) => {
+        const y = plotPosition(value, minY, maxY, 250, 30);
+        return <g key={value}>
+          <title>{String(value)}</title>
+          <path d={`M74 ${y}h6`} stroke="currentColor" />
+          <text x="69" y={y + 4} textAnchor="end">{label}</text>
+        </g>;
+      })}
+    </g>
+    <text x="315" y="303" textAnchor="middle" fontSize="14">{xLabel}</text>
+    <text x="15" y="140" transform="rotate(-90 15 140)" textAnchor="middle" fontSize="14">{yLabel}</text>
+  </g>;
+}
+
 export function NumericPlot({
   points,
   xLabel,
@@ -196,36 +245,24 @@ export function NumericPlot({
   const coordinates = points
     .map(
       ([x, y]) =>
-        `${40 + ((x - minX) / (maxX - minX || 1)) * 510},${260 - ((y - minY) / (maxY - minY || 1)) * 220}`,
+        `${plotPosition(x, minX, maxX, 80, 550)},${plotPosition(y, minY, maxY, 250, 30)}`,
     )
     .join(" ");
   return (
     <figure className="wp-plot">
       <figcaption>{title}</figcaption>
       <svg
-        viewBox="0 0 600 310"
+        viewBox="0 0 620 325"
         role="img"
         aria-label={`${title}; ${xLabel} from ${minX} to ${maxX}; ${yLabel} from ${minY} to ${maxY}`}
       >
-        <path d="M40 30V260H560" fill="none" stroke="currentColor" />
+        <PlotAxes {...{ minX, maxX, minY, maxY, xLabel, yLabel }} />
         <polyline
           points={coordinates}
           fill="none"
           stroke="var(--color-secondary)"
           strokeWidth="2"
         />
-        <text x="300" y="298" textAnchor="middle" fill="currentColor">
-          {xLabel}
-        </text>
-        <text
-          x="12"
-          y="145"
-          transform="rotate(-90 12 145)"
-          textAnchor="middle"
-          fill="currentColor"
-        >
-          {yLabel}
-        </text>
       </svg>
       <p className="wp-muted">
         Plotted supplied data; acceptance remains with the linked assessments.
@@ -247,6 +284,7 @@ export function ScalarFieldPlot({
   valueLabel: string;
   title: string;
 }) {
+  const gradientId = `wp-field-${useId()}`;
   if (
     !points.length ||
     points.length > 10000 ||
@@ -277,34 +315,42 @@ export function ScalarFieldPlot({
     <figure className="wp-plot">
       <figcaption>{title}</figcaption>
       <svg
-        viewBox="0 0 600 310"
+        viewBox="0 0 760 325"
         role="img"
         aria-label={`${title}; ${valueLabel} samples from ${minV} to ${maxV}; ${xLabel}; ${yLabel}`}
       >
-        <path d="M40 30V260H560" fill="none" stroke="currentColor" />
+        <PlotAxes {...{ minX, maxX, minY, maxY, xLabel, yLabel }} />
         {points.map((point, index) => (
           <circle
             key={index}
-            cx={40 + ((point.x - minX) / (maxX - minX || 1)) * 510}
-            cy={260 - ((point.y - minY) / (maxY - minY || 1)) * 220}
+            cx={plotPosition(point.x, minX, maxX, 80, 550)}
+            cy={plotPosition(point.y, minY, maxY, 250, 30)}
             r={3}
             fill={`hsl(${240 * (1 - (point.value - minV) / (maxV - minV || 1))} 75% 50%)`}
           >
             <title>{`${xLabel}: ${point.x}; ${yLabel}: ${point.y}; ${valueLabel}: ${point.value}`}</title>
           </circle>
         ))}
-        <text x="300" y="298" textAnchor="middle" fill="currentColor">
-          {xLabel}
-        </text>
-        <text
-          x="12"
-          y="145"
-          transform="rotate(-90 12 145)"
-          textAnchor="middle"
-          fill="currentColor"
-        >
-          {yLabel}
-        </text>
+        {minV !== maxV && <defs>
+          <linearGradient id={gradientId} x1="0" y1="1" x2="0" y2="0">
+            {[0, 0.25, 0.5, 0.75, 1].map(fraction => <stop
+              key={fraction} offset={`${fraction * 100}%`}
+              stopColor={`hsl(${240 * (1 - fraction)} 75% 50%)`}
+            />)}
+          </linearGradient>
+        </defs>}
+        <text x="605" y="16" fill="currentColor" fontSize="12">{valueLabel}</text>
+        <g aria-label={`${valueLabel} color scale`} fill="currentColor" fontSize="12">
+          <rect x="605" y="30" width="16" height="220"
+            fill={minV === maxV ? "hsl(240 75% 50%)" : `url(#${gradientId})`} />
+          {plotTicks(minV, maxV).map(({ value, label }) => {
+            const y = plotPosition(value, minV, maxV, 250, 30);
+            return <g key={value}>
+              <path d={`M621 ${y}h5`} stroke="currentColor" />
+              <text x="632" y={y + 4}>{label}</text>
+            </g>;
+          })}
+        </g>
       </svg>
       <p>
         {valueLabel}: {minV}–{maxV}
@@ -313,6 +359,7 @@ export function ScalarFieldPlot({
         Supplied samples without interpolated geometry. Review the exact
         assessment for acceptance.
       </p>
+      <p className="wp-muted">Colors show the recorded value range, not pass or fail. Exact values remain in the table and sample tooltips.</p>
     </figure>
   );
 }
@@ -321,22 +368,39 @@ export function RepresentationViewer({
   title,
   sourceSha256,
   readToolpaths,
+  readPdfPage,
+  readValidationReport,
+  onReady,
 }: {
   blob: Blob;
   title: string;
   sourceSha256?: string;
   /** Scoped read only; returns passive data from the exact same recorded artifact. */
   readToolpaths?: (signal: AbortSignal) => Promise<Blob>;
+  readPdfPage?: (page: number, signal: AbortSignal) => Promise<Blob>;
+  readValidationReport?: (signal: AbortSignal) => Promise<Blob>;
+  /** The bounded preview or its fallback has committed; never an execution signal. */
+  onReady?: () => void;
 }) {
   const [data, setData] = useState<{
     blob: Blob;
     text?: string;
     bytes?: ArrayBuffer;
     toolpaths?: ToolpathDocument;
+    assessment?: string;
     message?: string;
   }>();
   const [error, setError] = useState<{ blob: Blob; message: string }>();
   const type = blob.type.split(";")[0];
+  const readyCallback = useRef(onReady);
+  readyCallback.current = onReady;
+  const notifiedBlob = useRef<Blob | undefined>(undefined);
+  useEffect(() => {
+    if (((data?.blob === blob && data.assessment === undefined) || error?.blob === blob) && notifiedBlob.current !== blob) {
+      notifiedBlob.current = blob;
+      readyCallback.current?.();
+    }
+  }, [blob, data, error]);
   useEffect(() => {
     let active = true;
     setData(undefined);
@@ -350,6 +414,7 @@ export function RepresentationViewer({
         "model/3mf",
         "text/x-gcode",
         "application/vnd.wright.toolpaths+json",
+        "application/pdf",
       ].includes(type)
     )
       return;
@@ -382,6 +447,7 @@ export function RepresentationViewer({
               } catch {
                 // Ordinary text fallback remains bounded below.
               }
+              if (isAssessmentRecord(record)) return { assessment: text };
               if (
                 record &&
                 typeof record === "object" &&
@@ -420,8 +486,14 @@ export function RepresentationViewer({
       active = false;
     };
   }, [blob, type, sourceSha256]);
+  if (type === "application/pdf")
+    return <PdfPageViewer blob={blob} title={title} sourceSha256={sourceSha256} readPage={readPdfPage} onReady={onReady} />;
   if (["image/png", "image/jpeg", "image/gif", "image/webp"].includes(type))
-    return <ImageThumbnail blob={blob} title={title} />;
+    return (
+      <div className="wp-image-preview">
+        <ImageThumbnail blob={blob} title={title} onReady={onReady} />
+      </div>
+    );
   if (
     [
       "model/3mf",
@@ -434,12 +506,15 @@ export function RepresentationViewer({
         blob={blob}
         sourceSha256={sourceSha256}
         readToolpaths={readToolpaths}
+        onReady={onReady}
       />
     );
   if (error?.blob === blob) return <p role="status">{error.message}</p>;
   if (!data || data.blob !== blob)
     return <p role="status">Opening representation…</p>;
   if (data.toolpaths) return <ToolpathViewer document={data.toolpaths} />;
+  if (data.assessment !== undefined)
+    return <AssessmentReportViewer blob={blob} source={data.assessment} readReport={readValidationReport} onReady={onReady} />;
   if (data.message) return <p role="status">{data.message}</p>;
   if (
     data.bytes &&
@@ -460,6 +535,8 @@ export function RepresentationViewer({
       );
     }
   }
+  if (data.text !== undefined && ["text/markdown", "text/x-markdown"].includes(type))
+    return <MarkdownDocument text={data.text} />;
   if (
     data.text !== undefined &&
     type !== "text/html" &&
@@ -479,10 +556,12 @@ export function RecordedToolpathPreview({
   blob,
   sourceSha256,
   readToolpaths,
+  onReady,
 }: {
   blob: Blob;
   sourceSha256?: string;
   readToolpaths?: (signal: AbortSignal) => Promise<Blob>;
+  onReady?: () => void;
 }) {
   const port = useRef(readToolpaths);
   port.current = readToolpaths;
@@ -492,6 +571,15 @@ export function RecordedToolpathPreview({
     document?: ToolpathDocument;
     error?: string;
   }>();
+  const readyCallback = useRef(onReady);
+  readyCallback.current = onReady;
+  const notifiedBlob = useRef<Blob | undefined>(undefined);
+  useEffect(() => {
+    if (state?.blob === blob && notifiedBlob.current !== blob) {
+      notifiedBlob.current = blob;
+      readyCallback.current?.();
+    }
+  }, [state, blob]);
   useEffect(() => {
     const control = new AbortController();
     let active = true;
@@ -533,7 +621,7 @@ export function RecordedToolpathPreview({
   return state.document ? <ToolpathViewer document={state.document} /> : null;
 }
 
-/** Table first; visual axes are explicit view choices, never engineering input defaults. */
+/** Exact data with nearby plotting controls; axes remain explicit view choices. */
 export function CsvNumericInspector({
   columns,
   rows,
@@ -573,7 +661,6 @@ export function CsvNumericInspector({
     y !== field;
   return (
     <>
-      <DataTable columns={columns} rows={rows} />
       {numeric.length >= 3 && (
         <details>
           <summary>View numerical samples</summary>
@@ -624,6 +711,7 @@ export function CsvNumericInspector({
           </p>
         </details>
       )}
+      <DataTable columns={columns} rows={rows} pageSize={10} />
     </>
   );
 }

@@ -700,7 +700,7 @@ def test_workspace_tools_endpoints(client):
     tools = response_get.json()["enabled_tools"]
     assert "OpenSCAD Geometry" not in tools
 
-    # Rivet is part of Wright itself and cannot be disabled per workspace.
+    # Retired engine aliases cannot be re-injected into workspace tools.
     response_rivet = client.post(
         "/api/workspace/tools/toggle",
         json={
@@ -710,11 +710,11 @@ def test_workspace_tools_endpoints(client):
         },
     )
     assert response_rivet.status_code == 200
-    assert response_rivet.json()["is_enabled"] is True
+    assert response_rivet.json()["is_enabled"] is False
     response_get = client.get(
         "/api/workspace/tools", params={"session_id": "test-session"}
     )
-    assert "rivet-workflows" in response_get.json()["enabled_tools"]
+    assert "rivet-workflows" not in response_get.json()["enabled_tools"]
 
 
 def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
@@ -1262,7 +1262,6 @@ def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
     running = response_status.json()["running_mcps"]
     assert {item["name"] for item in running} == {
         "Workspace Scoped Onshape MCP",
-        "Rivet Workflows",
     }
 
 
@@ -1706,7 +1705,7 @@ def test_workspace_mcp_status_endpoint(client):
     assert "running_mcps" in data
 
 
-def test_workspace_mcp_status_errors_when_expected_server_inactive(
+def test_workspace_mcp_status_reports_gateway_mismatch_after_server_start(
     client, monkeypatch, tmp_path
 ):
     from api.config import DATABASE_PATH
@@ -1718,7 +1717,8 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
     monkeypatch.setenv("USERPROFILE", str(tmp_path))
     hermes_config = tmp_path / ".hermes" / "profiles" / "wright" / "config.yaml"
     hermes_config.parent.mkdir(parents=True)
-    hermes_config.write_text("mcp_servers:\n  wrightgateway: {}\n", encoding="utf-8")
+    hermes_config.write_text("mcp_servers: {}\n", encoding="utf-8")
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(hermes_config))
 
     client.get("/api/workspace/files", params={"session_id": "test-session"})
     now = int(time.time())
@@ -1752,15 +1752,12 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
 
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "ok"
+        # The test-agent has no configured Wright gateway; a live child alone
+        # must not overclaim that the agent is connected to workspace tools.
+        assert data["status"] == "mismatch"
         assert data["running_mcps"] == [
             {
                 "name": "Inactive Test MCP",
-                "status": "active",
-                "error_message": None,
-            },
-            {
-                "name": "Rivet Workflows",
                 "status": "active",
                 "error_message": None,
             },

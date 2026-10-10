@@ -38,6 +38,27 @@ after the response. Predictable missing
 configuration is a readiness defect; changed external conditions follow the
 configured wait/recovery/failure policy without guessing or uncertain replay.
 
+Before changing model calls or workflow instruction behavior, read
+`docs/architecture/workflow-instructions-and-interactions-plan.md`. Behavioral
+policy belongs in inspectable, versioned instruction assets/settings or accepted
+workflow/step source; never introduce policy prose in executor/adapter literals.
+Saved workflows retain their instruction bodies and explicit typed policy.
+Default changes affect newly authored processes; updating accepted instructions
+requires a visible new revision. Branch only on validated typed configuration,
+not wording in a prompt. Keep deterministic scope, schema, identity, validation
+and approval enforcement in the backend; a prompt cannot grant their authority.
+
+Freeze resolved model/adapter configuration before execution and verify it on
+continuation. Record actual requests at observable transport boundaries,
+including helper/recovery calls and failures, using the existing evidence owners
+and redaction. Distinguish requested aliases, confirmed routing and any reported
+upstream revision; do not claim provider-internal prompts or unobserved outcomes.
+Declared input answers are distinct from review/approval; model routing metadata
+and integration-test attribution never create automatic review or dispatch grants.
+Portable export/import preserves instructions and required reference/validation/UI
+dependencies, diagnoses unavailable capabilities, and transfers no credentials,
+live runs, answers, approval authority or trusted UI builds.
+
 Prefer existing independent MCP providers. Keep vendor protocols and compatibility
 workarounds external; no new Wright-owned Bambu MCP is planned. Catalog metadata,
 example bindings, and historical evidence may name vendors. Embedded vendor
@@ -62,7 +83,8 @@ experience on the existing accepted process and durable source runtime. Read its
 implementation-goal.md, tasks.md, contracts and acceptance-cases.md. The user
 submitted the saved goal and approved local implementation/testing through M0-M5
 without routine intermediate lifecycle approvals. Real process reviews and
-external effects retain their separate authority. No push, merge or release is
+external effects retain their separate authority. The user authorized feature-branch push and PR integration to `dev` on
+10 October 2026, subject to the repository gates. No production release is
 authorized. Keep progress/evidence current and preserve existing dirty work.
 
 Reuse Feature 082's validator/rework/result contracts; its per-subject checks

@@ -10,7 +10,7 @@ from pathlib import PurePosixPath
 
 from pydantic import TypeAdapter
 
-from core.process_interactions import StartReceipt, ProcessRunEventPage
+from core.process_interactions import StartReceipt, ProcessRunEvent, ProcessRunEventPage
 from core.process_validation import Digest, Identifier, canonical_digest
 from core.tracing import traced
 from data_vault.process_input_repository import ProcessRecordConflict
@@ -223,7 +223,13 @@ class ProcessRunSupervisor:
                     "SOURCE_CHANGED"
                     if error.code == "WORKFLOW_SOURCE_CONFLICT"
                     else "READINESS_UNSUPPORTED"
-                    if error.code == "WORKFLOW_SOURCE_INVALID"
+                    if error.code
+                    in {
+                        "WORKFLOW_SOURCE_INVALID",
+                        "WORKFLOW_ACTION_INTENT_UPGRADE_REQUIRED",
+                        "WORKFLOW_ACTION_INTENT_SCHEMA_UNSUPPORTED",
+                        "WORKFLOW_ACTION_INTENT_INVALID",
+                    }
                     else "CAPABILITY_UNAVAILABLE"
                 )
                 raise ProcessInterfaceError(
@@ -349,15 +355,24 @@ class ProcessRunSupervisor:
         gateway=None,
         session_id="",
         action_generator=None,
+        auto=False,
     ):
         """Accept a declared answer and own its same-run continuation task.
 
-        Checkpoint/run/actor are derived from the authenticated process scope.
+        Checkpoint/run are derived from the authenticated process scope. The
+        ordinary actor is its principal; an explicit automatic test response
+        derives its actor from the exact frozen integration enrollment.
         A retained answer is evidence, never permission to replay a claimed segment.
         """
         from .interactions import prepare_input_continuation
 
         scope.require(process, "process.respond")
+        if type(auto) is not bool:
+            raise ProcessInterfaceError(
+                "RESPONSE_INVALID",
+                "Automatic response must be a boolean.",
+                "Use an explicit test response or the ordinary authenticated input path.",
+            )
         checkpoint_id = TypeAdapter(Identifier).validate_python(checkpoint_id)
         request_id = TypeAdapter(Identifier).validate_python(request_id)
         expected_subject_digest = TypeAdapter(Digest).validate_python(
@@ -392,6 +407,35 @@ class ProcessRunSupervisor:
             record, view = await asyncio.to_thread(
                 self._record, scope, process, receipt.run_id
             )
+            actor = scope.principal_id
+            reason = "Response to declared process input"
+            if auto:
+                from ..workflow_integration_policy import WorkflowIntegrationPolicyError
+
+                context = checkpoint.continuation.get("execution_context", {}) or {}
+                policies = getattr(
+                    self.application.workspace, "workflow_integration_policies", None
+                )
+                if policies is None or not context.get("integration_policy_digest"):
+                    raise ProcessInterfaceError(
+                        "SCOPE_DENIED",
+                        "This run has no enrolled automatic-input authority.",
+                        "Use an authenticated response or enroll an exact isolated test process.",
+                    )
+                try:
+                    authority = policies.authorize_input_response(
+                        context["integration_policy_digest"],
+                        workspace_id=process.workspace_id,
+                        checkpoint=checkpoint,
+                        expected_subject_digest=expected_subject_digest,
+                    )
+                except WorkflowIntegrationPolicyError as error:
+                    raise ProcessInterfaceError(
+                        "SCOPE_DENIED",
+                        "Automatic input is not authorized for this exact test subject.",
+                        "Inspect the local test enrollment and the current declared input.",
+                    ) from error
+                actor, reason = authority["actor"], authority["reason"]
             prior = None
             if checkpoint.continuation.get("response_id") is not None:
                 checkpoint, prior, _ = self.application.human_inputs.respond(
@@ -400,9 +444,10 @@ class ProcessRunSupervisor:
                     run_id=receipt.run_id,
                     expected_subject_digest=expected_subject_digest,
                     value=value,
-                    actor=scope.principal_id,
-                    reason="Response to declared process input",
+                    actor=actor,
+                    reason=reason,
                     request_id=request_id,
+                    integration_test=actor.startswith("integration_test:"),
                 )
                 claim = record.get("resume_segments", {}).get(checkpoint_id)
                 owned = self._owned.get(receipt.run_id)
@@ -484,9 +529,10 @@ class ProcessRunSupervisor:
                     run_id=receipt.run_id,
                     expected_subject_digest=expected_subject_digest,
                     value=value,
-                    actor=scope.principal_id,
-                    reason="Response to declared process input",
+                    actor=actor,
+                    reason=reason,
                     request_id=request_id,
+                    integration_test=actor.startswith("integration_test:"),
                 )
                 if checkpoint.state == "pending":
                     checkpoint = self.application.human_inputs.consume(
@@ -862,6 +908,141 @@ class ProcessRunSupervisor:
                 **execution,
             )
 
+    @traced("process.interface.run.legacy.resume")
+    async def resume_legacy_approval(
+        self,
+        scope,
+        process,
+        checkpoint,
+        request_id,
+        *,
+        expected_subject_digest,
+        response_generator,
+        gateway=None,
+        session_id="",
+        action_generator=None,
+    ):
+        """Keep the compatibility response while supervising its continuation.
+
+        Canonical approval/consume and resume records still decide authority and
+        cached segment results, including historical runs without start receipts.
+        Disconnecting this observer cannot interrupt the registered execution.
+        """
+        from ..workflow_approval_execution import resume_workflow_approval
+
+        scope.require(process, "process.action")
+        scope.require_run(checkpoint.run_id)
+        request_id = TypeAdapter(Identifier).validate_python(request_id)
+        expected_subject_digest = TypeAdapter(Digest).validate_python(
+            expected_subject_digest
+        )
+        root = self._root(scope, process, "process.action")
+        if (
+            checkpoint.workspace_id != process.workspace_id
+            or checkpoint.workflow_id != process.source_path
+            or checkpoint.checkpoint_kind != "approval"
+            or checkpoint.subject.get("definition_digest") != process.source_digest
+        ):
+            raise ProcessInterfaceError(
+                "SCOPE_DENIED",
+                "This continuation belongs to another process.",
+                "Open the exact saved process and its checkpoint.",
+            )
+        if checkpoint.subject_digest != expected_subject_digest:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The reviewed continuation subject changed.",
+                "Refresh its exact checkpoint before continuing.",
+            )
+        intent = {
+            "request_id": request_id,
+            "principal_id": scope.principal_id,
+            "subject_digest": expected_subject_digest,
+            "action_id": f"continue-{checkpoint.checkpoint_id}",
+        }
+        async with self._allocation:
+            owned = self._owned.get(checkpoint.run_id)
+            if self.is_live(checkpoint.run_id):
+                if (
+                    owned.checkpoint_id != checkpoint.checkpoint_id
+                    or owned.action_request != intent
+                ):
+                    raise ProcessInterfaceError(
+                        "REQUEST_CONFLICT",
+                        "This run already owns another continuation request.",
+                        "Follow the original request and its recorded outcome.",
+                    )
+            else:
+                if (
+                    self._closed
+                    or sum(self.is_live(key) for key in self._owned)
+                    >= self.maximum_active
+                ):
+                    raise ProcessInterfaceError(
+                        "CAPABILITY_UNAVAILABLE",
+                        "The runtime cannot continue this action yet.",
+                        "Wait for capacity, then reconcile this same request.",
+                    )
+                current = self.application.workspace.workflow_external_actions.lookup(
+                    checkpoint.checkpoint_id
+                )
+                if current.state == "consumed":
+                    prior = current.external_action or {}
+                    if prior.get("action_id") != request_id or prior.get(
+                        "principal_id"
+                    ) not in {None, scope.principal_id}:
+                        raise ProcessInterfaceError(
+                            "REQUEST_CONFLICT",
+                            "A different request already consumed this checkpoint.",
+                            "Inspect the original request; do not submit another identity.",
+                        )
+                owned = _OwnedRun(
+                    checkpoint_id=checkpoint.checkpoint_id,
+                    action_request=intent,
+                    action_ready=asyncio.Event(),
+                )
+
+                def runtime_ready(runtime, emit, local_cancel_supported):
+                    owned.tool_runtime = runtime
+                    owned.emit = emit
+                    owned.local_cancel_supported = local_cancel_supported
+
+                def authorized(current):
+                    owned.action_ready.set()
+
+                async def execute():
+                    return await resume_workflow_approval(
+                        service=self.application.workspace,
+                        workspace_id=process.workspace_id,
+                        workspace_dir=root,
+                        checkpoint=current,
+                        subject_digest=expected_subject_digest,
+                        request_id=request_id,
+                        principal_id=scope.principal_id,
+                        gateway=gateway,
+                        session_id=session_id,
+                        response_generator=response_generator,
+                        action_generator=action_generator,
+                        on_runtime=runtime_ready,
+                        on_authorized=authorized,
+                        cancellation_status=owned.cancellation_outcome,
+                    )
+
+                owned.task = asyncio.create_task(
+                    execute(),
+                    name=f"wright-process-action:{checkpoint.run_id}:{checkpoint.checkpoint_id}",
+                )
+                self._owned[checkpoint.run_id] = owned
+
+                def finished(task):
+                    if self._owned.get(checkpoint.run_id) is owned:
+                        self._owned.pop(checkpoint.run_id, None)
+                    if not task.cancelled():
+                        task.exception()
+
+                owned.task.add_done_callback(finished)
+        return await asyncio.shield(owned.task)
+
     @traced("process.interface.run.events")
     async def events(self, scope, process, run_id, *, cursor=None, limit=256):
         """Read bounded progress from the recorder; subscription starts no work.
@@ -949,6 +1130,11 @@ class ProcessRunSupervisor:
                             "sequence": index,
                         },
                     )
+            if not legacy:
+                # The page contract includes defaulted null fields in its size
+                # check. Budget that validated shape, not the smaller sparse
+                # projection, so long histories paginate before the limit.
+                item = ProcessRunEvent.model_validate(item).model_dump(mode="json")
             size += len(json.dumps(item, ensure_ascii=False).encode("utf-8"))
             if size > 60_000:
                 break
@@ -1022,10 +1208,15 @@ class ProcessRunSupervisor:
     def cancellation_capability(self, run_id):
         """Presentation hint only; cancel rechecks the exact active provider binding."""
         owned = self._owned.get(run_id)
-        if not owned or owned.task.done() or owned.emit is None:
+        if not owned or owned.task is None or owned.task.done():
             return (
                 False,
                 "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            )
+        if owned.emit is None:
+            return (
+                False,
+                "Execution is preparing. Cancellation is unavailable until its active operation is identified.",
             )
         if owned.cancel_request:
             return (
@@ -1065,11 +1256,17 @@ class ProcessRunSupervisor:
                     "state": "cancellation_requested",
                 }
             owned = self._owned.get(run_id)
-            if not owned or owned.task.done() or owned.emit is None:
+            if not owned or owned.task is None or owned.task.done():
                 raise ProcessInterfaceError(
                     "ACTION_NOT_PERMITTED",
                     "This runtime has no active execution to cancel.",
                     "Inspect the actual run outcome; an unknown owner needs reconciliation.",
+                )
+            if owned.emit is None:
+                raise ProcessInterfaceError(
+                    "CAPABILITY_UNAVAILABLE",
+                    "Execution is preparing; its cancellation capability is not established yet.",
+                    "Follow the same run until its active operation and permitted actions are available.",
                 )
             target = None
             if not owned.local_cancel_supported:

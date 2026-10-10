@@ -26,6 +26,7 @@ import {
   RepresentationDownload,
   RepresentationViewer,
   ResultCard,
+  schemaFieldError,
   Section,
 } from "@wright/ui-kit";
 import {
@@ -205,9 +206,28 @@ function CommonProcessController({
   const [now, setNow] = useState(Date.now);
   const [representation, setRepresentation] = useState<{
     reference: ArtifactRef;
+    generation: number;
+    focusReader: boolean;
     blob?: Blob;
   }>();
   const representationGeneration = useRef(0);
+  const representationReader = useRef<HTMLDivElement | null>(null);
+  const focusedRepresentation = useRef<number | undefined>(undefined);
+  const focusReadyRepresentation = (
+    selected: NonNullable<typeof representation>,
+  ) => {
+    if (
+      !selected.focusReader ||
+      selected.generation !== representationGeneration.current ||
+      focusedRepresentation.current === selected.generation
+    )
+      return;
+    const reader = representationReader.current;
+    if (!reader) return;
+    focusedRepresentation.current = selected.generation;
+    reader.focus({ preventScroll: true });
+    reader.scrollIntoView?.({ block: "start" });
+  };
   const workingRoot = useRef<HTMLDivElement | null>(null);
   const focusedNavigation = useRef<string | undefined>(undefined);
   const representationRead = useRef<AbortController | undefined>(undefined);
@@ -666,12 +686,12 @@ function CommonProcessController({
       }
     : undefined;
   const requestRepresentation = useCallback(
-    (reference: ArtifactRef) => {
+    (reference: ArtifactRef, focusReader = true) => {
       const generation = ++representationGeneration.current;
       representationRead.current?.abort();
       const control = new AbortController();
       representationRead.current = control;
-      setRepresentation({ reference });
+      setRepresentation({ reference, generation, focusReader });
       void client
         .getRepresentation(
           reference,
@@ -684,7 +704,7 @@ function CommonProcessController({
         )
         .then((blob) => {
           if (alive.current && generation === representationGeneration.current)
-            setRepresentation({ reference, blob });
+            setRepresentation({ reference, generation, focusReader, blob });
         })
         .catch((error) => {
           if (
@@ -768,8 +788,8 @@ function CommonProcessController({
         target.kind === "run" ||
         (target.kind === "assessment"
           ? element.dataset.assessmentId === target.assessment_id &&
-            element.closest<HTMLElement>("[data-result-id]")?.dataset.resultId ===
-              target.result_id
+            element.closest<HTMLElement>("[data-result-id]")?.dataset
+              .resultId === target.result_id
           : element.dataset.resultId === target.result_id),
     );
     destination?.focus();
@@ -778,7 +798,7 @@ function CommonProcessController({
       reference &&
       (target.kind === "assessment" || target.kind === "evidence")
     ) {
-      if (openRepresentation) openRepresentation(reference);
+      if (openRepresentation) requestRepresentation(reference, false);
       else
         setNavigationReason({
           code: "CAPABILITY_UNAVAILABLE",
@@ -786,7 +806,7 @@ function CommonProcessController({
           correction: "Open the exact file with its supported reader.",
         });
     }
-  }, [navigation, snapshot, client, openRepresentation]);
+  }, [navigation, snapshot, client, openRepresentation, requestRepresentation]);
   const loadMore = async () => {
     const previous = snapshotRef.current;
     if (!previous?.next_page || operation.current) return;
@@ -993,6 +1013,130 @@ function CommonProcessController({
       : startAction.reasons,
   };
 
+  const needsResponse = snapshot?.state === "waiting_human";
+  const interactionPanel = snapshot && !!snapshot.interactions?.length && (
+    <Section
+      title={needsResponse ? "Your next step" : "Questions and decisions"}
+    >
+      {snapshot.interactions.map((interaction) => (
+        <CheckpointCard
+          key={interaction.checkpoint_id}
+          interaction={interaction}
+          actions={snapshot.actions ?? []}
+          onOpen={openRepresentation}
+          onNavigate={navigate}
+          response={
+            interaction.kind === "input"
+              ? {
+                  value: answers[interaction.subject_digest],
+                  onChange: (value) =>
+                    setAnswers((current) => ({
+                      ...current,
+                      [interaction.subject_digest]: value,
+                    })),
+                  onSubmit: (action, value) => void respond(action, value),
+                  busy: !!busy,
+                  readOnly: readOnly || !!interactionBlocked,
+                  blockedReason: interactionBlocked,
+                }
+              : undefined
+          }
+          review={
+            interaction.kind !== "input"
+              ? {
+                  reason: reviewReasons[interaction.subject_digest] ?? "",
+                  onReasonChange: (value) =>
+                    setReviewReasons((current) => ({
+                      ...current,
+                      [interaction.subject_digest]: value,
+                    })),
+                  onSubmit: (action, decision, value) =>
+                    void decide(action, decision, value),
+                  busy: !!busy,
+                  readOnly: readOnly || !!interactionBlocked,
+                  blockedReason: interactionBlocked,
+                }
+              : undefined
+          }
+          execution={
+            interaction.kind === "action"
+              ? {
+                  onSubmit: (action) => void requestAction(action),
+                  busy: !!busy,
+                  readOnly: readOnly || !!interactionBlocked,
+                  blockedReason: interactionBlocked,
+                }
+              : undefined
+          }
+        >
+          <NavigationButton
+            title="Open interaction step"
+            target={{
+              kind: "block",
+              block_id: interaction.step_id,
+              ...(activeRun ? { run_id: activeRun } : {}),
+            }}
+            onNavigate={navigate}
+          />
+          {interaction.kind !== "input" && !interaction.decisions?.length && (
+            <p className="wp-muted">
+              Open the interaction step to inspect this checkpoint. Response
+              controls are unavailable in this view.
+            </p>
+          )}
+        </CheckpointCard>
+      ))}
+    </Section>
+  );
+
+  // Group only declared, locally displayable defaults. This changes presentation,
+  // never the bindings sent by prepare() or the backend's readiness decision.
+  const savedDefaultInputs = !activeRun
+    ? (snapshot?.inputs ?? []).filter((input) => {
+        const fallback = input.default;
+        return (
+          !!fallback &&
+          input.binding_kind !== "option" &&
+          !input.dependencies?.some(
+            (dependency) => dependency.classification === "unresolved",
+          ) &&
+          !(
+            "value" in fallback &&
+            schemaFieldError(input.value_schema, fallback.value, input.required)
+          )
+        );
+      })
+    : [];
+  const savedDefaultIds = new Set(
+    savedDefaultInputs.map((input) => input.input_id),
+  );
+  const directInputs = (snapshot?.inputs ?? []).filter(
+    (input) => !savedDefaultIds.has(input.input_id),
+  );
+  const renderInput = (input: InputDefinition) => (
+    <div key={input.input_id}>
+      <InputEditor
+        definition={input}
+        binding={
+          Object.hasOwn(drafts, input.input_id)
+            ? drafts[input.input_id]
+            : undefined
+        }
+        onChange={(value) => edit(input, value)}
+        onUpload={upload}
+        now={now}
+        disabled={
+          readOnly || !!activeRun || !!busy || pendingStart || !!storageReason
+        }
+      />
+      <NavigationButton
+        title="Open input step"
+        target={{ kind: "block", block_id: input.block_id }}
+        onNavigate={navigate}
+      />
+    </div>
+  );
+
   return (
     <ProcessUI theme={theme} className="common-process-view">
       <div data-testid="common-process-view" ref={workingRoot}>
@@ -1062,96 +1206,95 @@ function CommonProcessController({
         )}
         {snapshot && (
           <>
+            {needsResponse && interactionPanel}
             <div className="wp-columns">
-              <Section
-                title={activeRun ? "Run inputs" : "Inputs"}
-                description={
-                  activeRun
-                    ? "These are the frozen inputs used by this run."
-                    : "Prepare the inputs for this run. The accepted process remains separate."
-                }
-              >
-                {(snapshot.inputs ?? []).map((input) => (
-                  <div key={input.input_id}>
-                    <InputEditor
-                      definition={input}
-                      binding={
-                        Object.hasOwn(drafts, input.input_id)
-                          ? drafts[input.input_id]
-                          : undefined
-                      }
-                      onChange={(value) => edit(input, value)}
-                      onUpload={upload}
-                      now={now}
-                      disabled={
-                        readOnly ||
-                        !!activeRun ||
-                        !!busy ||
-                        pendingStart ||
-                        !!storageReason
-                      }
-                    />
-                    {input.default && !input.current_value && (
-                      <p className="wp-muted">
-                        A declared default is available; the backend checks its
-                        use during preparation.
-                      </p>
-                    )}
-                    <NavigationButton
-                      title="Open input step"
-                      target={{ kind: "block", block_id: input.block_id }}
-                      onNavigate={navigate}
-                    />
-                  </div>
-                ))}
-                {!snapshot.inputs?.length && (
-                  <p className="wp-muted">
-                    No user inputs are available on this page.
-                  </p>
-                )}
-                {!activeRun && (
-                  <>
-                    <button
-                      type="button"
-                      className="wp-button"
-                      disabled={
-                        readOnly ||
-                        !!storageReason ||
-                        !!busy ||
-                        pendingStart ||
-                        loading ||
-                        uploadCount > 0
-                      }
-                      aria-busy={busy === "prepare" || undefined}
-                      onClick={() => void prepare()}
-                    >
-                      {busy === "prepare"
-                        ? "Preparing and checking…"
-                        : "Prepare and check inputs"}
-                    </button>
-                    {uploadCount > 0 && (
-                      <p role="status">
-                        Finish preparing the selected files before checking
-                        inputs.
-                      </p>
-                    )}
-                    <ReadinessPanel
-                      readiness={dirty ? undefined : readiness}
-                      onNavigate={navigate}
-                      now={now}
-                    />
-                    {permittedStart && (
-                      <ActionButton
-                        action={permittedStart}
-                        readOnly={readOnly}
-                        busy={busy === "start"}
-                        onAction={!busy ? () => void start() : undefined}
+              {(!activeRun || !!snapshot.inputs?.length) && (
+                <Section
+                  title={activeRun ? "Run inputs" : "Inputs"}
+                  description={
+                    activeRun
+                      ? "These are the frozen inputs used by this run."
+                      : "Review the inputs, then check that this run is ready to start."
+                  }
+                >
+                  {directInputs.map(renderInput)}
+                  {savedDefaultInputs.length > 0 && (
+                    <>
+                      {!directInputs.length && (
+                        <p>
+                          This process has saved defaults for all inputs. Review
+                          or change them below, then prepare the run.
+                        </p>
+                      )}
+                      <details
+                        open={
+                          !!reason ||
+                          (!dirty && !!readiness && readiness.state !== "ready")
+                        }
+                      >
+                        <summary>
+                          Saved defaults ({savedDefaultInputs.length})
+                        </summary>
+                        <p className="wp-muted">
+                          Review or change these values. Every input is checked
+                          when you prepare the run.
+                        </p>
+                        {savedDefaultInputs.map(renderInput)}
+                      </details>
+                    </>
+                  )}
+                  {!snapshot.inputs?.length && (
+                    <p className="wp-muted">
+                      No user inputs are available on this page.
+                    </p>
+                  )}
+                  {!activeRun && (
+                    <>
+                      <button
+                        type="button"
+                        className="wp-button"
+                        disabled={
+                          readOnly ||
+                          !!storageReason ||
+                          !!busy ||
+                          pendingStart ||
+                          loading ||
+                          uploadCount > 0
+                        }
+                        aria-busy={busy === "prepare" || undefined}
+                        onClick={() => void prepare()}
+                      >
+                        {busy === "prepare"
+                          ? "Preparing and checking…"
+                          : "Prepare and check inputs"}
+                      </button>
+                      {uploadCount > 0 && (
+                        <p role="status">
+                          Finish preparing the selected files before checking
+                          inputs.
+                        </p>
+                      )}
+                      <ReadinessPanel
+                        readiness={dirty ? undefined : readiness}
                         onNavigate={navigate}
+                        now={now}
                       />
-                    )}
-                  </>
-                )}
-              </Section>
+                      {permittedStart && (
+                        <ActionButton
+                          action={permittedStart}
+                          readOnly={readOnly}
+                          busy={busy === "start"}
+                          compactReasons={
+                            !dirty && !!readiness?.reasons?.length
+                          }
+                          onAction={!busy ? () => void start() : undefined}
+                          onNavigate={navigate}
+                        />
+                      )}
+                    </>
+                  )}
+                </Section>
+              )}
               <Section title="Progress" focusId="progress">
                 {(snapshot.diagnostics ?? []).map((diagnostic, index) => (
                   <ReasonNotice
@@ -1197,6 +1340,11 @@ function CommonProcessController({
                       action={action}
                       readOnly={readOnly}
                       busy={busy === "cancel"}
+                      compactReasons={
+                        action.operation === "cancel" &&
+                        (snapshot.state === "completed" ||
+                          snapshot.state === "cancelled")
+                      }
                       onAction={
                         action.operation === "cancel" && !busy
                           ? () => void cancel()
@@ -1228,102 +1376,51 @@ function CommonProcessController({
                 )}
               </Section>
             </div>
-            {!!snapshot.interactions?.length && (
-              <Section title="Declared interactions">
-                {snapshot.interactions.map((interaction) => (
-                  <CheckpointCard
-                    key={interaction.checkpoint_id}
-                    interaction={interaction}
-                    actions={snapshot.actions ?? []}
-                    onOpen={openRepresentation}
-                    onNavigate={navigate}
-                    response={
-                      interaction.kind === "input"
-                        ? {
-                            value: answers[interaction.subject_digest],
-                            onChange: (value) =>
-                              setAnswers((current) => ({
-                                ...current,
-                                [interaction.subject_digest]: value,
-                              })),
-                            onSubmit: (action, value) =>
-                              void respond(action, value),
-                            busy: !!busy,
-                            readOnly: readOnly || !!interactionBlocked,
-                            blockedReason: interactionBlocked,
-                          }
-                        : undefined
-                    }
-                    review={
-                      interaction.kind !== "input"
-                        ? {
-                            reason:
-                              reviewReasons[interaction.subject_digest] ?? "",
-                            onReasonChange: (value) =>
-                              setReviewReasons((current) => ({
-                                ...current,
-                                [interaction.subject_digest]: value,
-                              })),
-                            onSubmit: (action, decision, value) =>
-                              void decide(action, decision, value),
-                            busy: !!busy,
-                            readOnly: readOnly || !!interactionBlocked,
-                            blockedReason: interactionBlocked,
-                          }
-                        : undefined
-                    }
-                    execution={
-                      interaction.kind === "action"
-                        ? {
-                            onSubmit: (action) => void requestAction(action),
-                            busy: !!busy,
-                            readOnly: readOnly || !!interactionBlocked,
-                            blockedReason: interactionBlocked,
-                          }
-                        : undefined
-                    }
-                  >
-                    <NavigationButton
-                      title="Open interaction step"
-                      target={{
-                        kind: "block",
-                        block_id: interaction.step_id,
-                        ...(activeRun ? { run_id: activeRun } : {}),
-                      }}
-                      onNavigate={navigate}
-                    />
-                    {interaction.kind !== "input" &&
-                      !interaction.decisions?.length && (
-                        <p className="wp-muted">
-                          Open the interaction step to inspect this checkpoint.
-                          Response controls are unavailable in this view.
-                        </p>
-                      )}
-                  </CheckpointCard>
-                ))}
-              </Section>
-            )}
+            {!needsResponse && interactionPanel}
             <Section
               title="Results and checks"
               description="Inspect the exact output revisions and their linked assessments."
             >
-              {(snapshot.outputs ?? []).map((output) => (
-                <ResultCard
-                  key={output.result_id}
-                  output={output}
-                  onNavigate={navigate}
-                  onOpen={openRepresentation}
-                />
-              ))}
-              {!snapshot.outputs?.length && (
+              {(snapshot.outputs ?? [])
+                .filter((output) => output.role !== "previous_attempt")
+                .map((output) => (
+                  <ResultCard
+                    key={output.result_id}
+                    output={output}
+                    onNavigate={navigate}
+                    onOpen={openRepresentation}
+                  />
+                ))}
+              {!snapshot.outputs?.some(
+                (output) => output.role !== "previous_attempt",
+              ) && (
                 <p className="wp-muted">
                   No outputs are recorded on this page yet.
                 </p>
               )}
+              {snapshot.outputs?.some(
+                (output) => output.role === "previous_attempt",
+              ) && (
+                <Section
+                  title="Previous attempts"
+                  description="Retained models, measurements and drawings from before a correction. These files are historical evidence and are not current outputs."
+                >
+                  {snapshot.outputs
+                    .filter((output) => output.role === "previous_attempt")
+                    .map((output) => (
+                      <ResultCard
+                        key={output.result_id}
+                        output={output}
+                        onNavigate={navigate}
+                        onOpen={openRepresentation}
+                      />
+                    ))}
+                </Section>
+              )}
               {!canReadRepresentations && (
                 <p className="wp-muted">
-                  Representation previews are unavailable in this host. Use the
-                  exact result and evidence links.
+                  File previews are unavailable in this host. Use the exact
+                  result and evidence links.
                 </p>
               )}
               {snapshot.next_page && (
@@ -1340,52 +1437,95 @@ function CommonProcessController({
               )}
             </Section>
             {representation && (
-              <Section title="Representation">
-                <button
-                  type="button"
-                  className="wp-link"
-                  onClick={() => {
-                    representationGeneration.current++;
-                    representationRead.current?.abort();
-                    representationRead.current = undefined;
-                    setRepresentation(undefined);
-                  }}
+              <div
+                ref={representationReader}
+                tabIndex={-1}
+                role="region"
+                aria-label="Selected file"
+                style={{ scrollMarginTop: "1rem" }}
+              >
+                <Section
+                  title={
+                    representation.reference.artifact_ref.split("/").at(-1) ||
+                    "Selected file"
+                  }
                 >
-                  Close representation
-                </button>
-                {representation.blob ? (
-                  <>
-                    <RepresentationViewer
-                      blob={representation.blob}
-                      title={representation.reference.artifact_ref}
-                      sourceSha256={representation.reference.sha256}
-                      readToolpaths={(signal) =>
-                        client.getRepresentation(representation.reference, {
-                          ...(activeRunRef.current
-                            ? { runId: activeRunRef.current }
-                            : {
-                                inputSnapshotId:
-                                  preparedRef.current?.snapshot_id,
-                              }),
-                          preview: "toolpaths",
-                          signal,
-                        })
-                      }
-                    />
-                    <RepresentationDownload
-                      blob={representation.blob}
-                      name={representation.reference.artifact_ref}
-                    />
-                  </>
-                ) : (
-                  <p role="status">Opening the exact representation…</p>
-                )}
-                <details>
-                  <summary>Representation identity</summary>
-                  <p>{representation.reference.artifact_ref}</p>
-                  <code>{representation.reference.sha256}</code>
-                </details>
-              </Section>
+                  <div className="wp-row">
+                    <button
+                      type="button"
+                      className="wp-link"
+                      onClick={() => {
+                        representationGeneration.current++;
+                        representationRead.current?.abort();
+                        representationRead.current = undefined;
+                        setRepresentation(undefined);
+                      }}
+                    >
+                      Close file
+                    </button>
+                    {representation.blob && (
+                      <RepresentationDownload
+                        blob={representation.blob}
+                        name={representation.reference.artifact_ref}
+                      />
+                    )}
+                  </div>
+                  {representation.blob ? (
+                    <>
+                      <RepresentationViewer
+                        key={representation.generation}
+                        blob={representation.blob}
+                        title={
+                          representation.reference.artifact_ref
+                            .split("/")
+                            .at(-1) || "Selected file"
+                        }
+                        sourceSha256={representation.reference.sha256}
+                        onReady={() => focusReadyRepresentation(representation)}
+                        readValidationReport={(signal) =>
+                          client.getRepresentation(representation.reference, {
+                            runId: activeRunRef.current ?? undefined,
+                            preview: "validation-report",
+                            signal,
+                          })
+                        }
+                        readPdfPage={(page, signal) =>
+                          client.getRepresentation(representation.reference, {
+                            ...(activeRunRef.current
+                              ? { runId: activeRunRef.current }
+                              : {
+                                  inputSnapshotId:
+                                    preparedRef.current?.snapshot_id,
+                                }),
+                            preview: "pdf-page",
+                            page,
+                            signal,
+                          })
+                        }
+                        readToolpaths={(signal) =>
+                          client.getRepresentation(representation.reference, {
+                            ...(activeRunRef.current
+                              ? { runId: activeRunRef.current }
+                              : {
+                                  inputSnapshotId:
+                                    preparedRef.current?.snapshot_id,
+                                }),
+                            preview: "toolpaths",
+                            signal,
+                          })
+                        }
+                      />
+                    </>
+                  ) : (
+                    <p role="status">Opening the file…</p>
+                  )}
+                  <details>
+                    <summary>File details</summary>
+                    <p>{representation.reference.artifact_ref}</p>
+                    <code>{representation.reference.sha256}</code>
+                  </details>
+                </Section>
+              </div>
             )}
           </>
         )}

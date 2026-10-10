@@ -2,7 +2,7 @@
 
 **Date:** 30 September 2026.
 **Direction:** [Workflow platform vision](workflow-platform-vision.md), V1-V7.
-**Status:** Agreed user experience and architectural direction. Feature 083 is
+**Status:** Agreed user experience and architectural direction. Feature 083
 locally implements its bounded interaction contract, scoped client, common view,
 public UI kit and configured-model authoring path. Two actual digital engineering
 chains, saved reuse, migration and installed native/Linux UI-resource checks have
@@ -110,6 +110,14 @@ failure in both common and tailored views.
 
 ## Start with reusable interactions
 
+Recording an engineering review and continuing execution have separate readiness
+checks. A decision concerns the exact saved source, inputs, criteria and artifacts;
+their producer need not remain online. The backend verifies those identities and
+the review authority when recording it. Continuing still requalifies required live
+capabilities, choices and the frozen model configuration before executing anything.
+A saved approval alone does not establish current execution readiness. Both common
+and tailored views obtain these permitted actions from the same approval owner.
+
 Feature 083 provides a bounded kit assembled from Wright components and design tokens:
 
 - Text, image/file, dimension/unit, and capability-backed option inputs.
@@ -125,6 +133,14 @@ Begin with schema-based forms and standard result views as a common fallback.
 Allow AI-authored custom composition for workflows that benefit from it. Do not
 attempt a schema capable of expressing every possible application, or require
 every process to have a generated app. Specialised widgets remain possible.
+
+Preparation should make unanswered inputs easy to find. The common view may
+group declared defaults in an expandable section, retaining their exact input
+identities, editable controls and links to their blocks. Keep unresolved inputs,
+invalid values and live capability choices visible. Explain that defaults still
+need readiness checks; expand them when preparation reports a problem. Grouping
+must not remove bindings, infer readiness, alter saved source, or change the
+frozen inputs displayed for an existing run.
 
 Build and style the kit for the chosen hosting model. An isolated app cannot
 import private React files or inherit the parent frame's CSS automatically.

@@ -7,7 +7,7 @@ and the [checked feature scope](../../specs/083-process-working-interfaces/tasks
 
 ## Compose through Wright
 
-Open an accepted workflow in the workspace and choose **Use saved process**.
+Open an accepted workflow in the workspace and choose **Open working view**.
 In its working tab choose **Create or choose interface**. Use the supplied
 [reference instruction](reference-instruction.txt) in **How should this interface
 help the user?**, adapting the layout to the job. Wright supplies the actual
@@ -59,6 +59,27 @@ Their `prepare.py` commands stage proposals in fresh isolated roots. Source
 acceptance, readiness, execution and reviewer authority remain Wright operations.
 Provider installation and vendor protocols remain outside these examples.
 Neither example authorizes a machine, supplier action or engineering acceptance.
+
+The focus-wheel [orientation study evidence](../../artifacts/process-interfaces/083/20261009-orientation-comparison/index.html)
+shows a downstream comparison on the same retained native STL: two proper rigid
+orientations, the original mesh checks, actual independent offline slices, and a
+declared engineer review. Its authored
+[inspection operation](printed-replacement-part/orientation-study.py) is executed
+through the configured independent engineering Python MCP. It does not slice,
+dispatch, select an orientation, or replace Wright's runtime. The socket screen
+is specific to this accepted wheel's geometry and uses segment midpoints; it is
+not a general support-removal or fit analysis. The saved workflow and frozen
+study basis, exact files and limitations are retained with that evidence.
+
+The same study can be included in a new native wheel process by declaring
+`orientation_comparison: true` in its preparation bindings. The optional
+[stage declarations](printed-replacement-part/orientation_stages.py) consume the
+current run's native STL after its CAD inspection gate. Two slices and their
+comparison join the existing final review alongside the dimensioned drawing and
+requirements matrix. This preserves the original full profile and review gates;
+it neither selects a winning orientation nor releases the proposed package.
+Each run has separate output paths. The backend verifies the actual producer
+dependencies before the inspection tools observe and retain their hashes.
 
 The original dataset preparers additionally use explicit
 [external slicing bindings](../../docs/workflows/external-slicing-bindings.md)

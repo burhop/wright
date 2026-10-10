@@ -67,6 +67,15 @@ def test_hermes_gateway_profile_can_bind_exact_workspace_session():
     assert profile.terminal_config() == {"cwd": "/workspace/project"}
 
 
+def test_explicit_config_does_not_sync_unrelated_host_locations(monkeypatch, tmp_path):
+    selected = tmp_path / "isolated" / "config.yaml"
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(selected))
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "other-home"))
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "other-local"))
+    monkeypatch.setenv("HERMES_PROFILE", "other-profile")
+    assert hermes_config_paths() == [str(selected)]
+
+
 def test_wright_system_hint_has_no_solid_edge_tool_recipe():
     lowered = WRIGHT_SYSTEM_HINT.lower()
 

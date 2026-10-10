@@ -192,7 +192,7 @@ async def test_qualified_sdk_role_applies_prepared_instructions_each_turn_and_av
         async def probe(self):
             return resolution
 
-        async def generate(self, role, message, actual):
+        async def generate(self, role, message, actual, *, invocation_observer=None):
             calls.append((role, message, actual))
             return {
                 "resolution": actual,
@@ -271,7 +271,7 @@ async def test_confined_provider_failure_keeps_only_its_fixed_category(
                 "configuration_digest": "a" * 64,
             }
 
-        async def generate(self, *args):
+        async def generate(self, *args, invocation_observer=None):
             if transport_timeout:
                 raise TimeoutError("SECRET transport details")
             raise HermesRoleInvocationError("SCOPED_MODEL_TIMEOUT")

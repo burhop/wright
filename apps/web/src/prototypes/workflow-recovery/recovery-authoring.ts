@@ -1,5 +1,9 @@
 import { canonicalDefinitionBytes } from "./canonical-wire";
 import {
+  normalizeWorkflowInstructions,
+  normalizeWorkflowInstructionOverride,
+} from "./workflow-instructions";
+import {
   validateAuthoringConfiguration,
   validateAuthoringConnections,
 } from "./authoring-objects";
@@ -125,6 +129,10 @@ function diagnostic(
 
 function stableKey(id: string): string {
   const suffix = id.includes(".") ? id.slice(id.indexOf(".") + 1) : id;
+  // canonicalId maps each source underscore to one hyphen. Preserve that
+  // one-to-one mapping: repeated/trailing underscores are legal source keys
+  // and can also be referenced by typed step settings, not only graph edges.
+  if (/^[a-z][a-z0-9_-]*$/.test(suffix)) return suffix.replace(/-/g, "_");
   return suffix
     .replace(/[^a-zA-Z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "")
@@ -289,6 +297,20 @@ function isInteractionObject(
   );
 }
 
+function isInstructionOverrideObject(
+  sectionKind: string,
+  key: string,
+  value: unknown,
+): boolean {
+  return (
+    sectionKind === "task" &&
+    key === "instruction_override" &&
+    !!value &&
+    typeof value === "object" &&
+    !Array.isArray(value)
+  );
+}
+
 // Runtime tool-created outputs use an exact port-to-file map. Preserve its
 // object form through the scalar-only editor model, like approval objects.
 function isExpectedFilePortsObject(key: string, value: unknown): boolean {
@@ -320,9 +342,15 @@ function isMcpFileDependenciesObject(
     value !== null &&
     typeof value === "object" &&
     !Array.isArray(value) &&
-    Object.entries(value).every(
-      ([port, file]) =>
-        port.length > 0 &&
+    Object.entries(value).every(([port, file]) => {
+      if (!port.length) return false;
+      if (file !== null && typeof file === "object" && !Array.isArray(file)) {
+        return (
+          Object.keys(file).length === 1 &&
+          (file as Record<string, unknown>).source === "connected_output"
+        );
+      }
+      return (
         typeof file === "string" &&
         file.length > 0 &&
         file.length <= 256 &&
@@ -332,8 +360,9 @@ function isMcpFileDependenciesObject(
           .every(
             (part) =>
               part.length > 0 && !part.startsWith(".") && !/[ .]$/.test(part),
-          ),
-    )
+          )
+      );
+    })
   );
 }
 
@@ -453,6 +482,14 @@ function formattedSections(workflow: RecoveryWorkflow): FormattedSection[] {
           "reviewed_ai_suggestions",
           workflow.metadata.authorship === "human_with_ai_proposal",
         ],
+        ...(workflow.metadata.instructions === undefined
+          ? []
+          : ([
+              [
+                "instructions",
+                normalizeWorkflowInstructions(workflow.metadata.instructions),
+              ],
+            ] as [string, unknown][])),
       ],
       canonicalIds: [workflow.workflowId],
     },
@@ -1123,6 +1160,17 @@ function executionKindForActor(
   return null;
 }
 
+/** Display metadata only; callers must bind it to an accepted source revision. */
+export function recoveryWorkflowSourceTitle(text: string): string | undefined {
+  const parsed = parseSections(text.replace(/\r\n?/g, "\n"));
+  const workflows = parsed.sections.filter(
+    (section) => section.kind === "workflow",
+  );
+  if (parsed.diagnostics.length || workflows.length !== 1) return undefined;
+  const name = workflows[0].fields.name;
+  return typeof name === "string" && name.trim() ? name.trim() : undefined;
+}
+
 export function parseRecoveryAuthoringSource(
   text: string,
   base: RecoveryWorkflow,
@@ -1146,12 +1194,11 @@ export function parseRecoveryAuthoringSource(
   const workflowSection = workflowSections[0];
   if (workflowSection) {
     diagnostics.push(
-      ...requireFields(workflowSection, [
-        "name",
-        "purpose",
-        "discipline",
-        "reviewed_ai_suggestions",
-      ]),
+      ...requireFields(
+        workflowSection,
+        ["name", "purpose", "discipline", "reviewed_ai_suggestions"],
+        ["instructions"],
+      ),
     );
     if (workflowSection.key !== stableKey(base.workflowId))
       diagnostics.push(
@@ -1178,6 +1225,26 @@ export function parseRecoveryAuthoringSource(
       candidate.metadata.authorship = reviewedAi
         ? "human_with_ai_proposal"
         : "human";
+    delete candidate.metadata.instructions;
+    if (workflowSection.fields.instructions !== undefined) {
+      try {
+        candidate.metadata.instructions = normalizeWorkflowInstructions(
+          workflowSection.fields.instructions,
+        );
+      } catch (error) {
+        diagnostics.push(
+          diagnostic(
+            "WFR-SOURCE-INSTRUCTIONS-INVALID",
+            error instanceof Error
+              ? error.message
+              : "Workflow instructions are invalid.",
+            "Keep complete embedded instruction bodies, their declared roles and dependencies. Body digests are verified when saving.",
+            base.workflowId,
+            workflowSection.startLine,
+          ),
+        );
+      }
+    }
     sourceMapForResolved(workflowSection, [base.workflowId], sourceMap);
   }
 
@@ -1428,6 +1495,7 @@ export function parseRecoveryAuthoringSource(
           !["string", "number", "boolean"].includes(typeof value) &&
           !isApprovalObject(settings as Record<string, unknown>, key, value) &&
           !isExpectedFilePortsObject(key, value) &&
+          !isInstructionOverrideObject(section.kind, key, value) &&
           !isMcpFileDependenciesObject(
             section.kind,
             settings as Record<string, unknown>,
@@ -1570,6 +1638,34 @@ export function parseRecoveryAuthoringSource(
           };
       }
     }
+    if (
+      settings &&
+      typeof settings === "object" &&
+      !Array.isArray(settings) &&
+      "instruction_override" in settings
+    ) {
+      try {
+        if (!candidate.metadata.instructions || executionKind !== "ai_capable")
+          throw new Error(
+            "Step instructions require an embedded workflow instruction profile and an AI task.",
+          );
+        normalizeWorkflowInstructionOverride(
+          (settings as Record<string, unknown>).instruction_override,
+        );
+      } catch (error) {
+        diagnostics.push(
+          diagnostic(
+            "WFR-SOURCE-INSTRUCTIONS-INVALID",
+            error instanceof Error
+              ? error.message
+              : "Invalid step instruction override.",
+            "Make workflow instructions explicit, then use scoped append or replace guidance.",
+            baseBlock?.id ?? null,
+            section.startLine,
+          ),
+        );
+      }
+    }
     const configuration =
       settings && typeof settings === "object" && !Array.isArray(settings)
         ? structuredClone(settings as Record<string, string | number | boolean>)
@@ -1582,17 +1678,33 @@ export function parseRecoveryAuthoringSource(
     delete configuration[RECOVERY_AUTHORING_INSTRUCTION_FIELD_KEY];
     delete configuration[RECOVERY_AUTHORING_SECONDARY_INSTRUCTION_KEY];
     delete configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
-    const approvalObjects = Object.fromEntries(
+    const approvalObjects: Record<string, unknown> = Object.fromEntries(
       Object.entries(configuration).filter(
         ([key, value]) =>
           isApprovalObject(configuration, key, value) ||
           isInteractionObject(section.kind, configuration, key, value) ||
+          isInstructionOverrideObject(section.kind, key, value) ||
           isExpectedFilePortsObject(key, value) ||
-          isMcpFileDependenciesObject(section.kind, configuration, key, value) ||
+          isMcpFileDependenciesObject(
+            section.kind,
+            configuration,
+            key,
+            value,
+          ) ||
           isMcpTaskToolsList(section.kind, configuration, key, value),
       ),
     );
     if (Object.keys(approvalObjects).length) {
+      if (approvalObjects.instruction_override) {
+        try {
+          approvalObjects.instruction_override =
+            normalizeWorkflowInstructionOverride(
+              approvalObjects.instruction_override,
+            );
+        } catch {
+          /* The source diagnostic above owns invalid declarations. */
+        }
+      }
       for (const key of Object.keys(approvalObjects)) delete configuration[key];
       configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY] =
         stableJson(approvalObjects);

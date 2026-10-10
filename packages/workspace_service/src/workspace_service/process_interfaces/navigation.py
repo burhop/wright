@@ -10,7 +10,7 @@ from core.tracing import traced
 from ..workflow_source_execution import _parse
 from .errors import ProcessInterfaceError
 from .owners import recorded_run_facts
-from .projection import project_output
+from .projection import project_output, project_previous_output
 
 
 def _denied():
@@ -72,6 +72,9 @@ class ProcessNavigation:
             return NavigationResolution(process=process, target=target)
         outputs = tuple(
             project_output(result, facts.reports) for result in facts.run.results
+        ) + tuple(
+            project_previous_output(attempt, original_id, result, facts.reports)
+            for attempt, original_id, result in facts.run.previous_results
         )
         selected = [
             output

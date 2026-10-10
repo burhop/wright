@@ -393,14 +393,15 @@ async def test_hermes_messages_include_wright_onshape_search_hint(monkeypatch):
     )
 
     assert messages[0]["role"] == "system"
-    assert "jarvisonshapemcp__search_documents" in messages[0]["content"]
-    assert "prefer the most recently modified" in messages[0]["content"]
+    assert all("Rivet" not in message["content"] for message in messages)
+    assert "jarvisonshapemcp" not in messages[0]["content"]
+    assert "Onshape" not in messages[0]["content"]
     assert messages[-1]["role"] == "user"
     assert "[Workspace::v1: /home/agent/wright/3d-printing]" in messages[-1]["content"]
 
 
 @pytest.mark.asyncio
-async def test_hermes_messages_bind_rivet_tools_to_displayed_workflow(monkeypatch):
+async def test_hermes_messages_do_not_inject_retired_rivet_guidance(monkeypatch):
     adapter = HermesAdapter("http://127.0.0.1:8642", "")
 
     async def fake_history(_session_id):
@@ -420,9 +421,9 @@ async def test_hermes_messages_bind_rivet_tools_to_displayed_workflow(monkeypatc
         )
     )
 
-    assert messages[1]["role"] == "system"
-    assert 'slug is "untitled-workflow-2"' in messages[1]["content"]
-    assert "Do not target, create, or open another" in messages[1]["content"]
+    assert [message["role"] for message in messages] == ["system", "user"]
+    assert "Rivet" not in messages[0]["content"]
+    assert "untitled-workflow-2" not in str(messages)
 
 
 @pytest.mark.asyncio

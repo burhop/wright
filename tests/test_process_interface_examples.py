@@ -162,6 +162,66 @@ def test_existing_native_history_is_not_adopted(configuration):
     assert not (workspace / "process-proofs").exists()
 
 
+def test_heat_cad_container_mapping_keeps_host_and_provider_paths_distinct(configuration):
+    from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths
+
+    workspace, project, bindings, tools = configuration
+    bindings.update(cad_workspace="/cad-workspace", run_path_template=VERSION)
+    manifest = project / "build/agentcad.json"
+    manifest.write_text(json.dumps({
+        "runtime": "build123d", "project_root": "/cad-workspace/selected-cad-project", "versions": [],
+    }))
+    before = manifest.read_bytes()
+    module = heat_preparer()
+    report = module.prepare(workspace, "container", tools, bindings)
+    plan = compile_prompt_workflow((workspace / report["source_path"]).read_text())
+    root = workspace / "process-proofs/heat-spreader-sizing/container/inputs"
+    mapping = json.loads((root / "cad-path-mapping.json").read_bytes())
+    assert mapping == {
+        "local_workspace": str(workspace.resolve()), "local_project": str(project.resolve()),
+        "provider_workspace": "/cad-workspace", "provider_project": "/cad-workspace/selected-cad-project",
+        "manifest_sha256": module.definition.sha(before), "mapping": "explicit_posix_mount",
+    }
+    operation = json.loads((root / "cad-call.json").read_bytes())
+    assert operation["cwd"] == "/cad-workspace/selected-cad-project"
+    assert operation["script"] == "/cad-workspace/" + report["output_template"] + "/plate-source.py"
+    solver = json.loads((root / "solver-call.json").read_bytes())
+    assert solver["job_name"].startswith("/workspace/")
+    assert "/cad-workspace/" not in solver["input_content"]
+    author = next(step for step in plan.steps if step.id == "author_cad_container")
+    observed = next(step for step in plan.steps if step.id == "measure_candidates_container")
+    assert operation["script"].rsplit("/", 1)[0] in author.prompt
+    assert "/cad-workspace/" in observed.prompt
+    assert str(workspace) not in author.prompt
+    for run_id in ("first", "second"):
+        bound = bind_run_paths(plan, run_id)
+        for step in bound.steps:
+            assert TOKEN not in step.prompt
+            if step.save:
+                assert step.output_path.startswith(report["output_root"] + "/" + run_id + "/")
+    assert manifest.read_bytes() == before
+    assert any(item["path"].endswith("cad-path-mapping.json") for item in report["input_files"])
+
+
+@pytest.mark.parametrize("mount", ["", "relative", "//server/share", "/workspace/../other", "/a/./b", "/a//b", "C:\\workspace", "/workspace\\project", None])
+def test_bad_cad_mount_blocks_before_staging(configuration, mount):
+    workspace, _, bindings, tools = configuration
+    bindings["cad_workspace"] = mount
+    with pytest.raises(ValueError, match="explicit absolute POSIX workspace mount"):
+        heat_preparer().prepare(workspace, "bad-cad-mount", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_container_mapping_does_not_adopt_a_host_manifest(configuration):
+    workspace, project, bindings, tools = configuration
+    bindings["cad_workspace"] = "/workspace"
+    before = (project / "build/agentcad.json").read_bytes()
+    with pytest.raises(ValueError, match="exact root"):
+        heat_preparer().prepare(workspace, "wrong-provider-root", tools, bindings)
+    assert (project / "build/agentcad.json").read_bytes() == before
+    assert not (workspace / "process-proofs").exists()
+
+
 def test_existing_attempt_is_preserved(configuration):
     workspace, _, bindings, tools = configuration
     module = heat_preparer()
@@ -436,6 +496,21 @@ def test_printed_proposal_preserves_assignment_and_full_gate(printed_configurati
     assert profile.id == "printed-replacement-part-01-full"
     assert len(profile.checks) == 18
     assert profile.checks[-1].constraint.operator == "review"
+    review = next(step for step in plan.steps if step.id == "review_preparation_source_test")
+    assert plan.steps.index(review) < plan.steps.index(validator)
+    assert review.external_action["action_kind"] == "local_review"
+    assert review.external_action["settings"]["validation_review"] == {
+        "profile_ref": profile.reference().model_dump(mode="json"),
+        "requirement_ids": sorted(
+            requirement.id for requirement in profile.baseline.requirements
+            if requirement.review_required
+        ),
+    }
+    # The review must be reachable before assessment, with the same exact subjects.
+    review_sources = {address for _, address in review.references}
+    assert set(dict(validator.validation_sources).values()) <= review_sources
+    assert not any(address.startswith(validator.id + ".") for address in review_sources)
+    assert plan.steps[-1].id == validator.id
     call = json.loads(
         (
             workspace
@@ -606,6 +681,291 @@ def test_configured_geometry_requires_qualified_inputs_before_staging(printed_co
     bindings["geometry_operation_mode"] = "configured_tool"
     with pytest.raises(ValueError, match="pinned basis and both qualified"):
         printed_preparer().prepare(workspace, "missing-operations", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_printed_independent_construction_keeps_downstream_owners_and_full_gate(printed_configuration):
+    from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = "configured_tool"
+    bindings["run_path_template"] = VERSION
+    for role in ("construction", "repair"):
+        reference = bindings["geometry_operation_files"][role]
+        path = Path(reference["path"])
+        path.write_text(json.dumps({"code": f"print('fixture-only/{TOKEN}/{role}')"}))
+        reference["sha256"] = module.definition.sha(path.read_bytes())
+    outputs = {"source_mesh": "source_mesh.stl", "native_cad": "native-design.FCStd",
+               "neutral_cad": "native-design.step", "cad_preview": "native-design.png",
+               "native_measurements": "native-measurements.json"}
+    bindings["construction_binding"] = {"server": "fixture-native-cad", "tool": "execute_code", "outputs": outputs}
+    tools.append(dict(server_id="fixture-native-cad", tool_name="execute_code",
+                      name="fixture-native-cad__execute_code", schema_digest="b" * 64))
+    report = module.prepare(workspace, "independent-construction", tools, bindings)
+    plan = compile_prompt_workflow((workspace / report["source_path"]).read_text())
+    for run_id in ("native-one", "native-two"):
+        bound = bind_run_paths(plan, run_id)
+        create = next(s for s in bound.steps if s.id.startswith("create_mesh"))
+        repair = next(s for s in bound.steps if s.id.startswith("repair_measure_orient"))
+        assert create.server_id == "fixture-native-cad" and create.tool_name.endswith("__execute_code")
+        assert create.agent_task is False and create.prompt == ""
+        assert set(create.expected_files) == {report["output_root"] + "/" + run_id + "/" + name for name in outputs.values()}
+        assert repair.server_id == "fixture-geometry" and repair.tool_name.endswith("__execute_blender_code")
+        assert list(repair.file_dependencies.values()) == [report["output_root"] + "/" + run_id + "/source_mesh.stl"]
+        assert {s.server_id for s in bound.steps if s.id.startswith("supports_and_slice")} == {"fixture-slicer"}
+        gate = next(s for s in bound.steps if s.validation)
+        profile = ValidatorConfiguration.model_validate(gate.validation).load(str(workspace))
+        assert profile.id == "printed-replacement-part-01-full" and len(profile.checks) == 18
+        assert profile.checks[-1].constraint.operator == "review"
+    assert report["physical_dispatch"] is False
+    assert not list((workspace / report["output_root"]).iterdir())
+
+
+@pytest.mark.parametrize("binding", [None, {}, {"server": "cad", "tool": "execute_code"},
+    {"server": "cad", "tool": "execute_code", "outputs": {"source_mesh": "other.stl"}},
+    {"server": "cad", "tool": "execute_code", "outputs": {"source_mesh": "source_mesh.stl", "cad": "../escaped.step"}},
+    {"server": "cad", "tool": "execute_code", "outputs": {"source_mesh": "source_mesh.stl", "cad": "source-model-report.json"}},
+    {"server": "cad", "tool": "execute_code", "outputs": {"source_mesh": "source_mesh.stl", "cad": "source_mesh.stl"}},
+])
+def test_invalid_independent_construction_binding_never_stages(printed_configuration, binding):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = "configured_tool"
+    bindings["construction_binding"] = binding
+    with pytest.raises(ValueError, match="construction"):
+        module.prepare(workspace, "bad-independent-construction", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_missing_independent_construction_capability_never_stages(printed_configuration):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = "configured_tool"
+    bindings["construction_binding"] = {"server": "absent-native-cad", "tool": "execute_code", "outputs": {"source_mesh": "source_mesh.stl"}}
+    with pytest.raises(ValueError, match="absent-native-cad/execute_code"):
+        module.prepare(workspace, "missing-independent-construction", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def test_independent_construction_requires_explicit_configured_mode(printed_configuration):
+    workspace, bindings, tools = printed_configuration
+    bindings["construction_binding"] = {"server": "native-cad", "tool": "execute_code", "outputs": {"source_mesh": "source_mesh.stl"}}
+    with pytest.raises(ValueError, match="configured tool"):
+        printed_preparer().prepare(workspace, "implicit-construction", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+def repair_completion_binding(workspace, bindings, module):
+    """Declare a fixture inspector without running any engineering provider."""
+    path = workspace.parent / "completion-arguments.json"
+    path.write_text(json.dumps({"code": "print('fixture completion inspector')"}))
+    bindings["repair_completion_operation"] = {
+        "server": "fixture-inspection", "tool": "run_simulation",
+        "arguments_file": {"path": str(path), "sha256": module.definition.sha(path.read_bytes())},
+    }
+
+
+def test_printed_repair_completion_gate_preserves_checks_and_precedes_slice(printed_configuration):
+    from workspace_service.workflow_run_paths import TOKEN, VERSION, bind_run_paths
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings.update(geometry_operation_mode="configured_tool", run_path_template=VERSION)
+    for role in ("construction", "repair"):
+        reference = bindings["geometry_operation_files"][role]
+        path = Path(reference["path"])
+        path.write_text(json.dumps({"code": f"print('fixture-only/{TOKEN}/{role}')"}))
+        reference["sha256"] = module.definition.sha(path.read_bytes())
+    repair_completion_binding(workspace, bindings, module)
+    result = module.prepare(workspace, "completion-gate", tools, bindings)
+    plan = compile_prompt_workflow((workspace / result["source_path"]).read_text())
+    for run_id in ("completion-first", "completion-second"):
+        bound = bind_run_paths(plan, run_id)
+        early = next(s for s in bound.steps if s.id.startswith("validate_mesh_before_slice"))
+        final = next(s for s in bound.steps if s.validation and s != early)
+        early_profile = ValidatorConfiguration.model_validate(early.validation).load(str(workspace))
+        final_profile = ValidatorConfiguration.model_validate(final.validation).load(str(workspace))
+        mesh_checks = [c for c in final_profile.checks if c.subject_role == "repaired_mesh"]
+        assert len(mesh_checks) == 5
+        assert list(early_profile.checks[:-1]) == mesh_checks
+        assert early_profile.checks[-1].selector == "/completed_program_record"
+        assert early_profile.checks[-1].constraint.expected is True
+        completion_requirement = next(r for r in early_profile.baseline.requirements if r.id == "PRINT01-REPAIR-COMPLETION")
+        staged_reference = completion_requirement.sources[0]
+        assert not Path(staged_reference.artifact_ref).is_absolute()
+        assert module.definition.sha((workspace / staged_reference.artifact_ref).read_bytes()) == staged_reference.sha256
+        assert len(final_profile.checks) == 18
+        assert final_profile.checks[-1].constraint.operator == "review"
+        inspector = next(s for s in bound.steps if s.id.startswith("inspect_repair_completion"))
+        slicer = next(s for s in bound.steps if s.id.startswith("supports_and_slice"))
+        order = [s.id for s in bound.steps]
+        assert order.index(inspector.id) < order.index(early.id) < order.index(slicer.id)
+        assert inspector.agent_task is False and inspector.prompt == ""
+        assert inspector.expected_files == (result["output_root"] + "/" + run_id + "/repair-completion.json",)
+        assert any(p.endswith("/" + run_id + "/repair-provider-response.json") for p in inspector.file_dependencies.values())
+        assert len(inspector.file_dependencies) == 5
+        assert {c.subject_role for c in early_profile.checks} == {"repaired_mesh", "completion"}
+    assert result["physical_dispatch"] is False
+    assert not list((workspace / result["output_root"]).iterdir())
+
+
+def native_inspection_binding(workspace, bindings, tools, module):
+    """Authored fixture declarations only; no native provider call."""
+    configured_geometry(bindings, workspace, module)
+    bindings.update(geometry_operation_mode="configured_tool", run_path_template="wright.run-path/1")
+    for role in ("construction", "repair"):
+        ref = bindings["geometry_operation_files"][role]
+        path = Path(ref["path"])
+        path.write_text(json.dumps({"code": "print('fixture/{{wright.run_id}}')"}))
+        ref["sha256"] = module.definition.sha(path.read_bytes())
+    bindings["construction_binding"] = {
+        "server": "fixture-native", "tool": "execute_code",
+        "outputs": {"native_cad": "native.FCStd", "neutral_cad": "neutral.step", "source_mesh": "source_mesh.stl"},
+    }
+    tools.append(dict(server_id="fixture-native", tool_name="execute_code", name="fixture-native__execute_code", schema_digest="c" * 64))
+    path = workspace.parent / "native-inspection-arguments.json"
+    path.write_text(json.dumps({"code": "print('fixture inspection/{{wright.run_id}}')"}))
+    bindings["native_inspection_operation"] = {
+        "server": "fixture-native", "tool": "execute_code",
+        "arguments_file": {"path": str(path), "sha256": module.definition.sha(path.read_bytes())},
+    }
+
+
+def test_integrated_native_inspection_preserves_full_profile_and_exact_handoffs(printed_configuration):
+    from workspace_service.workflow_run_paths import bind_run_paths
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    native_inspection_binding(workspace, bindings, tools, module)
+    result = module.prepare(workspace, "native-inspection", tools, bindings)
+    plan = compile_prompt_workflow((workspace / result["source_path"]).read_text(encoding="utf-8"))
+    for run_id in ("inspection-first", "inspection-second"):
+        bound = bind_run_paths(plan, run_id)
+        create, inspect, early, repair, final, review = (
+            next(s for s in bound.steps if s.id.startswith(prefix))
+            for prefix in ("create_mesh", "inspect_native_and_draw", "validate_native_inspection", "repair_measure_orient", "validate_outputs", "review_preparation")
+        )
+        order = [s.id for s in bound.steps]
+        assert order.index(create.id) < order.index(inspect.id) < order.index(early.id) < order.index(repair.id)
+        assert inspect.agent_task is False and inspect.prompt == ""
+        assert inspect.server_id == "fixture-native"
+        report_step = next(s for s in bound.steps if s.id.startswith("summarize_preparation"))
+        assert "maxTextBytes=32768" in report_step.prompt
+        assert "maxTextBytes=65536" not in report_step.prompt
+        assert "truncated or unavailable" in report_step.prompt
+        root = result["output_root"] + "/" + run_id + "/"
+        assert set(inspect.file_dependencies.values()) == {root + name for name in ("native.FCStd", "neutral.step", "source_mesh.stl")}
+        assert set(inspect.expected_files) == {root + name for name in module.native_inspection.OUTPUTS.values()}
+        early_profile = ValidatorConfiguration.model_validate(early.validation).load(str(workspace))
+        final_profile = ValidatorConfiguration.model_validate(final.validation).load(str(workspace))
+        assert early_profile.version == "2" and len(early_profile.checks) == 20
+        assert any(check.selector == "/drawing/dimension_values_mm/SocketAcrossFlat" for check in early_profile.checks)
+        assert all(r.id.endswith("-DIGITAL-OBSERVATION") for r in early_profile.baseline.requirements)
+        assert final_profile.id == "printed-replacement-part-01-full" and len(final_profile.checks) == 18
+        assert final_profile.checks[-1].constraint.operator == "review"
+        references = [ref for _, ref in review.references]
+        assert inspect.id + ".drawing_pdf" in references
+        assert inspect.id + ".drawing_preview" in references
+        assert inspect.id + ".matrix" in references
+        assert early.id + ".native_inspection_assessment" in references
+    assert result["physical_dispatch"] is False
+    assert not list((workspace / result["output_root"]).iterdir())
+
+
+def test_native_orientation_study_uses_same_run_geometry_and_preserves_reviews(printed_configuration):
+    from workspace_service.workflow_run_paths import bind_run_paths
+
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    native_inspection_binding(workspace, bindings, tools, module)
+    bindings.update(orientation_comparison=True, nominal_layer_section=None)
+    result = module.prepare(workspace, "integrated-orientation", tools, bindings)
+    comparison_args = workspace / "process-proofs/printed-replacement-part/integrated-orientation/inputs/orientation/compare_orientations-arguments.json"
+    comparison_code = json.loads(comparison_args.read_bytes())["input_content"]
+    assert "filament mass (g)" in comparison_code
+    assert "filament length (mm)" in comparison_code
+    source = (workspace / result["source_path"]).read_text(encoding="utf-8")
+    plan = compile_prompt_workflow(source)
+    for run_id in ("first", "second"):
+        steps = bind_run_paths(plan, run_id).steps
+        create, native, orient, compare, review, final = (
+            next(s for s in steps if s.id.startswith(prefix)) for prefix in (
+                "create_mesh", "validate_native_inspection", "orient_geometry",
+                "compare_orientations", "review_preparation", "validate_outputs"))
+        root = result["output_root"] + "/" + run_id + "/"
+        assert root + "source_mesh.stl" in orient.file_dependencies.values()
+        assert root + "source_mesh.stl" in compare.file_dependencies.values()
+        assert root + "orientation/source_mesh.stl" in compare.file_dependencies.values()
+        assert steps.index(create) < steps.index(native) < steps.index(orient) < steps.index(compare) < steps.index(review)
+        assert sum(s.id.startswith("slice_socket_") for s in steps) == 2
+        refs = [ref for _, ref in review.references]
+        assert any(ref.startswith(compare.id + ".") for ref in refs)
+        assert any("inspect_native_and_draw" in ref and ref.endswith("drawing_pdf") for ref in refs)
+        full = ValidatorConfiguration.model_validate(final.validation).load(str(workspace))
+        assert len(full.checks) == 18 and full.checks[-1].constraint.operator == "review"
+    assert source.count('"action_kind":"local_review"') == 2
+    assert result["physical_dispatch"] is False
+    assert not list((workspace / result["output_root"]).iterdir())
+
+
+@pytest.mark.parametrize("value", ["true", 1, None])
+def test_orientation_selection_requires_typed_configuration(printed_configuration, value):
+    workspace, bindings, tools = printed_configuration
+    bindings["orientation_comparison"] = value
+    with pytest.raises(ValueError, match="boolean"):
+        printed_preparer().prepare(workspace, "invalid-orientation", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+@pytest.mark.parametrize("fault", ["missing_provider", "missing_native_output", "changed_arguments", "nonobject_arguments", "unexpected_binding", "ai_construction"])
+def test_native_inspection_invalid_binding_does_not_stage(printed_configuration, fault):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    native_inspection_binding(workspace, bindings, tools, module)
+    binding = bindings["native_inspection_operation"]
+    if fault == "missing_provider":
+        binding["server"] = "unavailable-inspector"
+    elif fault == "missing_native_output":
+        bindings["construction_binding"]["outputs"].pop("native_cad")
+    elif fault == "unexpected_binding":
+        binding["approve"] = True
+    elif fault == "ai_construction":
+        bindings.pop("construction_binding")
+        bindings["geometry_operation_mode"] = "ai_task"
+    else:
+        path = Path(binding["arguments_file"]["path"])
+        path.write_text("[]")
+        if fault == "nonobject_arguments":
+            binding["arguments_file"]["sha256"] = module.definition.sha(path.read_bytes())
+    with pytest.raises(ValueError):
+        module.prepare(workspace, "invalid-native-inspection", tools, bindings)
+    assert not (workspace / "process-proofs").exists()
+
+
+@pytest.mark.parametrize("fault", ["missing_server", "changed_arguments", "non_object_arguments", "extra_binding_field"])
+def test_printed_repair_completion_bad_binding_never_stages(printed_configuration, fault):
+    workspace, bindings, tools = printed_configuration
+    module = printed_preparer()
+    configured_geometry(bindings, workspace, module)
+    bindings["geometry_operation_mode"] = "configured_tool"
+    repair_completion_binding(workspace, bindings, module)
+    binding = bindings["repair_completion_operation"]
+    if fault == "missing_server":
+        binding["server"] = "missing-inspector"
+    elif fault == "extra_binding_field":
+        binding["approval"] = True
+    else:
+        path = Path(binding["arguments_file"]["path"])
+        path.write_text("[]")
+        if fault == "non_object_arguments":
+            binding["arguments_file"]["sha256"] = module.definition.sha(path.read_bytes())
+    with pytest.raises(ValueError):
+        module.prepare(workspace, "invalid-completion-gate", tools, bindings)
     assert not (workspace / "process-proofs").exists()
 
 

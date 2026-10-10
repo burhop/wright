@@ -150,6 +150,35 @@ async def authoring_capabilities(
         raise _error(error) from error
 
 
+@router.get("/imported-interfaces")
+async def imported_interfaces(
+    request: Request,
+    response: Response,
+    session_id: Identifier,
+    path: Locator,
+    expected_storage_digest: Digest,
+    service=Depends(get_workspace_service),
+    authoring=Depends(get_process_ui_authoring),
+):
+    response.headers["Cache-Control"] = "no-store"
+    _, scope, process = _context(
+        request,
+        service,
+        ProcessSourceRequest(
+            session_id=session_id,
+            path=path,
+            expected_storage_digest=expected_storage_digest,
+        ),
+    )
+    try:
+        return {
+            "process": process,
+            **await authoring.imported_interfaces(scope, process),
+        }
+    except (ProcessInterfaceError, KeyError, ValueError) as error:
+        raise _error(error) from error
+
+
 @router.post("/authoring-jobs", status_code=202)
 async def create_authoring_job(
     body: ProcessUIAuthoringRequest,
@@ -169,6 +198,7 @@ async def create_authoring_job(
             title=body.title,
             ui_id=body.ui_id,
             base_revision=body.base_revision,
+            imported_interface=body.imported_interface,
         )
     except (ProcessInterfaceError, KeyError, ValueError) as error:
         raise _error(error) from error

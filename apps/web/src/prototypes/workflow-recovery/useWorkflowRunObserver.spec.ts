@@ -198,4 +198,35 @@ describe("scoped run observer", () => {
       ),
     ).toBe(true);
   });
+  it("reconciles the same waiting run after an answer in another tab", () => {
+    const owned = {
+      pending: false,
+      startedAt: "2026-09-08T10:00:00Z",
+      logPath: "runs/owned.json",
+      hasResult: true,
+      status: "waiting_human",
+    };
+    expect(
+      preferObservedRun(
+        { ...row(), path: owned.logPath, status: "running" },
+        owned,
+      ),
+    ).toBe(true);
+    expect(
+      preferObservedRun(
+        { ...row(), path: owned.logPath, status: "completed" },
+        owned,
+      ),
+    ).toBe(true);
+    expect(
+      preferObservedRun(
+        {
+          ...row(),
+          path: "runs/earlier.json",
+          started_at: "2026-09-08T09:00:00Z",
+        },
+        owned,
+      ),
+    ).toBe(false);
+  });
 });

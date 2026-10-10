@@ -138,8 +138,15 @@ describe("process documents in the existing viewer store", () => {
   });
 
   it("retains the saved interface revision when recording the backend's run receipt", () => {
-    const locator = {kind: "working" as const, ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32)};
-    const tailored = createProcessWorkspaceTab(process, {viewId: "view-tailored", interface: locator});
+    const locator = {
+      kind: "working" as const,
+      ui_id: "ui-" + "a".repeat(32),
+      revision_id: "revision-" + "b".repeat(32),
+    };
+    const tailored = createProcessWorkspaceTab(process, {
+      viewId: "view-tailored",
+      interface: locator,
+    });
     act(() => viewer.openTransientTab(tailored));
     act(() => viewer.attachProcessTabRun(tailored.path, process, "run-one"));
     expect(viewer.openTabs[0]?.processView?.interface).toEqual(locator);

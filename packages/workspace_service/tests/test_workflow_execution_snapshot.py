@@ -266,6 +266,37 @@ def test_latest_ignores_malformed_foreign_and_escaping_records(tmp_path):
         recent_workflow_runs(tmp_path, "../outside.workflow.wflow", latest_only=True)
 
 
+def test_history_and_latest_use_recorded_start_for_uuid_and_legacy_locators(tmp_path):
+    source, path, record = setup_record(tmp_path, status="completed")
+    # File-name order deliberately contradicts chronological start order.
+    older = path.parent / ("f" * 32 + ".json")
+    newer = path.parent / ("0" * 31 + "1.json")
+    older.write_text(
+        json.dumps(
+            {
+                **record,
+                "run_id": "f" * 32,
+                "status": "failed",
+                "started_at": "2026-09-08T11:00:00+00:00",
+            }
+        ),
+        encoding="utf-8",
+    )
+    newer.write_text(
+        json.dumps(
+            {**record, "run_id": "0" * 31 + "1", "started_at": "2026-09-08T12:00:00Z"}
+        ),
+        encoding="utf-8",
+    )
+    history = recent_workflow_runs(tmp_path, source, limit=1)
+    latest = recent_workflow_runs(tmp_path, source, latest_only=True)
+    assert history[0]["path"].endswith(newer.name)
+    assert latest[0]["path"] == history[0]["path"]
+    assert latest[0]["status"] == "completed"
+    assert latest[0]["run_id"] == "0" * 31 + "1"
+    assert json.loads(older.read_text(encoding="utf-8"))["status"] == "failed"
+
+
 def test_projection_is_byte_bounded_and_native_payloads_never_appear():
     results = [
         artifact("task" + str(i), "reports/" + ("p" * 2000) + str(i) + ".html")

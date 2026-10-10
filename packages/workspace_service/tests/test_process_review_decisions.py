@@ -148,26 +148,39 @@ async def decide(case, **changes):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("artifact", [False, True])
-async def test_review_is_scoped_durable_and_does_not_dispatch(tmp_path, artifact):
+@pytest.mark.parametrize("actor", ["reviewer", "integration_test:isolated-review"])
+async def test_review_is_scoped_durable_and_does_not_dispatch(
+    tmp_path, artifact, actor
+):
     case = await waiting_review_case(tmp_path, artifact=artifact)
     app, reference, receipt, cp, digest, calls, _ = case
     try:
-        result = await decide(case)
+        result = await decide(case, actor=actor)
         assert result.context.run_id == receipt.run_id
         assert result.interactions[0].subject_digest == digest
         assert result.interactions[0].decision.request_id == "review-one"
+        assert result.interactions[0].decision.integration_test is actor.startswith(
+            "integration_test:"
+        )
         assert result.state == ("completed" if artifact else "waiting_human")
         assert len(calls) == 1 and not app.runs.is_live(receipt.run_id)
         if artifact:
             reviewed = await app.workspace.workflow_artifact_reviews.get(
                 "workspace", cp, str(tmp_path)
             )
-            assert reviewed["actor"] == "reviewer"
+            assert reviewed["actor"] == actor
+            assert reviewed["integration_test"] is actor.startswith("integration_test:")
             assert reviewed["request_id"] == "review-one"
             assert reviewed["state"] == "approved"
         else:
             reviewed = app.workspace.workflow_external_actions.lookup(cp)
-            assert reviewed.actor == "reviewer" and reviewed.state == "approved"
+            assert reviewed.actor == actor and reviewed.state == "approved"
+            assert reviewed.continuation["decision_attribution"][
+                "integration_test"
+            ] is actor.startswith("integration_test:")
+            assert "integration_policy_digest" not in (
+                reviewed.continuation.get("execution_context") or {}
+            )
             assert reviewed.external_action is None
             assert (
                 reviewed.continuation["decision_receipt"]["request_id"] == "review-one"
@@ -176,7 +189,7 @@ async def test_review_is_scoped_durable_and_does_not_dispatch(tmp_path, artifact
         recreated = ProcessInterfaceService(app.workspace)
         app.workspace.process_interfaces = recreated
         case = (recreated, *case[1:])
-        retried = await decide(case)
+        retried = await decide(case, actor=actor)
         assert retried.context.run_id == receipt.run_id
         assert len(calls) == 1
         record = json.loads(
@@ -193,6 +206,13 @@ async def test_review_is_scoped_durable_and_does_not_dispatch(tmp_path, artifact
             )
             == 1
         )
+        event = next(
+            item
+            for item in record["events"]
+            if item["kind"] == ("review_decided" if artifact else "approval_decided")
+        )
+        assert event["actor"] == actor
+        assert event["integration_test"] is actor.startswith("integration_test:")
         await recreated.close()
     finally:
         await app.close()

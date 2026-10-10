@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from pydantic import ValidationError
 
@@ -188,6 +188,51 @@ def _action_receipt(checkpoint):
     )
 
 
+def _approval_evidence(checkpoint):
+    evidence = tuple(
+        ArtifactRef(artifact_ref=path, sha256=digest)
+        for path, digest in sorted(
+            {
+                (item["path"], item["sha256"])
+                for item in checkpoint.continuation.get("artifact_files", ())
+            }
+        )
+    )
+    if len(evidence) > PAGE_ITEMS:
+        raise ProcessInterfaceError(
+            "READINESS_UNSUPPORTED",
+            "This action checkpoint exceeds the bounded evidence composition size.",
+            "Inspect every artifact in the canonical run and reduce the declared checkpoint's evidence scope.",
+        )
+    return evidence
+
+
+def _approval_instructions(checkpoint, resolved):
+    """Display accepted review text only from the checkpoint's exact revision."""
+    if checkpoint.subject.get("definition_digest") == resolved.process.source_digest:
+        block = next(
+            (
+                item
+                for item in _parse(resolved.document.source)
+                if item["kind"] == "task" and item["id"] == checkpoint.step_id
+            ),
+            None,
+        )
+        if block:
+            fields = block["fields"]
+            message = (fields.get("settings") or {}).get("approval_message")
+            if not isinstance(message, str) or not message.strip():
+                message = fields.get("instructions")
+            if isinstance(message, str) and message.strip():
+                return redact_text(message)[:8192]
+    # A different current source cannot supply historical review instructions.
+    # Retain the recorded title; do not invent a historical instruction body.
+    return redact_text(
+        checkpoint.continuation.get("step_title")
+        or "Review the exact process action and its evidence before continuing."
+    )[:8192]
+
+
 async def _approval(app, resolved, view, *, gateway, session_id):
     reference = view.get("approval")
     if (
@@ -273,8 +318,9 @@ async def _approval(app, resolved, view, *, gateway, session_id):
         step_id=checkpoint.step_id,
         kind="action",
         subject_digest=checkpoint.subject_digest,
-        instructions="Review the exact process action and its evidence before continuing.",
+        instructions=_approval_instructions(checkpoint, resolved),
         decisions=("approved", "changes_requested"),
+        evidence=_approval_evidence(checkpoint),
         state=state,
         action_receipt=_action_receipt(checkpoint),
         decision=ReviewDecision(
@@ -405,15 +451,14 @@ async def _review(app, resolved, view):
     return (interaction,), (action,)
 
 
-def _reports(app, resolved, run_id):
-    validation = ValidationApplication(
-        app.db_path, resolved.process.workspace_id, resolved.workspace_dir
-    )
+def reports_for_run(app, process, workspace_dir, run_id):
+    """Reuse the validator's reports/currentness for one already-authorized run."""
+    validation = ValidationApplication(app.db_path, process.workspace_id, workspace_dir)
     identities = validation.repository.assessment_ids_for_run(
-        resolved.process.workspace_id, run_id
+        process.workspace_id, run_id
     )
     if identities and validation.repository.assessment_ids_for_run(
-        resolved.process.workspace_id,
+        process.workspace_id,
         run_id,
         cursor=identities[-1][0],
         limit=1,
@@ -430,7 +475,8 @@ def _reports(app, resolved, run_id):
 
 async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=""):
     """Read one authorized run; mutations still belong to canonical use cases."""
-    generated_at = datetime.now(timezone.utc).isoformat()
+    observed_at = datetime.now(timezone.utc)
+    generated_at = observed_at.isoformat()
     receipt = await asyncio.to_thread(
         app.inputs.receipt_for_run,
         resolved.process.workspace_id,
@@ -443,6 +489,7 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             resolved.workspace_dir,
             resolved.process.source_path,
             run_id,
+            complete_results=True,
             **(
                 {"run_log_path": receipt.run_log_path}
                 if receipt and receipt.run_log_path
@@ -455,6 +502,14 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             source_digest=view["source_digest"],
         )
         results = tuple(restore_result(item) for item in view["results"])
+        previous_results = tuple(
+            (
+                item["producer_attempt"],
+                item["original_result_id"],
+                restore_result(item["result"]),
+            )
+            for item in view.get("previous_results", [])
+        )
     except (
         WorkflowRunReadError,
         ValidationError,
@@ -462,10 +517,15 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
         TypeError,
         KeyError,
     ) as error:
+        inventory_limited = getattr(error, "code", None) == "result_inventory_limit"
         raise ProcessInterfaceError(
             "CAPABILITY_UNAVAILABLE",
-            "Wright could not verify this recorded run.",
-            "Open its canonical run log and check the exact process and run identity.",
+            "The recorded result inventory exceeds the supported metadata bounds."
+            if inventory_limited
+            else "Wright could not verify this recorded run.",
+            "Open the canonical run log to inspect the full retained results; no incomplete inventory was presented."
+            if inventory_limited
+            else "Open its canonical run log and check the exact process and run identity.",
             details={"record_error": getattr(error, "code", "invalid")},
         ) from error
     inputs = None
@@ -490,7 +550,9 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
         app, resolved, view, gateway=gateway, session_id=session_id
     )
     review, review_permissions = await _review(app, resolved, view)
-    reports = await asyncio.to_thread(_reports, app, resolved, run_id)
+    reports = await asyncio.to_thread(
+        reports_for_run, app, resolved.process, resolved.workspace_dir, run_id
+    )
     execution = view["execution"]
     progress = execution.get("last_progress") or {}
     diagnostics = ()
@@ -532,6 +594,13 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             operation_id=run_id,
             state=_STATES[view["status"]],
             observed_at=generated_at,
+            # This is a new read of Wright's owning recorder. Its short display
+            # lifetime is not a permission grant and never refreshes retained
+            # remote-operation observations appended below.
+            stale_after=(
+                observed_at
+                + timedelta(seconds=app.limits.run_observation_freshness_seconds)
+            ).isoformat(),
             activity=redact_text(progress["message"])[:8192]
             if progress.get("message")
             else None,
@@ -540,13 +609,17 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
                 "completed_steps": len(execution["completed_task_ids"]),
             },
             limitations=(
-                "Some recorded result metadata exceeded the read bound; use the canonical run log.",
+                "Some recorded progress metadata exceeded the summary bound; use the canonical run log for those details.",
             )
             if execution["truncated"]
             else (),
         ),
     )
     cancel_enabled, cancel_message = app.runs.cancellation_capability(run_id)
+    ended_without_cancellation = not cancel_enabled and view["status"] in {
+        "completed",
+        "cancelled",
+    }
     cancel_action = Action(
         action_id="cancel-run",
         title="Cancel this run",
@@ -563,9 +636,15 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
         if cancel_enabled
         else (
             _blocked(
-                "CAPABILITY_UNAVAILABLE",
-                cancel_message,
-                "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+                "ACTION_NOT_PERMITTED"
+                if ended_without_cancellation
+                else "CAPABILITY_UNAVAILABLE",
+                f"This Wright run has {view['status']}; there is no active execution to cancel."
+                if ended_without_cancellation
+                else cancel_message,
+                "Open its saved results or prepare another run."
+                if ended_without_cancellation
+                else "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
             ),
         ),
     )
@@ -579,8 +658,11 @@ async def recorded_run_facts(app, resolved, run_id, *, gateway=None, session_id=
             cursor=execution["event_count"],
             observed_at=generated_at,
             results=results,
+            previous_results=previous_results,
             input_snapshot=inputs,
-            results_truncated=bool(execution["truncated"]),
+            # The recorder returned the complete bounded inventory or raised.
+            # Truncated progress diagnostics cannot make exact results disappear.
+            results_truncated=False,
         ),
         reports=reports,
         interactions=approval + review + human_input,

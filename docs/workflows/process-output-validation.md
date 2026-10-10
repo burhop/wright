@@ -113,6 +113,14 @@ uv run python -m workspace_service.process_validation_cli export `
 
 `get` returns the complete report envelope. `read` pages actionable findings. `export` supports `json`, `markdown`, and `csv`; the CSV is the requirements traceability matrix.
 
+Readable reports include each requirement's review obligation and the recorded
+numerical uncertainty allowance beside its observations. The allowance uses the
+observed unit and datum frame. Zero can be a default, so it is not proof of zero
+measurement error or physical accuracy. Missing and non-numeric observations are
+identified explicitly. CSV exports retain this context in the appended
+`review_required`, `measurement_uncertainties`, and `uncertainty_note` columns;
+the original assessment and engineering verdict remain authoritative.
+
 ## Consume validation reports
 
 All projections come from one `wright.process-validation-report/1` document. A consumer determines the effective verdict with both fields:

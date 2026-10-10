@@ -3,11 +3,13 @@
 import hashlib
 import json
 from dataclasses import asdict
+from datetime import datetime, timedelta
 from types import SimpleNamespace
 
 import pytest
 
 from core.process_interactions import (
+    PAGE_ITEMS,
     InputSnapshot,
     ProcessRef,
     StartReceipt,
@@ -15,6 +17,10 @@ from core.process_interactions import (
 )
 from core.process_validation import canonical_digest
 from workspace_service.process_interfaces.errors import ProcessInterfaceError
+from workspace_service.process_interfaces.owners import (
+    _approval_evidence,
+    _approval_instructions,
+)
 from workspace_service.process_interfaces.service import (
     ProcessInterfaceService,
     ProcessScope,
@@ -60,6 +66,50 @@ def reference(root, path):
     )
 
 
+def test_action_evidence_is_deduplicated_exact_and_never_truncated():
+    artifact = {"path": "outputs/basis.json", "sha256": "a" * 64}
+    checkpoint = SimpleNamespace(continuation={"artifact_files": [artifact, artifact]})
+    evidence = _approval_evidence(checkpoint)
+    assert len(evidence) == 1
+    assert evidence[0].artifact_ref == artifact["path"]
+    assert evidence[0].sha256 == artifact["sha256"]
+    checkpoint.continuation["artifact_files"] = [
+        {"path": f"outputs/evidence-{index}.json", "sha256": "a" * 64}
+        for index in range(PAGE_ITEMS + 1)
+    ]
+    with pytest.raises(ProcessInterfaceError) as error:
+        _approval_evidence(checkpoint)
+    assert error.value.reason.code == "READINESS_UNSUPPORTED"
+
+
+def test_action_instructions_use_exact_accepted_review_text_not_a_new_revision():
+    source = """task review
+  instructions: "Inspect the exact socket section."
+  settings: {"approval_message":"Confirm the measured D-flat and blind depth."}
+end
+"""
+    resolved = SimpleNamespace(
+        process=SimpleNamespace(source_digest="a" * 64),
+        document=SimpleNamespace(source=source),
+    )
+    checkpoint = SimpleNamespace(
+        subject={"definition_digest": "a" * 64},
+        step_id="review",
+        continuation={"step_title": "Original socket review"},
+    )
+    assert _approval_instructions(checkpoint, resolved) == (
+        "Confirm the measured D-flat and blind depth."
+    )
+    resolved.document.source = source.replace(
+        '{"approval_message":"Confirm the measured D-flat and blind depth."}', "{}"
+    )
+    assert _approval_instructions(checkpoint, resolved) == (
+        "Inspect the exact socket section."
+    )
+    resolved.process.source_digest = "b" * 64
+    assert _approval_instructions(checkpoint, resolved) == "Original socket review"
+
+
 @pytest.mark.asyncio
 async def test_run_projection_uses_current_checkpoint_and_never_executes(tmp_path):
     case = await setup_case(tmp_path)
@@ -73,12 +123,85 @@ async def test_run_projection_uses_current_checkpoint_and_never_executes(tmp_pat
     assert view.interactions[0].checkpoint_id == case.checkpoint.checkpoint_id
     assert view.interactions[0].subject_digest == case.checkpoint.subject_digest
     assert view.interactions[0].state == "waiting"
+    assert view.interactions[0].instructions == "Review the exact package and printer."
+    assert {
+        (item.artifact_ref, item.sha256) for item in view.interactions[0].evidence
+    } == {
+        (item["path"], item["sha256"])
+        for item in case.checkpoint.continuation["artifact_files"]
+    }
+    assert view.interactions[0].evidence
     actions = {item.operation: item for item in view.actions}
     assert actions["review"].enabled and not actions["action"].enabled
     assert view.observations[0].progress_percent is None
+    local = view.observations[0]
+    assert local.provider_binding == "wright-source-run"
+    assert datetime.fromisoformat(local.stale_after) == (
+        datetime.fromisoformat(local.observed_at) + timedelta(seconds=30)
+    )
+    assert local.estimated_remaining_seconds is None
     assert view.context.input_snapshot_id is None
     assert case.calls == calls
     assert (tmp_path / case.result["run_log_path"]).read_bytes() == before
+
+
+@pytest.mark.asyncio
+async def test_wide_run_keeps_late_exact_file_readable_without_execution(tmp_path):
+    from workspace_service.adapters.filesystem import LocalWorkspaceFiles
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.use_cases.files import WorkspaceFileUseCases
+
+    case = await setup_case(tmp_path)
+    app = application(case.services, tmp_path)
+    process = reference(tmp_path, case.checkpoint.workflow_id)
+    run_id = case.result["run_id"]
+    path = tmp_path / case.result["run_log_path"]
+    record = json.loads(path.read_bytes())
+    content = b"requirement,value\nsocket,5.6\n"
+    digest = hashlib.sha256(content).hexdigest()
+    for index in range(160):
+        filename = f"evidence-{index:03d}-" + "a" * 100 + ".csv"
+        (tmp_path / filename).write_bytes(content)
+        item = EngineeringResult(
+            f"{run_id}:producer:evidence-{index}",
+            "file",
+            filename,
+            (
+                Representation(
+                    "workspace_file",
+                    filename,
+                    "csv",
+                    sha256=digest,
+                    size_bytes=len(content),
+                ),
+            ),
+            Provenance(run_id, "producer", f"evidence-{index}"),
+        )
+        record["partial_results"][item.id] = item.to_dict()
+    # Long progress text is still bounded independently from the result inventory.
+    record["events"].append(
+        {"kind": "step_progress", "task_id": "producer", "message": "x" * 5000}
+    )
+    path.write_text(json.dumps(record), encoding="utf-8")
+    original = path.read_bytes()
+    calls = list(case.calls)
+    view = await app.get_snapshot(scope(), process, run_id=run_id)
+    last = next(output for output in view.outputs if output.result_id == item.id)
+    assert last.representations[0].artifact_ref == filename
+    reader_scope = scope(capabilities=frozenset({"process.read", "process.results"}))
+    executor = BoundedExecutor()
+    app.workspace.files = WorkspaceFileUseCases(
+        app.db_path, executor, LocalWorkspaceFiles
+    )
+    try:
+        opened = await app.artifacts.read(
+            reader_scope, process, last.representations[0], run_id=run_id
+        )
+        assert opened.content == content
+    finally:
+        await executor.close()
+    assert path.read_bytes() == original
+    assert case.calls == calls
 
 
 @pytest.mark.asyncio
@@ -101,6 +224,77 @@ async def test_run_projection_obeys_scope_and_stale_owner_evidence(tmp_path):
         await app.get_snapshot(
             scope(workspace_id="other"), process, run_id=case.result["run_id"]
         )
+
+
+@pytest.mark.asyncio
+async def test_checkpoint_evidence_can_be_read_without_review_or_execution(tmp_path):
+    from core.process_interactions import ArtifactRef
+    from workspace_service.adapters.filesystem import LocalWorkspaceFiles
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.use_cases.files import WorkspaceFileUseCases
+
+    case = await setup_case(tmp_path)
+    app = application(case.services, tmp_path)
+    process = reference(tmp_path, case.checkpoint.workflow_id)
+    reader_scope = scope(capabilities=frozenset({"process.read", "process.results"}))
+    item = case.checkpoint.continuation["artifact_files"][0]
+    evidence = ArtifactRef(artifact_ref=item["path"], sha256=item["sha256"])
+    run_file = tmp_path / case.result["run_log_path"]
+    before = run_file.read_bytes()
+    calls = list(case.calls)
+    executor = BoundedExecutor()
+    app.workspace.files = WorkspaceFileUseCases(
+        app.db_path, executor, LocalWorkspaceFiles
+    )
+    try:
+        artifact = await app.artifacts.read(
+            reader_scope, process, evidence, run_id=case.result["run_id"]
+        )
+        assert artifact.content == (tmp_path / evidence.artifact_ref).read_bytes()
+        assert case.calls == calls
+        assert run_file.read_bytes() == before
+        assert (
+            app.workspace.workflow_external_actions.get(
+                case.checkpoint.checkpoint_id,
+                workspace_id="ws",
+                run_id=case.result["run_id"],
+            ).actor
+            is None
+        )
+        for forged in (
+            evidence.model_copy(update={"artifact_ref": "private.txt"}),
+            evidence.model_copy(update={"sha256": "0" * 64}),
+            evidence.model_copy(update={"result_id": "invented-result"}),
+            evidence.model_copy(
+                update={"representation_id": "invented-representation"}
+            ),
+        ):
+            with pytest.raises(ProcessInterfaceError) as denied:
+                await app.artifacts.read(
+                    reader_scope, process, forged, run_id=case.result["run_id"]
+                )
+            assert denied.value.reason.code == "SCOPE_DENIED"
+        with pytest.raises(ProcessInterfaceError) as wrong_subject:
+            app.artifacts._authorize_checkpoint(
+                process,
+                case.result["run_id"],
+                {
+                    "approval": {
+                        "checkpoint_id": case.checkpoint.checkpoint_id,
+                        "subject_digest": "0" * 64,
+                    }
+                },
+                evidence,
+            )
+        assert wrong_subject.value.reason.code == "SCOPE_DENIED"
+        (tmp_path / evidence.artifact_ref).write_bytes(b"changed checkpoint evidence")
+        with pytest.raises(ProcessInterfaceError) as stale:
+            await app.artifacts.read(
+                reader_scope, process, evidence, run_id=case.result["run_id"]
+            )
+        assert stale.value.reason.code == "SUBJECT_STALE"
+    finally:
+        await executor.close()
 
 
 @pytest.mark.asyncio

@@ -21,36 +21,26 @@ from .base import (
 )
 from .hermes_config import hermes_config_path, resolve_hermes_api_settings
 from .hermes_role import HermesRoleTransport
+from .workflow_instructions import embedded_instruction_set
 
 logger = structlog.get_logger(__name__)
 
 
-WRIGHT_SYSTEM_HINT = (
-    "You are running inside Wright with MCP tools exposed through the "
-    "wrightgateway. Select tools from their advertised descriptions and schemas, "
-    "and use the workspace path from the [Workspace::v1: ...] prefix when a tool "
-    "requires an explicit workspace or output location. "
-    "When a tool returns retryable validation errors and confirms that no external "
-    "state was changed, apply every deterministic correction it reports in one "
-    "revised tool call and retry. Do not stop merely to relay those corrections "
-    "unless a correction is ambiguous, requires new user authority, or the revised "
-    "call repeats the same failure. "
-    "When Wright supplies a currently displayed Rivet workflow, every Rivet read or "
-    "write must target that workflow. Never select, create, or open another Rivet "
-    "workflow unless the user explicitly requests it. "
-    "For Onshape requests, do not ask the user for document, "
-    "workspace, or element IDs when they provided a document or part name. "
-    "First use jarvisonshapemcp__search_documents or "
-    "jarvisonshapemcp__list_documents to find the document. If there are "
-    "multiple exact title matches, prefer the most recently modified one "
-    "unless the user specified another date or version. Then inspect the "
-    "document with jarvisonshapemcp__get_document_summary, "
-    "jarvisonshapemcp__get_elements, or "
-    "jarvisonshapemcp__find_part_studios before exporting with "
-    "jarvisonshapemcp__export_part_studio or "
-    "jarvisonshapemcp__export_assembly. Ask a clarifying question only when "
-    "search results are ambiguous after you have searched."
-)
+# Compatibility name; shipped behavior lives in the inspectable role resource.
+WRIGHT_SYSTEM_HINT = embedded_instruction_set().resolve("chat").text
+
+
+class ChatInvocationEvidenceError(ValueError):
+    """An actual request audit failed; do not silently classify it as SSE syntax."""
+
+
+async def _retain_chat_invocation(observer, invocation):
+    try:
+        await observer(invocation)
+    except Exception as error:
+        raise ChatInvocationEvidenceError(
+            "Chat invocation evidence could not be retained."
+        ) from error
 
 
 def _gateway_unavailable_message(last_error: Exception | str | None) -> str:
@@ -727,32 +717,8 @@ class HermesAdapter(BaseAgentEngine):
                 ],
                 {"role": "user", "content": request.message},
             ]
-        messages = [{"role": "system", "content": WRIGHT_SYSTEM_HINT}]
-        if request.active_rivet_slug:
-            quoted_slug = json.dumps(request.active_rivet_slug)
-            messages.append(
-                {
-                    "role": "system",
-                    "content": (
-                        "Wright UI context: the currently displayed Rivet workflow "
-                        f"slug is {quoted_slug}. Use this exact slug for every "
-                        "wright__rivet_* read or write. Do not target, create, or "
-                        "open another Rivet workflow unless the user explicitly "
-                        "requests it."
-                    ),
-                }
-            )
-        else:
-            messages.append(
-                {
-                    "role": "system",
-                    "content": (
-                        "Wright UI context: no Rivet workflow is currently displayed. "
-                        "Do not guess a Rivet workflow target or create/open one unless "
-                        "the user explicitly requests it."
-                    ),
-                }
-            )
+        instructions = embedded_instruction_set(request.instruction_set).resolve("chat")
+        messages = [{"role": "system", "content": instructions.text}]
         for msg in history:
             messages.append({"role": msg.role, "content": msg.content})
 
@@ -814,6 +780,14 @@ class HermesAdapter(BaseAgentEngine):
         """Stream chat via Hermes native OpenAI-compatible API."""
         if request.invocation_context is not None:
             transport = HermesRoleTransport.from_host()
+            captured_invocations = []
+
+            async def capture_invocation(invocation):
+                if request.invocation_observer is not None:
+                    await request.invocation_observer(invocation)
+                else:
+                    captured_invocations.append(invocation)
+
             try:
                 if transport is None:
                     raise ValueError("No confined model transport")
@@ -831,7 +805,13 @@ class HermesAdapter(BaseAgentEngine):
                     request.invocation_context,
                     request.message,
                     resolution,
+                    invocation_observer=capture_invocation,
                 )
+                for invocation in captured_invocations:
+                    yield AgentStreamEvent(
+                        type="progress", data={"model_invocation": invocation}
+                    )
+                captured_invocations.clear()
                 if (
                     result["effective_instructions_digest"]
                     != request.invocation_context.instructions_digest
@@ -853,6 +833,10 @@ class HermesAdapter(BaseAgentEngine):
                 yield AgentStreamEvent(type="token", data={"text": result["text"]})
                 yield AgentStreamEvent(type="stream_end", data={})
             except (OSError, ValueError, TimeoutError, KeyError) as error:
+                for invocation in captured_invocations:
+                    yield AgentStreamEvent(
+                        type="progress", data={"model_invocation": invocation}
+                    )
                 yield AgentStreamEvent(
                     type="error",
                     data={
@@ -880,19 +864,40 @@ class HermesAdapter(BaseAgentEngine):
         received_agent_output = False
         turn_started_ms = int(time.time() * 1000)
         emitted_text_parts: list[str] = []
+        chat_invocation = None
+        reported_models = set()
 
         try:
             headers = {**self.headers, "X-Hermes-Session-Id": session_id}
+            payload = {
+                "model": "hermes",
+                "messages": messages,
+                "stream": True,
+                "session_id": session_id,
+            }
+            if request.invocation_observer is not None:
+                from .workflow_instructions import invocation_evidence
+                from core.redaction import redact_mapping
+
+                instructions = embedded_instruction_set(request.instruction_set)
+                invocation = invocation_evidence(
+                    payload,
+                    operation="hermes-chat-http",
+                    instruction_set=instructions,
+                    resolved=instructions.resolve("chat"),
+                )
+                invocation["request_fields"] = redact_mapping(
+                    {**payload, "messages": invocation["messages"]}
+                )
+                invocation["capture_phase"] = "submission"
+                invocation["observability_boundary"] = "wright_to_hermes_http"
+                await _retain_chat_invocation(request.invocation_observer, invocation)
+                chat_invocation = invocation
             async with aconnect_sse(
                 client,
                 "POST",
                 f"{self.base_url}/v1/chat/completions",
-                json={
-                    "model": "hermes",
-                    "messages": messages,
-                    "stream": True,
-                    "session_id": session_id,
-                },
+                json=payload,
                 headers=headers,
                 timeout=60.0,
             ) as event_source:
@@ -937,6 +942,22 @@ class HermesAdapter(BaseAgentEngine):
                     else:
                         try:
                             chunk = json.loads(sse.data)
+                            reported_model = chunk.get("model")
+                            if (
+                                chat_invocation is not None
+                                and isinstance(reported_model, str)
+                                and 0 < len(reported_model.strip()) <= 160
+                                and reported_model not in reported_models
+                            ):
+                                reported_models.add(reported_model)
+                                await _retain_chat_invocation(
+                                    request.invocation_observer,
+                                    {
+                                        **chat_invocation,
+                                        "capture_phase": "response",
+                                        "upstream_reported_model": reported_model,
+                                    },
+                                )
                             error_message = _completion_error_message(chunk)
                             if error_message:
                                 yield AgentStreamEvent(
@@ -959,6 +980,8 @@ class HermesAdapter(BaseAgentEngine):
                                     type="tool",
                                     data={"tool_calls": delta["tool_calls"]},
                                 )
+                        except ChatInvocationEvidenceError:
+                            raise
                         except Exception:
                             logger.warn(
                                 "Failed to parse completion chunk data", data=sse.data

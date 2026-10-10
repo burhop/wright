@@ -26,6 +26,9 @@ from workspace_service.workspace_file_inspection import (
     INSPECT_TOOL_NAME,
 )
 from packages.workspace_service.tests.test_workspace_document_gateway import _fixture
+from packages.workspace_service.tests.test_workflow_ai_task import (
+    legacy_instruction_profile,
+)
 
 
 def sha(value):
@@ -129,7 +132,7 @@ def case(tmp_path):
         definition_digest=sha(b"canonical immutable source"),
     )
 
-    async def bind(**changes):
+    async def bind(*, frozen_route=None, **changes):
         grant = dict(
             campaign_id="campaign",
             dataset_id="case-01",
@@ -153,11 +156,23 @@ def case(tmp_path):
             tool_runtime=runtime,
             files=service.files,
         )
+        bound_plan = plan
+        if frozen_route is not None:
+            from workspace_service.workflow_model_routing import (
+                freeze_workflow_model_routing,
+            )
+            from packages.workspace_service.tests.test_workflow_model_routing import (
+                owner,
+            )
+
+            bound_plan, context = await freeze_workflow_model_routing(
+                owner(frozen_route), plan, context
+            )
         bind_integration_document_writes(
             service=service,
             runtime=runtime,
             context=context,
-            plan=plan,
+            plan=bound_plan,
             workspace_dir=str(root),
             workspace_id="w1",
             run_id="run-1",
@@ -180,6 +195,22 @@ def case(tmp_path):
         bind=bind,
         emit=emit,
         events=events,
+    )
+
+
+@pytest.mark.asyncio
+async def test_frozen_routing_preserves_exact_read_only_file_authority(case):
+    from packages.workspace_service.tests.test_workflow_model_routing import route
+
+    await case.bind(frozen_route=route())
+    original = (case.root / "inputs/brief.md").read_bytes()
+    await case.runtime.call(
+        case.step, {"relativePath": "inputs/brief.md"}, on_event=case.emit
+    )
+    assert (case.root / "inputs/brief.md").read_bytes() == original
+    assert (
+        case.runtime._integration_file_read_authority.context["model_routing"]["text"]
+        == route()
     )
 
 
@@ -256,7 +287,7 @@ async def test_model_can_inspect_missing_output_then_write_and_observe_it(case):
         }
 
     response, records = await case.runtime.run_task(
-        case.step,
+        replace(case.step, instruction_set=legacy_instruction_profile()),
         "Inspect, create and verify the declared source file.",
         decide,
         case.emit,

@@ -214,7 +214,7 @@ describe("declared input authoring", () => {
       const workflow = declaredWorkflow(),
         human = workflow.blocks.find((item) => item.id === "block.choice")!;
       const metadata = interactionObject(human, "human_interaction")!;
-      if (field === "version") metadata.version = 2;
+      if (field === "version") metadata.version = 4;
       else if (field === "schema")
         metadata.response_schema = { type: "string" };
       else if (field === "port") metadata.output_port = "another-port";

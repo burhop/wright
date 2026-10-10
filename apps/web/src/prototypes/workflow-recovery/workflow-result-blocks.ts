@@ -1,6 +1,7 @@
 import type {
   WorkspaceEngineeringResult,
   WorkspaceWorkflowOutput,
+  WorkspaceWorkflowRunSummary,
   WorkflowApprovalCheckpoint,
 } from "../../services/workspace-service";
 import type { RecoveryWorkflow } from "./model";
@@ -27,6 +28,13 @@ export interface WorkflowResultBlock {
   files: ResultFile[];
   sourceMismatch: boolean;
   reviewLabel: string;
+  unavailableRun?: {
+    status: WorkspaceWorkflowRunSummary["status"];
+    failedStepId?: string;
+    failedStepTitle?: string;
+    error?: string;
+    diagnostic?: string;
+  };
 }
 
 export function safeResultPath(value: unknown): value is string {
@@ -62,6 +70,8 @@ function expectedFiles(
 }
 
 function resultTitle(files: ResultFile[]): string {
+  if (files.length === 1 && /\.(png|jpe?g|gif|webp)$/i.test(files[0]!.path))
+    return "Image";
   if (files.some((file) => fileKind(file.path) === "Plot or image"))
     return "Plots and supporting data";
   const document = files.find((file) => fileKind(file.path) === "Document");
@@ -78,18 +88,46 @@ function resultTitle(files: ResultFile[]): string {
   return "Supporting files";
 }
 
+/** Attribute a failure only when the saved run identifies the failed step. */
+export function recordedFailedStep(
+  workflow: RecoveryWorkflow | null,
+  run?: WorkspaceWorkflowRunSummary | null,
+): { id?: string; title?: string; diagnostic?: string } | null {
+  const progress = run?.execution?.last_progress;
+  if (
+    run?.status !== "failed" ||
+    !progress ||
+    !(
+      progress.status === "failed" ||
+      (progress.kind === "step_diagnostic" &&
+        !!progress.message &&
+        progress.message === run.error)
+    )
+  )
+    return null;
+  const id = progress.task_id ? taskBlockId(progress.task_id) : undefined;
+  return {
+    id: workflow?.blocks.some((block) => block.id === id) ? id : undefined,
+    title: progress.task_title,
+    diagnostic:
+      progress.kind === "step_diagnostic" ? progress.diagnostic : undefined,
+  };
+}
+
 export function workflowResultBlocks({
   workflow,
   results = [],
   outputs = [],
   checkpoint,
   sourceMismatch = false,
+  run,
 }: {
   workflow: RecoveryWorkflow | null;
   results?: readonly WorkspaceEngineeringResult[];
   outputs?: readonly WorkspaceWorkflowOutput[];
   checkpoint?: WorkflowApprovalCheckpoint | null;
   sourceMismatch?: boolean;
+  run?: WorkspaceWorkflowRunSummary | null;
 }): WorkflowResultBlock[] {
   const groups = new Map<string, WorkflowResultBlock>();
   function group(producerId: string, producerTitle?: string, recorded = false) {
@@ -182,6 +220,20 @@ export function workflowResultBlocks({
     .map((value) => {
       value.files.sort((a, b) => priority(a) - priority(b));
       value.title = resultTitle(value.files);
+      if (
+        run &&
+        !sourceMismatch &&
+        !value.files.some((file) => file.available)
+      ) {
+        const failedStep = recordedFailedStep(workflow, run);
+        value.unavailableRun = {
+          status: run.status,
+          failedStepId: failedStep?.id,
+          failedStepTitle: failedStep?.title,
+          error: run.error,
+          diagnostic: failedStep?.diagnostic,
+        };
+      }
       for (const file of value.files) {
         if (file.available && reviewed.has(file.path))
           file.sha256 ??= reviewRecords.find(
@@ -219,6 +271,10 @@ export function workflowResultBlocks({
 export function resultAvailability(result: WorkflowResultBlock): string {
   const available = result.files.filter((file) => file.available).length;
   if (result.sourceMismatch) return "From saved run · workflow changed";
+  if (!available && result.unavailableRun?.status === "failed")
+    return "Not produced · run failed";
+  if (!available && result.unavailableRun?.status === "cancelled")
+    return "Not produced · run cancelled";
   if (!available) return "Not produced yet";
   return `${available} of ${result.files.length} files available`;
 }

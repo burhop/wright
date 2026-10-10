@@ -18,8 +18,11 @@ from workspace_service.workflow_source_execution import (
     execute_prompt_workflow,
 )
 from packages.workspace_service.tests.test_workflow_mcp_execution import Gateway
-from packages.workspace_service.tests.test_workflow_source_execution import (
+from packages.workspace_service.tests.test_workflow_ai_task import (
     source,
+    legacy_instruction_profile,
+)
+from packages.workspace_service.tests.test_workflow_source_execution import (
     task,
     service,
 )
@@ -296,7 +299,7 @@ def test_shared_executor_accepts_cloud_deliverable_without_local_file(
     async def emit(event):
         events.append(event)
 
-    async def fail(*args):
+    async def fail(*args, **kwargs):
         raise ValueError("Later model unavailable")
 
     async def execute(on_event):
@@ -747,6 +750,7 @@ def test_workspace_file_and_image_inputs_reach_declared_importer(
             purpose="Contract fixture",
             discipline="engineering",
             reviewed_ai_suggestions=True,
+            instructions=legacy_instruction_profile(),
         ),
     )
     text += section(

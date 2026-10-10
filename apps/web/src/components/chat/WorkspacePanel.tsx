@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FileTree from "../common/FileTree";
+import { WorkspaceGitPanel } from "./WorkspaceGitPanel";
 import DiffViewer from "../common/DiffViewer";
 import EditorTabs from "./EditorTabs";
 import ViewerInspector from "./ViewerInspector";
@@ -32,27 +33,25 @@ import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import { MaximizeIcon, MinimizeIcon, SearchIcon } from "../common/Icons";
 import type { EditorTab } from "../../store/viewer";
-import {
-  rivetWorkflowsTabEnabled,
-  workspaceSurfacesEnabled,
-} from "../../services/surfaces/feature-flags";
+import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { workflowRecoveryEnabled } from "../../config/workflow-recovery";
-import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
-import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
 import { WorkflowRecoveryPage } from "../pages/WorkflowRecoveryPage";
+import { NativeConfirmDialog } from "../native-process/NativeConfirmDialog";
+import "../native-process/native-process.css";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
 import { WorkspaceSidebarPanel } from "../workspace/WorkspaceSidebarPanel";
 import { PaneSeparator } from "../workspace/PaneSeparator";
 import { ResponsivePaneSwitcher } from "../workspace/ResponsivePaneSwitcher";
-import { COMPACT_NAVIGATION_BREAKPOINT_PX, resolveWorkspaceLayout } from "../workspace/workspace-layout";
+import {
+  COMPACT_NAVIGATION_BREAKPOINT_PX,
+  resolveWorkspaceLayout,
+} from "../workspace/workspace-layout";
 import {
   SurfaceFocusManager,
   installF6HostRegionCycle,
 } from "../../services/surfaces/focus-manager";
-import { isBrepToolActivity } from "../../services/brep-panel-activity";
-import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
 import {
   ProcessClientError,
   type NavigationResolution,
@@ -73,10 +72,19 @@ import {
 } from "../../services/process-workspace-tabs";
 import { ProcessWorkspaceTab } from "../process-interfaces/ProcessWorkspaceTab";
 
-const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
-const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
-const WORKSPACE_WORKFLOW_FILE_PATH =
-  "/workflows/mounting-bracket.workflow.wflow";
+import { blankWorkflowSource } from "../../services/blank-workflow";
+
+function isRetiredWorkspaceAppTab(tab: {
+  path: string;
+  type?: string;
+}): boolean {
+  return (
+    tab.type === "brep" ||
+    tab.type === "rivet" ||
+    tab.path === "/.wright/apps/brep" ||
+    tab.path.startsWith("/.wright/rivet-workflows/")
+  );
+}
 
 function isWorkspaceWorkflowTab(path: string | null): boolean {
   const match =
@@ -84,38 +92,6 @@ function isWorkspaceWorkflowTab(path: string | null): boolean {
       path ?? "",
     );
   return !!match && !/^(aux|con|nul|prn|com[1-9]|lpt[1-9])$/.test(match[1]);
-}
-
-function directRivetTabPath(slug: string): string {
-  return `${DIRECT_RIVET_TAB_PREFIX}/${slug}/workflow.rivet-project`;
-}
-
-function isDirectRivetTab(path: string | null): boolean {
-  return normalizeEditorTabPath(path ?? "").startsWith(
-    `${DIRECT_RIVET_TAB_PREFIX}/`,
-  );
-}
-
-function rivetSlugFromTabPath(path: string): string | null {
-  const normalized = normalizeEditorTabPath(path);
-  if (!isDirectRivetTab(normalized)) return null;
-  return (
-    normalized.slice(DIRECT_RIVET_TAB_PREFIX.length + 1).split("/")[0] || null
-  );
-}
-
-function isDirectBrepTab(path: string | null): boolean {
-  return normalizeEditorTabPath(path ?? "") === DIRECT_BREP_TAB_PATH;
-}
-
-function isVisibleBrepServer(server: {
-  name?: string;
-  source_url?: string | null;
-}): boolean {
-  return (
-    server.name?.trim().toLowerCase() === "brep mcp" &&
-    server.source_url?.toLowerCase().includes("brep-mcp") === true
-  );
 }
 
 interface CompactMcpServer {
@@ -198,7 +174,6 @@ export function WorkspacePanel({
   const location = useLocation();
   const surfacesEnabled = workspaceSurfacesEnabled();
   const recoveryWorkflowEnabled = workflowRecoveryEnabled();
-  const rivetWorkflowEnabled = rivetWorkflowsTabEnabled();
   const canonicalWorkflowRequested =
     new URLSearchParams(location.search).get("workflow") === "canonical";
   const canonicalWorkflowAvailable =
@@ -207,11 +182,9 @@ export function WorkspacePanel({
     "workflowPath",
   );
   const requestedWorkflowPath =
-    workflowPathQuery === null
-      ? WORKSPACE_WORKFLOW_FILE_PATH
-      : isWorkspaceWorkflowTab(workflowPathQuery)
-        ? normalizeEditorTabPath(workflowPathQuery)
-        : null;
+    workflowPathQuery && isWorkspaceWorkflowTab(workflowPathQuery)
+      ? normalizeEditorTabPath(workflowPathQuery)
+      : null;
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const [workflowReopenRequests, setWorkflowReopenRequests] = useState<
@@ -459,7 +432,8 @@ export function WorkspacePanel({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
-  const compactNavigation = !surfacesEnabled && panelWidth < COMPACT_NAVIGATION_BREAKPOINT_PX;
+  const compactNavigation =
+    !surfacesEnabled && panelWidth < COMPACT_NAVIGATION_BREAKPOINT_PX;
   const [compactSidebarOpen, setCompactSidebarOpen] = useState(false);
   const dockedSidebarCollapsed = compactNavigation || isSidebarCollapsed;
   const [ordinaryAgentCollapsed, setOrdinaryAgentCollapsed] = useState<boolean>(
@@ -483,6 +457,8 @@ export function WorkspacePanel({
     openTransientTab,
     attachProcessTabRun,
     closeTab,
+    setTabDirty,
+    setTabSaving,
     setActiveTabPath,
     getDocument,
     getProvider,
@@ -490,6 +466,33 @@ export function WorkspacePanel({
     reloadDocument,
     resetViewer,
   } = useViewerPanel();
+
+  const [pendingWorkflowClose, setPendingWorkflowClose] = useState<
+    string | null
+  >(null);
+  const keepEditingWorkflow = useCallback(
+    () => setPendingWorkflowClose(null),
+    [],
+  );
+  const pendingWorkflowTab = openTabs.find(
+    (tab) =>
+      tab.path === pendingWorkflowClose &&
+      tab.type === "workflow" &&
+      tab.isDirty,
+  );
+  const hasUnsavedWorkflow = openTabs.some(
+    (tab) => tab.type === "workflow" && (tab.isDirty || tab.isSaving),
+  );
+  useEffect(() => setPendingWorkflowClose(null), [_workspaceId]);
+  useEffect(() => {
+    if (!hasUnsavedWorkflow) return;
+    const protectDraft = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", protectDraft);
+    return () => window.removeEventListener("beforeunload", protectDraft);
+  }, [hasUnsavedWorkflow]);
 
   // Drawer visibility is transient; resizing must not overwrite desktop layout.
   useEffect(() => {
@@ -519,11 +522,11 @@ export function WorkspacePanel({
   }, [_workspaceId, location.search]);
   const hasProcessLink = Boolean(processLink.tab || processLink.error);
   const openProcessView = useCallback(
-    (process: ProcessRef) => {
+    (process: ProcessRef, runId?: string) => {
       if (!workspaceFileSessionId || process.workspace_id !== _workspaceId)
         return;
       const tab = checkedProcessWorkspaceTab(
-        createProcessWorkspaceTab(process),
+        createProcessWorkspaceTab(process, { runId }),
         _workspaceId,
       );
       setProcessTabError(null);
@@ -547,21 +550,52 @@ export function WorkspacePanel({
     ],
   );
 
-  const openProcessInterface = useCallback((process: ProcessRef, locator: ProcessInterfaceLocator, title: string, runId?: string) => {
-    if (!workspaceFileSessionId || process.workspace_id !== _workspaceId) return;
-    const tab = checkedProcessWorkspaceTab(createProcessWorkspaceTab(process, {
-      interface: locator, runId, name: `${title.slice(0, 220)} · ${locator.kind === "preview" ? "preview" : "working interface"}`,
-    }), _workspaceId);
-    setProcessTabError(null);
-    setIsSidebarCollapsed(true);
-    openTransientTab(tab);
-    navigate({pathname: location.pathname, search: processWorkspaceQuery(location.search, tab)}, {replace: true});
-  }, [_workspaceId, workspaceFileSessionId, openTransientTab, navigate, location.pathname, location.search]);
+  const openProcessInterface = useCallback(
+    (
+      process: ProcessRef,
+      locator: ProcessInterfaceLocator,
+      title: string,
+      runId?: string,
+    ) => {
+      if (!workspaceFileSessionId || process.workspace_id !== _workspaceId)
+        return;
+      const tab = checkedProcessWorkspaceTab(
+        createProcessWorkspaceTab(process, {
+          interface: locator,
+          runId,
+          name: `${title.slice(0, 220)} · ${locator.kind === "preview" ? "preview" : "working interface"}`,
+        }),
+        _workspaceId,
+      );
+      setProcessTabError(null);
+      setIsSidebarCollapsed(true);
+      openTransientTab(tab);
+      navigate(
+        {
+          pathname: location.pathname,
+          search: processWorkspaceQuery(location.search, tab),
+        },
+        { replace: true },
+      );
+    },
+    [
+      _workspaceId,
+      workspaceFileSessionId,
+      openTransientTab,
+      navigate,
+      location.pathname,
+      location.search,
+    ],
+  );
 
   useEffect(() => {
-    const failed = () => setProcessTabError("The interface view closed, but its managed runtime cleanup needs reconciliation. The process was not cancelled.");
+    const failed = () =>
+      setProcessTabError(
+        "The interface view closed, but its managed runtime cleanup needs reconciliation. The process was not cancelled.",
+      );
     window.addEventListener("wright-process-ui-close-failed", failed);
-    return () => window.removeEventListener("wright-process-ui-close-failed", failed);
+    return () =>
+      window.removeEventListener("wright-process-ui-close-failed", failed);
   }, []);
 
   // Resize and model states
@@ -656,8 +690,8 @@ export function WorkspacePanel({
 
   // Workspace Config state
   const [workspacePrompt, setWorkspacePrompt] = useState("");
-  const [gitLargeFileThreshold, setGitLargeFileThreshold] =
-    useState<number>(10);
+  const [gitLargeFileThresholdMiB, setGitLargeFileThresholdMiB] =
+    useState("10");
 
   // Compact MCP tools state
   const [mcpServers, setMcpServers] = useState<CompactMcpServer[]>([]);
@@ -700,7 +734,10 @@ export function WorkspacePanel({
         isSidebarCollapsed,
         isAgentCollapsed: ordinaryAgentCollapsed,
         workflowAgentCollapsed,
-        openTabs: dedupeEditorTabs(openTabs),
+        openTabs: dedupeEditorTabs(openTabs).map((tab) => ({
+          ...tab,
+          isSaving: undefined,
+        })),
         activeTabPath: activeTabPath
           ? normalizeEditorTabPath(activeTabPath)
           : null,
@@ -773,18 +810,7 @@ export function WorkspacePanel({
   );
 
   // Git state
-  const [, setGitBranch] = useState<string>("main");
-  const [, setGitChanges] = useState<
-    { path: string; git_status: string; staged: boolean; file_size?: number }[]
-  >([]);
-  const [, setGitHistory] = useState<
-    {
-      commit_hash: string;
-      message: string;
-      author: string;
-      timestamp: number;
-    }[]
-  >([]);
+  const [gitRefreshVersion, setGitRefreshVersion] = useState(0);
   const [, setGitLoading] = useState(false);
   const [, setGitError] = useState<string | null>(null);
   const [activeDiffFile, setActiveDiffFile] = useState<{
@@ -817,6 +843,7 @@ export function WorkspacePanel({
   const openWorkspaceFileRef = useRef<(path: string) => Promise<void>>(
     async () => {},
   );
+  const lastWorkflowAutoOpen = useRef<string | null>(null);
 
   useEffect(() => {
     sendMessageRef.current = sendMessage;
@@ -824,6 +851,9 @@ export function WorkspacePanel({
 
   useEffect(() => {
     resetViewer();
+    // Resetting tabs also resets the passive-link attachment guard. React's
+    // StrictMode mount check may repeat this effect after the first attachment.
+    lastWorkflowAutoOpen.current = null;
     setProcessTabError(null);
     setWorkspaceRoot(null);
     workspaceRootRef.current = null;
@@ -889,13 +919,9 @@ export function WorkspacePanel({
             }
             continue;
           }
-          const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
+          if (isRetiredWorkspaceAppTab(tab)) continue;
           if (isWorkspaceWorkflowTab(tabPath) || tab.type === "workflow") {
-            if (
-              canonicalWorkflowAvailable &&
-              requestedWorkflowPath &&
-              isWorkspaceWorkflowTab(tab.path)
-            ) {
+            if (recoveryWorkflowEnabled && isWorkspaceWorkflowTab(tab.path)) {
               openTransientTab({
                 name: tabPath.split("/").at(-1)!,
                 path: tabPath,
@@ -903,28 +929,6 @@ export function WorkspacePanel({
                 createIfMissing: false,
               });
             }
-            continue;
-          }
-          if (
-            isDirectRivetTab(tabPath) ||
-            tab.type === "rivet" ||
-            savedWorkflowSlug
-          ) {
-            const slug =
-              rivetSlugFromTabPath(tabPath) || savedWorkflowSlug || "rivet";
-            openTransientTab({
-              name: `${slug}.rivet-project`,
-              path: directRivetTabPath(slug),
-              type: "rivet",
-            });
-            continue;
-          }
-          if (isDirectBrepTab(tabPath) || tab.type === "brep") {
-            openTransientTab({
-              name: "BREP",
-              path: DIRECT_BREP_TAB_PATH,
-              type: "brep",
-            });
             continue;
           }
           const fileNode = workspaceRootRef.current
@@ -961,14 +965,20 @@ export function WorkspacePanel({
           return;
         }
         if (
-          !hasProcessLink && canonicalWorkflowAvailable &&
-          workflowPathQuery !== null && requestedWorkflowPath &&
+          !hasProcessLink &&
+          canonicalWorkflowAvailable &&
+          workflowPathQuery !== null &&
+          requestedWorkflowPath &&
           restoreSearch.current === search
         ) {
           // An explicit file link takes precedence over the last saved active
           // tab. Reading history must not bootstrap a missing workflow.
-          openTransientTab({name: requestedWorkflowPath.split("/").at(-1)!,
-            path: requestedWorkflowPath, type: "workflow", createIfMissing: false});
+          openTransientTab({
+            name: requestedWorkflowPath.split("/").at(-1)!,
+            path: requestedWorkflowPath,
+            type: "workflow",
+            createIfMissing: false,
+          });
           setActiveTabPath(requestedWorkflowPath);
           return;
         }
@@ -982,9 +992,7 @@ export function WorkspacePanel({
           ) {
             return;
           }
-          const savedWorkflowSlug = workspaceRivetWorkflowSlug(
-            savedLayout.activeTabPath,
-          );
+          if (isRetiredWorkspaceAppTab({ path: normalizedActiveTab })) return;
           if (isProcessWorkspaceTabPath(normalizedActiveTab)) {
             const savedTab = savedLayout.openTabs.find(
               (tab: EditorTab) => tab.path === normalizedActiveTab,
@@ -995,11 +1003,7 @@ export function WorkspacePanel({
               return;
             }
           }
-          setActiveTabPath(
-            savedWorkflowSlug
-              ? directRivetTabPath(savedWorkflowSlug)
-              : normalizedActiveTab,
-          );
+          setActiveTabPath(normalizedActiveTab);
         }
       };
       syncTabs();
@@ -1048,9 +1052,7 @@ export function WorkspacePanel({
     if (!activeTabPath || !viewerContainerRef.current) return;
     if (
       isWorkspaceWorkflowTab(activeTabPath) ||
-      isProcessWorkspaceTabPath(activeTabPath) ||
-      isDirectRivetTab(activeTabPath) ||
-      isDirectBrepTab(activeTabPath)
+      isProcessWorkspaceTabPath(activeTabPath)
     ) {
       viewerContainerRef.current.replaceChildren();
       return;
@@ -1175,44 +1177,28 @@ export function WorkspacePanel({
     };
   }, [activeTabPath, workspaceFileSessionId, getDocument, getProvider]);
 
-  // Fetch Git Data helper
   const fetchGitData = useCallback(async () => {
-    if (!activeSessionId) return;
-    setGitLoading(true);
-    setGitError(null);
-    try {
-      const statusRes = await workspaceService.getGitStatus(activeSessionId);
-      setGitBranch(statusRes.branch_name);
-      setGitChanges(statusRes.changes);
-
-      const historyRes = await workspaceService.getGitHistory(activeSessionId);
-      setGitHistory(historyRes.commits);
-    } catch (err: unknown) {
-      console.error("Failed to fetch Git data:", err);
-    } finally {
-      setGitLoading(false);
-    }
-  }, [
-    activeSessionId,
-    setGitLoading,
-    setGitError,
-    setGitBranch,
-    setGitChanges,
-    setGitHistory,
-  ]);
+    setGitRefreshVersion((version) => version + 1);
+  }, []);
 
   // Fetch workspace config helper
   const fetchConfig = useCallback(async () => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     setOptionsLoading(true);
     setOptionsError(null);
     try {
-      const config = await workspaceService.getWorkspaceConfig(activeSessionId);
+      const config = await workspaceService.getWorkspaceConfig(
+        workspaceFileSessionId,
+      );
       setRemoteUrl(config.git_remote_url || "");
       setGitUsername(config.git_username || "");
       setGitToken(config.has_token ? "••••••••" : "");
       setWorkspacePrompt(config.workspace_prompt || "");
-      setGitLargeFileThreshold(config.git_large_file_threshold ?? 10);
+      setGitLargeFileThresholdMiB(
+        String(
+          (config.git_large_file_threshold ?? 10 * 1024 * 1024) / (1024 * 1024),
+        ),
+      );
       if (config.workspace_path) {
         setWorkspacePath(config.workspace_path);
       }
@@ -1223,14 +1209,14 @@ export function WorkspacePanel({
       setOptionsLoading(false);
     }
   }, [
-    activeSessionId,
+    workspaceFileSessionId,
     setOptionsLoading,
     setOptionsError,
     setRemoteUrl,
     setGitUsername,
     setGitToken,
     setWorkspacePrompt,
-    setGitLargeFileThreshold,
+    setGitLargeFileThresholdMiB,
     setWorkspacePath,
   ]);
 
@@ -1325,19 +1311,31 @@ export function WorkspacePanel({
   // Options save handlers
   const handleSaveOptions = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
+    const thresholdBytes = Math.round(
+      Number(gitLargeFileThresholdMiB) * 1024 * 1024,
+    );
+    if (
+      !gitLargeFileThresholdMiB.trim() ||
+      !Number.isSafeInteger(thresholdBytes) ||
+      thresholdBytes < 1
+    ) {
+      setOptionsError("Enter a positive file-size threshold in MiB.");
+      setOptionsSaved(false);
+      return;
+    }
     setOptionsLoading(true);
     setOptionsError(null);
     setOptionsSaved(false);
     try {
       const tokenToSend = gitToken === "••••••••" ? null : gitToken;
       await workspaceService.updateWorkspaceConfig(
-        activeSessionId,
+        workspaceFileSessionId,
         remoteUrl.trim() || null,
         gitUsername.trim() || null,
         tokenToSend,
         workspacePrompt.trim() || null,
-        gitLargeFileThreshold,
+        thresholdBytes,
       );
       setOptionsSaved(true);
       setTimeout(() => setOptionsSaved(false), 3000);
@@ -1352,11 +1350,11 @@ export function WorkspacePanel({
   };
 
   const handlePush = async () => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     setOptionsLoading(true);
     setOptionsError(null);
     try {
-      await workspaceService.pushCommits(activeSessionId);
+      await workspaceService.pushCommits(workspaceFileSessionId);
       alert("Push completed successfully!");
     } catch (err: unknown) {
       setOptionsError(err instanceof Error ? err.message : "Push failed");
@@ -1366,13 +1364,15 @@ export function WorkspacePanel({
   };
 
   const handlePull = async () => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     setOptionsLoading(true);
     setOptionsError(null);
     try {
-      await workspaceService.pullCommits(activeSessionId);
+      await workspaceService.pullCommits(workspaceFileSessionId);
       alert("Pull completed successfully!");
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+      const tree = await workspaceService.getWorkspaceFiles(
+        workspaceFileSessionId,
+      );
       setWorkspaceRoot(tree);
       await fetchGitData();
     } catch (err: unknown) {
@@ -1390,14 +1390,16 @@ export function WorkspacePanel({
 
   // Git Action Handlers
   const handleRevert = async (filePath: string) => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     if (!confirm(`Are you sure you want to revert changes in ${filePath}?`))
       return;
     setGitLoading(true);
     setGitError(null);
     try {
-      await workspaceService.revertFile(activeSessionId, filePath);
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+      await workspaceService.revertFile(workspaceFileSessionId, filePath);
+      const tree = await workspaceService.getWorkspaceFiles(
+        workspaceFileSessionId,
+      );
       setWorkspaceRoot(tree);
       await fetchGitData();
       if (activeDiffFile?.path === filePath) {
@@ -1434,26 +1436,6 @@ export function WorkspacePanel({
         type: "workflow",
       });
       setIsSidebarCollapsed(true);
-      return;
-    }
-
-    const savedWorkflowSlug = workspaceRivetWorkflowSlug(path);
-    if (savedWorkflowSlug && workspaceFileSessionId) {
-      const workflow = await workspaceService.readRivetWorkflow(
-        workspaceFileSessionId,
-        savedWorkflowSlug,
-      );
-      openTransientTab({
-        name: `${workflow.slug}.rivet-project`,
-        path: directRivetTabPath(workflow.slug),
-        type: "rivet",
-      });
-      if (surfaceLayout.mode === "narrow") {
-        surfaceLayoutDispatch({
-          type: "select_narrow_pane",
-          pane: "surface",
-        });
-      }
       return;
     }
 
@@ -1505,12 +1487,18 @@ export function WorkspacePanel({
     name: string,
     type: "file" | "directory",
   ) => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     try {
       const fullPath =
         parentPath === "/" ? `/${name}` : `${parentPath}/${name}`;
-      await workspaceService.createFileNode(activeSessionId, fullPath, type);
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+      await workspaceService.createFileNode(
+        workspaceFileSessionId,
+        fullPath,
+        type,
+      );
+      const tree = await workspaceService.getWorkspaceFiles(
+        workspaceFileSessionId,
+      );
       setWorkspaceRoot(tree);
       await fetchGitData();
     } catch (err: unknown) {
@@ -1520,10 +1508,12 @@ export function WorkspacePanel({
   };
 
   const handleDelete = async (filePath: string) => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     try {
-      await workspaceService.deleteFileNode(activeSessionId, filePath);
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+      await workspaceService.deleteFileNode(workspaceFileSessionId, filePath);
+      const tree = await workspaceService.getWorkspaceFiles(
+        workspaceFileSessionId,
+      );
       setWorkspaceRoot(tree);
       await fetchGitData();
       handleCloseTab(filePath);
@@ -1534,10 +1524,16 @@ export function WorkspacePanel({
   };
 
   const handleRename = async (oldPath: string, newPath: string) => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     try {
-      await workspaceService.moveFileNode(activeSessionId, oldPath, newPath);
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+      await workspaceService.moveFileNode(
+        workspaceFileSessionId,
+        oldPath,
+        newPath,
+      );
+      const tree = await workspaceService.getWorkspaceFiles(
+        workspaceFileSessionId,
+      );
       setWorkspaceRoot(tree);
       await fetchGitData();
 
@@ -1551,14 +1547,16 @@ export function WorkspacePanel({
   };
 
   const handleMove = async (sourcePath: string, destPath: string) => {
-    if (!activeSessionId) return;
+    if (!workspaceFileSessionId) return;
     try {
       await workspaceService.moveFileNode(
-        activeSessionId,
+        workspaceFileSessionId,
         sourcePath,
         destPath,
       );
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+      const tree = await workspaceService.getWorkspaceFiles(
+        workspaceFileSessionId,
+      );
       setWorkspaceRoot(tree);
       await fetchGitData();
 
@@ -1570,8 +1568,19 @@ export function WorkspacePanel({
     }
   };
 
-  const handleCloseTab = (path: string) => {
+  const handleCloseTab = (path: string, discardWorkflowEdits = false) => {
     const normalizedPath = normalizeEditorTabPath(path);
+    const closing = openTabs.find((tab) => tab.path === normalizedPath);
+    if (closing?.type === "workflow" && closing.isSaving) return;
+    if (
+      !discardWorkflowEdits &&
+      closing?.type === "workflow" &&
+      closing.isDirty
+    ) {
+      setPendingWorkflowClose(normalizedPath);
+      return;
+    }
+    setPendingWorkflowClose(null);
     const remainingTabs = openTabs.filter((tab) => tab.path !== normalizedPath);
     closeTab(path);
     if (processLink.tab?.path === normalizedPath) {
@@ -1676,7 +1685,9 @@ export function WorkspacePanel({
   // Toggle activity bar sidebar
   const handleActivityBarClick = (sidebar: WorkspaceSidebarId) => {
     if (compactNavigation) {
-      setCompactSidebarOpen((open) => activeSidebar === sidebar ? !open : true);
+      setCompactSidebarOpen((open) =>
+        activeSidebar === sidebar ? !open : true,
+      );
       setActiveSidebar(sidebar);
       return;
     }
@@ -1781,7 +1792,7 @@ export function WorkspacePanel({
       name: requestedWorkflowPath.split("/").at(-1)!,
       path: requestedWorkflowPath,
       type: "workflow",
-      createIfMissing: workflowPathQuery === null,
+      createIfMissing: false,
     });
     if (surfaceLayout.mode === "narrow") {
       surfaceLayoutDispatch({
@@ -1815,7 +1826,7 @@ export function WorkspacePanel({
         name: path.split("/").at(-1)!,
         path: normalizeEditorTabPath(path),
         type: "workflow",
-        createIfMissing: true,
+        createIfMissing: false,
       });
     },
     [
@@ -1932,7 +1943,6 @@ export function WorkspacePanel({
     ],
   );
 
-  const lastWorkflowAutoOpen = useRef<string | null>(null);
   useEffect(() => {
     if (!canonicalWorkflowAvailable) {
       lastWorkflowAutoOpen.current = null;
@@ -1959,85 +1969,39 @@ export function WorkspacePanel({
     hasProcessLink,
   ]);
 
-  const openRivetWorkflowTab = useCallback(
-    (slug?: string) => {
-      if (!workspaceFileSessionId) return;
+  const creatingWorkflowRef = useRef(false);
+  const createWorkspaceWorkflow = useCallback(async () => {
+    if (!_workspaceId || !workspaceFileSessionId || creatingWorkflowRef.current)
+      return;
+    creatingWorkflowRef.current = true;
+    try {
+      const path = `workflows/untitled-workflow-${crypto.randomUUID().slice(0, 12)}.workflow.wflow`;
+      const created = await workspaceService.createWorkspaceWorkflowSource(
+        workspaceFileSessionId,
+        path,
+        blankWorkflowSource(),
+      );
+      if (created.workspace_id !== _workspaceId || created.path !== path)
+        throw new Error("The new workflow belongs to a different workspace.");
+      setError(null);
+      selectWorkspaceWorkflow(path);
       setIsSidebarCollapsed(true);
-      const initialSlug = slug || "rivet";
-      const initialPath = directRivetTabPath(initialSlug);
-      openTransientTab({
-        name: `${initialSlug}.rivet-project`,
-        path: initialPath,
-        type: "rivet",
-      });
-      const workflowRequest = slug
-        ? workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
-        : workspaceService.ensureDefaultRivetWorkflow(workspaceFileSessionId);
-      void workflowRequest
-        .then((workflow) => {
-          updateTabPath(
-            initialPath,
-            directRivetTabPath(workflow.slug),
-            `${workflow.slug}.rivet-project`,
-          );
-        })
-        .catch((error) => {
-          console.error("Rivet workflow preparation failed", error);
-        });
-      if (surfaceLayout.mode === "narrow") {
-        surfaceLayoutDispatch({
-          type: "select_narrow_pane",
-          pane: "surface",
-        });
-      }
-    },
-    [
-      openTransientTab,
-      surfaceLayout.mode,
-      surfaceLayoutDispatch,
-      updateTabPath,
-      workspaceFileSessionId,
-    ],
-  );
-
-  const openBrepPanelTab = useCallback(() => {
-    if (!workspaceFileSessionId) return;
-    setIsSidebarCollapsed(true);
-    openTransientTab({
-      name: "BREP",
-      path: DIRECT_BREP_TAB_PATH,
-      type: "brep",
-    });
-    if (surfaceLayout.mode === "narrow") {
-      surfaceLayoutDispatch({
-        type: "select_narrow_pane",
-        pane: "surface",
-      });
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? `Could not create a workflow: ${error.message}`
+          : "Could not create a workflow. Existing files were kept.",
+      );
+    } finally {
+      creatingWorkflowRef.current = false;
     }
-  }, [
-    openTransientTab,
-    surfaceLayout.mode,
-    surfaceLayoutDispatch,
-    workspaceFileSessionId,
-  ]);
+  }, [_workspaceId, workspaceFileSessionId, selectWorkspaceWorkflow]);
 
-  const lastBrepActivityRef = useRef<string | null>(null);
-  useEffect(() => {
-    const activity = [...activeSessionStreamActivity]
-      .reverse()
-      .find(isBrepToolActivity);
-    if (!activity || lastBrepActivityRef.current === activity.id) return;
-
-    lastBrepActivityRef.current = activity.id;
-    openBrepPanelTab();
-  }, [activeSessionStreamActivity, openBrepPanelTab]);
-
-  const workspaceWorkflowTabs =
-    canonicalWorkflowAvailable && requestedWorkflowPath
-      ? openTabs.filter((tab) => isWorkspaceWorkflowTab(tab.path))
-      : [];
+  const workspaceWorkflowTabs = recoveryWorkflowEnabled
+    ? openTabs.filter((tab) => isWorkspaceWorkflowTab(tab.path))
+    : [];
   const activeWorkspaceWorkflow =
-    canonicalWorkflowAvailable && isWorkspaceWorkflowTab(activeTabPath);
+    recoveryWorkflowEnabled && isWorkspaceWorkflowTab(activeTabPath);
   const processTabs = openTabs.flatMap((tab) => {
     if (tab.type !== "process" || !_workspaceId) return [];
     try {
@@ -2085,50 +2049,29 @@ export function WorkspacePanel({
   ]);
 
   useEffect(() => {
-    if (canonicalWorkflowAvailable) return;
     for (const tab of openTabs) {
-      if (isWorkspaceWorkflowTab(tab.path) || tab.type === "workflow") {
+      if (
+        isRetiredWorkspaceAppTab(tab) ||
+        (!recoveryWorkflowEnabled &&
+          (isWorkspaceWorkflowTab(tab.path) || tab.type === "workflow"))
+      ) {
         closeTab(tab.path);
       }
     }
-  }, [canonicalWorkflowAvailable, closeTab, openTabs]);
-  const directRivetTabs = openTabs.filter(
-    (tab) => isDirectRivetTab(tab.path) || tab.type === "rivet",
-  );
-  const activeDirectRivetSlug = activeTabPath
-    ? rivetSlugFromTabPath(activeTabPath)
-    : null;
-  const activeDirectRivet = activeDirectRivetSlug !== null;
-  const activeRivetUiContext = useMemo(
-    () => ({ activeRivetSlug: activeDirectRivetSlug }),
-    [activeDirectRivetSlug],
-  );
+  }, [recoveryWorkflowEnabled, closeTab, openTabs]);
   const sendMessageWithSurfaceContext = useCallback(
     (message: string, attachments?: string[]) =>
-      sendMessage(message, attachments, false, undefined, activeRivetUiContext),
-    [activeRivetUiContext, sendMessage],
+      sendMessage(message, attachments, false, undefined, undefined),
+    [sendMessage],
   );
   const steerMessageWithSurfaceContext = useCallback(
     (message: string, attachments?: string[]) =>
-      steerMessage(message, attachments, activeRivetUiContext),
-    [activeRivetUiContext, steerMessage],
+      steerMessage(message, attachments, undefined),
+    [steerMessage],
   );
-  const rivetMutationVersion =
-    activeSessionStreamState?.rivetMutationVersion || 0;
-  const rivetExternalRevisionToken =
-    activeSessionId && !isActiveSessionStreaming && rivetMutationVersion > 0
-      ? `${activeSessionId}:${rivetMutationVersion}`
-      : null;
-  const directBrepTabs = openTabs.filter(
-    (tab) => isDirectBrepTab(tab.path) || tab.type === "brep",
-  );
-  const activeDirectBrep = isDirectBrepTab(activeTabPath);
-
   useEffect(() => {
-    if (activeWorkspaceWorkflow || activeDirectRivet || activeDirectBrep) {
-      setIsSidebarCollapsed(true);
-    }
-  }, [activeDirectBrep, activeDirectRivet, activeWorkspaceWorkflow]);
+    if (activeWorkspaceWorkflow) setIsSidebarCollapsed(true);
+  }, [activeWorkspaceWorkflow]);
 
   if (isThin) {
     return (
@@ -2421,38 +2364,26 @@ export function WorkspacePanel({
       {!surfaceChromeHidden && (
         <WorkspaceActivityBar
           activeSidebar={activeSidebar}
-          isSidebarCollapsed={compactNavigation ? !compactSidebarOpen : isSidebarCollapsed}
+          isSidebarCollapsed={
+            compactNavigation ? !compactSidebarOpen : isSidebarCollapsed
+          }
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
           onOpenWorkflows={() => {
             setCompactSidebarOpen(false);
-            if (recoveryWorkflowEnabled) {
-              if (canonicalWorkflowRequested) {
-                openWorkspaceWorkflowTab();
-              } else {
-                const query = new URLSearchParams(location.search);
-                query.set("workflow", "canonical");
-                navigate(
-                  {
-                    pathname: location.pathname,
-                    search: `?${query.toString()}`,
-                  },
-                  { replace: true },
-                );
-              }
-            } else if (rivetWorkflowEnabled) {
-              void openRivetWorkflowTab();
-            }
+            void createWorkspaceWorkflow();
           }}
-          onOpenBrepPanel={openBrepPanelTab}
-          workflowsEnabled={recoveryWorkflowEnabled || rivetWorkflowEnabled}
+          workflowsEnabled={recoveryWorkflowEnabled}
         />
       )}
 
       {/* 2. Left Sidebar Panel (collapsible) */}
       <WorkspaceSidebarPanel
         compact={compactNavigation}
-        open={!surfaceChromeHidden && (compactNavigation ? compactSidebarOpen : !isSidebarCollapsed)}
+        open={
+          !surfaceChromeHidden &&
+          (compactNavigation ? compactSidebarOpen : !isSidebarCollapsed)
+        }
         width={leftSidebarWidth}
         onClose={() => setCompactSidebarOpen(false)}
       >
@@ -2507,7 +2438,9 @@ export function WorkspacePanel({
                     fontSize: "0.75rem",
                   }}
                 >
-                  No MCP servers configured.
+                  {mcpError
+                    ? "The installed tool list is unavailable."
+                    : "No MCP servers configured."}
                 </div>
               ) : (
                 <div
@@ -2522,7 +2455,6 @@ export function WorkspacePanel({
                       enabledTools.includes(server.name) ||
                       enabledTools.includes(server.server_id);
                     const isGloballyActive = server.is_active;
-                    const isBrep = isVisibleBrepServer(server);
 
                     return (
                       <div
@@ -2614,26 +2546,6 @@ export function WorkspacePanel({
                             }
                             style={{ cursor: "pointer" }}
                           />
-                          {isBrep && (
-                            <button
-                              type="button"
-                              data-testid="open-brep-panel"
-                              onClick={openBrepPanelTab}
-                              disabled={!isEnabled}
-                              title={
-                                isEnabled
-                                  ? "Open BREP in a Wright panel"
-                                  : "Enable BREP MCP before opening its panel"
-                              }
-                              style={{
-                                cursor: isEnabled ? "pointer" : "not-allowed",
-                                fontSize: "0.65rem",
-                                padding: "2px 6px",
-                              }}
-                            >
-                              Open panel
-                            </button>
-                          )}
                         </div>
                       </div>
                     );
@@ -2710,65 +2622,11 @@ export function WorkspacePanel({
         )}
 
         {activeSidebar === "git" && (
-          <div
-            data-testid="git-panel-coming-soon"
-            aria-disabled="true"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              pointerEvents: "none",
-              opacity: 0.72,
-            }}
-          >
-            <div
-              style={{
-                padding: "var(--space-md)",
-                fontSize: "0.7rem",
-                fontWeight: "bold",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                borderBottom: "1px solid var(--color-border)",
-                color: "var(--color-primary)",
-              }}
-            >
-              Git Version Control
-            </div>
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "var(--space-sm)",
-                padding: "var(--space-lg)",
-                textAlign: "center",
-                color: "var(--color-secondary)",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
-                  color: "var(--color-primary)",
-                }}
-              >
-                Coming soon
-              </div>
-              <div
-                style={{
-                  maxWidth: "220px",
-                  fontSize: "0.75rem",
-                  lineHeight: 1.45,
-                }}
-              >
-                Git controls are disabled while this workflow is being finished.
-              </div>
-            </div>
-          </div>
+          <WorkspaceGitPanel
+            sessionId={workspaceFileSessionId}
+            refreshVersion={gitRefreshVersion}
+            onDiff={(path, diffText) => setActiveDiffFile({ path, diffText })}
+          />
         )}
 
         {activeSidebar === "settings" && (
@@ -2983,15 +2841,19 @@ export function WorkspacePanel({
                       gap: "2px",
                     }}
                   >
-                    <label>Oversized Warning Threshold (MB)</label>
+                    <label htmlFor="workspace-settings-git-threshold">
+                      Large-file warning threshold (MiB)
+                    </label>
                     <input
+                      id="workspace-settings-git-threshold"
                       data-testid="workspace-settings-git-threshold"
                       type="number"
-                      min={1}
-                      max={100}
-                      value={gitLargeFileThreshold}
+                      min={1 / (1024 * 1024)}
+                      step="any"
+                      required
+                      value={gitLargeFileThresholdMiB}
                       onChange={(e) =>
-                        setGitLargeFileThreshold(parseInt(e.target.value) || 10)
+                        setGitLargeFileThresholdMiB(e.target.value)
                       }
                       style={{
                         backgroundColor: "var(--color-surface-subtle)",
@@ -3442,9 +3304,7 @@ export function WorkspacePanel({
               )}
             {activeTabPath &&
               !activeWorkspaceWorkflow &&
-              !activeProcessView &&
-              !activeDirectRivet &&
-              !activeDirectBrep && (
+              !activeProcessView && (
                 <button
                   data-testid="viewer-inspector-toggle"
                   onClick={() => setIsInspectorOpen(!isInspectorOpen)}
@@ -3550,6 +3410,8 @@ export function WorkspacePanel({
                     ] ?? 0
                   }
                   onOpenWorkflow={selectWorkspaceWorkflow}
+                  onUnsavedChange={setTabDirty}
+                  onSavingChange={setTabSaving}
                   onOpenProcess={openProcessView}
                   createIfMissing={tab.createIfMissing}
                   navigation={
@@ -3612,71 +3474,7 @@ export function WorkspacePanel({
               </div>
             );
           })}
-          {directRivetTabs.map((tab) => {
-            const slug = rivetSlugFromTabPath(tab.path) || "rivet";
-            if (!_workspaceId || !workspaceFileSessionId) return null;
-            const isActive = activeTabPath === tab.path;
-            return (
-              <div
-                key={tab.path}
-                data-testid={`retained-direct-rivet-panel-${slug}`}
-                aria-hidden={!isActive}
-                style={{
-                  position: isActive ? "relative" : "absolute",
-                  inset: isActive ? undefined : 0,
-                  zIndex: isActive ? 1 : 0,
-                  display: isActive ? "flex" : "none",
-                  width: "100%",
-                  height: "100%",
-                  visibility: isActive ? "visible" : "hidden",
-                  pointerEvents: isActive ? "auto" : "none",
-                }}
-              >
-                <ManagedRivetSurface
-                  workspaceId={_workspaceId}
-                  sessionId={workspaceFileSessionId}
-                  initialSlug={slug}
-                  externalRevisionToken={
-                    isActive ? rivetExternalRevisionToken : null
-                  }
-                  onWorkflowLoaded={(workflow) => {
-                    updateTabPath(
-                      tab.path,
-                      directRivetTabPath(workflow.slug),
-                      `${workflow.slug}.rivet-project`,
-                    );
-                  }}
-                />
-              </div>
-            );
-          })}
-          {directBrepTabs.map((tab) => {
-            const isActive = activeTabPath === tab.path;
-            return (
-              <div
-                key={tab.path}
-                data-testid="retained-direct-brep-panel"
-                aria-hidden={!isActive}
-                style={{
-                  position: isActive ? "relative" : "absolute",
-                  inset: isActive ? undefined : 0,
-                  zIndex: isActive ? 1 : 0,
-                  display: isActive ? "flex" : "none",
-                  width: "100%",
-                  height: "100%",
-                  visibility: isActive ? "visible" : "hidden",
-                  pointerEvents: isActive ? "auto" : "none",
-                }}
-              >
-                <DirectBrepSurface sessionId={workspaceFileSessionId || ""} />
-              </div>
-            );
-          })}
-          {!activeWorkspaceWorkflow &&
-          !activeProcessView &&
-          !activeDirectRivet &&
-          !activeDirectBrep &&
-          activeTabPath ? (
+          {!activeWorkspaceWorkflow && !activeProcessView && activeTabPath ? (
             <>
               <div
                 ref={viewerContainerRef}
@@ -3825,10 +3623,7 @@ export function WorkspacePanel({
                 </div>
               )}
             </>
-          ) : !activeWorkspaceWorkflow &&
-            !activeProcessView &&
-            !activeDirectRivet &&
-            !activeDirectBrep ? (
+          ) : !activeWorkspaceWorkflow && !activeProcessView && true ? (
             /* Welcome / landing screen when no tabs are open */
             <div
               data-testid="workspace-empty-state"
@@ -4285,6 +4080,22 @@ export function WorkspacePanel({
             ◀
           </button>
         )}
+      {pendingWorkflowTab && (
+        <NativeConfirmDialog
+          title="Unsaved workflow changes"
+          stayLabel="Keep editing"
+          proceedLabel="Discard changes"
+          stay={keepEditingWorkflow}
+          proceed={() => handleCloseTab(pendingWorkflowTab.path, true)}
+          proceedDisabled={pendingWorkflowTab.isSaving}
+        >
+          <p>
+            {pendingWorkflowTab.name.replace(/\.workflow\.wflow$/i, ".wflow")}{" "}
+            has unsaved changes. Keep editing to save them, or discard them and
+            close this tab.
+          </p>
+        </NativeConfirmDialog>
+      )}
     </WorkspaceLayout>
   );
 }

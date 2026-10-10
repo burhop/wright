@@ -22,6 +22,17 @@ def reconcile_wright_managed_servers(database_path: str) -> int:
     try:
         connection.execute("PRAGMA foreign_keys = ON")
         connection.execute("BEGIN IMMEDIATE")
+        # Retain historical records without advertising or launching the retired
+        # engine. Canonical accepted-source workflows use Wright's native runtime.
+        connection.execute(
+            "UPDATE mcp_servers SET is_active=0, is_installed=0, status='inactive' "
+            "WHERE server_id='rivet-workflows' AND deployment_mode='wright-managed'"
+        )
+        connection.execute(
+            "UPDATE mcp_tools SET is_enabled=0 WHERE server_id IN "
+            "(SELECT server_id FROM mcp_servers WHERE server_id='rivet-workflows' "
+            "AND deployment_mode='wright-managed')"
+        )
         for entry in WRIGHT_MANAGED_SERVERS:
             command = json.dumps(entry["command"])
             connection.execute(

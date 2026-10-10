@@ -6,6 +6,7 @@ acceptance. They verify native opening/closing and exact presentation grants.
 
 import sqlite3
 from dataclasses import replace
+from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -295,6 +296,210 @@ async def test_saved_reuse_requires_no_model_or_compiler_and_close_does_not_canc
         ).state
         == "issued"
     )
+
+
+@pytest.mark.asyncio
+async def test_new_view_reclaims_expired_capacity_without_replaying_process(
+    tmp_path, monkeypatch
+):
+    case = native_case(tmp_path, monkeypatch)
+    job = await build(case)
+    presentations = case.surfaces.presentation_service
+    now = presentations.clock()
+    monkeypatch.setattr(presentations, "clock", lambda: now)
+    expired = await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "abandoned", read_only=True
+    )
+    now += timedelta(hours=7)
+    current = await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "current", read_only=True
+    )
+    original_start = case.surfaces.live_apps.start
+
+    async def bounded_start(**kwargs):
+        if sum(item.state == "ready" for item in case.manager.instances.values()) >= 2:
+            raise LiveAppControlError(
+                "SURFACE_LIMIT_OWNED_APPS", "Two occupied test slots", retryable=False
+            )
+        return await original_start(**kwargs)
+
+    monkeypatch.setattr(case.surfaces.live_apps, "start", bounded_start)
+    case.application.runs.start = AsyncMock(side_effect=AssertionError("No new run"))
+    case.author.engine.stream_chat = AsyncMock(
+        side_effect=AssertionError("No model call")
+    )
+    now += timedelta(hours=1)  # Exact expiry boundary of the abandoned view.
+    reopened = await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "reopened", read_only=True
+    )
+    assert reopened["descriptor"].lifecycle is SurfaceLifecycle.READY
+    assert (
+        presentations.get_record(
+            actor=case.actor, presentation_id=expired["launch"].presentation_id
+        ).state
+        == "closed"
+    )
+    assert (
+        presentations.get_record(
+            actor=case.actor, presentation_id=current["launch"].presentation_id
+        ).state
+        == "issued"
+    )
+    assert [call for call in case.manager.calls if call[0] == "stop"] == [
+        ("stop", expired["launch"].instance_id)
+    ]
+    old_grants = [
+        grant
+        for grant in retained_grants(case)
+        if grant.constraints["presentation_id"] == expired["launch"].presentation_id
+    ]
+    assert old_grants and all(grant.revoked_at is not None for grant in old_grants)
+    case.application.runs.start.assert_not_called()
+    case.application.runs.cancel.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_expired_cleanup_preserves_another_unexpired_presentation(
+    tmp_path, monkeypatch
+):
+    case = native_case(tmp_path, monkeypatch)
+    job = await build(case)
+    presentations = case.surfaces.presentation_service
+    now = presentations.clock()
+    monkeypatch.setattr(presentations, "clock", lambda: now)
+    old = await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "old", read_only=True
+    )
+    now += timedelta(hours=7)
+    fresh = presentations.open(
+        actor=case.actor,
+        surface_id=old["descriptor"].surface_id,
+        kind="panel",
+        idempotency_key="another-presentation",
+        remember_preference=False,
+        isolated_acknowledged=True,
+    )
+    now += timedelta(hours=1)
+    await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "new", read_only=True
+    )
+    assert (
+        presentations.get_record(
+            actor=case.actor, presentation_id=old["launch"].presentation_id
+        ).state
+        == "closed"
+    )
+    assert (
+        presentations.get_record(
+            actor=case.actor, presentation_id=fresh.launch.presentation_id
+        ).state
+        == "issued"
+    )
+    assert not [call for call in case.manager.calls if call[0] == "stop"]
+
+
+@pytest.mark.asyncio
+async def test_expired_cleanup_does_not_touch_another_session(tmp_path, monkeypatch):
+    case = native_case(tmp_path, monkeypatch)
+    job = await build(case)
+    presentations = case.surfaces.presentation_service
+    now = presentations.clock()
+    monkeypatch.setattr(presentations, "clock", lambda: now)
+    foreign_actor = SurfaceActor(
+        user_id=case.actor.user_id,
+        workspace_id=case.actor.workspace_id,
+        session_id="another-session",
+        role=case.actor.role,
+    )
+    foreign = await case.owner.open(
+        case.scope, case.process, foreign_actor, job.job_id, "foreign", read_only=True
+    )
+    now += timedelta(hours=8)
+    await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "new", read_only=True
+    )
+    assert (
+        presentations.get_record(
+            actor=foreign_actor, presentation_id=foreign["launch"].presentation_id
+        ).state
+        == "issued"
+    )
+    assert not [call for call in case.manager.calls if call[0] == "stop"]
+
+
+@pytest.mark.asyncio
+async def test_expired_close_cannot_stop_a_replacement_generation(
+    tmp_path, monkeypatch
+):
+    case = native_case(tmp_path, monkeypatch)
+    job = await build(case)
+    presentations = case.surfaces.presentation_service
+    now = presentations.clock()
+    monkeypatch.setattr(presentations, "clock", lambda: now)
+    old = await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "old", read_only=True
+    )
+    descriptor = old["descriptor"]
+    instance = dict(descriptor.instance)
+    instance["generation"] += 1
+    for state in (
+        SurfaceLifecycle.STOPPING,
+        SurfaceLifecycle.STOPPED,
+        SurfaceLifecycle.STARTING,
+        SurfaceLifecycle.READY,
+    ):
+        descriptor = await case.surfaces.service.project_runtime(
+            actor=case.actor,
+            surface_id=descriptor.surface_id,
+            target=state,
+            expected_revision=descriptor.revision,
+            instance=instance,
+            presentations=descriptor.presentations,
+        )
+    now += timedelta(hours=8)
+    await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "new", read_only=True
+    )
+    assert not [call for call in case.manager.calls if call[0] == "stop"]
+    # Even an explicit late close from the old browser cannot stop the new host.
+    await case.owner.close(
+        case.scope, case.actor, descriptor.surface_id, old["launch"].presentation_id
+    )
+    assert not [call for call in case.manager.calls if call[0] == "stop"]
+    assert (
+        await case.surfaces.service.get(
+            actor=case.actor, surface_id=descriptor.surface_id
+        )
+    ).lifecycle is SurfaceLifecycle.READY
+
+
+@pytest.mark.asyncio
+async def test_open_before_expiry_preserves_capacity_failure(tmp_path, monkeypatch):
+    case = native_case(tmp_path, monkeypatch)
+    job = await build(case)
+    view = await case.owner.open(
+        case.scope, case.process, case.actor, job.job_id, "valid", read_only=True
+    )
+    monkeypatch.setattr(
+        case.surfaces.live_apps,
+        "start",
+        AsyncMock(
+            side_effect=LiveAppControlError(
+                "SURFACE_LIMIT_OWNED_APPS", "Full", retryable=False
+            )
+        ),
+    )
+    with pytest.raises(ProcessInterfaceError, match="open interface limit"):
+        await case.owner.open(
+            case.scope, case.process, case.actor, job.job_id, "new", read_only=True
+        )
+    assert (
+        case.surfaces.presentation_service.get_record(
+            actor=case.actor, presentation_id=view["launch"].presentation_id
+        ).state
+        == "issued"
+    )
+    assert not [call for call in case.manager.calls if call[0] == "stop"]
 
 
 @pytest.mark.asyncio

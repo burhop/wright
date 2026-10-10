@@ -84,6 +84,27 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         ).iterdir()
         if path.name.startswith(f"{ordinal:02d}")
     )
+    if script == "drill-jig":
+        fixture_spec = importlib.util.spec_from_file_location(
+            "external_slice_fixture", ROOT / "tests/fixtures/external_slice_binding.py"
+        )
+        fixture = importlib.util.module_from_spec(fixture_spec)
+        fixture_spec.loader.exec_module(fixture)
+        make_binding = fixture.make_binding
+
+        scenario = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
+        config = json.loads(preparer.BINDING.read_text(encoding="utf-8"))
+        args.slicer_binding, external_tools = make_binding(
+            tmp_path / "external-slice",
+            scenario["scenario_id"],
+            config["slicer"]["process"],
+        )
+        tools = [
+            tool
+            for tool in tools
+            if (tool["server_id"], tool["tool_name"])
+            not in {(row["server_id"], row["tool_name"]) for row in external_tools}
+        ] + external_tools
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text(encoding="utf-8")
     plan = compile_prompt_workflow(source)
@@ -111,7 +132,14 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
     assert any(
         tool["tool_name"] == "inspect_file" for tool in manifest["tool_allowlist"]
     )
-    assert not (Path(args.workspace_root) / manifest["output_root"]).exists()
+    output_root = Path(args.workspace_root) / manifest["output_root"]
+    if script == "drill-jig":
+        # External slicing prepares only an empty destination, never artifacts.
+        assert output_root.is_dir() and all(
+            path.is_dir() for path in output_root.rglob("*")
+        )
+    else:
+        assert not output_root.exists()
     assert any(
         path.endswith(".step") for path in manifest["expected_tool_created_files"]
     )
@@ -418,6 +446,9 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             validate=lambda step, value, schema: Draft202012Validator(schema).validate(
                 value
             ),
+        )
+        runtime._connected_arguments = lambda step, responses, tool: (
+            WorkflowMcpRuntime._connected_arguments(runtime, step, responses, tool)
         )
         arguments = WorkflowMcpRuntime.arguments(
             runtime, execution, {execution.arguments_from: exact}

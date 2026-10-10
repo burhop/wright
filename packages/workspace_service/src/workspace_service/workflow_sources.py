@@ -1780,9 +1780,29 @@ class WorkspaceWorkflowSourceUseCases:
         store_factory: Callable[[str], WorkspaceWorkflowSourceStore] = (
             WorkspaceWorkflowSourceStore
         ),
+        *,
+        instruction_defaults: Callable[[str], dict] | None = None,
     ) -> None:
         self._executor = executor
         self._store_factory = store_factory
+        self._instruction_defaults = instruction_defaults
+
+    def _new_source(self, workspace_dir: str, source: str) -> str:
+        if self._instruction_defaults is None:
+            return source
+        from core.workflow_instructions import WorkflowInstructionSet
+        from .workflow_instruction_settings import materialize_new_workflow_instructions
+
+        try:
+            defaults = self._instruction_defaults(workspace_dir)
+            return materialize_new_workflow_instructions(
+                source, WorkflowInstructionSet.model_validate(defaults["instructions"])
+            )
+        except ValueError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_instructions_invalid",
+                "Workflow instruction defaults or embedded instructions are invalid. Inspect settings before saving.",
+            ) from error
 
     async def create(
         self,
@@ -1798,13 +1818,50 @@ class WorkspaceWorkflowSourceUseCases:
                 "workspace.workflow_sources.create",
                 lambda: self._store_factory(workspace_dir).create(
                     path,
-                    source,
+                    self._new_source(workspace_dir, source),
                     **(
                         {"layout": layout, "origin": origin}
                         if layout is not None or origin is not None
                         else {}
                     ),
                 ),
+            )
+        except WorkflowSourceStorageError:
+            raise
+        except RuntimeError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_source_unavailable",
+                "Workflow source storage is unavailable",
+            ) from error
+
+    async def copy(
+        self,
+        workspace_dir: str,
+        source_path: str,
+        destination_path: str,
+        expected_storage_digest: str,
+    ) -> WorkflowSourceDocument:
+        """Copy the pinned saved definition; preserve legacy absence of instructions.
+
+        Read authority is the exact digest requested, not current installation
+        defaults. The destination begins its own source/layout revision history;
+        no run, approval, template lineage or interface authority is copied.
+        """
+
+        def copy_definition():
+            store = self._store_factory(workspace_dir)
+            saved = store.read(source_path)
+            if saved.storage_digest != expected_storage_digest:
+                raise WorkflowSourceConflictError(
+                    saved.storage_revision, saved.storage_digest
+                )
+            layout = saved.layout if saved.layout_status == "current" else None
+            return store.create(destination_path, saved.source, layout=layout)
+
+        try:
+            return await self._executor.run_to_completion(
+                "workspace.workflow_sources.copy",
+                copy_definition,
             )
         except WorkflowSourceStorageError:
             raise

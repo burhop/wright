@@ -1,5 +1,142 @@
 # Feature 083 local completion
 
+## User testing corrections — 7 October UTC
+
+### Native image output through the user's configured Codex connection
+
+The user's correction is confirmed by actual execution: the existing Codex
+connection accepts a reference image plus instructions and returns image bytes.
+An AI prompt configured as Image (PNG/JPEG) now uses this native capability;
+another MCP is unnecessary. Existing explicitly selected MCP image tasks remain
+supported. The installed SDK's normal resolver preserves the default model and
+credentials. A fixed provider-side image request is integrated with the existing
+durable workflow runtime, storage, exact file mappings, image result and viewer.
+Readiness qualifies capability; resolved model/configuration/SDK drift invalidates
+the prepared request. No UI executor, alternate job authority or model switch
+was introduced. Tool-free interface-code authoring retains its earlier scope.
+
+The [first capture](../../artifacts/ui-walkthrough/workspace-feedback/20261007-native-image-001/report.html)
+created, connected, saved and reopened the image workflow and submitted one run.
+Its harness then failed to parse the NDJSON response as ordinary JSON. The backend
+nevertheless completed run `ce84e8253701486694fd65e5b6ec8a0e` and saved a real PNG.
+The [nine-step continuation](../../artifacts/ui-walkthrough/workspace-feedback/20261007-native-image-continuation-002/report.html)
+observes that exact run, opens the generated brass rendering in the shared Wright
+image viewer tab and restores it on reload without another execution. Browser
+diagnostics are empty. This is live native image execution; it is not a fresh
+Solid Edge CAD creation/export or engineering-geometry certification. Those
+checks and user acceptance remain open.
+
+The earlier missing-image-MCP interpretation and readiness proof below are
+historical and superseded. Their recorded scopes and failed captures remain
+intact. See the continuation's verification record for exact file/hash,
+provider/model provenance and local regression results.
+
+The focused regression selection passes **168 backend cases and 74 frontend
+cases**, with TypeScript compilation, Python lint and whitespace checks passing.
+Native adapter tests cover PNG/JPEG, inherited model preservation, configuration
+drift, unexpected tools and incomplete/mislabeled outputs. Runtime tests reject
+text/header-invalid responses before publishing an image. These tests use
+explicit doubles; the served PNG execution above is the live-provider proof.
+
+### Drawn connections and the final image
+
+The user's final-output requirement is an image, produced by transforming the
+CAD screenshot into a realistic rendering. The editor now offers direct Prompt
+and Reference image sockets, provider-declared model image exports and PNG/JPEG
+result choices. Images use the existing MCP task/runtime, gateway, run-scoped
+file output and shared result viewer. There is no new image executor or vendor
+adapter. Activity summaries remain supporting evidence. Required provider
+configuration is checked before running; format/filename changes on connected
+outputs require explicit disconnection.
+
+The [14-step served authoring report](../../artifacts/ui-walkthrough/workspace-feedback/20261007-image-handoff-final-004/report.html)
+proves mouse-drawn text/image handoffs, separate rendering instructions,
+Undo/Redo, save/reopen and missing-provider readiness. No workflow execution was
+submitted. The frontend selection passes 107 cases, TypeScript compilation
+passes and 124 backend cases pass. Runtime provider doubles prove byte transport,
+image result identity, exact digests, run-path separation and rejection of
+missing/mislabeled/header-invalid outputs. Loading an old source does not change
+it; explicitly selecting image output can add its missing image socket.
+
+This is **not** a verified end-to-end realistic rendering. The workspace still
+needs an image-capable provider selected; fresh Solid Edge image export, actual
+rendering, quality/geometry assessment and user acceptance remain open. PNG/JPEG
+header/file checks establish bounded file evidence only. Earlier unsuccessful
+capture attempts are retained; the continuations correct block selection and
+distinguish execution edges from displayed result edges.
+
+### Manual authoring follow-up
+
+The later three annotations concern creating a prompt-to-Solid Edge workflow
+by hand. Internal Wright services are now excluded from MCP server choices using
+registry presentation metadata, with no change to runtime tool authority or
+bindings. Both palette and Inspector offer actual enabled providers, explicit
+deferred selection, inventory refresh and honest errors. Existing unavailable
+bindings remain visible; no replacement server is guessed. The previously
+omitted independent Solid Edge connection was enabled for the isolated test
+workspace through ordinary registry/grant/install APIs using its existing binary.
+Discovery returned 27 tools; no CAD document was created or changed.
+
+The renamed **Open working view** opens the same saved workflow in a Wright tab,
+requires editor changes to be saved first, and submits no execution. The
+[12-step manual-authoring report](../../artifacts/ui-walkthrough/workspace-feedback/20261007-manual-authoring-continuation-002/report.html)
+proves the normal workspace entry, prompt-to-provider connection, source
+save/reload, separate working view, and creation of another blank workflow with
+deferred server choice. It captures no browser errors; 137 focused frontend
+cases and TypeScript compilation pass. Earlier latency and capture-check failures
+are retained; their
+presence limits claims about general performance. This is authoring evidence,
+not a fresh CAD execution, native-model verification or user acceptance.
+
+### Earlier workspace correction pass
+
+**Product acceptance remains open.** The nine workspace annotations exposed
+entry-point and integration gaps beyond the earlier local feature proofs below.
+Those proofs remain historical evidence of their recorded scopes; they do not
+establish that this workspace was ready for user testing on 7 October.
+
+This follow-up changes the normal workspace path: Workflows creates a distinct
+empty source; existing sources open only through explicit file selection or
+retained tabs/links. It removes automatic Rivet provider/tool advertisement and
+the dedicated BREP launcher. BREP belongs to the ordinary independent MCP path.
+Git status, history, diffs, local commits and branch controls reuse the existing
+workspace service. Failed Git inspection is an error, rather than a clean state.
+Settings/files/Git use the workspace's session capability, independently of chat
+selection. Retired provider records and old evidence are preserved, disabled;
+unused legacy modules are migration debt and are not a claim of complete code
+deletion.
+
+The restarted test environment also lacked host configuration access and its
+engineering processes. The owned loopback API now reads its existing credentials
+and model configuration, and the dedicated Blender session and isolated
+inspection container are restored. No credential was embedded in the UI or
+authentication disabled. A new normal-UI run of the reported common digital
+workflow completed construction/repair and produced source/repaired STL, preview
+and response evidence. It does not establish physical printing or fit/strength.
+History now sorts recorded start times across timestamp and UUID locators;
+filename order had incorrectly restored an older failure after a successful run.
+
+The [workspace walkthrough](../../artifacts/ui-walkthrough/workspace-feedback/20261007-final-served-workspace/report.html)
+retains actual controls, raw/annotated screens, diagnostics, exact fresh run
+identity and reload observation. Earlier failed captures are retained alongside
+it. The normal-workspace regression selection now expects blank creation,
+explicit existing-file opens, usable Git, ordinary MCPs and no retired app
+advertisement. It replaces tests that explicitly expected the unwanted example,
+automatic missing-file creation and disabled Git placeholder.
+
+The final served walkthrough passes all ten steps with no captured browser
+errors. Its fresh run `cb84480082934f8d929a8d5b40fedeee` completes and reopens with
+the same identity; five output files were checked against recorded hashes.
+TypeScript and 65 focused frontend cases pass, alongside focused backend Git,
+workspace, retirement/gateway and run-history checks. Selections overlap; no
+aggregate backend count or whole-product acceptance is claimed. The
+[annotation ledger](../../artifacts/ui-walkthrough/workspace-feedback/20261007-final-served-workspace/feedback-resolution.json)
+records each of the nine comments, evidence and remaining boundaries.
+
+The full printed example's ordinary builtin-write readiness limitation described
+below remains unresolved. No protected campaign, held review, physical action,
+push, merge, release or user acceptance occurred in this correction pass.
+
 ## Final local completion — 4 October UTC
 
 **All57tasks M0–M5 and all182 original semantic obligations are locally verified.**

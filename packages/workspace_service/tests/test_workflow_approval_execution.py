@@ -199,16 +199,27 @@ async def setup_case(
         if run_receipt and block["id"] == "approve":
             from workspace_service.workflow_run_paths import VERSION, TOKEN
 
-            fields["outputs"] = [{
-                "key": "handoff_receipt", "kind": "workspace_file", "name": "Receipt",
-                "item": None, "required": False, "quantity": "one", "description": "Test receipt",
-            }]
+            fields["outputs"] = [
+                {
+                    "key": "handoff_receipt",
+                    "kind": "workspace_file",
+                    "name": "Receipt",
+                    "item": None,
+                    "required": False,
+                    "quantity": "one",
+                    "description": "Test receipt",
+                }
+            ]
             fields["settings"]["approval_settings"].pop("receipt_path", None)
             fields["settings"].update(
                 run_path_template=VERSION,
                 output_filename=f"outputs/attempt/{TOKEN}/receipt.json",
             )
-        if run_paths and block["kind"] == "task" and fields.get("performed_by") == "ai_assisted":
+        if (
+            run_paths
+            and block["kind"] == "task"
+            and fields.get("performed_by") == "ai_assisted"
+        ):
             from workspace_service.workflow_run_paths import VERSION, TOKEN
 
             settings = fields["settings"]
@@ -342,7 +353,9 @@ def reopen_case(case):
         return SimpleNamespace(source=raw.decode(), storage_digest=digest(raw))
 
     reopened.workflow_sources = SimpleNamespace(read=read)
-    checkpoint = reopened.workflow_external_actions.lookup(case.checkpoint.checkpoint_id)
+    checkpoint = reopened.workflow_external_actions.lookup(
+        case.checkpoint.checkpoint_id
+    )
     assert reopened.workflow_external_actions is not previous.workflow_external_actions
     assert checkpoint.subject_digest == case.checkpoint.subject_digest
     case.services = reopened

@@ -294,10 +294,12 @@ async def read_process_representation(
         request, service, body.session_id, body.path, body.expected_storage_digest
     )
     try:
-        if body.archive_entry is not None and body.preview is None:
+        if (body.archive_entry is not None and body.preview != "toolpaths") or (
+            body.page is not None and body.preview != "pdf-page"
+        ):
             raise ProcessInterfaceError(
                 "RESPONSE_INVALID",
-                "An archive entry is only supported for a passive toolpath preview.",
+                "Choose a toolpath preview for an archive entry, or a PDF preview for a page.",
                 "Download the exact file or choose its supported preview.",
             )
         reader = (
@@ -311,7 +313,15 @@ async def read_process_representation(
             body.reference,
             run_id=body.run_id,
             input_snapshot_id=body.input_snapshot_id,
-            **({"archive_entry": body.archive_entry} if body.preview else {}),
+            **(
+                {
+                    "archive_entry": body.archive_entry,
+                    "preview": body.preview,
+                    "page": body.page,
+                }
+                if body.preview
+                else {}
+            ),
         )
     except ProcessInterfaceError as error:
         raise _transport_error(error) from error
@@ -331,7 +341,13 @@ async def read_process_representation(
             "X-Content-Type-Options": "nosniff",
             "X-Wright-Artifact-SHA256": artifact.reference.sha256,
             **(
-                {"X-Wright-View-Format": "wright.gcode.toolpaths.v1"}
+                {
+                    "X-Wright-View-Format": {
+                        "pdf-page": "wright.pdf.page.v1",
+                        "toolpaths": "wright.gcode.toolpaths.v1",
+                        "validation-report": "wright.validation.report.v1",
+                    }[body.preview]
+                }
                 if body.preview
                 else {}
             ),
@@ -417,6 +433,7 @@ async def respond_to_process_input(
             body.request_id,
             expected_subject_digest=body.subject_digest,
             value=body.value,
+            auto=body.auto,
             response_generator=generate_workflow_response,
             action_generator=decide_workflow_tool_action,
             gateway=getattr(request.app.state, "gateway_service", None),

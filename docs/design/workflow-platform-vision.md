@@ -104,6 +104,11 @@ provided, have an explicit configured default, be produced automatically by
 declared upstream work, or come from a deliberately declared interaction step.
 Do not require intermediate engineering results to exist before their producers run.
 
+The 7 October clarification also allows an author to delegate unspecified design
+choices to AI under an explicit saved assumption policy. The AI records its
+choices and rationale as assumptions while preserving supplied requirements.
+Such choices are declared work; they do not require an unexpected runtime question.
+
 The accepted process defines where user review or action is required. At those
 steps, persist the waiting state and resume the same run after the declared
 response. Between them, an unattended process continues without opportunistic
@@ -113,9 +118,29 @@ readiness defect, not a reason to invent a runtime question or form.
 Readiness does not freeze the external world. Recheck current prerequisites
 before consequential actions. Unavailability, failure, or insufficient evidence
 follows the configured wait, bounded recovery, or failure policy and is reported
-honestly. It does not grant permission to guess inputs, bypass verification, or
+honestly. It does not grant permission to substitute assumptions for inputs the
+process requires a person or another producer to supply, bypass verification, or
 replay an action with an uncertain outcome. Authoring-time clarification remains
 available while preparing the process; runtime interaction follows its definition.
+
+## Portable, inspectable AI instructions
+
+**User clarification, 7 October 2026:** behavioral prompts belong in visible
+Wright settings or workflow/step configuration. Saving or exporting a workflow
+must preserve the applicable instruction text and policy so another user's local
+defaults do not silently change its behavior. Record the effective instructions
+used by a run; distinguish them from current defaults and provider-internal
+behavior that Wright cannot observe.
+
+Global defaults help author new processes. Updating an accepted workflow's
+instructions is an explicit versioned change. A process declares where to ask
+for input, validate requirements or obtain approval; these use the existing
+runtime and evidence identities. Permission and validation enforcement remain
+backend responsibilities.
+
+The [instruction and interaction refactoring plan](../architecture/workflow-instructions-and-interactions-plan.md)
+records the current code gaps and proposed implementation. These paragraphs
+capture direction, not a claim that instruction portability is implemented.
 
 ## Decisions agents must preserve
 

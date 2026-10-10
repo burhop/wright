@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -11,6 +11,7 @@ import {
   surfaceProxyHeaders,
   surfaceProxyConnection,
   surfaceProxyResponseBody,
+  surfaceDevProxyPlugin,
 } from "./vite.config";
 import configuration from "./vite.config";
 
@@ -21,6 +22,12 @@ describe("web license build output", () => {
       const directory = mkdtempSync(
         path.join(tmpdir(), "wright-license-output-"),
       );
+      const resolved = path.resolve(directory);
+      if (
+        !resolved.startsWith(path.resolve(tmpdir()) + path.sep) ||
+        !path.basename(resolved).startsWith("wright-license-output-")
+      )
+        throw new Error("Temporary cleanup escaped its root");
       try {
         if (typeof configuration !== "function")
           throw new Error("Expected the owning config factory");
@@ -56,12 +63,6 @@ describe("web license build output", () => {
         );
         expect(existsSync(path.join(directory, "dist"))).toBe(false);
       } finally {
-        const resolved = path.resolve(directory);
-        if (
-          !resolved.startsWith(path.resolve(tmpdir()) + path.sep) ||
-          !path.basename(resolved).startsWith("wright-license-output-")
-        )
-          throw new Error("Temporary cleanup escaped its root");
         rmSync(resolved, { recursive: true, force: true });
       }
     },
@@ -69,10 +70,46 @@ describe("web license build output", () => {
 });
 
 describe("surface development proxy rewriting", () => {
+  it("installs exactly the same scoped middleware in development and production preview", () => {
+    const plugin = surfaceDevProxyPlugin();
+    expect(plugin.configurePreviewServer).toBe(plugin.configureServer);
+    const install = plugin.configurePreviewServer;
+    if (typeof install !== "function")
+      throw new Error("Expected preview middleware hook");
+    let middleware: (
+      request: unknown,
+      response: unknown,
+      next: () => void,
+    ) => void;
+    const use = vi.fn((value) => {
+      middleware = value;
+    });
+    install.call({} as never, { middlewares: { use } } as never);
+    expect(use).toHaveBeenCalledOnce();
+    for (const headers of [
+      { host: "127.0.0.1:5248" },
+      { host: "s-other.localhost:5248" },
+    ]) {
+      const next = vi.fn();
+      const end = vi.fn();
+      middleware!(
+        {
+          url: "/__wright-surface/s-panel.localhost%3A8000/__wright/bootstrap",
+          headers,
+        },
+        { end },
+        next,
+      );
+      expect(next).toHaveBeenCalledOnce();
+      expect(end).not.toHaveBeenCalled();
+    }
+  });
   it.each(["application/json", "text/plain", "application/octet-stream"])(
     "preserves exact recorded %s evidence bytes and owning headers",
     (contentType) => {
-      const body = Buffer.from('{"url":"/wright-ai/v1","text":"é","bytes":"\\u0000"}');
+      const body = Buffer.from(
+        '{"url":"/wright-ai/v1","text":"é","bytes":"\\u0000"}',
+      );
       const headers = {
         "content-type": contentType,
         "content-length": String(body.byteLength),
@@ -81,7 +118,9 @@ describe("surface development proxy rewriting", () => {
         "content-security-policy": "default-src 'none'",
       };
       const original = { ...headers };
-      expect(surfaceProxyResponseBody(body, headers, "s-editor.localhost%3A8030")).toBe(body);
+      expect(
+        surfaceProxyResponseBody(body, headers, "s-editor.localhost%3A8030"),
+      ).toBe(body);
       expect(headers).toEqual(original);
       expect(body.toString()).toContain('"url":"/wright-ai/v1"');
     },
@@ -94,7 +133,11 @@ describe("surface development proxy rewriting", () => {
         ...(length === undefined ? {} : { "content-length": length }),
       };
       const original = { ...headers };
-      surfaceProxyResponseBody(Buffer.from("exact"), headers, "s-editor.localhost%3A8030");
+      surfaceProxyResponseBody(
+        Buffer.from("exact"),
+        headers,
+        "s-editor.localhost%3A8030",
+      );
       expect(headers).toEqual(original);
     }
   });
@@ -107,8 +150,14 @@ describe("surface development proxy rewriting", () => {
       "transfer-encoding": "chunked",
       "content-security-policy": "default-src 'self'",
     };
-    const result = surfaceProxyResponseBody(body, headers, "s-editor.localhost%3A8030");
-    expect(result.toString()).toContain('/__wright-surface/s-editor.localhost%3A8030/wright-ai/config');
+    const result = surfaceProxyResponseBody(
+      body,
+      headers,
+      "s-editor.localhost%3A8030",
+    );
+    expect(result.toString()).toContain(
+      "/__wright-surface/s-editor.localhost%3A8030/wright-ai/config",
+    );
     expect(headers["content-length"]).toBe(String(result.byteLength));
     expect(headers).not.toHaveProperty("transfer-encoding");
     expect(headers).not.toHaveProperty("content-security-policy");
@@ -120,9 +169,16 @@ describe("surface development proxy rewriting", () => {
     ["https://localhost:8443", "https:", "localhost", "8443"],
     ["http://localhost", "http:", "localhost", "80"],
     ["https://localhost", "https:", "localhost", "443"],
-  ])("connects surface previews to the configured API %s", (target, protocol, hostname, port) => {
-    expect(surfaceProxyConnection(target)).toEqual({ protocol, hostname, port });
-  });
+  ])(
+    "connects surface previews to the configured API %s",
+    (target, protocol, hostname, port) => {
+      expect(surfaceProxyConnection(target)).toEqual({
+        protocol,
+        hostname,
+        port,
+      });
+    },
+  );
 
   it("keeps Rivet AI configuration and completion requests inside the preview", () => {
     const authority = encodeURIComponent("s-editor.localhost:8000");
@@ -172,16 +228,48 @@ describe("surface development proxy rewriting", () => {
 
   it("translates only the exact isolated development Origin to its issued backend Origin", () => {
     const authority = "s-editor.localhost:8000";
-    expect(surfaceProxyHeaders({host: "s-editor.localhost:5242", origin: "http://s-editor.localhost:5242"}, authority).origin)
-      .toBe("http://s-editor.localhost:8000");
-    for (const origin of ["null", "https://foreign.invalid", "http://127.0.0.1:5242", "http://s-other.localhost:5242", "http://s-editor.localhost:5242/"]) {
-      expect(surfaceProxyHeaders({host: "s-editor.localhost:5242", origin}, authority).origin).toBe(origin);
+    expect(
+      surfaceProxyHeaders(
+        {
+          host: "s-editor.localhost:5242",
+          origin: "http://s-editor.localhost:5242",
+        },
+        authority,
+      ).origin,
+    ).toBe("http://s-editor.localhost:8000");
+    for (const origin of [
+      "null",
+      "https://foreign.invalid",
+      "http://127.0.0.1:5242",
+      "http://s-other.localhost:5242",
+      "http://s-editor.localhost:5242/",
+    ]) {
+      expect(
+        surfaceProxyHeaders(
+          { host: "s-editor.localhost:5242", origin },
+          authority,
+        ).origin,
+      ).toBe(origin);
     }
-    expect(surfaceProxyHeaders({host: "s-other.localhost:5242", origin: "http://s-other.localhost:5242"}, authority).origin)
-      .toBe("http://s-other.localhost:5242");
-    expect(surfaceProxyHeaders({host: "127.0.0.1:5242", origin: "http://127.0.0.1:5242"}, authority).origin)
-      .toBe("http://127.0.0.1:5242");
-    expect(surfaceProxyHeaders({host: "s-editor.localhost:5242"}, authority).origin).toBeUndefined();
+    expect(
+      surfaceProxyHeaders(
+        {
+          host: "s-other.localhost:5242",
+          origin: "http://s-other.localhost:5242",
+        },
+        authority,
+      ).origin,
+    ).toBe("http://s-other.localhost:5242");
+    expect(
+      surfaceProxyHeaders(
+        { host: "127.0.0.1:5242", origin: "http://127.0.0.1:5242" },
+        authority,
+      ).origin,
+    ).toBe("http://127.0.0.1:5242");
+    expect(
+      surfaceProxyHeaders({ host: "s-editor.localhost:5242" }, authority)
+        .origin,
+    ).toBeUndefined();
   });
 
   it("extracts the internal preview credential without forwarding it", () => {

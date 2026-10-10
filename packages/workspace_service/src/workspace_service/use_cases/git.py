@@ -49,6 +49,13 @@ class WorkspaceGitUseCases:
             "workspace.git.status", work, timeout_seconds=self._timeout
         )
 
+    async def initialize(self, workspace_dir: str) -> None:
+        await self._executor.run(
+            "workspace.git.initialize",
+            lambda: self._git_factory(workspace_dir).initialize(),
+            timeout_seconds=self._timeout,
+        )
+
     async def diff(self, workspace_dir: str, path: str) -> str:
         return await self._executor.run(
             "workspace.git.diff",

@@ -423,25 +423,49 @@ def test_revoked_process_read_grant_denies_context(case):
     assert case.client.get(PREFIX + "/context").status_code == 403
 
 
-def test_passive_toolpath_preview_keeps_exact_managed_results_grant(case, monkeypatch):
+@pytest.mark.parametrize("preview", ["toolpaths", "pdf-page", "validation-report"])
+def test_passive_toolpath_preview_keeps_exact_managed_results_grant(
+    case, monkeypatch, preview
+):
     from workspace_service.process_interfaces.artifacts import ProcessArtifactBytes
 
     calls = []
+    view_format = (
+        "wright.pdf.page.v1" if preview == "pdf-page" else "wright.gcode.toolpaths.v1"
+    )
+    media_type = (
+        "application/vnd.wright.pdf-page+json"
+        if preview == "pdf-page"
+        else "application/vnd.wright.toolpaths+json"
+    )
+    filename = "outputs/drawing.pdf" if preview == "pdf-page" else "outputs/slice.3mf"
+    extra = (
+        {"page": 2}
+        if preview == "pdf-page"
+        else {"archive_entry": "Metadata/plate_1.gcode"}
+    )
+    if preview == "validation-report":
+        view_format, media_type, filename, extra = (
+            "wright.validation.report.v1",
+            "text/markdown",
+            "outputs/assessment.json",
+            {},
+        )
 
     async def passive(scope, process, reference, **options):
         calls.append((scope, process, reference, options))
         return ProcessArtifactBytes(
             reference,
-            b'{"format":"wright.gcode.toolpaths.v1"}',
-            "application/vnd.wright.toolpaths+json",
+            json.dumps({"format": view_format}).encode(),
+            media_type,
         )
 
     monkeypatch.setattr(case.owner.artifacts, "preview", passive)
     body = case.query | {
-        "reference": {"artifact_ref": "outputs/slice.3mf", "sha256": "a" * 64},
+        "reference": {"artifact_ref": filename, "sha256": "a" * 64},
         "input_snapshot_id": "input-one",
-        "preview": "toolpaths",
-        "archive_entry": "Metadata/plate_1.gcode",
+        "preview": preview,
+        **extra,
     }
     response = case.client.post(
         PREFIX + "/representations/read", json=body, headers={"Origin": ORIGIN}
@@ -450,16 +474,18 @@ def test_passive_toolpath_preview_keeps_exact_managed_results_grant(case, monkey
     assert response.headers["x-wright-artifact-sha256"] == "a" * 64
     assert response.headers["content-length"] == str(len(response.content))
     assert response.headers["x-content-type-options"] == "nosniff"
-    assert response.headers["x-wright-view-format"] == "wright.gcode.toolpaths.v1"
+    assert response.headers["x-wright-view-format"] == view_format
     assert len(calls) == 1
     scope, process, reference, options = calls[0]
     assert scope.run_bound is True and scope.run_id is None
     assert process == case.reference
-    assert reference.artifact_ref == "outputs/slice.3mf"
+    assert reference.artifact_ref == filename
     assert options == {
         "run_id": None,
         "input_snapshot_id": "input-one",
-        "archive_entry": "Metadata/plate_1.gcode",
+        "archive_entry": extra.get("archive_entry"),
+        "preview": preview,
+        "page": extra.get("page"),
     }
     foreign = body | {"run_id": "other-run", "input_snapshot_id": None}
     assert (

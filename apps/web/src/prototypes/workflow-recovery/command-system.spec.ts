@@ -220,6 +220,87 @@ describe("recovery command and source conformance", () => {
     ).toBe(false);
   });
 
+  it("retains execution order and approval between the same blocks through editing and source round trips", () => {
+    const approval = initialWorkflow.relationships.find(
+      (item) => item.id === "rel.review-accepted",
+    )!;
+    const order = {
+      ...approval,
+      id: "rel.review-order",
+      kind: "control" as const,
+      label: "Continue after review",
+      condition: null,
+    };
+    const added = applyRecoveryBatch(
+      initialWorkflow,
+      initialLayout,
+      recoveryCommandBatch(initialWorkflow.revision, "graph", [
+        { kind: "connect", relationship: order },
+      ]),
+    );
+    expect(added.ok, JSON.stringify(added.diagnostics)).toBe(true);
+    expect(added.workflow!.relationships).toContainEqual(approval);
+    expect(added.workflow!.relationships).toContainEqual(order);
+    const internal = parseRecoveryDsl(formatRecoveryDsl(added.workflow!).text);
+    expect(internal.ok, JSON.stringify(internal.diagnostics)).toBe(true);
+    const source = formatRecoveryAuthoringSource(added.workflow!).text;
+    const reopened = parseRecoveryAuthoringSource(source, initialWorkflow);
+    expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+    expect(toCanonicalWire(reopened.workflow!)).toEqual(
+      toCanonicalWire(added.workflow!),
+    );
+    const removed = applyRecoveryBatch(
+      added.workflow!,
+      added.layout!,
+      recoveryCommandBatch(added.workflow!.revision, "graph", [
+        { kind: "disconnect", relationshipId: order.id },
+      ]),
+    );
+    expect(removed.ok, JSON.stringify(removed.diagnostics)).toBe(true);
+    expect(removed.workflow!.relationships).toEqual(
+      initialWorkflow.relationships,
+    );
+    expect(initialWorkflow.relationships).toHaveLength(16);
+  });
+
+  it.each(["data", "decision", "feedback", "control"] as const)(
+    "rejects duplicate %s relationships even with different labels or conditions",
+    (kind) => {
+      const workflow = cloneWorkflow(initialWorkflow);
+      const relationship =
+        kind === "control"
+          ? {
+              ...workflow.relationships.find(
+                (item) => item.kind === "decision",
+              )!,
+              id: "rel.order",
+              kind,
+              condition: null,
+            }
+          : workflow.relationships.find((item) => item.kind === kind)!;
+      if (kind === "control") workflow.relationships.push(relationship);
+      const result = applyRecoveryBatch(
+        workflow,
+        initialLayout,
+        recoveryCommandBatch(workflow.revision, "graph", [
+          {
+            kind: "connect",
+            relationship: {
+              ...relationship,
+              id: "rel.duplicate",
+              label: "Another label",
+              condition: "Another condition",
+            },
+          },
+        ]),
+      );
+      expect(result.ok).toBe(false);
+      expect(result.diagnostics.map((item) => item.code)).toContain(
+        "WFR-RELATIONSHIP-DUPLICATE",
+      );
+    },
+  );
+
   it.each([
     [
       "rel.duplicate-endpoints",

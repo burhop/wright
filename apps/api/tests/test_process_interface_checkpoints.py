@@ -1,6 +1,7 @@
 """Authenticated input response routes on a real declared source and durable run."""
 
 from contextlib import asynccontextmanager
+from functools import partial
 from types import SimpleNamespace
 
 import pytest
@@ -18,7 +19,7 @@ PREFIX = "/api/workspace/process-interfaces"
 
 
 @pytest.fixture
-def checkpoint_case(tmp_path, monkeypatch):
+def checkpoint_case(tmp_path, monkeypatch, request):
     holder = {}
 
     @asynccontextmanager
@@ -31,7 +32,9 @@ def checkpoint_case(tmp_path, monkeypatch):
     try:
         with TestClient(app) as client:
             owner, reference, receipt, cp, calls, generate = client.portal.call(
-                waiting_case, tmp_path
+                partial(
+                    waiting_case, tmp_path, integration=getattr(request, "param", False)
+                )
             )
             holder["owner"] = owner
             workspace = owner.workspace
@@ -59,6 +62,7 @@ def checkpoint_case(tmp_path, monkeypatch):
                 query=query,
                 root=tmp_path,
                 generate=generate,
+                integration=getattr(request, "param", False),
             )
     finally:
         app.dependency_overrides.pop(get_workspace_service, None)
@@ -88,6 +92,7 @@ def test_route_projects_form_accepts_server_actor_and_resumes_exact_run(
     attached = case.client.get(
         f"{PREFIX}/runs/{case.receipt.run_id}", params=case.query
     )
+
     assert attached.status_code == 200
     snapshot = attached.json()
     assert snapshot["state"] == "waiting_human"
@@ -116,6 +121,54 @@ def test_route_projects_form_accepts_server_actor_and_resumes_exact_run(
         ).json()["state"]
         == "completed"
     )
+
+
+def test_auto_input_without_enrollment_is_rejected_without_an_answer(checkpoint_case):
+    case = checkpoint_case
+    response = submit(case, auto=True)
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "SCOPE_DENIED"
+    assert (
+        case.owner.human_inputs.repository.get(case.checkpoint.checkpoint_id).state
+        == "pending"
+    )
+    assert len(case.calls) == 1
+
+
+@pytest.mark.parametrize("checkpoint_case", [True], indirect=True)
+def test_enrolled_auto_input_records_test_actor_and_idempotent_continuation(
+    checkpoint_case,
+):
+    case = checkpoint_case
+    response = submit(case, auto=True)
+    assert response.status_code == 202, response.text
+    answer = response.json()
+    assert answer["actor"] == "integration_test:input-campaign"
+    assert answer["integration_test"] is True
+    assert answer["run_id"] == case.receipt.run_id
+    completed = case.client.portal.call(
+        case.owner.runs.wait, control(), case.reference, case.receipt.run_id
+    )
+    assert completed["status"] == "completed"
+    assert submit(case, auto=True).json() == answer
+    assert len(case.calls) == 2
+    assert submit(case, auto=False).status_code == 409
+    assert len(case.calls) == 2
+
+
+@pytest.mark.parametrize("checkpoint_case", [True], indirect=True)
+def test_enrollment_alone_does_not_change_a_manual_input_actor(checkpoint_case):
+    case = checkpoint_case
+    response = submit(case)
+    assert response.status_code == 202, response.text
+    assert response.json()["actor"] == "local-control-plane"
+    assert not response.json()["integration_test"]
+
+
+@pytest.mark.parametrize("auto", ["true", 1, None])
+def test_auto_input_flag_is_strict(checkpoint_case, auto):
+    assert submit(checkpoint_case, auto=auto).status_code == 422
+    assert len(checkpoint_case.calls) == 1
 
 
 @pytest.mark.parametrize("invalid_envelope", [False, True])
@@ -205,11 +258,12 @@ def test_public_body_cannot_supply_authority_or_run(checkpoint_case, changes):
         ({"path": "workflows/other.workflow.wflow"}, 403, "SCOPE_DENIED"),
     ],
 )
+@pytest.mark.parametrize("checkpoint_case", [False, True], indirect=True)
 def test_route_rejects_stale_invalid_and_cross_process_answer(
     checkpoint_case, changes, status, code
 ):
     case = checkpoint_case
-    result = submit(case, **changes)
+    result = submit(case, auto=case.integration, **changes)
     assert result.status_code == status, result.text
     assert result.json()["error_code"] == code
     assert len(case.calls) == 1

@@ -111,9 +111,13 @@ async def test_missing_later_choice_blocks_public_start_before_any_dispatch(tmp_
     try:
         with pytest.raises(ProcessInterfaceError) as denied:
             await app.runs.start(
-                scope(), process(text), prepared.snapshot.snapshot_id,
-                "missing-later-choice", expected_input_digest=prepared.snapshot.digest,
-                response_generator=must_not_execute, gateway=must_not_connect,
+                scope(),
+                process(text),
+                prepared.snapshot.snapshot_id,
+                "missing-later-choice",
+                expected_input_digest=prepared.snapshot.digest,
+                response_generator=must_not_execute,
+                gateway=must_not_connect,
             )
         assert denied.value.reason.code == "INPUT_REQUIRED"
         assert calls == []
@@ -251,35 +255,73 @@ async def test_unavailable_tool_gateway_has_a_useful_blocking_reason(tmp_path):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("agent_task", [False, True])
 @pytest.mark.parametrize("granted", [False, True])
-async def test_predictable_tool_authority_is_checked_before_execution(tmp_path, agent_task, granted):
+async def test_predictable_tool_authority_is_checked_before_execution(
+    tmp_path, agent_task, granted
+):
     guarded = replace(TOOL, required_approvals=frozenset({"workspace_write_approval"}))
     blocks = _parse(tool_source(default="Engineering requirements"))
+    # Capture a named legacy fixture profile so this test isolates tool grants,
+    # rather than implying strict modern action-intent compatibility.
+    from agent_adapters.workflow_instructions import embedded_instruction_set
+
+    instructions = embedded_instruction_set().model_dump(mode="json")
+    instructions["profile_id"] = "tool-authority-fixture"
+    instructions["policy"]["assumption_policy"] = "document_reasonable"
+    next(block["fields"] for block in blocks if block["kind"] == "workflow")[
+        "instructions"
+    ] = instructions
     first = next(block["fields"] for block in blocks if block["id"] == "first")
     first["settings"]["mcp_schema_digest"] = schema_digest(guarded)
     if agent_task:
         first["performed_by"] = "ai_assisted"
-        first["settings"].update(authoring_template="mcp-task", mcp_task_tools=[guarded.tool_name],
-                                 task_guidance="Use only the declared tool and exact supplied requirements.")
-    text = "".join(section(block["kind"], block["id"], **block["fields"]) for block in blocks)
+        first["settings"].update(
+            authoring_template="mcp-task",
+            mcp_task_tools=[guarded.tool_name],
+            task_guidance="Use only the declared tool and exact supplied requirements.",
+            instruction_override={
+                "origin": "tool-authority-fixture",
+                "assumption_policy": "document_reasonable",
+            },
+        )
+    text = "".join(
+        section(block["kind"], block["id"], **block["fields"]) for block in blocks
+    )
     app = owner(tmp_path, text)
     gateway = Gateway()
     gateway.list_tools = lambda *args: (guarded,)
-    gateway.workspace_approvals_for_model_call = lambda *args: {"workspace_write_approval"} if granted else set()
+    gateway.workspace_approvals_for_model_call = lambda *args: (
+        {"workspace_write_approval"} if granted else set()
+    )
     prepared = await app.set_inputs(scope(), process(text))
-    readiness = await app.check_readiness(scope(), process(text), prepared.snapshot.snapshot_id,
-                                          gateway=gateway, session_id="session")
+    readiness = await app.check_readiness(
+        scope(),
+        process(text),
+        prepared.snapshot.snapshot_id,
+        gateway=gateway,
+        session_id="session",
+    )
     assert readiness.state == ("ready" if granted else "blocked")
     if not granted:
         assert readiness.reasons[0].code == "CAPABILITY_UNAVAILABLE"
         assert "authorization" in readiness.reasons[0].message.lower()
         assert readiness.reasons[0].correction
+
         async def must_not_execute(*args, **kwargs):
-            raise AssertionError("A missing predictable grant must block before execution")
+            raise AssertionError(
+                "A missing predictable grant must block before execution"
+            )
 
         with pytest.raises(ProcessInterfaceError) as denied:
-            await app.runs.start(scope(), process(text), prepared.snapshot.snapshot_id,
-                                 "missing-tool-grant", expected_input_digest=prepared.snapshot.digest,
-                                 response_generator=must_not_execute, gateway=gateway, session_id="session")
+            await app.runs.start(
+                scope(),
+                process(text),
+                prepared.snapshot.snapshot_id,
+                "missing-tool-grant",
+                expected_input_digest=prepared.snapshot.digest,
+                response_generator=must_not_execute,
+                gateway=gateway,
+                session_id="session",
+            )
         assert denied.value.reason.code == "CAPABILITY_UNAVAILABLE"
         assert app.runs._owned == {}
     assert gateway.calls == []

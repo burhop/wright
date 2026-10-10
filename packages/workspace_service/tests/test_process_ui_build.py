@@ -56,7 +56,7 @@ def toolchain():
 def test_installed_role_resources_are_versioned_and_closed():
     first, second = load_authoring_resources(), load_authoring_resources()
     assert first == second
-    assert first.version == "process-ui-author-1"
+    assert first.version == "process-ui-author-2"
     assert "no executable tools" in first.instructions
     assert "another process executor" in first.instructions
     assert "default function App" in first.template
@@ -173,12 +173,31 @@ def test_toolchain_versions_match_current_lockfile():
         "vite",
         "react",
         "react-dom",
+        "react-markdown",
+        "remark-gfm",
         "three",
         "@types/react",
         "@types/react-dom",
         "@types/three",
     ):
         assert declared[name]["version"] == lock[f"node_modules/{name}"]["version"]
+
+
+@pytest.mark.parametrize("name", ["react-markdown", "remark-gfm"])
+def test_missing_document_reader_dependency_is_actionable(monkeypatch, name):
+    configured = toolchain()
+    manifest_path = configured.dependency_root / "node_modules" / name / "package.json"
+    read = Path.read_bytes
+
+    def missing(path):
+        if path == manifest_path:
+            raise FileNotFoundError(name)
+        return read(path)
+
+    monkeypatch.setattr(Path, "read_bytes", missing)
+    with pytest.raises(ProcessInterfaceError) as error:
+        configured.describe()
+    assert error.value.reason.code == "CAPABILITY_UNAVAILABLE"
 
 
 def test_exact_catalog_binding_and_optional_absence():

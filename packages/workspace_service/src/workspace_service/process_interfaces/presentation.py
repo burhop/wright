@@ -380,6 +380,7 @@ class ProcessInterfacePresentations:
             administrator_approved=True,
             sharing_mode="isolated",
         )
+        await self._reconcile_expired(scope, actor)
         key = "process-ui:" + canonical_digest({"request_id": request_id})
         descriptor = await self.surfaces.service.declare(
             actor=actor, source=source, title=manifest.title[:256], idempotency_key=key
@@ -503,6 +504,42 @@ class ProcessInterfacePresentations:
             "build": report,
         }
 
+    async def _reconcile_expired(self, scope, actor):
+        """Release expired static views through their existing lifecycle owners.
+
+        A browser can disappear without sending close. Its expired presentation
+        must not retain capacity indefinitely. This is scoped to this native
+        actor's process views; a live presentation, CAD host or process run is
+        never an idle-time inference or a cleanup target.
+        """
+        now = self.surfaces.presentation_service.clock()
+        for descriptor in await self.surfaces.service.list(actor=actor):
+            source = descriptor.source
+            if (
+                not isinstance(source, LiveAppSurfaceSource)
+                or source.ownership is not LiveAppOwnership.WRIGHT_OWNED
+                or not source.source_id.startswith("process.ui-")
+                or descriptor.lifecycle
+                not in {SurfaceLifecycle.READY, SurfaceLifecycle.UNHEALTHY}
+            ):
+                continue
+            for record in self.surfaces.presentation_service.list_records(
+                actor=actor, surface_id=descriptor.surface_id
+            ):
+                instance = descriptor.instance or {}
+                if (
+                    record.expires_at <= now
+                    and record.instance_id == instance.get("instanceId")
+                    and record.generation == instance.get("generation")
+                    and record.source_id == source.source_id
+                    and record.source_version == source.source_version
+                ):
+                    # Include already-closed records so a prior interrupted
+                    # runtime stop can reconcile through its idempotent owner.
+                    await self._close(
+                        scope, actor, descriptor.surface_id, record.presentation_id
+                    )
+
     async def close(self, scope, actor, surface_id, presentation_id):
         try:
             return await self._close(scope, actor, surface_id, presentation_id)
@@ -559,10 +596,18 @@ class ProcessInterfacePresentations:
             descriptor = await self.surfaces.service.get(
                 actor=actor, surface_id=surface_id
             )
-            if descriptor.lifecycle in {
-                SurfaceLifecycle.READY,
-                SurfaceLifecycle.UNHEALTHY,
-            }:
+            instance = descriptor.instance or {}
+            if (
+                descriptor.lifecycle
+                in {
+                    SurfaceLifecycle.READY,
+                    SurfaceLifecycle.UNHEALTHY,
+                }
+                and instance.get("instanceId") == record.instance_id
+                and instance.get("generation") == record.generation
+                and descriptor.source.source_id == record.source_id
+                and descriptor.source.source_version == record.source_version
+            ):
                 await self.surfaces.live_apps.stop(
                     actor=actor,
                     surface_id=surface_id,

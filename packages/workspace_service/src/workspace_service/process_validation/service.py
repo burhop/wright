@@ -72,9 +72,9 @@ def _finding(profile, check, issue, subject=None, measurement=None, *, evidence=
     observed = measurement.value if measurement else None
     expected = check.constraint
     target = (
-        f"Set {check.selector or 'the output'} to {expected.target:g} {check.unit}, within {expected.tolerance:g} {check.unit}."
+        f"Required at {check.selector or 'the output'}: {expected.target:g} {check.unit}, within {expected.tolerance:g} {check.unit}."
         if expected.operator == "within"
-        else f"Satisfy {', '.join(check.requirement_ids)} at {check.selector or 'the output root'}: {expected.model_dump(exclude_none=True)}."
+        else f"Required by {', '.join(check.requirement_ids)} at {check.selector or 'the output root'}: {expected.model_dump(exclude_none=True)}."
     )
     if issue.action != "revise_output":
         target = str(issue)
@@ -98,7 +98,9 @@ def _finding(profile, check, issue, subject=None, measurement=None, *, evidence=
         source_refs=sources,
         summary=str(issue),
         explanation=(
-            f"Observed {str(observed)[:1024]}. {target}" if measurement else str(issue)
+            f"Observed {str(observed)[:1024]}{(' ' + measurement.unit) if measurement.unit else ''}. {target}"
+            if measurement
+            else str(issue)
         ),
         correction=Correction(
             action=issue.action,
@@ -111,24 +113,28 @@ def _finding(profile, check, issue, subject=None, measurement=None, *, evidence=
     )
 
 
+def default_reader_registry() -> ReaderRegistry:
+    """The same installed readers for workflow preparation and evaluation."""
+    registry = ReaderRegistry()
+    registry.register(StructuredReader())
+    registry.register(CfdEvidenceReader())
+    registry.register(StepSeatGeometryReader())
+    registry.register(HarnessReader())
+    registry.register(KiCadReader())
+    registry.register(PrintingArtifactReader())
+    registry.register(SheetMetalEvidenceReader())
+    registry.register(StepBoundingBoxReader())
+    registry.register(StructuralEvidenceReader())
+    registry.register(ThermalFieldReader())
+    registry.register(TrackingTimelineReader())
+    registry.register(WaterHeaterTimelineReader())
+    return registry
+
+
 class ProcessValidationService:
     def __init__(self, repository, resolver, *, registry=None):
         self.repository, self.resolver = repository, resolver
-        if registry is None:
-            registry = ReaderRegistry()
-            registry.register(StructuredReader())
-            registry.register(CfdEvidenceReader())
-            registry.register(StepSeatGeometryReader())
-            registry.register(HarnessReader())
-            registry.register(KiCadReader())
-            registry.register(PrintingArtifactReader())
-            registry.register(SheetMetalEvidenceReader())
-            registry.register(StepBoundingBoxReader())
-            registry.register(StructuralEvidenceReader())
-            registry.register(ThermalFieldReader())
-            registry.register(TrackingTimelineReader())
-            registry.register(WaterHeaterTimelineReader())
-        self.registry = registry
+        self.registry = default_reader_registry() if registry is None else registry
 
     def _outcome(self, attempt):
         current = self.repository.current(

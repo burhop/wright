@@ -40,6 +40,11 @@ def cleanup_gateway_test_rows():
         )
 
 
+def test_normal_gateway_does_not_advertise_retired_app_tools(legacy_client):
+    tools = legacy_client.app.state.gateway_service.management.tools()
+    assert not any("rivet" in tool.name.lower() for tool in tools)
+
+
 def _seed(tmp_path):
     suffix = uuid.uuid4().hex
     server_id = f"calc-{suffix}"

@@ -74,8 +74,12 @@ assert.equal(replies.length, 2);
 assert.equal(replies.every(reply => reply.value.type === 'ready'), true);
 """
     reply = subprocess.run(
-        [node, "-e", script], input=json.dumps(receiver), text=True,
-        capture_output=True, timeout=10, check=False,
+        [node, "-e", script],
+        input=json.dumps(receiver),
+        text=True,
+        capture_output=True,
+        timeout=10,
+        check=False,
     )
     assert reply.returncode == 0, reply.stderr
 
@@ -258,6 +262,10 @@ def test_actual_static_server_serves_only_verified_dist_and_health_with_restrict
             assert response.getheader("Cache-Control") == "no-store"
             assert "private" not in raw.decode()
             assert "ws:" not in STATIC_CSP and "wss:" not in STATIC_CSP
+            if path == "/":
+                assert b'id="wright-process-connection" role="status"' in raw
+                assert b"#wright-process-connection{margin:0;padding:6px 12px" in raw
+                assert b"system-ui,sans-serif" in raw
             client.close()
         client = HTTPConnection("127.0.0.1", server.server_port, timeout=5)
         client.request("HEAD", "/app.js")

@@ -1,4 +1,8 @@
 import type { RecoveryLayout, RecoveryWorkflow } from "./model";
+import {
+  normalizeWorkflowInstructions,
+  type WorkflowInstructionSet,
+} from "./workflow-instructions";
 
 export interface CanonicalWorkflowWire {
   document_kind: "workflow-ir";
@@ -12,6 +16,7 @@ export interface CanonicalWorkflowWire {
     purpose: string;
     engineering_domain: string;
     authorship: "human" | "human_with_ai_proposal";
+    instructions?: WorkflowInstructionSet;
   };
   phases: {
     id: string;
@@ -158,6 +163,13 @@ export function toCanonicalWire(
       purpose: workflow.metadata.purpose,
       engineering_domain: workflow.metadata.engineeringDomain,
       authorship: workflow.metadata.authorship,
+      ...(workflow.metadata.instructions === undefined
+        ? {}
+        : {
+            instructions: normalizeWorkflowInstructions(
+              workflow.metadata.instructions,
+            ),
+          }),
     },
     phases: workflow.phases.map((phase) => ({
       id: phase.id,
@@ -265,6 +277,13 @@ export function fromCanonicalWire(
       purpose: wire.metadata.purpose,
       engineeringDomain: wire.metadata.engineering_domain,
       authorship: wire.metadata.authorship,
+      ...(wire.metadata.instructions === undefined
+        ? {}
+        : {
+            instructions: normalizeWorkflowInstructions(
+              wire.metadata.instructions,
+            ),
+          }),
     },
     phases: wire.phases.map((phase) => ({
       id: phase.id,

@@ -6,6 +6,36 @@ import {
   type WorkflowResultBlock,
 } from "./workflow-result-blocks";
 
+function unavailableMessage(
+  run: NonNullable<WorkflowResultBlock["unavailableRun"]>,
+): string {
+  switch (run.status) {
+    case "failed":
+      return run.failedStepTitle
+        ? `The workflow failed at “${run.failedStepTitle}”. This run did not produce this output.`
+        : "The workflow failed. This run did not produce this output.";
+    case "cancelled":
+      return "The workflow was cancelled. This output has not been recorded.";
+    case "running":
+      return "The workflow is running. This output has not been produced yet.";
+    case "interrupted":
+    case "unknown":
+      return "Wright cannot confirm execution has finished. This output has not been recorded. Check the saved run before retrying.";
+    case "completed":
+      return "The run finished, but this expected output was not recorded. Inspect the producing step and saved run.";
+    case "external_action_not_dispatched":
+      return "The external action was not dispatched. This output has not been recorded.";
+    case "external_action_outcome_unknown":
+      return "The external action's outcome is unknown. This output has not been recorded. Inspect the saved run before retrying.";
+    case "awaiting_external_outcome":
+      return "The workflow is waiting for an external outcome. This output has not been produced yet.";
+    case "changes_requested":
+      return "Changes were requested. Inspect the saved run for the requested changes. This output has not been produced yet.";
+    default:
+      return "The workflow is waiting for review. This output has not been produced yet.";
+  }
+}
+
 export function WorkflowResultsNavigator({
   results,
   onSelect,
@@ -69,16 +99,19 @@ export function WorkflowResultInspector({
   sessionId,
   onOpenFile,
   onSelectProducer,
+  onShowRunDetails,
 }: {
   result: WorkflowResultBlock;
   sessionId?: string;
   onOpenFile?: (path: string) => void;
   onSelectProducer: (id: string) => void;
+  onShowRunDetails?: () => void;
 }) {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const available = result.files.filter((file) => file.available);
   const selected =
     available.find((file) => file.path === selectedPath) ?? available[0];
+  const unavailableRun = !available.length ? result.unavailableRun : undefined;
   return (
     <section
       data-testid="workflow-result-inspector"
@@ -91,11 +124,54 @@ export function WorkflowResultInspector({
           They do not verify your changes.
         </p>
       )}
-      <p>
-        {result.reviewLabel ||
-          "Availability does not mean the engineering result has been checked or approved."}
-      </p>
-      {!available.length && (
+      {available.length > 0 && (
+        <p>
+          {result.reviewLabel ||
+            "Availability does not mean the engineering result has been checked or approved."}
+        </p>
+      )}
+      {unavailableRun && (
+        <section
+          className="recovery-result-unavailable"
+          data-testid="workflow-result-unavailable"
+          role="status"
+        >
+          <h3>Why this output is unavailable</h3>
+          <p>{unavailableMessage(unavailableRun)}</p>
+          {unavailableRun.diagnostic && (
+            <p data-testid="workflow-result-diagnostic">
+              Step reported: {unavailableRun.diagnostic}
+            </p>
+          )}
+          {unavailableRun.failedStepId && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-result-failed-step"
+              onClick={() => onSelectProducer(unavailableRun.failedStepId!)}
+            >
+              Inspect failed step
+            </button>
+          )}
+          {onShowRunDetails && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-result-run-details"
+              onClick={onShowRunDetails}
+            >
+              View run details
+            </button>
+          )}
+          {unavailableRun.error && (
+            <details className="recovery-result-location">
+              <summary>Technical details</summary>
+              <p className="recovery-result-path">{unavailableRun.error}</p>
+            </details>
+          )}
+        </section>
+      )}
+      {!available.length && !unavailableRun && (
         <p>
           No output files from this step have been recorded for the current
           workflow. Inspect the producing step and run status to see what is

@@ -88,6 +88,76 @@ function resolve(
 function label(value: JsonValue): string {
   return typeof value === "string" ? value : JSON.stringify(value);
 }
+function sameValue(left: JsonValue, right: JsonValue, depth = 0): boolean {
+  if (left === right) return true;
+  if (depth > 24) return false;
+  if (Array.isArray(left) && Array.isArray(right))
+    return left.length === right.length && left.every((item, i) => sameValue(item, right[i], depth + 1));
+  if (record(left) && record(right))
+    return Object.keys(left).length === Object.keys(right).length && Object.entries(left).every(([key, item]) => Object.hasOwn(right, key) && sameValue(item, right[key], depth + 1));
+  return false;
+}
+
+/** Form feedback only. The backend validates the complete declared schema. */
+export function schemaFieldError(
+  schema: ValueSchema,
+  value: JsonValue | undefined,
+  required = false,
+  root = schema,
+  descendants = true,
+  level = 0,
+): string | undefined {
+  if (level > 24) return "This value is too deeply nested.";
+  const selected = resolve(schema, root);
+  if (!selected) return undefined;
+  if (value === undefined) return required ? "Provide a value." : undefined;
+  if (Array.isArray(selected.enum) && !selected.enum.some((item) => sameValue(item, value)))
+    return "Choose one of the declared values.";
+  if ("const" in selected && !sameValue(selected.const, value))
+    return "Use the declared value.";
+  if (selected.type === "number" || selected.type === "integer") {
+    if (typeof value !== "number" || !Number.isFinite(value)) return "Enter a finite number.";
+    if (selected.type === "integer" && !Number.isInteger(value)) return "Enter a whole number.";
+    if (typeof selected.minimum === "number" && value < selected.minimum) return `Enter a value of at least ${selected.minimum}.`;
+    if (typeof selected.maximum === "number" && value > selected.maximum) return `Enter a value of at most ${selected.maximum}.`;
+    if (typeof selected.exclusiveMinimum === "number" && value <= selected.exclusiveMinimum) return `Enter a value greater than ${selected.exclusiveMinimum}.`;
+    if (typeof selected.exclusiveMaximum === "number" && value >= selected.exclusiveMaximum) return `Enter a value less than ${selected.exclusiveMaximum}.`;
+    if (typeof selected.multipleOf === "number" && selected.multipleOf > 0 && Math.abs(value / selected.multipleOf - Math.round(value / selected.multipleOf)) > 1e-9) return `Enter a multiple of ${selected.multipleOf}.`;
+  }
+  if (selected.type === "string") {
+    if (typeof value !== "string") return "Enter text.";
+    const length = [...value].length;
+    if (typeof selected.minLength === "number" && length < selected.minLength) return `Enter at least ${selected.minLength} characters.`;
+    if (typeof selected.maxLength === "number" && length > selected.maxLength) return `Enter at most ${selected.maxLength} characters.`;
+  }
+  if (selected.type === "boolean" && typeof value !== "boolean") return "Choose true or false.";
+  if (selected.type === "null" && value !== null) return "Use the declared null value.";
+  if (selected.type === "array") {
+    if (!Array.isArray(value)) return "Enter a list of values.";
+    if (typeof selected.minItems === "number" && value.length < selected.minItems) return `Provide at least ${selected.minItems} items.`;
+    if (typeof selected.maxItems === "number" && value.length > selected.maxItems) return `Provide at most ${selected.maxItems} items.`;
+    if (descendants && record(selected.items)) {
+      for (let i = 0; i < value.length; i++) {
+        const error = schemaFieldError(selected.items, value[i], true, root, true, level + 1);
+        if (error) return `Item ${i + 1}: ${error}`;
+      }
+    }
+  }
+  if (selected.type === "object") {
+    if (!record(value)) return "Complete the response fields.";
+    const count = Object.keys(value).length;
+    if (typeof selected.minProperties === "number" && count < selected.minProperties) return `Provide at least ${selected.minProperties} fields.`;
+    if (typeof selected.maxProperties === "number" && count > selected.maxProperties) return `Provide at most ${selected.maxProperties} fields.`;
+    if (descendants && record(selected.properties)) {
+      for (const [key, child] of Object.entries(selected.properties)) {
+        if (!record(child)) continue;
+        const error = schemaFieldError(child, value[key], Array.isArray(selected.required) && selected.required.includes(key), root, true, level + 1);
+        if (error) return `${typeof child.title === "string" ? child.title : key}: ${error}`;
+      }
+    }
+  }
+  return undefined;
+}
 function JsonEditor({
   id,
   title,
@@ -158,6 +228,8 @@ export function SchemaField({
 }) {
   const id = useId();
   const selected = resolve(schema, root);
+  const error = schemaFieldError(schema, value, required, root, false);
+  const notice = error && <p id={`${id}-error`} className="wp-field-error" role="alert">{error}</p>;
   if (!selected || level > 24)
     return (
       <div className="wp-notice" role="status">
@@ -172,6 +244,8 @@ export function SchemaField({
         <label htmlFor={id}>{name}</label>
         <select
           id={id}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
           disabled={disabled}
           value={
             value === undefined
@@ -197,6 +271,7 @@ export function SchemaField({
             </option>
           ))}
         </select>
+        {notice}
       </div>
     );
   if ("const" in selected || selected.type === "null")
@@ -224,6 +299,7 @@ export function SchemaField({
     return (
       <fieldset className="wp-fieldset" disabled={disabled}>
         <legend>{name}</legend>
+        {value !== undefined && notice}
         {Object.entries(selected.properties)
           .slice(0, 256)
           .map(([key, child]) => (
@@ -261,6 +337,7 @@ export function SchemaField({
     return (
       <fieldset className="wp-fieldset" disabled={disabled}>
         <legend>{name}</legend>
+        {notice}
         {entries.slice(0, 256).map((entry, index) => (
           <div key={index}>
             <SchemaField
@@ -335,6 +412,8 @@ export function SchemaField({
         <label htmlFor={id}>{name}</label>
         <textarea
           id={id}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
           disabled={disabled}
           value={typeof value === "string" ? value : ""}
           maxLength={
@@ -344,6 +423,7 @@ export function SchemaField({
           }
           onChange={(event) => onChange(event.target.value)}
         />
+        {notice}
         {typeof selected.description === "string" && (
           <p className="wp-muted">{selected.description}</p>
         )}
@@ -356,6 +436,8 @@ export function SchemaField({
         <input
           id={id}
           type="number"
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
           disabled={disabled}
           value={typeof value === "number" ? value : ""}
           min={
@@ -383,6 +465,7 @@ export function SchemaField({
             );
           }}
         />
+        {notice}
       </div>
     );
   return (
@@ -397,9 +480,12 @@ export function SchemaField({
     </div>
   );
 }
-export function ImageThumbnail({ blob, title }: { blob: Blob; title: string }) {
+export function ImageThumbnail({ blob, title, onReady }: { blob: Blob; title: string; onReady?: () => void }) {
   const [stored, setStored] = useState<{ blob: Blob; url: string }>();
   const [failed, setFailed] = useState<Blob>();
+  useEffect(() => {
+    if (failed === blob || blob.size > 32 * 1024 * 1024 || !["image/png", "image/jpeg", "image/webp", "image/gif"].includes(blob.type)) onReady?.();
+  }, [blob, failed, onReady]);
   useEffect(() => {
     if (
       !["image/png", "image/jpeg", "image/webp", "image/gif"].includes(
@@ -420,6 +506,7 @@ export function ImageThumbnail({ blob, title }: { blob: Blob; title: string }) {
       className="wp-thumbnail"
       src={url}
       alt={title}
+      onLoad={onReady}
       onError={() => setFailed(blob)}
     />
   ) : (

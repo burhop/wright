@@ -9,7 +9,10 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
     openWindow,
   });
 
-  beforeEach(() => openWindow.mockReset());
+  beforeEach(() => {
+    openWindow.mockReset();
+    vi.unstubAllEnvs();
+  });
 
   it("resolves backend paths and validates a distinct absolute preview URL", () => {
     expect(adapter.resolveBackendUrl("/api/workspace/surfaces")).toBe(
@@ -44,6 +47,34 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
     expect(development.validateIssuedPreviewUrl(issued)).toBe(
       "http://s-panel.localhost:15174/__wright-surface/s-panel.localhost%3A18001/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
     );
+  });
+
+  it("uses the same scoped exchange in a production build on a local runtime port", () => {
+    vi.stubEnv("DEV", false);
+    const local = new BrowserHostAdapter({
+      controlUrl: "http://127.0.0.1:5248/workspace/ws-1",
+    });
+    const issued =
+      "http://s-panel.localhost:8065/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+    const expected =
+      "http://s-panel.localhost:5248/__wright-surface/s-panel.localhost%3A8065/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+    expect(local.validateIssuedPreviewUrl(issued)).toBe(expected);
+    expect(local.validateIssuedPreviewUrl(expected)).toBe(expected);
+    expect(() =>
+      local.validateIssuedPreviewUrl(
+        expected.replace("s-panel.localhost:5248", "s-other.localhost:5248"),
+      ),
+    ).toThrow(SurfaceHostAdapterError);
+  });
+
+  it("does not enable a local proxy for a foreign control host on a conventional development port", () => {
+    vi.stubEnv("DEV", false);
+    const remote = new BrowserHostAdapter({
+      controlUrl: "https://wright.example.test:5173/workspace/ws-1",
+    });
+    const issued =
+      "https://s-panel.preview.example.test/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+    expect(remote.validateIssuedPreviewUrl(issued)).toBe(issued);
   });
 
   it("upgrades a legacy same-origin development proxy to an isolated origin", () => {

@@ -3,6 +3,7 @@
 import asyncio
 from dataclasses import replace
 import hashlib
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -23,6 +24,91 @@ from packages.workspace_service.tests.test_process_input_readiness import (
 
 
 PREFIX = "/api/workspace/process-interfaces"
+
+
+def test_pdf_preview_uses_exact_recorded_result_without_execution(
+    sync_client, artifact_case
+):
+    from packages.workspace_service.tests.test_process_pdf_preview import pdf_bytes
+    from workspace_service.workflow_results import Provenance, file_result
+    from pathlib import PurePosixPath
+
+    c = artifact_case
+    data = pdf_bytes()
+    (c.root / "drawing.pdf").write_bytes(data)
+    result = file_result(
+        {
+            "output_path": "drawing.pdf",
+            "output_format": "pdf",
+            "output_bytes": len(data),
+            "sha256": hashlib.sha256(data).hexdigest(),
+        },
+        Provenance("pdf-run", "drawing", "pdf"),
+    ).to_dict()
+    result["representations"][0]["sha256"] = hashlib.sha256(data).hexdigest()
+    source_path = c.query["path"]
+    slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
+    record = {
+        "workflow_path": source_path,
+        "source_digest": c.query["expected_storage_digest"],
+        "run_id": "pdf-run",
+        "status": "completed",
+        "events": [],
+        "result": {"run_id": "pdf-run", "results": [result]},
+    }
+    path = c.root / "runs" / slug / "pdf-run.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(record))
+    before = path.read_bytes()
+    reference = {
+        "artifact_ref": "drawing.pdf",
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "result_id": result["id"],
+    }
+    response = read(
+        sync_client, c, reference, None, run_id="pdf-run", preview="pdf-page", page=2
+    )
+    assert response.status_code == 200, response.text
+    assert response.headers["x-wright-view-format"] == "wright.pdf.page.v1"
+    assert response.headers["x-wright-artifact-sha256"] == reference["sha256"]
+    assert response.json()["page"] == 2 and response.json()["page_count"] == 2
+    raw = read(sync_client, c, reference, None, run_id="pdf-run")
+    assert raw.headers["content-type"] == "application/pdf" and raw.content == data
+    for extra in [
+        {"run_id": "foreign-run"},
+        {"run_id": "pdf-run", "reference": {**reference, "sha256": "0" * 64}},
+    ]:
+        selected = extra.pop("reference", reference)
+        assert (
+            read(
+                sync_client, c, selected, None, preview="pdf-page", **extra
+            ).status_code
+            != 200
+        )
+    assert (
+        read(sync_client, c, reference, None, run_id="pdf-run", page=1).status_code
+        == 422
+    )
+    assert (
+        read(
+            sync_client,
+            c,
+            reference,
+            None,
+            run_id="pdf-run",
+            preview="pdf-page",
+            page=201,
+        ).status_code
+        == 422
+    )
+    (c.root / "drawing.pdf").write_bytes(b"%PDF-changed")
+    assert (
+        read(
+            sync_client, c, reference, None, run_id="pdf-run", preview="pdf-page"
+        ).status_code
+        == 409
+    )
+    assert path.read_bytes() == before
 
 
 @pytest.fixture

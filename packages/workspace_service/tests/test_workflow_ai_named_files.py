@@ -14,12 +14,31 @@ from workspace_service.workflow_source_execution import (
 )
 from workspace_service.process_validation.application import ValidationApplication
 from workspace_service.process_validation.process import output_id
-from .test_workflow_ai_task import call, done
+from .test_workflow_ai_task import call, done, source
 from .test_workflow_mcp_execution import runtime, edge
-from .test_workflow_source_execution import task, source
+from .test_workflow_source_execution import task
 from .test_workflow_external_action_execution import service, source as approval_source
 from .test_workflow_execution_continuation import authorize, order
 from .test_workflow_process_validation import runtime_service, validator
+
+
+@pytest.mark.parametrize("count", [17, 32, 33])
+def test_complete_tool_evidence_pack_has_an_explicit_file_count_bound(count):
+    files = [f"evidence-{index}.json" for index in range(count)]
+    producer = task(
+        "produce",
+        fmt="text",
+        authoring_template="mcp-task",
+        mcp_server="docs",
+        expected_files="\n".join(files),
+    )
+    if count > 32:
+        with pytest.raises(WorkflowSourceExecutionError, match="maximum 32"):
+            compile_prompt_workflow(source(producer))
+    else:
+        assert compile_prompt_workflow(source(producer)).steps[
+            0
+        ].expected_files == tuple(files)
 
 
 def graph(*, pause=False, all_files=False, validate=False):
@@ -97,7 +116,7 @@ def test_multiple_files_bind_exact_bytes_and_survive_durable_review_without_repl
     async def decide(*args, **kwargs):
         return next(replies)
 
-    async def generate(prompt, fmt):
+    async def generate(prompt, fmt, **kwargs):
         prompts.append(prompt)
         return "Read actual measurements"
 
@@ -198,7 +217,7 @@ def test_named_file_mapping_cannot_substitute_a_model_claim_for_created_files(
     async def decide(*args, **kwargs):
         return next(replies)
 
-    async def generate(*args):
+    async def generate(*args, **kwargs):
         pytest.fail("Missing files must not reach the consumer")
 
     with pytest.raises(WorkflowSourceExecutionError, match="expected file"):

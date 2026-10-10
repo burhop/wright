@@ -16,8 +16,14 @@ from .workflow_results import EngineeringResult, Provenance, Representation
 def input_identities(values):
     return {
         key: hashlib.sha256(
-            json.dumps({"template_sha256": value.sha256, "run_id": value.run_path_id,
-                        "resolved_sha256": value.resolved_sha256}, sort_keys=True).encode()
+            json.dumps(
+                {
+                    "template_sha256": value.sha256,
+                    "run_id": value.run_path_id,
+                    "resolved_sha256": value.resolved_sha256,
+                },
+                sort_keys=True,
+            ).encode()
         ).hexdigest()
         if isinstance(value, WorkflowReference) and value.run_path_id
         else value.sha256
@@ -172,6 +178,14 @@ async def _validate_continuation(
     ):
         raise stale("This run has no executable continuation snapshot.")
     state = json.loads(json.dumps(state, allow_nan=False))
+    from .workflow_model_routing import validate_frozen_model_plan
+
+    try:
+        validate_frozen_model_plan(plan, state.get("execution_context"))
+    except (ValueError, TypeError) as error:
+        raise stale(
+            "The prepared model route does not match the durable run."
+        ) from error
     kind = state.get("checkpoint_kind") if state["schema_version"] == 3 else "approval"
     if kind not in {"approval", "input"}:
         raise stale("The continuation checkpoint kind is unsupported.")
@@ -357,6 +371,24 @@ async def _validate_continuation(
                 "The input checkpoint omits or changes retained result/file identities."
             )
     files = state.get("input_files", []) + state.get("artifact_files", [])
+    from .workflow_run_paths import ATTEMPT_VERSION, verify_prior_attempt_files
+    from .workflow_source_execution import WorkflowSourceExecutionError
+    import asyncio
+
+    for producer in plan.steps:
+        if producer.run_path_template != ATTEMPT_VERSION:
+            continue
+        try:
+            await asyncio.to_thread(
+                verify_prior_attempt_files,
+                producer,
+                state.get("revision_attempts", []),
+                workspace_dir,
+            )
+        except WorkflowSourceExecutionError as error:
+            raise stale(
+                "A retained correction attempt's file changed or is unavailable."
+            ) from error
     for evidence in files:
         try:
             identity = await service.files.hash_reference(

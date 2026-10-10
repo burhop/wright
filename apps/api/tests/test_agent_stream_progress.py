@@ -268,7 +268,9 @@ async def test_chat_job_failure_emits_generic_trace_bearing_error():
 
 
 @pytest.mark.asyncio
-async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch):
+async def test_chat_attach_failure_emits_generic_trace_bearing_error(
+    monkeypatch, tmp_path
+):
     request = Request(
         {
             "type": "http",
@@ -289,6 +291,12 @@ async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch
     monkeypatch.setattr(
         "api.routers.agent.get_chat_stream_registry",
         lambda request: _AttachFailureRegistry(),
+    )
+    monkeypatch.setattr(
+        "api.routers.workspace._workflow_source_scope",
+        lambda session, service: SimpleNamespace(
+            workspace_id="workspace", workspace_dir=str(tmp_path)
+        ),
     )
 
     response = await chat(

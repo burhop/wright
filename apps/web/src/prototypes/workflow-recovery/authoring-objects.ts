@@ -34,7 +34,7 @@ export const AUTHORING_GROUPS: readonly {
   {
     id: "input",
     label: "Input",
-    description: "Text and existing workspace files",
+    description: "Text, workspace files and declared requests for user input",
   },
   {
     id: "document",
@@ -94,6 +94,22 @@ const documentOut: TemplatePort = {
   typeId: "type.document.engineering",
   direction: "output",
 };
+const promptIn: TemplatePort = {
+  key: "prompt-in",
+  name: "Prompt",
+  typeId: "type.document.engineering",
+  direction: "input",
+  required: false,
+  cardinality: "optional",
+};
+const referenceImageIn: TemplatePort = {
+  key: "reference-image-in",
+  name: "Reference image",
+  typeId: "type.file.workspace",
+  direction: "input",
+  required: false,
+  cardinality: "optional",
+};
 const modelIn: TemplatePort = {
   key: "model-in",
   name: "CAD model",
@@ -129,17 +145,7 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
       save_output: false,
       file_policy: "indexed",
     },
-    ports: [
-      {
-        key: "prompt-in",
-        name: "Prompt",
-        typeId: "type.document.engineering",
-        direction: "input",
-        required: false,
-        cardinality: "optional",
-      },
-      { ...documentOut, name: "Response" },
-    ],
+    ports: [promptIn, referenceImageIn, { ...documentOut, name: "Response" }],
   },
   {
     id: "text-input",
@@ -259,9 +265,9 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
   },
   {
     id: "human-input",
-    group: "more",
-    label: "User input step",
-    description: "Pause at a declared point for a structured user response",
+    group: "input",
+    label: "Request input",
+    description: "Ask for declared answers and continue the same run",
     executionKind: "human",
     instructions: "",
     ports: [
@@ -270,6 +276,8 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
         key: "evidence-in",
         name: "Evidence to review",
         direction: "input",
+        required: false,
+        cardinality: "optional",
       },
       {
         key: "response-out",
@@ -294,7 +302,11 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
       max_tool_calls: 8,
       timeout_seconds: 300,
     },
-    ports: [{ ...documentOut, name: "Task result" }],
+    ports: [
+      promptIn,
+      referenceImageIn,
+      { ...documentOut, name: "Task result" },
+    ],
   },
   {
     id: "mcp-tool",
@@ -466,9 +478,9 @@ export function createAuthoringObject(
     authoring_template: template.id,
     ...template.configuration,
   };
-  if (template.id === "ai-prompt")
+  if (template.id === "ai-prompt" || template.id === "mcp-task")
     configuration.prompt_input = ports[0]!.id.slice(5).replaceAll("-", "_");
-  if (template.group === "input")
+  if (template.inputMode)
     Object.assign(configuration, {
       [RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY]: "input",
       input_mode: template.inputMode!,

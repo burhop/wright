@@ -80,6 +80,43 @@ export function inputDeclarationCommands(
   ];
 }
 
+/** Only declared incoming structured task outputs may resolve planned questions. */
+export function connectedRequirementsSources(
+  block: RecoveryBlock,
+  workflow: RecoveryWorkflow,
+) {
+  return workflow.relationships
+    .filter(
+      (edge) =>
+        edge.kind === "data" && block.inputPortIds.includes(edge.targetId),
+    )
+    .flatMap((edge) => {
+      const port = workflow.ports.find((item) => item.id === edge.sourceId);
+      const owner = workflow.blocks.find(
+        (item) => item.id === port?.ownerBlockId,
+      );
+      if (
+        !port ||
+        !owner ||
+        port.direction !== "output" ||
+        port.typeId !== "type.result.structured" ||
+        owner.executionKind === "human" ||
+        recoveryAuthoringSectionKind(owner) !== "task"
+      )
+        return [];
+      return [
+        {
+          key: `${sourceKey(owner.id)}.${sourceKey(port.id)}`,
+          label: `${owner.title} · ${port.name}`,
+        },
+      ];
+    })
+    .filter(
+      (item, index, all) =>
+        all.findIndex((value) => value.key === item.key) === index,
+    );
+}
+
 export function humanInputDeclarationCommands(
   block: RecoveryBlock,
   workflow: RecoveryWorkflow,
@@ -93,14 +130,14 @@ export function humanInputDeclarationCommands(
     throw new Error("Choose a declared Engineer input step.");
   const value = declarationJson(text);
   if (
-    value.version !== 1 ||
+    ![1, 2, 3].includes(value.version as number) ||
     value.kind !== "input" ||
     typeof value.instructions !== "string" ||
     !value.instructions.trim() ||
     value.instructions.length > 8000
   )
     throw new Error(
-      "Declare version 1 input with meaningful instructions of at most 8,000 characters.",
+      "Declare version 1, 2 or 3 input with meaningful instructions of at most 8,000 characters.",
     );
   if (
     !value.response_schema ||
@@ -109,6 +146,43 @@ export function humanInputDeclarationCommands(
     (value.response_schema as Record<string, unknown>).type !== "object"
   )
     throw new Error("The response schema must declare type object.");
+  if (value.version === 3) {
+    const when = value.when as Record<string, unknown> | null;
+    const schema = value.response_schema as Record<string, unknown>;
+    const properties = schema.properties;
+    const fieldNames =
+      properties && typeof properties === "object" && !Array.isArray(properties)
+        ? Object.keys(properties)
+        : [];
+    if (
+      !when ||
+      typeof when !== "object" ||
+      Array.isArray(when) ||
+      Object.keys(when).some(
+        (key) => !["kind", "source", "fields"].includes(key),
+      ) ||
+      when.kind !== "unresolved_fields" ||
+      typeof when.source !== "string" ||
+      !connectedRequirementsSources(block, workflow).some(
+        (item) => item.key === when.source,
+      ) ||
+      !Array.isArray(when.fields) ||
+      !fieldNames.length ||
+      schema.additionalProperties !== false ||
+      when.fields.length !== fieldNames.length ||
+      !when.fields.every(
+        (field) => typeof field === "string" && fieldNames.includes(field),
+      ) ||
+      new Set(when.fields).size !== fieldNames.length
+    )
+      throw new Error(
+        "Conditional input needs a connected structured task result and exactly the declared answer fields, with additionalProperties false.",
+      );
+  } else if (value.when !== undefined && value.when !== null) {
+    throw new Error(
+      "A conditional input declaration requires version 3. Choose the declared unresolved-fields condition.",
+    );
+  }
   const outputs = workflow.ports.filter((port) =>
     block.outputPortIds.includes(port.id),
   );

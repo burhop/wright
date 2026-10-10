@@ -16,6 +16,13 @@ from .application import ValidationApplication, assessment_reference
 from .configuration import ValidatorConfiguration
 
 
+def _correction_explanations(findings):
+    """Bound the run summary without repeating a cause shared by many checks."""
+    # Keep every per-check finding in the assessment. Collapse only exact text
+    # duplicates here, before the summary limit, preserving first-seen order.
+    return list(dict.fromkeys(finding.explanation for finding in findings))[:20]
+
+
 def application_for_workspace(service, workspace_dir):
     from ..workflow_source_execution import _invalid
 
@@ -303,7 +310,7 @@ async def execute_validator(
         **assessment_reference(assessment, outcome.is_current),
         "verdict": verdict,
         "assessment_path": path,
-        "corrections": [f.explanation for f in assessment.findings[:20]],
+        "corrections": _correction_explanations(assessment.findings),
     }
     await emit(
         "design_check",

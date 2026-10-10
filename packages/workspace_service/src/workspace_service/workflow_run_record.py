@@ -2,12 +2,14 @@
 
 import asyncio
 import json
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import PurePosixPath
 from uuid import uuid4
 import socket
 import hashlib
 import logging
+import re
 from dataclasses import asdict
 
 import anyio
@@ -15,7 +17,15 @@ import anyio
 _FINAL_CHECKPOINT_SECONDS = 5
 _MAX_RUN_DIRECTORY_ENTRIES = 10_000
 _MAX_RUN_READ_FILES = 100
-_MAX_RUN_RECORD_BYTES = 16 * 1024 * 1024
+# Extended tool runs retain actual model requests as well as engineering events.
+# Their read/continuation budget must accommodate those records (a qualified
+# supplier research stage alone produced 26 MiB), without treating prompt-file
+# limits as run limits. Keep a hard bound; never recover a partial JSON record.
+_MAX_RUN_RECORD_BYTES = 64 * 1024 * 1024
+# The interaction owner pages a compact result inventory separately from progress.
+# Native responses remain only in the recorder, under its existing read bound.
+_MAX_RESULT_INVENTORY_BYTES = 2 * 1024 * 1024
+_MAX_RESULT_INVENTORY_ITEMS = 4096
 _logger = logging.getLogger(__name__)
 
 
@@ -34,11 +44,77 @@ def _recorded_result_rows(record):
     return list(record.get("partial_results", {}).values())
 
 
-def _execution_snapshot(record, state):
+def _previous_result_rows(record):
+    """Read invalidated file evidence from durable events without reviving outputs.
+
+    No run is rewritten. Value and live-application locators can now identify a
+    later attempt, so only byte-pinned workspace representations are retained.
+    The presentation ID identifies this exact historical occurrence; the original
+    result identity remains available for its owning validation assessment.
+    """
+    current, attempts, previous = {}, {}, []
+    for offset, event in enumerate(record.get("events", [])):
+        if event.get("kind") == "result_ready":
+            row = event.get("engineering_result")
+            if isinstance(row, dict) and isinstance(row.get("id"), str):
+                if row.get("provenance", {}).get("task_id") != event.get("task_id"):
+                    raise WorkflowRunReadError(
+                        "invalid", "Recorded result and event identities disagree"
+                    )
+                current[row["id"]] = row
+        elif event.get("kind") == "design_revision":
+            invalidated = set(event.get("invalidated_task_ids", []))
+            for key, row in list(current.items()):
+                task = row.get("provenance", {}).get("task_id")
+                if task not in invalidated:
+                    continue
+                current.pop(key)
+                representations = [
+                    rep
+                    for rep in row.get("representations", [])
+                    if rep.get("kind") == "workspace_file"
+                    and isinstance(rep.get("sha256"), str)
+                    and re.fullmatch(r"[0-9a-f]{64}", rep["sha256"])
+                ]
+                if not representations:
+                    continue
+                identity = hashlib.sha256(
+                    json.dumps(
+                        [record.get("run_id"), offset, row],
+                        sort_keys=True,
+                        separators=(",", ":"),
+                        allow_nan=False,
+                    ).encode()
+                ).hexdigest()
+                previous.append(
+                    {
+                        "producer_attempt": str(attempts.get(task, 0) + 1),
+                        "original_result_id": key,
+                        "result": {
+                            **row,
+                            "id": "history-" + identity,
+                            "representations": representations,
+                            "exports": [],
+                            "artifact_role": "diagnostic",
+                        },
+                    }
+                )
+                if len(previous) > _MAX_RESULT_INVENTORY_ITEMS:
+                    raise WorkflowRunReadError(
+                        "result_inventory_limit",
+                        "The previous result inventory exceeds its supported bound",
+                    )
+            for task in invalidated:
+                attempts[task] = attempts.get(task, 0) + 1
+    return previous
+
+
+def _execution_snapshot(record, state, *, complete_results=False):
     """Fold durable events, never infer execution from graph position or elapsed time.
 
-    Polling exposes artifact metadata, not model responses or native tool payloads.
-    Detailed immutable evidence remains available at the existing run-log path.
+    Polling exposes artifact metadata and bounded reported failure diagnostics,
+    not successful model responses or native tool payloads. Detailed immutable
+    evidence remains available at the existing run-log path.
     """
     truncated = False
 
@@ -289,6 +365,10 @@ def _execution_snapshot(record, state):
             "external_action_reconciled",
         }:
             progress = fields(event, event_fields)
+            if kind == "step_diagnostic":
+                # Explain the recorded failure without treating model prose as
+                # a requirement, a permitted action or a new interaction.
+                progress.update(fields(event, ("diagnostic",)))
 
     result = record.get("result") or {}
     if "partial_results" in record or isinstance(result.get("results"), list):
@@ -305,9 +385,23 @@ def _execution_snapshot(record, state):
             for o in result["outputs"]
             if isinstance(o, dict) and isinstance(o.get("output_path"), str)
         }
+    event_metadata_truncated = truncated
+    truncated = False
     compact_results = [
         a for r in current_results.values() if isinstance(r, dict) if (a := artifact(r))
     ]
+    if complete_results and (
+        truncated
+        or len(compact_results) != len(current_results)
+        or len(compact_results) > _MAX_RESULT_INVENTORY_ITEMS
+        or len(json.dumps(compact_results, ensure_ascii=True).encode())
+        > _MAX_RESULT_INVENTORY_BYTES
+    ):
+        raise WorkflowRunReadError(
+            "result_inventory_limit",
+            "The recorded result inventory exceeds the supported metadata bounds",
+        )
+    truncated |= event_metadata_truncated
     run_id = record.get("run_id") or result.get("run_id")
     if not isinstance(run_id, str):
         ids = {r.get("provenance", {}).get("run_id") for r in compact_results}
@@ -330,7 +424,12 @@ def _execution_snapshot(record, state):
         "operations_truncated": operations_truncated,
         "truncated": truncated,
     }
-    # Bound the complete artifact/event projection, even for unusually wide graphs.
+    # Legacy progress reads retain the original combined 64 KiB envelope. The
+    # interaction owner needs every current result before its existing paging;
+    # shrinking that inventory would misreport later files as not produced.
+    inventory = compact_results if complete_results else None
+    if complete_results:
+        compact_results = []
     while (
         len(json.dumps([snapshot, compact_results], ensure_ascii=True).encode())
         > 64 * 1024
@@ -348,7 +447,7 @@ def _execution_snapshot(record, state):
         else:
             snapshot["last_progress"] = None
             break
-    return snapshot, compact_results, run_id
+    return snapshot, inventory if complete_results else compact_results, run_id
 
 
 async def record_workflow_run(
@@ -412,8 +511,10 @@ async def record_workflow_resume(
         raise ValueError("Continuation does not belong to this workspace")
     identity = f"workflow-resume:{workspace_id}:{checkpoint.run_id}"
     async with ApplicationLease(identity):
-        raw = await service.files.read_reference(workspace_dir, relative)
-        if len(raw) > 16 * 1024 * 1024:
+        raw = await service.files.read_bytes(
+            workspace_dir, relative, maximum_bytes=_MAX_RUN_RECORD_BYTES
+        )
+        if len(raw) > _MAX_RUN_RECORD_BYTES:
             raise ValueError("Workflow run log exceeds the recovery limit")
         record = json.loads(raw)
         result = record.get("result") or {}
@@ -572,10 +673,12 @@ async def _record_run(
             )
 
     async def emit(event):
-        record["events"].append(dict(event))
+        # A producer can enrich a nested invocation after receiving a response;
+        # preserve the earlier submission as its own immutable snapshot.
+        record["events"].append(deepcopy(event))
         if event.get("kind") == "result_ready":
             result = event["engineering_result"]
-            record.setdefault("partial_results", {})[result["id"]] = result
+            record.setdefault("partial_results", {})[result["id"]] = deepcopy(result)
         if event.get("kind") == "design_revision":
             invalidated = set(event.get("invalidated_task_ids", []))
             record["partial_results"] = {
@@ -585,7 +688,7 @@ async def _record_run(
             }
         await checkpoint()
         if on_event:
-            await on_event(event)
+            await on_event(deepcopy(event))
 
     try:
         await emit(
@@ -823,7 +926,9 @@ async def record_workflow_artifact_review_decision(
     async with ApplicationLease(
         f"workflow-artifact-review:{workspace_id}:{review['run_id']}"
     ):
-        raw = await service.files.read_reference(workspace_dir, relative)
+        raw = await service.files.read_bytes(
+            workspace_dir, relative, maximum_bytes=_MAX_RUN_RECORD_BYTES
+        )
         if len(raw) > _MAX_RUN_RECORD_BYTES:
             raise ValueError("Review run exceeds the recovery limit")
         record = json.loads(raw)
@@ -858,6 +963,12 @@ async def record_workflow_artifact_review_decision(
                 "checkpoint_id": review["review_id"],
                 "subject_digest": review["package_digest"],
                 "request_id": review.get("request_id"),
+                "actor": review.get("actor"),
+                **(
+                    {"integration_test": review["integration_test"]}
+                    if "integration_test" in review
+                    else {}
+                ),
                 "message": f"Review is {review['state'].replace('_', ' ')}.",
             }
         )
@@ -890,8 +1001,10 @@ async def record_workflow_approval_transition(
     relative = checkpoint.continuation.get("run_log_path")
     if not isinstance(relative, str) or not relative.startswith("runs/"):
         raise ValueError("Approval continuation has no safe run-log path")
-    raw = await service.files.read_reference(workspace_dir, relative)
-    if len(raw) > 16 * 1024 * 1024:
+    raw = await service.files.read_bytes(
+        workspace_dir, relative, maximum_bytes=_MAX_RUN_RECORD_BYTES
+    )
+    if len(raw) > _MAX_RUN_RECORD_BYTES:
         raise ValueError("Workflow run log exceeds the recovery limit")
     record = json.loads(raw)
     result = record.get("result") if isinstance(record, dict) else None
@@ -965,6 +1078,16 @@ async def record_workflow_approval_transition(
         ),
         "checkpoint_id": checkpoint.checkpoint_id,
         "subject_digest": checkpoint.subject_digest,
+        **(
+            {
+                "actor": checkpoint.actor,
+                "integration_test": (
+                    checkpoint.continuation.get("decision_attribution") or {}
+                ).get("integration_test", False),
+            }
+            if kind == "approval_decided"
+            else {}
+        ),
         **(
             {"request_id": decision_receipt["request_id"]}
             if kind == "approval_decided" and decision_receipt is not None
@@ -1122,11 +1245,14 @@ def _read_run_record(paths, relative, source_path):
     return record
 
 
-def _run_summary(record, relative, *, current_digest=None, compact=False):
+def _run_summary(
+    record, relative, *, current_digest=None, compact=False, complete_results=False
+):
     state = _observed_run_state(record)
     events = record.get("events", [])
     result = record.get("result") or {}
     summary = {
+        "run_id": record.get("run_id") or result.get("run_id"),
         "path": relative,
         "status": state,
         "started_at": record.get("started_at"),
@@ -1142,7 +1268,9 @@ def _run_summary(record, relative, *, current_digest=None, compact=False):
         "capture_rights": result.get("capture_rights"),
     }
     if compact:
-        snapshot, artifacts, run_id = _execution_snapshot(record, state)
+        snapshot, artifacts, run_id = _execution_snapshot(
+            record, state, complete_results=complete_results
+        )
         summary.update(
             execution=snapshot,
             results=artifacts,
@@ -1156,15 +1284,34 @@ def _run_summary(record, relative, *, current_digest=None, compact=False):
         for key in ("code", "correction"):
             if isinstance(summary.get(key), str):
                 summary[key] = summary[key][: 160 if key == "code" else 4096]
+    if complete_results:
+        previous = _previous_result_rows(record)
+        inventory = [summary["results"], previous]
+        if (
+            len(summary["results"]) + len(previous) > _MAX_RESULT_INVENTORY_ITEMS
+            or len(json.dumps(inventory, ensure_ascii=True).encode())
+            > _MAX_RESULT_INVENTORY_BYTES
+        ):
+            raise WorkflowRunReadError(
+                "result_inventory_limit",
+                "The recorded result inventory exceeds its supported metadata bounds",
+            )
+        summary["previous_results"] = previous
     return summary
 
 
-def read_workflow_run(workspace_dir, source_path, run_id, *, run_log_path=None):
+def read_workflow_run(
+    workspace_dir, source_path, run_id, *, run_log_path=None, complete_results=False
+):
     """Attach to exact recorder facts without acquiring a lease or replaying work.
 
     A server-retained locator can avoid bounded legacy history scanning. A locator
     never overrides the record's source/run identity. Approval/review payloads are
     references only; their owning services recheck current evidence and permission.
+
+    The interaction owner requests the complete bounded result inventory for its
+    existing pagination. Exceeding that inventory bound is explicit, never a
+    partial list that could be mistaken for all the run's engineering outputs.
     """
     from .workspace_path import WorkspacePath
 
@@ -1200,9 +1347,20 @@ def read_workflow_run(workspace_dir, source_path, run_id, *, run_log_path=None):
         relative = f"{folder_relative}/{name}"
         try:
             record = _read_run_record(paths, relative, source_path)
-            summary = _run_summary(
-                record, relative, current_digest=current_digest, compact=True
+            recorded_id = record.get("run_id") or (record.get("result") or {}).get(
+                "run_id"
             )
+            if recorded_id is not None and recorded_id != run_id:
+                continue
+            summary = _run_summary(
+                record,
+                relative,
+                current_digest=current_digest,
+                compact=True,
+                complete_results=complete_results,
+            )
+        except WorkflowRunReadError:
+            raise
         except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
             if run_log_path is not None:
                 raise WorkflowRunReadError(
@@ -1216,6 +1374,7 @@ def read_workflow_run(workspace_dir, source_path, run_id, *, run_log_path=None):
         if any(
             item.get("provenance", {}).get("run_id") != run_id
             for item in summary["results"]
+            + [row["result"] for row in summary.get("previous_results", [])]
         ):
             raise WorkflowRunReadError(
                 "invalid", "Recorded result and run identities disagree"
@@ -1269,12 +1428,20 @@ def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=Fa
         return []
     # Bound directory work as well as JSON reads. Report only this exact source.
     candidates, _ = _run_candidates(folder)
+    timestamp_names = all(
+        re.fullmatch(r"\d{8}T\d{6}Z-[a-zA-Z0-9]+\.json", name) for name in candidates
+    )
     results = []
     latest_group = None
     for name in candidates:
         # Same-second run names have random suffixes. Read that small timestamp
         # group before selecting by actual start time, rather than UUID ordering.
-        if latest_only and results and name.split("-", 1)[0] != latest_group:
+        if (
+            latest_only
+            and timestamp_names
+            and results
+            and name.split("-", 1)[0] != latest_group
+        ):
             break
         relative = f"runs/{slug}/{name}"
         try:
@@ -1287,12 +1454,20 @@ def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=Fa
             results.append(summary)
         except (OSError, ValueError, TypeError, KeyError, AttributeError):
             continue
-        if not latest_only and len(results) >= min(20, max(1, limit)):
-            break
-    return (
-        sorted(
-            results, key=lambda r: (r.get("started_at") or "", r["path"]), reverse=True
-        )[:1]
-        if latest_only
-        else results
-    )
+
+    def started_key(summary):
+        try:
+            started = datetime.fromisoformat(
+                str(summary.get("started_at")).replace("Z", "+00:00")
+            )
+            if started.tzinfo is None:
+                started = started.replace(tzinfo=timezone.utc)
+            timestamp = started.timestamp()
+        except (ValueError, OverflowError, OSError):
+            timestamp = float("-inf")
+        return timestamp, summary["path"]
+
+    # Retained UUID locators have no chronological filename component. Sort
+    # recorder facts before limiting either history or latest-run observation.
+    results.sort(key=started_key, reverse=True)
+    return results[: 1 if latest_only else min(20, max(1, limit))]

@@ -54,13 +54,18 @@ async def test_omitted_canonical_result_is_reported_as_unavailable_not_unrelated
     tmp_path, monkeypatch
 ):
     async with case(tmp_path) as c:
+        from workspace_service.workflow_run_record import WorkflowRunReadError
+
+        def unavailable_inventory(*args, **kwargs):
+            assert kwargs["complete_results"] is True
+            raise WorkflowRunReadError(
+                "result_inventory_limit",
+                "Recorded inventory exceeds its supported bound",
+            )
+
         monkeypatch.setattr(
             "workspace_service.process_interfaces.artifacts.read_workflow_run",
-            lambda *args, **kwargs: {
-                "source_digest": c.process.source_digest,
-                "results": [],
-                "execution": {"truncated": True},
-            },
+            unavailable_inventory,
         )
         with pytest.raises(ProcessInterfaceError) as failure:
             await c.app.artifacts.read(
@@ -72,6 +77,56 @@ async def test_omitted_canonical_result_is_reported_as_unavailable_not_unrelated
                 run_id="recorded-run",
             )
         assert failure.value.reason.code == "CAPABILITY_UNAVAILABLE"
+
+
+@pytest.mark.asyncio
+async def test_prior_attempt_file_requires_exact_history_identity_and_unchanged_bytes(
+    tmp_path, monkeypatch
+):
+    from .test_workflow_revision_history import revision_events
+    from workspace_service.workflow_run_record import _previous_result_rows
+
+    async with case(tmp_path) as c:
+        _, events = revision_events()
+        history = _previous_result_rows({"run_id": "run-1", "events": events})
+        row = history[0]["result"]
+        rep = row["representations"][0]
+        path = tmp_path / rep["location"]
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b"failed geometry")
+        monkeypatch.setattr(
+            "workspace_service.process_interfaces.artifacts.read_workflow_run",
+            lambda *a, **kw: {
+                "source_digest": c.process.source_digest,
+                "results": [],
+                "previous_results": history,
+            },
+        )
+        reference = ArtifactRef(
+            artifact_ref=rep["location"], sha256=rep["sha256"], result_id=row["id"]
+        )
+        observed = await c.app.artifacts.read(
+            scope(*CAPABILITIES), c.process, reference, run_id="run-1"
+        )
+        assert observed.content == b"failed geometry"
+        for candidate in (
+            reference.model_copy(
+                update={"result_id": history[0]["original_result_id"]}
+            ),
+            reference.model_copy(update={"sha256": "b" * 64}),
+            reference.model_copy(update={"artifact_ref": "another-attempt.csv"}),
+        ):
+            with pytest.raises(ProcessInterfaceError) as denied:
+                await c.app.artifacts.read(
+                    scope(*CAPABILITIES), c.process, candidate, run_id="run-1"
+                )
+            assert denied.value.reason.code == "SCOPE_DENIED"
+        path.write_bytes(b"changed geometry")
+        with pytest.raises(ProcessInterfaceError) as stale:
+            await c.app.artifacts.read(
+                scope(*CAPABILITIES), c.process, reference, run_id="run-1"
+            )
+        assert stale.value.reason.code == "SUBJECT_STALE"
 
 
 @pytest.mark.asyncio

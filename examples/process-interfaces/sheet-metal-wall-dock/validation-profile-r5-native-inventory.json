@@ -1,0 +1,671 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "wall-dock-130-r5-native-inventory",
+  "version": "1",
+  "baseline": {
+    "id": "wall-dock-130-r5-native-inventory-basis",
+    "version": "1",
+    "requirements": [
+      {
+        "id": "SHEET01-MATERIAL",
+        "text": "Use the unique freshly observed R1-permitted installed 5052 label and an eligible complete supplier stock row with T 1.3..1.7 mm; preserve native/desired/supplier identity distinctions and do not invent temper or properties.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/stock-selection-revision-r1.md",
+            "sha256": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+            "locator": "selected stock"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/company-fabrication-capabilities-r4.md",
+            "sha256": "ed73ef7775bcfe77c5c6f998036cc64791b9bbe9eaecbf9c72730f49da447bd1",
+            "locator": "material authority"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-GEOMETRY",
+        "text": "R5 outside virtual-sharp shelf is 110 by 130 mm, rear top Z60 and split lip tops Z12, sides open, all bends upward. Native offsets use actual selected T/R; preserve the original 75 mm revision separately.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md",
+            "sha256": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+            "locator": "Geometry and coordinate basis"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/cad-design-choices-revision-r3.md",
+            "sha256": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+            "locator": "approved interpretation"
+          },
+          {
+            "artifact_ref": "examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md",
+            "sha256": "196fc8874727a932e899c5b6c22c2075c277cbc9359e27373630bdb3db53aa1c",
+            "locator": "Exactly what changes; Recheck before CAD; Verification and release"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-FEATURES",
+        "text": "Retain rear slots 5.5 by 12 mm at X20/90,Z38, R2.75 ends; R5 notch X46..64,Y110..130 with R3 roots, split lips and original external corner treatment. Preserve centered 65 by 50 mm reference footprint and minimum 6 mm side clearance.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md",
+            "sha256": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+            "locator": "Geometry and coordinate basis"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/cad-design-choices-revision-r3.md",
+            "sha256": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+            "locator": "feature decisions"
+          },
+          {
+            "artifact_ref": "examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md",
+            "sha256": "196fc8874727a932e899c5b6c22c2075c277cbc9359e27373630bdb3db53aa1c",
+            "locator": "Exactly what changes; Recheck before CAD; Verification and release"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-FORMING",
+        "text": "Use R1-selected stock and complete current source rule, R3 neutral-factor K and evaluated square relief dimensions, R4 split-lip/rear sequence, revised R5 throat arithmetic and actual tool/flat clearances. Retain all applicable supplier constraints and disclosed uncertainty; no supplier approval claim.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/company-fabrication-capabilities-r4.md",
+            "sha256": "ed73ef7775bcfe77c5c6f998036cc64791b9bbe9eaecbf9c72730f49da447bd1",
+            "locator": "forming sequence and limits"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/cad-design-choices-revision-r3.md",
+            "sha256": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+            "locator": "forming inputs"
+          },
+          {
+            "artifact_ref": "examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md",
+            "sha256": "196fc8874727a932e899c5b6c22c2075c277cbc9359e27373630bdb3db53aa1c",
+            "locator": "Exactly what changes; Recheck before CAD; Verification and release"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/stock-selection-revision-r1.md",
+            "sha256": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+            "locator": "selected stock"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-NATIVE",
+        "text": "Native readback proves one Solid Edge sheet-metal part with exact thickness/material, formed dimensions, bends, reliefs, slots/notch and no dropped feature.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/prompt.txt",
+            "sha256": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+            "locator": "native part request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md",
+            "sha256": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+            "locator": "Load and process assumptions"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-CORRESPONDENCE",
+        "text": "Folded STEP and genuine developed flat DXF correspond to the same current PSM; the DXF is a developed flat, not screenshot or folded projection.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/prompt.txt",
+            "sha256": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+            "locator": "export request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md",
+            "sha256": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+            "locator": "Supplier and output scope"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-HANDOFF",
+        "text": "The digest-bound local simulated supplier preview itemizes exact stock, assumptions and quantity four with concept_only=true, manufacturing release HOLD and supplier acceptance unverified.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/prompt.txt",
+            "sha256": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+            "locator": "preview scope"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/manufacturing-policy.md",
+            "sha256": "a2ca35182be5025ad85062d272d49c5945cfe4bae6e5762063fb7a799166b58e",
+            "locator": "handoff policy"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/company-fabrication-capabilities-r4.md",
+            "sha256": "ed73ef7775bcfe77c5c6f998036cc64791b9bbe9eaecbf9c72730f49da447bd1",
+            "locator": "release boundary"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-SCOPE",
+        "text": "The result does not claim wall-anchor strength, structural verification, live price/lead time, manufacturability, upload, purchase or production authority.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/context.md",
+            "sha256": "973f0b6d22ede71ecb7b5dc4dae0cb9a59bff10f450b85a4049572b1fafab008",
+            "locator": "Load and process assumptions; Supplier and output scope"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      },
+      {
+        "id": "SHEET01-INDEPENDENT-DXF-REVIEW",
+        "text": "Each Solid Edge flat-pattern DXF is independently reopened and saved by the pinned headless DXF provider with hash-bound equal entity inventory and extents; this is not desktop AutoCAD or supplier approval.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "specs/082-output-content-validation/campaign-example-renewal-lineup.json",
+            "sha256": "9a7992ac2ec340b7e8fb511b16b87d1effd341dc5e768cd81834065e891ef199",
+            "locator": "cases/sheet-metal-supplier-handoff-01/final_deliverable"
+          }
+        ],
+        "mandatory": true,
+        "review_required": true
+      }
+    ],
+    "unresolved_decisions": [],
+    "amendments": [
+      {
+        "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/stock-selection-revision-r1.md",
+        "sha256": "a8dd81c8a20f03e62e50976c7ad07dce36a3062657d0ec670620a110842cecaf",
+        "locator": "complete approved stock revision"
+      },
+      {
+        "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/cad-design-choices-revision-r3.md",
+        "sha256": "9b11da64a3a2152d9eef9c5166292ce81999abd300d62b7c9333a4fe751536d3",
+        "locator": "complete approved CAD revision"
+      },
+      {
+        "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/company-fabrication-capabilities-r4.md",
+        "sha256": "ed73ef7775bcfe77c5c6f998036cc64791b9bbe9eaecbf9c72730f49da447bd1",
+        "locator": "complete approved capability revision"
+      },
+      {
+        "artifact_ref": "specs/082-output-content-validation/campaign-example-renewal-lineup.json",
+        "sha256": "9a7992ac2ec340b7e8fb511b16b87d1effd341dc5e768cd81834065e891ef199",
+        "locator": "cases/sheet-metal-supplier-handoff-01/final_deliverable"
+      },
+      {
+        "artifact_ref": "examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md",
+        "sha256": "196fc8874727a932e899c5b6c22c2075c277cbc9359e27373630bdb3db53aa1c",
+        "locator": "Exactly what changes; Recheck before CAD; Verification and release"
+      },
+      {
+        "artifact_ref": "examples/process-interfaces/sheet-metal-wall-dock/material-inventory-contract.md",
+        "sha256": "1cfd9bc390e72c63c072fc9e37d0e39969ea66a5164ee05619848d834824c6ef",
+        "locator": "Complete native inventory handoff contract"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "installed-material-label",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-MATERIAL"
+      ],
+      "subject_role": "installed_materials",
+      "reader": "structured",
+      "selector": "/materials/0/name",
+      "constraint": {
+        "operator": "equals",
+        "expected": "Aluminum Alloy:3.3523 , AlMg2.5, EN-AW 5052 ",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "wall-dock-native-check",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-NATIVE"
+      ],
+      "subject_role": "wall_dock_check",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/wall-dock/native-check",
+      "constraint": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "operation": "design_check",
+        "required_requirement_ids": [
+          "SHEET01-NATIVE"
+        ]
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "wall-dock-step-present",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-NATIVE",
+        "SHEET01-CORRESPONDENCE"
+      ],
+      "subject_role": "wall_dock_step",
+      "reader": "step-bounding-box",
+      "selector": "box/x_span_mm",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 0.001,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "model_axes",
+      "evidence_method": "native_inspection",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "wall-dock-developed-dxf",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-CORRESPONDENCE"
+      ],
+      "subject_role": "wall_dock_dxf",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/wall-dock/dxf-entity-count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": "flat_pattern_mm",
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "operation": "dxf_contract"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "wall-dock-native-review",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-FEATURES",
+        "SHEET01-FORMING",
+        "SHEET01-GEOMETRY",
+        "SHEET01-INDEPENDENT-DXF-REVIEW",
+        "SHEET01-MATERIAL",
+        "SHEET01-NATIVE"
+      ],
+      "subject_role": "wall_dock_check",
+      "reader": "structured",
+      "selector": "",
+      "constraint": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "human_review",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "wall-dock-reviewed-dxf",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-INDEPENDENT-DXF-REVIEW"
+      ],
+      "subject_role": "wall_dock_review_dxf",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/wall-dock/reviewed-dxf-entity-count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": "flat_pattern_mm",
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "operation": "dxf_contract"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "wall-dock-dxf-review-binding",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-INDEPENDENT-DXF-REVIEW",
+        "SHEET01-CORRESPONDENCE"
+      ],
+      "subject_role": "wall_dock_review_report",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/wall-dock/dxf-review-binding",
+      "constraint": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "operation": "dxf_review_binding",
+        "related_roles": [
+          "wall_dock_dxf",
+          "wall_dock_review_dxf"
+        ],
+        "reviewed_role": "wall_dock_review_dxf",
+        "source_role": "wall_dock_dxf"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "final-manifest-binding",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-CORRESPONDENCE",
+        "SHEET01-HANDOFF"
+      ],
+      "subject_role": "final_manifest",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/final-manifest",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 10.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "expected_basenames": {
+          "cart_receipt": "cart-quote-handoff.json",
+          "installed_materials": "installed-materials.json",
+          "manufacturing_intent": "manufacturing-intent.md",
+          "preview_receipt": "supplier-preview.json",
+          "supplier_evidence": "supplier-evidence.json",
+          "wall_dock_check": "wall-dock-measured-check.json",
+          "wall_dock_dxf": "wall-dock.dxf",
+          "wall_dock_native": "wall-dock.psm",
+          "wall_dock_screenshot": "wall-dock.jpg",
+          "wall_dock_step": "wall-dock.step"
+        },
+        "operation": "manifest_binding",
+        "related_roles": [
+          "cart_receipt",
+          "installed_materials",
+          "manufacturing_intent",
+          "preview_receipt",
+          "supplier_evidence",
+          "wall_dock_check",
+          "wall_dock_dxf",
+          "wall_dock_native",
+          "wall_dock_screenshot",
+          "wall_dock_step"
+        ]
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "supplier-preview-simulation",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-HANDOFF"
+      ],
+      "subject_role": "preview_receipt",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/supplier-preview",
+      "constraint": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "action_kind": "supplier_upload_preview",
+        "destination": "test://083-mechanical-engineering-dock-inventory-088/supplier/sheet-metal-supplier-handoff-01",
+        "operation": "simulated_handoff",
+        "scenario_id": "sheet-metal-supplier-handoff-01"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "cart-handoff-simulation",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-HANDOFF"
+      ],
+      "subject_role": "cart_receipt",
+      "reader": "sheet-metal-evidence",
+      "selector": "sheet-metal/cart-handoff",
+      "constraint": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "action_kind": "cart_quote_handoff",
+        "destination": "test://083-mechanical-engineering-dock-inventory-088/supplier/sheet-metal-supplier-handoff-01",
+        "operation": "simulated_handoff",
+        "scenario_id": "sheet-metal-supplier-handoff-01"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "manufacturing-intent-review",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-FEATURES",
+        "SHEET01-FORMING",
+        "SHEET01-GEOMETRY",
+        "SHEET01-INDEPENDENT-DXF-REVIEW",
+        "SHEET01-MATERIAL",
+        "SHEET01-NATIVE",
+        "SHEET01-SCOPE"
+      ],
+      "subject_role": "manufacturing_intent",
+      "reader": "structured",
+      "selector": "",
+      "constraint": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "human_review",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "correspondence-and-handoff-review",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-CORRESPONDENCE",
+        "SHEET01-HANDOFF",
+        "SHEET01-SCOPE"
+      ],
+      "subject_role": "engineering_handoff",
+      "reader": "structured",
+      "selector": "",
+      "constraint": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "human_review",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "r5-step-x-envelope",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-GEOMETRY"
+      ],
+      "subject_role": "wall_dock_step",
+      "reader": "step-bounding-box",
+      "selector": "box/x_span_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 110.0,
+        "tolerance": 0.05,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "model_axes",
+      "evidence_method": "native_inspection",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "r5-step-y-envelope",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-GEOMETRY"
+      ],
+      "subject_role": "wall_dock_step",
+      "reader": "step-bounding-box",
+      "selector": "box/y_span_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 130.0,
+        "tolerance": 0.05,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "model_axes",
+      "evidence_method": "native_inspection",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "r5-step-z-envelope",
+      "version": "1",
+      "requirement_ids": [
+        "SHEET01-GEOMETRY"
+      ],
+      "subject_role": "wall_dock_step",
+      "reader": "step-bounding-box",
+      "selector": "box/z_span_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 60.0,
+        "tolerance": 0.05,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "model_axes",
+      "evidence_method": "native_inspection",
+      "parameters": {},
+      "applicability_reason": null
+    }
+  ],
+  "excluded_scope": [],
+  "limitations": [
+    "The reader validates native-inspection evidence, developed-DXF structure, exact artifact lineage and simulated handoff safety; it does not parse proprietary PSM feature history.",
+    "Bend feasibility, reliefs, detailed feature correspondence, supplier acceptance and physical fabrication remain behind authenticated engineering review and the declared HOLD boundary.",
+    "This R5 profile retains all original checks and adds three exact STEP envelope checks. Detailed geometry still requires native observations and explicit review; an envelope pass alone is insufficient. Dimensioned drawing integration remains a separate required deliverable."
+  ],
+  "supported_kinds": [
+    "file",
+    "value"
+  ]
+}

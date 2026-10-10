@@ -72,7 +72,7 @@ def verify_task_files(
     workspace_dir: str, paths: tuple[str, ...], before: dict | None = None
 ) -> list[dict]:
     from .workspace_path import WorkspacePath
-    from .workflow_source_execution import _invalid
+    from .workflow_source_execution import _error
 
     files = []
     for path in paths:
@@ -85,16 +85,29 @@ def verify_task_files(
                 raise ValueError("The existing file was not updated by this task")
             with target.open("rb") as stream:
                 digest = hashlib.file_digest(stream, "sha256").hexdigest()
+            media_type = None
+            if target.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp"}:
+                with target.open("rb") as stream:
+                    media_type = image_media_type(path, stream.read(16))
+                    if media_type in {"image/png", "image/jpeg"}:
+                        from .workflow_mcp_images import _dimensions
+
+                        stream.seek(0)
+                        width, height = _dimensions(stream.read(), media_type)
+                        if width <= 0 or height <= 0:
+                            raise ValueError("Image dimensions must be positive")
             files.append(
                 {
                     "output_path": path,
                     "output_bytes": size,
                     "output_format": target.suffix.lstrip("."),
                     "sha256": digest,
+                    **({"media_type": media_type} if media_type else {}),
                 }
             )
         except (OSError, ValueError) as error:
-            raise _invalid(
+            raise _error(
+                "WORKFLOW_OUTPUT_INVALID",
                 f"The task did not produce the expected file: {path}.",
                 "Inspect the tool results and correct the task or expected filename.",
             ) from error
@@ -166,7 +179,16 @@ def verified_file_dependencies(step, responses, workspace_dir):
     records = []
     for source_id, expected_path in step.file_dependencies.items():
         value = responses.get(source_id)
+        connected_output = expected_path == {"source": "connected_output"}
         if isinstance(value, EngineeringResult):
+            if (
+                connected_output
+                and source_id
+                != f"{value.provenance.task_id}.{value.provenance.output_port}"
+            ):
+                raise _invalid(
+                    f"{step.title}: its file receipt belongs to another connected output."
+                )
             representations = [
                 rep for rep in value.representations if rep.kind == "workspace_file"
             ]
@@ -192,6 +214,8 @@ def verified_file_dependencies(step, responses, workspace_dir):
             raise _invalid(
                 f"{step.title}: its connected file was not supplied or produced."
             )
+        if connected_output:
+            expected_path = location
         if location != expected_path or expected_size is None:
             raise _invalid(
                 f"{step.title}: its connected file differs from the declared input."

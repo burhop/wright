@@ -25,6 +25,8 @@ dependencies = [
     "wright-data-vault>=0.1.0,<0.2.0",
     "wright-model-registry>=0.1.0,<0.2.0",
     "wright-tool-registry>=0.1.0,<0.2.0",
+    "pypdfium2>=5,<6",
+    "pillow>=12,<13",
 ]
 
 [project.urls]

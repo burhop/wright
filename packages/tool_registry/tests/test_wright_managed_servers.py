@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import sqlite3
 
 from data_vault import upgrade_database
@@ -17,54 +16,35 @@ def _row(database):
         ).fetchone()
 
 
-def test_wright_managed_rivet_server_is_installed_and_active_on_first_seed(tmp_path):
+def test_fresh_start_does_not_install_retired_rivet_server(tmp_path):
     database = tmp_path / "state.db"
     upgrade_database(database)
 
-    assert reconcile_wright_managed_servers(str(database)) == 1
-
-    row = _row(database)
-    assert row is not None
-    assert row[0] == "rivet-workflows"
-    assert json.loads(row[1]) == ["wright-rivet-mcp"]
-    assert row[2:5] == (1, 1, "active")
-    assert row[5:] == (1, "wright-managed", "medium")
+    assert reconcile_wright_managed_servers(str(database)) == 0
+    assert _row(database) is None
     with sqlite3.connect(database) as connection:
         tools = connection.execute(
             "SELECT name, is_enabled FROM mcp_tools WHERE server_id='rivet-workflows' ORDER BY name"
         ).fetchall()
-    assert [name for name, _enabled in tools] == [
-        "create_workflow",
-        "inspect_workflow",
-        "list_templates",
-        "list_workflows",
-        "run_workflow",
-        "validate_workflow",
-    ]
-    assert all(enabled == 1 for _name, enabled in tools)
+    assert tools == []
 
 
-def test_wright_managed_reconcile_preserves_user_disablement(tmp_path):
+def test_wright_managed_reconcile_preserves_independent_user_disablement(tmp_path):
     database = tmp_path / "state.db"
     upgrade_database(database)
     reconcile_wright_managed_servers(str(database))
     with sqlite3.connect(database) as connection:
-        connection.execute(
-            "UPDATE mcp_servers SET is_active=0, status='inactive' WHERE server_id='rivet-workflows'"
-        )
-        connection.execute(
-            "UPDATE mcp_tools SET is_enabled=0 WHERE tool_id='rivet-workflows:run_workflow'"
-        )
+        connection.execute("""INSERT INTO mcp_servers
+            (server_id,name,type,command,is_active,is_installed,status,created_at,updated_at)
+            VALUES ('independent','Independent MCP','stdio','[]',0,1,'inactive',1,1)""")
         connection.commit()
 
     reconcile_wright_managed_servers(str(database))
 
-    assert _row(database)[2:5] == (1, 0, "inactive")
     with sqlite3.connect(database) as connection:
-        enabled = connection.execute(
-            "SELECT is_enabled FROM mcp_tools WHERE tool_id='rivet-workflows:run_workflow'"
-        ).fetchone()[0]
-    assert enabled == 0
+        assert connection.execute(
+            "SELECT is_installed,is_active,status FROM mcp_servers WHERE server_id='independent'"
+        ).fetchone() == (1, 0, "inactive")
 
 
 def test_internal_rivet_server_is_not_in_public_engineering_catalog():

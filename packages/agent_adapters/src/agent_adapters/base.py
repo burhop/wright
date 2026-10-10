@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import AsyncIterator
+from typing import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 import hashlib
 from typing import Literal
@@ -142,6 +142,9 @@ class AgentChatRequest:
     attachments: list[str] | None = None
     active_rivet_slug: str | None = None
     invocation_context: AgentInvocationContext | None = None
+    instruction_set: dict | None = None
+    # Internal evidence callback; never user-authored invocation/action authority.
+    invocation_observer: Callable[[dict], Awaitable[None]] | None = None
 
 
 @dataclass

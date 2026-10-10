@@ -84,7 +84,13 @@ async def qualify_inputs(
             "SOURCE_CHANGED"
             if error.code == "WORKFLOW_SOURCE_CONFLICT"
             else "READINESS_UNSUPPORTED"
-            if error.code == "WORKFLOW_SOURCE_INVALID"
+            if error.code
+            in {
+                "WORKFLOW_SOURCE_INVALID",
+                "WORKFLOW_ACTION_INTENT_UPGRADE_REQUIRED",
+                "WORKFLOW_ACTION_INTENT_SCHEMA_UNSUPPORTED",
+                "WORKFLOW_ACTION_INTENT_INVALID",
+            }
             else "CAPABILITY_UNAVAILABLE"
         )
         reason = ProcessInterfaceError(code, str(error), error.correction).reason

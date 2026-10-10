@@ -1,5 +1,10 @@
 import { validateOutputChanges } from "./output-contracts";
 import {
+  normalizeWorkflowInstructions,
+  normalizeWorkflowInstructionOverride,
+  type WorkflowInstructionSet,
+} from "./workflow-instructions";
+import {
   cloneLayout,
   cloneWorkflow,
   recoveryAuthoringSectionKind,
@@ -26,6 +31,7 @@ import {
 
 export type RecoveryCommand =
   | { kind: "move_block"; blockId: string; x: number; y: number }
+  | { kind: "set_workflow_instructions"; value: WorkflowInstructionSet | null }
   | {
       kind: "set_workflow_metadata";
       patch: Partial<
@@ -51,7 +57,7 @@ export type RecoveryCommand =
   | {
       kind: "set_block_object_configuration";
       blockId: string;
-      key: "interaction_input" | "human_interaction";
+      key: "interaction_input" | "human_interaction" | "instruction_override";
       value: Record<string, unknown> | null;
     }
   | {
@@ -203,6 +209,22 @@ function applyCommand(
     );
     return;
   }
+  if (command.kind === "set_workflow_instructions") {
+    if (command.value === null) delete workflow.metadata.instructions;
+    else {
+      try {
+        workflow.metadata.instructions = normalizeWorkflowInstructions(
+          command.value,
+        );
+      } catch (error) {
+        throw new Error(
+          `WFR-COMMAND-INSTRUCTIONS-INVALID:${error instanceof Error ? error.message : "Invalid instruction collection"}`,
+          { cause: error },
+        );
+      }
+    }
+    return;
+  }
   if (command.kind === "set_phase_name") {
     const phase = workflow.phases.find((item) => item.id === command.phaseId);
     if (!phase || !command.name.trim())
@@ -245,11 +267,18 @@ function applyCommand(
   if (command.kind === "set_block_object_configuration") {
     const target = block(workflow, command.blockId);
     if (
-      !["interaction_input", "human_interaction"].includes(command.key) ||
+      ![
+        "interaction_input",
+        "human_interaction",
+        "instruction_override",
+      ].includes(command.key) ||
       (command.key === "interaction_input" &&
         recoveryAuthoringSectionKind(target) !== "input") ||
       (command.key === "human_interaction" &&
-        target.configuration.authoring_template !== "human-input")
+        target.configuration.authoring_template !== "human-input") ||
+      (command.key === "instruction_override" &&
+        (target.executionKind !== "ai_capable" ||
+          !workflow.metadata.instructions))
     )
       throw new Error("This declaration does not belong to the selected step.");
     const retained =
@@ -265,7 +294,11 @@ function applyCommand(
     )
       throw new Error("Use an object for the declaration.");
     if (command.value === null) delete objects[command.key];
-    else objects[command.key] = command.value;
+    else
+      objects[command.key] =
+        command.key === "instruction_override"
+          ? normalizeWorkflowInstructionOverride(command.value)
+          : command.value;
     if (Object.keys(objects).length)
       target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY] =
         stableValue(objects);
@@ -732,6 +765,14 @@ export function textEditCommands(
     metadataPatch.engineeringDomain = after.metadata.engineeringDomain;
   if (Object.keys(metadataPatch).length > 0)
     edits.push({ kind: "set_workflow_metadata", patch: metadataPatch });
+  if (
+    stableValue(before.metadata.instructions) !==
+    stableValue(after.metadata.instructions)
+  )
+    edits.push({
+      kind: "set_workflow_instructions",
+      value: after.metadata.instructions ?? null,
+    });
   const afterPhases = new Map(after.phases.map((item) => [item.id, item]));
   for (const current of before.phases) {
     const edited = afterPhases.get(current.id);

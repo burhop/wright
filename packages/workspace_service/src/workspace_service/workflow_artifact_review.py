@@ -66,6 +66,11 @@ class WorkflowArtifactReviewService:
             "actor": decision.get("actor"),
             "reason": decision.get("reason"),
             **(
+                {"integration_test": decision["integration_test"]}
+                if "integration_test" in decision
+                else {}
+            ),
+            **(
                 {"request_id": decision["request_id"]}
                 if decision.get("request_id") is not None
                 else {}
@@ -238,6 +243,7 @@ class WorkflowArtifactReviewService:
                     "state": decision,
                     "reason": reason,
                     "actor": actor,
+                    "integration_test": actor.startswith("integration_test:"),
                     "decided_at": _now(),
                     **({"request_id": request_id} if request_id is not None else {}),
                 },

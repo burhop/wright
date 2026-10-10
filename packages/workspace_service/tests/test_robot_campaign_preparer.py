@@ -16,9 +16,20 @@ spec.loader.exec_module(preparer)
 @pytest.mark.parametrize("ordinal", [1, 2, 3])
 def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal):
     config = json.loads(preparer.BINDING.read_text())
+    qualified_tools = {
+        **config["allowed_tools"],
+        "agentcad": ["context", "docs", "run"],
+        "wright-workspace-files": ["write_text_document", "inspect_file"],
+        "calculix": [
+            "calculix_mesh_preflight",
+            "calculix_solve_static_recorded",
+            "calculix_run_get",
+        ],
+        "calculix-fields": ["export_recorded_fields_and_reactions"],
+    }
     tools = [
         {"server_id": server, "tool_name": name, "schema_digest": "a" * 64}
-        for server, names in config["allowed_tools"].items()
+        for server, names in qualified_tools.items()
         for name in names
     ]
     args = SimpleNamespace(
@@ -42,7 +53,7 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     manifest = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()
     )
-    assert len(plan.steps) == 7
+    assert len(plan.steps) == 14
     assert len(manifest["preserved_original_stages"]) == 3
     assert len(manifest["preserved_original_edges"]) == 2
     assert plan.steps[0].id.startswith("normalize_csv_")
@@ -50,15 +61,22 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     assert plan.steps[2].id.startswith("align_and_measure_")
     assert plan.steps[3].id.startswith("draft_diagnosis_")
     assert plan.steps[4].external_action["action_kind"] == "local_review"
-    assert plan.steps[5].id.startswith("validate_robot_content_")
-    assert plan.steps[6].id.startswith("collect_robot_evidence_")
+    assert plan.steps[-2].id.startswith("validate_robot_content_")
+    assert plan.steps[-1].id.startswith("collect_robot_evidence_")
     assert "one percent" in source
     assert "metric_tolerance_percent" in source
     assert any(p.endswith("recording.db3") for p in plan.steps[0].expected_files)
     assert "get_topic_schema" in source and "get_messages_in_range" in source
     assert "max_messages=2" in source and "max_messages=100" not in source
+    # Diagnosis/metrics do not synthesize scripts; the declared downstream
+    # corrective CAD source author has its own inspected output.
     assert not any(
-        path.endswith(".py") for path in manifest["expected_tool_created_files"]
+        path.endswith(".py") for step in plan.steps[:5] for path in step.expected_files
+    )
+    assert any(
+        step.id.startswith("author_corrective_")
+        and any(path.endswith(".py") for path in step.expected_files)
+        for step in plan.steps
     )
     for path in directory.glob("*.csv"):
         staged = next(
@@ -130,7 +148,7 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     assert any(value.startswith(diagnosis.id + ".") for _, value in review.references)
     assert review.external_action["action"]["kind"] == "local_review"
     assert review.external_action["action"]["mode"] == "review_only"
-    validator = plan.steps[5]
+    validator = plan.steps[-2]
     assert validator.validation
     assert validator.max_revisions == 0
     assert {role for role, _ in validator.validation_sources} == {
@@ -139,6 +157,10 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
         "metrics",
         "plot",
         "diagnosis",
+        "corrective_step",
+        "corrective_measurements",
+        "corrective_fea",
+        "commissioning",
     }
     assert validator.validation["profile"]["name"] == scenario["scenario_id"]
     configured_review = review.external_action["settings"]["validation_review"]
@@ -163,9 +185,7 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
         and 'when: "pass"' in source
     )
     expected_tools = {
-        (server, name)
-        for server, names in config["allowed_tools"].items()
-        for name in names
+        (server, name) for server, names in qualified_tools.items() for name in names
     }
     assert {
         (tool["server_id"], tool["tool_name"]) for tool in manifest["tool_allowlist"]

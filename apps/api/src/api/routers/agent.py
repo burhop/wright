@@ -1005,12 +1005,40 @@ async def chat(
         )
         log.info("workspace_session_title_updated", updated=updated)
 
+    from api.composition import workspace_service as workspace_application
+
+    try:
+        instruction_defaults = await asyncio.to_thread(
+            workspace_application().workflow_instruction_settings.read
+        )
+    except ValueError as error:
+        raise HTTPException(
+            422,
+            detail={
+                "code": "workflow_instructions_invalid",
+                "message": "Global chat instructions are invalid. Inspect instruction defaults in Settings.",
+            },
+        ) from error
+    from workspace_service.chat_invocation_evidence import ChatInvocationRecorder
+    from api.routers.workspace import _workflow_source_scope
+
+    chat_application = workspace_application()
+    chat_scope = _workflow_source_scope(body.session_id, chat_application)
+    invocation_recorder = ChatInvocationRecorder(
+        chat_application,
+        workspace_id=chat_scope.workspace_id,
+        workspace_dir=chat_scope.workspace_dir,
+        session_id=body.session_id,
+        request_id=trace_id or secrets.token_hex(16),
+    )
     chat_request = AgentChatRequest(
         session_id=body.session_id,
         message=body.message,
         trace_id=trace_id,
         attachments=attachment_data_urls(body.attachments),
         active_rivet_slug=body.active_rivet_slug,
+        instruction_set=instruction_defaults["instructions"],
+        invocation_observer=invocation_recorder.observe,
     )
     registry = get_chat_stream_registry(request)
     job = await registry.start(chat_request, engine)

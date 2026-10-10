@@ -1,5 +1,5 @@
 // Generated from core.process_interfaces.contract_schemas(). Do not hand edit.
-// Schema SHA-256: 42a7097f0dd60b8ff5c929e4488594ea1b33bdd80f7dd813f2c0fd5ed198dfc7
+// Schema SHA-256: 7df3efb8e3dec1ef83b02a4457542dee0d5ceab51d0dffa988107f93251076ba
 export const contractSchemas: Readonly<Record<string, unknown>> = {
   "Action": {
     "additionalProperties": false,
@@ -869,7 +869,7 @@ export const contractSchemas: Readonly<Record<string, unknown>> = {
     "additionalProperties": false,
     "properties": {
       "binding_id": {
-        "maxLength": 160,
+        "maxLength": 321,
         "minLength": 1,
         "title": "Binding Id",
         "type": "string"

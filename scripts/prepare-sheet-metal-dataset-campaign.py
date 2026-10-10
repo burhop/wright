@@ -38,6 +38,7 @@ _renewal_spec.loader.exec_module(renewal)
 
 def prepare(args, directory, available):
     config = json.loads(BINDING.read_text(encoding="utf-8"))
+    cad_server = getattr(args, "cad_server_id", None) or SERVER
     manifest = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
     if "cad-design-choices-revision-r3.md" not in manifest["files"]["context"]:
         raise ValueError("Publish the explicit R3 CAD design-choice input revision before preparing a fresh sheet-metal attempt")
@@ -164,7 +165,10 @@ def prepare(args, directory, available):
         helpers.add_reference(sections, brief, task, "human_inputs")
         return task["id"] + "." + task["id"] + "_report"
     research = new_task("supplier_research", "Retrieve current supplier capability evidence")
-    source_files = [f"supplier-source-{i + 1}.{extension}" for i in range(len(supplier_sources)) for extension in ("html", "txt")]
+    source_files = ["supplier-evidence.json", *[
+        f"supplier-source-{i + 1}.{extension}"
+        for i in range(len(supplier_sources)) for extension in ("html", "txt")
+    ]]
     research_ref = bind(research,
         "Retrieve these exact official supplier pages without logging in, uploading, communicating, or changing a cart: " + json.dumps(supplier_sources) + ". "
         f"Call retrieve_public_references(operation_source_document={operation_path!r}, output_root={output_root!r}, urls={supplier_sources!r}). "
@@ -225,7 +229,7 @@ def prepare(args, directory, available):
         "Distinguish requested alloy/class from supplier temper and native metadata: do not promote a sourced temper to a customer requirement. "
         "Apply any explicit uploaded native-label mapping only when the unique fresh inventory supports it. Missing density/strength/temper metadata is not a geometry blocker when the human revision explicitly allows the mapping and no property-dependent analysis was requested; do not claim those properties. "
         "Missing or ambiguous required alloy/class remains an unresolved design decision; never invent a library entry.",
-        "installed-materials.json", SERVER)
+        "installed-materials.json", cad_server)
     order(supplier_evidence, intent, "sealed supplier facts precede intent")
     order(materials, intent, "installed material evidence precedes intent")
     intent_ref = bind(intent,
@@ -306,7 +310,7 @@ def prepare(args, directory, available):
             "The runtime supplies the authoritative creation path and retains indexed revisions. Use commit mode, closeAfterSave=false and visible=false. "
             "Create a genuine native flat pattern with explicit flatPatternSettings. Respect profile-relative flange edges, native pre-flange sketch spans, full-thickness flange surface offsets, and measured coordinate frames documented in the live schema. "
             "Do not omit customer cutouts, return flanges, corner reliefs or lid features to obtain a passing file. Record requested versus actual material and geometry; fail on unsupported native feature rather than substituting a fixture.",
-            part_name + "-creation.json", SERVER)
+            part_name + "-creation.json", cad_server)
         if company_capabilities:
             create["fields"]["prompt"] += (
                 " Apply only the exact-reviewed R4 prototype scope in the approved intent. An explicit ready_for_geometry_verification status "
@@ -327,7 +331,7 @@ def prepare(args, directory, available):
             "Return the existing design-check JSON contract: verdict pass/revise/needs_input; checks with requirement, expected, observed, status and evidence as a list of 1-based successful tool-call indices; corrections list. "
             f"Prefix every applicable native criterion's requirement text with its frozen source requirement ID, and include at least one criterion prefixed {native_requirement_id}. "
             "Pass requires actual supported observed evidence, not recipe values or prose. Preserve the existing runtime inspection gate; this is not campaign content-validity qualification.",
-            part_name + "-measured-check.json", SERVER)
+            part_name + "-measured-check.json", cad_server)
         if company_capabilities:
             inspect["fields"]["prompt"] += (
                 " Preserve the exact-reviewed R4 assessment scope. Measure all applicable CAD geometry, topology, relief, flat-development "
@@ -346,7 +350,7 @@ def prepare(args, directory, available):
             "Read the exact accepted upstream native " + part_name + " identity and existing flat-pattern state without modifying geometry. "
             "Confirm its readback using native measurement tools. Wright will export folded STEP, persisted flat DXF and a labeled model screenshot from this same document after the task finishes. "
             "Never replace a failed flat DXF with a folded projection, STEP file, drawing, or copied input. Preserve existing native DXF integrity checks. The JPEG is only an inspection view, not a dimensioned manufacturing drawing.",
-            part_name + "-export.json", SERVER)
+            part_name + "-export.json", cad_server)
         helpers.add_reference(sections, inspect["id"] + "." + inspect_key, export_task, "model", "cad_model")
         helpers.add_reference(sections, inspect_ref, export_task, "observed_checks")
         exports = []
@@ -563,6 +567,8 @@ def prepare(args, directory, available):
     for server, names in config["allowed_tools"].items():
         if server == "wright-engineering-evidence":
             server = evidence_server
+        elif server == SERVER:
+            server = cad_server
         for name in names:
             tool = next((t for t in available if t["server_id"] == server and t["tool_name"] == name), None)
             if not tool:
@@ -585,6 +591,9 @@ def prepare(args, directory, available):
     for name in scenario_config["parts"]:
         for role, extension in (("native_sheet_metal", "psm"), ("folded_neutral_model", "step"), ("developed_flat_pattern", "dxf")):
             expected.append({"role": name + "_" + role, "patterns": ["**/" + name + "." + extension, "**/" + name + "-*." + extension]})
+    # The confined copy owner requires an existing destination directory. Prepare
+    # this empty run-specific directory without producing or claiming an output.
+    helpers.confined(workspace, output_root + "/sealed").mkdir(parents=True, exist_ok=True)
     draft.mkdir(parents=True)
     target = draft / "bound.workflow.wflow"
     target.write_text(result, encoding="utf-8", newline="")
@@ -620,6 +629,7 @@ def main():
     parser.add_argument("--scenario")
     parser.add_argument("--instance-source")
     parser.add_argument("--evidence-server-id", default="wright-engineering-evidence")
+    parser.add_argument("--cad-server-id", default=SERVER)
     parser.add_argument("--dxf-server-id")
     args = parser.parse_args()
     if args.instance_source and not args.scenario:

@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 spec = importlib.util.spec_from_file_location(
     "process_example_definition", Path(__file__).resolve().parents[1] / "definition.py"
@@ -15,22 +15,56 @@ spec.loader.exec_module(definition)
 REPO = definition.REPO
 
 
-def prepare(workspace, attempt, tools, bindings):
-    """Providers/paths are explicit configuration, never discovered by guessing."""
+def cad_paths(workspace, bindings):
+    """Check the local project against its explicitly configured provider root."""
     project = Path(bindings["cad_project"]).resolve(strict=True)
-    workspace = Path(workspace).resolve(strict=True)
     if not project.is_relative_to(workspace):
         raise ValueError("The disposable CAD project must belong to this workspace")
+    provider_workspace = workspace
+    provider_project = project
+    if "cad_workspace" in bindings:
+        mount = bindings["cad_workspace"]
+        if (
+            not isinstance(mount, str)
+            or not mount.startswith("/")
+            or mount.startswith("//")
+            or "\\" in mount
+            or ".." in mount.split("/")
+            or str(PurePosixPath(mount)) != (mount.rstrip("/") or "/")
+        ):
+            raise ValueError("Use the CAD provider's explicit absolute POSIX workspace mount")
+        provider_workspace = PurePosixPath(mount)
+        provider_project = provider_workspace / project.relative_to(workspace).as_posix()
     manifest_path = project / "build/agentcad.json"
     manifest = json.loads(manifest_path.read_bytes())
+    manifest_root = manifest.get("project_root")
+    identity_matches = (
+        manifest_root == str(provider_project)
+        if "cad_workspace" in bindings
+        else isinstance(manifest_root, str) and Path(manifest_root).resolve() == project
+    )
     if (
         manifest.get("runtime") != "build123d"
-        or Path(manifest.get("project_root", "")).resolve() != project
+        or not identity_matches
         or manifest.get("versions") != []
     ):
         raise ValueError(
             "Initialize a fresh empty project/build for this exact root and selected runtime before preparation"
         )
+    return provider_workspace, provider_project, {
+        "local_workspace": str(workspace),
+        "local_project": str(project),
+        "provider_workspace": str(provider_workspace),
+        "provider_project": str(provider_project),
+        "manifest_sha256": definition.sha(manifest_path.read_bytes()),
+        "mapping": "explicit_posix_mount" if "cad_workspace" in bindings else "same_host",
+    }
+
+
+def prepare(workspace, attempt, tools, bindings):
+    """Providers/paths are explicit configuration, never discovered by guessing."""
+    workspace = Path(workspace).resolve(strict=True)
+    provider_workspace, project, path_mapping = cad_paths(workspace, bindings)
     cad, files, solver = (
         bindings[key] for key in ("cad_server", "files_server", "solver_server")
     )
@@ -140,6 +174,9 @@ def prepare(workspace, attempt, tools, bindings):
     preflight = flow.stage(
         "cad_documentation", "Read the selected CAD project and authoring instructions"
     )
+    mapping_ref = flow.input_bytes(
+        "cad-path-mapping.json", (json.dumps(path_mapping, indent=2) + "\n").encode()
+    )
     docs = flow.ai(
         preflight,
         f"Call context(cwd={str(project)!r},build_dir='build'), docs(section='quickstart',cwd={str(project)!r},build_dir='build') and docs(section='helpers',cwd={str(project)!r},build_dir='build'). Return actual project identity and exact source authoring instructions. Empty geometry is expected before the next stage. Report missing configuration; do not execute geometry here.",
@@ -148,8 +185,9 @@ def prepare(workspace, attempt, tools, bindings):
         calls=3,
     )
     flow.reference(basis_result, preflight, "reviewed_basis")
+    flow.reference(mapping_ref, preflight, "configured_path_mapping")
     author = flow.stage("author_cad", "Author the exact plate candidates")
-    absolute_output = workspace / flow.output
+    absolute_output = provider_workspace / flow.output
     source_path = absolute_output / "plate-source.py"
     source_guidance = (REPO / "scripts/agentcad_source_contract.py").read_bytes()
     guidance_ref = flow.input_bytes(

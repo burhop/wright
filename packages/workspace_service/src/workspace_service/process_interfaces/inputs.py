@@ -293,7 +293,20 @@ async def prepare_inputs(
     limits: ProcessInterfaceLimits | None = None,
     review_snapshots=None,
     tool_runtime=None,
+    review_snapshot: InputSnapshot | None = None,
 ) -> PreparedInputs:
+    # Only the approval owner's persisted snapshot is eligible for passive
+    # review. Normal preparation and continuation still refresh live choices.
+    if review_snapshot is not None:
+        review_snapshot = InputSnapshot.model_validate_json(
+            review_snapshot.model_dump_json()
+        )
+        if review_snapshot.process != process or review_snapshot.bindings != bindings:
+            raise ProcessInterfaceError(
+                "SUBJECT_STALE",
+                "The review values do not match this run's frozen inputs.",
+                "Reopen the exact saved review and its input snapshot.",
+            )
     limits = limits or ProcessInterfaceLimits()
     if hashlib.sha256(source.encode("utf-8")).hexdigest() != process.source_digest:
         raise ProcessInterfaceError(
@@ -329,7 +342,33 @@ async def prepare_inputs(
             if fields.get("settings", {}).get("interaction_input") is not None
             else None
         )
-        if definition.binding_kind == "option":
+        if definition.binding_kind == "option" and review_snapshot is not None:
+            saved = supplied.get(key)
+            if saved is not None:
+                declared_capability = metadata.option_source.capability()
+                if (
+                    not isinstance(saved, OptionBinding)
+                    or saved.capability.binding_id != declared_capability.binding_id
+                    or saved.capability.schema_digest
+                    != declared_capability.schema_digest
+                    or saved.capability.resource_digest is None
+                ):
+                    raise ProcessInterfaceError(
+                        "SUBJECT_STALE",
+                        "The recorded provider choice does not match the accepted input declaration.",
+                        "Inspect the exact saved option and capability identity.",
+                    )
+                definition = InputDefinition.model_validate(
+                    {
+                        **definition.model_dump(),
+                        "option_source": saved.capability,
+                    }
+                )
+                if saved.option_id == metadata.default_option_id:
+                    default = saved.model_copy(
+                        update={"provenance": "explicit_default"}
+                    )
+        elif definition.binding_kind == "option":
             try:
                 catalog = await read_options(
                     metadata.option_source,
@@ -442,7 +481,7 @@ async def prepare_inputs(
                     "Use a smaller input pack or authorized artifact references.",
                 )
         else:
-            if isinstance(binding, OptionBinding):
+            if isinstance(binding, OptionBinding) and review_snapshot is None:
                 verify_option(binding, catalog)
             try:
                 validate_response(definition.value_schema, binding.value)

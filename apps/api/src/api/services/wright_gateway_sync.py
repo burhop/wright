@@ -108,9 +108,9 @@ def notify_gateway_tool_change() -> None:
 def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
     """Read an exact Wright gateway session/workspace binding from Hermes config."""
     path = Path(config_path).expanduser()
-    if not path.exists():
-        return None
     try:
+        if not path.exists():
+            return None
         config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         gateway = config.get("mcp_servers", {}).get("wrightgateway", {})
         args = gateway.get("args", [])

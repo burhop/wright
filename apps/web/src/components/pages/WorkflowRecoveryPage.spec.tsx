@@ -7,14 +7,30 @@ const mocks = vi.hoisted(() => ({
   get: vi.fn(),
   readiness: vi.fn(),
   create: vi.fn(),
+  copy: vi.fn(),
   update: vi.fn(),
   files: vi.fn(),
   history: vi.fn(),
 }));
 
-vi.mock("../process-interfaces/HistoricalResultView", () => ({HistoricalResultView: (props: {workflowPath: string; runLogPath: string; onClose: () => void}) => {
-  mocks.history(props);return <button data-testid="historical-result-fixture" onClick={props.onClose}>Back to workflow</button>;
-}}));
+vi.mock("../../services/workflow-source-copy", () => ({
+  copyWorkspaceWorkflowSource: mocks.copy,
+}));
+
+vi.mock("../process-interfaces/HistoricalResultView", () => ({
+  HistoricalResultView: (props: {
+    workflowPath: string;
+    runLogPath: string;
+    onClose: () => void;
+  }) => {
+    mocks.history(props);
+    return (
+      <button data-testid="historical-result-fixture" onClick={props.onClose}>
+        Back to workflow
+      </button>
+    );
+  },
+}));
 
 vi.mock("../../services/workspace-service", async (importOriginal) => {
   const actual =
@@ -55,6 +71,8 @@ vi.mock(
       onReloadStoredSource?: () => Promise<void>;
       templateReadiness?: { state: string } | null;
       onRefreshTemplateReadiness?: () => void;
+      onUnsavedChange?: (unsaved: boolean) => void;
+      onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
     }) {
       const [initialSource] = useState(props.workflowSource);
       const [readSource, setReadSource] = useState("");
@@ -85,15 +103,36 @@ vi.mock(
             </button>
           )}
           {props.fileActions}
+          {props.onOpenRunWorkingView && (
+            <button
+              data-testid="fixture-answer-input"
+              onClick={() =>
+                props.onOpenRunWorkingView?.("waiting-run", "b".repeat(64))
+              }
+            >
+              Answer input fixture
+            </button>
+          )}
+          <button
+            data-testid="fixture-edit"
+            onClick={() => props.onUnsavedChange?.(true)}
+          >
+            Edit fixture
+          </button>
+          <button
+            data-testid="fixture-clean"
+            onClick={() => props.onUnsavedChange?.(false)}
+          >
+            Clean fixture
+          </button>
           {props.onSave && (
             <button
               type="button"
               data-testid="fixture-save"
               onClick={() =>
-                void props.onSave?.(
-                  "updated workflow source",
-                  props.workflowLayout,
-                )
+                void props
+                  .onSave?.("updated workflow source", props.workflowLayout)
+                  ?.catch(() => {})
               }
             >
               Save fixture
@@ -147,11 +186,7 @@ import {
   WorkspaceWorkflowSourceNotFoundError,
   type WorkspaceWorkflowSourceDocument,
 } from "../../services/workspace-service";
-import {
-  initialWorkflow,
-  initialLayout,
-} from "../../prototypes/workflow-recovery/model";
-import { formatRecoveryAuthoringSource } from "../../prototypes/workflow-recovery/recovery-authoring";
+import { initialLayout } from "../../prototypes/workflow-recovery/model";
 import { WorkflowRecoveryPage } from "./WorkflowRecoveryPage";
 
 const document: WorkspaceWorkflowSourceDocument = {
@@ -168,9 +203,20 @@ const document: WorkspaceWorkflowSourceDocument = {
 function renderPage({
   strict = false,
   onOpenWorkflow,
+  onUnsavedChange,
+  onSavingChange,
   onOpenProcess,
   createIfMissing,
-}: { strict?: boolean; onOpenWorkflow?: (path: string) => void; onOpenProcess?: (process: import("@wright/process-client").ProcessRef) => void; createIfMissing?: boolean } = {}) {
+}: {
+  strict?: boolean;
+  onOpenWorkflow?: (path: string) => void;
+  onUnsavedChange?: (path: string, unsaved: boolean) => void;
+  onSavingChange?: (path: string, saving: boolean) => void;
+  onOpenProcess?: (
+    process: import("@wright/process-client").ProcessRef,
+  ) => void;
+  createIfMissing?: boolean;
+} = {}) {
   const page = (
     <WorkflowRecoveryPage
       workspaceId="workspace-1"
@@ -178,6 +224,8 @@ function renderPage({
       workspaceName="Bracket Program"
       workflowFilePath="/workflows/mounting-bracket.workflow.wflow"
       onOpenWorkflow={onOpenWorkflow}
+      onUnsavedChange={onUnsavedChange}
+      onSavingChange={onSavingChange}
       onOpenProcess={onOpenProcess}
       createIfMissing={createIfMissing}
     />
@@ -193,37 +241,146 @@ describe("workspace workflow page", () => {
     mocks.readiness.mockReset();
     mocks.readiness.mockResolvedValue({ state: "not_template" });
     mocks.create.mockReset();
+    mocks.copy.mockReset();
     mocks.update.mockReset();
     mocks.files.mockReset();
   });
 
+  it("reports edit and clean state to the workspace with the exact tab path", async () => {
+    mocks.get.mockResolvedValue(document);
+    const onUnsavedChange = vi.fn();
+    renderPage({ onUnsavedChange, onOpenProcess: vi.fn() });
+    await waitFor(() =>
+      expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute(
+        "data-state",
+        "ready",
+      ),
+    );
+    await userEvent.click(await screen.findByTestId("fixture-edit"));
+    expect(onUnsavedChange).toHaveBeenLastCalledWith(
+      "/workflows/mounting-bracket.workflow.wflow",
+      true,
+    );
+    expect(
+      screen.getByRole("button", { name: "Open working view" }),
+    ).toBeDisabled();
+    await userEvent.click(screen.getByTestId("fixture-clean"));
+    expect(onUnsavedChange).toHaveBeenLastCalledWith(
+      "/workflows/mounting-bracket.workflow.wflow",
+      false,
+    );
+    expect(
+      screen.getByRole("button", { name: "Open working view" }),
+    ).toBeEnabled();
+  });
+
+  it.each(["success", "failure"])(
+    "reports the exact pending save until %s",
+    async (outcome) => {
+      mocks.get.mockResolvedValue(document);
+      let resolveSave!: (value: typeof document) => void;
+      let rejectSave!: (error: Error) => void;
+      mocks.update.mockImplementation(
+        () =>
+          new Promise((resolve, reject) => {
+            resolveSave = resolve;
+            rejectSave = reject;
+          }),
+      );
+      const onSavingChange = vi.fn();
+      renderPage({ onSavingChange });
+      await waitFor(() =>
+        expect(screen.getByTestId("workflow-editor-fixture")).toHaveAttribute(
+          "data-state",
+          "ready",
+        ),
+      );
+      await userEvent.click(screen.getByTestId("fixture-save"));
+      expect(onSavingChange.mock.calls).toEqual([
+        ["/workflows/mounting-bracket.workflow.wflow", true],
+      ]);
+      if (outcome === "success")
+        resolveSave({ ...document, source: "updated workflow source" });
+      else rejectSave(new Error("Fixture save failed"));
+      await waitFor(() =>
+        expect(onSavingChange.mock.calls).toEqual([
+          ["/workflows/mounting-bracket.workflow.wflow", true],
+          ["/workflows/mounting-bracket.workflow.wflow", false],
+        ]),
+      );
+    },
+  );
+
   it("offers shared process entry without the retired active demo", async () => {
-    mocks.get.mockResolvedValue(document);renderPage({onOpenProcess: vi.fn()});
+    mocks.get.mockResolvedValue(document);
+    renderPage({ onOpenProcess: vi.fn() });
     await screen.findByTestId("workflow-editor-fixture");
-    expect(screen.getByRole("button", {name: "Use saved process"})).toBeVisible();
-    expect(screen.queryByRole("button", {name: "Print a part demo"})).not.toBeInTheDocument();
-    expect(screen.queryByTestId("workflow-print-demo-open")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Open working view" }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "Print a part demo" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("workflow-print-demo-open"),
+    ).not.toBeInTheDocument();
     expect(mocks.history).not.toHaveBeenCalled();
+  });
+  it("opens the exact paused run and captured source rather than a new preparation", async () => {
+    mocks.get.mockResolvedValue(document);
+    const onOpenProcess = vi.fn();
+    renderPage({ onOpenProcess });
+    await userEvent.click(await screen.findByTestId("fixture-answer-input"));
+    expect(onOpenProcess).toHaveBeenCalledExactlyOnceWith(
+      {
+        workspace_id: document.workspace_id,
+        source_path: document.path,
+        source_digest: "b".repeat(64),
+      },
+      "waiting-run",
+    );
   });
 
   it("preserves the historical result query as a read-only view and returns to its editor", async () => {
-    window.history.replaceState({}, "", "/?workflowPath=workflows%2Fmounting-bracket.workflow.wflow&printDemoRun=runs%2Fmounting-bracket%2Fold.json");
-    mocks.get.mockResolvedValue(document);renderPage();
+    window.history.replaceState(
+      {},
+      "",
+      "/?workflowPath=workflows%2Fmounting-bracket.workflow.wflow&printDemoRun=runs%2Fmounting-bracket%2Fold.json",
+    );
+    mocks.get.mockResolvedValue(document);
+    renderPage();
     await screen.findByTestId("historical-result-fixture");
-    expect(mocks.history.mock.calls.at(-1)![0]).toMatchObject({workflowPath: document.path, runLogPath: "runs/mounting-bracket/old.json"});
-    expect(screen.queryByTestId("workflow-editor-fixture")).not.toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", {name: "Back to workflow"}));
+    expect(mocks.history.mock.calls.at(-1)![0]).toMatchObject({
+      workflowPath: document.path,
+      runLogPath: "runs/mounting-bracket/old.json",
+    });
+    expect(
+      screen.queryByTestId("workflow-editor-fixture"),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Back to workflow" }),
+    );
     await screen.findByTestId("workflow-editor-fixture");
-    expect(screen.getByRole("button", {name: "View saved result"})).toBeVisible();
-    expect(mocks.update).not.toHaveBeenCalled();expect(mocks.create).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: "View saved result" }),
+    ).toBeVisible();
+    expect(mocks.update).not.toHaveBeenCalled();
+    expect(mocks.create).not.toHaveBeenCalled();
   });
 
   it("does not attach another workflow's historical query to a restored tab", async () => {
-    window.history.replaceState({}, "", "/?workflowPath=workflows%2Fother.workflow.wflow&printDemoRun=runs%2Fother%2Fold.json");
-    mocks.get.mockResolvedValue(document);renderPage();
+    window.history.replaceState(
+      {},
+      "",
+      "/?workflowPath=workflows%2Fother.workflow.wflow&printDemoRun=runs%2Fother%2Fold.json",
+    );
+    mocks.get.mockResolvedValue(document);
+    renderPage();
     await screen.findByTestId("workflow-editor-fixture");
     expect(mocks.history).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", {name: "View saved result"})).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "View saved result" }),
+    ).not.toBeInTheDocument();
   });
 
   it("opens the accepted saved process without saving, executing or opening another window", async () => {
@@ -231,9 +388,15 @@ describe("workspace workflow page", () => {
     const onOpenProcess = vi.fn();
     renderPage({ onOpenProcess });
     expect(screen.getByTestId("workflow-working-view-open")).toBeDisabled();
-    await waitFor(() => expect(screen.getByTestId("workflow-working-view-open")).toBeEnabled());
+    await waitFor(() =>
+      expect(screen.getByTestId("workflow-working-view-open")).toBeEnabled(),
+    );
     await userEvent.click(screen.getByTestId("workflow-working-view-open"));
-    expect(onOpenProcess).toHaveBeenCalledExactlyOnceWith({ workspace_id: document.workspace_id, source_path: document.path, source_digest: document.storage_digest });
+    expect(onOpenProcess).toHaveBeenCalledExactlyOnceWith({
+      workspace_id: document.workspace_id,
+      source_path: document.path,
+      source_digest: document.storage_digest,
+    });
     expect(mocks.create).not.toHaveBeenCalled();
     expect(mocks.update).not.toHaveBeenCalled();
   });
@@ -247,11 +410,38 @@ describe("workspace workflow page", () => {
     expect(onOpenProcess).not.toHaveBeenCalled();
   });
 
+  it("requires unsaved edits to be saved before opening the working view", async () => {
+    mocks.get.mockResolvedValue(document);
+    const onOpenProcess = vi.fn();
+    renderPage({ onOpenProcess });
+    await screen.findByTestId("workflow-editor-fixture");
+    await userEvent.click(screen.getByTestId("fixture-edit"));
+    expect(
+      screen.getByRole("button", { name: "Open working view" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByText("Save your changes to open the working view."),
+    ).toBeVisible();
+    await userEvent.click(screen.getByTestId("workflow-working-view-open"));
+    expect(onOpenProcess).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByTestId("fixture-clean"));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open working view" }),
+    );
+    expect(onOpenProcess).toHaveBeenCalledExactlyOnceWith({
+      workspace_id: document.workspace_id,
+      source_path: document.path,
+      source_digest: document.storage_digest,
+    });
+  });
+
   it("does not create a missing workflow on passive process navigation or restoration", async () => {
     mocks.get.mockRejectedValue(new WorkspaceWorkflowSourceNotFoundError());
     renderPage({ createIfMissing: false, onOpenProcess: vi.fn() });
     const error = await screen.findByTestId("workflow-source-load-error");
-    expect(error).toHaveTextContent("saved workflow file is no longer available");
+    expect(error).toHaveTextContent(
+      "saved workflow file is no longer available",
+    );
     expect(mocks.create).not.toHaveBeenCalled();
     expect(mocks.update).not.toHaveBeenCalled();
     await userEvent.click(screen.getByTestId("workflow-source-load-retry"));
@@ -481,22 +671,19 @@ describe("workspace workflow page", () => {
     expect(mocks.update).not.toHaveBeenCalled();
   });
 
-  it("automatically creates the default workflow once when the file is missing, including in StrictMode", async () => {
+  it("does not create a missing workflow when an existing file is opened, including in StrictMode", async () => {
     mocks.get.mockRejectedValue(new WorkspaceWorkflowSourceNotFoundError());
     mocks.create.mockResolvedValue(document);
     renderPage({ strict: true });
 
-    expect(await screen.findByTestId("fixture-save")).toBeVisible();
-    await waitFor(() => expect(mocks.create).toHaveBeenCalledOnce());
-    expect(mocks.create).toHaveBeenCalledWith(
-      "session-1",
-      document.path,
-      formatRecoveryAuthoringSource(initialWorkflow).text,
-    );
+    expect(
+      await screen.findByTestId("workflow-source-load-error"),
+    ).toHaveTextContent("create a new one explicitly");
+    expect(mocks.create).not.toHaveBeenCalled();
     expect(mocks.get).toHaveBeenCalledOnce();
   });
 
-  it("opens the stored workflow when automatic creation loses a race", async () => {
+  it("opens the stored workflow when explicit empty-file creation loses a race", async () => {
     mocks.get
       .mockRejectedValueOnce(new WorkspaceWorkflowSourceNotFoundError())
       .mockResolvedValueOnce(document);
@@ -504,7 +691,7 @@ describe("workspace workflow page", () => {
       new Error("Unable to create this workflow file in the workspace."),
     );
 
-    renderPage();
+    renderPage({ createIfMissing: true });
 
     expect(await screen.findByTestId("fixture-save")).toBeVisible();
     expect(mocks.create).toHaveBeenCalledOnce();
@@ -515,7 +702,7 @@ describe("workspace workflow page", () => {
     );
   });
 
-  it("fails closed after a real create failure and retries the complete bootstrap", async () => {
+  it("fails closed after an explicitly requested create failure and retries that request", async () => {
     mocks.get
       .mockRejectedValueOnce(new WorkspaceWorkflowSourceNotFoundError())
       .mockRejectedValueOnce(new WorkspaceWorkflowSourceNotFoundError())
@@ -524,7 +711,7 @@ describe("workspace workflow page", () => {
       .mockRejectedValueOnce(new Error("The path cannot be written."))
       .mockResolvedValueOnce(document);
 
-    renderPage();
+    renderPage({ createIfMissing: true });
 
     expect(
       await screen.findByTestId("workflow-source-load-error"),
@@ -641,5 +828,56 @@ describe("workspace workflow page", () => {
     );
     expect(mocks.get).toHaveBeenNthCalledWith(2, "session-1", document.path);
     expect(mocks.get).toHaveBeenNthCalledWith(3, "session-1", document.path);
+  });
+});
+
+describe("accepted workflow copies", () => {
+  beforeEach(() => {
+    window.history.replaceState({}, "", "/");
+    mocks.get.mockReset();
+    mocks.copy.mockReset();
+    mocks.create.mockReset();
+    mocks.readiness.mockReset();
+    mocks.readiness.mockResolvedValue({ state: "not_template" });
+  });
+  it.each(["save-as", "clone"])(
+    "copies the accepted definition through %s without creating a blank source",
+    async (action) => {
+      mocks.get.mockResolvedValue(document);
+      mocks.readiness.mockResolvedValue({ state: "not_template" });
+      mocks.copy.mockResolvedValue({
+        ...document,
+        path: "workflows/new-copy.workflow.wflow",
+        storage_revision: 1,
+        definition_revision: 1,
+      });
+      const open = vi.fn();
+      const user = userEvent.setup();
+      renderPage({ onOpenWorkflow: open });
+      await screen.findByTestId("workflow-file-menu");
+      await user.click(screen.getByTestId("workflow-file-menu"));
+      await user.click(screen.getByTestId(`workflow-file-${action}`));
+      await user.type(screen.getByLabelText("Workflow name"), "New copy");
+      await user.click(screen.getByTestId("workflow-file-create"));
+      await waitFor(() =>
+        expect(open).toHaveBeenCalledWith("workflows/new-copy.workflow.wflow"),
+      );
+      expect(mocks.copy).toHaveBeenCalledExactlyOnceWith(
+        "session-1",
+        document.path,
+        "workflows/new-copy.workflow.wflow",
+        document.storage_digest,
+      );
+      expect(mocks.create).not.toHaveBeenCalled();
+    },
+  );
+  it("requires saving local edits before offering a definition copy", async () => {
+    mocks.get.mockResolvedValue(document);
+    renderPage({ onOpenWorkflow: vi.fn() });
+    await screen.findByTestId("workflow-file-menu");
+    await userEvent.click(screen.getByTestId("fixture-edit"));
+    expect(screen.getByTestId("workflow-file-save-as")).toBeDisabled();
+    expect(screen.getByTestId("workflow-file-clone")).toBeDisabled();
+    expect(mocks.copy).not.toHaveBeenCalled();
   });
 });

@@ -332,6 +332,7 @@ class ProcessInterfaceRepository:
                 "built",
                 "preview",
             }
+            and not re.fullmatch(r"attempt-[0-2]-invocation-[1-8]", record_key)
             and not re.fullmatch(r"view-start-[0-9a-f]{64}", record_key)
         ):
             raise ValueError("Unsupported or oversized authoring provenance record")

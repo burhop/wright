@@ -2,11 +2,13 @@ import { useState } from "react";
 import type { RecoveryCommand } from "./command-system";
 import { type RecoveryBlock, type RecoveryWorkflow } from "./model";
 import { sourceKey } from "./prompt-settings";
+import { ResponseFieldBuilder } from "./ResponseFieldBuilder";
 import {
   declarationJson,
   humanInputDeclarationCommands,
   inputDeclarationCommands,
   interactionObject,
+  connectedRequirementsSources,
 } from "./interaction-settings";
 
 const pretty = (value: unknown) => JSON.stringify(value, null, 2);
@@ -161,7 +163,7 @@ export function HumanInputDeclarationEditor({
   const [text, setText] = useState(
     pretty(
       initial.object ?? {
-        version: 1,
+        version: 2,
         kind: "input",
         instructions: block.instructions,
         response_schema: {
@@ -187,6 +189,25 @@ export function HumanInputDeclarationEditor({
       setError("");
     }
   };
+  const sources = connectedRequirementsSources(block, workflow);
+  const when =
+    current?.when &&
+    typeof current.when === "object" &&
+    !Array.isArray(current.when)
+      ? (current.when as Record<string, unknown>)
+      : null;
+  const conditional = current?.version === 3;
+  const answerFields = (schema: unknown) => {
+    const properties =
+      schema && typeof schema === "object"
+        ? (schema as Record<string, unknown>).properties
+        : null;
+    return properties &&
+      typeof properties === "object" &&
+      !Array.isArray(properties)
+      ? Object.keys(properties)
+      : [];
+  };
   const apply = () => {
     if (readOnly) return;
     try {
@@ -207,15 +228,16 @@ export function HumanInputDeclarationEditor({
       className="recovery-prompt-editor"
       data-testid="workflow-human-input-editor"
     >
-      <h3>Planned user input</h3>
+      <h3>Request input</h3>
       <p>
-        This step pauses the same run for a structured response. Connect
-        upstream evidence and the response output to the steps that use it.
+        This step waits for the declared answers, then continues the same run.
+        Connect evidence when there is something to inspect, and connect the
+        response output to the steps that use the answers.
       </p>
       {!initial.object && (
         <p role="status">
-          This step is a draft. Define its instructions and response schema
-          before running.
+          This step is a draft. Define its instructions and answer fields before
+          running.
         </p>
       )}
       <label>
@@ -234,18 +256,132 @@ export function HumanInputDeclarationEditor({
         />
       </label>
       <label>
-        Response declaration (JSON)
-        <textarea
-          data-testid="workflow-human-input-json"
-          rows={15}
-          value={text}
-          disabled={readOnly}
+        Ask for input
+        <select
+          disabled={readOnly || !current}
+          value={conditional ? "unresolved_fields" : "always"}
+          data-testid="workflow-human-input-condition"
           onChange={(event) => {
-            setText(event.target.value);
+            if (!current || readOnly) return;
+            if (event.target.value === "always") {
+              const { when: _when, ...unconditional } = current;
+              setText(
+                pretty({
+                  ...unconditional,
+                  version: conditional ? 2 : current.version,
+                }),
+              );
+            } else {
+              setText(
+                pretty({
+                  ...current,
+                  version: 3,
+                  when: {
+                    kind: "unresolved_fields",
+                    source: sources[0]?.key ?? "",
+                    fields: answerFields(current.response_schema),
+                  },
+                }),
+              );
+            }
             setError("");
           }}
-        />
+        >
+          <option value="always">Always at this declared step</option>
+          <option value="unresolved_fields">
+            When declared fields are unresolved
+          </option>
+        </select>
       </label>
+      {conditional && (
+        <>
+          <label>
+            Requirements resolution result
+            <select
+              data-testid="workflow-human-input-resolution-source"
+              disabled={readOnly || !current}
+              value={typeof when?.source === "string" ? when.source : ""}
+              onChange={(event) => {
+                if (!current || readOnly) return;
+                setText(
+                  pretty({
+                    ...current,
+                    when: {
+                      ...when,
+                      kind: "unresolved_fields",
+                      source: event.target.value,
+                      fields: answerFields(current.response_schema),
+                    },
+                  }),
+                );
+                setError("");
+              }}
+            >
+              <option value="">
+                Choose a connected structured task output
+              </option>
+              {sources.map((source) => (
+                <option key={source.key} value={source.key}>
+                  {source.label}
+                </option>
+              ))}
+              {typeof when?.source === "string" &&
+                when.source &&
+                !sources.some((source) => source.key === when.source) && (
+                  <option value={when.source}>
+                    Unavailable: {when.source}
+                  </option>
+                )}
+            </select>
+          </label>
+          <p>
+            The task must return Wright's requirements-resolution result for
+            these answer fields. If all are resolved, the same answer output
+            continues automatically. Otherwise this declared step waits for the
+            complete answer.
+          </p>
+          {!sources.length && (
+            <p role="status">
+              Connect a structured result from an upstream task before
+              configuring this condition.
+            </p>
+          )}
+        </>
+      )}
+      <ResponseFieldBuilder
+        schema={current?.response_schema}
+        disabled={readOnly || !current}
+        onError={setError}
+        onChange={(response_schema) => {
+          if (!current || readOnly) return;
+          setText(
+            pretty({
+              ...current,
+              response_schema,
+              ...(conditional
+                ? { when: { ...when, fields: answerFields(response_schema) } }
+                : {}),
+            }),
+          );
+          setError("");
+        }}
+      />
+      <details className="recovery-technical-details">
+        <summary>Advanced declaration (JSON)</summary>
+        <label>
+          Response declaration (JSON)
+          <textarea
+            data-testid="workflow-human-input-json"
+            rows={15}
+            value={text}
+            disabled={readOnly}
+            onChange={(event) => {
+              setText(event.target.value);
+              setError("");
+            }}
+          />
+        </label>
+      </details>
       <p>
         Define the object response_schema with named properties and required
         fields. This is a planned input, separate from an approval or action.

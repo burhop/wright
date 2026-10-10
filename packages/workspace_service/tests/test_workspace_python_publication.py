@@ -26,10 +26,9 @@ from packages.workspace_service.tests.test_workspace_document_gateway import _fi
 from packages.workspace_service.tests.test_workflow_mcp_execution import Gateway
 from packages.workspace_service.tests.test_workflow_source_execution import (
     task,
-    source,
     service,
 )
-from packages.workspace_service.tests.test_workflow_ai_task import done
+from packages.workspace_service.tests.test_workflow_ai_task import done, source
 
 
 def native_session(session):

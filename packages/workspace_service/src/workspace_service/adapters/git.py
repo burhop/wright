@@ -24,6 +24,16 @@ class LocalWorkspaceGit:
     def status(self) -> dict[str, Any]:
         return self.manager.get_git_status()
 
+    def initialize(self) -> None:
+        if self.status().get("is_repository"):
+            return
+        self.process.run(
+            ["git", "init", "--initial-branch=main"],
+            cwd=Path(self.workspace_dir),
+            timeout_seconds=self.timeout,
+            check=True,
+        )
+
     def diff(self, path: str) -> str:
         return self.manager.get_git_diff(path)
 
@@ -58,7 +68,7 @@ class LocalWorkspaceGit:
     def branch(self, branch: str, *, create: bool) -> ProcessResult:
         cleaned = self.validate_branch(branch)
         argv = ["git", "checkout"]
-        argv.extend(["-b", cleaned] if create else ["--", cleaned])
+        argv.extend(["-b", cleaned] if create else [cleaned, "--"])
         return self.process.run(
             argv,
             cwd=Path(self.workspace_dir),

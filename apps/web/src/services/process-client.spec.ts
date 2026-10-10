@@ -13,6 +13,24 @@ import {
 } from "@wright/process-client";
 
 const digest = "a".repeat(64);
+
+it("preserves a full block and port dependency address", () => {
+  const binding = `${"b".repeat(160)}.${"p".repeat(160)}`;
+  const dependency = {
+    binding_id: binding,
+    classification: "upstream_produced",
+    producer_step: "producer",
+    producer_port: "result",
+  };
+  expect(() => assertContract("InputDependency", dependency)).not.toThrow();
+  expect(dependency.binding_id).toBe(binding);
+  expect(() =>
+    assertContract("InputDependency", {
+      ...dependency,
+      binding_id: binding + "x",
+    }),
+  ).toThrow();
+});
 const process: ProcessRef = {
   workspace_id: "workspace",
   source_path: "workflows/part.wflow",
@@ -759,6 +777,106 @@ describe("scoped input upload and representation reads", () => {
       client(fetch).getRepresentation(reference, {
         runId: "run-one",
         preview: "toolpaths",
+      }),
+    ).rejects.toMatchObject({ reason: { code: "UI_INCOMPATIBLE" } });
+  });
+  it("reads an exact assessment report and rejects wrong format or incompatible preview options", async () => {
+    const fetch = fake(async () =>
+      binary("data", {
+        "content-type": "text/markdown",
+        "x-wright-view-format": "wright.validation.report.v1",
+      }),
+    );
+    const blob = await client(fetch).getRepresentation(reference, {
+      runId: "run-one",
+      preview: "validation-report",
+    });
+    expect(blob.type).toBe("text/markdown");
+    expect(JSON.parse(fetch.mock.calls[0][1]!.body as string)).toMatchObject({
+      reference,
+      run_id: "run-one",
+      preview: "validation-report",
+    });
+    for (const extra of [{ page: 1 }, { archiveEntry: "other.json" }])
+      await expect(
+        client(fetch).getRepresentation(reference, {
+          runId: "run-one",
+          preview: "validation-report",
+          ...extra,
+        }),
+      ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const reportMismatches: Record<string, string>[] = [
+      { "content-type": "text/markdown", "x-wright-view-format": "wrong" },
+      {
+        "content-type": "text/html",
+        "x-wright-view-format": "wright.validation.report.v1",
+      },
+      {
+        "content-type": "text/markdown",
+        "x-wright-view-format": "wright.validation.report.v1",
+        "x-wright-artifact-sha256": "b".repeat(64),
+      },
+    ];
+    for (const headers of reportMismatches) {
+      const wrong = fake(async () => binary("data", headers));
+      await expect(
+        client(wrong).getRepresentation(reference, {
+          runId: "run-one",
+          preview: "validation-report",
+        }),
+      ).rejects.toMatchObject({ reason: { code: "UI_INCOMPATIBLE" } });
+    }
+  });
+  it("reads an exact PDF page and rejects wrong page/format scope", async () => {
+    const fetch = fake(async () =>
+      binary("data", {
+        "content-type": "application/vnd.wright.pdf-page+json",
+        "x-wright-view-format": "wright.pdf.page.v1",
+      }),
+    );
+    const blob = await client(fetch).getRepresentation(reference, {
+      runId: "run-one",
+      preview: "pdf-page",
+      page: 2,
+    });
+    expect(blob.type).toBe("application/vnd.wright.pdf-page+json");
+    expect(JSON.parse(fetch.mock.calls[0][1]!.body as string)).toMatchObject({
+      reference,
+      run_id: "run-one",
+      preview: "pdf-page",
+      page: 2,
+    });
+    for (const page of [0, 201, 1.5])
+      await expect(
+        client(fetch).getRepresentation(reference, {
+          runId: "run-one",
+          preview: "pdf-page",
+          page,
+        }),
+      ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    await expect(
+      client(fetch).getRepresentation(reference, { runId: "run-one", page: 1 }),
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    await expect(
+      client(fetch).getRepresentation(reference, {
+        runId: "run-one",
+        preview: "pdf-page",
+        archiveEntry: "other.pdf",
+      }),
+    ).rejects.toMatchObject({ reason: { code: "RESPONSE_INVALID" } });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const wrong = fake(async () =>
+      binary("data", {
+        "content-type": "application/vnd.wright.pdf-page+json",
+        "x-wright-view-format": "wright.pdf.page.v2",
+      }),
+    );
+    await expect(
+      client(wrong).getRepresentation(reference, {
+        runId: "run-one",
+        preview: "pdf-page",
+        page: 1,
       }),
     ).rejects.toMatchObject({ reason: { code: "UI_INCOMPATIBLE" } });
   });

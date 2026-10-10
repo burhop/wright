@@ -794,6 +794,277 @@ describe("common process preparation and authority", () => {
       screen.getByRole("button", { name: "Start process" }),
     ).toBeDisabled();
   });
+  it("keeps saved defaults inspectable while showing unanswered inputs first", async () => {
+    const { client, store } = fixture();
+    const snapshot: InteractionSnapshot = {
+      ...initial,
+      inputs: [
+        {
+          ...initial.inputs![0],
+          input_id: "material",
+          block_id: "material",
+          title: "Material",
+          default: {
+            input_id: "material",
+            value: "PETG",
+            provenance: "explicit_default",
+          },
+        },
+        initial.inputs![0],
+        {
+          ...initial.inputs![0],
+          input_id: "drawing",
+          block_id: "drawing",
+          title: "Reference drawing",
+          binding_kind: "file",
+          default: {
+            input_id: "drawing",
+            reference: { artifact_ref: "inputs/drawing.png", sha256: hash },
+            provenance: "explicit_default",
+          },
+        },
+      ],
+    };
+    vi.mocked(client.getSnapshot).mockResolvedValue(snapshot);
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    expect(
+      await screen.findByLabelText("Design request (required)"),
+    ).toBeVisible();
+    const summary = screen.getByText("Saved defaults (2)");
+    expect(summary.closest("details")).not.toHaveAttribute("open");
+    expect(screen.getByLabelText("Material (required)")).not.toBeVisible();
+    fireEvent.click(summary);
+    expect(screen.getByLabelText("Material (required)")).toBeVisible();
+    expect(screen.getByLabelText("Material (required)")).toHaveValue("PETG");
+    expect(screen.getByText("inputs/drawing.png")).toBeVisible();
+    for (const mutation of [
+      client.setInputs,
+      client.start,
+      client.respond,
+      client.decide,
+    ])
+      expect(mutation).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText("Material (required)"), {
+      target: { value: "PA12" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Prepare and check inputs" }),
+    );
+    await waitFor(() =>
+      expect(client.setInputs).toHaveBeenCalledWith([
+        {
+          input_id: "material",
+          kind: "value",
+          value: "PA12",
+          provenance: "supplied",
+        },
+      ]),
+    );
+    // Omitted, unchanged defaults still resolve through the existing backend path.
+    expect(client.checkReadiness).toHaveBeenCalledTimes(1);
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("expands saved defaults after blocked readiness without enabling Start", async () => {
+    const { client, store } = fixture();
+    const defaults: InteractionSnapshot = {
+      ...initial,
+      inputs: [
+        {
+          ...initial.inputs![0],
+          default: {
+            input_id: "prompt",
+            kind: "value",
+            value: "Saved design",
+            provenance: "explicit_default",
+          },
+        },
+      ],
+    };
+    const blocked: Readiness = {
+      ...readiness,
+      state: "blocked",
+      reasons: [
+        {
+          code: "INPUT_REQUIRED",
+          message: "Inspect the saved design reference.",
+          correction: "Select the correct revision.",
+          navigation: { kind: "block", block_id: "intent" },
+        },
+      ],
+    };
+    vi.mocked(client.getSnapshot).mockImplementation(async (options) =>
+      options?.inputSnapshotId
+        ? { ...defaults, context: prepared.context, readiness: blocked }
+        : defaults,
+    );
+    vi.mocked(client.checkReadiness).mockResolvedValue(blocked);
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    const summary = await screen.findByText("Saved defaults (1)");
+    expect(summary.closest("details")).not.toHaveAttribute("open");
+    expect(
+      screen.getByRole("button", { name: "Prepare and check inputs" }),
+    ).toBeVisible();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Prepare and check inputs" }),
+    );
+    await waitFor(() =>
+      expect(summary.closest("details")).toHaveAttribute("open"),
+    );
+    expect(
+      screen.getByText("Inspect the saved design reference."),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Start process" }),
+    ).toBeDisabled();
+    expect(client.setInputs).toHaveBeenCalledWith([]);
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("keeps unresolved, invalid and live-choice saved defaults visible", async () => {
+    const { client, store } = fixture();
+    const snapshot: InteractionSnapshot = {
+      ...initial,
+      inputs: [
+        {
+          ...initial.inputs![0],
+          title: "Unresolved input",
+          default: { input_id: "prompt", value: "draft" },
+          dependencies: [{ binding_id: "size", classification: "unresolved" }],
+        },
+        {
+          ...initial.inputs![0],
+          input_id: "size",
+          title: "Size",
+          value_schema: { type: "number", minimum: 1 },
+          default: { input_id: "size", value: -1 },
+        },
+        {
+          ...initial.inputs![0],
+          input_id: "option",
+          title: "Live choice",
+          binding_kind: "option",
+          default: { input_id: "option", value: "unused" },
+        },
+      ],
+    };
+    vi.mocked(client.getSnapshot).mockResolvedValue(snapshot);
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    expect(
+      await screen.findByLabelText("Unresolved input (required)"),
+    ).toBeVisible();
+    expect(screen.getByLabelText("Size (required)")).toBeVisible();
+    expect(screen.getByText("Enter a value of at least 1.")).toBeVisible();
+    expect(screen.getByLabelText("Live choice (required)")).toBeVisible();
+    expect(
+      screen.getByText("The configured choices are unavailable."),
+    ).toBeVisible();
+    expect(screen.queryByText(/Saved defaults \(/)).not.toBeInTheDocument();
+    expect(client.setInputs).not.toHaveBeenCalled();
+  });
+  it("invalidates prepared readiness when a saved default is edited", async () => {
+    const { client, store } = fixture();
+    const inputs: InteractionSnapshot["inputs"] = [
+      {
+        ...initial.inputs![0],
+        default: {
+          input_id: "prompt",
+          kind: "value",
+          value: "Saved design",
+          provenance: "explicit_default",
+        },
+      },
+    ];
+    vi.mocked(client.getSnapshot).mockImplementation(async (options) => ({
+      ...(options?.inputSnapshotId ? prepared : initial),
+      inputs,
+    }));
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    await screen.findByText("Saved defaults (1)");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Prepare and check inputs" }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Start process" }),
+      ).toBeEnabled(),
+    );
+    fireEvent.click(screen.getByText("Saved defaults (1)"));
+    fireEvent.change(screen.getByLabelText("Design request (required)"), {
+      target: { value: "Changed design" },
+    });
+    expect(
+      screen.getByRole("button", { name: "Start process" }),
+    ).toBeDisabled();
+    expect(screen.getByText("Readiness has not been checked")).toBeVisible();
+    expect(store.clear).toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("keeps recorded run inputs visible and frozen even when defaults exist", async () => {
+    const { client, store } = fixture();
+    client.follow = vi.fn(async function* () {
+      yield {
+        type: "snapshot" as const,
+        snapshot: {
+          ...running,
+          inputs: [
+            {
+              ...initial.inputs![0],
+              default: {
+                input_id: "prompt",
+                kind: "value" as const,
+                value: "Earlier default",
+                provenance: "explicit_default" as const,
+              },
+              current_value: {
+                input_id: "prompt",
+                kind: "value" as const,
+                value: "Actual run input",
+                provenance: "supplied" as const,
+              },
+            },
+          ],
+        },
+      };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    const field = await screen.findByLabelText("Design request (required)");
+    expect(field).toBeVisible();
+    expect(field).toBeDisabled();
+    expect(field).toHaveValue("Actual run input");
+    expect(screen.queryByText(/Saved defaults \(/)).not.toBeInTheDocument();
+    expect(client.setInputs).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+  });
   it("checks the saved input overlay before the explicit start and records recovery before submission", async () => {
     const { client, store, saved } = fixture();
     await prepareView(client, store);
@@ -899,6 +1170,63 @@ describe("common process preparation and authority", () => {
         block_id: "destination",
       }),
     );
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("shows a capability blocker once by default and keeps Start reasons inspectable", async () => {
+    const { client, store } = fixture();
+    const reason = {
+      code: "CAPABILITY_UNAVAILABLE",
+      message: "The required measurement reader is unavailable.",
+      correction: "Restore the reader before starting.",
+    };
+    const blocked: Readiness = {
+      ...readiness,
+      state: "blocked",
+      reasons: [reason],
+    };
+    vi.mocked(client.checkReadiness).mockResolvedValue(blocked);
+    vi.mocked(client.getSnapshot).mockImplementation(async (options) =>
+      options?.inputSnapshotId
+        ? {
+            ...prepared,
+            state: "preparing",
+            readiness: blocked,
+            actions: [
+              { ...prepared.actions![0], enabled: false, reasons: [reason] },
+            ],
+          }
+        : initial,
+    );
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    fireEvent.change(
+      await screen.findByLabelText("Design request (required)"),
+      {
+        target: { value: "Create a small fixture" },
+      },
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Prepare and check inputs" }),
+    );
+    await screen.findByText("Not ready to start");
+    const button = screen.getByRole("button", { name: "Start process" });
+    expect(button).toBeDisabled();
+    const disclosures = screen.getByText("Why unavailable").closest("details")!;
+    expect(disclosures).not.toHaveAttribute("open");
+    const messages = screen.getAllByText(reason.message);
+    expect(messages).toHaveLength(2);
+    expect(
+      messages.filter((element) => !disclosures.contains(element)),
+    ).toHaveLength(1);
+    fireEvent.click(screen.getByText("Why unavailable"));
+    expect(disclosures).toHaveAttribute("open");
+    expect(disclosures).toHaveTextContent(reason.message);
+    fireEvent.click(button);
     expect(client.start).not.toHaveBeenCalled();
   });
   it("expires readiness while idle and requires a fresh assessment", async () => {
@@ -1065,9 +1393,7 @@ describe("common process preparation and authority", () => {
       screen.getByRole("button", { name: "Prepare and check inputs" }),
     ).toBeDisabled();
     expect(screen.getByRole("button", { name: "Open process" })).toBeDisabled();
-    expect(
-      screen.getByText(/Representation previews are unavailable/),
-    ).toBeVisible();
+    expect(screen.getByText(/File previews are unavailable/)).toBeVisible();
     expect(client.start).not.toHaveBeenCalled();
   });
 });
@@ -1394,8 +1720,78 @@ describe("common process request recovery and observer lifetime", () => {
     expect(screen.queryByText("Process completed")).not.toBeInTheDocument();
     expect(client.start).not.toHaveBeenCalled();
   });
+  it("separates prior attempt evidence from current results without retrying a failed run", async () => {
+    const { client, store } = fixture();
+    const reference = {
+      artifact_ref: "attempts/1/model.csv",
+      sha256: hash,
+      result_id: "history-one",
+    };
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield {
+        type: "snapshot",
+        snapshot: {
+          ...running,
+          state: "failed",
+          actions: [],
+          outputs: [
+            {
+              result_id: "history-one",
+              step_id: "geometry",
+              port_id: "out",
+              role: "previous_attempt",
+              producer_attempt: "1",
+              title: "Attempt 1: Measured geometry",
+              representations: [reference],
+              assessments: [],
+            },
+          ],
+        },
+      };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        canNavigate
+        canReadRepresentations
+      />,
+    );
+    await screen.findByRole("heading", { name: "Previous attempts" });
+    expect(
+      screen.getByText("Historical evidence · superseded output"),
+    ).toBeVisible();
+    expect(
+      screen.getByText("No outputs are recorded on this page yet."),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Attempt 1: Measured geometry" }),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    await waitFor(() => expect(client.getRepresentation).toHaveBeenCalled());
+    expect(vi.mocked(client.getRepresentation).mock.calls[0][0]).toEqual(
+      reference,
+    );
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.requestAction).not.toHaveBeenCalled();
+  });
   it("retains exact result, assessment, evidence and producer navigation", async () => {
     const { client, store } = fixture();
+    const scroll = vi.fn();
+    const originalScroll = HTMLElement.prototype.scrollIntoView;
+    HTMLElement.prototype.scrollIntoView = scroll;
+    let emitRefresh: (() => void) | undefined;
+    let finishPreview: ((text: string) => void) | undefined;
+    const preview = new Blob(["exact output"], { type: "text/plain" });
+    vi.spyOn(preview, "text").mockImplementation(
+      () =>
+        new Promise<string>((resolve) => {
+          finishPreview = resolve;
+        }),
+    );
+    vi.mocked(client.getRepresentation).mockResolvedValue(preview);
     const artifact = {
       artifact_ref: "outputs/geometry.csv",
       sha256: hash,
@@ -1428,6 +1824,13 @@ describe("common process request recovery and observer lifetime", () => {
           ],
         },
       };
+      await new Promise<void>((resolve) => {
+        emitRefresh = resolve;
+      });
+      yield {
+        type: "snapshot",
+        snapshot: { ...running, state: "completed", actions: [], outputs: [] },
+      };
     });
     render(
       <CommonProcessView
@@ -1440,6 +1843,7 @@ describe("common process request recovery and observer lifetime", () => {
       />,
     );
     await screen.findByText("Measured geometry");
+    expect(scroll).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Open assessment" }));
     expect(client.navigate).toHaveBeenCalledWith({
       kind: "assessment",
@@ -1456,10 +1860,25 @@ describe("common process request recovery and observer lifetime", () => {
       result_id: "result-one",
       run_id: "run-one",
     });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Open representation" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    await screen.findByText("Opening representation…");
+    expect(scroll).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("region", { name: "Selected file" }),
+    ).not.toHaveFocus();
+    await act(async () => {
+      finishPreview?.("exact output");
+    });
     await screen.findByText("exact output");
+    expect(screen.getByRole("region", { name: "Selected file" })).toHaveFocus();
+    expect(screen.getByRole("heading", { name: "geometry.csv" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Close file" })).toBeVisible();
+    expect(scroll).toHaveBeenCalledExactlyOnceWith({ block: "start" });
+    expect(screen.getByText("Failed")).toBeVisible();
+    await act(async () => {
+      emitRefresh?.();
+    });
+    expect(scroll).toHaveBeenCalledTimes(1);
     expect(
       screen.getByRole("link", { name: "Download exact file" }),
     ).toHaveAttribute("download", "geometry.csv");
@@ -1467,7 +1886,7 @@ describe("common process request recovery and observer lifetime", () => {
       runId: "run-one",
       signal: expect.any(AbortSignal),
     });
-    expect(screen.getByText("Failed")).toBeVisible();
+    HTMLElement.prototype.scrollIntoView = originalScroll;
   });
   it("aborts a representation read on close without cancelling the process", async () => {
     const { client, store } = fixture();
@@ -1516,9 +1935,7 @@ describe("common process request recovery and observer lifetime", () => {
       />,
     );
     await screen.findByText("Exact part");
-    fireEvent.click(
-      screen.getByRole("button", { name: "Open representation" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
     expect(signal?.aborted).toBe(false);
     view.unmount();
     expect(signal?.aborted).toBe(true);
@@ -1527,103 +1944,148 @@ describe("common process request recovery and observer lifetime", () => {
   });
   it("a reopened run whose recorded representation was removed shows its exact failure without substitution or execution", async () => {
     const { client, store } = fixture();
-    const artifact = {artifact_ref: "outputs/removed.stl", sha256: hash, result_id: "removed-result"};
-    vi.mocked(client.follow).mockImplementation(async function* () {
-      yield {type: "snapshot", snapshot: {...running, state: "completed", actions: [], outputs: [{
-        result_id: artifact.result_id, step_id: "geometry", port_id: "out", role: "geometry",
-        title: "Original recorded part", representations: [artifact],
-      }]}};
-    });
-    vi.mocked(client.getRepresentation).mockRejectedValue(new ProcessClientError({
-      code: "CAPABILITY_UNAVAILABLE", message: "The recorded part file is no longer available.",
-      correction: "Inspect the recorded run; no replacement file was selected.",
-    }));
-    const view = render(<CommonProcessView client={client} sessionId="session" runId="run-one"
-      recoveryStore={store} canReadRepresentations/>);
-    await screen.findByText("Original recorded part");
-    fireEvent.click(screen.getByRole("button", {name: "Open representation"}));
-    await screen.findByText("The recorded part file is no longer available.");
-    expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(artifact, {runId: "run-one", signal: expect.any(AbortSignal)});
-    expect(screen.queryByRole("link", {name: "Download exact file"})).not.toBeInTheDocument();
-    expect(client.start).not.toHaveBeenCalled(); expect(client.cancel).not.toHaveBeenCalled();
-    expect(client.requestAction).not.toHaveBeenCalled(); expect(client.navigate).not.toHaveBeenCalled();
-    view.unmount();
-  });
-  it.each([false, true])("focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: %s)", async (sharedAssessment) => {
-    const { client, store } = fixture();
-    const output = {
-      result_id: "subject-result",
-      step_id: "geometry",
-      port_id: "part",
-      role: "geometry",
-      title: "Checked part",
-      assessments: [
-        {
-          assessment_id: "assessment-one",
-          subject_digest: hash,
-          outcome: "fail" as const,
-          currentness: "current" as const,
-        },
-      ],
-    };
-    const completed: InteractionSnapshot = {
-      ...running,
-      state: "completed",
-      outputs: sharedAssessment
-        ? [{ ...output, result_id: "earlier-result", title: "Earlier checked part" }, output]
-        : [output],
-    };
-    vi.mocked(client.getSnapshot).mockResolvedValue(completed);
-    vi.mocked(client.follow).mockImplementation(async function* () {
-      yield { type: "snapshot", snapshot: completed };
-    });
-    const reference = {
-      artifact_ref: "outputs/assessment.json",
+    const artifact = {
+      artifact_ref: "outputs/removed.stl",
       sha256: hash,
-      result_id: "validator-evidence",
+      result_id: "removed-result",
     };
-    const navigation = {
-      requestId: "focus-assessment",
-      resolution: {
-        process,
-        target: {
-          kind: "assessment" as const,
-          assessment_id: "assessment-one",
-          result_id: "subject-result",
-          run_id: "run-one",
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield {
+        type: "snapshot",
+        snapshot: {
+          ...running,
+          state: "completed",
+          actions: [],
+          outputs: [
+            {
+              result_id: artifact.result_id,
+              step_id: "geometry",
+              port_id: "out",
+              role: "geometry",
+              title: "Original recorded part",
+              representations: [artifact],
+            },
+          ],
         },
-        representation: reference,
-      },
-    };
-    const props = {
-      client,
-      sessionId: "session",
+      };
+    });
+    vi.mocked(client.getRepresentation).mockRejectedValue(
+      new ProcessClientError({
+        code: "CAPABILITY_UNAVAILABLE",
+        message: "The recorded part file is no longer available.",
+        correction:
+          "Inspect the recorded run; no replacement file was selected.",
+      }),
+    );
+    const view = render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        canReadRepresentations
+      />,
+    );
+    await screen.findByText("Original recorded part");
+    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    await screen.findByText("The recorded part file is no longer available.");
+    expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(artifact, {
       runId: "run-one",
-      recoveryStore: store,
-      canReadRepresentations: true,
-      navigation,
-    };
-    const view = render(<CommonProcessView {...props} />);
-    await screen.findByText("exact output");
-    expect(document.activeElement).toHaveAttribute(
-      "data-assessment-id",
-      "assessment-one",
-    );
-    expect(document.activeElement?.closest("[data-result-id]")).toHaveAttribute(
-      "data-result-id",
-      "subject-result",
-    );
-    expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(
-      reference,
-      { runId: "run-one", signal: expect.any(AbortSignal) },
-    );
-    view.rerender(
-      <CommonProcessView {...props} navigation={{ ...navigation }} />,
-    );
-    expect(client.getRepresentation).toHaveBeenCalledTimes(1);
+      signal: expect.any(AbortSignal),
+    });
+    expect(
+      screen.queryByRole("link", { name: "Download exact file" }),
+    ).not.toBeInTheDocument();
     expect(client.start).not.toHaveBeenCalled();
     expect(client.cancel).not.toHaveBeenCalled();
+    expect(client.requestAction).not.toHaveBeenCalled();
+    expect(client.navigate).not.toHaveBeenCalled();
+    view.unmount();
   });
+  it.each([false, true])(
+    "focuses an exact assessment and reads its separate recorded evidence only once (shared assessment: %s)",
+    async (sharedAssessment) => {
+      const { client, store } = fixture();
+      const output = {
+        result_id: "subject-result",
+        step_id: "geometry",
+        port_id: "part",
+        role: "geometry",
+        title: "Checked part",
+        assessments: [
+          {
+            assessment_id: "assessment-one",
+            subject_digest: hash,
+            outcome: "fail" as const,
+            currentness: "current" as const,
+          },
+        ],
+      };
+      const completed: InteractionSnapshot = {
+        ...running,
+        state: "completed",
+        outputs: sharedAssessment
+          ? [
+              {
+                ...output,
+                result_id: "earlier-result",
+                title: "Earlier checked part",
+              },
+              output,
+            ]
+          : [output],
+      };
+      vi.mocked(client.getSnapshot).mockResolvedValue(completed);
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: completed };
+      });
+      const reference = {
+        artifact_ref: "outputs/assessment.json",
+        sha256: hash,
+        result_id: "validator-evidence",
+      };
+      const navigation = {
+        requestId: "focus-assessment",
+        resolution: {
+          process,
+          target: {
+            kind: "assessment" as const,
+            assessment_id: "assessment-one",
+            result_id: "subject-result",
+            run_id: "run-one",
+          },
+          representation: reference,
+        },
+      };
+      const props = {
+        client,
+        sessionId: "session",
+        runId: "run-one",
+        recoveryStore: store,
+        canReadRepresentations: true,
+        navigation,
+      };
+      const view = render(<CommonProcessView {...props} />);
+      await screen.findByText("exact output");
+      expect(document.activeElement).toHaveAttribute(
+        "data-assessment-id",
+        "assessment-one",
+      );
+      expect(
+        document.activeElement?.closest("[data-result-id]"),
+      ).toHaveAttribute("data-result-id", "subject-result");
+      expect(client.getRepresentation).toHaveBeenCalledExactlyOnceWith(
+        reference,
+        { runId: "run-one", signal: expect.any(AbortSignal) },
+      );
+      view.rerender(
+        <CommonProcessView {...props} navigation={{ ...navigation }} />,
+      );
+      expect(client.getRepresentation).toHaveBeenCalledTimes(1);
+      expect(client.start).not.toHaveBeenCalled();
+      expect(client.cancel).not.toHaveBeenCalled();
+    },
+  );
   it("rejects foreign navigation without reading files or changing the run", async () => {
     const { client, store } = fixture();
     vi.mocked(client.getSnapshot).mockResolvedValue(running);
@@ -1658,6 +2120,135 @@ describe("common process request recovery and observer lifetime", () => {
     expect(client.getRepresentation).not.toHaveBeenCalled();
     expect(client.start).not.toHaveBeenCalled();
     expect(client.cancel).not.toHaveBeenCalled();
+  });
+  it("keeps progress visible without an empty frozen-input panel", async () => {
+    const { client, store } = fixture();
+    const held: InteractionSnapshot = {
+      ...running,
+      state: "failed",
+      inputs: [],
+      actions: running.actions?.map((action) => ({
+        ...action,
+        enabled: false,
+      })),
+    };
+    vi.mocked(client.attach).mockResolvedValue(held);
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: held };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    await screen.findByRole("heading", { name: "Progress" });
+    expect(
+      screen.queryByRole("heading", { name: "Run inputs" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("No user inputs are available on this page."),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Cancel this run" }),
+    ).toBeDisabled();
+    expect(client.cancel).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it.each(["completed", "cancelled"] as const)(
+    "keeps cancellation details compact after a run is %s",
+    async (state) => {
+      const { client, store } = fixture();
+      const reason = `This Wright run has ${state}; there is no active execution to cancel.`;
+      const ended: InteractionSnapshot = {
+        ...running,
+        state,
+        inputs: [],
+        actions: running.actions?.map((action) => ({
+          ...action,
+          enabled: false,
+          reasons: [
+            {
+              code: "ACTION_NOT_PERMITTED",
+              message: reason,
+              correction: "Open its saved results or prepare another run.",
+            },
+          ],
+        })),
+      };
+      vi.mocked(client.attach).mockResolvedValue(ended);
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: ended };
+      });
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+        />,
+      );
+      expect(
+        await screen.findByRole("button", { name: "Cancel this run" }),
+      ).toBeDisabled();
+      const explanation = screen.getByText(reason);
+      expect(explanation).not.toBeVisible();
+      fireEvent.click(screen.getByText("Why unavailable"));
+      expect(explanation).toBeVisible();
+      expect(client.cancel).not.toHaveBeenCalled();
+      expect(client.start).not.toHaveBeenCalled();
+    },
+  );
+  it("retains preparation controls for a process without initial input fields", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.getSnapshot).mockResolvedValue({ ...initial, inputs: [] });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        recoveryStore={store}
+      />,
+    );
+    await screen.findByRole("button", { name: "Prepare and check inputs" });
+    expect(screen.getByRole("heading", { name: "Inputs" })).toBeInTheDocument();
+    expect(client.setInputs).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
+  });
+  it("puts a pending question ahead of preparation and diagnostics without answering it", async () => {
+    const { client, store } = fixture();
+    vi.mocked(client.attach).mockResolvedValue(waitingInput);
+    vi.mocked(client.follow).mockImplementation(async function* () {
+      yield { type: "snapshot", snapshot: waitingInput };
+    });
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+      />,
+    );
+    const question = await screen.findByRole("heading", {
+      name: "Your next step",
+    });
+    const inputs = screen.getByRole("heading", { name: "Run inputs" });
+    const progress = screen.getByRole("heading", { name: "Progress" });
+    expect(
+      question.compareDocumentPosition(inputs) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      question.compareDocumentPosition(progress) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.getAllByText("Choose the comparison to carry forward."),
+    ).toHaveLength(1);
+    expect(client.respond).not.toHaveBeenCalled();
+    expect(client.decide).not.toHaveBeenCalled();
+    expect(client.start).not.toHaveBeenCalled();
   });
   it("shows only declared interactions and never submits an invented response", async () => {
     const { client, store } = fixture();

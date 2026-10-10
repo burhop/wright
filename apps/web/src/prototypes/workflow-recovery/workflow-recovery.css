@@ -193,6 +193,7 @@
 }
 .recovery-filebar__identity > div {
   min-width: 0;
+  width: 100%;
 }
 .recovery-filebar__identity h1 {
   margin: 0;
@@ -2620,6 +2621,71 @@
   color: #93e4d3;
   font-weight: 600;
 }
+.recovery-result-unavailable {
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid var(--recovery-line);
+  border-left: 3px solid var(--recovery-amber, #e2ae5b);
+  border-radius: 6px;
+  background: var(--recovery-floating-surface);
+  overflow-wrap: anywhere;
+}
+.recovery-result-unavailable h3 {
+  margin: 0 0 8px;
+}
+.recovery-result-unavailable p {
+  margin: 0 0 10px;
+}
+.recovery-result-unavailable button + button {
+  margin-top: 8px;
+}
+.recovery-run-failure-banner {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--recovery-red);
+  background: color-mix(
+    in srgb,
+    var(--recovery-red) 12%,
+    var(--recovery-panel)
+  );
+}
+.recovery-run-failure-banner > div:first-child {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.recovery-run-failure-banner b {
+  color: var(--recovery-red);
+}
+.recovery-run-failure-banner__message {
+  margin: 4px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.recovery-run-failure-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.recovery-run-failure-banner.is-cancelled {
+  border-color: var(--recovery-amber);
+  background: color-mix(
+    in srgb,
+    var(--recovery-amber) 12%,
+    var(--recovery-panel)
+  );
+}
+.recovery-run-failure-banner.is-cancelled b {
+  color: var(--recovery-amber);
+}
 .recovery-result-path {
   font-size: 11px;
   color: var(--recovery-muted);
@@ -3750,6 +3816,138 @@
   accent-color: var(--color-secondary);
   margin: 0;
 }
+.workflow-recovery .recovery-response-fields {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.workflow-recovery .recovery-response-fields fieldset {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.workflow-recovery .recovery-response-fields legend {
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.workflow-recovery
+  .recovery-response-fields
+  .recovery-response-fields__required {
+  flex-direction: row;
+  align-items: center;
+}
+.workflow-recovery .recovery-response-fields textarea {
+  min-height: 80px;
+}
+.wright-instruction-editor {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  color: var(--color-primary);
+  text-align: left;
+}
+.wright-instruction-editor label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.wright-instruction-editor :is(select, textarea) {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border-hover);
+  border-radius: 6px;
+  background: var(--color-surface-subtle);
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 400;
+}
+.wright-instruction-editor textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+.wright-instruction-editor pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.wright-instruction-editor table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.wright-instruction-editor :is(td, th) {
+  padding: 7px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--color-border);
+}
+.wright-instruction-editor p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.wright-instruction-editor details {
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+}
+.wright-instruction-editor summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.wright-instruction-editor details[open] > summary {
+  margin-bottom: 12px;
+}
+.wright-instruction-editor > button {
+  justify-self: start;
+}
+.wright-instruction-diff {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.wright-instruction-defaults-card {
+  display: grid;
+  gap: var(--space-md);
+  max-width: 680px;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.wright-instruction-defaults-card h2 {
+  font-size: 1.1rem;
+}
+.recovery-modal--instructions {
+  width: min(900px, calc(100vw - 32px));
+}
+.workflow-transfer-diagnostics {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 16px 0;
+  list-style: none;
+}
+.workflow-transfer-diagnostics li {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface-subtle);
+  overflow-wrap: anywhere;
+}
 .workflow-recovery .recovery-prompt-editor details {
   border-top: 1px solid var(--color-border);
   padding-top: 12px;
@@ -3871,7 +4069,8 @@
   margin-bottom: 8px;
 }
 
-.recovery-panel-heading input.recovery-block-name {
+.recovery-panel-heading input.recovery-block-name,
+.recovery-filebar__identity input.recovery-workflow-name {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
@@ -3883,10 +4082,12 @@
   border: 1px solid transparent;
   border-radius: 4px;
 }
-.recovery-panel-heading input.recovery-block-name:not([readonly]):hover {
+.recovery-panel-heading input.recovery-block-name:not([readonly]):hover,
+.recovery-filebar__identity input.recovery-workflow-name:not([readonly]):hover {
   border-color: var(--recovery-muted);
 }
-.recovery-panel-heading input.recovery-block-name:focus {
+.recovery-panel-heading input.recovery-block-name:focus,
+.recovery-filebar__identity input.recovery-workflow-name:focus {
   outline: 2px solid var(--recovery-accent, #32bdf3);
   outline-offset: 1px;
 }

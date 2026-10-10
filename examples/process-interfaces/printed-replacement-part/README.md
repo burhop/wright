@@ -75,6 +75,36 @@ partial files; their existence does not complete the step or authorize a retry.
 
 ## Engineering handoffs
 
+An optional `native_inspection_operation` binds an existing provider's `server`,
+`tool`, and `arguments_file` (`path` plus `sha256`). It requires a configured
+current construction producer with `native_cad`, `neutral_cad` and `source_mesh`
+ports. The preparer connects those exact current-run files to native inspection
+and drawing, then applies the versioned `native-inspection-profile.json` before
+mesh repair and slicing. Profile version 2 retains the original eleven supplemental
+checks and adds nine checks of named functional drawing observations. It does not replace the original eighteen-check profile
+or any human/physical requirement. The final review receives the measurements,
+native/SVG/PDF drawing, a passive PNG preview, matrix, criteria and assessment from this same run.
+
+The drawing uses native linked dimensions for the envelope, scallop radius,
+socket radius/across-flat/depth, overall and hub heights, roof at the axis,
+section grip span and exposed round. The full native section carries its cutting
+line and hatch; the enlarged socket view uses the actual planar CAD section.
+The PNG is a QtSvg rendering of the exact native SVG, with both hashes retained.
+No dimension value is overridden and no AI illustration defines the geometry.
+The matrix includes the observed dimensions and a proposed physical inspection
+plan. Manufacturing tolerances, fit, strength and human drawing acceptance remain
+separate. Accepted earlier processes retain their pinned version 1 instructions
+and criteria; only a newly accepted revision uses the new drawing and profile.
+
+`wheel-inspection-operation.py` is an authored FreeCAD provider argument, not
+Wright execution code. Its default input mode retains pinned upstream hashes.
+For a same-run handoff, an explicitly accepted `workflow_dependencies` mode
+records the bytes it consumes after Wright verifies declared producer-file
+dependencies. Run-path templates allocate new files for each run. Missing native
+ports/providers or changed argument files block preparation before staging;
+native tool failures and failed checks hold downstream work. These declarations
+alone do not establish live capability or engineering acceptance.
+
 - Interpret the original 38 mm wheel, six scallops, D socket and clearance, blind
   depth, front hub and grip features. Persist a declared basis review.
 - Use the existing geometry MCP to create actual source STL, then repair, measure
@@ -88,8 +118,12 @@ partial files; their existence does not complete the step or authorize a retry.
   machine instructions.
 - Summarize measured facts and outstanding limits. A separately enrolled private
   test handoff may write a labelled simulated receipt, with no network dispatch.
-  The unchanged full 18-check profile then assesses the exact current subjects.
-  Mandatory authenticated engineering review remains independent and held.
+  The declared engineering review then presents the exact validation subjects
+  and original requirements. Its typed review binding identifies the unchanged
+  profile and all six review-required requirements. Only after this review does
+  the full 18-check profile assess those subjects. An integration-test response
+  cannot supply the mandatory authenticated human review. This order avoids an
+  unreachable review after a validator that already requires that decision.
 
 The passive inspection operation records the selected provider's qualified success
 contract as the basis for CLI success. That is not an independently observed exit
@@ -201,6 +235,81 @@ without asking AI to retranscribe its code. It does not permit fallback after
 an uncertain or failed operation, replay a run, or weaken the final checks. Choose
 and accept the stage bindings before a fresh run; preserve previous failures.
 
+### Independent native construction provider
+
+A fresh configured construction can explicitly select a different existing MCP
+provider while retaining the Blender repair/orientation stage and offline slicer:
+
+```json
+"geometry_operation_modes": {"construction": "configured_tool", "repair": "configured_tool"},
+"construction_binding": {
+  "server": "your-enabled-native-cad-server",
+  "tool": "execute_code",
+  "outputs": {
+    "source_mesh": "source_mesh.stl",
+    "native_cad": "native-design.FCStd",
+    "neutral_cad": "native-design.step",
+    "cad_preview": "native-design.png",
+    "native_measurements": "native-measurements.json"
+  }
+}
+```
+
+This is an explicit example configuration, not a provider fallback. Preparation
+requires the fresh exact tool/schema and the pinned construction recipe before
+staging. The recipe must actually produce every declared output in the run's
+unique directory; output declarations do not execute CAD or establish compliance.
+Its supplied basis and recipe still join the declared review. Native API calls
+remain in the accepted operation supplied to the independent provider, not in
+Wright's executor or gateway. The original source STL handoff, repair ownership,
+PETG profiles, simulated-only destination and eighteen-check gate remain intact.
+
+Additional native artifacts have inspectable file ports and required-output
+checks. Their engineering criteria must be assessed by an explicit additional
+validation profile; they are not extra subjects silently added to the original
+profile. Without this binding the previous producer remains unchanged. A retained
+source consumer cannot also select a new construction producer. Different run
+bindings allocate different output paths through the existing run-path contract.
+
+### Explicit repair completion before slicing
+
+For a fresh configured repair recipe that declares the final `W083_FINAL_REPORT`
+record, supply an optional `repair_completion_operation` binding with `server`,
+`tool`, and `arguments_file: {path, sha256}`. This is an authored operation for an
+existing independent Python-capable provider. The preparer freezes the arguments
+and checks capability availability before staging. It does not infer success from
+free-text error wording or the existence of partial exports.
+
+The new steps retain the actual repair response as `repair-provider-response.json`,
+inspect its final record and exact files, and run the original five mesh checks
+plus the explicit completion check before slicing. The original full 18-check
+profile and final engineering reviews remain unchanged. A missing completion
+receipt or failed required check holds dependent work. These checks establish
+their declared digital scope only, not physical fit, strength or human acceptance.
+
+`repair-completion-operation.py` needs the inspector's paths for `response_path`,
+`source_path`, `repaired_path`, `preview_path` and `output_path`. Also declare
+`producer_path_style` (`windows` or `posix`) and `producer_output_paths` containing
+the exact producer paths for `repaired_mesh_stl` and `geometry_only_preview_png`.
+The producer and inspector may use different mounts or operating systems. Compare
+complete declared producer paths using that convention, not just their filenames.
+Use the existing run-path token in all run-specific argument paths and preserve
+previous failed runs. A retained-source consumer needs its own explicitly bound
+early gate; this optional fresh-producer declaration does not invent that binding.
+
+### Native preview and drawing identity
+
+The authored native construction recipe binds the exact document's view and
+allows bounded display updates before capture. It retains blank attempts and
+fails if all three captures are blank. Its sampled pixel check detects an empty
+frame; it does not verify geometry or replace visual review. Construction is
+never retried by this display check.
+
+The downstream `wheel-inspection-operation.py` recipe requires `drawing_number`
+in its accepted configuration (1–20 uppercase letters, digits or hyphens). Each
+new inspection retains the exact native/STEP/STL hashes and its own drawing
+identity, so another run's title-block revision is not inherited silently.
+
 ### Separate consumer of retained geometry
 
 If a producer created useful geometry before a later technical failure, do not
@@ -246,3 +355,15 @@ layered toolpaths, material/profile correspondence, measured findings and declar
 reviews. Link to exact artifacts and producing blocks in Wright workspace tabs.
 Use only backend-permitted actions; retain the common-view fallback. This digital
 proof must not expose a physical print command or infer camera/machine status.
+
+### Native drawing projection readiness
+
+The accepted inspection operation must wait for actual TechDraw projected edges
+before selecting dimension references. A fixed sleep failed on a fresh isolated
+FreeCAD host although the views became available later. The example now services
+GUI callbacks while checking every required view, with a 30-second deadline and
+an explicit diagnostic naming any unavailable views. It records wait timing in
+the measurement report. Existing feature, dimension and geometry checks remain
+required; projection availability alone is not drawing verification. Adopt this
+operation through a new accepted argument/source revision and fresh run, retaining
+failed attempts and their native documents.

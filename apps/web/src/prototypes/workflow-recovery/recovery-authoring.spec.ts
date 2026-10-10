@@ -22,6 +22,7 @@ import { createAuthoringObject } from "./authoring-objects";
 import {
   formatRecoveryAuthoringSource,
   parseRecoveryAuthoringSource,
+  recoveryAuthoringBlockId,
   recoveryAuthoringSemanticIdAtOffset,
   validateRecoveryAuthoringRoundTrip,
 } from "./recovery-authoring";
@@ -30,12 +31,40 @@ function semanticBytes(workflow: RecoveryWorkflow): string {
   return canonicalDefinitionBytes(workflow, true);
 }
 
-it("cold-round-trips declared input metadata and a human response without losing their nested schemas", () => {
-  const base = { ...cloneWorkflow(initialWorkflow), workflowId: "workflow.test" };
-  const parsed = parseRecoveryAuthoringSource(
-    declaredInputSource,
-    base,
+it("preserves repeated and trailing underscores in source identities and typed port references", () => {
+  const source = declaredInputSource
+    .replaceAll("first_out", "candidate__mesh_")
+    .replaceAll("first_in", "candidate_mesh")
+    .replace(/\bfirst\b/g, "build__wheel_")
+    .replaceAll("choice_response", "choice__response_");
+  const base = {
+    ...cloneWorkflow(initialWorkflow),
+    workflowId: "workflow.test",
+  };
+  const parsed = parseRecoveryAuthoringSource(source, base);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const saved = formatRecoveryAuthoringSource(parsed.workflow!).text;
+  expect(saved).toContain('"build__wheel_.candidate__mesh_"');
+  expect(saved).toContain('"choice.choice__response_"');
+  expect(saved).toContain('"output_port":"choice__response_"');
+  expect(saved).toContain('"key":"candidate_mesh"');
+  expect(recoveryAuthoringBlockId(parsed.workflow!, "build__wheel_")).toBe(
+    "block.build--wheel-",
   );
+  const reopened = parseRecoveryAuthoringSource(saved, base);
+  expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+  expect(semanticBytes(reopened.workflow!)).toBe(
+    semanticBytes(parsed.workflow!),
+  );
+  expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(saved);
+});
+
+it("cold-round-trips declared input metadata and a human response without losing their nested schemas", () => {
+  const base = {
+    ...cloneWorkflow(initialWorkflow),
+    workflowId: "workflow.test",
+  };
+  const parsed = parseRecoveryAuthoringSource(declaredInputSource, base);
   expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
   const firstSource = formatRecoveryAuthoringSource(parsed.workflow!).text;
   expect(firstSource).toContain('"interaction_input":');

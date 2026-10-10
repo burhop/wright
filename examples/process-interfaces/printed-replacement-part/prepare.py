@@ -29,6 +29,24 @@ retained_spec = importlib.util.spec_from_file_location(
 retained_source = importlib.util.module_from_spec(retained_spec)
 retained_spec.loader.exec_module(retained_source)
 
+gate_spec = importlib.util.spec_from_file_location(
+    "printed_early_repair_gate", Path(__file__).with_name("repair_gate.py")
+)
+repair_gate = importlib.util.module_from_spec(gate_spec)
+gate_spec.loader.exec_module(repair_gate)
+
+native_spec = importlib.util.spec_from_file_location(
+    "printed_native_inspection", Path(__file__).with_name("native_inspection.py")
+)
+native_inspection = importlib.util.module_from_spec(native_spec)
+native_spec.loader.exec_module(native_inspection)
+
+orientation_spec = importlib.util.spec_from_file_location(
+    "printed_orientation_stages", Path(__file__).with_name("orientation_stages.py")
+)
+orientation_stages = importlib.util.module_from_spec(orientation_spec)
+orientation_spec.loader.exec_module(orientation_stages)
+
 
 def prepare(workspace, attempt, tools, bindings):
     workspace = Path(workspace).resolve(strict=True)
@@ -36,7 +54,28 @@ def prepare(workspace, attempt, tools, bindings):
     modes = provider_inputs.geometry_operation_modes(bindings)
     configured_construction = modes["construction"] == "configured_tool"
     configured_repair = modes["repair"] == "configured_tool"
+    construction = provider_inputs.construction_binding(bindings)
     retained = retained_source.qualify(bindings)
+    compare_orientations = bindings.get("orientation_comparison", False)
+    if type(compare_orientations) is not bool:
+        raise ValueError("Declare orientation_comparison as a boolean")
+    if compare_orientations and (retained or not configured_construction):
+        raise ValueError("The integrated orientation study requires the current configured native producer")
+    native_check = None
+    if "native_inspection_operation" in bindings:
+        native_check = native_inspection.qualify(
+            bindings["native_inspection_operation"], construction,
+            configured=configured_construction, retained=retained,
+        )
+    completion = None
+    if "repair_completion_operation" in bindings:
+        if retained:
+            raise ValueError("Declare a separate retained-source early gate; do not bind it to an absent new producer")
+        if not configured_repair:
+            raise ValueError("The repair-completion record requires an explicit configured repair operation")
+        completion = repair_gate.qualify(bindings["repair_completion_operation"])
+    if retained and "construction_binding" in bindings:
+        raise ValueError("A retained source has no new construction producer; remove the construction binding")
     validation_budget = (
         ResourceBudget.model_validate(bindings["validation_resource_budget"])
         if "validation_resource_budget" in bindings
@@ -90,6 +129,12 @@ def prepare(workspace, attempt, tools, bindings):
         (slicer, ("slice_model_file",)),
         (inspection, ("run_simulation",)),
     ]
+    if configured_construction:
+        required.append((construction["server"], (construction["tool"],)))
+    if completion:
+        required.append((completion[0]["server"], (completion[0]["tool"],)))
+    if native_check:
+        required.append((native_check[0]["server"], (native_check[0]["tool"],)))
     for server, names in required:
         for name in names:
             matches = [
@@ -266,9 +311,9 @@ def prepare(workspace, attempt, tools, bindings):
         if configured_construction:
             flow.exact_mcp(
                 create,
-                flow.select(geometry, "execute_blender_code"),
+                flow.select(construction["server"], construction["tool"]),
                 argument_port,
-                ("source_mesh.stl",),
+                tuple(construction["outputs"].values()),
                 "source-model-report.json",
             )
             create["fields"]["settings"]["timeout_seconds"] = 360
@@ -296,9 +341,19 @@ def prepare(workspace, attempt, tools, bindings):
         flow.reference(
             refs["concept.png"], create, "original_reference", "reference_images"
         )
-    source_roles = flow.file_outputs(
-        create, {"source_mesh": flow.output + "/source_mesh.stl"}
+    construction_roles = flow.file_outputs(
+        create, {role: flow.output + "/" + filename
+                 for role, filename in construction["outputs"].items()}
     )
+    # The retained profile binds exact declared subjects, not every deliverable.
+    # Added native outputs remain inspectable ports; their checks need an explicit
+    # additional profile rather than changing the original eighteen-check gate.
+    source_roles = {"source_mesh": construction_roles["source_mesh"]}
+    native_steps, native_review_refs = ([], [])
+    if native_check:
+        native_steps, native_review_refs = native_inspection.add(
+            flow, definition, native_check, create, construction,
+        )
     repair = flow.original("repair_measure_orient")
     repair_result = flow.ai(
         repair,
@@ -373,6 +428,11 @@ def prepare(workspace, attempt, tools, bindings):
             "mesh_preview": flow.output + "/mesh-preview.png",
         },
     )
+    early_repair_steps = []
+    if completion:
+        early_repair_steps = list(repair_gate.add(
+            flow, definition, completion, profile, create, repair, files,
+        ))
     slice_step = flow.original("supports_and_slice")
     arguments = {
         "source": str(absolute_output / "repaired_mesh.stl"),
@@ -583,13 +643,18 @@ def prepare(workspace, attempt, tools, bindings):
     flow.file_outputs(
         inspect_step, {"toolpath_summary": flow.output + "/toolpath-summary.json"}
     )
+    orientation_steps, orientation_review_refs = ([], [])
+    if compare_orientations:
+        orientation_steps, orientation_review_refs = orientation_stages.add(
+            flow, definition, bindings, create, construction,
+        )
     report = flow.stage(
         "summarize_preparation",
         "Record measured preparation facts and outstanding engineering review",
     )
     report_result = flow.ai(
         report,
-        "The connected construction and repair results and original requirements are supplied reference material. Read those results directly; do not guess report filenames or reread supplied content. Use inspect_file exactly once for each connected slice_evidence and toolpath_summary workspace-file reference, using its verified relative path with includeText=true and maxTextBytes=65536. Those bounded records contain the actual package/mesh identity and profile observations; do not read raw profiles, G-code or the full support preview. Return the report after those two inspections; Wright saves it, so do not call a writing tool. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict. Return one compact JSON object under 6000 characters, with artifact_lineage, geometry_observations, preparation_observations, outstanding_requirements, limitations and engineering_acceptance=false.",
+        "The connected construction and repair results and original requirements are supplied reference material. Read those results directly; do not guess report filenames or reread supplied content. Use inspect_file exactly once for each connected slice_evidence and toolpath_summary workspace-file reference, using its verified relative path with includeText=true and maxTextBytes=32768, within the selected workspace reader schema. If either record is truncated or unavailable, report that exact limitation instead of treating an incomplete inspection as complete. Those bounded records contain the actual package/mesh identity and profile observations; do not read raw profiles, G-code or the full support preview. Return the report after those two inspections; Wright saves it, so do not call a writing tool. Summarize construction, socket interpretation, repair, orientation/support consequences, exact PETG settings and nominal toolpaths. Separate design values from measured dimensions and future physical fit. The preview is nominal toolpath data, not completed printing. Retain all original mandatory limits and unresolved review requirements. Do not invent measurements, successful printing, fit, strength or a critic/human verdict. Return one compact JSON object under 6000 characters, with artifact_lineage, geometry_observations, preparation_observations, outstanding_requirements, limitations and engineering_acceptance=false.",
         "source-report.json",
         server=files,
         calls=2,
@@ -681,21 +746,35 @@ def prepare(workspace, attempt, tools, bindings):
     flow.review(
         final_review,
         "Review the original socket, grip, orientation/support, tolerance and action-scope requirements against exact outputs. This process cannot certify fit, strength, accuracy or a physical print.",
+        profile={
+            "profile_ref": validator["fields"]["settings"]["validation"]["profile"]["reference"],
+            "requirement_ids": sorted(
+                requirement["id"] for requirement in profile["baseline"]["requirements"]
+                if requirement["review_required"]
+            ),
+        },
     )
-    flow.reference(validator["id"] + ".assessment", final_review, "assessment")
+    flow.reference(requirements_ref, final_review, "original_requirements")
+    for role, (producer, key, kind) in sources.items():
+        flow.reference(producer["id"] + "." + key, final_review, role, kind)
+    for reference, role, kind in [*native_review_refs, *orientation_review_refs]:
+        flow.reference(reference, final_review, role, kind)
     return flow.save(
         [
             basis,
             basis_review,
             *([] if retained else [create]),
+            *native_steps,
             repair,
+            *early_repair_steps,
             slice_step,
             response_step,
             inspect_step,
+            *orientation_steps,
             report,
             transfer,
-            validator,
             final_review,
+            validator,
         ]
     )
 

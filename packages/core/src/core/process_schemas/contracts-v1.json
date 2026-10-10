@@ -1798,7 +1798,7 @@
         "additionalProperties": false,
         "properties": {
           "binding_id": {
-            "maxLength": 160,
+            "maxLength": 321,
             "minLength": 1,
             "title": "Binding Id",
             "type": "string"

@@ -12,6 +12,18 @@ Final local completion is recorded in the
 release, arbitrary provider support and human/physical engineering acceptance
 remain separate. Earlier dated checkpoints retain their original scopes.
 
+## 7 October 2026 — instruction portability and deliberate input
+
+The user requires saved/exported workflows to carry their applicable prompts and
+prefers questions at declared process steps. A code audit found hidden prompt
+policy, incomplete instruction provenance and an inconsistent projection of
+declared input waits through the diagram's Run transport. The separate
+[analysis and implementation plan](workflow-instructions-and-interactions-plan.md)
+proposes versioned settings resolved into saved instructions, documented
+assumptions, portable export and improvements to the existing user-input step.
+This is planned correction work; earlier implementation evidence does not prove
+these newly identified requirements or close these gaps.
+
 ## Current migration checkpoint — 3 October 2026
 
 T048's complete caller inventory and T049's shared-code/error audit now have

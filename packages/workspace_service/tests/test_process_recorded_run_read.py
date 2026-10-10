@@ -293,6 +293,34 @@ def test_oversized_record_is_not_read_as_partial_truth(tmp_path, monkeypatch):
     assert error.value.code == "invalid"
 
 
+def test_extended_run_retains_requests_and_projects_actual_failure(tmp_path):
+    path, _ = saved(
+        tmp_path,
+        status="failed",
+        code="WORKFLOW_INTEGRATION_POLICY_INVALID",
+        error="A declared evidence file is unavailable.",
+        correction="Correct the producer declaration before a new run.",
+        events=[
+            {
+                "kind": "model_invocation",
+                "task_id": "research",
+                "invocation": {
+                    "request_fields": {"instructions": "x" * (20 * 1024 * 1024)}
+                },
+            }
+        ],
+    )
+    original_digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    view = recorder.read_workflow_run(
+        tmp_path, SOURCE, "run-1", run_log_path=path.relative_to(tmp_path).as_posix()
+    )
+    assert view["status"] == "failed"
+    assert view["code"] == "WORKFLOW_INTEGRATION_POLICY_INVALID"
+    assert view["error"] == "A declared evidence file is unavailable."
+    assert len(json.dumps(view)) < 10_000
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == original_digest
+
+
 def test_rework_removes_invalidated_output_from_attachment(tmp_path):
     saved(
         tmp_path,
@@ -323,3 +351,61 @@ def test_missing_run_does_not_create_files(tmp_path):
         if p.is_file()
     } == files
     assert path.exists()
+
+
+def test_interaction_inventory_keeps_later_results_past_progress_budget(tmp_path):
+    rows = [
+        result_row(f"engineering-stage-{index:03d}-" + "a" * 120)
+        for index in range(160)
+    ]
+    path, _ = saved(
+        tmp_path,
+        status="awaiting_approval",
+        partial_results={row["id"]: row for row in rows},
+    )
+    original = path.read_bytes()
+    progress = recorder.read_workflow_run(tmp_path, SOURCE, "run-1")
+    assert len(progress["results"]) < len(rows)  # Actual legacy progress ceiling.
+    view = recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert [row["id"] for row in view["results"]] == [row["id"] for row in rows]
+    assert not view["execution"]["truncated"]
+    assert path.read_bytes() == original
+
+
+def test_inventory_limit_is_explicit_and_does_not_return_partial_results(
+    tmp_path, monkeypatch
+):
+    row = result_row("drawing")
+    path, _ = saved(tmp_path, partial_results={row["id"]: row})
+    original = path.read_bytes()
+    monkeypatch.setattr(recorder, "_MAX_RESULT_INVENTORY_BYTES", 10)
+    with pytest.raises(recorder.WorkflowRunReadError) as caught:
+        recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert caught.value.code == "result_inventory_limit"
+    assert path.read_bytes() == original
+
+
+def test_full_inventory_rejects_foreign_result_after_legacy_cutoff(tmp_path):
+    rows = [
+        result_row(f"engineering-stage-{index:03d}-" + "a" * 120)
+        for index in range(160)
+    ]
+    rows[-1]["provenance"]["run_id"] = "foreign-run"
+    saved(tmp_path, partial_results={row["id"]: row for row in rows})
+    with pytest.raises(recorder.WorkflowRunReadError) as caught:
+        recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert caught.value.code == "invalid"
+
+
+def test_inventory_does_not_inherit_another_runs_metadata_limit(tmp_path, monkeypatch):
+    row = result_row("drawing")
+    saved(
+        tmp_path,
+        "another",
+        name="20260930T120100Z-bbbbbbbbbbbb.json",
+        partial_results={row["id"]: row},
+    )
+    saved(tmp_path, "run-1")
+    monkeypatch.setattr(recorder, "_MAX_RESULT_INVENTORY_BYTES", 10)
+    view = recorder.read_workflow_run(tmp_path, SOURCE, "run-1", complete_results=True)
+    assert view["results"] == []

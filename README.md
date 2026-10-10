@@ -53,14 +53,17 @@ single hosted black box. Wright coordinates agents and deterministic tools while
 leaving LLM/provider choice, credentials, licenses, and host software under the
 operator's control.
 
-The [workflow platform vision](docs/design/workflow-platform-vision.md) guides
-future work: general workflow mechanisms, evidence-based engineering review,
-and independent tool integrations. Manufacturing is an early reference workflow.
-The [process UI design](docs/design/process-apps.md) describes authoring and working
-views of one process, with AI-authored interfaces using shared Wright foundations.
-The [refactoring plan](docs/architecture/workflow-platform-refactoring-plan.md)
-puts the interaction contract, shared UI kit/client, and workspace experience
-first, then migration and proof across different engineering processes.
+Engineers build a process with blocks, connections and source, then carry out
+that same process in a working view inside a Wright workspace tab. They can
+provide inputs, inspect designs and calculations, trace findings to their evidence,
+and respond at declared questions or review steps. An optional AI-created interface
+can present the job as a dashboard, comparison or guided sequence.
+
+The [workflow platform vision](docs/design/workflow-platform-vision.md) and
+[process UI design](docs/design/process-apps.md) keep these experiences on shared
+execution, validation and storage services. Engineering tools remain independent
+MCP providers. Manufacturing is one use; analysis, investigation and documentation
+can use different workflow structures.
 
 The first public alpha is aimed at developers, MCP porters, demo users, and
 selected beta feedback. Local and hybrid deployments are supported, but real
@@ -68,7 +71,15 @@ engineering toolchains still require explicit configuration.
 
 ## What Works Today
 
-- Agent orchestration surfaces for engineering workflows.
+- A graphical workflow editor with typed connections, source editing, inspectors,
+  undo/redo and saved definitions.
+- Common working views for inputs, progress, results and deliberate user decisions;
+  optional AI-created interfaces that can be previewed, saved and reused.
+- Inspectable workflow/step instructions and assumption policy, saved with the
+  workflow. Export/import includes required supported dependencies and diagnoses
+  capabilities that must be configured in the receiving workspace.
+- Durable runs, declared input/review checkpoints, output checks and exact evidence
+  links. A successful tool call alone does not establish an engineering pass.
 - Ten versioned engineering workflow templates that create editable workspace
   workflows with recorded origins, readiness disclosures, and durable approval
   checkpoints.
@@ -77,34 +88,40 @@ engineering toolchains still require explicit configuration.
 - Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,
   and general validation tooling.
 - A manager-neutral packaged runtime with a production Hermes Git adapter and
-  a direct MCP profile for Codex. OpenClaw integration remains future work.
+  a direct MCP profile for Codex. Using Codex as Wright's replacement agent
+  runtime is a separate integration project; OpenClaw integration remains future work.
 - BYO-AI configuration for local or hosted OpenAI-compatible endpoints.
 
 The Docker appliance is not a complete CAD/CAE/CAM workstation and does not
 silently install every possible backend.
 
+These descriptions cover the current development source. Published releases may
+lag it. The workflow editor and process views require their build configuration;
+see [the current-source setup and user guide](docs/workflows/process-working-interfaces.md).
+Provider availability, licensing and engineering acceptance must be established
+for the selected workflow.
+
 ## User Interface
 
-### Agent Chat Interface
+1. **Build:** use **Workflows** for a blank process, or open a saved workflow or
+   template. Add inputs and tasks, select workspace MCP providers, and connect
+   the outputs that the next step needs.
+2. **Prepare:** save, choose **Open working view**, supply inputs and resolve
+   readiness findings before starting.
+3. **Follow and inspect:** view progress, open actual output files and validation
+   evidence, and answer only the interactions declared by the process.
+4. **Return:** use the saved run's working view to inspect the same durable run.
+   Opening it does not repeat completed work.
 
-Interact with local LLM agents to iterate on designs, request modifications, or
-write code.
+See the [illustrated workspace guide](docs/workflows/engineering-workspace-tour.md)
+and [working-view reference](docs/workflows/process-working-interfaces.md) for
+current controls, screenshots and limitations. Agent chat, workspace files and
+the tool registry support these journeys in the same workspace.
 
-![Agent Chat Interface](docs/images/screenshot_agent_chat.png)
+![A declared engineering review in Wright](docs/images/workflows/working-review.png)
 
-### Tool Registry
-
-View engineering tools, MCP status, and validation metadata available to agents.
-
-![Tool Registry](docs/images/screenshot_tool_registry.png)
-
-### Workspace Artifacts
-
-Review files, generated artifacts, logs, and viewer panels inside the active
-workspace. CAD files, scripts, screenshots, and diagnostics stay local to the
-workspace volume or checkout you control.
-
-![Workspace Artifacts](docs/images/screenshot_initial.png)
+*Current development UI: the saved process is waiting for its declared intent
+review. Evidence is available; the design has not been approved or manufactured.*
 
 ## Quick Start
 

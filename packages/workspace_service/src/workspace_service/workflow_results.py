@@ -184,7 +184,7 @@ def file_representation(output: dict) -> Representation:
 def file_result(output: dict, provenance: Provenance) -> EngineeringResult:
     return EngineeringResult(
         f"{provenance.run_id}:{provenance.task_id}:{provenance.output_port}",
-        "file",
+        "image" if str(output.get("media_type", "")).startswith("image/") else "file",
         output["output_path"],
         (file_representation(output),),
         provenance,

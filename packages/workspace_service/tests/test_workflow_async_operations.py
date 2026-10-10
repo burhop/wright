@@ -79,6 +79,11 @@ def remote(states=("working", "completed")):
         server_id="fea",
         schema_digest=schema_digest(tools[0]),
         timeout_seconds=2,
+        # Legacy operation-budget fixture; modern strict intent is tested separately.
+        instruction_override={
+            "origin": "operation-budget-fixture",
+            "assumption_policy": "document_reasonable",
+        },
     )
     return g, runtime, step, tools
 
@@ -88,7 +93,8 @@ def test_submission_is_polled_to_completion_once():
     events = []
 
     async def emit(kind, **kw):
-        events.append((kind, kw))
+        if kind == "operation_progress":
+            events.append((kind, kw))
 
     result = asyncio.run(r.call(s, {}, on_event=emit))
     assert result[0] == {"stress": 12, "units": "MPa"}
@@ -138,21 +144,35 @@ async def test_multihour_observation_is_outside_ai_budget_but_models_remain_boun
     decisions, events = [], []
 
     async def emit(kind, **data):
-        events.append((kind, data))
+        if kind == "operation_progress":
+            events.append((kind, data))
 
     async def decide(messages, schemas, **kwargs):
         decisions.append(messages[-1]["role"])
         if len(decisions) == 1:
             return {
                 "role": "assistant",
-                "tool_calls": [{"id": "submit-once", "function": {
-                    "name": schemas[0]["function"]["name"], "arguments": "{}",
-                }}],
+                "tool_calls": [
+                    {
+                        "id": "submit-once",
+                        "function": {
+                            "name": schemas[0]["function"]["name"],
+                            "arguments": "{}",
+                        },
+                    }
+                ],
             }
         assert any(data.get("state") == "completed" for _, data in events)
-        return {"role": "assistant", "content": json.dumps({
-            "status": "completed", "response": '{"stress":12}', "evidence": [1],
-        })}
+        return {
+            "role": "assistant",
+            "content": json.dumps(
+                {
+                    "status": "completed",
+                    "response": '{"stress":12}',
+                    "evidence": [1],
+                }
+            ),
+        }
 
     response, records = await runtime.run_task(step, "Run the analysis", decide, emit)
     assert response == '{"stress":12}'
@@ -176,11 +196,18 @@ async def test_multihour_profile_does_not_extend_model_decision_budget(phase):
         decisions.append(messages[-1]["role"])
         if (len(decisions) == 1) == (phase == "before"):
             await asyncio.sleep(0.2)
-        return {"role": "assistant", "tool_calls": [{
-            "id": "submit-once", "function": {
-                "name": schemas[0]["function"]["name"], "arguments": "{}",
-            },
-        }]}
+        return {
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "id": "submit-once",
+                    "function": {
+                        "name": schemas[0]["function"]["name"],
+                        "arguments": "{}",
+                    },
+                }
+            ],
+        }
 
     with pytest.raises(WorkflowSourceExecutionError) as error:
         await runtime.run_task(step, "Run the analysis", decide, emit)
@@ -201,11 +228,18 @@ async def test_multihour_observation_does_not_refill_spent_model_budget():
     async def decide(messages, schemas, **kwargs):
         decisions.append(messages[-1]["role"])
         await asyncio.sleep(0.13)
-        return {"role": "assistant", "tool_calls": [{
-            "id": "submit-once", "function": {
-                "name": schemas[0]["function"]["name"], "arguments": "{}",
-            },
-        }]}
+        return {
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "id": "submit-once",
+                    "function": {
+                        "name": schemas[0]["function"]["name"],
+                        "arguments": "{}",
+                    },
+                }
+            ],
+        }
 
     with pytest.raises(WorkflowSourceExecutionError) as error:
         await runtime.run_task(step, "Run the analysis", decide, emit)
@@ -222,16 +256,24 @@ async def test_interrupting_multihour_ai_monitor_does_not_cancel_or_resubmit():
     started, events = asyncio.Event(), []
 
     async def emit(kind, **data):
-        events.append(data)
+        if kind == "operation_progress":
+            events.append(data)
         if data.get("state") == "working":
             started.set()
 
     async def decide(messages, schemas, **kwargs):
-        return {"role": "assistant", "tool_calls": [{
-            "id": "submit-once", "function": {
-                "name": schemas[0]["function"]["name"], "arguments": "{}",
-            },
-        }]}
+        return {
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "id": "submit-once",
+                    "function": {
+                        "name": schemas[0]["function"]["name"],
+                        "arguments": "{}",
+                    },
+                }
+            ],
+        }
 
     task = asyncio.create_task(runtime.run_task(step, "Run the analysis", decide, emit))
     await asyncio.wait_for(started.wait(), 2)
@@ -244,8 +286,9 @@ async def test_interrupting_multihour_ai_monitor_does_not_cancel_or_resubmit():
     assert not runtime._active_operations
 
 
-@pytest.mark.parametrize("value", [True, None, "7200", 0, -1, 604801,
-                                          float("nan"), float("inf")])
+@pytest.mark.parametrize(
+    "value", [True, None, "7200", 0, -1, 604801, float("nan"), float("inf")]
+)
 def test_invalid_observation_timeout_rejected_before_submission(value):
     g, runtime, step, tools = remote()
     tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = value
@@ -260,7 +303,9 @@ def test_invalid_observation_timeout_blocks_readiness(agent_task):
     g, runtime, step, tools = remote()
     tools[0].upstream_meta["wright/operation"]["observation_timeout_seconds"] = 604801
     step = replace(step, agent_task=agent_task, schema_digest=schema_digest(tools[0]))
-    with pytest.raises(WorkflowSourceExecutionError, match="observation_timeout_seconds"):
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="observation_timeout_seconds"
+    ):
         runtime.preflight(step)
     assert not g.calls
 
@@ -272,14 +317,22 @@ async def test_profile_without_explicit_observation_budget_keeps_ai_deadline():
     events = []
 
     async def emit(kind, **data):
-        events.append(data)
+        if kind == "operation_progress":
+            events.append(data)
 
     async def decide(messages, schemas, **kwargs):
-        return {"role": "assistant", "tool_calls": [{
-            "id": "submit-once", "function": {
-                "name": schemas[0]["function"]["name"], "arguments": "{}",
-            },
-        }]}
+        return {
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "id": "submit-once",
+                    "function": {
+                        "name": schemas[0]["function"]["name"],
+                        "arguments": "{}",
+                    },
+                }
+            ],
+        }
 
     with pytest.raises(WorkflowSourceExecutionError) as error:
         await runtime.run_task(step, "Run the analysis", decide, emit)
@@ -293,7 +346,8 @@ async def test_profile_without_explicit_observation_budget_keeps_ai_deadline():
 async def test_multihour_budget_does_not_hold_a_stalled_status_call_open():
     g, runtime, step, tools = remote(("working",))
     tools[0].upstream_meta["wright/operation"].update(
-        observation_timeout_seconds=7200, cancel_confirm_seconds=0,
+        observation_timeout_seconds=7200,
+        cancel_confirm_seconds=0,
     )
     step = replace(step, schema_digest=schema_digest(tools[0]), timeout_seconds=0.1)
     original = g.call_tool
@@ -318,7 +372,8 @@ async def test_explicit_observation_timeout_retains_uncertainty_and_single_submi
     events = []
 
     async def emit(kind, **data):
-        events.append(data)
+        if kind == "operation_progress":
+            events.append(data)
 
     with pytest.raises(TimeoutError):
         await runtime.call(step, {}, on_event=emit)
@@ -333,7 +388,8 @@ def test_timeout_requests_cancel_without_resubmission_or_false_completion():
     events = []
 
     async def emit(kind, **kw):
-        events.append(kw)
+        if kind == "operation_progress":
+            events.append(kw)
 
     with pytest.raises(TimeoutError):
         asyncio.run(r.call(replace(s, timeout_seconds=0.07), {}, on_event=emit))
@@ -391,7 +447,8 @@ async def test_progress_is_provider_observed_and_only_configured_metrics_are_use
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
+        if kind == "operation_progress":
+            events.append(payload)
 
     await runtime.call(step, {}, on_event=emit)
     observed = next(e for e in events if e["state"] == "completed")
@@ -423,7 +480,8 @@ async def test_invalid_progress_is_unavailable_never_guessed_or_clamped(value):
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
+        if kind == "operation_progress":
+            events.append(payload)
 
     await runtime.call(step, {}, on_event=emit)
     observed = next(e for e in events if e["state"] == "completed")
@@ -447,7 +505,8 @@ async def test_another_operation_status_never_becomes_this_operations_progress()
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
+        if kind == "operation_progress":
+            events.append(payload)
 
     with pytest.raises(WorkflowSourceExecutionError, match="identity"):
         await runtime.call(step, {}, on_event=emit)
@@ -462,8 +521,9 @@ async def test_interrupting_monitor_does_not_send_a_remote_cancellation():
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
-        if payload["state"] == "working":
+        if kind == "operation_progress":
+            events.append(payload)
+        if kind == "operation_progress" and payload["state"] == "working":
             started.set()
 
     task = asyncio.create_task(runtime.call(step, {}, on_event=emit))
@@ -496,7 +556,8 @@ async def test_timeout_cancellation_reads_actual_terminal_outcome_without_resubm
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
+        if kind == "operation_progress":
+            events.append(payload)
 
     with pytest.raises(TimeoutError):
         await runtime.call(step, {}, on_event=emit)
@@ -522,7 +583,8 @@ async def test_status_binding_changed_during_submission_is_not_adopted():
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
+        if kind == "operation_progress":
+            events.append(payload)
 
     with pytest.raises(WorkflowSourceExecutionError, match="binding has changed"):
         await runtime.call(step, {}, on_event=emit)
@@ -559,7 +621,7 @@ async def test_missing_cancel_authority_is_unavailable_without_a_runtime_questio
     entered = asyncio.Event()
 
     async def emit(kind, **payload):
-        if payload["state"] == "working":
+        if kind == "operation_progress" and payload["state"] == "working":
             entered.set()
 
     task = asyncio.create_task(runtime.call(step, {}, on_event=emit))
@@ -594,7 +656,8 @@ async def test_missing_submission_identity_is_unknown_without_resubmission():
     events = []
 
     async def emit(kind, **payload):
-        events.append(payload)
+        if kind == "operation_progress":
+            events.append(payload)
 
     with pytest.raises(WorkflowSourceExecutionError) as error:
         await runtime.call(step, {}, on_event=emit)

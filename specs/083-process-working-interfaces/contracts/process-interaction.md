@@ -7,6 +7,31 @@ Schemas are generated from owning contracts during implementation, not hand-drif
 
 ## Snapshot
 
+### Retained producer attempts (9 October local implementation)
+
+The recorder's complete read now projects byte-pinned workspace files retained
+before a `design_revision` event, independently of the current output map. This
+also works when the next producer attempt fails before returning any results.
+Existing run records are read without migration or rewriting. No earlier output
+is reintroduced into execution responses, current ports or approval subjects.
+
+The owning process projection uses the existing `outputs[]` shape with role
+`previous_attempt`, `producer_attempt`, and a stable history occurrence ID.
+Original run/step/port identity and file path/hash remain recorded; assessment
+matching uses the original result identity and exact bytes. The common view
+groups these under **Previous attempts** and labels them as superseded evidence.
+Saved generated interfaces can consume these existing fields; compatibility and
+their treatment of this role must still be checked before claiming a particular
+tailored view presents history correctly. The common view remains available.
+
+History navigation and file access reuse the existing process scope, artifact
+owner and readers. Reads require exact run, source, occurrence ID, path and hash;
+changed files report stale. A history ID grants no execution/review authority.
+Only byte-pinned workspace representations qualify: a live CAD document or
+step-response locator may now refer to a later attempt and is not exposed as an
+immutable historical representation. Complete current and prior inventories
+share the recorder's item/byte bounds and fail explicitly if exceeded.
+
 | Field | Contract |
 |---|---|
 | context | ProcessRef, optional run_id, input_snapshot_id/digest, contract_version, snapshot cursor and generated_at |
@@ -85,6 +110,15 @@ maps to them through owning services. Legacy source-start stream can adapt to
 start+follow for compatibility, but disconnect must no longer cancel execution.
 Do not duplicate existing reviewer authorization or result repositories.
 
+Approval decision readiness concerns the exact persisted subject, accepted source,
+frozen inputs, criteria, reviewed files and actor authority. It does not require
+the producer's live capabilities. A pending decision can therefore be enabled
+while execution would be unavailable. Continuation independently requalifies
+current tools, options, readers and frozen model routing before consuming or
+dispatching the action. Clients must use each action's own permitted state;
+neither decision availability nor a recorded approval implies that continuation
+is available. This does not change the transport or UI compatibility version.
+
 `PendingInteraction.decision` optionally exposes the retained decision, actor,
 bounded redacted reason, request identity and integration-test attribution. It
 cannot appear on input interactions. Native review bodies contain only the
@@ -93,6 +127,19 @@ ID; actor, run, destination, automatic-review and integration flags are rejected
 The client verifies the exact returned subject/request/decision. Identical retries
 read the existing decision and can repair an interrupted recorder projection;
 they do not dispatch or rerun work. Approval consumption remains a separate action.
+
+The native input-response route additionally accepts a strict optional `auto`
+boolean, defaulting to false, for explicitly authorized isolated tests. The
+ordinary scoped client and generated interfaces do not expose this switch.
+When true, the existing integration-policy owner checks enabled, current,
+non-revoked enrollment against the checkpoint's workspace, accepted source,
+input subject and frozen campaign/dataset identities. It derives the test actor;
+the caller cannot supply an actor, `integration_test` flag, run or grant.
+Enrollment alone never changes a manual response into a test answer. The input
+owner still validates the answer schema and current source, model configuration
+and upstream artifacts before its existing one-shot continuation. Test attribution
+grants no review, validation override or external-action authority. Identical
+requests return the same retained answer; uncertain claimed work is not replayed.
 
 Native navigation returns shared `NavigationResolution(process, target,
 representation?)`. The resolved target preserves every supplied identity and can
@@ -129,6 +176,20 @@ ambiguity, unsupported motion, bounds or deadline return inspection/download
 fallback; they never change process acceptance or dispatch any operation.
 
 ## Currentness, limits and errors
+
+An optional `preview: "validation-report"` on the existing representation read
+returns passive `text/markdown`, with `X-Wright-View-Format:
+wright.validation.report.v1`. The artifact hash header still identifies the
+original assessment JSON. The owner first enforces exact process/run/result/file
+membership and unchanged bytes, then matches those bytes to a report returned by
+the existing validator for that workspace/run. An embedded assessment ID alone
+grants no access. This mode requires a recorded result (not a prepared input),
+accepts no page/archive selector, and is bounded to16MiB source and2MiB report
+under the existing worker deadline. It carries original checks and currentness;
+it cannot create a review, change a verdict, or start work. Native and managed
+transports use the same owner and process.results grant. Missing capability or
+unsupported reports retain exact download fallback. Existing UI bundles need an
+explicit rebuild to adopt new reader code; no stored bundle is silently changed.
 
 Each mutation includes request_id, expected_source_digest and exact subject/input
 identity as appropriate. Reuse with different payload returns conflict; duplicates

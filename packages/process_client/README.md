@@ -119,6 +119,14 @@ requires those later capabilities and their backend/browser proofs.
 
 ## Shared contract generation
 
+`getRepresentation(reference, {runId, preview: "pdf-page", page: 1})` reads a
+passive page of the same exact recorded PDF through the existing representation
+owner. `page` is one-based and bounded to1–200; archive selection remains exclusive
+to toolpath previews. The client checks the source hash and explicit
+`wright.pdf.page.v1` response format. Omitting `preview` returns the unchanged
+original file. Prepared input snapshots use the same existing input scope.
+
+
 `src/contracts.generated.ts` and the private validator schemas come from actual
 `core.process_interfaces.contract_schemas()` and its owning fixture. Run from
 the repository Python environment:

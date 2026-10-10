@@ -262,6 +262,11 @@ def checkpoint(case, result=None):
 
 
 async def decide(case, current):
+    # A normal start captures a frozen input snapshot and produces v3. Retain
+    # the enrolled owner context rather than rewriting it to a legacy fixture.
+    assert current.continuation["schema_version"] == 3
+    assert current.continuation["checkpoint_kind"] == "approval"
+    assert current.continuation["execution_context"]["integration_policy_digest"]
     return await router.decide_workflow_approval_checkpoint_endpoint(
         current.run_id,
         current.checkpoint_id,
@@ -270,6 +275,7 @@ async def decide(case, current):
             subject_digest=current.subject_digest,
             decision="approved",
             auto=True,
+            reason="",
             request_id=f"decide-{current.step_id}",
         ),
         case.request,
@@ -278,6 +284,7 @@ async def decide(case, current):
 
 
 async def resume(case, current):
+    case.resume_service = fresh_service(case.root)
     return await router.resume_workflow_approval_checkpoint_endpoint(
         current.run_id,
         WorkflowApprovalResumeRequest(
@@ -287,7 +294,7 @@ async def resume(case, current):
             request_id=f"resume-{current.step_id}",
         ),
         case.request,
-        fresh_service(case.root),
+        case.resume_service,
     )
 
 
@@ -360,6 +367,59 @@ async def test_two_checkpoint_api_restarts_and_duplicate_resumes_execute_real_mc
 
 
 @pytest.mark.asyncio
+async def test_resume_route_disconnect_keeps_actual_mcp_owned_and_retry_attaches(
+    case, monkeypatch
+):
+    _, second = await second_approved(case)
+    original = case.gateway.call_tool
+    reached, release = asyncio.Event(), asyncio.Event()
+
+    async def delayed(*args, **kwargs):
+        reached.set()
+        await release.wait()
+        return await original(*args, **kwargs)
+
+    monkeypatch.setattr(case.gateway, "call_tool", delayed)
+    observer = asyncio.create_task(resume(case, second))
+    try:
+        await asyncio.wait_for(reached.wait(), 20)
+        app = case.resume_service.process_interfaces
+        assert app.runs.is_live(second.run_id)
+        enabled, explanation = app.runs.cancellation_capability(second.run_id)
+        assert not enabled and "no currently qualified cancellation" in explanation
+        observer.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await observer
+        assert app.runs.is_live(second.run_id)
+        assert dispatch_count(case) == 0
+        # Same service and exact request reattach; a new service would model a
+        # backend restart, which is a different interruption boundary.
+        retry = asyncio.create_task(
+            router.resume_workflow_approval_checkpoint_endpoint(
+                second.run_id,
+                WorkflowApprovalResumeRequest(
+                    session_id="session",
+                    checkpoint_id=second.checkpoint_id,
+                    subject_digest=second.subject_digest,
+                    request_id=f"resume-{second.step_id}",
+                ),
+                case.request,
+                case.resume_service,
+            )
+        )
+        await asyncio.sleep(0)
+        release.set()
+        result = await retry
+        assert result.execution_result["status"] == "completed"
+        assert dispatch_count(case) == 1
+        assert not app.runs.is_live(second.run_id)
+    finally:
+        release.set()
+        if hasattr(case, "resume_service"):
+            await case.resume_service.process_interfaces.close()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "boundary", ["before_dispatch", "after_dispatch", "lost_response"]
 )
@@ -382,7 +442,9 @@ async def test_interrupted_final_mcp_is_durable_unknown_and_cannot_replay(
     pending = asyncio.create_task(resume(case, second))
     await asyncio.wait_for(reached.wait(), timeout=20)
     if boundary != "lost_response":
-        pending.cancel()
+        # The HTTP observer no longer owns execution. Shut down the actual
+        # owning runtime to exercise interrupted/unconfirmed operation evidence.
+        await case.resume_service.process_interfaces.close()
         with pytest.raises(asyncio.CancelledError):
             await pending
     else:
@@ -400,7 +462,9 @@ async def test_interrupted_final_mcp_is_durable_unknown_and_cannot_replay(
         await resume(case, second)
     assert blocked.value.detail["code"] == "workflow_continuation_outcome_unknown"
     assert dispatch_count(case) == expected_calls
-    assert record(case)["status"] in {"failed", "cancelled"}
+    assert record(case)["status"] == (
+        "failed" if boundary == "lost_response" else "interrupted"
+    )
 
 
 @pytest.mark.asyncio

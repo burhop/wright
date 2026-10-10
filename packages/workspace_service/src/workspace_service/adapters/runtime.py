@@ -40,7 +40,6 @@ def _with_builtin_workspace_tools(tools: list[str]) -> list[str]:
         for tool in tools
         if tool not in {RIVET_WORKFLOWS_SERVER_ID, RIVET_WORKFLOWS_SERVER_NAME}
     ]
-    enabled.append(RIVET_WORKFLOWS_SERVER_ID)
     return enabled
 
 
@@ -1243,7 +1242,23 @@ class WorkspaceManager:
 
     def get_git_status(self) -> Dict[str, Any]:
         """Retrieve branch name, clean status, and changed items array from the local Git repo."""
-        branch_name = "main"
+        probe = subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            cwd=self.base_dir,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if probe.returncode != 0:
+            if "not a git repository" not in probe.stderr.lower():
+                raise RuntimeError("Git could not inspect this workspace repository.")
+            return {
+                "branch_name": "",
+                "is_clean": False,
+                "changes": [],
+                "is_repository": False,
+            }
+        branch_name = ""
         try:
             res_branch = subprocess.run(
                 ["git", "branch", "--show-current"],
@@ -1251,10 +1266,11 @@ class WorkspaceManager:
                 capture_output=True,
                 text=True,
                 check=True,
+                timeout=10,
             )
-            branch_name = res_branch.stdout.strip() or "main"
-        except Exception:
-            pass
+            branch_name = res_branch.stdout.strip()
+        except Exception as error:
+            raise RuntimeError("Git could not read the workspace branch.") from error
 
         changes = []
         try:
@@ -1264,6 +1280,7 @@ class WorkspaceManager:
                 capture_output=True,
                 text=True,
                 check=True,
+                timeout=10,
             )
             for line in res.stdout.splitlines():
                 if len(line) < 4:
@@ -1291,9 +1308,15 @@ class WorkspaceManager:
                 )
         except Exception as e:
             logger.error("Failed to run git status: %s", e)
+            raise RuntimeError("Git could not load workspace changes.") from e
 
         is_clean = len(changes) == 0
-        return {"branch_name": branch_name, "is_clean": is_clean, "changes": changes}
+        return {
+            "branch_name": branch_name,
+            "is_clean": is_clean,
+            "changes": changes,
+            "is_repository": True,
+        }
 
     def get_git_diff(self, rel_path: str) -> str:
         """Return the unified git diff of a file (handles untracked files)."""
@@ -1642,18 +1665,17 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
             materialized = str(srv["instructions"]).replace("{workspace}", local_path)
             active_instructions.append(f"## {srv['name']} Instructions\n{materialized}")
 
-    global_rules = (
-        "## Global Workspace Rules\n"
-        f"1. **Workspace Path**: The absolute path to the current project workspace is `{local_path}`. All files and assets generated or modified during this session must reside directly within this folder or its subdirectories.\n"
-        "2. **Excluding System Temp/Hidden Paths**: Never write or export final requested outputs to system temporary directories (such as `/tmp/`, `/var/tmp/`, etc.).\n"
-        "3. **Explicit MCP Target Arguments**: When calling MCP tools (such as OpenSCAD, FreeCAD, CalculiX, etc.) to create models, save files, run simulations, or export files (e.g., STL, 3MF, PNG, etc.), you must explicitly specify target directory and output path parameters (e.g. `workspace`, `output_path`, `path`, `directory`, `cwd`) pointing to this active workspace or a subfolder inside it (e.g. `./`), instead of relying on the tools' default parameters which often fall back to temporary system directories.\n\n"
+    from workspace_service.workflow_instruction_settings import (
+        WorkflowInstructionSettings,
     )
+    from core.workflow_instructions import WorkflowInstructionSet
+    from agent_adapters.workflow_instructions import embedded_asset
 
-    return (
-        "Here are the instructions on how to use the loaded MCP tools within the Wright platform:\n\n"
-        + global_rules
-        + ("\n\n".join(active_instructions) if active_instructions else "")
-    )
+    captured = WorkflowInstructionSettings(db_path).read()["instructions"]
+    global_rules = embedded_asset(
+        WorkflowInstructionSet.model_validate(captured), "context.workspace"
+    ).render({"workspace_path": local_path})
+    return global_rules + "\n\n" + "\n\n".join(active_instructions)
 
 
 def write_workspace_agent_context(

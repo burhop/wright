@@ -350,7 +350,7 @@ it("offers an additive repair without changing the existing connection", async (
   }
   render(<Editor />);
   const select = screen.getByTestId("workflow-recovery-cad-export-format-0");
-  await within(select).findByRole("option", { name: "dxf" });
+  await within(select).findByRole("option", { name: "DXF" });
   fireEvent.change(select, { target: { value: "dxf" } });
   expect(screen.getByRole("alert")).toHaveTextContent("Review model uses STEP");
   expect(latest).toBe(original.workflow);

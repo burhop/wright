@@ -23,6 +23,37 @@ from workspace_service.process_validation_cli import main
 from workspace_service.process_validation_tools import ProcessValidationTool
 
 
+def test_fixed_validation_schemas_compile_once_and_return_independent_copies(
+    monkeypatch,
+):
+    from pydantic import BaseModel
+    from workspace_service.process_validation_tools import _validation_schema
+
+    _validation_schema.cache_clear()
+    original = BaseModel.model_json_schema.__func__
+    calls = []
+
+    def generate(cls, *args, **kwargs):
+        calls.append(cls)
+        return original(cls, *args, **kwargs)
+
+    monkeypatch.setattr(BaseModel, "model_json_schema", classmethod(generate))
+    try:
+        for operation in ("evaluate", "read", "get", "export"):
+            first = ProcessValidationTool(None, operation)
+            expected = first.contract()
+            second = ProcessValidationTool(None, operation)
+            altered = second.contract()
+            assert altered == expected
+            altered["input_schema"]["properties"].clear()
+            altered["output_schema"].clear()
+            assert first.contract() == expected
+        assert len(calls) == 8
+        assert len(set(calls)) == 8
+    finally:
+        _validation_schema.cache_clear()
+
+
 def args(length=100):
     profile = load_profile("structured-demo")
     value = {"part_id": "demo-plate", "length_mm": length}

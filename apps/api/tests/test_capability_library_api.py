@@ -156,7 +156,7 @@ def test_repeated_catalog_reads_do_not_rebuild_bundled_snapshot(
     assert client.get("/api/mcp/capabilities").status_code == 200
 
 
-def test_fresh_start_managed_server_does_not_overclaim_legacy_validation(
+def test_fresh_start_does_not_advertise_retired_engine(
     capability_client,
 ) -> None:
     client, database_path = capability_client
@@ -165,13 +165,9 @@ def test_fresh_start_managed_server_does_not_overclaim_legacy_validation(
     response = client.get("/api/mcp/capabilities", params={"limit": 200})
 
     assert response.status_code == 200
-    managed = next(
-        capability
-        for capability in response.json()["capabilities"]
-        if capability["capability_id"] == "rivet-workflows"
-    )
-    assert managed["validation_result"]["status"] == "not_tested"
-    assert managed["validation_result"]["evidence_status"] == "unverified"
+    assert "rivet-workflows" not in {
+        capability["capability_id"] for capability in response.json()["capabilities"]
+    }
 
 
 def test_capability_detail_resolves_alias_without_leaking_secrets(

@@ -152,7 +152,12 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
             <button
               type="button"
               aria-label={`Close ${tab.name}`}
-              title={`Close ${tab.name}`}
+              title={
+                tab.isSaving
+                  ? "Wait for saving to finish before closing this tab."
+                  : `Close ${tab.name}`
+              }
+              disabled={tab.isSaving}
               onClick={(e) => {
                 e.stopPropagation();
                 onCloseTab(tab.path);
@@ -162,8 +167,8 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
                 background: "none",
                 border: "none",
                 color: "inherit",
-                cursor: "pointer",
-                opacity: isActive ? 0.85 : 0.65,
+                cursor: tab.isSaving ? "wait" : "pointer",
+                opacity: tab.isSaving ? 0.35 : isActive ? 0.85 : 0.65,
                 padding: "2px",
                 display: "flex",
                 alignItems: "center",
@@ -175,11 +180,13 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
                 transition: "all 0.15s ease",
               }}
               onMouseEnter={(e) => {
+                if (tab.isSaving) return;
                 e.currentTarget.style.opacity = "1";
                 e.currentTarget.style.backgroundColor =
                   "rgba(255, 255, 255, 0.12)";
               }}
               onMouseLeave={(e) => {
+                if (tab.isSaving) return;
                 e.currentTarget.style.opacity = isActive ? "0.85" : "0.65";
                 e.currentTarget.style.backgroundColor = "transparent";
               }}

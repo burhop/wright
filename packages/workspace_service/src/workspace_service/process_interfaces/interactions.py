@@ -13,7 +13,7 @@ import time
 import json
 from dataclasses import asdict
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_serializer, model_validator
 
 from core.process_interactions import (
     PAGE_ITEMS,
@@ -41,6 +41,10 @@ from data_vault.workflow_continuation_repository import (
 )
 
 from ..workflow_human_input import HumanInputDeclaration
+from core.workflow_input_conditions import (
+    ConditionalInputEvaluation,
+    validate_requirements_resolution,
+)
 from .errors import ProcessInterfaceError
 
 
@@ -54,9 +58,48 @@ class InputCheckpointSubject(Contract):
     artifact_digests: tuple[Digest, ...] = Field(max_length=PAGE_ITEMS)
     step_id: Identifier
     declaration: HumanInputDeclaration
-    upstream_digests: dict[ResultIdentifier, Digest] = Field(
-        min_length=1, max_length=PAGE_ITEMS
-    )
+    upstream_digests: dict[ResultIdentifier, Digest] = Field(max_length=PAGE_ITEMS)
+    condition_evaluation: ConditionalInputEvaluation | None = None
+
+    @model_validator(mode="after")
+    def declared_evidence_scope(self):
+        # Old subjects keep both their required evidence and exact wire shape;
+        # no defaults/extra fields can change a historical subject's digest.
+        if self.declaration.version == 1 and not self.upstream_digests:
+            raise ValueError("Version 1 input checkpoints require upstream evidence")
+        if (self.declaration.version == 3) != (self.condition_evaluation is not None):
+            raise ValueError(
+                "A conditional input subject requires its recorded evaluation"
+            )
+        if self.condition_evaluation:
+            condition = self.declaration.when
+            evaluation = self.condition_evaluation
+            if (
+                evaluation.decision != "ask"
+                or evaluation.source != condition.source
+                or self.upstream_digests.get(condition.source)
+                != evaluation.source_digest
+            ):
+                raise ValueError(
+                    "The input evaluation does not match its upstream subject"
+                )
+            validate_requirements_resolution(
+                condition,
+                self.declaration.response_schema,
+                {
+                    "version": "wright.requirements-resolution/1",
+                    "unresolved_fields": list(evaluation.unresolved_fields),
+                    "resolved_values": evaluation.resolved_values,
+                },
+            )
+        return self
+
+    @model_serializer(mode="wrap")
+    def preserved_legacy_shape(self, serialize):
+        result = serialize(self)
+        if self.condition_evaluation is None:
+            result.pop("condition_evaluation", None)
+        return result
 
     @field_validator("input_digests", "artifact_digests")
     @classmethod
@@ -113,6 +156,7 @@ async def prepare_input_continuation(
             gateway=gateway,
             integration_policy_digest=(context or {}).get("integration_policy_digest"),
             run_id=checkpoint.run_id,
+            expected_execution_context=context,
         )
         if prepared.execution_context != context:
             raise _unavailable(
@@ -195,6 +239,24 @@ class HumanInputCheckpointService:
                 raise ValueError(
                     "Input checkpoint identity does not match its evidence"
                 )
+            if subject.condition_evaluation is not None:
+                from ..workflow_execution_continuation import decode_value
+                from ..workflow_human_input_runtime import (
+                    condition_requirements_evidence,
+                )
+
+                evaluation = subject.condition_evaluation
+                encoded = continuation["responses"][evaluation.source]
+                if canonical_digest(encoded) != evaluation.source_digest:
+                    raise ValueError("Conditional input evidence changed")
+                _, resolution = condition_requirements_evidence(
+                    subject.declaration.model_dump(mode="json"), decode_value(encoded)
+                )
+                if (
+                    resolution.unresolved_fields != evaluation.unresolved_fields
+                    or resolution.resolved_values != evaluation.resolved_values
+                ):
+                    raise ValueError("Conditional input evaluation changed")
         except (ValueError, TypeError, KeyError) as error:
             raise _unavailable(
                 "The saved input checkpoint evidence is inconsistent."

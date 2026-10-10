@@ -4,25 +4,52 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_serializer, model_validator
 
 from core.process_interactions import checked_value_schema
 from core.process_validation import Contract, Identifier
+from core.workflow_input_conditions import HumanInputCondition
 
 
 class HumanInputDeclaration(Contract):
-    version: Literal[1]
+    # Version 1 retains its connected producer-evidence requirement. Version 2
+    # explicitly permits a question anchored to the saved definition and frozen
+    # run inputs before an engineering producer has run.
+    version: Literal[1, 2, 3]
     kind: Literal["input"]
     instructions: str = Field(min_length=1, max_length=8000)
     response_schema: dict
     output_port: Identifier
+    when: HumanInputCondition | None = None
 
     @field_validator("version", mode="before")
     @classmethod
     def exact_version(cls, value):
-        if type(value) is not int or value != 1:
-            raise ValueError("Human input requires declaration version 1")
+        if type(value) is not int or value not in {1, 2, 3}:
+            raise ValueError("Human input requires declaration version 1, 2 or 3")
         return value
+
+    @model_validator(mode="after")
+    def versioned_condition(self):
+        if (self.version == 3) != (self.when is not None):
+            raise ValueError(
+                "A conditional input requires version 3 and a declared condition"
+            )
+        if self.when and (
+            set(self.when.fields) != set(self.response_schema.get("properties", {}))
+            or self.response_schema.get("additionalProperties") is not False
+        ):
+            raise ValueError(
+                "Condition fields must match the fixed closed response schema"
+            )
+        return self
+
+    @model_serializer(mode="wrap")
+    def preserved_legacy_shape(self, serialize):
+        result = serialize(self)
+        if self.when is None:
+            result.pop("when", None)
+        return result
 
     @field_validator("instructions")
     @classmethod
@@ -53,7 +80,7 @@ def compile_human_input(block_id, fields, incoming, blocks):
     except (ValueError, TypeError, KeyError) as error:
         raise _invalid(
             f"{title}: the declared human input is invalid.",
-            "Declare version 1 input instructions, a bounded object response_schema "
+            "Declare versioned input instructions, a bounded object response_schema "
             "and exactly one structured response output_port.",
         ) from error
     outputs = fields.get("outputs", [])
@@ -62,6 +89,23 @@ def compile_human_input(block_id, fields, incoming, blocks):
         for port in fields.get("inputs", [])
         for source in incoming.get(f"{block_id}.{port['key']}", [])
     )
+    if declaration.when:
+        source_id, source_port = declaration.when.source.split(".")
+        producer = blocks.get(source_id)
+        if (
+            declaration.when.source not in {source for _, source in refs}
+            or not producer
+            or producer["kind"] != "task"
+            or not any(
+                port.get("key") == source_port
+                and port.get("kind") == "structured_result"
+                for port in producer["fields"].get("outputs", [])
+            )
+        ):
+            raise _invalid(
+                f"{title}: the condition needs connected structured upstream evidence.",
+                "Connect the declared requirements-resolution output and select its exact source address.",
+            )
     if (
         set(settings) - {"authoring_template", "human_interaction"}
         or fields.get("performed_by") != "engineer"
@@ -73,21 +117,25 @@ def compile_human_input(block_id, fields, incoming, blocks):
         or outputs[0].get("key") != declaration.output_port
         or outputs[0].get("kind") != "structured_result"
         or outputs[0].get("quantity") != "one"
-        or not refs
+        or (not refs and declaration.version == 1)
         or any(
             port.get("required") is True
             and len(incoming.get(f"{block_id}.{port['key']}", [])) != 1
             for port in fields.get("inputs", [])
         )
-        or not any(
-            blocks[source.split(".", 1)[0]]["kind"] == "task" for _, source in refs
+        or (
+            refs
+            and not any(
+                blocks[source.split(".", 1)[0]]["kind"] == "task" for _, source in refs
+            )
         )
     ):
         raise _invalid(
-            f"{title}: human input needs an Engineer work step, connected upstream "
-            "evidence and one structured response output.",
+            f"{title}: human input needs an Engineer work step, one structured response "
+            "output and connected upstream evidence when required by its declaration or ports.",
             "Connect the outputs to review, declare the response port and remove "
-            "AI prompts, tools or reusable execution bindings from this step.",
+            "AI prompts, tools or reusable execution bindings from this step. "
+            "Use declaration version 2 for a Request input step before any upstream work.",
         )
     return PromptStep(
         block_id,

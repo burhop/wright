@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { expect, it, vi } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { McpTaskOptions } from "./McpTaskOptions";
 import { createAuthoringObject } from "./authoring-objects";
 import {
@@ -29,6 +29,109 @@ function fixture() {
     block: created.workflow.blocks.find((block) => block.id === add.block.id)!,
   };
 }
+
+afterEach(() => vi.unstubAllGlobals());
+
+it("lists configured MCPs without internal services and records an explicit late selection", async () => {
+  const { workflow, block } = fixture();
+  const tool = {
+    name: "cad__create",
+    server_id: "cad",
+    tool_name: "create",
+    title: "Create",
+    description: "",
+    input_schema: {},
+    schema_digest: "digest",
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async (url: string) =>
+        new Response(
+          JSON.stringify(
+            url === "/api/mcp/servers"
+              ? { servers: [{ server_id: "cad", name: "CAD application" }] }
+              : {
+                  tools: [
+                    tool,
+                    { ...tool, server_id: "wright-workspace-files" },
+                    { ...tool, server_id: "wright-process-validation" },
+                  ],
+                },
+          ),
+        ),
+    ),
+  );
+  const apply = vi.fn(() => true);
+  render(
+    <McpTaskOptions
+      block={block}
+      workflow={workflow}
+      sessionId="workspace"
+      readOnly={false}
+      onApply={apply}
+    />,
+  );
+  await screen.findByRole("option", { name: "CAD application" });
+  expect(
+    screen.queryByRole("option", { name: "MCP server" }),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.getByRole("option", { name: "Choose server later" }),
+  ).toHaveValue("");
+  fireEvent.change(screen.getByTestId("workflow-recovery-task-server"), {
+    target: { value: "cad" },
+  });
+  expect(apply).toHaveBeenCalledWith([
+    {
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key: "mcp_server",
+      value: "cad",
+    },
+    {
+      kind: "set_block_configuration",
+      blockId: block.id,
+      key: "mcp_server_name",
+      value: "CAD application",
+    },
+  ]);
+});
+
+it("reports missing server metadata and refreshes without guessing a binding", async () => {
+  const { workflow, block } = fixture();
+  let available = false;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) =>
+      url === "/api/mcp/servers" && !available
+        ? new Response("Unavailable", { status: 503 })
+        : new Response(
+            JSON.stringify(
+              url === "/api/mcp/servers" ? { servers: [] } : { tools: [] },
+            ),
+          ),
+    ),
+  );
+  const apply = vi.fn(() => true);
+  render(
+    <McpTaskOptions
+      block={block}
+      workflow={workflow}
+      sessionId="workspace"
+      readOnly={false}
+      onApply={apply}
+    />,
+  );
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "Could not load workspace MCP servers",
+  );
+  available = true;
+  fireEvent.click(screen.getByRole("button", { name: "Refresh servers" }));
+  await screen.findByText(/No MCP servers are available to this workspace/);
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  expect(apply).not.toHaveBeenCalled();
+});
 
 it("offers32 calls while preserving default8 and the600-second maximum", () => {
   const { workflow, block } = fixture();

@@ -20,6 +20,15 @@ The public `wright-engineering` distribution contains the complete application
 runtime. Manager adapters only install or connect to it. Internal component
 packages are not public installation choices.
 
+## Build and use a process
+
+Use the [engineering workspace tour](../workflows/engineering-workspace-tour.md)
+to build a workflow, prepare inputs, inspect outputs and follow declared decisions.
+The [working-view guide](../workflows/process-working-interfaces.md) describes
+current development UI controls and build flags. A Codex connection in the table
+above calls Wright's MCP service; replacing Wright's internal Hermes agent runtime
+with Codex is a separate integration project.
+
 ## Shared native runtime
 
 All native manager paths use one Wright-owned root, `WRIGHT_HOME` (default

@@ -23,41 +23,84 @@ const tab = createProcessWorkspaceTab(process, {
 describe("workspace process locators", () => {
   it("routes exact evidence to the common tab even when tailored tabs precede it", () => {
     const working = createProcessWorkspaceTab(process, {
-      viewId: "working-view", runId: "run-one",
-      interface: { kind: "working", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32) },
+      viewId: "working-view",
+      runId: "run-one",
+      interface: {
+        kind: "working",
+        ui_id: "ui-" + "a".repeat(32),
+        revision_id: "revision-" + "b".repeat(32),
+      },
     });
     const preview = createProcessWorkspaceTab(process, {
-      viewId: "preview-view", runId: "run-one",
-      interface: { kind: "preview", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), job_id: "job-one" },
+      viewId: "preview-view",
+      runId: "run-one",
+      interface: {
+        kind: "preview",
+        ui_id: "ui-" + "a".repeat(32),
+        revision_id: "revision-" + "b".repeat(32),
+        job_id: "job-one",
+      },
     });
-    expect(findCommonProcessWorkspaceTab([working, preview, tab], process, "run-one")).toEqual(tab);
-    expect(findCommonProcessWorkspaceTab([working, preview], process, "run-one")).toBeUndefined();
+    expect(
+      findCommonProcessWorkspaceTab(
+        [working, preview, tab],
+        process,
+        "run-one",
+      ),
+    ).toEqual(tab);
+    expect(
+      findCommonProcessWorkspaceTab([working, preview], process, "run-one"),
+    ).toBeUndefined();
     expect(working.processView.interface?.kind).toBe("working");
     expect(preview.processView.interface?.kind).toBe("preview");
   });
 
   it.each([
-    { process: { ...process, workspace_id: "other-workspace" }, runId: "run-one" },
-    { process: { ...process, source_path: "workflows/other.workflow.wflow" }, runId: "run-one" },
-    { process: { ...process, source_digest: "b".repeat(64) }, runId: "run-one" },
+    {
+      process: { ...process, workspace_id: "other-workspace" },
+      runId: "run-one",
+    },
+    {
+      process: { ...process, source_path: "workflows/other.workflow.wflow" },
+      runId: "run-one",
+    },
+    {
+      process: { ...process, source_digest: "b".repeat(64) },
+      runId: "run-one",
+    },
     { process, runId: "other-run" },
     { process, runId: undefined },
   ])("does not reuse a common tab for a different subject %j", (subject) => {
-    expect(findCommonProcessWorkspaceTab([tab], subject.process, subject.runId)).toBeUndefined();
+    expect(
+      findCommonProcessWorkspaceTab([tab], subject.process, subject.runId),
+    ).toBeUndefined();
   });
 
   it("keeps prepared common views separate from recorded-run evidence", () => {
-    const prepared = createProcessWorkspaceTab(process, { viewId: "prepared-view" });
-    expect(findCommonProcessWorkspaceTab([prepared, tab], process, "run-one")).toEqual(tab);
-    expect(findCommonProcessWorkspaceTab([tab, prepared], process, undefined)).toEqual(prepared);
-    expect(new URLSearchParams(processWorkspaceQuery("?processUIKind=working&processUIJob=job-one", tab)).has("processUIKind")).toBe(false);
+    const prepared = createProcessWorkspaceTab(process, {
+      viewId: "prepared-view",
+    });
+    expect(
+      findCommonProcessWorkspaceTab([prepared, tab], process, "run-one"),
+    ).toEqual(tab);
+    expect(
+      findCommonProcessWorkspaceTab([tab, prepared], process, undefined),
+    ).toEqual(prepared);
+    expect(
+      new URLSearchParams(
+        processWorkspaceQuery(
+          "?processUIKind=working&processUIJob=job-one",
+          tab,
+        ),
+      ).has("processUIKind"),
+    ).toBe(false);
   });
 
   it("creates a typed tab with no user input, credentials or browser run state", () => {
     expect(tab).toEqual({
       type: "process",
       path: "/.wright/process-views/view-one",
-      name: "thermal.wflow · working view",
+      name: "Working view · thermal.wflow",
       isDirty: false,
       processView: {
         version: "1",
@@ -188,31 +231,93 @@ describe("workspace process locators", () => {
     expect(processWorkspaceQuery("")).toBe("");
   });
 
-  it.each(["working", "preview"] as const)("round-trips exact %s interface locators in existing tabs", kind => {
-    const locator = {kind, ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32),
-      ...(kind === "preview" ? {job_id: "job-one"} : {})};
-    const view = checkedProcessWorkspaceView({...tab.processView, interface: locator});
-    const app = createProcessWorkspaceTab(process, {viewId: view.view_id, runId: view.run_id, interface: view.interface});
-    expect(checkedProcessWorkspaceTab(JSON.parse(JSON.stringify(app)), process.workspace_id)).toEqual(app);
-    expect(processWorkspaceTabFromQuery(processWorkspaceQuery("?workflow=canonical", app), process.workspace_id)).toEqual(app);
-    expect(app.processView.interface).toEqual(locator);
-    expect(() => checkedProcessWorkspaceTab(app, "different-workspace")).toThrow();
-    const common = processWorkspaceQuery(processWorkspaceQuery("", app), tab);
-    expect(new URLSearchParams(common).has("processUI")).toBe(false);
-  });
+  it.each(["working", "preview"] as const)(
+    "round-trips exact %s interface locators in existing tabs",
+    (kind) => {
+      const locator = {
+        kind,
+        ui_id: "ui-" + "a".repeat(32),
+        revision_id: "revision-" + "b".repeat(32),
+        ...(kind === "preview" ? { job_id: "job-one" } : {}),
+      };
+      const view = checkedProcessWorkspaceView({
+        ...tab.processView,
+        interface: locator,
+      });
+      const app = createProcessWorkspaceTab(process, {
+        viewId: view.view_id,
+        runId: view.run_id,
+        interface: view.interface,
+      });
+      expect(
+        checkedProcessWorkspaceTab(
+          JSON.parse(JSON.stringify(app)),
+          process.workspace_id,
+        ),
+      ).toEqual(app);
+      expect(
+        processWorkspaceTabFromQuery(
+          processWorkspaceQuery("?workflow=canonical", app),
+          process.workspace_id,
+        ),
+      ).toEqual(app);
+      expect(app.processView.interface).toEqual(locator);
+      expect(() =>
+        checkedProcessWorkspaceTab(app, "different-workspace"),
+      ).toThrow();
+      const common = processWorkspaceQuery(processWorkspaceQuery("", app), tab);
+      expect(new URLSearchParams(common).has("processUI")).toBe(false);
+    },
+  );
 
   it.each([
-    {kind: "working", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), job_id: "job-one"},
-    {kind: "preview", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32)},
-    {kind: "working", ui_id: "../outside", revision_id: "revision-" + "b".repeat(32)},
-    {kind: "preview", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), job_id: "../outside"},
-    {kind: "working", ui_id: "ui-" + "a".repeat(32), revision_id: "revision-" + "b".repeat(32), token: "secret"},
-  ])("rejects malformed or authority-bearing interface locators %j", locator => {
-    expect(() => checkedProcessWorkspaceView({...tab.processView, interface: locator})).toThrow();
-  });
+    {
+      kind: "working",
+      ui_id: "ui-" + "a".repeat(32),
+      revision_id: "revision-" + "b".repeat(32),
+      job_id: "job-one",
+    },
+    {
+      kind: "preview",
+      ui_id: "ui-" + "a".repeat(32),
+      revision_id: "revision-" + "b".repeat(32),
+    },
+    {
+      kind: "working",
+      ui_id: "../outside",
+      revision_id: "revision-" + "b".repeat(32),
+    },
+    {
+      kind: "preview",
+      ui_id: "ui-" + "a".repeat(32),
+      revision_id: "revision-" + "b".repeat(32),
+      job_id: "../outside",
+    },
+    {
+      kind: "working",
+      ui_id: "ui-" + "a".repeat(32),
+      revision_id: "revision-" + "b".repeat(32),
+      token: "secret",
+    },
+  ])(
+    "rejects malformed or authority-bearing interface locators %j",
+    (locator) => {
+      expect(() =>
+        checkedProcessWorkspaceView({ ...tab.processView, interface: locator }),
+      ).toThrow();
+    },
+  );
 
-  it.each(["&processUI=ui-" + "a".repeat(32), "&processUIKind=working", "&processUIJob=job-one"])(
-    "rejects partial interface queries %s", suffix => {
-      expect(() => processWorkspaceTabFromQuery(processWorkspaceQuery("", tab) + suffix, process.workspace_id)).toThrow();
-    });
+  it.each([
+    "&processUI=ui-" + "a".repeat(32),
+    "&processUIKind=working",
+    "&processUIJob=job-one",
+  ])("rejects partial interface queries %s", (suffix) => {
+    expect(() =>
+      processWorkspaceTabFromQuery(
+        processWorkspaceQuery("", tab) + suffix,
+        process.workspace_id,
+      ),
+    ).toThrow();
+  });
 });

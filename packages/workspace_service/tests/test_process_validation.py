@@ -91,6 +91,19 @@ def test_defect_has_precise_values_source_location_and_repair_target(tmp_path):
     assert outcome.assessment.summary.requirements_compliant is False
 
 
+def test_finding_describes_the_requirement_without_instructing_evidence_edits(tmp_path):
+    outcome, _, _ = evaluate(tmp_path, {"length_mm": 98, "part_id": "demo-plate"})
+    finding = outcome.assessment.findings[0]
+    assert finding.correction.target == "Required at /length_mm: 100 mm, within 0.2 mm."
+    assert finding.explanation.startswith("Observed 98 mm. Required at /length_mm:")
+    # A structured subject can be an inspection record. Its selector is an
+    # evidence locator, not authorization to replace a measurement with a target.
+    assert finding.correction.action == "revise_output"
+    assert finding.correction.target_step_id == finding.owner.step_id == "producer"
+    assert finding.observed == 98 and finding.expected.target == 100
+    assert finding.correction.recheck_ids
+
+
 @pytest.mark.parametrize("value", [True, "100", None])
 def test_invalid_numeric_value_is_an_output_defect_not_a_reader_crash(tmp_path, value):
     outcome, _, _ = evaluate(tmp_path, {"length_mm": value, "part_id": "demo-plate"})
@@ -286,6 +299,10 @@ def test_failure_preserves_observed_and_expected_units_separately(tmp_path):
     finding = outcome.assessment.findings[0]
     assert finding.unit == "mm" and finding.observed_unit == "m"
     assert finding.expected.target == 100 and finding.observed == 0.098
+    assert finding.explanation.startswith(
+        "Observed 0.098 m. Required at /length_mm: 100 mm"
+    )
+    assert "Observed 0.098 mm" not in finding.explanation
 
 
 def test_inline_text_observation_does_not_include_serialization_quotes():

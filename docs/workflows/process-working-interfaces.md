@@ -14,7 +14,166 @@ records exact limitations. This guide is not a release or engineering-acceptance
 claim. Consult the
 [task record](../../specs/083-process-working-interfaces/tasks.md).
 
+## Current-source setup
+
+This guide describes development source as of 10 October 2026. Published releases
+may lag it. For a source frontend, enable these Vite flags **before building**:
+
+```dotenv
+VITE_WRIGHT_WORKFLOW_RECOVERY=true
+VITE_WRIGHT_WORKFLOW_COMPOSER=true
+VITE_WRIGHT_PROCESS_DEFINITION_VIEW=true
+VITE_WORKSPACE_SURFACES_ENABLED=true
+```
+
+Set `WRIGHT_WEB_API_PROXY_TARGET` to the running Wright API. These flags enable UI
+surfaces; they do not configure a model, install engineering applications or grant
+MCP permissions. Use the normal authenticated workspace and enable the providers
+needed by the selected process. Existing release installation instructions remain
+in the [getting-started guides](../getting-started/overview.md).
+
+## Instructions, assumptions and deliberate questions
+
+Open **Instructions** from the workflow editor's menu to inspect the saved
+instruction collection, effective role instructions and assumption policy.
+**Document reasonable assumptions** allows unspecified choices to be recorded;
+explicit requirements still constrain the task. Step overrides are inspectable
+in the block's instruction controls. Protocol instructions remain subject to
+compatibility checks and backend enforcement.
+
+In Settings, **Workflow instruction defaults** configures newly authored
+workflows. **Update from current defaults...** proposes an explicit update for an
+existing workflow; review it and save a new revision. Changing global defaults
+never silently changes a saved workflow or a run already underway.
+
+Use **Request input** for a deliberate question, including a first-step question.
+Configure its fields and connect its response to downstream work. A declared
+condition can select whether to ask. A valid answer continues the same durable
+run. It does not approve an engineering review or authorize an external action.
+Unattended steps do not create opportunistic questions; missing configuration
+appears in readiness, and execution faults retain an error or configured hold.
+
+**Export / import workflow** includes saved instruction bodies and supported
+reference, validation and UI dependencies. Inspect the package before importing;
+configure missing capabilities in the receiving workspace. Credentials, live
+runs, prior answers, approval authority and trusted UI builds do not transfer.
+Imported UI source requires local compatibility checking, rebuild and review.
+
+## Open an existing run
+
+**Open working view** prepares the saved process for a new run. To follow work
+already started, expand **Run details**, then **Previous runs**, expand the
+recorded run and choose **Open run in working view**. This opens that exact run
+in a Wright tab. Reloading reconciles its observed state; it does not start again.
+The link requires a recorded run identity and the current accepted source digest.
+Other revisions retain **Open saved run log** and their recorded results.
+
+When the diagram source cannot be drawn, the error remains visible and **Results
+from the saved run** includes the same history controls. Opening existing work
+does not repair the definition, relax its checks or approve its results.
+
 ## Open and prepare a process
+
+### Name a workflow in the diagram
+
+Click the workflow name above the diagram to edit it. Press **Enter** or move
+focus away to apply the name, then **Save**. **Escape** cancels the edit; an empty
+name restores the previous one. **Undo** and **Redo** include name changes.
+The name is saved in the workflow definition; this does not rename its file or
+start a run. Name editing follows the same locks as other diagram edits during
+an unapplied source draft, pending save, run or candidate preview.
+
+### Connect a CAD model between steps
+
+For a configured CAD task that supports identified model handoffs, choose
+**CAD model from another block** under **Model to work on**. The task exposes a
+**CAD model** input immediately. Drag a compatible upstream CAD model output to
+it, or use the **CAD model from** list in the Inspector. Both edit the same
+connection and support **Undo**, **Redo**, **Save** and reopening.
+
+Choosing **Create a new model** removes the upstream model connection and its
+input. This does not run a CAD operation. Compatibility and run readiness still
+depend on the configured providers and workflow; a drawn connection alone does
+not establish that a model has been produced or verified.
+
+### Rebuild an imported interface
+
+Open the imported workflow's working view and choose **Create or choose interface**.
+When the workflow package includes interface source, **Imported interface** lists
+those candidates. Select one, describe the adaptation in **How should this
+interface help the user?**, then choose **Rebuild imported interface**. Review
+the resulting **Open preview** before choosing **Save interface**. The saved
+local interface is then available for reuse on this process's runs.
+
+The imported source is reference material for Wright's configured coding role.
+It does not transfer a trusted build, credentials, answers, approvals or a live
+run. Wright checks the exact selected bytes, records them with the request, and
+builds against the current workflow bindings and installed UI kit. A changed or
+missing candidate requires refresh or restoration; it is never silently replaced.
+If a request's outcome is uncertain, **Reconcile request** follows the original
+request even if the imported file later changes. The common working view and
+ordinary local interface creation remain available when import data is unusable.
+
+Local controlled tests and actual-model workspace verification cover selection,
+rebuild, preview, save, chooser reuse, reload and common-view fallback. The
+[engineering execution ledger](../../specs/083-process-working-interfaces/mechanical-engineering-execution.md)
+records the exact build, workflow and retained failures. This does not certify
+arbitrary imported interfaces or grant engineering acceptance.
+
+### Reopen after a browser interruption
+
+Opening a saved interface reclaims expired Wright process views in the same
+user, workspace and session before allocating another UI host. It revokes their
+presentation grants and stops only the corresponding static UI instance when
+no valid presentation remains. A late close from an older instance cannot stop
+its replacement. Saved interfaces, engineering files and process runs remain
+unchanged.
+
+Presentation authority currently lasts eight hours. This cleanup does not
+detect a browser crash immediately: an unexpired view can still occupy a slot.
+Close unused interface tabs normally to release them sooner. The common view
+remains available when the managed-interface limit is reached. This policy does
+not close engineering applications or cancel their operations.
+
+### Inspect work from before a correction
+
+In the common working view, **Previous attempts** keeps models, drawings,
+measurements and documents from before an automatic correction. Use **Open file**
+to inspect them or **Download exact file** to retain the recorded bytes. These
+are labelled historical evidence and stay separate from current results, even
+when a later correction fails. **Open producing step** returns to the owning
+block. Opening or reloading this evidence does not restart the process.
+
+This view requires recorded workspace files with exact byte identities. Live
+application documents and unpinned files are not historical snapshots. Changed
+or missing files remain errors; Wright does not substitute a newer file.
+
+### Read engineering documents
+
+Use **Open file** beside a result or review attachment. Markdown requirements,
+assumptions and inspection plans show formatted headings, lists and tables in the
+shared reader. **View source** exposes the original Markdown; **Download exact
+file** returns the recorded file unchanged. Larger documents retain a download
+fallback. Links and embedded images in Markdown are shown as references; open
+related files using their own evidence controls.
+
+On a narrow workspace, select **Surface** to return from Chat to the working view.
+Document viewing does not answer a question, approve evidence or resume a run.
+
+### Inspect numerical results
+
+Open a CSV result and expand **View numerical samples**. Choose the horizontal
+and vertical columns; choose a value column to color the recorded samples.
+The axes show numerical ticks and retain the supplied column names/units. A
+field plot has a labeled color scale for its own recorded range. Colors do not
+indicate whether a requirement passes or fails; use the linked assessment.
+
+Display labels may be rounded. The exact table, sample tooltips and downloaded
+file retain the original values. All supported samples are plotted even when
+the table shows only one page. Other coordinates remain in the table; projecting
+onto two axes can overlap samples and does not create an interpolated surface.
+
+### Prepare the run
 
 In a compact workspace, **Workspace Files** opens navigation over the document.
 Use **Close**, press **Escape**, or click the shaded space beside navigation to
@@ -29,12 +188,15 @@ the authority; built-in reviewed operations and exact integration-test enrollmen
 retain their separate scope. This check grants no permission and does not replace
 the final dispatch checks or a process's declared human review.
 
-1. Open the intended workflow file in its Wright workspace. The **Workflows**
-   control and file tabs retain the existing editor, diagram and source controls.
+1. Use **Workflows** to create a new blank workflow, or open the intended existing
+   file through Workspace Files or **Open workflow** in the editor's file menu.
+   File tabs retain the existing editor, diagram and source controls.
    An explicit workflow link selects that source rather than a restored unrelated
    tab. Opening an existing file does not create a missing workflow.
-2. Choose **Use saved process** to open its working view in a workspace tab.
-   **Open workflow** returns to the authoring view.
+2. Save your edits, then choose **Open working view** to open the same saved
+   workflow's input, result and progress interface in a workspace tab. It does
+   not select a template or start execution. **Open workflow** returns to the
+   authoring view. The editor requires unsaved changes to be saved first.
 3. Supply required values, files, images and available provider choices. Run
    preparation freezes these inputs separately from the accepted definition.
    Uploaded images have thumbnails; changes invalidate prior preparation.
@@ -42,15 +204,85 @@ the final dispatch checks or a process's declared human review.
    start with reasons. Use **Open related item** on a missing-input reason to
    inspect its exact input step. Outputs declared to be produced upstream need
    not exist beforehand. Readiness is not an engineering verdict.
+   Required validation checks also qualify their registered reader and evidence
+   method against the pinned profile before work starts. Optional checks,
+   explicitly excluded checks and human review do not require an automatic
+   reader at preparation. This does not evaluate future outputs or accept a
+   review. Runtime inspection still checks the actual capability, format and
+   exact output; changed availability retains its normal hold/failure behavior.
 5. Start deliberately. Follow backend activity and actual tool contributions.
    Inspect outputs, findings and evidence. A declared human review/action/input
    persists waiting state until its exact response is accepted. Unattended
    segments do not invent questions or engineering defaults.
 
+To author a prompt-driven task by hand, add a **Text input**, enter the request,
+then choose a configured provider from **MCP servers**. Draw a connection from
+the text output to the task's **Prompt** input. The Inspector's **Prompt source**
+and **Prompt from** controls offer the same binding. Alternatively, add
+**MCP task · choose server later**, then select its
+provider in the Inspector. **Refresh servers** rereads the enabled workspace
+inventory. An unbound task remains editable but must be bound before running.
+Internal Wright file/validation operations remain available to the runtime;
+they are not presented as independently configured MCP servers.
+
+### Model screenshot to a rendered image
+
+For a workflow whose final deliverable is a realistic image:
+
+1. Connect the design text to the CAD task's **Prompt** input. In its **Exports**,
+   choose **Add model image** when the selected provider supports image export.
+   The existing Solid Edge provider declares **Image (JPEG)**. Retain any model
+   exports needed for engineering review.
+2. Add an **AI prompt** or **MCP task** for rendering. Write the rendering
+   instructions separately, including the geometry, proportions and features
+   to preserve. Choose **Image (PNG)** or **Image (JPEG)** as the response format
+   and set the image filename.
+3. Draw the CAD image output to that step's **Reference image** input. The image
+   is supplied as image content; it does not replace the written instructions.
+4. For an **AI prompt**, Wright uses the configured AI connection's native image
+   output. The qualified Codex connection accepts the image and text together
+   and returns PNG/JPEG; no additional MCP is required. An explicitly selected
+   image MCP remains an alternative. Readiness checks the selected path before
+   starting, and a changed AI model/configuration invalidates the prepared call.
+5. Save, inspect readiness and run. The returned image is the final result;
+   the task's textual activity summary remains supporting evidence. Each run
+   writes its image under a separate run output directory.
+
+To view a produced image in the editor, choose **Results → Image**, then
+**Open plot or image in tab**. The green result card opens the same result
+viewer. An unproduced output uses **View output status** and explains the saved
+run state, with **Inspect failed step** and **View run details** when applicable.
+Expected filenames are not downloadable results. Opening a result resets the
+inspector to the top; inspecting status or a saved file does not rerun the process.
+
+A failed run also shows a persistent **Workflow failed** alert above the diagram,
+even when Run details is collapsed or the workflow is reopened. **View error
+details** opens the full saved error; **Inspect failed step** selects a step only
+when the matching run identifies it. An error from a different source version is
+labelled as a saved-run error and is not attributed to the current edited blocks.
+
+Image tasks reuse the existing workflow runner, configured AI adapter or MCP
+gateway, file storage/verification and result viewer. The native image adapter
+uses the installed SDK's provider-side image tool with the resolved default
+model; it has no independent executor or job state. Verification checks the exact output path, changed file bytes,
+PNG/JPEG header dimensions and recorded hash. It does not establish realistic
+appearance or preserved engineering geometry; add an explicit review or suitable
+validator for those requirements. A successful authoring walkthrough does not
+prove that a particular image provider or CAD export has executed.
+
 The process services own state and permitted actions. Closing or reopening a tab
 does not cancel or restart a run. Submission, observed start, completion,
 cancellation request and actual outcome remain separate. An unknown external
 outcome requires reconciliation rather than another mutation.
+
+The compatibility approval-resume endpoint and working-view actions use the
+same task supervisor and canonical continuation records. A disconnected resume
+request detaches its observer; retry the same request identity to attach again.
+The compatibility response still returns the exact segment's recorded result.
+Cancellation may be unavailable during preparation or when the active provider
+has no qualified cancellation capability. A runtime shutdown records interruption
+and does not establish that a remote operation was cancelled. Recorded uncertain
+work is not replayed.
 
 ## Create, save and reuse a tailored interface
 
@@ -116,6 +348,15 @@ npm dependencies. The packaged authoring instructions, public API and reference
 template are in `workspace_service.process_interfaces.resources` and are shipped
 with the Python package. Compiler readiness is explicit; generation must not
 invent package scripts, plugins, backends, shell commands or host launchers.
+
+Installed builds resolve the kit's geometry and Markdown readers from the
+explicitly configured toolchain root. The versioned `toolchain.json` includes
+`react-markdown` and `remark-gfm`; missing or mismatched libraries make compiler
+readiness unavailable. Verify a packaged build outside the source checkout when
+adding a shared component dependency. Saved interfaces remain usable without a
+compiler. Passive PDF previews require the PDFium and Pillow libraries declared
+by `wright-engineering[runtime]`; viewing an existing drawing does not require
+the CAD application that produced it.
 
 Generated interfaces receive no native bearer token, global workspace client,
 generic tool invocation or agent-authoring authority. MCP App same-server grants
@@ -190,11 +431,12 @@ imply universal MCP Tasks or physical-device support. See the
 
 ## Locally verified proof environment
 
-At the latest 4 October UTC checkpoint, the owned API8063/UI5246/native-addon19988
-accept connections. The documented inspection utility performs two actual scoped
+At the recorded 4 October UTC checkpoint, the owned API8063/UI5246/native-addon19988
+accepted connections. These are historical local addresses, not current setup instructions. The documented inspection utility performs two actual scoped
 GETs without changing interface/authoring/continuation records. Open the
 [current local workspace](http://127.0.0.1:5246/workspace/083-fresh-prompt-055?workflow=canonical&workflowPath=workflows%2Fprinted-replacement-part-mixed-default-071.workflow.wflow)
-and choose **Use saved process**. Existing local authentication/session setup is
+and choose **Open working view** (called **Use saved process** in the 4 October
+evidence). Existing local authentication/session setup is
 required. These temporary source-proof services are separate from the historical
 installed hosts below and may stop with their owned processes. See
 [current operator check](../../artifacts/process-interfaces/083/20261004-current-operator-guidance-verified/checked-scope.json).
@@ -240,3 +482,21 @@ See the [native report](../../artifacts/process-interfaces/083/20261002-installe
 and [current Docker qualification record](../../specs/083-process-working-interfaces/evidence/installed-docker-reuse.md)
 for exact build, capability limits and checked scope. These local candidate
 checks do not establish release, full engineering parity or human acceptance.
+
+### Importing an interface into another workspace
+
+A workflow bundle carries the saved interface source and bindings as an inactive
+candidate. It carries no trusted build, live run, answers or review authority.
+Use the common working view while qualifying local providers and rebuilding the
+interface. A local saved view must pass its current binding checks and managed
+preview before saving; its availability does not make the engineering process
+ready to execute.
+
+The 10 October isolated proof used Wright's native authoring service to adapt the
+imported source into a new local UI identity, preview/save it, and request a small
+wording update. It verified reload and common fallback, plus a required output
+rename that visibly blocked the incompatible UI. Restoring the original source
+made the saved view compatible again. This API-driven proof does not establish a
+one-click import/rebuild picker or destination engineering execution. See the
+[illustrated record](../../artifacts/process-interfaces/083/20261010-portable-working-interface/index.html)
+and the [execution ledger](../../specs/083-process-working-interfaces/mechanical-engineering-execution.md).

@@ -36,10 +36,22 @@ installed-workspace acceptance.
 
 Explicit workflow file links must take precedence over a restored active tab.
 Opening an existing source or its history must not create a missing workflow.
+Preserve exact legal source identifiers when converting between source and
+diagram identities, including repeated and trailing underscores. Collapsing
+separators can break connections or disagree with typed port references even
+when the backend accepts and executes the source. Check cold parse, formatted
+save/reopen, typed settings, and the same accepted source in the served editor.
 Historical result links attach only to their exact source and use the native
 read-only recorder adapter; they expose no process or device actions. Verify
 editor return and saved artifact navigation through the workspace entry. Retain
 failed walkthroughs when a repaired continuation passes.
+
+Connection identity includes its semantic kind as well as its endpoints. An
+execution-order connection and an approval connection may link the same two
+blocks; preserve both through diagram inspection, commands and source round
+trips. Reject duplicate connections of the same kind, including attempts to
+distinguish them only by label or condition. This does not relax port types,
+cardinality, cycle checks or the runtime's separate review authority.
 
 ## Continue the existing design
 
@@ -88,6 +100,16 @@ examples. Newly authored templates remain unbound drafts. Their visible success
 does not prove live model generation, MCP execution or native-runtime integration.
 
 ## Required evidence before claiming UI readiness
+
+For automated working-interface walkthroughs, close the exact presentation through
+Wright before disposing the browser. Confirm the presentation-close response and
+preserve failures for reconciliation. Terminating a Playwright browser process
+does not prove that the application's page-leaving cleanup ran. Record the owned
+presentation identities so abandoned test views can be closed through the normal
+API; never clear surface records directly, raise the workspace capacity limit to
+hide a leak, or stop unrelated applications. Closing a view must leave its durable
+process and engineering outputs unchanged. Browser crash/orphan recovery is a
+separate lifecycle case from normal tab close and reload.
 
 1. Record branch, commit, checkout, frontend URL, API target, workspace, enabled
    feature flags, and the screenshots used as the design reference. Verify what

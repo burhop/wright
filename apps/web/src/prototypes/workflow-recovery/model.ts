@@ -1,4 +1,5 @@
 import type { DraftProjection } from "../../components/workflow-composer/draft-projection";
+import type { WorkflowInstructionSet } from "./workflow-instructions";
 
 export type RecoveryExecutionKind = "human" | "deterministic" | "ai_capable";
 export type RecoveryBlockKind = "work" | "approval" | "decision" | "component";
@@ -123,6 +124,7 @@ export interface RecoveryWorkflow {
     purpose: string;
     engineeringDomain: string;
     authorship: "human" | "human_with_ai_proposal";
+    instructions?: WorkflowInstructionSet;
   };
   phases: RecoveryPhase[];
   blocks: RecoveryBlock[];

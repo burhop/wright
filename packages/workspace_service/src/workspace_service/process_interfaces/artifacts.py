@@ -17,6 +17,7 @@ from ..errors import WorkspaceTimeoutError
 from ..workflow_references import image_media_type
 from ..workflow_execution_continuation import restore_result
 from ..workflow_run_record import read_workflow_run, WorkflowRunReadError
+from ..workflow_external_actions import WorkflowExternalActionError
 from .errors import ProcessInterfaceError
 from .inputs import _descriptors, _sections, input_file_reference
 
@@ -24,8 +25,8 @@ from .inputs import _descriptors, _sections, input_file_reference
 def _denied():
     return ProcessInterfaceError(
         "SCOPE_DENIED",
-        "This file does not belong to the selected process inputs or result.",
-        "Open the file from the exact prepared inputs or recorded result.",
+        "This file does not belong to the selected process inputs, checkpoint or result.",
+        "Open the file from the exact prepared inputs, retained checkpoint or recorded result.",
     )
 
 
@@ -36,6 +37,7 @@ def _media_type(path, content):
     return {
         ".txt": "text/plain",
         ".md": "text/markdown",
+        ".pdf": "application/pdf",
         ".json": "application/json",
         ".csv": "text/csv",
         ".stl": "model/stl",
@@ -68,6 +70,8 @@ class ProcessArtifactAccess:
         run_id=None,
         input_snapshot_id=None,
         archive_entry=None,
+        preview="toolpaths",
+        page=None,
     ):
         """Derive a passive view only after exact membership and byte authorization."""
         from .representations import (
@@ -86,7 +90,60 @@ class ProcessArtifactAccess:
 
         def derive():
             suffix = PurePosixPath(reference.artifact_ref).suffix.lower()
-            if suffix == ".3mf":
+            if preview == "validation-report":
+                from .owners import reports_for_run
+                from ..process_validation.reporting import render_readable_markdown
+
+                if (
+                    run_id is None
+                    or reference.result_id is None
+                    or archive_entry is not None
+                    or page is not None
+                    or suffix != ".json"
+                    or len(artifact.content) > 16 * 1024 * 1024
+                ):
+                    raise RepresentationUnavailable(
+                        "Choose an assessment recorded by this run."
+                    )
+                root = self.application.runs._root(scope, process, "process.results")
+                # A JSON shape or assessment ID is not authority. Both the original
+                # result membership above and the owning report's exact bytes must match.
+                reports = [
+                    report
+                    for report in reports_for_run(
+                        self.application, process, root, run_id
+                    )
+                    if report.assessment.model_dump_json(indent=2).encode("utf-8")
+                    == artifact.content
+                ]
+                if len(reports) != 1:
+                    raise RepresentationUnavailable(
+                        "No exact assessment report belongs to this run."
+                    )
+                content = render_readable_markdown(reports[0]).encode("utf-8")
+                if len(content) > min(
+                    self.application.limits.maximum_representation_bytes,
+                    2 * 1024 * 1024,
+                ):
+                    raise RepresentationUnavailable(
+                        "The assessment exceeds the report preview bound."
+                    )
+                return ProcessArtifactBytes(reference, content, "text/markdown")
+            media_type = "application/vnd.wright.toolpaths+json"
+            if preview == "pdf-page" and suffix == ".pdf" and archive_entry is None:
+                from .pdf_preview import read_pdf_page
+
+                document = read_pdf_page(
+                    artifact.content,
+                    reference.sha256,
+                    page=page if page is not None else 1,
+                )
+                media_type = "application/vnd.wright.pdf-page+json"
+            elif preview != "toolpaths" or page is not None:
+                raise RepresentationUnavailable(
+                    "Unsupported passive preview selection."
+                )
+            elif suffix == ".3mf":
                 document = read_3mf_toolpaths(
                     artifact.content,
                     reference.sha256,
@@ -107,9 +164,7 @@ class ProcessArtifactAccess:
                 raise RepresentationUnavailable(
                     "The derived view exceeds its passive presentation bound."
                 )
-            return ProcessArtifactBytes(
-                reference, content, "application/vnd.wright.toolpaths+json"
-            )
+            return ProcessArtifactBytes(reference, content, media_type)
 
         try:
             # Both parsing and serialization use the workspace's existing worker
@@ -119,10 +174,14 @@ class ProcessArtifactAccess:
                 derive,
                 timeout_seconds=self.application.limits.representation_timeout_seconds,
             )
-        except (RepresentationUnavailable, WorkspaceTimeoutError) as error:
+        except (RepresentationUnavailable, WorkspaceTimeoutError, ValueError) as error:
             raise ProcessInterfaceError(
                 "CAPABILITY_UNAVAILABLE",
-                "A complete toolpath preview is unavailable for this recorded file.",
+                "A readable assessment is unavailable for this recorded file."
+                if preview == "validation-report"
+                else "A PDF page preview is unavailable for this recorded file."
+                if preview == "pdf-page"
+                else "A complete toolpath preview is unavailable for this recorded file.",
                 "Download the exact artifact and inspect it with a compatible engineering tool.",
                 details={"reader_diagnostic": str(error)},
             ) from error
@@ -249,7 +308,7 @@ class ProcessArtifactAccess:
             ) from error
 
     async def _authorize_result(self, root, process, run_id, reference):
-        if reference.result_id is None or reference.representation_id is not None:
+        if reference.representation_id is not None:
             raise _denied()
         receipt = await asyncio.to_thread(
             self.application.inputs.receipt_for_run,
@@ -263,6 +322,7 @@ class ProcessArtifactAccess:
                 root,
                 process.source_path,
                 run_id,
+                complete_results=True,
                 **(
                     {"run_log_path": receipt.run_log_path}
                     if receipt and receipt.run_log_path
@@ -273,7 +333,12 @@ class ProcessArtifactAccess:
                 receipt and receipt.process != process
             ):
                 raise _denied()
-            for item in view["results"]:
+            if reference.result_id is None:
+                self._authorize_checkpoint(process, run_id, view, reference)
+                return
+            for item in view["results"] + [
+                row["result"] for row in view.get("previous_results", [])
+            ]:
                 result = restore_result(item)
                 if (
                     result.id != reference.result_id
@@ -287,12 +352,6 @@ class ProcessArtifactAccess:
                     for rep in result.representations
                 ):
                     return
-            if view.get("execution", {}).get("truncated"):
-                raise ProcessInterfaceError(
-                    "CAPABILITY_UNAVAILABLE",
-                    "This run's bounded result view does not include the requested representation.",
-                    "Use the canonical run's supported result reader for this exact artifact.",
-                )
         except ProcessInterfaceError:
             raise
         except (WorkflowRunReadError, ValueError, TypeError, KeyError) as error:
@@ -301,6 +360,35 @@ class ProcessArtifactAccess:
                 "The exact run's result references could not be verified.",
                 "Inspect the canonical process and run record before opening this file.",
             ) from error
+        raise _denied()
+
+    def _authorize_checkpoint(self, process, run_id, view, reference):
+        """Read existing checkpoint evidence without inspection/decision/dispatch."""
+        from .owners import _approval_evidence
+
+        for field, owner in (
+            ("approval", self.application.workspace.workflow_external_actions),
+            ("input_checkpoint", self.application.human_inputs),
+        ):
+            retained = view.get(field)
+            if not retained or not retained.get("checkpoint_id"):
+                continue
+            try:
+                checkpoint = owner.get(
+                    retained["checkpoint_id"],
+                    workspace_id=process.workspace_id,
+                    run_id=run_id,
+                )
+            except WorkflowExternalActionError as error:
+                raise _denied() from error
+            if (
+                checkpoint.workflow_id != process.source_path
+                or checkpoint.subject.get("definition_digest") != process.source_digest
+                or checkpoint.subject_digest != retained.get("subject_digest")
+            ):
+                raise _denied()
+            if reference in _approval_evidence(checkpoint):
+                return
         raise _denied()
 
 

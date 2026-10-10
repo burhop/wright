@@ -1,4 +1,4 @@
-"""Bounded tool-free model transport over the existing installed Hermes SDK."""
+"""Bounded model transport with fixed operation scopes over the installed SDK."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
+from core.redaction import redact_mapping
 
 from .base import AgentInvocationContext
 
@@ -68,18 +69,25 @@ class HermesRoleTransport:
             return None
         return candidate
 
-    async def call(self, request: dict) -> dict:
+    async def call(self, request: dict, *, invocation_observer=None) -> dict:
         raw = json.dumps(request, ensure_ascii=False).encode("utf-8")
-        if len(raw) > 2_200_000:
+        image_request = request.get("operation") in {"probe-image", "generate-image"}
+        input_limit = 12_600_000 if image_request else 2_200_000
+        output_limit = 17_000_000 if image_request else 1_200_000
+        if len(raw) > input_limit:
             raise ValueError("Authoring invocation exceeds the fixed input bound")
         child = None
+        invocations = []
         with tempfile.TemporaryDirectory(prefix="wright-model-role-") as cwd:
+            # Internal argv only: model/request fields cannot select an evidence path.
+            evidence_path = Path(cwd) / "sdk-invocations.json"
             try:
                 child = await asyncio.create_subprocess_exec(
                     str(self.python),
                     "-I",
                     str(Path(__file__).with_name("hermes_role_worker.py")),
                     str(self.runtime_root.resolve()),
+                    str(evidence_path),
                     cwd=cwd,
                     stdin=asyncio.subprocess.PIPE,
                     stdout=asyncio.subprocess.PIPE,
@@ -89,11 +97,17 @@ class HermesRoleTransport:
                     child.stdin.write(raw)
                     await child.stdin.drain()
                     child.stdin.close()
-                    content = await child.stdout.read(1_200_001)
-                    if len(content) > 1_200_000:
-                        raise ValueError(
-                            "Confined model output exceeds the fixed bound"
-                        )
+                    chunks, size = [], 0
+                    while chunk := await child.stdout.read(
+                        min(65536, output_limit + 1 - size)
+                    ):
+                        chunks.append(chunk)
+                        size += len(chunk)
+                        if size > output_limit:
+                            raise ValueError(
+                                "Confined model output exceeds the fixed bound"
+                            )
+                    content = b"".join(chunks)
                     await child.wait()
                 result = json.loads(content)
                 if (
@@ -104,17 +118,46 @@ class HermesRoleTransport:
                     raise HermesRoleInvocationError(
                         result.get("code") if isinstance(result, dict) else None
                     )
+                result["wright_invocations"] = invocations
                 return result
             finally:
                 if child is not None and child.returncode is None:
                     child.kill()
                     await child.wait()
+                if evidence_path.exists():
+                    if evidence_path.stat().st_size > 2_097_152:
+                        raise ValueError(
+                            "SDK invocation evidence exceeds its fixed bound"
+                        )
+                    evidence = json.loads(evidence_path.read_bytes())
+                    records = evidence.get("invocations")
+                    if (
+                        evidence.get("schema_version") != "wright.scoped-sdk-evidence/1"
+                        or not isinstance(records, list)
+                        or len(records) > 8
+                    ):
+                        raise ValueError("Invalid SDK invocation evidence")
+                    for record in records:
+                        if (
+                            not isinstance(record, dict)
+                            or record.get("capture_scope") != "provider_sdk_request"
+                        ):
+                            raise ValueError("Invalid SDK invocation evidence")
+                        invocation = redact_mapping(record)
+                        invocations.append(invocation)
+                        if invocation_observer is not None:
+                            await invocation_observer(invocation)
 
     async def probe(self) -> dict:
         return (await self.call({"operation": "probe"}))["resolution"]
 
     async def generate(
-        self, context: AgentInvocationContext, message: str, resolution: dict
+        self,
+        context: AgentInvocationContext,
+        message: str,
+        resolution: dict,
+        *,
+        invocation_observer=None,
     ) -> dict:
         return await self.call(
             {
@@ -124,5 +167,6 @@ class HermesRoleTransport:
                     {"role": "system", "content": context.instructions},
                     {"role": "user", "content": message},
                 ],
-            }
+            },
+            invocation_observer=invocation_observer,
         )

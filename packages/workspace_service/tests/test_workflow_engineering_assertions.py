@@ -36,11 +36,18 @@ def test_print_package_guidance_uses_selected_profiles_for_different_machines(
             "evidence": EVIDENCE,
         }
     )
-    assert next(
-        result for result in results if result.assertion_id == "additive.build-volume"
-    ).state == volume_state
+    assert (
+        next(
+            result
+            for result in results
+            if result.assertion_id == "additive.build-volume"
+        ).state
+        == volume_state
+    )
     profile = next(
-        result for result in results if result.assertion_id == "additive.supported-slice"
+        result
+        for result in results
+        if result.assertion_id == "additive.supported-slice"
     )
     assert profile.state == "fail"
     assert profile.correction == (

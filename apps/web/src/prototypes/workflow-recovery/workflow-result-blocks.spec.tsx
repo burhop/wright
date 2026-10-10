@@ -66,6 +66,18 @@ function setup() {
 }
 
 describe("read-only workflow result blocks", () => {
+  it("names a single image deliverable without pretending an expected file exists", () => {
+    const { workflow } = setup();
+    workflow.blocks.find(
+      (block) => block.id === "block.generate-geometry",
+    )!.configuration = {
+      expected_files: "outputs/{{wright.run_id}}/render.png",
+    };
+    const [result] = workflowResultBlocks({ workflow });
+    expect(result!.title).toBe("Image");
+    expect(result!.files[0]!.available).toBe(false);
+    expect(resultAvailability(result!)).toBe("Not produced yet");
+  });
   it("projects recorded files without inventing a diagram when the source is unavailable", () => {
     const { result } = setup();
     const before = JSON.stringify(result);

@@ -437,3 +437,121 @@ def test_unknown_revoked_and_expired_grants(case, monkeypatch):
     )
     with pytest.raises(WorkflowIntegrationPolicyError, match="expired"):
         case.service.get(expiring)
+
+
+def input_checkpoint(case, identity):
+    from workspace_service.process_interfaces.interactions import input_subject_digest
+
+    subject = {
+        "definition_digest": case.grant["source_digest"],
+        "input_snapshot_id": "input-snapshot",
+        "input_digest": "a" * 64,
+        "input_digests": [],
+        "artifact_digests": [],
+        "step_id": "choice",
+        "declaration": {
+            "version": 2,
+            "kind": "input",
+            "instructions": "Choose the comparison.",
+            "response_schema": {
+                "type": "object",
+                "properties": {"selection": {"type": "string", "enum": ["a", "b"]}},
+                "required": ["selection"],
+                "additionalProperties": False,
+            },
+            "output_port": "choice_response",
+        },
+        "upstream_digests": {},
+    }
+    return SimpleNamespace(
+        subject=subject,
+        subject_digest=input_subject_digest(subject),
+        workspace_id="workspace",
+        workflow_id=case.grant["source_path"],
+        checkpoint_kind="input",
+        step_id="choice",
+        expires_at=None,
+        continuation={
+            "execution_context": {**case.grant, "integration_policy_digest": identity},
+            "input_files": [
+                {"path": p, "sha256": h} for p, h in case.grant["input_files"].items()
+            ],
+        },
+    )
+
+
+def test_input_attribution_uses_enrollment_and_confers_no_decision_grant(case):
+    identity = case.service.enroll(**case.grant)
+    pending = input_checkpoint(case, identity)
+    result = case.service.authorize_input_response(
+        identity,
+        workspace_id="workspace",
+        checkpoint=pending,
+        expected_subject_digest=pending.subject_digest,
+    )
+    assert result["actor"] == "integration_test:campaign"
+    assert set(result) == {"actor", "reason"}
+
+
+@pytest.mark.parametrize(
+    "changed",
+    [
+        "workspace",
+        "path",
+        "step",
+        "kind",
+        "definition",
+        "digest",
+        "campaign",
+        "dataset",
+        "policy",
+        "input",
+        "expiry",
+        "manual",
+        "revoked",
+        "disabled",
+    ],
+)
+def test_input_attribution_rejects_changed_or_missing_exact_authority(case, changed):
+    from workspace_service.process_interfaces.interactions import input_subject_digest
+
+    identity = case.service.enroll(
+        **{**case.grant, **({"approval_mode": "manual"} if changed == "manual" else {})}
+    )
+    pending = input_checkpoint(case, identity)
+    if changed == "workspace":
+        pending.workspace_id = "other"
+    elif changed == "path":
+        pending.workflow_id = "workflows/other.wflow"
+    elif changed == "step":
+        pending.step_id = "other"
+    elif changed == "kind":
+        pending.checkpoint_kind = "approval"
+    elif changed == "definition":
+        pending.subject["definition_digest"] = "f" * 64
+        pending.subject_digest = input_subject_digest(pending.subject)
+    elif changed == "digest":
+        pending.subject_digest = "f" * 64
+    elif changed == "campaign":
+        pending.continuation["execution_context"]["campaign_id"] = "other"
+    elif changed == "dataset":
+        pending.continuation["execution_context"]["dataset_digest"] = "f" * 64
+    elif changed == "policy":
+        pending.continuation["execution_context"]["integration_policy_digest"] = (
+            "f" * 64
+        )
+    elif changed == "input":
+        pending.continuation["input_files"][0]["sha256"] = "f" * 64
+    elif changed == "expiry":
+        pending.expires_at = 1
+    elif changed == "revoked":
+        case.service.revoke(identity)
+    elif changed == "disabled":
+        case.service.enabled = False
+    with pytest.raises(WorkflowIntegrationPolicyError):
+        case.service.authorize_input_response(
+            identity,
+            workspace_id="workspace",
+            checkpoint=pending,
+            expected_subject_digest=pending.subject_digest,
+        )

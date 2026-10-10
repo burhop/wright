@@ -42,7 +42,8 @@
 .native-process input,
 .native-process select,
 .native-process textarea,
-.native-process button {
+.native-process button,
+.native-dialog button {
   font: inherit;
   color: var(--color-primary);
   background: var(--color-surface);
@@ -67,7 +68,8 @@
   background: var(--color-surface-hover);
   border-color: var(--color-secondary);
 }
-.native-process button:disabled {
+.native-process button:disabled,
+.native-dialog button:disabled {
   opacity: 0.55;
   cursor: default;
 }
@@ -279,6 +281,14 @@
 }
 .native-dialog button {
   margin: var(--space-sm);
+  cursor: pointer;
+}
+.native-dialog button:focus-visible {
+  outline: 2px solid var(--color-accent, #33baf0);
+  outline-offset: 2px;
+}
+.native-dialog button:hover {
+  border-color: var(--color-accent, #33baf0);
 }
 .native-runs {
   margin-block: var(--space-xl);

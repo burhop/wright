@@ -16,6 +16,7 @@ import {
   ProgressPanel,
   InputEditor,
   ResultCard,
+  EvidenceReference,
   CheckpointCard,
   SchemaField,
   parseToolpaths,
@@ -25,6 +26,7 @@ import {
   NumericPlot,
   ImageThumbnail,
   RepresentationViewer,
+  RepresentationDownload,
   FindingsPanel,
   ScalarFieldPlot,
   CsvNumericInspector,
@@ -86,6 +88,57 @@ afterEach(() => {
 });
 
 describe("public kit presentation and authority", () => {
+  it.each([
+    ["failed", "completed", "Completed"],
+    ["running", "cancelled", "Cancelled"],
+    ["reconciliation_required", "completed", "Completed"],
+  ] as const)(
+    "does not promote an observed %s / %s outcome to process completion",
+    (state, observedState, label) => {
+      render(
+        <ProgressPanel
+          state={state}
+          observations={[
+            {
+              ...observation,
+              activity: undefined,
+              state: observedState,
+              observed_at: "2026-09-30T12:00:00Z",
+            },
+          ]}
+          now={Date.parse("2026-09-30T12:00:30Z")}
+        />,
+      );
+      expect(screen.getByText(`Observed state: ${label}`)).toBeInTheDocument();
+      expect(screen.queryByText("Process completed")).not.toBeInTheDocument();
+      expect(screen.queryByText("Process cancelled")).not.toBeInTheDocument();
+    },
+  );
+  it("labels the process completion once and preserves the observation's activity and identity", () => {
+    const { container } = render(
+      <ProgressPanel
+        state="completed"
+        observations={[
+          {
+            ...observation,
+            state: "completed",
+            operation_id: "job-123",
+          },
+        ]}
+        now={Date.parse("2026-09-30T12:00:30Z")}
+      />,
+    );
+    expect(screen.getAllByText("Process completed")).toHaveLength(1);
+    expect(screen.getByText("Observed state: Completed")).toBeInTheDocument();
+    expect(screen.getByText("Reported by configured-tool")).toBeVisible();
+    expect(screen.getByText("Measuring geometry")).toBeInTheDocument();
+    expect(container.querySelector("details")).toHaveTextContent(
+      "Provider: configured-tool",
+    );
+    expect(container.querySelector("details")).toHaveTextContent(
+      "Operation: job-123",
+    );
+  });
   it("uses an explicit theme without private shell state", () => {
     const { container } = render(
       <ProcessUI theme="light">
@@ -173,7 +226,7 @@ describe("public kit presentation and authority", () => {
         }}
       />,
     );
-    expect(screen.getByText("Inputs need attention")).toBeInTheDocument();
+    expect(screen.getByText("Not ready to start")).toBeInTheDocument();
     expect(screen.getByText(/Produced by an earlier step/)).toBeInTheDocument();
     expect(
       screen.getByText(/Provided at a declared interaction/),
@@ -219,6 +272,66 @@ describe("public kit presentation and authority", () => {
     expect(screen.getByText("25% last reported")).toBeInTheDocument();
     expect(screen.queryByText(/2 min remaining/)).not.toBeInTheDocument();
   });
+  it.each<Observation["state"]>([
+    "completed",
+    "failed",
+    "cancelled",
+    "waiting_human",
+    "preparing",
+    "ready",
+    "reconciliation_required",
+  ])(
+    "does not ask for a progress estimate when the observation is %s",
+    (state) => {
+      render(
+        <ProgressPanel
+          state={state}
+          observations={[
+            {
+              ...observation,
+              state,
+              progress_percent: undefined,
+              estimated_remaining_seconds: undefined,
+              limitations: ["Physical fit has not been tested."],
+            },
+          ]}
+          now={Date.parse("2026-09-30T12:00:30Z")}
+        />,
+      );
+      expect(
+        screen.queryByText(/has not supplied a percentage/),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(
+        screen.getByText("Physical fit has not been tested."),
+      ).toBeInTheDocument();
+      expect(screen.getByText(observation.observed_at)).toBeInTheDocument();
+    },
+  );
+  it.each<Observation["state"]>([
+    "running",
+    "waiting_external",
+    "cancellation_requested",
+  ])("explains an absent progress estimate while %s", (state) => {
+    render(
+      <ProgressPanel
+        state={state}
+        observations={[
+          {
+            ...observation,
+            state,
+            progress_percent: undefined,
+            estimated_remaining_seconds: undefined,
+          },
+        ]}
+        now={Date.parse("2026-09-30T12:00:30Z")}
+      />,
+    );
+    expect(
+      screen.getByText(/has not supplied a percentage/),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+  });
   it("expires observations while the view is quiet, without changing the observed timestamp", () => {
     vi.useFakeTimers();
     try {
@@ -246,9 +359,24 @@ describe("public kit presentation and authority", () => {
       assessment_id: "check-one",
       result_id: output.result_id,
     });
+    expect(screen.getByRole("button", { name: "Open file" })).toBeDisabled();
+  });
+  it("shows a readable filename while retaining exact evidence identity and open scope", () => {
+    const onOpen = vi.fn();
+    const reference = {
+      artifact_ref: "process-proofs/case/outputs/run-id/geometry-basis.json",
+      sha256: hash,
+    };
+    render(<EvidenceReference reference={reference} onOpen={onOpen} />);
+    expect(screen.getByText("geometry-basis.json")).toBeVisible();
     expect(
-      screen.getByRole("button", { name: "Open representation" }),
-    ).toBeDisabled();
+      screen.getByText(reference.artifact_ref).closest("details"),
+    ).not.toHaveAttribute("open");
+    expect(screen.getByText(hash).closest("details")).not.toHaveAttribute(
+      "open",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(reference);
   });
   it("shows declared review evidence without enabling an invented approval", () => {
     const onAction = vi.fn();
@@ -280,6 +408,38 @@ describe("public kit presentation and authority", () => {
     expect(
       screen.queryByRole("button", { name: "Approve" }),
     ).not.toBeInTheDocument();
+    expect(onAction).not.toHaveBeenCalled();
+  });
+  it("keeps unavailable checkpoint actions disabled with their exact reason on demand", () => {
+    const onAction = vi.fn();
+    render(
+      <ActionButton
+        compactReasons
+        action={{
+          action_id: "continue",
+          operation: "action",
+          title: "Continue process",
+          enabled: false,
+          subject_digest: hash,
+          reasons: [
+            {
+              code: "ACTION_NOT_PERMITTED",
+              message: "Review is still pending.",
+              correction: "Complete the declared review.",
+            },
+          ],
+        }}
+        onAction={onAction}
+      />,
+    );
+    const button = screen.getByRole("button", { name: "Continue process" });
+    expect(button).toBeDisabled();
+    expect(
+      screen
+        .getByText("Review is still pending.")
+        .closest("details.wp-action-reasons"),
+    ).not.toHaveAttribute("open");
+    fireEvent.click(button);
     expect(onAction).not.toHaveBeenCalled();
   });
   it("shows a retained test review without inventing dispatch authority", () => {
@@ -322,6 +482,140 @@ describe("public kit presentation and authority", () => {
 });
 
 describe("schema and provider-backed input controls", () => {
+  it("shows the declared quantity error beside its field and enables only a corrected response", () => {
+    const submit = vi.fn();
+    function Form() {
+      const [value, setValue] =
+        useState<import("@wright/process-client").JsonValue>();
+      return (
+        <CheckpointCard
+          interaction={{
+            checkpoint_id: "cp",
+            step_id: "choice",
+            subject_digest: hash,
+            kind: "input",
+            instructions: "Choose a material and quantity.",
+            state: "waiting",
+            response_schema: {
+              type: "object",
+              properties: {
+                material: { type: "string", enum: ["steel", "aluminum"] },
+                quantity: {
+                  type: "integer",
+                  title: "Number of plates",
+                  minimum: 1,
+                  maximum: 5,
+                },
+              },
+              required: ["material", "quantity"],
+              additionalProperties: false,
+            },
+          }}
+          actions={[
+            {
+              action_id: "answer",
+              checkpoint_id: "cp",
+              subject_digest: hash,
+              operation: "respond",
+              title: "Submit response",
+              enabled: true,
+            },
+          ]}
+          response={{ value, onChange: setValue, onSubmit: submit }}
+        />
+      );
+    }
+    render(<Form />);
+    const button = screen.getByRole("button", { name: "Submit response" });
+    expect(button).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("material (required)"), {
+      target: { value: "0" },
+    });
+    expect(button).toBeDisabled();
+    const quantity = screen.getByLabelText("Number of plates (required)");
+    fireEvent.change(quantity, { target: { value: "0" } });
+    expect(quantity).toHaveAttribute("aria-invalid", "true");
+    expect(quantity).toHaveAccessibleDescription(
+      "Enter a value of at least 1.",
+    );
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
+    expect(submit).not.toHaveBeenCalled();
+    fireEvent.change(quantity, { target: { value: "2.5" } });
+    expect(quantity).toHaveAccessibleDescription("Enter a whole number.");
+    expect(button).toBeDisabled();
+    fireEvent.change(quantity, { target: { value: "6" } });
+    expect(quantity).toHaveAccessibleDescription("Enter a value of at most 5.");
+    fireEvent.change(quantity, { target: { value: "2" } });
+    expect(quantity).toHaveAttribute("aria-invalid", "false");
+    expect(button).toBeEnabled();
+    fireEvent.click(button);
+    expect(submit).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ subject_digest: hash }),
+      { material: "steel", quantity: 2 },
+    );
+  });
+  it("keeps the backend's disabled action authoritative for a valid local answer", () => {
+    render(
+      <CheckpointCard
+        interaction={{
+          checkpoint_id: "cp",
+          step_id: "choice",
+          subject_digest: hash,
+          kind: "input",
+          instructions: "Choose quantity",
+          response_schema: { type: "integer", minimum: 1 },
+        }}
+        actions={[
+          {
+            action_id: "answer",
+            checkpoint_id: "cp",
+            subject_digest: hash,
+            operation: "respond",
+            title: "Submit response",
+            enabled: false,
+            reasons: [reason],
+          },
+        ]}
+        response={{ value: 2, onChange: vi.fn(), onSubmit: vi.fn() }}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Submit response" }),
+    ).toBeDisabled();
+    expect(screen.getByText(reason.message)).toBeVisible();
+  });
+  it("checks nested local references and text bounds without counting UTF-16 units as characters", () => {
+    const schema = {
+      $defs: { name: { type: "string", minLength: 2 } },
+      type: "object",
+      properties: { name: { $ref: "#/$defs/name" } },
+      required: ["name"],
+    };
+    const { rerender } = render(
+      <SchemaField
+        title="Answer"
+        schema={schema}
+        value={{ name: "😀" }}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByLabelText("name (required)"),
+    ).toHaveAccessibleDescription("Enter at least 2 characters.");
+    rerender(
+      <SchemaField
+        title="Answer"
+        schema={schema}
+        value={{ name: "😀a" }}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText("name (required)")).toHaveAttribute(
+      "aria-invalid",
+      "false",
+    );
+  });
   it("edits a prompt as a typed binding without executing the process", () => {
     const onChange = vi.fn();
     render(<InputEditor definition={input} onChange={onChange} />);
@@ -531,10 +825,23 @@ describe("schema and provider-backed input controls", () => {
         provenance: "explicit_default" as const,
       },
     };
-    const view = render(<InputEditor definition={definition} onChange={vi.fn()} onUpload={onUpload} />);
+    const view = render(
+      <InputEditor
+        definition={definition}
+        onChange={vi.fn()}
+        onUpload={onUpload}
+      />,
+    );
     expect(screen.getByText("inputs/default.png")).toBeVisible();
     expect(onUpload).not.toHaveBeenCalled();
-    view.rerender(<InputEditor definition={definition} binding={null} onChange={vi.fn()} onUpload={onUpload} />);
+    view.rerender(
+      <InputEditor
+        definition={definition}
+        binding={null}
+        onChange={vi.fn()}
+        onUpload={onUpload}
+      />,
+    );
     expect(screen.queryByText("inputs/default.png")).not.toBeInTheDocument();
   });
 });
@@ -655,8 +962,15 @@ describe("bounded representation views", () => {
     expect(parsed.packageSha256).toBe(hash);
     expect(parsed.provenance?.selectedSection?.excludedPrefixLines).toBe(10);
     expect(() => parseRecordedToolpaths(recordedPaths, "unknown")).toThrow();
-    expect(() => parseRecordedToolpaths({ ...recordedPaths, provenance: null }, hash)).toThrow();
-    expect(() => parseRecordedToolpaths({ ...recordedPaths, package_sha256: "unknown" }, hash)).toThrow();
+    expect(() =>
+      parseRecordedToolpaths({ ...recordedPaths, provenance: null }, hash),
+    ).toThrow();
+    expect(() =>
+      parseRecordedToolpaths(
+        { ...recordedPaths, package_sha256: "unknown" },
+        hash,
+      ),
+    ).toThrow();
   });
   it.each([
     { first_line: 0 },
@@ -669,51 +983,113 @@ describe("bounded representation views", () => {
     { start_marker: "; BODY\nSTART" },
     { selected_text_sha256: "unknown" },
   ])("rejects inconsistent nominal scope evidence (%#)", (change) => {
-    expect(() => parseRecordedToolpaths({
-      ...recordedPaths,
-      provenance: {
-        ...recordedPaths.provenance,
-        selected_section: { ...recordedPaths.provenance.selected_section, ...change },
-      },
-    }, hash)).toThrow();
+    expect(() =>
+      parseRecordedToolpaths(
+        {
+          ...recordedPaths,
+          provenance: {
+            ...recordedPaths.provenance,
+            selected_section: {
+              ...recordedPaths.provenance.selected_section,
+              ...change,
+            },
+          },
+        },
+        hash,
+      ),
+    ).toThrow();
   });
   it("shows recorded neutral paths and their excluded machine scope without requesting another read", async () => {
     const readToolpaths = vi.fn();
-    render(<RepresentationViewer blob={jsonBlob(recordedPaths)} title="recorded-paths.json" sourceSha256={"d".repeat(64)} readToolpaths={readToolpaths} />);
+    render(
+      <RepresentationViewer
+        blob={jsonBlob(recordedPaths)}
+        title="recorded-paths.json"
+        sourceSha256={"d".repeat(64)}
+        readToolpaths={readToolpaths}
+      />,
+    );
     await screen.findByRole("slider");
-    expect(screen.getByText(/Package correspondence and engineering/)).toBeVisible();
-    expect(screen.getByText(/Machine setup and shutdown are excluded and unverified/)).toBeVisible();
-    expect(screen.getByText(/Recorded evidence SHA-256: d{64}/)).toBeInTheDocument();
-    expect(screen.getByText(/Reported package SHA-256: a{64}/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Package correspondence and engineering/),
+    ).toBeVisible();
+    expect(
+      screen.getByText(
+        /Machine setup and shutdown are excluded and unverified/,
+      ),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/Recorded evidence SHA-256: d{64}/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Reported package SHA-256: a{64}/),
+    ).toBeInTheDocument();
     expect(readToolpaths).not.toHaveBeenCalled();
   });
   it("supports bounded recorded layer data beyond the ordinary text preview limit", async () => {
     const count = 120_000;
     const value = {
       ...recordedPaths,
-      layers: [{ ...recordedPaths.layers[0], model: Array.from({ length: count }, () => [0, 0, 10, 0]) }],
+      layers: [
+        {
+          ...recordedPaths.layers[0],
+          model: Array.from({ length: count }, () => [0, 0, 10, 0]),
+        },
+      ],
       provenance: { ...recordedPaths.provenance, segments: count },
     };
     const blob = jsonBlob(value);
     expect(blob.size).toBeGreaterThan(1024 * 1024);
-    render(<RepresentationViewer blob={blob} title="large-recorded-paths.json" sourceSha256={hash} />);
+    render(
+      <RepresentationViewer
+        blob={blob}
+        title="large-recorded-paths.json"
+        sourceSha256={hash}
+      />,
+    );
     await screen.findByRole("slider");
   });
   it("retains the ordinary JSON text bound and refuses incomplete recorded provenance", async () => {
-    const view = render(<RepresentationViewer blob={jsonBlob({ value: "x".repeat(2 * 1024 * 1024) })} title="large-report.json" sourceSha256={hash} />);
+    const view = render(
+      <RepresentationViewer
+        blob={jsonBlob({ value: "x".repeat(2 * 1024 * 1024) })}
+        title="large-report.json"
+        sourceSha256={hash}
+      />,
+    );
     await screen.findByText(/exceeds the supported text preview size/);
     expect(screen.queryByRole("slider")).not.toBeInTheDocument();
-    view.rerender(<RepresentationViewer blob={jsonBlob({ ...recordedPaths, provenance: null })} title="invalid-paths.json" sourceSha256={hash} />);
+    view.rerender(
+      <RepresentationViewer
+        blob={jsonBlob({ ...recordedPaths, provenance: null })}
+        title="invalid-paths.json"
+        sourceSha256={hash}
+      />,
+    );
     await screen.findByText(/could not be read/);
     expect(screen.queryByRole("slider")).not.toBeInTheDocument();
   });
   it("requires the exact recorded file identity and reconciles a changed representation", async () => {
     const blob = jsonBlob(recordedPaths);
-    const view = render(<RepresentationViewer blob={blob} title="recorded-paths.json" />);
+    const view = render(
+      <RepresentationViewer blob={blob} title="recorded-paths.json" />,
+    );
     await screen.findByText(/could not be read/);
-    view.rerender(<RepresentationViewer blob={blob} title="recorded-paths.json" sourceSha256={hash} />);
+    view.rerender(
+      <RepresentationViewer
+        blob={blob}
+        title="recorded-paths.json"
+        sourceSha256={hash}
+      />,
+    );
     await screen.findByRole("slider");
-    view.rerender(<RepresentationViewer blob={jsonBlob({ ...recordedPaths, layers: [] })} title="changed-paths.json" sourceSha256={hash} />);
+    view.rerender(
+      <RepresentationViewer
+        blob={jsonBlob({ ...recordedPaths, layers: [] })}
+        title="changed-paths.json"
+        sourceSha256={hash}
+      />,
+    );
     await screen.findByText(/could not be read/);
     expect(screen.queryByRole("slider")).not.toBeInTheDocument();
   });
@@ -751,13 +1127,16 @@ describe("bounded representation views", () => {
       value: async () => JSON.stringify(data),
     });
     const read = vi.fn(async () => passive);
-    render(
-      <RecordedToolpathPreview
-        blob={raw}
-        sourceSha256={hash}
-        readToolpaths={read}
-      />,
-    );
+    // Finish the asynchronous reader mount and its effects before moving the slider.
+    await act(async () => {
+      render(
+        <RecordedToolpathPreview
+          blob={raw}
+          sourceSha256={hash}
+          readToolpaths={read}
+        />,
+      );
+    });
     const slider = await screen.findByRole("slider");
     expect(slider).toHaveAttribute("max", "30");
     fireEvent.change(slider, { target: { value: "2" } });
@@ -799,6 +1178,41 @@ describe("bounded representation views", () => {
     expect(
       screen.getByText(/Other coordinates remain in the exact table/),
     ).toBeInTheDocument();
+  });
+  it("keeps numeric plotting controls above a short exact-data page and plots all samples", () => {
+    const rows = Array.from({ length: 23 }, (_, index) => [
+      String(index),
+      "0",
+      "0",
+      String(25 + index),
+    ]);
+    render(
+      <CsvNumericInspector
+        columns={["x_m", "y_m", "z_m", "temperature_c"]}
+        rows={rows}
+      />,
+    );
+    const table = screen.getByRole("table");
+    const controls = screen.getByText("View numerical samples");
+    expect(
+      controls.compareDocumentPosition(table) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(table.querySelectorAll("tbody tr")).toHaveLength(10);
+    expect(table.querySelector("tbody tr td")?.textContent).toBe("0");
+    fireEvent.click(screen.getByRole("button", { name: "Next rows" }));
+    expect(table.querySelector("tbody tr td")?.textContent).toBe("10");
+    fireEvent.change(screen.getByLabelText("Horizontal column"), {
+      target: { value: "x_m" },
+    });
+    fireEvent.change(screen.getByLabelText("Vertical column"), {
+      target: { value: "y_m" },
+    });
+    fireEvent.change(screen.getByLabelText("Value column"), {
+      target: { value: "temperature_c" },
+    });
+    expect(screen.getByRole("img").querySelectorAll("circle")).toHaveLength(23);
+    expect(rows[22]).toEqual(["22", "0", "0", "47"]);
   });
   it("refuses missing exact package identity and preserves download fallback", async () => {
     const read = vi.fn();
@@ -887,6 +1301,87 @@ describe("bounded representation views", () => {
     expect(
       screen.getByText(/without interpolated geometry/),
     ).toBeInTheDocument();
+    expect(screen.getByLabelText("x · mm axis").textContent).toContain("0.25");
+    expect(screen.getByLabelText("y · mm axis").textContent).toContain("0.75");
+    const scale = screen.getByLabelText("Temperature · K color scale");
+    expect(scale.textContent).toContain("300");
+    expect(scale.textContent).toContain("310");
+    expect(scale.textContent).toContain("320");
+    expect(
+      screen.getByText(/Colors show the recorded value range/),
+    ).toBeVisible();
+    expect(screen.getByRole("img").querySelectorAll("circle")).toHaveLength(2);
+  });
+  it("shows one value for constant axes and a constant field without inventing a range", () => {
+    render(
+      <ScalarFieldPlot
+        title="Uniform field"
+        xLabel="x"
+        yLabel="y"
+        valueLabel="value"
+        points={[{ x: 2, y: -3, value: 17 }]}
+      />,
+    );
+    expect(
+      screen.getByLabelText("x axis").querySelectorAll("text"),
+    ).toHaveLength(1);
+    expect(
+      screen.getByLabelText("y axis").querySelectorAll("text"),
+    ).toHaveLength(1);
+    expect(screen.getByLabelText("value color scale").textContent).toBe("17");
+    expect(screen.getByRole("img").querySelector("linearGradient")).toBeNull();
+    expect(screen.getByRole("img").innerHTML).not.toMatch(/NaN|Infinity/);
+  });
+  it("keeps separate field legends independent and exact values available", () => {
+    const points = [
+      { x: 0, y: 0, value: 25 },
+      { x: 0.1, y: 0.06, value: 41.6666666665829 },
+    ];
+    render(
+      <>
+        <ScalarFieldPlot
+          title="First"
+          xLabel="x"
+          yLabel="y"
+          valueLabel="T"
+          points={points}
+        />
+        <ScalarFieldPlot
+          title="Second"
+          xLabel="x"
+          yLabel="y"
+          valueLabel="T"
+          points={points}
+        />
+      </>,
+    );
+    const plots = screen.getAllByRole("img");
+    const ids = plots.map((plot) => plot.querySelector("linearGradient")?.id);
+    expect(ids.every(Boolean)).toBe(true);
+    expect(new Set(ids).size).toBe(2);
+    expect(plots[0].querySelectorAll("circle title")[1].textContent).toContain(
+      "41.6666666665829",
+    );
+    expect(plots[0].textContent).toContain("41.6667");
+  });
+  it("keeps closely spaced large coordinate ticks distinguishable", () => {
+    render(
+      <NumericPlot
+        title="Close positions"
+        xLabel="position"
+        yLabel="value"
+        points={[
+          [1e12, 0],
+          [1e12 + 1, 1],
+        ]}
+      />,
+    );
+    const labels = [
+      ...screen.getByLabelText("position axis").querySelectorAll("text"),
+    ].map((node) => node.textContent);
+    expect(labels).toHaveLength(5);
+    expect(new Set(labels).size).toBe(5);
+    expect(labels).toContain("1000000000001");
   });
   it("parses quoted CSV fields and Windows line endings as actual table data", () => {
     expect(
@@ -947,6 +1442,163 @@ describe("bounded representation views", () => {
     expect(await screen.findByText(/no supported preview/)).toBeInTheDocument();
     expect(document.querySelector("script, iframe, object, embed")).toBeNull();
   });
+  it("announces preview readiness only after asynchronous content commits, once per blob", async () => {
+    const blob = new Blob(["loaded preview"], { type: "text/plain" });
+    let finish: ((value: string) => void) | undefined;
+    vi.spyOn(blob, "text").mockImplementation(
+      () =>
+        new Promise<string>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const ready = vi.fn(() =>
+      expect(screen.getByText("loaded preview")).toBeInTheDocument(),
+    );
+    const view = render(
+      <RepresentationViewer
+        blob={blob}
+        title="Exact preview"
+        onReady={ready}
+      />,
+    );
+    await screen.findByText("Opening representation…");
+    expect(ready).not.toHaveBeenCalled();
+    await act(async () => {
+      finish?.("loaded preview");
+    });
+    expect(ready).toHaveBeenCalledTimes(1);
+    view.rerender(
+      <RepresentationViewer
+        blob={blob}
+        title="Exact preview"
+        onReady={ready}
+      />,
+    );
+    expect(ready).toHaveBeenCalledTimes(1);
+  });
+  it("renders Markdown engineering headings and tables with the exact source and download", async () => {
+    const text =
+      "# Inspection plan\r\n\r\n| Characteristic | Result |\r\n| --- | --- |\r\n| Diameter | 38 mm |\r\n\r\n- [ ] Engineer review\r\n";
+    const blob = new Blob([text], { type: "text/markdown; charset=utf-8" });
+    const create = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:exact-markdown");
+    const revoke = vi
+      .spyOn(URL, "revokeObjectURL")
+      .mockImplementation(() => undefined);
+    const ready = vi.fn(() =>
+      expect(screen.getByRole("table")).toBeInTheDocument(),
+    );
+    const view = render(
+      <>
+        <RepresentationDownload blob={blob} name="inspection-plan.md" />
+        <RepresentationViewer
+          blob={blob}
+          title="Inspection plan"
+          onReady={ready}
+        />
+      </>,
+    );
+    expect(
+      await screen.findByRole("heading", { name: "Inspection plan", level: 1 }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: "Characteristic" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "38 mm" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox")).toBeDisabled();
+    const source = screen.getByText("View source").closest("details")!;
+    expect(source).not.toHaveAttribute("open");
+    fireEvent.click(screen.getByText("View source"));
+    expect(source.querySelector("pre")?.textContent).toBe(text);
+    expect(
+      screen.getByRole("link", { name: "Download exact file" }),
+    ).toHaveAttribute("download", "inspection-plan.md");
+    expect(create).toHaveBeenCalledWith(blob);
+    expect(ready).toHaveBeenCalledTimes(1);
+    view.unmount();
+    expect(revoke).toHaveBeenCalledWith("blob:exact-markdown");
+  });
+  it("keeps Markdown references passive and HTML inert without requesting more evidence", async () => {
+    const text =
+      '# Passive document\n\n[Remote](https://example.invalid/read) [Local](./secret.md) [Action](javascript:alert(1))\n\n![Remote diagram](https://example.invalid/image.png)\n\n<img src="/api/private" onerror="window.bad=true">\n<script>window.bad=true</script>\n<iframe src="https://example.invalid"></iframe>\n';
+    const fetch = vi.spyOn(globalThis, "fetch");
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob([text], { type: "text/markdown" })}
+        title="Passive document"
+      />,
+    );
+    await screen.findByRole("heading", { name: "Passive document" });
+    expect(screen.getByText("Remote")).toBeInTheDocument();
+    expect(screen.getByText("[Image: Remote diagram]")).toBeInTheDocument();
+    expect(
+      view.container.querySelector(
+        "a, img, script, iframe, object, embed, [src], [href], [onerror]",
+      ),
+    ).toBeNull();
+    expect(view.container.querySelector("pre")?.textContent).toBe(text);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it("does not interpret ordinary plain text as Markdown", async () => {
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob(["# Plain document"], { type: "text/plain" })}
+        title="Plain file"
+      />,
+    );
+    await screen.findByText("# Plain document");
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    expect(view.container.querySelector("pre")?.textContent).toBe(
+      "# Plain document",
+    );
+  });
+  it("discards a late Markdown read after the engineer opens a different file", async () => {
+    const old = new Blob(["# Old requirements"], { type: "text/markdown" });
+    let finish: ((text: string) => void) | undefined;
+    vi.spyOn(old, "text").mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const ready = vi.fn();
+    const view = render(
+      <RepresentationViewer blob={old} title="Old" onReady={ready} />,
+    );
+    view.rerender(
+      <RepresentationViewer
+        blob={new Blob(["# Current requirements"], { type: "text/x-markdown" })}
+        title="Current"
+        onReady={ready}
+      />,
+    );
+    await screen.findByRole("heading", { name: "Current requirements" });
+    await act(async () => {
+      finish?.("# Old requirements");
+    });
+    expect(
+      screen.queryByRole("heading", { name: "Old requirements" }),
+    ).not.toBeInTheDocument();
+    expect(ready).toHaveBeenCalledTimes(1);
+  });
+  it("waits for a bitmap to load before announcing its preview readiness", async () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:ready-preview");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    const ready = vi.fn();
+    render(
+      <RepresentationViewer
+        blob={new Blob(["png"], { type: "image/png" })}
+        title="Exact image"
+        onReady={ready}
+      />,
+    );
+    const image = await screen.findByRole("img", { name: "Exact image" });
+    expect(image.closest(".wp-image-preview")).not.toBeNull();
+    expect(ready).not.toHaveBeenCalled();
+    fireEvent.load(image);
+    expect(ready).toHaveBeenCalledTimes(1);
+  });
   it("shows exact assessment-sized JSON as inert text without the smaller prose limit", async () => {
     const text = JSON.stringify({
       schema_version: "wright.process-validation/1",
@@ -973,6 +1625,7 @@ describe("bounded representation views", () => {
   it.each([
     ["application/json", 16 * 1024 * 1024 + 1],
     ["text/plain", 65_537],
+    ["text/markdown", 65_537],
   ])("rejects oversized %s before reading bytes", async (type, size) => {
     const blob = new Blob(["x".repeat(size)], { type });
     const read = vi.spyOn(blob, "text");

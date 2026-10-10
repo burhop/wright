@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 
 import {
   AUTHORING_GROUPS,
@@ -19,6 +19,7 @@ import {
 } from "./model";
 import { WorkflowObjectIcon } from "./WorkflowObjectIcon";
 import { disconnectedProcessDiagnostic } from "./run-readiness";
+import { isPromptBlock, promptIsConfigured } from "./prompt-settings";
 import type { WorkspaceWorkflowSourceReadiness } from "../../services/workspace-service";
 
 export interface AuthoringWorkspaceFile {
@@ -59,6 +60,7 @@ export function mcpTaskIsAvailable(
 }
 
 export function AuthoringRunReadiness({
+  detailsRef,
   workflow,
   saved,
   executionConnected,
@@ -67,6 +69,7 @@ export function AuthoringRunReadiness({
   onRefreshTemplateReadiness,
   onSelect,
 }: {
+  readonly detailsRef?: RefObject<HTMLDetailsElement | null>;
   readonly workflow: RecoveryWorkflow;
   readonly saved: boolean;
   readonly executionConnected: boolean;
@@ -89,6 +92,9 @@ export function AuthoringRunReadiness({
     return requiresExecutionBinding && !block.bindingId && !hasMcpBinding;
   });
   const mcpTasks = tasks.filter(isMcpTask);
+  const missingPrompts = tasks.filter(
+    (block) => isPromptBlock(block) && !promptIsConfigured(block, workflow),
+  );
   const mcpCheckKey = mcpTasks
     .map(
       (block) =>
@@ -124,6 +130,8 @@ export function AuthoringRunReadiness({
   const attentionCount =
     inputs.inputs.filter((item) => item.status !== "configured").length +
     unbound.length +
+    missingPrompts.length +
+    (tasks.length === 0 ? 1 : 0) +
     (processIssue ? 1 : 0) +
     (!saved ? 1 : 0) +
     (!executionConnected ? 1 : 0) +
@@ -156,6 +164,7 @@ export function AuthoringRunReadiness({
       : "attention";
   return (
     <details
+      ref={detailsRef}
       className={`recovery-run-readiness ${attentionCount ? "has-attention" : "is-ready"}`}
       data-testid="workflow-recovery-run-readiness"
     >
@@ -163,12 +172,17 @@ export function AuthoringRunReadiness({
         <b>Run readiness</b>
         <span>
           {attentionCount
-            ? `${attentionCount} item${attentionCount === 1 ? "" : "s"} need attention`
+            ? `${attentionCount} ${attentionCount === 1 ? "item needs" : "items need"} attention`
             : "Authoring checks pass"}
         </span>
       </summary>
       <div className="recovery-run-readiness__body">
         <div className="recovery-run-readiness__grid">
+          <ReadinessItem
+            label="Processing steps"
+            value={tasks.length ? `${tasks.length} defined` : "None defined"}
+            status={tasks.length ? "good" : "attention"}
+          />
           <ReadinessItem
             label="Inputs"
             value={`${inputs.configuredCount}/${inputs.totalCount} configured`}
@@ -210,6 +224,16 @@ export function AuthoringRunReadiness({
             status={templateStatusTone}
           />
         </div>
+        {tasks.length === 0 && (
+          <p
+            className="recovery-run-readiness__issue"
+            data-testid="workflow-recovery-readiness-no-tasks"
+          >
+            Add a processing step using Create, then connect the inputs it
+            needs. Input blocks supply data; they do not perform work on their
+            own.
+          </p>
+        )}
         {unbound.length > 0 && (
           <div className="recovery-run-readiness__issue">
             <b>Unbound tasks</b>
@@ -221,6 +245,21 @@ export function AuthoringRunReadiness({
                 onClick={() => onSelect(block.id)}
               >
                 {block.title} · choose a tool or execution binding
+              </button>
+            ))}
+          </div>
+        )}
+        {missingPrompts.length > 0 && (
+          <div className="recovery-run-readiness__issue">
+            <b>Task instructions needed</b>
+            {missingPrompts.map((block) => (
+              <button
+                type="button"
+                key={block.id}
+                data-testid={`workflow-recovery-readiness-prompt-${block.id}`}
+                onClick={() => onSelect(block.id)}
+              >
+                {block.title} · write a prompt or connect a prompt source
               </button>
             ))}
           </div>
@@ -368,8 +407,14 @@ export function AuthoringCreateRail({
   const [group, setGroup] = useState<string | null>(null);
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
   const [toolMessage, setToolMessage] = useState("");
+  const [serverReload, setServerReload] = useState(0);
   useEffect(() => {
-    if (group !== "tool" || !sessionId) return;
+    if (group !== "tool") return;
+    setTools([]);
+    if (!sessionId) {
+      setToolMessage("Open a workspace to choose an MCP server.");
+      return;
+    }
     let current = true;
     setToolMessage("Loading available servers…");
     void listWorkflowMcpTools(sessionId)
@@ -377,9 +422,9 @@ export function AuthoringCreateRail({
         if (current) {
           setTools(value);
           setToolMessage(
-            value.length
+            mcpServerChoices(value).length
               ? ""
-              : "Enable a server in Tool Registry to add it here.",
+              : "Enable a server in MCP Tools to add it here.",
           );
         }
       })
@@ -392,7 +437,7 @@ export function AuthoringCreateRail({
     return () => {
       current = false;
     };
-  }, [group, sessionId]);
+  }, [group, sessionId, serverReload]);
   const rootRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!group) return;
@@ -450,7 +495,11 @@ export function AuthoringCreateRail({
         <section
           id="recovery-create-options"
           className="recovery-create-popover"
-          aria-label={`${AUTHORING_GROUPS.find((item) => item.id === group)?.label} templates`}
+          aria-label={
+            group === "tool"
+              ? "Available MCP servers"
+              : `${AUTHORING_GROUPS.find((item) => item.id === group)?.label} templates`
+          }
         >
           <header>
             <h3>{AUTHORING_GROUPS.find((item) => item.id === group)?.label}</h3>
@@ -465,7 +514,7 @@ export function AuthoringCreateRail({
           </header>
           <p>
             {group === "tool"
-              ? "Choose a server, then describe what you want it to do."
+              ? "Choose a workspace MCP server, or add a task and choose its server later."
               : "Add an object to this workflow. Nothing runs when you add it."}
           </p>
           {AUTHORING_TEMPLATES.filter(
@@ -489,7 +538,27 @@ export function AuthoringCreateRail({
           ))}
           {group === "tool" && (
             <>
+              <button
+                type="button"
+                className="recovery-create-template"
+                data-testid="workflow-recovery-create-template-mcp-task"
+                onClick={() => {
+                  onCreate("mcp-task");
+                  setGroup(null);
+                }}
+              >
+                <b>MCP task · choose server later</b>
+                <span>Select a server in the Inspector before running.</span>
+              </button>
               {toolMessage && <p role="status">{toolMessage}</p>}
+              <button
+                type="button"
+                className="recovery-button recovery-button--secondary"
+                disabled={disabled || !sessionId}
+                onClick={() => setServerReload((value) => value + 1)}
+              >
+                Refresh servers
+              </button>
               {mcpServerChoices(tools).map((server) => (
                 <button
                   type="button"

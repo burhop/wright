@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 import math
 
@@ -206,6 +206,7 @@ class RecordedRun:
     results: tuple[EngineeringResult, ...] = ()
     input_snapshot: InputSnapshot | None = None
     results_truncated: bool = False
+    previous_results: tuple[tuple[str, str, EngineeringResult], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -303,6 +304,30 @@ def project_output(
     )
 
 
+def project_previous_output(attempt, original_id, result, reports):
+    # Assessments retain their original subject identity and exact byte digest.
+    # The history alias is only for read/navigation, never a workflow port value.
+    original = replace(result, id=original_id)
+    output = project_output(original, reports)
+    title = (
+        output.title.rsplit("/", 1)[-1]
+        if output.title in {ref.artifact_ref for ref in output.representations}
+        else output.title
+    )
+    return output.model_copy(
+        update={
+            "result_id": result.id,
+            "title": f"Attempt {attempt}: {title}",
+            "role": "previous_attempt",
+            "producer_attempt": attempt,
+            "representations": tuple(
+                ref.model_copy(update={"result_id": result.id})
+                for ref in output.representations
+            ),
+        }
+    )
+
+
 def _disabled(action: Action, reason: Reason) -> Action:
     return Action.model_validate(
         {**action.model_dump(), "enabled": False, "reasons": [reason, *action.reasons]}
@@ -391,6 +416,9 @@ def project_interactions(
         state = "waiting_external"
     outputs = tuple(
         project_output(result, facts.reports) for result in (run.results if run else ())
+    ) + tuple(
+        project_previous_output(attempt, original_id, result, facts.reports)
+        for attempt, original_id, result in (run.previous_results if run else ())
     )
     actions = []
     for action in facts.actions:

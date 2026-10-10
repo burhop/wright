@@ -298,7 +298,9 @@ def test_canonical_gate_inspects_producer_output_and_publishes_evidence_before_h
 
 
 @pytest.mark.parametrize("second_length", [100, 98])
-def test_repeated_process_runs_have_independent_validation_attempts(tmp_path, second_length):
+def test_repeated_process_runs_have_independent_validation_attempts(
+    tmp_path, second_length
+):
     from core.process_validation import Assessment
     from workspace_service.process_validation.application import ValidationApplication
 
@@ -315,8 +317,13 @@ def test_repeated_process_runs_have_independent_validation_attempts(tmp_path, se
             events.append(event)
 
         invocation = execute_prompt_workflow(
-            service=app, workspace_dir=str(tmp_path), plan=plan, input_values={},
-            response_generator=generate, on_event=emit, run_id=run_id,
+            service=app,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=generate,
+            on_event=emit,
+            run_id=run_id,
         )
         if length == 100:
             asyncio.run(invocation)
@@ -324,8 +331,12 @@ def test_repeated_process_runs_have_independent_validation_attempts(tmp_path, se
             with pytest.raises(WorkflowSourceExecutionError) as error:
                 asyncio.run(invocation)
             assert error.value.code == "PROCESS_VALIDATION_REJECTED"
-        report = next(event["report"] for event in events if event["kind"] == "design_check")
-        assessment = Assessment.model_validate_json((tmp_path / report["assessment_path"]).read_bytes())
+        report = next(
+            event["report"] for event in events if event["kind"] == "design_check"
+        )
+        assessment = Assessment.model_validate_json(
+            (tmp_path / report["assessment_path"]).read_bytes()
+        )
         assert assessment.request.run_id == run_id
         assert assessment.request.subjects[0].producer.run_id == run_id
         assert assessment.summary.release_eligible is (length == 100)
@@ -333,10 +344,14 @@ def test_repeated_process_runs_have_independent_validation_attempts(tmp_path, se
 
     assert assessments[0].id != assessments[1].id
     assert assessments[0].attempt_id != assessments[1].attempt_id
-    assert assessments[0].request.idempotency_key != assessments[1].request.idempotency_key
+    assert (
+        assessments[0].request.idempotency_key != assessments[1].request.idempotency_key
+    )
     application = ValidationApplication(app.db_path, "workspace", str(tmp_path))
     for assessment in assessments:
-        repeated = application.service.evaluate(assessment.request, load_profile("structured-demo"))
+        repeated = application.service.evaluate(
+            assessment.request, load_profile("structured-demo")
+        )
         assert repeated.assessment.id == assessment.id
         assert repeated.assessment.attempt_id == assessment.attempt_id
 

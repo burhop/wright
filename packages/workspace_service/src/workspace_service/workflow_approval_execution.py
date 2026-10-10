@@ -22,6 +22,10 @@ from .workflow_integration_policy import (
     TEST_HANDOFF_BINDING,
 )
 from .workflow_mcp_execution import WorkflowMcpRuntime
+from .workflow_model_routing import (
+    freeze_workflow_model_routing,
+    restore_review_model_routing,
+)
 from .workflow_resource_lease import ApplicationLease
 from .workflow_run_record import (
     record_workflow_approval_transition,
@@ -80,7 +84,14 @@ def _current(service, checkpoint, workspace_id, subject_digest):
 
 
 async def _prepare(
-    *, service, workspace_id, workspace_dir, checkpoint, gateway, session_id
+    *,
+    service,
+    workspace_id,
+    workspace_dir,
+    checkpoint,
+    gateway,
+    session_id,
+    for_decision=False,
 ):
     runtime = None
 
@@ -132,6 +143,7 @@ async def _prepare(
             expected_digest=checkpoint.subject["definition_digest"],
             tool_runtime=get_runtime,
             run_id=checkpoint.run_id,
+            review_only=for_decision,
             **overlay,
         )
         state = checkpoint.continuation
@@ -180,16 +192,10 @@ async def _prepare(
                         "approval_stale", "A reviewed input or artifact changed"
                     )
         context = state.get("execution_context")
-        if context:
+        if context and context.get("integration_policy_digest"):
             policy_digest = context.get("integration_policy_digest")
-            if not policy_digest:
-                raise _error(
-                    "WORKFLOW_INTEGRATION_POLICY_INVALID",
-                    "The execution context has no enrolled policy.",
-                    "Re-enroll this exact integration run.",
-                )
             grant = service.workflow_integration_policies.get(policy_digest)
-            if grant["allowed_tools"] and runtime is None:
+            if not for_decision and grant["allowed_tools"] and runtime is None:
                 get_runtime()
             current_context = await service.workflow_integration_policies.authorize(
                 policy_digest,
@@ -200,7 +206,19 @@ async def _prepare(
                 plan=plan,
                 tool_runtime=runtime,
                 files=service.files,
+                review_only=for_decision,
             )
+            if for_decision:
+                plan = restore_review_model_routing(plan, context)
+                if "model_routing" in context:
+                    current_context = {
+                        **current_context,
+                        "model_routing": context["model_routing"],
+                    }
+            else:
+                plan, current_context = await freeze_workflow_model_routing(
+                    service, plan, current_context, expected_context=context
+                )
             if current_context != context:
                 raise _error(
                     "WORKFLOW_INTEGRATION_POLICY_INVALID",
@@ -220,6 +238,19 @@ async def _prepare(
                     workspace_dir=workspace_dir,
                     workspace_id=workspace_id,
                     run_id=checkpoint.run_id,
+                )
+        else:
+            if context and set(context) != {"model_routing"}:
+                raise _error(
+                    "WORKFLOW_INTEGRATION_POLICY_INVALID",
+                    "The execution context has no enrolled policy.",
+                    "Re-enroll this exact integration run.",
+                )
+            if for_decision:
+                plan = restore_review_model_routing(plan, context)
+            else:
+                plan, context = await freeze_workflow_model_routing(
+                    service, plan, context, expected_context=context
                 )
         return plan, inputs, runtime, context
     except BaseException:
@@ -247,7 +278,7 @@ async def inspect_workflow_approval(
     gateway=None,
     session_id="",
 ):
-    """Read permission using the same currentness/preparation as real mutations.
+    """Read permission using the corresponding decision or execution preparation.
 
     This never acquires dispatch authority, records a decision, consumes a
     checkpoint or dispatches its external operation. Mutations rerun these checks
@@ -263,6 +294,7 @@ async def inspect_workflow_approval(
         checkpoint=current,
         gateway=gateway,
         session_id=session_id,
+        for_decision=current.state == "pending",
     )
     try:
         if current.state == "pending":
@@ -319,10 +351,13 @@ async def decide_workflow_approval(
             checkpoint=current,
             gateway=gateway,
             session_id=session_id,
+            for_decision=True,
         )
         try:
             if auto:
-                if decision != "approved" or not context:
+                if decision != "approved" or not (context or {}).get(
+                    "integration_policy_digest"
+                ):
                     raise _error(
                         "WORKFLOW_INTEGRATION_POLICY_INVALID",
                         "Automatic review requires enrolled test authority.",
@@ -369,7 +404,9 @@ def _dispatch_kind(checkpoint, context):
         and subject["action"] == {"kind": "local_review", "mode": "review_only"}
     ):
         return "local_review"
-    if context and subject["binding"] == TEST_HANDOFF_BINDING:
+    if (context or {}).get("integration_policy_digest") and subject[
+        "binding"
+    ] == TEST_HANDOFF_BINDING:
         # authorize() has checked the exact enrolled test URI and confined
         # receipt path against every canonical action immediately before this.
         return "test_handoff"
@@ -497,7 +534,11 @@ def _operation_dispatch_check(checkpoint, workspace_dir, runtime=None, step=None
             qualify_operation(
                 runtime,
                 step,
-                integration=bool(checkpoint.continuation.get("execution_context")),
+                integration=bool(
+                    (checkpoint.continuation.get("execution_context") or {}).get(
+                        "integration_policy_digest"
+                    )
+                ),
             )
         binding = checkpoint.subject["binding"]
         if (tool.server_id, tool.name, schema_digest(tool)) != (
@@ -592,7 +633,7 @@ async def resume_workflow_approval(
                 operation = qualify_operation(
                     runtime,
                     plan.steps[current.continuation["next_step_index"]],
-                    integration=bool(context),
+                    integration=bool((context or {}).get("integration_policy_digest")),
                 )
             if current.state == "consumed":
                 prior = current.external_action or {}
@@ -647,7 +688,9 @@ async def resume_workflow_approval(
                             plan.steps[current.continuation["next_step_index"]],
                             current.subject["settings"],
                             profile,
-                            integration=bool(context),
+                            integration=bool(
+                                (context or {}).get("integration_policy_digest")
+                            ),
                             before_dispatch=_operation_dispatch_check(
                                 current,
                                 workspace_dir,

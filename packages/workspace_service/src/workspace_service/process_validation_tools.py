@@ -1,6 +1,8 @@
 """Thin BaseTool adapters; gateway policy supplies the workspace authority."""
 
 import asyncio
+from copy import deepcopy
+from functools import lru_cache
 from threading import Event
 from typing import Annotated, Literal
 
@@ -45,6 +47,12 @@ class ExportPayload(Contract):
     content: Annotated[str, Field(max_length=16 * 1024 * 1024)]
 
 
+@lru_cache(maxsize=8)
+def _validation_schema(model):
+    """Compile fixed Python contracts; never cache authority or result state."""
+    return model.model_json_schema()
+
+
 class ProcessValidationTool(BaseTool):
     def __init__(
         self,
@@ -73,21 +81,23 @@ class ProcessValidationTool(BaseTool):
 
     @property
     def input_schema(self):
-        return {
+        model = {
             "evaluate": EvaluateArguments,
             "read": ReadArguments,
             "get": GetArguments,
             "export": ExportArguments,
-        }[self.operation].model_json_schema()
+        }[self.operation]
+        return deepcopy(_validation_schema(model))
 
     @property
     def output_schema(self):
-        return {
+        model = {
             "evaluate": AssessmentReference,
             "read": FindingPage,
             "get": ValidationReport,
             "export": ExportPayload,
-        }[self.operation].model_json_schema()
+        }[self.operation]
+        return deepcopy(_validation_schema(model))
 
     async def execute(self, arguments, *, context):
         if context.workspace_id != self.application.workspace_id:

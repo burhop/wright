@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import acceptedManufacturingSource from "../../../../../artifacts/process-interfaces/083/20261003-retained-report-correction-003/accepted.workflow.wflow?raw";
+import acceptedManufacturingSource from "../../../tests/fixtures/corrected-manufacturing.workflow.wflow?raw";
 import {
   applyRecoveryBatch,
   recoveryCommandBatch,
@@ -162,7 +162,7 @@ function sourceWithFileDependencies(
   state = apply(state, [added]);
   state = apply(state, configureMcpTool(added.block, state.workflow, tool));
   return formatRecoveryAuthoringSource(state.workflow).text.replace(
-    /(^task [^\n]+\n[\s\S]*?\n  settings: )([^\n]+)/gm,
+    /(^task [^\n]+\n[\s\S]*?\n {2}settings: )([^\n]+)/gm,
     (match, prefix: string, value: string) => {
       const settings = JSON.parse(value);
       if (settings.mcp_tool !== tool.name) return match;
@@ -178,6 +178,27 @@ function sourceWithFileDependencies(
     },
   );
 }
+
+it("preserves connected-output bindings and explicit attempt templates on save and reopen", () => {
+  const source = sourceWithFileDependencies(
+    { authored_source: { source: "connected_output" } },
+    "mcp-task",
+  ).replace(
+    '"expected_file_ports":{"model":"process-proofs/case/plate.step"}',
+    '"run_path_template":"wright.run-path/2","expected_file_ports":{"model":"outputs/{{wright.run_id}}/create/{{wright.producer_attempt}}/plate.step"}',
+  );
+  const parsed = parseRecoveryAuthoringSource(source, initialWorkflow);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const formatted = formatRecoveryAuthoringSource(parsed.workflow!).text;
+  expect(formatted).toContain('"source":"connected_output"');
+  expect(formatted).toContain('"run_path_template":"wright.run-path/2"');
+  expect(formatted).toContain("{{wright.producer_attempt}}");
+  const reopened = parseRecoveryAuthoringSource(formatted, initialWorkflow);
+  expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+  expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(
+    formatted,
+  );
+});
 
 it.each(["mcp-tool", "mcp-task"])(
   "cold-round-trips %s file dependencies alongside produced file ports",
@@ -233,7 +254,7 @@ it.each([
 
 function sourceWithTaskTools(tools: unknown, template = "mcp-task"): string {
   return sourceWithFileDependencies({}, template).replace(
-    /(^task [^\n]+\n[\s\S]*?\n  settings: )([^\n]+)/gm,
+    /(^task [^\n]+\n[\s\S]*?\n {2}settings: )([^\n]+)/gm,
     (match, prefix: string, value: string) => {
       const settings = JSON.parse(value);
       if (settings.mcp_tool !== tool.name) return match;
@@ -242,32 +263,55 @@ function sourceWithTaskTools(tools: unknown, template = "mcp-task"): string {
   );
 }
 
-it.each([[], ["inspect_file"], ["inspect_file", "measure"]].map((tools) => ({ tools })))(
+it.each(
+  [[], ["inspect_file"], ["inspect_file", "measure"]].map((tools) => ({
+    tools,
+  })),
+)(
   "cold-round-trips a bounded distinct MCP task allowlist (%#)",
   ({ tools }) => {
     const parsed = parseRecoveryAuthoringSource(
-      sourceWithTaskTools(tools), initialWorkflow,
+      sourceWithTaskTools(tools),
+      initialWorkflow,
     );
     expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
     const formatted = formatRecoveryAuthoringSource(parsed.workflow!).text;
     expect(formatted).toContain('"mcp_task_tools":' + JSON.stringify(tools));
     const reopened = parseRecoveryAuthoringSource(formatted, initialWorkflow);
     expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
-    expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(formatted);
+    expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(
+      formatted,
+    );
   },
 );
 
-it.each([null, {}, [42], [""], ["inspect_file", "inspect_file"], Array.from({ length: 33 }, (_, i) => "tool_" + i)].map((tools) => ({ tools })))(
-  "rejects malformed MCP task tool lists (%#)",
-  ({ tools }) => {
-    const parsed = parseRecoveryAuthoringSource(sourceWithTaskTools(tools), initialWorkflow);
-    expect(parsed.ok).toBe(false);
-    expect(parsed.diagnostics.some((d) => d.code === "WFR-SOURCE-FIELD-TYPE")).toBe(true);
-  },
-);
+it.each(
+  [
+    null,
+    {},
+    [42],
+    [""],
+    ["inspect_file", "inspect_file"],
+    Array.from({ length: 33 }, (_, i) => "tool_" + i),
+  ].map((tools) => ({ tools })),
+)("rejects malformed MCP task tool lists (%#)", ({ tools }) => {
+  const parsed = parseRecoveryAuthoringSource(
+    sourceWithTaskTools(tools),
+    initialWorkflow,
+  );
+  expect(parsed.ok).toBe(false);
+  expect(
+    parsed.diagnostics.some((d) => d.code === "WFR-SOURCE-FIELD-TYPE"),
+  ).toBe(true);
+});
 
 it("rejects a nonempty task allowlist on an exact configured tool step", () => {
-  expect(parseRecoveryAuthoringSource(sourceWithTaskTools(["inspect_file"], "mcp-tool"), initialWorkflow).ok).toBe(false);
+  expect(
+    parseRecoveryAuthoringSource(
+      sourceWithTaskTools(["inspect_file"], "mcp-tool"),
+      initialWorkflow,
+    ).ok,
+  ).toBe(false);
 });
 
 it("opens the actual accepted manufacturing source with its read-only report allowlist", () => {

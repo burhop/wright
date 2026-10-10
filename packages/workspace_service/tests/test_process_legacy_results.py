@@ -102,7 +102,7 @@ def test_original_recorder_shapes_preserve_exact_results_without_actions(
     assert run["run_id"] == "recorded-run" and run["status"] == status
     assert run["source_matches_current"] is True
     assert {row["id"] for row in run["results"]} == {row["id"] for row in rows}
-    assert all(
-        row["provenance"]["run_id"] == "recorded-run" for row in run["results"]
-    )
-    assert {path: path.read_bytes() for path in tmp_path.rglob("*") if path.is_file()} == before
+    assert all(row["provenance"]["run_id"] == "recorded-run" for row in run["results"])
+    assert {
+        path: path.read_bytes() for path in tmp_path.rglob("*") if path.is_file()
+    } == before

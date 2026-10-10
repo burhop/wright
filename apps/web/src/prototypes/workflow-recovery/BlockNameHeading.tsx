@@ -1,26 +1,44 @@
 import { useEffect, useRef, useState } from "react";
 
-export function BlockNameHeading({
-  title,
-  readOnly,
-  onRename,
-}: {
+type NameHeadingProps = {
   title: string;
   readOnly: boolean;
   onRename: (title: string) => boolean;
+};
+
+export function BlockNameHeading(props: NameHeadingProps) {
+  return <EditableNameHeading {...props} kind="block" />;
+}
+
+export function WorkflowNameHeading(
+  props: NameHeadingProps & { fileTitle: string },
+) {
+  return <EditableNameHeading {...props} kind="workflow" />;
+}
+
+function EditableNameHeading({
+  title,
+  readOnly,
+  onRename,
+  kind,
+  fileTitle,
+}: NameHeadingProps & {
+  kind: "block" | "workflow";
+  fileTitle?: string;
 }) {
   const [draft, setDraft] = useState(title);
   const cancelled = useRef(false);
   useEffect(() => setDraft(title), [title]);
+  const Heading = kind === "workflow" ? "h1" : "h2";
 
   return (
-    <h2 aria-label={title}>
+    <Heading aria-label={title} title={fileTitle}>
       <input
-        className="recovery-block-name"
-        data-testid="workflow-recovery-block-name"
-        aria-label="Block name"
+        className={`recovery-${kind}-name`}
+        data-testid={`workflow-recovery-${kind}-name`}
+        aria-label={kind === "workflow" ? "Workflow name" : "Block name"}
         title={
-          readOnly ? title : "Rename block. Enter to apply; Escape to cancel."
+          readOnly ? title : `Rename ${kind}. Enter to apply; Escape to cancel.`
         }
         value={draft}
         readOnly={readOnly}
@@ -43,6 +61,6 @@ export function BlockNameHeading({
           }
         }}
       />
-    </h2>
+    </Heading>
   );
 }

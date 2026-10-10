@@ -17,6 +17,17 @@ refined temperature fields, and compares temperature, heat balance and refinemen
 The original full 082 profile assesses those same outputs. Arbitrary STEP meshing,
 material certification and physical thermal qualification are outside this case.
 
+**Provider compatibility, 9 October:** this preparation uses the released
+AgentCAD0.6.0 script-export contract from the original live proof. A fresh run
+against upstream revision`2a377583d9d250971a584acb7b5ac6e2a75737c0` refused its
+manual STEP exports (`manual_step_export`) before geometry creation. Its MCP
+`run` tool and schema being available do not establish this semantic capability.
+Do not interchange those providers under an accepted source or suppress the
+provider check. Select and record a compatible released binding, or author a new
+workflow revision using the selected provider's supported canonical exports.
+The failed thermal001 run is retained in the mechanical-engineering ledger;
+neither its geometry nor analysis is claimed successful.
+
 ## Prepare a configured process
 
 1. Use a fresh isolated Wright workspace. Install/enable the existing CAD and
@@ -39,6 +50,19 @@ material certification and physical thermal qualification are outside this case.
    ```powershell
    .venv/Scripts/python.exe examples/process-interfaces/heat-spreader-sizing/prepare.py --workspace ABSOLUTE_WORKSPACE --attempt heat-ui-001 --tools PRIVATE_TOOLS_JSON --bindings PRIVATE_BINDINGS_JSON
    ```
+
+For a CAD provider in a Linux container, keep `cad_project` as the **local**
+workspace project directory and additionally set `cad_workspace` to the explicit
+POSIX mount of that same workspace (for example `/workspace`). Preparation derives
+the provider project from that mount and the local workspace-relative project
+path. The native `build/agentcad.json` must name that exact provider project and
+have no existing versions. Preparation records both identities and the manifest
+hash in `cad-path-mapping.json`; it never rewrites the native manifest. CAD source,
+exports and read-back calls use provider paths. Wright file tools still use
+workspace-relative paths, and `solver_workspace` remains the solver's separately
+configured mount. Omit `cad_workspace` for the original same-host behavior.
+The operator must configure and qualify the actual volume mapping; this
+preparation check alone cannot establish that a provider has mounted it correctly.
 
 Preparation copies the original frozen assignment bytes into a new
 `process-proofs/heat-spreader-sizing/<attempt>/inputs` folder and writes a connected

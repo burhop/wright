@@ -2,21 +2,10 @@
 
 from typing import Annotated, Literal
 
-from pydantic import Field, StrictStr, model_validator
+from pydantic import Field, StrictStr, model_serializer, model_validator
 
 from .process_validation import Contract
-
-
-UNATTENDED_STEP_POLICY = (
-    "This is an unattended process step. Use the supplied requirements, explicit "
-    "defaults and upstream evidence. Do not ask the user questions, invent a human "
-    "interaction, or silently fill missing engineering requirements. A later "
-    "declared human-input or review step is handled by Wright, not by this response. "
-    "If completion requires an additional user choice, report status blocked with "
-    "reason input_required; explain the missing dependency as a diagnostic. Do not "
-    "perform unrelated operations or claim completion. This diagnostic does not "
-    "authorize retrying completed operations."
-)
+from .workflow_instructions import WorkflowAssumption
 
 
 class InvalidStepOutcomeError(ValueError):
@@ -32,6 +21,14 @@ class UnattendedStepOutcome(Contract):
     reason: (
         Literal["input_required", "capability_unavailable", "execution_failed"] | None
     )
+    assumptions: Annotated[tuple[WorkflowAssumption, ...], Field(max_length=256)] = ()
+
+    @model_serializer(mode="wrap")
+    def omit_empty_assumptions(self, handler):
+        data = handler(self)
+        if not self.assumptions:
+            data.pop("assumptions", None)
+        return data
 
     @model_validator(mode="after")
     def valid_disposition(self):

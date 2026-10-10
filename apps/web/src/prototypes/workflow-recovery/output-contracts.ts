@@ -22,8 +22,8 @@ export function exportFormatLabel(format: string): string {
   return (
     (
       {
-        screenshot_jpeg: "JPEG preview",
-        screenshot_png: "PNG preview",
+        screenshot_jpeg: "Image (JPEG)",
+        screenshot_png: "Image (PNG)",
         flat_dxf: "Flat pattern (DXF)",
         flat_parasolid: "Flat pattern (Parasolid)",
         parasolid: "Parasolid",
@@ -54,7 +54,28 @@ export function configuredOutputs(
   block: RecoveryBlock,
   workflow?: RecoveryWorkflow,
 ) {
-  const contracts = new Map<string, { format: string; name: string }>();
+  const contracts = new Map<
+    string,
+    { format: string; name: string; path?: string }
+  >();
+  try {
+    const files = JSON.parse(
+      String(block.configuration.expected_file_ports ?? "{}"),
+    );
+    for (const [port, path] of Object.entries(files)) {
+      if (typeof path !== "string") continue;
+      const format = path.split(".").pop()?.toLowerCase() ?? "";
+      contracts.set(port, {
+        format,
+        path,
+        name: /^(png|jpe?g)$/.test(format)
+          ? `Image (${format === "png" ? "PNG" : "JPEG"})`
+          : path,
+      });
+    }
+  } catch {
+    /* An incomplete draft has no declared file contract yet. */
+  }
   for (const setting of ["cad", "application_resource"] as const) {
     let value: { kind?: string; exports?: ExportContract[] };
     try {
@@ -133,7 +154,11 @@ export function validateOutputChanges(
       updated = configuredOutputs(next, after);
     for (const portId of producer.outputPortIds) {
       const contract = previous.get(key(portId));
-      if (!contract || contract.format === updated.get(key(portId))?.format)
+      if (
+        !contract ||
+        (contract.format === updated.get(key(portId))?.format &&
+          contract.path === updated.get(key(portId))?.path)
+      )
         continue;
       const consumers = before.relationships
         .filter((edge) => edge.kind === "data" && edge.sourceId === portId)

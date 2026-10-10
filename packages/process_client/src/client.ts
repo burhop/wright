@@ -43,7 +43,9 @@ export interface RepresentationOptions extends ReadOptions {
   readonly runId?: string;
   readonly inputSnapshotId?: string;
   /** Passive derived data from the same authorized artifact; raw remains the default. */
-  readonly preview?: "toolpaths";
+  readonly preview?: "toolpaths" | "pdf-page" | "validation-report";
+  /** One-based page of the same exact PDF; never an independent file locator. */
+  readonly page?: number;
   /** Exact plate entry for a multi-plate archive; never an independent file locator. */
   readonly archiveEntry?: string;
 }
@@ -318,7 +320,7 @@ async function representationBody(
   response: Response,
   reference: ArtifactRef,
   signal?: AbortSignal,
-  preview?: "toolpaths",
+  preview?: "toolpaths" | "pdf-page" | "validation-report",
 ): Promise<Blob> {
   const maximum = 104_857_600;
   const size = response.headers.get("content-length");
@@ -333,7 +335,13 @@ async function representationBody(
       (response.headers.get("x-wright-view-format") !==
         "wright.gcode.toolpaths.v1" ||
         response.headers.get("content-type")?.split(";", 1)[0] !==
-          "application/vnd.wright.toolpaths+json"))
+          "application/vnd.wright.toolpaths+json")) ||
+    (preview === "pdf-page" &&
+      (response.headers.get("x-wright-view-format") !== "wright.pdf.page.v1" ||
+       response.headers.get("content-type")?.split(";", 1)[0] !== "application/vnd.wright.pdf-page+json")) ||
+    (preview === "validation-report" &&
+      (response.headers.get("x-wright-view-format") !== "wright.validation.report.v1" ||
+       response.headers.get("content-type")?.split(";", 1)[0] !== "text/markdown"))
   ) {
     await response.body?.cancel().catch(() => undefined);
     throw clientError(
@@ -378,6 +386,7 @@ async function representationBody(
       "text/markdown",
       "text/csv",
       "application/json",
+      "application/pdf",
       "image/png",
       "image/jpeg",
       "image/gif",
@@ -390,6 +399,8 @@ async function representationBody(
     ]);
     if (preview === "toolpaths")
       passive.add("application/vnd.wright.toolpaths+json");
+    if (preview === "pdf-page")
+      passive.add("application/vnd.wright.pdf-page+json");
     return new Blob(parts, {
       type: passive.has(type) ? type : "application/octet-stream",
     });
@@ -999,12 +1010,14 @@ export function createNativeProcessClient(
     ) {
       const checked = assertContract("ArtifactRef", reference);
       relativeLocator(checked.artifact_ref);
-      if (read.preview !== undefined && read.preview !== "toolpaths")
+      if (read.preview !== undefined && !["toolpaths", "pdf-page", "validation-report"].includes(read.preview))
         throw clientError(
           "RESPONSE_INVALID",
           "This passive preview is unsupported.",
           "Download the exact recorded file.",
         );
+      if (read.page !== undefined && (read.preview !== "pdf-page" || !Number.isInteger(read.page) || read.page < 1 || read.page > 200))
+        throw clientError("RESPONSE_INVALID", "Choose a supported PDF page.", "Open a page between 1 and 200 of the exact file.");
       if (read.archiveEntry !== undefined) {
         if (read.preview !== "toolpaths")
           throw clientError(
@@ -1046,6 +1059,7 @@ export function createNativeProcessClient(
             reference: checked,
             ...ownership,
             ...(read.preview ? { preview: read.preview } : {}),
+            ...(read.page !== undefined ? { page: read.page } : {}),
             ...(read.archiveEntry !== undefined
               ? { archive_entry: read.archiveEntry }
               : {}),

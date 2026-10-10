@@ -31,7 +31,6 @@ from typing import Literal, Optional
 from agent_adapters import BaseAgentEngine
 from agent_adapters.report_generation import (
     generate_workflow_response,
-    response_instructions,
     decide_workflow_tool_action,
 )
 from agent_adapters.hermes_gateway import hermes_config_paths
@@ -112,6 +111,7 @@ from api.schemas.workspace import (
     WorkflowResponse,
     WorkflowDocumentResponse,
     WorkflowSourceCreateRequest,
+    WorkflowSourceCopyRequest,
     WorkflowSourceRunRequest,
     WorkflowSourceRunResponse,
     WorkflowArtifactReviewDecisionRequest,
@@ -1129,6 +1129,41 @@ async def create_workflow_source_endpoint(
         raise _workflow_source_unavailable(error) from error
 
 
+@router.post(
+    "/workflow-sources/copy",
+    response_model=WorkflowSourceResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflow_sources.copy")
+async def copy_workflow_source_endpoint(
+    body: WorkflowSourceCopyRequest,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(body.session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        document = await service.workflow_sources.copy(
+            scope.workspace_dir,
+            body.source_path,
+            body.destination_path,
+            body.expected_storage_digest,
+        )
+        return _workflow_source_response(scope.workspace_id, document)
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "workflow_source_not_found",
+                "message": "Workflow source not found",
+            },
+        ) from error
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+
+
 @router.put("/workflow-sources", response_model=WorkflowSourceResponse)
 @traced("workspace.workflow_sources.update")
 async def update_workflow_source_endpoint(
@@ -1188,6 +1223,24 @@ async def list_workflow_source_tools(
         return {"tools": runtime.available()}
     finally:
         await runtime.close()
+
+
+@router.get("/workflow-sources/instruction-defaults")
+async def workflow_instruction_defaults(
+    session_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        return await service.executor.run(
+            "workspace.workflow_sources.instruction_defaults",
+            lambda: service.workflow_instruction_defaults(scope.workspace_dir),
+            timeout_seconds=30.0,
+        )
+    except ValueError as error:
+        raise HTTPException(
+            422, detail={"code": "workflow_instructions_invalid", "message": str(error)}
+        ) from error
 
 
 @router.post("/workflow-sources/images", status_code=201)
@@ -1617,6 +1670,7 @@ async def run_workflow_source_endpoint(
                 "completed",
                 "pending_review",
                 "awaiting_approval",
+                "waiting_human",
             }:
                 raise WorkflowSourceExecutionError(
                     recorded.get("code", "OUTCOME_UNKNOWN"),
@@ -1628,11 +1682,6 @@ async def run_workflow_source_endpoint(
                         "Open the exact saved run and inspect its actual outcome.",
                     ),
                 )
-            for step in recorded.get("steps", []):
-                if step.get("execution_kind") == "ai":
-                    step["format_instructions"] = response_instructions(
-                        step["output_format"]
-                    )
             return {
                 "workspace_id": bound.workspace_id,
                 "workflow_path": body.path,
@@ -1652,14 +1701,6 @@ async def run_workflow_source_endpoint(
                             cursor=cursor,
                         )
                         for event in page["events"]:
-                            if (
-                                event.get("kind") == "step_started"
-                                and event.get("execution_kind") == "ai"
-                                and isinstance(event.get("output_format"), str)
-                            ):
-                                event["format_instructions"] = response_instructions(
-                                    event["output_format"]
-                                )
                             yield json.dumps(event, ensure_ascii=False) + "\n"
                         cursor = page["cursor"]
                         if page["has_more"]:
@@ -1717,6 +1758,7 @@ async def run_workflow_source_endpoint(
         raise HTTPException(status_code=status_code, detail=info) from error
     except (OSError, ValueError) as error:
         raise HTTPException(status_code=422, detail=detail(error)) from error
+
 
 @router.get(
     "/workflow-source-templates",
@@ -1842,6 +1884,21 @@ def _scoped_workflow_checkpoint(
     )
 
 
+def _canonical_approval_continuation(checkpoint) -> bool:
+    state = checkpoint.continuation
+    version = state.get("schema_version")
+    if (
+        type(version) is int
+        and version == 3
+        and state.get("checkpoint_kind") != "approval"
+    ):
+        raise WorkflowExternalActionError(
+            "approval_continuation_invalid",
+            "This checkpoint is not a canonical approval continuation.",
+        )
+    return type(version) is int and version in {2, 3}
+
+
 async def _project_workflow_checkpoint(
     service: WorkspaceService, checkpoint, kind: str
 ):
@@ -1942,7 +1999,7 @@ async def decide_workflow_approval_checkpoint_endpoint(
         current = _scoped_workflow_checkpoint(
             service, run_id, checkpoint_id, body.session_id
         )
-        if current.continuation.get("schema_version") == 2:
+        if _canonical_approval_continuation(current):
             from workspace_service.workflow_approval_execution import (
                 decide_workflow_approval,
             )
@@ -1955,7 +2012,7 @@ async def decide_workflow_approval_checkpoint_endpoint(
                 checkpoint=current,
                 subject_digest=body.subject_digest,
                 decision=body.decision,
-                reason=body.reason,
+                reason=body.reason if body.reason is not None else "",
                 auto=body.auto,
                 gateway=request.app.state.gateway_service,
                 session_id=body.session_id,
@@ -1992,6 +2049,7 @@ async def decide_workflow_approval_checkpoint_endpoint(
 @router.post(
     "/workflow-runs/{run_id}/resume",
     response_model=WorkflowApprovalCheckpointResponse,
+    dependencies=[Depends(_require_process_validation_role)],
 )
 @traced("workspace.workflow_approval.resume")
 async def resume_workflow_approval_checkpoint_endpoint(
@@ -2000,23 +2058,36 @@ async def resume_workflow_approval_checkpoint_endpoint(
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    from core.process_interactions import ProcessRef
+    from workspace_service.process_interfaces.service import ProcessScope
+    from workspace_service.process_interfaces.errors import ProcessInterfaceError
+
     try:
         current = _scoped_workflow_checkpoint(
             service, run_id, body.checkpoint_id, body.session_id
         )
-        if current.continuation.get("schema_version") == 2:
-            from workspace_service.workflow_approval_execution import (
-                resume_workflow_approval,
-            )
-
+        if _canonical_approval_continuation(current):
             scope = _workflow_source_scope(body.session_id, service)
-            checkpoint, result = await resume_workflow_approval(
-                service=service,
+            process = ProcessRef(
                 workspace_id=scope.workspace_id,
-                workspace_dir=scope.workspace_dir,
-                checkpoint=current,
-                subject_digest=body.subject_digest,
-                request_id=body.request_id,
+                source_path=current.workflow_id,
+                source_digest=current.subject["definition_digest"],
+            )
+            invocation = ProcessScope(
+                getattr(getattr(request, "state", None), "principal_id", None)
+                or "local-control-plane",
+                scope.workspace_id,
+                frozenset({"process.read", "process.action"}),
+            )
+            (
+                checkpoint,
+                result,
+            ) = await service.process_interfaces.runs.resume_legacy_approval(
+                invocation,
+                process,
+                current,
+                body.request_id,
+                expected_subject_digest=body.subject_digest,
                 gateway=request.app.state.gateway_service,
                 session_id=body.session_id,
                 response_generator=generate_workflow_response,
@@ -2042,6 +2113,15 @@ async def resume_workflow_approval_checkpoint_endpoint(
         await _project_workflow_checkpoint(
             service, checkpoint, "external_action_authorized"
         )
+    except ProcessInterfaceError as error:
+        raise HTTPException(
+            status_code=403 if error.reason.code == "SCOPE_DENIED" else 409,
+            detail={
+                "code": error.reason.code.lower(),
+                "message": error.reason.message,
+                "correction": error.reason.correction,
+            },
+        ) from error
     except WorkflowExternalActionError as error:
         raise _workflow_external_action_http_error(error) from error
     except WorkflowSourceExecutionError as error:
@@ -3733,6 +3813,18 @@ async def run_file_endpoint(
 # ── Git Operations ───────────────────────────────────────────────────────
 
 
+@router.post("/git/init", response_model=GitPushPullResponse)
+@traced("workspace.git.initialize")
+async def git_initialize_endpoint(
+    body: GitPushPullRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
+    await service.git.initialize(workspace_dir)
+    return GitPushPullResponse(success=True, message="Workspace repository is ready")
+
+
 @router.get("/git/status", response_model=GitStatusResponse)
 @traced("workspace.git.status")
 async def git_status_endpoint(
@@ -3754,6 +3846,7 @@ async def git_status_endpoint(
         branch_name=result["branch_name"],
         is_clean=result["is_clean"],
         changes=changes,
+        is_repository=result.get("is_repository", True),
     )
 
 

@@ -108,6 +108,77 @@ const focus = () =>
     window.dispatchEvent(new Event("focus"));
   });
 
+it.each([false, true])(
+  "opens a saved run from history even when source cannot be drawn: %s",
+  async (invalid) => {
+    vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+      snapshot("waiting_human"),
+    ]);
+    const open = vi.fn(),
+      run = vi.fn();
+    render(
+      <WorkflowRecoveryConcept
+        {...props}
+        workflowSource={invalid ? "invalid source" : source}
+        onRun={run}
+        onOpenRunWorkingView={open}
+      />,
+    );
+    if (!invalid)
+      fireEvent.click(
+        screen.getByTestId("workflow-recovery-run-details-toggle"),
+      );
+    fireEvent.click(screen.getByText("Previous runs"));
+    fireEvent.click(await screen.findByText(/Waiting for your input ·/));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open run in working view" }),
+    );
+    expect(open).toHaveBeenCalledExactlyOnceWith("recorded-run", digest);
+    expect(run).not.toHaveBeenCalled();
+    if (invalid)
+      expect(screen.getByText("Workflow file needs correction.")).toBeVisible();
+  },
+);
+
+it("shows a declared input wait and opens its exact run without starting another process", async () => {
+  let current = snapshot("waiting_human");
+  current.execution!.last_progress = {
+    kind: "input_requested",
+    task_id: "choice",
+    task_title: "Choose interval",
+    message: "Choose the analysis interval.",
+  };
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockImplementation(
+    async () => [current],
+  );
+  const onRun = vi.fn(),
+    onOpenRunWorkingView = vi.fn();
+  render(
+    <WorkflowRecoveryConcept
+      {...props}
+      onRun={onRun}
+      onOpenRunWorkingView={onOpenRunWorkingView}
+    />,
+  );
+  const wait = await screen.findByTestId("workflow-run-input-wait");
+  expect(wait).toHaveTextContent("Waiting for your input");
+  expect(wait).toHaveTextContent("Choose the analysis interval.");
+  expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+  expect(screen.queryByTestId("workflow-run-failure-banner")).toBeNull();
+  fireEvent.click(screen.getByTestId("workflow-run-answer-input"));
+  expect(onOpenRunWorkingView).toHaveBeenCalledExactlyOnceWith(
+    "recorded-run",
+    digest,
+  );
+  expect(onRun).not.toHaveBeenCalled();
+  current = snapshot("completed");
+  await focus();
+  await waitFor(() =>
+    expect(screen.queryByTestId("workflow-run-input-wait")).toBeNull(),
+  );
+  expect(onRun).not.toHaveBeenCalled();
+});
+
 it("keeps saved results accessible when the diagram source is invalid, without restoring editing authority", async () => {
   const current = snapshot("completed");
   current.execution!.outputs = [

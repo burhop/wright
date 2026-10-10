@@ -10,6 +10,7 @@ from .workflow_source_execution import (
     WorkflowSourceExecutionError,
     prepare_prompt_workflow,
 )
+from .workflow_model_routing import UNSET_CONTEXT, freeze_workflow_model_routing
 
 
 @dataclass
@@ -78,6 +79,7 @@ async def prepare_authorized_workflow_run(
     integration_policy_digest: str | None = None,
     input_snapshot=None,
     run_id: str | None = None,
+    expected_execution_context=UNSET_CONTEXT,
 ) -> PreparedWorkflowRun:
     """Public qualification and scoped integration readiness are separate gates.
 
@@ -137,6 +139,9 @@ async def prepare_authorized_workflow_run(
                 tool_runtime=open_tools() if grant["allowed_tools"] else runtime,
                 files=service.files,
             )
+        plan, context = await freeze_workflow_model_routing(
+            service, plan, context, expected_execution_context
+        )
         if context is not None and runtime is not None:
             from .workflow_integration_document_write import (
                 bind_integration_document_writes,

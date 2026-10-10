@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-10",
+  "build": "local production preview 47",
+  "scope": "Actual served workspace, read-only recorded-run navigation; no review or run action submitted",
+  "images": [
+    {
+      "image": "blank-workflow.png",
+      "sha256": "37747d32abb96525c9174021adcbce4e59b372f02107d41704e1bda5bddb9af5",
+      "source": "browser-235-run-navigation/screenshots/raw/01-entry-after.png"
+    },
+    {
+      "image": "working-review.png",
+      "sha256": "bee888957a6b64d9738899d7804b42d55bf2168e30b06b8666d6d43b0404ba7a",
+      "source": "browser-235-run-navigation/screenshots/raw/03-reopen-after.png"
+    }
+  ]
+}

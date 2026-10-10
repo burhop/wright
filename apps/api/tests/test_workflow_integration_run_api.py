@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from dataclasses import replace
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
@@ -10,6 +11,7 @@ import pytest_asyncio
 from fastapi import HTTPException
 
 from api.routers import workspace as router
+from apps.api.tests.process_interface_fixtures import bind_process_interfaces
 from api.schemas.workspace import WorkflowSourceRunRequest
 from api.schemas.workspace import (
     WorkflowApprovalDecisionRequest,
@@ -173,13 +175,16 @@ async def test_invalid_grants_never_start_a_run(prepared, tmp_path, mutation):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("handoff", [False, True])
-async def test_v2_approval_routes_continue_and_return_full_execution(tmp_path, handoff):
+@pytest.mark.parametrize("explicit_reason", [False, True])
+async def test_v2_approval_routes_continue_and_return_full_execution(
+    tmp_path, handoff, explicit_reason
+):
     from packages.workspace_service.tests.test_workflow_approval_execution import (
         setup_case,
     )
 
     case = await setup_case(tmp_path, handoff=handoff)
-    svc = case.services
+    svc = bind_process_interfaces(case.services, tmp_path, "ws")
     svc.lifecycle = SimpleNamespace(
         get_by_session=lambda _: {
             "workspace_id": "ws",
@@ -198,6 +203,7 @@ async def test_v2_approval_routes_continue_and_return_full_execution(tmp_path, h
             subject_digest=case.checkpoint.subject_digest,
             decision="approved",
             auto=True,
+            **({"reason": ""} if explicit_reason else {}),
             request_id="decision-01",
         ),
         request,
@@ -256,7 +262,7 @@ async def test_auto_approval_api_rechecks_current_authority_before_handoff(
         mode="manual" if mutation == "manual" else "auto",
         expires_at=expiry if mutation == "expired" else None,
     )
-    svc = case.services
+    svc = bind_process_interfaces(case.services, tmp_path, "ws")
     svc.lifecycle = SimpleNamespace(
         get_by_session=lambda _: {
             "workspace_id": "foreign" if mutation == "workspace" else "ws",
@@ -283,6 +289,7 @@ async def test_auto_approval_api_rechecks_current_authority_before_handoff(
         subject_digest=case.checkpoint.subject_digest,
         decision="approved",
         auto=True,
+        reason="",
         request_id="denied-auto-request",
     )
     with pytest.raises(HTTPException) as denied:
@@ -305,7 +312,7 @@ async def test_manual_changes_requested_api_prevents_test_handoff(tmp_path):
     )
 
     case = await setup_case(tmp_path, handoff=True)
-    svc = case.services
+    svc = bind_process_interfaces(case.services, tmp_path, "ws")
     svc.lifecycle = SimpleNamespace(
         get_by_session=lambda _: {
             "workspace_id": "ws",
@@ -347,3 +354,73 @@ async def test_manual_changes_requested_api_prevents_test_handoff(tmp_path):
     assert denied.value.status_code in {409, 422}
     assert len(case.calls) == 1
     assert not (tmp_path / "outputs/attempt/receipt.json").exists()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kind", ["input", None, "unsupported"])
+@pytest.mark.parametrize("operation", ["decide", "resume"])
+async def test_approval_routes_reject_nonapproval_v3_before_authority(
+    tmp_path, monkeypatch, kind, operation
+):
+    from packages.workspace_service.tests.test_workflow_approval_execution import (
+        setup_case,
+    )
+
+    case = await setup_case(tmp_path)
+    svc = bind_process_interfaces(case.services, tmp_path, "ws")
+    svc.lifecycle = SimpleNamespace(
+        get_by_session=lambda _: {"workspace_id": "ws", "local_path": str(tmp_path)}
+    )
+    svc.ensure_workspace_path_safe = lambda path: path
+    crossed = replace(
+        case.checkpoint,
+        continuation={
+            **case.checkpoint.continuation,
+            "schema_version": 3,
+            "checkpoint_kind": kind,
+        },
+    )
+    monkeypatch.setattr(
+        svc.workflow_external_actions, "get", lambda *args, **kwargs: crossed
+    )
+    request = SimpleNamespace(
+        app=SimpleNamespace(state=SimpleNamespace(gateway_service=None))
+    )
+    if operation == "decide":
+        invoke = router.decide_workflow_approval_checkpoint_endpoint(
+            crossed.run_id,
+            crossed.checkpoint_id,
+            WorkflowApprovalDecisionRequest(
+                session_id="session",
+                subject_digest=crossed.subject_digest,
+                decision="approved",
+                auto=False,
+                request_id="crossed-decision",
+            ),
+            request,
+            svc,
+        )
+    else:
+        invoke = router.resume_workflow_approval_checkpoint_endpoint(
+            crossed.run_id,
+            WorkflowApprovalResumeRequest(
+                session_id="session",
+                checkpoint_id=crossed.checkpoint_id,
+                subject_digest=crossed.subject_digest,
+                request_id="crossed-resume",
+            ),
+            request,
+            svc,
+        )
+    with pytest.raises(HTTPException) as blocked:
+        await invoke
+    assert blocked.value.status_code == 422
+    assert blocked.value.detail["code"] == "approval_continuation_invalid"
+    actual = svc.workflow_external_actions.lookup(case.checkpoint.checkpoint_id)
+    assert (
+        actual.state == "pending"
+        and actual.actor is None
+        and actual.external_action is None
+    )
+    assert len(case.calls) == 1
+    assert not (tmp_path / "outputs/attempt/after.txt").exists()

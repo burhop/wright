@@ -11,7 +11,11 @@ from workspace_service.workflow_source_execution import (
     WorkflowSourceExecutionError,
     compile_prompt_workflow,
 )
-from packages.workspace_service.tests.test_workflow_source_execution import task, source
+from packages.workspace_service.tests.test_workflow_source_execution import task
+from packages.workspace_service.tests.test_workflow_ai_task import (
+    source,
+    legacy_instruction_profile,
+)
 from packages.workspace_service.tests.test_workflow_mcp_execution import Gateway
 
 
@@ -370,6 +374,7 @@ def test_model_reference_passes_through_two_tasks_independently_of_text(tmp_path
         server_id="cad",
         agent_task=True,
         cad=cfg,
+        instruction_set=legacy_instruction_profile(),
     )
     second_cfg = settings()
     second_cfg.update(source="upstream", from_port="model")

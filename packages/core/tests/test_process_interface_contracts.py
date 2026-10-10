@@ -387,6 +387,31 @@ def test_dependency_classifications_require_declared_producer_or_correction():
             InputDependency(binding_id="later", classification=kind)
 
 
+def test_dependency_preserves_full_connected_input_address():
+    from jsonschema import validate
+
+    address = "b" * 160 + "." + "p" * 160
+    dependency = InputDependency(
+        binding_id=address,
+        classification="upstream_produced",
+        producer_step="s" * 160,
+        producer_port="o" * 160,
+    )
+    assert (
+        InputDependency.model_validate_json(dependency.model_dump_json()) == dependency
+    )
+    assert dependency.binding_id == address
+    validate(dependency.model_dump(mode="json"), InputDependency.model_json_schema())
+    with pytest.raises(ValidationError):
+        InputDependency.model_validate(
+            {**dependency.model_dump(), "binding_id": address + "x"}
+        )
+    with pytest.raises(ValidationError):
+        InputDependency.model_validate(
+            {**dependency.model_dump(), "producer_step": "s" * 161}
+        )
+
+
 def test_snapshot_projection_does_not_accept_another_input_assessment():
     context = InteractionContext(
         process=process(),

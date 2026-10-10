@@ -27,8 +27,25 @@ def control(actor="user"):
     )
 
 
-async def waiting_case(root, text=None):
+async def waiting_case(root, text=None, *, integration=False):
     text = text or human_source()
+    if integration:
+        import re
+
+        text = text.replace('"first.txt"', '"outputs/first.txt"').replace(
+            '"second.txt"', '"outputs/second.txt"'
+        )
+        text = re.sub(
+            r"^  settings: (\{[^\n]+\})$",
+            lambda match: (
+                "  settings: "
+                + json.dumps({**json.loads(match[1]), "input_text": "Compare a and b."})
+                if "interaction_input" in json.loads(match[1])
+                else match[0]
+            ),
+            text,
+            flags=re.MULTILINE,
+        )
     reference = process(text)
     path = root / reference.source_path
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -45,6 +62,33 @@ async def waiting_case(root, text=None):
 
     app.workspace.files.hash_reference = hash_reference
     app.workspace.workflow_sources.read = read_source
+    policy_digest = None
+    if integration:
+        import hashlib
+        from workspace_service.workflow_integration_policy import (
+            WorkflowIntegrationPolicyService,
+        )
+
+        basis = root / "input-basis.txt"
+        basis.write_text(
+            "Predetermined synthetic selection b; no engineering acceptance."
+        )
+        policies = WorkflowIntegrationPolicyService(
+            str(root / "integration.db"), enabled=True
+        )
+        app.workspace.workflow_integration_policies = policies
+        policy_digest = policies.enroll(
+            campaign_id="input-campaign",
+            dataset_id="input-dataset",
+            dataset_digest=hashlib.sha256(basis.read_bytes()).hexdigest(),
+            workspace_id="workspace",
+            source_path=reference.source_path,
+            source_digest=reference.source_digest,
+            input_files={basis.name: hashlib.sha256(basis.read_bytes()).hexdigest()},
+            output_root="outputs",
+            allowed_tools=[],
+            approval_mode="auto",
+        )
     frozen = (await app.set_inputs(control(), reference)).snapshot
     calls = []
 
@@ -59,6 +103,7 @@ async def waiting_case(root, text=None):
         "start-human",
         expected_input_digest=frozen.digest,
         response_generator=generate,
+        integration_policy_digest=policy_digest,
     )
     view = await app.runs.wait(control(), reference, receipt.run_id)
     assert view["status"] == "waiting_human"
@@ -80,6 +125,7 @@ async def answer(
     value=None,
     request="answer-one",
     actor="user",
+    auto=False,
 ):
     return await app.runs.respond(
         control(actor),
@@ -89,6 +135,7 @@ async def answer(
         expected_subject_digest=checkpoint.subject_digest,
         value={"selection": "b"} if value is None else value,
         response_generator=generate,
+        auto=auto,
     )
 
 
@@ -136,10 +183,14 @@ async def test_projection_is_a_declared_form_and_reads_never_execute_or_respond(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("integration", [False, True])
 async def test_response_owns_task_returns_before_model_and_retries_never_repeat(
     tmp_path,
+    integration,
 ):
-    app, reference, receipt, cp, calls, _ = await waiting_case(tmp_path)
+    app, reference, receipt, cp, calls, _ = await waiting_case(
+        tmp_path, integration=integration
+    )
     entered, release = asyncio.Event(), asyncio.Event()
 
     async def generate(prompt, fmt):
@@ -149,13 +200,15 @@ async def test_response_owns_task_returns_before_model_and_retries_never_repeat(
         return "Synthetic after declared selection"
 
     try:
-        response = await answer(app, reference, cp, generate)
+        response = await answer(app, reference, cp, generate, auto=integration)
         assert response.run_id == receipt.run_id
-        assert response.actor == "user"
-        assert not response.integration_test
+        assert response.actor == (
+            "integration_test:input-campaign" if integration else "user"
+        )
+        assert response.integration_test is integration
         await asyncio.wait_for(entered.wait(), 3)
         assert app.runs.is_live(receipt.run_id)
-        assert await answer(app, reference, cp, generate) == response
+        assert await answer(app, reference, cp, generate, auto=integration) == response
         observer = asyncio.create_task(
             app.runs.wait(control(), reference, receipt.run_id)
         )
@@ -169,7 +222,7 @@ async def test_response_owns_task_returns_before_model_and_retries_never_repeat(
         assert completed["status"] == "completed"
         assert completed["run_id"] == receipt.run_id
         assert len(calls) == 2
-        assert await answer(app, reference, cp, generate) == response
+        assert await answer(app, reference, cp, generate, auto=integration) == response
         assert len(calls) == 2
         record = json.loads(
             (tmp_path / receipt.run_log_path).read_text(encoding="utf-8")

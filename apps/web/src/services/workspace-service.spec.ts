@@ -353,6 +353,99 @@ describe("terminal workflow review", () => {
   });
 });
 
+describe("declared workflow input wait", () => {
+  beforeEach(() => mocks.fetch.mockReset());
+  const wait = {
+    status: "waiting_human",
+    run_id: "run-input",
+    workspace_id: "workspace",
+    workflow_path: "workflows/input.workflow.wflow",
+    output_path: "",
+    output_bytes: 0,
+    results: [],
+    input_checkpoint: {
+      checkpoint_id: "checkpoint-input",
+      run_id: "run-input",
+      workspace_id: "workspace",
+      workflow_id: "workflows/input.workflow.wflow",
+      step_id: "choose",
+      action_kind: "human_input",
+      state: "pending",
+      subject_digest: "a".repeat(64),
+      subject: {
+        definition_digest: digest,
+        declaration: {
+          kind: "input",
+          instructions: "Choose the analysis interval.",
+          response_schema: { type: "object" },
+        },
+      },
+    },
+  };
+  it.each([false, true])(
+    "preserves a declared wait with no prior file (stream=%s)",
+    async (stream) => {
+      const onEvent = vi.fn();
+      const event = {
+        kind: "input_requested",
+        task_id: "choose",
+        message: "Choose the analysis interval.",
+      };
+      mocks.fetch.mockResolvedValue(
+        stream
+          ? new Response(
+              `${JSON.stringify(event)}\n${JSON.stringify({ kind: "waiting_human", result: wait })}\n`,
+              { headers: { "Content-Type": "application/x-ndjson" } },
+            )
+          : response(wait),
+      );
+      await expect(
+        workspaceService.runWorkspaceWorkflowSource(
+          "session",
+          wait.workflow_path,
+          digest,
+          stream ? onEvent : undefined,
+        ),
+      ).resolves.toEqual(wait);
+      if (stream) expect(onEvent).toHaveBeenCalledExactlyOnceWith(event);
+      expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    },
+  );
+  it.each([
+    { ...wait, input_checkpoint: undefined },
+    {
+      ...wait,
+      input_checkpoint: { ...wait.input_checkpoint, run_id: "another-run" },
+    },
+    {
+      ...wait,
+      input_checkpoint: {
+        ...wait.input_checkpoint,
+        action_kind: "local_review",
+      },
+    },
+    {
+      ...wait,
+      input_checkpoint: {
+        ...wait.input_checkpoint,
+        subject: {
+          ...wait.input_checkpoint.subject,
+          definition_digest: "b".repeat(64),
+        },
+      },
+    },
+  ])("rejects missing or mismatched input authority %#", async (payload) => {
+    mocks.fetch.mockResolvedValue(response(payload));
+    await expect(
+      workspaceService.runWorkspaceWorkflowSource(
+        "session",
+        wait.workflow_path,
+        digest,
+      ),
+    ).rejects.toThrow("invalid workflow run result");
+  });
+});
+
 describe("CAD workflow completion", () => {
   beforeEach(() => mocks.fetch.mockReset());
   it.each(["cad/bracket.psm", "cad/bracket.step", "cad/bracket.x_t"])(

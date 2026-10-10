@@ -8,6 +8,7 @@ import pytest
 from core.process_interactions import NavigationTarget
 from workspace_service.process_interfaces.errors import ProcessInterfaceError
 from workspace_service.process_interfaces.projection import RecordedRun, ProjectionFacts
+from workspace_service.process_interfaces.projection import project_previous_output
 from workspace_service.workflow_results import (
     EngineeringResult,
     Representation,
@@ -29,6 +30,104 @@ CAPABILITIES = (
     "process.results",
     "process.navigate",
 )
+
+
+@pytest.mark.asyncio
+async def test_historical_assessment_navigation_uses_history_alias_and_preserves_currentness(
+    tmp_path, monkeypatch
+):
+    report, subject, _ = validation_report(tmp_path, revision=True)
+    async with case(tmp_path, text=source(default="Exact requirements")) as c:
+        digest = hashlib.sha256(
+            report.assessment.model_dump_json(indent=2).encode()
+        ).hexdigest()
+        old_subject = replace(subject, id="history-subject-attempt-1")
+        old_report = EngineeringResult(
+            "history-assessment-attempt-1",
+            "structured",
+            "Prior assessment",
+            (
+                Representation(
+                    "workspace_file",
+                    "outputs/assessment-attempt-1.json",
+                    "json",
+                    sha256=digest,
+                ),
+            ),
+            Provenance("run", "validator", "evidence"),
+            artifact_role="diagnostic",
+        )
+        current = replace(
+            subject,
+            representations=(replace(subject.representations[0], sha256="c" * 64),),
+        )
+        facts = ProjectionFacts(
+            process=c.process,
+            generated_at="2026-10-10T09:00:00Z",
+            reports=(report,),
+            run=RecordedRun(
+                process=c.process,
+                run_id="run",
+                status="awaiting_approval",
+                cursor=2,
+                observed_at="2026-10-10T09:00:00Z",
+                results=(current,),
+                previous_results=(
+                    ("1", subject.id, old_subject),
+                    ("1", "run:validator:evidence", old_report),
+                ),
+            ),
+        )
+        before = repr(facts)
+
+        async def read_facts(*args, **kwargs):
+            return facts
+
+        monkeypatch.setattr(
+            "workspace_service.process_interfaces.navigation.recorded_run_facts",
+            read_facts,
+        )
+        target = NavigationTarget(
+            kind="assessment",
+            run_id="run",
+            result_id=old_subject.id,
+            assessment_id=report.assessment.id,
+        )
+        resolved = await c.app.navigation.resolve(
+            scope(*CAPABILITIES), c.process, target
+        )
+        assert resolved.target.result_id == old_subject.id
+        assert resolved.representation.result_id == old_report.id
+        assert (
+            resolved.representation.artifact_ref == "outputs/assessment-attempt-1.json"
+        )
+        assert resolved.representation.sha256 == digest
+        historical = project_previous_output("1", subject.id, old_subject, (report,))
+        assert historical.role == "previous_attempt"
+        assert historical.assessments[0].currentness == "stale"
+        for changes in [
+            {"result_id": subject.id},
+            {"assessment_id": "other-assessment"},
+            {"result_id": "history-foreign"},
+            {"result_id": old_report.id},
+        ]:
+            with pytest.raises(ProcessInterfaceError) as failure:
+                await c.app.navigation.resolve(
+                    scope(*CAPABILITIES), c.process, target.model_copy(update=changes)
+                )
+            assert failure.value.reason.code == "SCOPE_DENIED"
+        assert repr(facts) == before
+        assert not (tmp_path / "runs").exists()
+        assert not (tmp_path / "first.txt").exists()
+        # A history alias grants no file by guessed name: the assessment must
+        # also have its exact retained representation in this same run.
+        facts = replace(
+            facts,
+            run=replace(facts.run, previous_results=(("1", subject.id, old_subject),)),
+        )
+        with pytest.raises(ProcessInterfaceError) as failure:
+            await c.app.navigation.resolve(scope(*CAPABILITIES), c.process, target)
+        assert failure.value.reason.code == "CAPABILITY_UNAVAILABLE"
 
 
 @pytest.mark.asyncio
@@ -227,7 +326,9 @@ async def test_assessment_subject_and_recorded_evidence_are_separate_identities(
         with pytest.raises(ProcessInterfaceError) as failure:
             await c.app.navigation.resolve(scope(*CAPABILITIES), c.process, target)
         assert failure.value.reason.code == "CAPABILITY_UNAVAILABLE"
-        facts = replace(facts, run=replace(facts.run, results=(), results_truncated=True))
+        facts = replace(
+            facts, run=replace(facts.run, results=(), results_truncated=True)
+        )
         with pytest.raises(ProcessInterfaceError) as failure:
             await c.app.navigation.resolve(scope(*CAPABILITIES), c.process, target)
         assert failure.value.reason.code == "CAPABILITY_UNAVAILABLE"

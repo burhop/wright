@@ -1,0 +1,548 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "focus-wheel-native-correspondence-001",
+  "version": "2",
+  "baseline": {
+    "id": "focus-wheel-native-correspondence-001-basis",
+    "version": "1",
+    "requirements": [
+      {
+        "id": "PRINT01-ENVELOPE-DIGITAL-OBSERVATION",
+        "text": "Digital observation contribution to PRINT01-ENVELOPE: The complete wheel is no more than 38.0 mm diameter and 18.0 mm high including the 2 mm raised front hub. Original engineering review obligations remain with the parent job.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+            "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+            "locator": "38 mm scale reference"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+            "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+            "locator": "Geometry and use"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "PRINT01-GRIP-DIGITAL-OBSERVATION",
+        "text": "Digital observation contribution to PRINT01-GRIP: The wheel has six equally spaced shallow scallops, at least 33 mm minimum grip diameter, nominal 1.0 mm exposed-edge rounds and subtle raised grip dots that do not form glove catches. Original engineering review obligations remain with the parent job.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+            "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+            "locator": "six scallops and grip dots"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+            "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+            "locator": "Geometry and use"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "PRINT01-SOCKET-DIGITAL-OBSERVATION",
+        "text": "Digital observation contribution to PRINT01-SOCKET: The concentric blind D socket is 10.0 mm deep and derives from a 6.00 mm round boundary and 5.20 mm across-flat shaft with 0.20 mm radial and 0.20 mm flat clearance. Original engineering review obligations remain with the parent job.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+            "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+            "locator": "shaft and socket request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+            "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+            "locator": "Geometry and use"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "PRINT01-SOCKET-WALL-DIGITAL-OBSERVATION",
+        "text": "Digital observation contribution to PRINT01-SOCKET-WALL: At least 3.0 mm material remains above the blind socket and no set screw, insert, taper or keyway is added. Original engineering review obligations remain with the parent job.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+            "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+            "locator": "Geometry and use"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "PRINT01-MESH-LINEAGE-DIGITAL-OBSERVATION",
+        "text": "Digital observation contribution to PRINT01-MESH-LINEAGE: Source and repaired printable meshes are distinct, correspond to the same approved geometry, and the final slice package binds to the repaired mesh revision. Original engineering review obligations remain with the parent job.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+            "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+            "locator": "requested mesh lineage"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+            "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+            "locator": "Review and outputs"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      }
+    ],
+    "unresolved_decisions": [],
+    "amendments": []
+  },
+  "checks": [
+    {
+      "id": "one-valid-solid",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/valid_solid",
+      "constraint": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "height18",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/measured_height_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 18.0,
+        "tolerance": 1e-05,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "envelope38",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/measured_max_y_envelope_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 38.0,
+        "tolerance": 1e-05,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "sampled-grip33",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-GRIP-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/sampled_minimum_grip_diameter_mm",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 33.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "socket-round",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/socket_sections/1/round_radius_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 3.2,
+        "tolerance": 1e-06,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "socket-flat",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/socket_sections/1/flat_x_mm",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": -2.4,
+        "tolerance": 1e-06,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "roof-solid",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-WALL-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/roof_uncovered_volume_mm3",
+      "constraint": {
+        "operator": "within",
+        "expected": null,
+        "target": 0.0,
+        "tolerance": 1e-05,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "mm3",
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "native-step-agreement",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-MESH-LINEAGE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/native_step_symmetric_volume_difference_mm3",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.001,
+        "inclusive": true
+      },
+      "unit": "mm3",
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "mesh-closed",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-MESH-LINEAGE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/mesh/all_edges_two_facets",
+      "constraint": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "mesh-deviation-sample",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-MESH-LINEAGE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/mesh/maximum_sampled_deviation_mm",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.05,
+        "inclusive": true
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "linked-drawing-dimensions",
+      "version": "2",
+      "requirement_ids": [
+        "PRINT01-SOCKET-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/linked_dimension_count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 10.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "drawing-Envelope",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/Envelope",
+      "constraint": {
+        "operator": "within",
+        "target": 38.0,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-OverallHeight",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/OverallHeight",
+      "constraint": {
+        "operator": "within",
+        "target": 18.0,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-HubHeight",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-ENVELOPE-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/HubHeight",
+      "constraint": {
+        "operator": "within",
+        "target": 2.0,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-SocketRadius",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/SocketRadius",
+      "constraint": {
+        "operator": "within",
+        "target": 3.2,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-SocketDepth",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/SocketDepth",
+      "constraint": {
+        "operator": "within",
+        "target": 10.0,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-SocketAcrossFlat",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/SocketAcrossFlat",
+      "constraint": {
+        "operator": "within",
+        "target": 5.6,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-ExposedRound",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-GRIP-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/ExposedRound",
+      "constraint": {
+        "operator": "within",
+        "target": 1.0,
+        "tolerance": 1e-05
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-GripAtSection",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-GRIP-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/GripAtSection",
+      "constraint": {
+        "operator": "range",
+        "minimum": 33.0
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    },
+    {
+      "id": "drawing-SocketRoofAtAxis",
+      "version": "1",
+      "requirement_ids": [
+        "PRINT01-SOCKET-WALL-DIGITAL-OBSERVATION"
+      ],
+      "subject_role": "inspection",
+      "reader": "structured",
+      "selector": "/drawing/dimension_values_mm/SocketRoofAtAxis",
+      "constraint": {
+        "operator": "range",
+        "minimum": 3.0
+      },
+      "unit": "mm",
+      "frame": "declared_native_mm",
+      "evidence_method": "structured_value",
+      "parameters": {}
+    }
+  ],
+  "excluded_scope": [],
+  "limitations": [
+    "Independent digital inspection of selected requirements only; original full job/material/support/human checks remain required.",
+    "128 mesh surface samples do not establish a complete deviation bound.",
+    "Drawing visual review and all physical tests remain pending.",
+    "Version 2 checks named functional drawing observations; this does not establish dimension layout quality, manufacturing tolerances, or standards compliance. Accepted prior workflow snapshots keep version 1."
+  ],
+  "supported_kinds": [
+    "file"
+  ]
+}

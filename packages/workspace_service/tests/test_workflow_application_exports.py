@@ -19,9 +19,9 @@ from packages.workspace_service.tests.test_workflow_application_task import (
 )
 from packages.workspace_service.tests.test_workflow_source_execution import (
     task,
-    source,
     service,
 )
+from packages.workspace_service.tests.test_workflow_ai_task import source
 from packages.workspace_service.tests.test_workflow_mcp_execution import edge
 
 
@@ -146,7 +146,7 @@ def test_application_exports_real_file_contents_to_next_block(
 
     svc.files.read_reference = read_reference
 
-    async def generate(prompt, fmt):
+    async def generate(prompt, fmt, **kwargs):
         assert data.decode() in prompt
         return "Reviewed exported document."
 
@@ -195,7 +195,7 @@ def test_failed_export_does_not_overwrite_previous_file_or_run_consumer(
     previous.write_bytes(b"Previous output")
     gateway = local_exporter(monkeypatch, b"new", problem)
 
-    async def generate(*args):
+    async def generate(*args, **kwargs):
         pytest.fail("Consumer must not run after failed export")
 
     with pytest.raises(WorkflowSourceExecutionError):

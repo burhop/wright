@@ -24,6 +24,8 @@ export interface EditorTab {
   path: string;
   type: string; // "code" | "stl" | "pdf" | etc.
   isDirty?: boolean;
+  /** Transient write state; never restored as workflow or run authority. */
+  isSaving?: boolean;
   last_modified?: number;
   processView?: ProcessWorkspaceView;
   /** Explicit workflow creation intent; passive navigation/restoration sets false. */
@@ -76,6 +78,7 @@ interface ViewerPanelContextType {
   closeTab: (path: string) => void;
   setActiveTabPath: (path: string | null) => void;
   setTabDirty: (path: string, isDirty: boolean) => void;
+  setTabSaving: (path: string, isSaving: boolean) => void;
   getDocument: (path: string) => ViewerDocument | undefined;
   getProvider: (path: string) => ViewerProvider | undefined;
   updateTabPath: (oldPath: string, newPath: string, newName: string) => void;
@@ -172,6 +175,15 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
     const normalizedPath = normalizeEditorTabPath(path);
     setOpenTabs((prev) =>
       prev.map((t) => (t.path === normalizedPath ? { ...t, isDirty } : t)),
+    );
+  }, []);
+
+  const setTabSaving = useCallback((path: string, isSaving: boolean) => {
+    const normalizedPath = normalizeEditorTabPath(path);
+    setOpenTabs((prev) =>
+      prev.map((tab) =>
+        tab.path === normalizedPath ? { ...tab, isSaving } : tab,
+      ),
     );
   }, []);
 
@@ -667,6 +679,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         closeTab,
         setActiveTabPath: activateTabPath,
         setTabDirty,
+        setTabSaving,
         getDocument,
         getProvider,
         updateTabPath,

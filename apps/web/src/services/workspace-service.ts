@@ -2,8 +2,52 @@ import { logger } from "./logger";
 import { hostAdapter } from "./host-adapter";
 import type { SelectOptions } from "./host-adapter/wright-desktop";
 import type { RecoveryLayout } from "../prototypes/workflow-recovery/model";
+import {
+  normalizeWorkflowInstructions,
+  type WorkflowInstructionSet,
+} from "../prototypes/workflow-recovery/workflow-instructions";
 
 const workspaceLogger = logger.child("WorkspaceService");
+
+export interface WorkflowInstructionDefaultsDocument {
+  instructions: WorkflowInstructionSet;
+  digest: string;
+  origin: "packaged" | "global";
+  revision: string;
+}
+
+export interface WorkflowInstructionUpgradeProposal {
+  scope: "defaults" | "workflow";
+  current_revision: string | null;
+  current_digest: string;
+  proposed_digest: string;
+  instructions: WorkflowInstructionSet;
+  changes: { path: string; before: unknown; after: unknown }[];
+  available: boolean;
+}
+
+function instructionDefaultsDocument(
+  value: unknown,
+): WorkflowInstructionDefaultsDocument {
+  const data = value as Partial<WorkflowInstructionDefaultsDocument> | null;
+  if (
+    !data ||
+    typeof data !== "object" ||
+    !/^[0-9a-f]{64}$/.test(String(data.digest)) ||
+    !["packaged", "global"].includes(String(data.origin)) ||
+    typeof data.revision !== "string" ||
+    !data.revision.trim()
+  )
+    throw new Error(
+      "Wright returned an invalid instruction defaults document.",
+    );
+  return {
+    instructions: normalizeWorkflowInstructions(data.instructions),
+    digest: data.digest!,
+    origin: data.origin!,
+    revision: data.revision,
+  };
+}
 
 export interface WorkspaceNode {
   name: string;
@@ -151,7 +195,9 @@ export interface WorkflowDemoCapture {
 }
 
 export interface WorkspaceWorkflowSourceRun {
-  status?: "completed" | "pending_review" | "awaiting_approval";
+  status?:
+    "completed" | "pending_review" | "awaiting_approval" | "waiting_human";
+  input_checkpoint?: WorkspaceWorkflowInputCheckpoint;
   review?: WorkspaceWorkflowReview;
   approval?: WorkflowApprovalCheckpoint;
   verification?: {
@@ -215,6 +261,7 @@ export interface WorkspaceWorkflowRunSummary {
     | "completed"
     | "changes_requested"
     | "pending_review"
+    | "waiting_human"
     | "awaiting_approval"
     | "awaiting_external_outcome"
     | "external_action_not_dispatched"
@@ -266,6 +313,9 @@ export interface WorkspaceWorkflowExecutionSnapshot {
     assessment_digest?: string;
     feedback_digest?: string;
     complete_result_ref?: string;
+    code?: string;
+    correction?: string;
+    diagnostic?: string;
   } | null;
   truncated: boolean;
 }
@@ -287,6 +337,24 @@ export interface WorkspaceWorkflowReview {
   actor: string | null;
   reason: string | null;
   attribution?: "local_workspace_user_not_authenticated";
+}
+export interface WorkspaceWorkflowInputCheckpoint {
+  checkpoint_id: string;
+  workspace_id: string;
+  workflow_id: string;
+  run_id: string;
+  step_id: string;
+  action_kind: "human_input";
+  subject_digest: string;
+  state: string;
+  subject: {
+    definition_digest: string;
+    declaration: {
+      kind: "input";
+      instructions: string;
+      response_schema: Record<string, unknown>;
+    };
+  };
 }
 export interface WorkspaceWorkflowOutput {
   task_id: string;
@@ -348,8 +416,14 @@ export interface WorkspaceWorkflowRunEvent {
   text?: string;
   result?: unknown;
   kind:
+    | "instructions_resolved"
+    | "model_invocation"
+    | "model_invocation_result"
+    | "assumptions_recorded"
+    | "input_condition_evaluated"
     | "review_requested"
     | "approval_requested"
+    | "input_requested"
     | "design_check"
     | "design_revision"
     | "validation_feedback_delivered"
@@ -1055,6 +1129,99 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
+  async proposeWorkflowActionIntentUpgrade(
+    instructions?: WorkflowInstructionSet,
+  ): Promise<WorkflowInstructionUpgradeProposal> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/settings/workflow-instructions/action-intent-upgrade`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify(
+          instructions
+            ? { instructions: normalizeWorkflowInstructions(instructions) }
+            : {},
+        ),
+      },
+    );
+    if (!response.ok)
+      throw new Error(
+        "Could not prepare the action intent upgrade. Your saved instructions have not changed.",
+      );
+    const data =
+      (await response.json()) as Partial<WorkflowInstructionUpgradeProposal>;
+    if (
+      !["defaults", "workflow"].includes(String(data.scope)) ||
+      !(
+        data.current_revision === null ||
+        (typeof data.current_revision === "string" &&
+          data.current_revision.trim())
+      ) ||
+      !/^[0-9a-f]{64}$/.test(String(data.current_digest)) ||
+      !/^[0-9a-f]{64}$/.test(String(data.proposed_digest)) ||
+      typeof data.available !== "boolean" ||
+      !Array.isArray(data.changes) ||
+      data.changes.some(
+        (change) =>
+          !change ||
+          typeof change.path !== "string" ||
+          !Object.hasOwn(change, "before") ||
+          !Object.hasOwn(change, "after"),
+      ) ||
+      data.scope !== (instructions ? "workflow" : "defaults")
+    )
+      throw new Error(
+        "Wright returned an invalid instruction upgrade proposal. Your saved instructions have not changed.",
+      );
+    return {
+      ...data,
+      instructions: normalizeWorkflowInstructions(data.instructions),
+    } as WorkflowInstructionUpgradeProposal;
+  }
+
+  async getWorkflowInstructionDefaults(
+    sessionId?: string,
+  ): Promise<WorkflowInstructionDefaultsDocument> {
+    const url = sessionId
+      ? `/api/workspace/workflow-sources/instruction-defaults?${new URLSearchParams({ session_id: sessionId })}`
+      : "/api/settings/workflow-instructions";
+    const response = await hostAdapter.fetch(`${API_BASE}${url}`, {
+      cache: "no-store",
+    });
+    if (!response.ok)
+      throw new Error(
+        "Could not load instruction defaults. Check the Wright connection and try again.",
+      );
+    return instructionDefaultsDocument(await response.json());
+  }
+
+  async saveWorkflowInstructionDefaults(
+    instructions: WorkflowInstructionSet,
+    expectedRevision: string,
+  ): Promise<WorkflowInstructionDefaultsDocument> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/settings/workflow-instructions`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          instructions: normalizeWorkflowInstructions(instructions),
+          expected_revision: expectedRevision,
+        }),
+      },
+    );
+    if (response.status === 409)
+      throw new Error(
+        "Instruction defaults changed elsewhere. Your edits are retained. Reload the latest defaults and compare before saving.",
+      );
+    if (!response.ok)
+      throw new Error(
+        "Could not save instruction defaults. Your edits have not been saved.",
+      );
+    return instructionDefaultsDocument(await response.json());
+  }
+
   private workspaceActivationTail: Promise<void> = Promise.resolve();
   private latestWorkspaceActivation: {
     sessionId: string;
@@ -1299,10 +1466,15 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}));
-      throw new Error(typeof payload.detail === "string" ? payload.detail : "Image upload failed.");
+      throw new Error(
+        typeof payload.detail === "string"
+          ? payload.detail
+          : "Image upload failed.",
+      );
     }
     const payload = await response.json();
-    if (typeof payload.path !== "string") throw new Error("Image upload returned no path.");
+    if (typeof payload.path !== "string")
+      throw new Error("Image upload returned no path.");
     return payload.path;
   }
 
@@ -1646,7 +1818,8 @@ export class WorkspaceService {
         if (
           event.kind === "completed" ||
           event.kind === "pending_review" ||
-          event.kind === "awaiting_approval"
+          event.kind === "awaiting_approval" ||
+          event.kind === "waiting_human"
         )
           run = event.result;
         else if (event.kind === "failed")
@@ -1678,10 +1851,29 @@ export class WorkspaceService {
         reader.releaseLock();
       }
     } else run = (await response.json()) as WorkspaceWorkflowSourceRun;
+    // A declared question can precede any file output. It is a durable wait,
+    // not completion; retain its exact identity for the existing process view.
+    const validInputWait =
+      run?.status === "waiting_human" &&
+      typeof run.run_id === "string" &&
+      !!run.run_id &&
+      typeof run.input_checkpoint?.checkpoint_id === "string" &&
+      !!run.input_checkpoint.checkpoint_id &&
+      run.input_checkpoint.run_id === run.run_id &&
+      run.input_checkpoint.workspace_id === run.workspace_id &&
+      run.input_checkpoint.workflow_id === run.workflow_path &&
+      run.input_checkpoint.subject?.definition_digest ===
+        expectedStorageDigest &&
+      run.input_checkpoint.action_kind === "human_input" &&
+      run.input_checkpoint.state === "pending" &&
+      /^[a-f0-9]{64}$/.test(run.input_checkpoint.subject_digest) &&
+      run.input_checkpoint.subject?.declaration?.kind === "input";
     if (
       !run ||
+      (run.status === "waiting_human" && !validInputWait) ||
       typeof run.output_path !== "string" ||
       (!run.output_path.trim() &&
+        !validInputWait &&
         !run.results?.some(
           (result) =>
             result.schema_version === 1 &&
@@ -2614,13 +2806,14 @@ export class WorkspaceService {
   }
 
   async getGitStatus(sessionId: string): Promise<{
+    is_repository?: boolean;
     branch_name: string;
     is_clean: boolean;
     changes: {
       path: string;
       git_status: string;
       staged: boolean;
-      file_size?: number;
+      file_size?: number | null;
     }[];
   }> {
     workspaceLogger.info("Fetching git status", { sessionId });
@@ -2634,6 +2827,19 @@ export class WorkspaceService {
       throw new Error(`Failed to fetch git status: ${response.statusText}`);
     }
     return response.json();
+  }
+
+  async initializeGit(sessionId: string): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/init`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok)
+      throw new Error("Could not create the workspace repository.");
   }
 
   async getGitDiff(sessionId: string, filePath: string): Promise<string> {
@@ -2738,6 +2944,7 @@ export class WorkspaceService {
     has_token: boolean;
     workspace_path?: string;
     workspace_prompt?: string | null;
+    /** File-size threshold in bytes. */
     git_large_file_threshold?: number | null;
   }> {
     workspaceLogger.info("Fetching workspace config", { sessionId });
@@ -2761,7 +2968,7 @@ export class WorkspaceService {
     username: string | null,
     token: string | null,
     workspacePrompt?: string | null,
-    gitLargeFileThreshold?: number | null,
+    gitLargeFileThresholdBytes?: number | null,
   ): Promise<{ success: boolean; workspace_id: string }> {
     workspaceLogger.info("Updating workspace config", {
       sessionId,
@@ -2781,7 +2988,7 @@ export class WorkspaceService {
           git_username: username,
           git_token: token,
           workspace_prompt: workspacePrompt,
-          git_large_file_threshold: gitLargeFileThreshold,
+          git_large_file_threshold: gitLargeFileThresholdBytes,
         }),
       },
     );

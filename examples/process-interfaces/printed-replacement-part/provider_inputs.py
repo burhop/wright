@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 
@@ -22,6 +23,39 @@ def geometry_operation_modes(bindings):
     ):
         raise ValueError("Select both supported geometry operation modes explicitly")
     return dict(selected)
+
+
+def construction_binding(bindings):
+    """Select an explicit independent producer without changing repair ownership."""
+    selected = bindings.get("construction_binding")
+    if selected is None and "construction_binding" not in bindings:
+        return {
+            "server": bindings["geometry_server"],
+            "tool": "execute_blender_code",
+            "outputs": {"source_mesh": "source_mesh.stl"},
+        }
+    if (
+        not isinstance(selected, dict)
+        or set(selected) != {"server", "tool", "outputs"}
+        or any(not isinstance(selected[key], str) or not selected[key].strip()
+               for key in ("server", "tool"))
+        or geometry_operation_modes(bindings)["construction"] != "configured_tool"
+    ):
+        raise ValueError("An explicit construction binding requires a configured tool, server, tool and output mapping")
+    outputs = selected["outputs"]
+    if (
+        not isinstance(outputs, dict)
+        or outputs.get("source_mesh") != "source_mesh.stl"
+        or len(outputs) > 16
+        or any(not isinstance(role, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", role)
+               or not isinstance(filename, str)
+               or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", filename)
+               or ".." in filename for role, filename in outputs.items())
+        or len(set(outputs.values())) != len(outputs)
+        or "source-model-report.json" in outputs.values()
+    ):
+        raise ValueError("Declare unique bounded construction output filenames and retain source_mesh.stl")
+    return {"server": selected["server"], "tool": selected["tool"], "outputs": dict(outputs)}
 
 
 def qualified_geometry_inputs(bindings):

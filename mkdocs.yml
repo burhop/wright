@@ -67,12 +67,14 @@ nav:
       - Engineering Workflow Templates: workflows/engineering-workflow-templates.md
       - Process Output Validation: workflows/process-output-validation.md
       - Process Working Interfaces: workflows/process-working-interfaces.md
+      - Engineering Workspace Tour: workflows/engineering-workspace-tour.md
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Open Web Applications: workspace-surfaces/opening-surfaces.md
-      - Rivet MCP Workflows: rivet/mcp-gateway.md
-      - Rivet Engineering Scenarios: rivet/engineering-scenarios.md
-      - Model-enabled Rivet Scenarios: rivet/model-enabled-scenarios.md
-      - Rivet Workflow Testing: rivet/testing.md
+      - Legacy Rivet compatibility:
+          - MCP Gateway: rivet/mcp-gateway.md
+          - Engineering Scenarios: rivet/engineering-scenarios.md
+          - Model-enabled Scenarios: rivet/model-enabled-scenarios.md
+          - Testing: rivet/testing.md
       - Local Chatter Model: models/chatter-local-model.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md

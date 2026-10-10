@@ -11,11 +11,15 @@ export function WorkflowRunHistory({
   path,
   refreshKey,
   onOpenFile,
+  currentSourceDigest,
+  onOpenRunWorkingView,
 }: {
   sessionId?: string;
   path: string;
   refreshKey: string;
   onOpenFile?: (path: string) => void;
+  currentSourceDigest?: string;
+  onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -53,6 +57,7 @@ export function WorkflowRunHistory({
     running: "Running",
     completed: "Completed",
     pending_review: "Awaiting your review",
+    waiting_human: "Waiting for your input",
     awaiting_approval: "Awaiting external action approval",
     awaiting_external_outcome: "Awaiting external action outcome",
     external_action_not_dispatched: "External action was not dispatched",
@@ -119,6 +124,20 @@ export function WorkflowRunHistory({
                   onOpenFile={onOpenFile}
                 />
               )}
+              {onOpenRunWorkingView &&
+                run.run_id &&
+                run.source_digest === currentSourceDigest &&
+                run.source_matches_current !== false && (
+                  <button
+                    type="button"
+                    className="recovery-button recovery-button--secondary"
+                    onClick={() =>
+                      onOpenRunWorkingView(run.run_id!, run.source_digest)
+                    }
+                  >
+                    Open run in working view
+                  </button>
+                )}
               {onOpenFile && (
                 <button
                   type="button"

@@ -488,7 +488,9 @@ def test_destination_must_match_reviewed_actual_argument(tmp_path):
         )
 
 
-async def approved_case(tmp_path, *, gateway=None, text=None, integration=False, run_id=None):
+async def approved_case(
+    tmp_path, *, gateway=None, text=None, integration=False, run_id=None
+):
     services, plan, inputs, runtime, gateway = await prepared_case(
         tmp_path, gateway=gateway, text=text, run_id=run_id
     )
@@ -831,21 +833,33 @@ def test_accepted_receipt_precedes_actual_observed_completion(tmp_path):
     asyncio.run(run())
 
 
-def test_approved_multihour_observation_keeps_submission_budget_and_receipt(tmp_path, monkeypatch):
+def test_approved_multihour_observation_keeps_submission_budget_and_receipt(
+    tmp_path, monkeypatch
+):
     async def run():
         gateway = ObservedGateway()
         long_profile = {**PROFILE, "observation_timeout_seconds": 7200}
-        gateway.tool = replace(gateway.tool, upstream_meta={
-            **gateway.tool.upstream_meta, "wright/operation": long_profile,
-        })
-        text = configured_source(tool=gateway.tool, settings_patch={
-            "operation_policy": {
-                "mode": "observe", "qualification_digest": digest(QUALIFICATION),
-                "profile_digest": digest(long_profile),
+        gateway.tool = replace(
+            gateway.tool,
+            upstream_meta={
+                **gateway.tool.upstream_meta,
+                "wright/operation": long_profile,
             },
-        })
+        )
+        text = configured_source(
+            tool=gateway.tool,
+            settings_patch={
+                "operation_policy": {
+                    "mode": "observe",
+                    "qualification_digest": digest(QUALIFICATION),
+                    "profile_digest": digest(long_profile),
+                },
+            },
+        )
         services, checkpoint, gateway, generate, models, initial = await approved_case(
-            tmp_path, gateway=gateway, text=text,
+            tmp_path,
+            gateway=gateway,
+            text=text,
         )
         deadlines, real_timeout = [], asyncio.timeout
 
@@ -859,7 +873,9 @@ def test_approved_multihour_observation_keeps_submission_budget_and_receipt(tmp_
         assert all(kwargs["timeout"] == 10 for _, kwargs in gateway.calls)
         assert [args[2] for args, _ in gateway.calls].count(TOOL.name) == 1
         stored = services.workflow_external_actions.get(
-            checkpoint.checkpoint_id, workspace_id="ws", run_id=checkpoint.run_id,
+            checkpoint.checkpoint_id,
+            workspace_id="ws",
+            run_id=checkpoint.run_id,
         )
         assert stored.external_action["evidence"]["submission"] == "accepted"
         assert stored.external_action["evidence"]["observed_outcome"] == "completed"
@@ -875,17 +891,26 @@ def test_multihour_deadline_change_after_review_cannot_consume_action(tmp_path):
     async def run():
         gateway = ObservedGateway()
         services, checkpoint, gateway, generate, models, initial = await approved_case(
-            tmp_path, gateway=gateway, text=observation_source(gateway),
+            tmp_path,
+            gateway=gateway,
+            text=observation_source(gateway),
         )
-        gateway.tool = replace(gateway.tool, upstream_meta={
-            **gateway.tool.upstream_meta, "wright/operation": {
-                **PROFILE, "observation_timeout_seconds": 7200,
+        gateway.tool = replace(
+            gateway.tool,
+            upstream_meta={
+                **gateway.tool.upstream_meta,
+                "wright/operation": {
+                    **PROFILE,
+                    "observation_timeout_seconds": 7200,
+                },
             },
-        })
+        )
         with pytest.raises(WorkflowSourceExecutionError):
             await dispatch(tmp_path, services, checkpoint, gateway, generate)
         stored = services.workflow_external_actions.get(
-            checkpoint.checkpoint_id, workspace_id="ws", run_id=checkpoint.run_id,
+            checkpoint.checkpoint_id,
+            workspace_id="ws",
+            run_id=checkpoint.run_id,
         )
         assert stored.external_action is None
         assert gateway.calls == []
@@ -894,21 +919,33 @@ def test_multihour_deadline_change_after_review_cannot_consume_action(tmp_path):
     asyncio.run(run())
 
 
-def test_accepted_operation_keeps_qualified_deadline_when_catalog_object_changes(tmp_path, monkeypatch):
+def test_accepted_operation_keeps_qualified_deadline_when_catalog_object_changes(
+    tmp_path, monkeypatch
+):
     async def run():
         gateway = ObservedGateway()
         long_profile = {**PROFILE, "observation_timeout_seconds": 7200}
-        gateway.tool = replace(gateway.tool, upstream_meta={
-            **gateway.tool.upstream_meta, "wright/operation": long_profile,
-        })
-        text = configured_source(tool=gateway.tool, settings_patch={
-            "operation_policy": {
-                "mode": "observe", "qualification_digest": digest(QUALIFICATION),
-                "profile_digest": digest(long_profile),
+        gateway.tool = replace(
+            gateway.tool,
+            upstream_meta={
+                **gateway.tool.upstream_meta,
+                "wright/operation": long_profile,
             },
-        })
+        )
+        text = configured_source(
+            tool=gateway.tool,
+            settings_patch={
+                "operation_policy": {
+                    "mode": "observe",
+                    "qualification_digest": digest(QUALIFICATION),
+                    "profile_digest": digest(long_profile),
+                },
+            },
+        )
         services, checkpoint, gateway, generate, models, initial = await approved_case(
-            tmp_path, gateway=gateway, text=text,
+            tmp_path,
+            gateway=gateway,
+            text=text,
         )
         original, real_timeout, deadlines = gateway.call_tool, asyncio.timeout, []
 

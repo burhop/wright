@@ -23,6 +23,9 @@
 .wright-process-ui h2 {
   font-size: var(--font-size-lg);
 }
+.wright-process-ui h1 {
+  font-size: var(--font-size-xl, 24px);
+}
 .wright-process-ui h3 {
   font-size: var(--font-size-md);
 }
@@ -127,6 +130,48 @@
 .wp-action {
   margin: var(--space-md) 0;
 }
+.wp-checkpoint-content--with-evidence {
+  display: grid;
+  /* A review may occupy a narrow panel inside a wide working interface. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--space-lg);
+  align-items: start;
+}
+.wp-checkpoint-content h4 {
+  margin: 0 0 var(--space-sm);
+}
+.wp-checkpoint-evidence {
+  max-height: 28rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.wp-result-representation__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.wp-result-representation__header h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.wp-result-representation details {
+  overflow-wrap: anywhere;
+}
+.wp-review-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.wp-review-controls > label,
+.wp-review-controls > textarea,
+.wp-review-controls > p {
+  grid-column: 1 / -1;
+}
+.wp-action-reasons summary {
+  color: var(--color-text-muted);
+  margin-top: var(--space-sm);
+}
 .wp-notice {
   padding: var(--space-md);
   margin: var(--space-sm) 0;
@@ -138,6 +183,13 @@
 }
 .wp-notice--error {
   border-left-color: var(--color-error);
+}
+.wp-field-error {
+  color: var(--color-error);
+  margin: 0.35rem 0 0;
+}
+.wp-field [aria-invalid="true"] {
+  border-color: var(--color-error);
 }
 .wp-notice--warning {
   border-left-color: var(--color-warning);
@@ -183,11 +235,24 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
+.wp-image-preview .wp-thumbnail {
+  width: 100%;
+  height: auto;
+  max-height: var(--wright-result-image-max-height, 70vh);
+  object-position: center;
+}
 .wp-evidence {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: start;
+  gap: var(--space-sm);
   border-top: 1px solid var(--color-border);
   padding-top: var(--space-sm);
   margin-top: var(--space-sm);
   overflow-wrap: anywhere;
+}
+.wp-evidence details {
+  grid-column: 1 / -1;
 }
 .wp-check {
   display: inline-block;
@@ -235,6 +300,53 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+.wp-document {
+  min-width: 0;
+  max-width: 100%;
+}
+.wp-markdown {
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.wp-markdown :is(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.3;
+  margin: var(--space-xl) 0 var(--space-md);
+}
+.wp-markdown h1 { font-size: var(--font-size-xl); }
+.wp-markdown h2 { font-size: 21px; }
+.wp-markdown h3 { font-size: var(--font-size-lg); }
+.wp-markdown > :first-child { margin-top: 0; }
+.wp-markdown :is(p, ul, ol, blockquote) {
+  max-width: 85ch;
+  margin-block: var(--space-md);
+}
+.wp-markdown :is(ul, ol) { padding-left: var(--space-xl); }
+.wp-markdown li { margin-block: var(--space-xs); }
+.wp-markdown blockquote {
+  border-left: 3px solid var(--color-border-hover);
+  padding-left: var(--space-lg);
+  margin-left: 0;
+}
+.wp-markdown code { font-family: var(--font-mono); font-size: 0.9em; }
+.wp-markdown pre {
+  padding: var(--space-md);
+  overflow: auto;
+  white-space: pre;
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-md);
+}
+.wp-markdown .wp-table { margin-block: var(--space-lg); }
+.wp-markdown .wp-table table { min-width: 36rem; }
+.wp-markdown .wp-table :is(th, td) { vertical-align: top; }
+.wp-markdown .wp-table th { background: var(--color-surface-subtle); }
+.wp-document-reference { text-decoration: underline dotted; }
+.wp-document-source {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+.wp-document-source summary { cursor: pointer; }
 .wp-table table {
   width: 100%;
   border-collapse: collapse;
@@ -260,3 +372,12 @@
     scroll-behavior: auto !important;
   }
 }
+.wright-process-ui .wp-pdf-preview img {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  background: white;
+}
+.wp-pdf-sheet { overflow: auto; max-height: 70vh; }
+.wright-process-ui .wp-pdf-sheet.is-full-size img { width: auto; max-width: none; }

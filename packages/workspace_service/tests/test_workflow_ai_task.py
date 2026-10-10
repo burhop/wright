@@ -11,10 +11,39 @@ from workspace_service.workflow_source_execution import (
 )
 from packages.workspace_service.tests.test_workflow_source_execution import (
     task,
-    source,
+    source as _source,
     service,
 )
 from packages.workspace_service.tests.test_workflow_mcp_execution import runtime
+
+
+def legacy_instruction_profile():
+    # These historical protocol fixtures deliberately exercise legacy direct
+    # tool calls; modern strict policy has separate pre-dispatch gate coverage.
+    from agent_adapters.workflow_instructions import load_default_workflow_instructions
+
+    instructions = load_default_workflow_instructions().model_dump(mode="json")
+    instructions.pop("action_intent_contract")
+    instructions["profile_id"] = "synthetic-legacy-protocol-fixture"
+    instructions["policy"]["assumption_policy"] = "document_reasonable"
+    return instructions
+
+
+def source(*args, **settings):
+    return with_legacy_instruction_profile(_source(*args, **settings))
+
+
+def with_legacy_instruction_profile(text):
+    header, remainder = text.split("\nend\n", 1)
+    if "\n  instructions:" in header:
+        return text
+    return (
+        header
+        + "\n  instructions: "
+        + json.dumps(legacy_instruction_profile())
+        + "\nend\n"
+        + remainder
+    )
 
 
 def plan(**settings):
@@ -54,6 +83,66 @@ def call(query="bracket", name="tool_0"):
     }
 
 
+def test_task_supplies_exact_output_and_protected_ids_as_request_data(tmp_path):
+    from agent_adapters.workflow_instructions import load_default_workflow_instructions
+
+    profile = load_default_workflow_instructions().model_dump(mode="json")
+    profile["policy"]["protected_requirements"] = ["supplied_thickness"]
+    workflow = plan()
+    workflow = replace(
+        workflow,
+        steps=(replace(workflow.steps[0], instruction_set=profile),),
+    )
+    gateway, runner = runtime()
+    wrapped = call()
+    wrapped["tool_calls"][0]["function"]["arguments"] = json.dumps(
+        {
+            "schema_version": "wright.workflow-action-intent/1",
+            "arguments": {"query": "bracket"},
+            "assumptions": [],
+            "unresolved_required_information": [],
+        }
+    )
+    actions = iter([wrapped, done("Actual evidence")])
+    seen, events = [], []
+
+    async def decide(messages, tools, **kwargs):
+        user = next(m["content"] for m in messages if m["role"] == "user")
+        context = json.loads(user.rsplit("\n\n", 1)[1])["wright_step_context"]
+        seen.append(context)
+        return next(actions)
+
+    async def emit(event):
+        events.append(event)
+
+    asyncio.run(
+        execute_prompt_workflow(
+            service=service(tmp_path),
+            workspace_dir=str(tmp_path),
+            plan=workflow,
+            input_values={},
+            response_generator=None,
+            action_generator=decide,
+            tool_runtime=runner,
+            on_event=emit,
+        )
+    )
+    assert len(gateway.calls) == 1 and len(seen) == 2
+    assert all(
+        context
+        == {
+            "schema_version": "wright.workflow-step-context/1",
+            "step_id": "research",
+            "declared_outputs": [
+                {"output_id": "research_response", "kind": "engineering_document"}
+            ],
+            "protected_requirement_identifiers": ["supplied_thickness"],
+        }
+        for context in seen
+    )
+    assert sum(event["kind"] == "instructions_resolved" for event in events) == 1
+
+
 def test_ai_task_discovers_tools_calls_twice_and_feeds_downstream(tmp_path):
     workflow = compile_prompt_workflow(
         source(
@@ -80,8 +169,8 @@ def test_ai_task_discovers_tools_calls_twice_and_feeds_downstream(tmp_path):
         seen.append((list(messages), tools, kwargs))
         return next(replies)
 
-    async def generate(prompt, fmt):
-        assert prompt == "Verified findings"
+    async def generate(prompt, fmt, **kwargs):
+        assert prompt.split("\n\nwright_step_context:", 1)[0] == "Verified findings"
         return "Report from verified findings"
 
     async def emit(event):
@@ -110,7 +199,10 @@ def test_ai_task_discovers_tools_calls_twice_and_feeds_downstream(tmp_path):
     progress = [e for e in events if e["kind"] == "task_progress"]
     assert len(progress) == 3
     assert all(
-        e["available_tools"]
+        [
+            {key: item[key] for key in ("alias", "tool", "schema_digest")}
+            for item in e["available_tools"]
+        ]
         == [
             {
                 "alias": "tool_0",

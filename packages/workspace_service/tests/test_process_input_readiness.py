@@ -179,7 +179,8 @@ async def test_missing_input_reason_targets_exact_accepted_block(
     readiness = owner.input_readiness(prepared)
     assert readiness.state == "blocked"
     missing = next(
-        item for item in readiness.reasons
+        item
+        for item in readiness.reasons
         if item.code == "INPUT_REQUIRED" and item.binding_id == "brief"
     )
     assert missing.navigation is not None
@@ -201,6 +202,28 @@ async def test_supplied_value_and_declared_upstream_output_are_ready(tmp_path):
     assert states["later.later_in"].classification == "upstream_produced"
     assert states["later.later_in"].producer_step == "first"
     assert states["later.later_in"].producer_port == "first_out"
+    assert not (tmp_path / "first.txt").exists()
+
+
+@pytest.mark.asyncio
+async def test_long_connected_dependency_is_ready_without_losing_source_identity(
+    tmp_path,
+):
+    block = "review_" + "b" * 153
+    port_id = "evidence_" + "p" * 151
+    text = source(later=True).replace("later_in", port_id).replace("later", block)
+    prepared = await prepare(
+        tmp_path,
+        text,
+        (ValueBinding(input_id="brief", value="Review the exact drawing"),),
+    )
+    readiness = owner.input_readiness(prepared)
+    assert readiness.state == "ready"
+    dependency = next(item for item in readiness.dependencies if "." in item.binding_id)
+    assert dependency.binding_id == f"{block}.{port_id}"
+    assert len(dependency.binding_id) == 321
+    assert dependency.producer_step == "first"
+    assert dependency.producer_port == "first_out"
     assert not (tmp_path / "first.txt").exists()
 
 

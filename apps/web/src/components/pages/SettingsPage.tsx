@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { WorkflowInstructionDefaultsCard } from "../../prototypes/workflow-recovery/WorkflowInstructionsEditor";
 import {
   applyTheme,
   readUiPreferences,
@@ -93,7 +94,8 @@ export function SettingsPage() {
       <header>
         <h1 style={{ marginBottom: "var(--space-xs)" }}>Global Settings</h1>
         <p style={{ color: "var(--color-text-muted)" }}>
-          Choose how Wright looks and access your AI connection.
+          Choose how Wright looks, configure workflow instructions and access
+          your AI connection.
         </p>
       </header>
       {message && (
@@ -181,6 +183,7 @@ export function SettingsPage() {
           </button>
         </div>
       </form>
+      <WorkflowInstructionDefaultsCard />
       <section
         style={{ ...cardStyle, maxWidth: 680 }}
         aria-labelledby="ai-connection-title"
