@@ -288,6 +288,14 @@ class DesktopBackend:
         )
         plan = compile_prompt_workflow(document.source)
         if any(
+            port.get("kind") == "reference_images"
+            for fields in plan.inputs.values()
+            for port in fields.get("outputs", [])
+        ) or any(step.native_image_format for step in plan.steps):
+            raise HTTPException(
+                503, "Desktop image input and generation capabilities are not qualified"
+            )
+        if any(
             step.cad or step.application or step.external_action or step.tool_name
             for step in plan.steps
         ):

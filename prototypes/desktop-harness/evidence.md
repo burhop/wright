@@ -1,5 +1,36 @@
 # Evidence index
 
+## Explicit image capability gates
+
+Image tracing found an unintended path: the desktop text callback rejected images,
+but the action callback could persist typed image parts without qualifying their
+delivery. The adapter now rejects image_url/image/input_image content before
+ordinal allocation, persistence and invocation observation. Four negative cases
+cover inline and remote image URLs and native image parts, without fetching URLs.
+
+The prototype admission owner also rejects declared reference_images inputs and
+native image generation with 503 before input preparation/readiness/start. The
+original-image cases use a real compiled connected workflow; provider authority
+is never consulted. Predictable missing imagery is not deferred to a running AI
+task or silently changed to text. Source authoring remains available.
+
+The first callback/lease/transport slice passes 23; expanded prototype coverage
+passes 35. A subsequent native image-generation compiled-source case passes in
+the final readiness-file suite. Changed Ruff/diff checks pass. Fresh real MCP
+positive controls completed text and permitted action tasks after the adapter
+fix: one denied ungranted start, one actual file inspection, unchanged input.
+The early-readiness backend guard was added **after** those live controls, so
+the reduced evidence preserves their exact earlier backend/profile hashes and
+does not claim coupled final-profile live qualification. Both owned APIs stopped
+with exit 0; the frozen Windows worktree/connection remains unchanged.
+
+Official OpenAI extension docs now explicitly describe conversation panels and
+context extensions. Documentation is separate from observed installed-host
+image delivery or rendering. References and precise boundaries are retained in
+qualified-image-gating-evidence.json. Image support is still unavailable; a
+future installed-host spike must deliver original bytes with exact scope/digest
+and native image content, without another model worker or public image URL.
+
 ## Original assignments: concrete readiness audit
 
 The read-only 11 October audit identifies the exact remaining original-workflow

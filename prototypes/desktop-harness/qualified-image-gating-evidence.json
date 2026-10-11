@@ -1,0 +1,74 @@
+{
+  "status": "explicit image-capability rejection fixed and locally tested; image support remains gated",
+  "pre_change_finding": "generate_response rejected images, while decide_action could persist typed image message parts under the 256 KiB cap without qualified delivery",
+  "action_guard": "reject typed image_url/image/input_image content before instruction resolution, ordinal allocation, persistence or invocation evidence",
+  "readiness_guard": "declared reference_images inputs and native image generation rejected 503 before input preparation/readiness/run admission",
+  "checks": {
+    "first_callback_lease_transport_slice": "23 passed in 0.89 seconds",
+    "expanded_prototype_callback_readiness_slice": "35 passed in 0.90 seconds",
+    "final_readiness_file": "13 passed in 3.215 seconds; native image generation case added",
+    "ruff": "changed Python files pass",
+    "whitespace": "passes"
+  },
+  "live_positive_controls": {
+    "response": {
+      "state": "/tmp/wright-desktop-image-guard-response-proof-20261011-01",
+      "profile": "wright-desktop-prototype:55e84afe62f6849f20e01c811a494a49a0208e8da9c4cb418aeb2c4dc9a4683c",
+      "runtime": {
+        "mcp_sdk": "1.28.1",
+        "files": {
+          "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+          "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+          "backend": "c2ec7eeac5051c586399c1a800b4a2c6a9bc4d9470bc5fd2d67272e2d103db40",
+          "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+        },
+        "confined_inspection": false,
+        "connection_lease_seconds": 30,
+        "heartbeat_interval_seconds": 5
+      },
+      "run_id": "6e2cb68958d94834b38f8dedba376404",
+      "result": "completed",
+      "api_exit": 0,
+      "scope": "real MCP transport with this desktop chat reasoning; not installed Windows plugin; backend bytes precede subsequent early-readiness image guard"
+    },
+    "action": {
+      "state": "/tmp/wright-desktop-image-guard-action-proof-20261011-01",
+      "profile": "wright-desktop-prototype:3c8ae7308ca8e626d23f8fa68778def8af34b8766973d441d958db2a388f7c76",
+      "runtime": {
+        "mcp_sdk": "1.28.1",
+        "files": {
+          "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+          "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+          "backend": "c2ec7eeac5051c586399c1a800b4a2c6a9bc4d9470bc5fd2d67272e2d103db40",
+          "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+        },
+        "confined_inspection": true,
+        "connection_lease_seconds": 30,
+        "heartbeat_interval_seconds": 5
+      },
+      "run_id": "b00d7640d8a44193a064f849fcaa789e",
+      "result": "completed",
+      "api_exit": 0,
+      "scope": "real MCP transport with this desktop chat reasoning; not installed Windows plugin; backend bytes precede subsequent early-readiness image guard",
+      "successful_dispatches": 1,
+      "input_unchanged": true,
+      "ungranted_start": 403
+    }
+  },
+  "current_runtime_file_sha256": {
+    "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+    "backend": "0b137cc5b756600c6f129a0ed723e67f5160ec3a3f65be6a4ae15736851f6d66",
+    "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+    "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+  },
+  "scope_limit": "Live positive controls qualify the new adapter with the prior backend; final added early-readiness guard has offline compiled-source/API-boundary coverage. A fresh coupled final-profile live proof remains required before promotion. Earlier restart/lease profiles retain their exact historical identities.",
+  "official_source_checked": "https://developers.openai.com/plugins/build/extensions",
+  "upstream_vs_local": "Conversation panels and context extensions are documented upstream; this does not verify installed Windows tools/panel or image presentation. MCP ImageContent delivery remains a next installed-host spike, not silently inferred from JSON image URLs.",
+  "windows_target_changed": false,
+  "original_inputs_changed": false,
+  "missing_capabilities": [
+    "Exact installed-host image delivery and perception",
+    "Actual installed plugin/conversation panel",
+    "Original engineering provider bindings and full connected executions"
+  ]
+}

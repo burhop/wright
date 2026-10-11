@@ -80,6 +80,47 @@ def test_readonly_source_without_private_grant_is_denied(boundary):
 
 
 @pytest.mark.parametrize(
+    "operation",
+    [
+        "/api/workspace/process-interfaces/inputs",
+        "/api/workspace/process-interfaces/readiness",
+        "/api/workspace/process-interfaces/runs",
+    ],
+)
+def test_original_image_input_is_unavailable_before_prepare_or_dispatch(
+    boundary, operation
+):
+    backend, service, source = boundary
+    image_source = source.replace(
+        '"kind":"engineering_document"', '"kind":"reference_images"', 2
+    ).replace('"inputs/requirements.md"', '"inputs/original-sketch.png"')
+    service.workflow_sources.read.return_value.source = image_source
+    with pytest.raises(HTTPException, match="image input") as failure:
+        asyncio.run(
+            backend.qualify_digital_source(
+                {"session_id": "session", "path": "workflows/read.workflow.wflow"},
+                operation=operation,
+            )
+        )
+    assert failure.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_native_image_generation_is_explicitly_unavailable(boundary):
+    from packages.workspace_service.tests.test_workflow_image_outputs import image_task
+    from packages.workspace_service.tests.test_workflow_ai_task import source
+
+    backend, service, _ = boundary
+    service.workflow_sources.read.return_value.source = source(
+        image_task(authoring_template="ai-prompt", mcp_server="")
+    )
+    with pytest.raises(HTTPException, match="generation capabilities") as failure:
+        check(backend)
+    assert failure.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+@pytest.mark.parametrize(
     "old,new",
     [
         ('"inspect_file"', '"write_text_document"'),

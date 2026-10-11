@@ -21,7 +21,7 @@ refers only to its specified local boundary, not arbitrary provider compatibilit
 | Desktop conversation provides workflow reasoning | locally verified | actual chat-authored replies; canonical runs completed; no model worker |
 | Existing editor/result viewer without Wright chat | locally verified in browser | normal Workflows entry; no agent/inference API requests in capture |
 | Current hosted editor authoring | 11 focused browser cases verified | direct inputs/instructions, typed keyboard connection/rejection, live drag/pan/zoom, Undo/Redo, source/layout reopening, managed-field rejection, real CAS and compact layout; full legacy/installed acceptance separate |
-| Desktop right panel / native plugin UI | unverified | earlier app-open request had no observed response/rendering proof; no automatic retry |
+| Desktop right panel / native plugin UI | conversation panels documented upstream; Wright installation unverified | OpenAI plugin extensions describe panels beside chat; earlier app-open request had no observed response/rendering proof; no automatic retry |
 | Declared input / same-run continuation | locally verified | synthetic fixture; invalid selection denied; original run and first output retained |
 | Connected working-view input submission | locally verified in served browser | actual Submit sends one declared choice, next desktop task uses it, same run completes; exact reload/close and preserved first output after API restart; native desktop and event-stream attachment separate |
 | Restart at durable declared input wait | locally verified | controlled isolated API SIGTERM/restart with same observable binding |
@@ -33,6 +33,7 @@ refers only to its specified local boundary, not arbitrary provider compatibilit
 | Cancellation / late reply denial | locally verified | proof 02; canonical cancellation followed by HTTP 409 |
 | Scope/auth/invalid reply/configuration drift | locally verified at tested boundaries | live denials plus strict repository/adapter tests |
 | Inspectable Wright instructions / handoff receipts | locally verified | embedded versioned assets, exact request/reply identity; observable boundary only |
+| Original-image input / image generation | explicitly unavailable | typed action images denied before persistence; declared input/generation rejected during prepare/readiness/start. Native installed-host delivery needs separate qualification |
 | Provider-internal prompts / exact upstream model receipt | unavailable at this transport | no fabricated evidence |
 | Global desktop native-tool ceiling | unverified | prompt guidance is not enforcement; earlier failures/exception retained |
 | Read-only Wright gateway task | locally verified, separately opt-in | exact privately enrolled source/input/schema; one `inspect_file` dispatch; ungranted start 403; other scopes remain gated |
@@ -47,6 +48,7 @@ refers only to its specified local boundary, not arbitrary provider compatibilit
 | Docker / Linux x64 | unverified | no cross-host compatibility claim; broader product packaging outside this prototype |
 
 Official sources:
+[conversation panels and context extensions](https://developers.openai.com/plugins/build/extensions),
 [plugin packaging and local marketplaces](https://developers.openai.com/plugins/build/plugins),
 [complete plugin testing](https://developers.openai.com/plugins/deploy/connect-chatgpt),
 [desktop browser](https://learn.chatgpt.com/docs/browser) and

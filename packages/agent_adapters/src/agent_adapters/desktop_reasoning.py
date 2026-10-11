@@ -251,6 +251,17 @@ class DesktopWorkflowReasoner:
         invocation_observer=None,
         expected_resolution=None,
     ):
+        if any(
+            isinstance(message, dict)
+            and isinstance(message.get("content"), list)
+            and any(
+                isinstance(part, dict)
+                and part.get("type") in {"image_url", "image", "input_image"}
+                for part in message["content"]
+            )
+            for message in messages
+        ):
+            raise ValueError("Desktop image inputs are not qualified")
         instructions = embedded_instruction_set(instruction_set)
         # Existing runtime already resolves saved task/recovery instructions and
         # constructs the precise schema/context. Retain that request unchanged.

@@ -252,6 +252,52 @@ def test_unqualified_image_capability_is_explicit_and_creates_no_request(tmp_pat
     assert repo.pending("workspace-1", "session-1") == []
 
 
+@pytest.mark.parametrize(
+    "part",
+    [
+        {"type": "image_url", "image_url": {"url": "data:image/png;base64,ignored"}},
+        {
+            "type": "image_url",
+            "image_url": {"url": "https://example.invalid/image.png"},
+        },
+        {"type": "image", "mimeType": "image/png", "data": "ignored"},
+        {"type": "input_image", "image_url": "data:image/png;base64,ignored"},
+    ],
+)
+def test_unqualified_action_image_is_rejected_before_persistence_or_observation(
+    tmp_path, part
+):
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo)
+    observations = []
+
+    async def observe(evidence):
+        observations.append(evidence)
+
+    with pytest.raises(ValueError, match="image inputs are not qualified"):
+        asyncio.run(
+            asyncio.wait_for(
+                desktop.decide_action(
+                    [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": "Inspect the original sketch"},
+                                part,
+                            ],
+                        }
+                    ],
+                    [],
+                    invocation_observer=observe,
+                ),
+                timeout=1,
+            )
+        )
+    assert desktop._ordinal == 0
+    assert repo.pending("workspace-1", "session-1") == []
+    assert observations == []
+
+
 @pytest.mark.parametrize("error_code", ["timeout", "internal"])
 def test_uncertain_provider_effect_stops_desktop_decision_loop_without_replay(
     tmp_path, error_code
