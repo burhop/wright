@@ -23,6 +23,7 @@ class HermesRoleInvocationError(ValueError):
                 "SCOPED_MODEL_TIMEOUT",
                 "SCOPED_MODEL_AUTH_REQUIRED",
                 "SCOPED_MODEL_RATE_LIMITED",
+                "WORKFLOW_MODEL_CHANGED",
             }
             else "SCOPED_INVOCATION_UNAVAILABLE"
         )
@@ -69,10 +70,24 @@ class HermesRoleTransport:
             return None
         return candidate
 
-    async def call(self, request: dict, *, invocation_observer=None) -> dict:
+    async def call(
+        self, request: dict, *, invocation_observer=None, timeout_seconds=None
+    ) -> dict:
         raw = json.dumps(request, ensure_ascii=False).encode("utf-8")
         image_request = request.get("operation") in {"probe-image", "generate-image"}
-        input_limit = 12_600_000 if image_request else 2_200_000
+        workflow_request = request.get("operation") == "generate-workflow"
+        if timeout_seconds is not None and (
+            not workflow_request
+            or type(timeout_seconds) is not int
+            or not 30 <= timeout_seconds <= 600
+        ):
+            raise ValueError("Workflow model timeout must be within 30–600 seconds")
+        deadline = timeout_seconds or self.timeout_seconds
+        input_limit = (
+            16_800_000
+            if workflow_request
+            else (12_600_000 if image_request else 2_200_000)
+        )
         output_limit = 17_000_000 if image_request else 1_200_000
         if len(raw) > input_limit:
             raise ValueError("Authoring invocation exceeds the fixed input bound")
@@ -93,7 +108,7 @@ class HermesRoleTransport:
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.DEVNULL,
                 )
-                async with asyncio.timeout(self.timeout_seconds):
+                async with asyncio.timeout(deadline):
                     child.stdin.write(raw)
                     await child.stdin.drain()
                     child.stdin.close()

@@ -2,7 +2,10 @@
 
 from dataclasses import replace
 
-from core.workflow_model_routing import WorkflowModelRouting, WorkflowTextResolution
+from core.workflow_model_routing import (
+    WorkflowModelRouting,
+    parse_workflow_text_resolution,
+)
 
 UNSET_CONTEXT = object()
 
@@ -72,7 +75,7 @@ async def freeze_workflow_model_routing(
                 raise ValueError(
                     "The model gateway could not qualify the selected model"
                 )
-            text = WorkflowTextResolution.model_validate(capability["resolution"])
+            text = parse_workflow_text_resolution(capability["resolution"])
         current = WorkflowModelRouting(
             text=text,
             images={

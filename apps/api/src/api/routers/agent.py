@@ -461,6 +461,8 @@ class HermesModelOptionsResponse(BaseModel):
     current_provider: Optional[str] = None
     current_model: Optional[str] = None
     groups: List[HermesModelOptionGroup]
+    selection_supported: bool = True
+    selection_message: Optional[str] = None
 
 
 class SetHermesModelRequest(BaseModel):
@@ -1081,6 +1083,25 @@ async def chat(
 @router.get("/models", response_model=HermesModelOptionsResponse)
 @traced("agent.models.list")
 async def list_hermes_models(refresh: bool = False):
+    from agent_adapters.workflow_sdk import (
+        sdk_transport_selected,
+        workflow_sdk_capabilities,
+    )
+
+    if sdk_transport_selected():
+        try:
+            route = (await workflow_sdk_capabilities())["resolution"]
+        except (ValueError, OSError, TimeoutError, KeyError) as error:
+            raise HTTPException(
+                status_code=503,
+                detail="The configured model cannot be resolved by the Hermes SDK. Check Model Setup and its qualified installation.",
+            ) from error
+        response = _build_model_options_response(
+            {"provider": route["provider"], "model": route["model_reference"]}
+        )
+        response.selection_supported = False
+        response.selection_message = "Using the configured model. Change it in Model Setup before starting a new run."
+        return response
     payload = await _hermes_json_request(
         "GET",
         "/api/model/options",
@@ -1097,6 +1118,13 @@ async def list_hermes_models(refresh: bool = False):
 @router.post("/model", response_model=SetHermesModelResponse)
 @traced("agent.model.set")
 async def set_hermes_model(body: SetHermesModelRequest):
+    from agent_adapters.workflow_sdk import sdk_transport_selected
+
+    if sdk_transport_selected():
+        raise HTTPException(
+            status_code=409,
+            detail="Remote model selection is unavailable for the configured SDK transport. Use Model Setup before starting a new run. No session model was changed.",
+        )
     provider = body.provider.strip()
     model = body.model.strip()
     if not provider or not model:

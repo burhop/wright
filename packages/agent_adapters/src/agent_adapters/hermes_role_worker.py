@@ -14,9 +14,15 @@ from pathlib import Path
 import sys
 
 
+class WorkflowSdkConfigurationChangedError(ValueError):
+    pass
+
+
 def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
     image_request = request.get("operation") in {"probe-image", "generate-image"}
     allowed = {"operation", "messages", "expected_resolution"}
+    if request.get("operation") == "generate-workflow":
+        allowed.add("timeout_seconds")
     if image_request:
         allowed.add("output_format")
     if set(request) - allowed:
@@ -26,6 +32,7 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
         "generate",
         "probe-image",
         "generate-image",
+        "generate-workflow",
     }:
         raise ValueError("Unsupported invocation operation")
     from hermes_cli.runtime_provider import _get_model_config, resolve_runtime_provider
@@ -56,7 +63,7 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
     }
     sdk_hashes = {}
     sdk_files = ["hermes_cli/runtime_provider.py", "agent/auxiliary_client.py"]
-    if image_request:
+    if image_request or mode == "codex_responses":
         sdk_files.extend(["agent/codex_runtime.py", "agent/codex_responses_adapter.py"])
     for name in sdk_files:
         sdk_hashes[name] = hashlib.sha256(
@@ -70,6 +77,10 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
     ).hexdigest()
     expected = request.get("expected_resolution")
     if expected is not None and expected != public:
+        if request["operation"] == "generate-workflow":
+            raise WorkflowSdkConfigurationChangedError(
+                "The frozen SDK configuration changed"
+            )
         raise ValueError(
             "The inherited model configuration changed; resolve a new authoring job"
         )
@@ -105,20 +116,60 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
                 )
             )
         messages = request.get("messages")
+        workflow_request = request["operation"] == "generate-workflow"
+        timeout_seconds = request.get("timeout_seconds", 120)
+        if type(timeout_seconds) is not int or not 30 <= timeout_seconds <= 600:
+            raise ValueError("Invalid model request timeout")
         if (
             not isinstance(messages, list)
             or len(messages) != 2
             or [item.get("role") for item in messages if isinstance(item, dict)]
             != ["system", "user"]
             or any(
-                set(item) != {"role", "content"} or not isinstance(item["content"], str)
+                set(item) != {"role", "content"}
+                or not (
+                    isinstance(item["content"], str)
+                    or (
+                        workflow_request
+                        and item.get("role") == "user"
+                        and isinstance(item["content"], list)
+                    )
+                )
                 for item in messages
             )
         ):
             raise ValueError(
                 "Confined authoring requires prepared system instructions and one self-contained user turn"
             )
-        if len(json.dumps(messages).encode()) > 2_097_152:
+        if workflow_request and isinstance(messages[1]["content"], list):
+            parts = messages[1]["content"]
+            if not parts or len(parts) > 512:
+                raise ValueError("Invalid workflow content parts")
+            for part in parts:
+                if not isinstance(part, dict):
+                    raise ValueError("Invalid workflow content part")
+                if part.get("type") == "text":
+                    if set(part) != {"type", "text"} or not isinstance(
+                        part["text"], str
+                    ):
+                        raise ValueError("Invalid workflow text part")
+                elif part.get("type") == "image_url":
+                    image = part.get("image_url")
+                    if (
+                        set(part) != {"type", "image_url"}
+                        or not isinstance(image, dict)
+                        or set(image) != {"url"}
+                        or not isinstance(image["url"], str)
+                        or not image["url"].startswith("data:image/")
+                    ):
+                        raise ValueError(
+                            "Workflow images must be inline input artifacts"
+                        )
+                else:
+                    raise ValueError("Unsupported workflow content part")
+        if len(json.dumps(messages).encode()) > (
+            16_777_216 if workflow_request else 2_097_152
+        ):
             raise ValueError("Authoring input exceeds its fixed bound")
         sdk_payload = dict(
             model=model,
@@ -126,7 +177,7 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
             tools=[],
             tool_choice="none",
             stream=False,
-            timeout=120,
+            timeout=timeout_seconds,
             max_tokens=32768,
         )
         if sdk_observer is not None:
@@ -154,6 +205,14 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
             "resolution": public,
             "text": text,
             "response_model": response_model,
+            **(
+                {"usage": response.usage.model_dump(mode="json")}
+                if workflow_request
+                and callable(
+                    getattr(getattr(response, "usage", None), "model_dump", None)
+                )
+                else {}
+            ),
             "effective_instructions_digest": hashlib.sha256(
                 messages[0]["content"].encode()
             ).hexdigest(),
@@ -167,6 +226,8 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
 def failure_code(error):
     """Fixed categories only; SDK exception text can contain credentials."""
     name = type(error).__name__
+    if isinstance(error, WorkflowSdkConfigurationChangedError):
+        return "WORKFLOW_MODEL_CHANGED"
     if isinstance(error, TimeoutError) or name in {
         "APITimeoutError",
         "TimeoutException",
@@ -207,14 +268,15 @@ def main():
         persist_evidence()
 
     try:
-        raw = sys.stdin.buffer.read(12_600_001)
-        if len(raw) > 12_600_000:
+        raw = sys.stdin.buffer.read(16_800_001)
+        if len(raw) > 16_800_000:
             raise ValueError("Invocation exceeds its fixed bound")
         request = json.loads(raw)
         if not isinstance(request, dict):
             raise ValueError("Invocation must be a JSON object")
         if (
             request.get("operation") not in {"probe-image", "generate-image"}
+            and request.get("operation") != "generate-workflow"
             and len(raw) > 2_200_000
         ):
             raise ValueError("Authoring invocation exceeds its fixed bound")

@@ -4308,3 +4308,23 @@ supplier or print action was submitted. The earlier presentation requirements
 above retain their historical wording; the current saved goal explicitly defers
 new deck work. Scanner-handling approval, a complete current gate, pre-push
 validation, GitHub CI and dev integration remain pending.
+
+## 10 October delivery follow-up — packaged model SDK repair (091)
+
+The previous turn made concrete progress through committed diagnostic and build
+repairs. This continuation confirms the stock package's resolver/client and
+implements reuse of the existing confined SDK for the explicitly selected Docker
+workflow path. Existing HTTP routes remain distinct; the workspace owner freezes
+and revalidates both. The SDK worker executes no tool, and backend validation,
+gateway dispatch and reviews retain authority. The UI reports the actual configured
+model and directs intentional changes to Model Setup; it invents no catalog or
+session lock. Submitted SDK requests, helper decisions and failures retain evidence.
+
+539 affected regressions pass with one skip, 337 shared-contract checks pass, and
+three workspace UI tests pass. A saved stock-package qualification passes with
+explicitly synthetic loopback responses, no real inference and no MCP effects.
+It verifies image/text input, a tool proposal, failure evidence and changed-route
+rejection. Strict docs and restaged native packages pass. Fresh exact-image and
+packaged-workspace verification remain pending; scoped checks are not a complete
+gate. The protected 130 mm run is not answered or resumed. The full engineering
+goal, scanner-handling approval and development delivery remain unfinished.

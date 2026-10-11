@@ -7,6 +7,7 @@ import { ViewerPanelProvider } from "../../store/viewer";
 
 const mocks = vi.hoisted(() => ({
   create: vi.fn(),
+  models: vi.fn(),
   chat: {
     state: {
       activeSessionId: "session-one",
@@ -33,9 +34,7 @@ vi.mock("../../hooks/useHealthStatus", () => ({ default: () => [] }));
 vi.mock("../../services/agent-service", () => ({
   agentService: {
     getActiveAgent: vi.fn().mockResolvedValue("hermes"),
-    listHermesModels: vi
-      .fn()
-      .mockResolvedValue({ groups: [], current_value: "" }),
+    listHermesModels: mocks.models,
   },
 }));
 vi.mock("../../services/workspace-service", async (importOriginal) => ({
@@ -86,6 +85,7 @@ describe("ordinary workspace passive workflow links", () => {
   beforeEach(() => {
     localStorage.clear();
     mocks.create.mockClear();
+    mocks.models.mockResolvedValue({ groups: [], current_value: "" });
   });
   it("reattaches the exact authoring tab after StrictMode repeats its workspace reset", async () => {
     open(
@@ -112,5 +112,42 @@ describe("ordinary workspace passive workflow links", () => {
       screen.queryByTestId("mounted-authoring-view"),
     ).not.toBeInTheDocument();
     expect(mocks.create).not.toHaveBeenCalled();
+  });
+  it("shows the resolved model and directs unsupported remote changes to Model Setup", async () => {
+    mocks.models.mockResolvedValue({
+      current_value: "configured-provider::configured-model",
+      groups: [
+        {
+          provider: "configured-provider",
+          label: "Configured provider",
+          options: [
+            {
+              value: "configured-provider::configured-model",
+              label: "configured-model",
+              provider: "configured-provider",
+              model: "configured-model",
+              is_current: true,
+            },
+          ],
+        },
+      ],
+      selection_supported: false,
+      selection_message:
+        "Using the configured model. Change it in Model Setup before starting a new run.",
+    });
+    open("");
+    const model = await screen.findByTestId("llm-model-select");
+    await waitFor(() =>
+      expect(model).toHaveValue("configured-provider::configured-model"),
+    );
+    expect(model).toBeDisabled();
+    expect(model).toHaveAttribute(
+      "title",
+      expect.stringContaining("Model Setup"),
+    );
+    expect(screen.getByText("Model Setup")).toBeVisible();
+    expect(
+      screen.queryByText("Hermes models unavailable"),
+    ).not.toBeInTheDocument();
   });
 });

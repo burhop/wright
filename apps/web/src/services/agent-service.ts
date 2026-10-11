@@ -70,6 +70,8 @@ export interface HermesModelOptionGroup {
 }
 
 export interface HermesModelOptionsResponse {
+  selection_supported?: boolean;
+  selection_message?: string | null;
   current_value?: string | null;
   current_provider?: string | null;
   current_model?: string | null;

@@ -331,34 +331,58 @@ async def generate_workflow_response(
         instruction_set=instructions,
         resolved=resolved,
     )
+    sdk_invocations = []
     headers = {"X-Hermes-Session-Id": f"wright-workflow-{uuid.uuid4()}"}
     if settings.api_key:
         headers["Authorization"] = f"Bearer {settings.api_key}"
     try:
-        async with httpx.AsyncClient(
-            timeout=httpx.Timeout(timeout_seconds, connect=10)
-        ) as client:
-            if expected_resolution is not None:
-                from .workflow_model_routing import lock_workflow_model
+        if (expected_resolution or {}).get("adapter") == "hermes-model-sdk":
+            from .workflow_sdk import workflow_sdk_completion
 
-                invocation["frozen_model_lock"] = await lock_workflow_model(
-                    client,
-                    settings,
-                    expected_resolution,
-                    headers["X-Hermes-Session-Id"],
-                )
-            invocation["capture_phase"] = "submission"
-            if invocation_observer is not None:
-                await invocation_observer(deepcopy(invocation))
-            response = await client.post(
-                f"{settings.base_url}/v1/chat/completions",
-                headers=headers,
-                json=payload,
+            async def capture_sdk(record):
+                sdk_invocations.append(record)
+                if invocation_observer is not None:
+                    await invocation_observer(deepcopy(record))
+
+            async def qualified(route):
+                invocation["frozen_model_resolution"] = route
+                invocation["capture_phase"] = "submission"
+                if invocation_observer is not None:
+                    await invocation_observer(deepcopy(invocation))
+
+            result = await workflow_sdk_completion(
+                payload,
+                expected_resolution,
+                invocation_observer=capture_sdk,
+                qualified_observer=qualified,
             )
-            response.raise_for_status()
-            result = response.json()
             message = result["choices"][0]["message"]
             value = message["content"]
+        else:
+            async with httpx.AsyncClient(
+                timeout=httpx.Timeout(timeout_seconds, connect=10)
+            ) as client:
+                if expected_resolution is not None:
+                    from .workflow_model_routing import lock_workflow_model
+
+                    invocation["frozen_model_lock"] = await lock_workflow_model(
+                        client,
+                        settings,
+                        expected_resolution,
+                        headers["X-Hermes-Session-Id"],
+                    )
+                invocation["capture_phase"] = "submission"
+                if invocation_observer is not None:
+                    await invocation_observer(deepcopy(invocation))
+                response = await client.post(
+                    f"{settings.base_url}/v1/chat/completions",
+                    headers=headers,
+                    json=payload,
+                )
+                response.raise_for_status()
+                result = response.json()
+                message = result["choices"][0]["message"]
+                value = message["content"]
     except httpx.ReadTimeout as error:
         raise TimeoutError(
             f"The model did not finish responding within {timeout_seconds} seconds."
@@ -398,7 +422,7 @@ async def generate_workflow_response(
         _model_usage(result, round((time.perf_counter() - started) * 1000)),
         outcome=outcome.model_dump(mode="json"),
         instructions=resolved.model_dump(mode="json"),
-        invocations=[invocation],
+        invocations=[invocation, *sdk_invocations],
         assumptions=assumptions,
     )
 

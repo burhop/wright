@@ -6,7 +6,11 @@ from types import ModuleType, SimpleNamespace
 
 import pytest
 
-from agent_adapters.hermes_role_worker import failure_code, invoke
+from agent_adapters.hermes_role_worker import (
+    failure_code,
+    invoke,
+    WorkflowSdkConfigurationChangedError,
+)
 
 
 @pytest.mark.parametrize(
@@ -126,6 +130,58 @@ def test_probe_and_generation_never_export_credentials_or_execute_tools(sdk):
     assert "synthetic-secret-never-export" not in json.dumps(result)
     assert result["response_model"] == "configured-default"
     assert sdk.state["closed"] == 2
+
+
+@pytest.mark.parametrize("operation", ["generate", "generate-workflow"])
+def test_multimodal_workflow_input_does_not_widen_confined_authoring(sdk, operation):
+    body = request(invoke({"operation": "probe"}, sdk.root)["resolution"])
+    body["operation"] = operation
+    body["messages"][1]["content"] = [
+        {"type": "text", "text": "Inspect the exact image"},
+        {
+            "type": "image_url",
+            "image_url": {"url": "data:image/png;base64,c3ludGhldGlj"},
+        },
+    ]
+    if operation == "generate":
+        with pytest.raises(ValueError):
+            invoke(body, sdk.root)
+        assert sdk.calls == []
+    else:
+        invoke(body, sdk.root)
+        assert sdk.calls[0]["messages"] == body["messages"]
+        assert sdk.calls[0]["tools"] == [] and sdk.calls[0]["tool_choice"] == "none"
+
+
+@pytest.mark.parametrize(
+    "part",
+    [
+        {
+            "type": "image_url",
+            "image_url": {"url": "https://external.invalid/image.png"},
+        },
+        {"type": "file", "path": "outside-workspace"},
+        {"type": "text", "text": "scope", "tools": ["terminal"]},
+    ],
+)
+def test_workflow_worker_rejects_unqualified_content_before_provider_call(sdk, part):
+    body = request(invoke({"operation": "probe"}, sdk.root)["resolution"])
+    body["operation"] = "generate-workflow"
+    body["messages"][1]["content"] = [part]
+    with pytest.raises(ValueError):
+        invoke(body, sdk.root)
+    assert sdk.calls == []
+
+
+def test_workflow_worker_detects_route_change_after_parent_probe(sdk):
+    route = invoke({"operation": "probe"}, sdk.root)["resolution"]
+    body = request(route)
+    body["operation"] = "generate-workflow"
+    sdk.runtime["base_url"] = "https://changed.invalid"
+    with pytest.raises(WorkflowSdkConfigurationChangedError) as failed:
+        invoke(body, sdk.root)
+    assert failure_code(failed.value) == "WORKFLOW_MODEL_CHANGED"
+    assert sdk.calls == []
 
 
 @pytest.mark.parametrize(

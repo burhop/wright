@@ -140,9 +140,9 @@ class HermesOpenAIBridgeSettings:
 
     def __post_init__(self) -> None:
         if self.expected_resolution is not None:
-            from core.workflow_model_routing import WorkflowTextResolution
+            from core.workflow_model_routing import parse_workflow_text_resolution
 
-            WorkflowTextResolution.model_validate(self.expected_resolution)
+            parse_workflow_text_resolution(self.expected_resolution)
         if not self.base_url.startswith(("http://", "https://")):
             raise ValueError("Hermes base URL must be HTTP(S)")
         if not 1 <= self.timeout_seconds <= 600:
@@ -1062,8 +1062,24 @@ class HermesOpenAICompatibilityBridge:
         )
 
     async def _post_json(
-        self, payload: dict[str, Any], request_id: str, *, pre_send_observer=None
+        self,
+        payload: dict[str, Any],
+        request_id: str,
+        *,
+        pre_send_observer=None,
+        sdk_observer=None,
     ) -> dict[str, Any]:
+        if (self.settings.expected_resolution or {}).get(
+            "adapter"
+        ) == "hermes-model-sdk":
+            from .workflow_sdk import workflow_sdk_completion
+
+            return await workflow_sdk_completion(
+                payload,
+                self.settings.expected_resolution,
+                invocation_observer=sdk_observer,
+                qualified_observer=pre_send_observer,
+            )
         if not self.available:
             raise HermesBridgeError(
                 "hermes_unavailable", "Hermes AI is not configured.", status_code=503
@@ -1358,6 +1374,12 @@ class HermesOpenAICompatibilityBridge:
         translate = bool(request.tools) and request.tool_choice != "none"
         upstream_started = time.perf_counter()
         invocations = []
+        sdk_invocations = []
+
+        async def retain_sdk(record):
+            sdk_invocations.append(record)
+            if invocation_observer is not None:
+                await invocation_observer(deepcopy(record))
 
         async def submit(actual_payload, operation):
             capture = invocation_evidence(
@@ -1372,12 +1394,20 @@ class HermesOpenAICompatibilityBridge:
 
                 async def before_send(model_lock):
                     capture["capture_phase"] = "submission"
-                    capture["frozen_model_lock"] = model_lock
+                    capture[
+                        "frozen_model_resolution"
+                        if (self.settings.expected_resolution or {}).get("adapter")
+                        == "hermes-model-sdk"
+                        else "frozen_model_lock"
+                    ] = model_lock
                     if invocation_observer is not None:
                         await invocation_observer(deepcopy(capture))
 
                 observed = await self._post_json(
-                    actual_payload, correlation, pre_send_observer=before_send
+                    actual_payload,
+                    correlation,
+                    pre_send_observer=before_send,
+                    sdk_observer=retain_sdk,
                 )
             else:
                 if invocation_observer is not None:
@@ -1435,10 +1465,16 @@ class HermesOpenAICompatibilityBridge:
             translation_ms=round((translated - upstream_completed) * 1000, 3),
             total_ms=round((translated - started) * 1000, 3),
         )
-        if request.instruction_set is not None or invocation_observer is not None:
+        if (
+            request.instruction_set is not None
+            or invocation_observer is not None
+            or self.settings.expected_resolution is not None
+        ):
             if upstream.get("usage") is not None:
                 result["usage"] = upstream["usage"]
-            return HermesBridgeCompletion(result, invocations, upstream.get("model"))
+            return HermesBridgeCompletion(
+                result, [*invocations, *sdk_invocations], upstream.get("model")
+            )
         return result
 
     @staticmethod

@@ -313,6 +313,8 @@ export function WorkspacePanel({
     try {
       const options = await agentService.listHermesModels();
       setModelGroups(options.groups);
+      setModelSelectionSupported(options.selection_supported !== false);
+      setModelSelectionMessage(options.selection_message || null);
       setSelectedModel(
         options.current_value || options.groups[0]?.options[0]?.value || "",
       );
@@ -611,6 +613,10 @@ export function WorkspacePanel({
   const [modelGroups, setModelGroups] = useState<HermesModelOptionGroup[]>([]);
   const [isLoadingModels, setIsLoadingModels] = useState<boolean>(true);
   const [modelError, setModelError] = useState<string | null>(null);
+  const [modelSelectionSupported, setModelSelectionSupported] = useState(true);
+  const [modelSelectionMessage, setModelSelectionMessage] = useState<
+    string | null
+  >(null);
   const normalSurfacePaneWidth = Math.max(
     1,
     panelWidth -
@@ -2149,7 +2155,11 @@ export function WorkspacePanel({
                 data-testid="llm-model-select"
                 value={selectedModel}
                 onChange={(e) => handleModelChange(e.target.value)}
-                disabled={isLoadingModels || modelGroups.length === 0}
+                disabled={
+                  isLoadingModels ||
+                  modelGroups.length === 0 ||
+                  !modelSelectionSupported
+                }
                 style={{
                   flex: 1,
                   backgroundColor: "var(--color-surface-subtle)",
@@ -2162,10 +2172,15 @@ export function WorkspacePanel({
                   cursor: "pointer",
                   transition: "border-color var(--transition-fast)",
                 }}
-                title={modelError || "Select LLM Model"}
+                title={
+                  modelError || modelSelectionMessage || "Select LLM Model"
+                }
               >
                 {renderModelOptions()}
               </select>
+              {modelSelectionMessage && (
+                <small title={modelSelectionMessage}>Model Setup</small>
+              )}
               {modelError ? (
                 <span
                   style={{
@@ -3864,7 +3879,11 @@ export function WorkspacePanel({
               data-testid="llm-model-select"
               value={selectedModel}
               onChange={(e) => handleModelChange(e.target.value)}
-              disabled={isLoadingModels || modelGroups.length === 0}
+              disabled={
+                isLoadingModels ||
+                modelGroups.length === 0 ||
+                !modelSelectionSupported
+              }
               style={{
                 flex: 1,
                 backgroundColor: "var(--color-surface-subtle)",
@@ -3877,10 +3896,13 @@ export function WorkspacePanel({
                 cursor: "pointer",
                 transition: "border-color var(--transition-fast)",
               }}
-              title={modelError || "Select LLM Model"}
+              title={modelError || modelSelectionMessage || "Select LLM Model"}
             >
               {renderModelOptions()}
             </select>
+            {modelSelectionMessage && (
+              <small title={modelSelectionMessage}>Model Setup</small>
+            )}
             {modelError ? (
               <span
                 style={{

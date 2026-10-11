@@ -39,12 +39,20 @@ They are compiled into its frontend; changing container runtime environment
 variables does not enable a feature omitted during the image build. The native
 builder and merge gate use the same enabled features.
 
-The current development Docker candidate has an open model-service compatibility
-finding: its bundled Hermes 0.19.0 gateway does not expose the model discovery and
-session model-lock endpoints required by the HTTP adapter. The editor can save and
-reopen a process, but gateway health alone does not qualify model execution.
-Readiness must retain this hold; no configured model name substitutes for confirmed
-routing. See the
+Bundled Hermes 0.19.0 does not expose the discovery/session-lock HTTP contract.
+Docker now explicitly selects Wright's existing confined SDK transport for
+workflow responses and tool decisions. It resolves the configured provider/model
+and freezes the profile, endpoint and SDK identity; changes hold continuation.
+Tool proposals still pass through Wright's existing validator/runtime/gateway.
+There is no tool executor in the SDK worker or fallback after a failed request.
+The workspace shows only the observed configured model and directs intentional
+changes to Model Setup. Source/native hosts retain the HTTP transport unless an
+operator explicitly configures a qualified SDK installation.
+
+The stock-package test uses synthetic local endpoint responses; it proves
+request/evidence mechanics, not live provider inference or engineering acceptance.
+The fresh complete image/browser and merge gates remain pending. Gateway health
+alone is not routing qualification. See the
 [delivery checkpoint](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/dev-delivery-checkpoint-090.md)
 for its scope. Previously qualified native/provider evidence is separate.
 

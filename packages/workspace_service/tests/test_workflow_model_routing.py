@@ -32,6 +32,39 @@ def owner(resolution):
     return SimpleNamespace(workflow_model_capabilities=reader)
 
 
+def test_sdk_route_continuation_stays_exact_and_cannot_replace_http_run():
+    from agent_adapters.workflow_sdk import sdk_workflow_resolution
+    from workspace_service.workflow_model_routing import validate_frozen_model_plan
+
+    sdk = sdk_workflow_resolution(
+        {
+            "provider": "configured-provider",
+            "model_reference": "A",
+            "api_mode": "chat_completions",
+            "endpoint_digest": "a" * 64,
+            "sdk_digest": "b" * 64,
+        }
+    )
+    plan = compile_prompt_workflow(source(task()))
+    original, context = asyncio.run(
+        freeze_workflow_model_routing(owner(sdk), plan, None)
+    )
+    restored, same = asyncio.run(
+        freeze_workflow_model_routing(owner(sdk), plan, None, context)
+    )
+    assert (
+        same == context
+        and original.steps[0].model_resolution == restored.steps[0].model_resolution
+    )
+    validate_frozen_model_plan(restored, same)
+    _, http_context = asyncio.run(
+        freeze_workflow_model_routing(owner(route()), plan, None)
+    )
+    with pytest.raises(WorkflowSourceExecutionError) as failed:
+        asyncio.run(freeze_workflow_model_routing(owner(sdk), plan, None, http_context))
+    assert failed.value.code == "WORKFLOW_MODEL_CHANGED"
+
+
 def test_initial_route_is_frozen_with_integration_context_not_permission_replaced():
     plan = compile_prompt_workflow(source(task()))
     bound, context = asyncio.run(

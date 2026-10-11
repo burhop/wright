@@ -25,6 +25,10 @@ def _headers(settings):
 
 
 async def workflow_model_capabilities():
+    from .workflow_sdk import sdk_transport_selected, workflow_sdk_capabilities
+
+    if sdk_transport_selected():
+        return await workflow_sdk_capabilities()
     settings = resolve_hermes_api_settings()
     try:
         async with httpx.AsyncClient(timeout=15) as client:

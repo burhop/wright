@@ -234,3 +234,48 @@ exact-image check. Its retained partial evidence includes 391 control-plane test
 clean wheel and rebuilt-source installations import successfully. These are scoped successes, not
 a completed merge gate. The previous candidate and failed browser records remain
 retained. The full current gate must still complete before publication.
+
+## Packaged model transport repair, in progress
+
+The user journey is configuring a real model, starting a saved workflow, and
+inspecting the same frozen routing and submitted request on continuation. The
+offline exact-image inspection confirms that bundled Hermes 0.19.0 exposes the
+existing SDK resolver/client used by Wright's confined authoring and image paths.
+It does not expose the HTTP discovery/session-lock contract. Reuse that SDK seam
+for the explicitly configured packaged workflow transport; retain the HTTP route
+for hosts that qualify it. There is no automatic fallback after a failed request.
+
+The shared core routing contract must distinguish the SDK route, profile,
+provider, model, endpoint and SDK identity. The existing workspace service freezes
+and revalidates it. The existing tool-decision bridge translates proposals; the
+worker executes no tool and the existing runtime/gateway retains execution and
+approval authority. Preserve complete request/repair evidence at the actual SDK
+boundary, including failures. An accepted HTTP run cannot silently acquire an SDK
+route. Missing configuration stays an explicit readiness/setup failure.
+
+Discovery should report only the configured model observed by the resolver. SDK
+mode must disclose that remote selection is unavailable and direct intentional
+changes to Model Setup, rather than synthesize a catalog or session-lock receipt.
+Existing interface/common-view compatibility remains unchanged. Prove isolated
+SDK text and tool-decision requests, changed-route rejection, continuation,
+multimodal input and error evidence, then qualify the stock package and ordinary
+packaged workspace journey. Synthetic endpoint responses prove transport and
+runtime mechanics only, not real model inference or engineering acceptance.
+
+The SDK repair is implemented locally. All 539 affected adapter/workspace/API and
+Docker checks pass (one skip), alongside 337 shared-contract checks and three
+workspace UI tests. The strict documentation build passes. Stock Hermes 0.19.0
+in the retained `fa40c677` image passes the saved offline SDK qualification using
+the current adapter mounted read-only: text with an inline image, one validated
+tool proposal, retained failed-request evidence and changed-route rejection.
+The synthetic loopback endpoint receives three requests; no MCP operation or
+real inference is submitted. The reproducible check is
+`scripts/test-hermes-workflow-sdk.py`, with explicit installed SDK Python/root.
+The first attempt used the image's system Python instead of its application
+environment and failed import; its record is retained separately.
+
+The production UI and restaged native distribution validate with UI manifest
+`9d6cf79fd990ec47c0a68e50187b1a7c6121a7a251a7c96d4c7c439c0b91c052`.
+This restaging does not qualify the native host's actual model configuration;
+source/native SDK selection remains explicit. A fresh clean candidate image,
+actual packaged-browser journey and complete delivery gates are still required.

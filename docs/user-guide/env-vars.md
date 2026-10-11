@@ -28,6 +28,15 @@ container profile, a local Hermes CLI/Desktop install, or an explicit override.
 | `API_SERVER_PORT` | No | `8642` | Hermes API server port written into the generated profile config. |
 | `API_SERVER_KEY` | No | Resolved from the running gateway; generated for Docker when neither key is supplied | Bearer key used by Wright to authenticate to the Hermes API server. Docker generates a unique key rather than using a shared development credential. |
 | `HERMES_API_KEY` | No | Falls back to `API_SERVER_KEY` | Compatibility alias for the Hermes API server key in container bootstrap. |
+| `WRIGHT_WORKFLOW_MODEL_TRANSPORT` | No | `hermes-http` on source/native hosts; `hermes-model-sdk` in Docker | Explicit text/tool-decision transport. SDK mode reuses the installed resolver/client and verifies the frozen provider, model, profile and SDK identity before submission. It does not execute tools or fall back to HTTP after failure. Existing HTTP runs retain their route; an unavailable or changed route holds readiness/continuation. |
+| `HERMES_ROLE_PYTHON` | For an explicitly installed SDK | Official native installation discovery; `/opt/hermes/.venv/bin/python` in Docker | Trusted installed Hermes Python used by the confined worker. Configure together with its runtime root. |
+| `HERMES_ROLE_RUNTIME_ROOT` | With an explicit SDK Python | Official native installation discovery; `/opt/hermes/.venv/lib/python3.13/site-packages` in Docker | Trusted Hermes package root containing the qualified resolver/client. This is installation configuration, never a workflow-supplied executable/path. |
+
+SDK model discovery reports the configured model resolved by Hermes. It does not
+advertise an inferred catalog or support remote model switching; use Model Setup
+before starting a new run. Resolver qualification establishes the selected route,
+not provider reachability, model quality or engineering acceptance. Invalid
+credentials or unavailable inference produce a bounded execution diagnostic.
 
 ---
 

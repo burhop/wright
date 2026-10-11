@@ -2,13 +2,12 @@
 
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, TypeAdapter, model_validator
 
 from .process_validation import Contract, Digest, Identifier, canonical_digest
 
 
-class WorkflowTextResolution(Contract):
-    adapter: Literal["hermes-http"] = "hermes-http"
+class _WorkflowTextResolution(Contract):
     provider: Identifier
     model_reference: Identifier
     profile: Identifier
@@ -25,11 +24,27 @@ class WorkflowTextResolution(Contract):
         return self
 
 
+class WorkflowTextResolution(_WorkflowTextResolution):
+    adapter: Literal["hermes-http"] = "hermes-http"
+
+
+class WorkflowSdkTextResolution(_WorkflowTextResolution):
+    adapter: Literal["hermes-model-sdk"] = "hermes-model-sdk"
+    api_mode: Literal["chat_completions", "codex_responses", "anthropic_messages"]
+    sdk_digest: Digest
+
+
+def parse_workflow_text_resolution(value):
+    return TypeAdapter(
+        WorkflowTextResolution | WorkflowSdkTextResolution
+    ).validate_python(value)
+
+
 class WorkflowModelRouting(Contract):
     schema_version: Literal["wright.workflow-model-routing/1"] = (
         "wright.workflow-model-routing/1"
     )
-    text: WorkflowTextResolution | None = None
+    text: WorkflowTextResolution | WorkflowSdkTextResolution | None = None
     images: dict[Identifier, dict] = Field(default_factory=dict, max_length=32)
 
     @model_validator(mode="after")

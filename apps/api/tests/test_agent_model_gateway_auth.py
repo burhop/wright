@@ -9,6 +9,68 @@ from api.routers import agent
 
 
 @pytest.mark.asyncio
+async def test_sdk_discovery_reports_only_actual_model_and_no_remote_selection(
+    client, monkeypatch
+):
+    from agent_adapters import workflow_sdk
+
+    monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
+
+    async def capabilities():
+        return {
+            "available": True,
+            "resolution": {
+                "provider": "configured-provider",
+                "model_reference": "configured-model",
+            },
+        }
+
+    async def forbidden_http(*args, **kwargs):
+        pytest.fail("SDK discovery must not fall back to unsupported HTTP endpoints")
+
+    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", capabilities)
+    monkeypatch.setattr(agent, "_hermes_json_request", forbidden_http)
+    response = await client.get("/api/agent/models")
+    assert response.status_code == 200
+    result = response.json()
+    assert result["current_value"] == "configured-provider::configured-model"
+    assert result["selection_supported"] is False
+    assert "Model Setup" in result["selection_message"]
+    assert len(result["groups"]) == len(result["groups"][0]["options"]) == 1
+    rejected = await client.post(
+        "/api/agent/model",
+        json={
+            "provider": "configured-provider",
+            "model": "another-model",
+            "session_id": "private-session",
+        },
+    )
+    assert (
+        rejected.status_code == 409 and "No session model was changed" in rejected.text
+    )
+
+
+@pytest.mark.asyncio
+async def test_sdk_unavailable_has_bounded_diagnostic_and_no_http_fallback(
+    client, monkeypatch
+):
+    from agent_adapters import workflow_sdk
+
+    monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
+
+    async def unavailable():
+        raise ValueError("fake-private-provider-response")
+
+    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", unavailable)
+    response = await client.get("/api/agent/models")
+    assert response.status_code == 503
+    assert (
+        "Model Setup" in response.text
+        and "fake-private-provider-response" not in response.text
+    )
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("upstream_status", [404, 405, 501])
 async def test_missing_model_service_is_unavailable_not_missing_workspace(
     client, monkeypatch, upstream_status
