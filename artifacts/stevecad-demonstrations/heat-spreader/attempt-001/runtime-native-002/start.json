@@ -1,0 +1,18 @@
+{
+  "principal_id": "local-control-plane",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/stevecad-heat-spreader-native-002.workflow.wflow",
+    "source_digest": "7cd1be4a19a4730bfb1a3e19239cec1a1b375006034cec7cfb5092671f28854d",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "request_id": "stevecad-heat-native-002",
+  "payload_digest": "a0e77a4c0f5b2cc385818f030337c9e23c7aeee982544b8bc63762543f1cdd21",
+  "input_snapshot_id": "inputs-c5dcac19b69f47be80d6f83105817022",
+  "input_digest": "d2e9e2ab2d157c1f9b8b8dd174131047a7db30546c094f6334d0ce3e58c81eeb",
+  "run_id": "61ae0f8a8a5343d9b1310d484555fdd1",
+  "run_log_path": "runs/stevecad-heat-spreader-native-002/61ae0f8a8a5343d9b1310d484555fdd1.json",
+  "initial_outcome": "accepted",
+  "created_at": "2026-10-11T17:00:41.227740+00:00"
+}

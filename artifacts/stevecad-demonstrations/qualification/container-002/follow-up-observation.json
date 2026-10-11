@@ -1,0 +1,6 @@
+{
+  "status": "diagnosed_after_attempt",
+  "observation": "The account state copied into the earlier fresh container held an expired short-lived access token. An already-open native MCP connection still reading the document did not prove that token could authorize a new process.",
+  "recovery": "Reauthorize through Wright's normal account connection, then mount fresh private account state. Attempt 005 passed using the original base-image MCP SDK 1.30.0, with no SDK downgrade.",
+  "claim_limit": "The earlier SDK-version hypothesis was not established. Credentials are absent from public evidence."
+}

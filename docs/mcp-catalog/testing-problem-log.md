@@ -1,5 +1,27 @@
 # MCP Server Testing Problem Log
 
+## 2026-10-11 — SteveCAD follow-up and native structural output contract
+
+SteveCAD native CAD creation, inspection and exact STEP transfer now passed in
+the isolated normal workspace. Fresh neutral Linux attempt 005 passed discovery,
+direct read and gateway inspection; source overlay and fixture scope are retained.
+Attempts 001–004 remain incomplete/failed. Refreshing OAuth state resolved the
+connection issue with the original base SDK; SDK incompatibility was not established.
+A child venv attempt also lacked inherited base dependencies and is not a pass.
+
+Casys 0.8.6 native stdio and actual coupon mesh preflight passed. Inspection of its
+upstream static deck showed U/S outputs without RF, so it cannot alone prove the
+original bracket reaction requirement. A separately selected unchanged OASiS
+environment with existing native Gmsh/CalculiX prerequisites executed a standard
+reaction fixture. Its first attempt wrote DAT/FRD outside supported result discovery;
+the provider correctly retained `completed_unverified`. Fresh attempt 002 exports
+actual DAT rows to VTU in the provider job directory. Automated finite-output checks
+pass; mandatory independent critic remains pending, `trustworthy_result=false`.
+The bracket has not been analysed. No dependencies were added to Wright's base image.
+
+Evidence: `artifacts/stevecad-demonstrations/qualification/README.md` and the separate
+`container-001`…`container-005`, `calculix-native-001`, `oasis-native-fea-001/002` folders.
+
 ## 2026-10-11 — SteveCAD native connection
 
 Problem:

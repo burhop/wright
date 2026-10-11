@@ -1,0 +1,5 @@
+{
+  "status": "failed",
+  "error_type": "McpInvalidOperationError",
+  "message": "MCP server 'SteveCAD (STEVE CAD)' requires approval before install."
+}

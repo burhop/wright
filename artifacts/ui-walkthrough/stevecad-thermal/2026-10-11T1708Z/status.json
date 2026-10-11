@@ -1,0 +1,32 @@
+{
+  "title": "SteveCAD comparison in Wright",
+  "summary": "Stopped at Open the isolated dashboard. Earlier evidence retained; no process was run or approved.",
+  "overall": "blocked",
+  "updated": "2026-10-11T17:11:08.662Z",
+  "manualSteps": [
+    {
+      "label": "Open the isolated dashboard",
+      "instruction": "Open Wright on port 8891."
+    }
+  ],
+  "steps": [
+    {
+      "id": "01",
+      "state": "blocked",
+      "label": "Open the isolated dashboard",
+      "summary": "Open the isolated dashboard",
+      "purpose": "The exact isolated workspace card is visible",
+      "action": "Open Wright on port 8891.",
+      "controls": [
+        {
+          "selector": "[data-testid=\"card-workspace-225aca34-3ae9-4557-85d6-0d8defd90a86\"]",
+          "label": "SteveCAD engineering demonstrations"
+        }
+      ],
+      "expected": "The exact isolated workspace card is visible",
+      "actual": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('card-workspace-225aca34-3ae9-4557-85d6-0d8defd90a86') to be visible\u001b[22m\n",
+      "raw": "screenshots/raw/01-stopped.png",
+      "annotated": "screenshots/annotated/01-stopped.png"
+    }
+  ]
+}

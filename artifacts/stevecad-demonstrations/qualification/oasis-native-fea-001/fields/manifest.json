@@ -1,0 +1,47 @@
+[
+  {
+    "path": "ccx.log",
+    "bytes": 2261,
+    "sha256": "a39cfc5be9f800831707feac6b8745320aadfd8576d7024589d705d8d102ec1f"
+  },
+  {
+    "path": "fixture.12d",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "fixture.cvg",
+    "bytes": 274,
+    "sha256": "65086dedb4572132b815ace04b294909c7f6f337111f9704fc310b02320f67f7"
+  },
+  {
+    "path": "fixture.dat",
+    "bytes": 1947,
+    "sha256": "d1bc3676a20fd59812ae60073cfb89cbd878e2c94d463a03dd5827ffcd6d7e9d"
+  },
+  {
+    "path": "fixture.frd",
+    "bytes": 4403,
+    "sha256": "544adf1fe39c24e8a88120c12b903663ba3ba67a16602b56491f91afd621a24c"
+  },
+  {
+    "path": "fixture.inp",
+    "bytes": 493,
+    "sha256": "421b2d97f94ad5629cadec9af55ee84f77f1640a83cd8ecca72072a91fb56d81"
+  },
+  {
+    "path": "fixture.sta",
+    "bytes": 170,
+    "sha256": "01e324ec0ea28f4d1fd7f5e2da1277af53812b873e218be1604c17a4c8e4990d"
+  },
+  {
+    "path": "qualification.json",
+    "bytes": 599,
+    "sha256": "74199694fdb6aa12cfa5b2b3cea526af0a9407fd111a36d3c63a61a62f791121"
+  },
+  {
+    "path": "spooles.out",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

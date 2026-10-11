@@ -1,0 +1,89 @@
+{
+  "observed_at": "2026-10-11T17:07:38.120513+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "f453fcef-2cac-4266-a43d-ce3d72450b1b__calculix_mesh_preflight",
+    "label": "mesh-preflight",
+    "output_dir": "artifacts/stevecad-demonstrations/qualification/calculix-native-001",
+    "print_summary": true,
+    "arguments": {
+      "step_path": "/exports/qualification/calculix/coupon.step",
+      "expected_step_sha256": "3c3ad6cf672bea6639b045403d97190ba0f125f27225e5915112cdc0675400a7",
+      "mesh_size_mm": 3,
+      "element_order": 2,
+      "selections": [
+        {
+          "name": "TOP",
+          "box": {
+            "min": [
+              -25.001,
+              -15.001,
+              2.999
+            ],
+            "max": [
+              25.001,
+              15.001,
+              3.001
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "Mesh preflight complete for STEP sha256:3c3ad6cf672bea6639b045403d97190ba0f125f27225e5915112cdc0675400a7: 4613 nodes, 2242 elements."
+      }
+    ],
+    "structuredContent": {
+      "schemaVersion": "1.0",
+      "kind": "mesh-selection-preflight",
+      "inputArtifact": {
+        "sourcePath": "/exports/qualification/calculix/coupon.step",
+        "sha256": "3c3ad6cf672bea6639b045403d97190ba0f125f27225e5915112cdc0675400a7",
+        "bytes": 34473
+      },
+      "boundsMm": {
+        "min": [
+          -25,
+          -15,
+          0
+        ],
+        "max": [
+          25,
+          15,
+          3
+        ]
+      },
+      "mesh": {
+        "nodes": 4613,
+        "elements": 2242
+      },
+      "selections": [
+        {
+          "name": "TOP",
+          "boxMm": {
+            "min": [
+              -25.001,
+              -15.001,
+              2.999
+            ],
+            "max": [
+              25.001,
+              15.001,
+              3.001
+            ]
+          },
+          "nodes": 1319
+        }
+      ],
+      "errors": []
+    },
+    "isError": false
+  }
+}

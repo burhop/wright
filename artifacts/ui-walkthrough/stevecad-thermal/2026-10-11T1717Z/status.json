@@ -1,0 +1,158 @@
+{
+  "title": "SteveCAD comparison in Wright",
+  "summary": "Stopped at Inspect the saved thermal process. Earlier evidence retained; no process was run or approved.",
+  "overall": "blocked",
+  "updated": "2026-10-11T17:16:51.771Z",
+  "manualSteps": [
+    {
+      "label": "Unlock the isolated local Wright instance",
+      "instruction": "Open Wright and unlock it with the existing private local access token. Do not share the token."
+    },
+    {
+      "label": "Open the isolated dashboard",
+      "instruction": "Open Wright on port 8891."
+    },
+    {
+      "label": "Enter the workspace",
+      "instruction": "Click SteveCAD engineering demonstrations."
+    },
+    {
+      "label": "Open the workflow editor",
+      "instruction": "Click Workflows."
+    },
+    {
+      "label": "Choose an existing saved workflow",
+      "instruction": "Open the workflow file menu, then click Open workflow."
+    },
+    {
+      "label": "Inspect the saved thermal process",
+      "instruction": "Click stevecad-heat-spreader-native-003.workflow.wflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "00",
+      "state": "pass",
+      "label": "Unlock the isolated local Wright instance",
+      "summary": "Unlock the isolated local Wright instance",
+      "purpose": "Normal local access succeeds without exposing credentials",
+      "action": "Open Wright and unlock it with the existing private local access token. Do not share the token.",
+      "controls": [
+        {
+          "selector": "input[type=\"password\"]",
+          "label": "Private Access Token"
+        },
+        {
+          "selector": "button[type=\"submit\"]",
+          "label": "Unlock"
+        }
+      ],
+      "expected": "Normal local access succeeds without exposing credentials",
+      "actual": "Normal local access succeeds without exposing credentials Verified in the served UI.",
+      "raw": "screenshots/raw/00-after.png",
+      "annotated": "screenshots/annotated/00-after.png"
+    },
+    {
+      "id": "01",
+      "state": "pass",
+      "label": "Open the isolated dashboard",
+      "summary": "Open the isolated dashboard",
+      "purpose": "The exact isolated workspace card is visible",
+      "action": "Open Wright on port 8891.",
+      "controls": [
+        {
+          "selector": "[data-testid=\"card-workspace-225aca34-3ae9-4557-85d6-0d8defd90a86\"]",
+          "label": "SteveCAD engineering demonstrations"
+        }
+      ],
+      "expected": "The exact isolated workspace card is visible",
+      "actual": "The exact isolated workspace card is visible Verified in the served UI.",
+      "raw": "screenshots/raw/01-after.png",
+      "annotated": "screenshots/annotated/01-after.png"
+    },
+    {
+      "id": "02",
+      "state": "pass",
+      "label": "Enter the workspace",
+      "summary": "Enter the workspace",
+      "purpose": "The workspace opens with its Workflows control",
+      "action": "Click SteveCAD engineering demonstrations.",
+      "controls": [
+        {
+          "selector": "[data-testid=\"activity-bar-workflows-btn\"]",
+          "label": "Workflows"
+        }
+      ],
+      "expected": "The workspace opens with its Workflows control",
+      "actual": "The workspace opens with its Workflows control Verified in the served UI.",
+      "raw": "screenshots/raw/02-after.png",
+      "annotated": "screenshots/annotated/02-after.png"
+    },
+    {
+      "id": "03",
+      "state": "pass",
+      "label": "Open the workflow editor",
+      "summary": "Open the workflow editor",
+      "purpose": "The preserved workflow editor opens in the workspace",
+      "action": "Click Workflows.",
+      "controls": [
+        {
+          "selector": "[data-testid=\"activity-bar-workflows-btn\"]",
+          "label": "Workflows"
+        },
+        {
+          "selector": "[data-testid=\"workflow-file-menu\"]",
+          "label": "Workflow file menu"
+        }
+      ],
+      "expected": "The preserved workflow editor opens in the workspace",
+      "actual": "The preserved workflow editor opens in the workspace Verified in the served UI.",
+      "raw": "screenshots/raw/03-after.png",
+      "annotated": "screenshots/annotated/03-after.png"
+    },
+    {
+      "id": "04",
+      "state": "pass",
+      "label": "Choose an existing saved workflow",
+      "summary": "Choose an existing saved workflow",
+      "purpose": "The saved thermal process is listed",
+      "action": "Open the workflow file menu, then click Open workflow.",
+      "controls": [
+        {
+          "selector": "[data-testid=\"workflow-file-menu\"]",
+          "label": "Workflow file menu"
+        },
+        {
+          "selector": "[data-testid=\"workflow-file-open\"]",
+          "label": "Open workflow"
+        }
+      ],
+      "expected": "The saved thermal process is listed",
+      "actual": "The saved thermal process is listed Verified in the served UI.",
+      "raw": "screenshots/raw/04-after.png",
+      "annotated": "screenshots/annotated/04-after.png"
+    },
+    {
+      "id": "05",
+      "state": "blocked",
+      "label": "Inspect the saved thermal process",
+      "summary": "Inspect the saved thermal process",
+      "purpose": "The exact saved heat-spreader process opens with its authoring and working-view controls",
+      "action": "Click stevecad-heat-spreader-native-003.workflow.wflow.",
+      "controls": [
+        {
+          "selector": "[data-testid=\"workflow-working-view-open\"]",
+          "label": "Open working view"
+        },
+        {
+          "selector": "[data-testid=\"workflow-workspace-context\"]",
+          "label": "Saved process context"
+        }
+      ],
+      "expected": "The exact saved heat-spreader process opens with its authoring and working-view controls",
+      "actual": "locator.waitFor: Error: strict mode violation: getByTestId('workflow-working-view-open') resolved to 2 elements:\n    1) <button type=\"button\" data-testid=\"workflow-working-view-open\" class=\"recovery-button recovery-button--secondary\" title=\"Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically.\">Open working view</button> aka getByLabel('SteveCAD engineering demonstrations workflow workflows/untitled-workflow-').getByTestId('workflow-working-view-open')\n    2) <button type=\"button\" data-testid=\"workflow-working-view-open\" class=\"recovery-button recovery-button--secondary\" title=\"Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically.\">Open working view</button> aka getByRole('button', { name: 'Open working view' })\n\nCall log:\n\u001b[2m  - waiting for getByTestId('workflow-working-view-open') to be visible\u001b[22m\n",
+      "raw": "screenshots/raw/05-stopped.png",
+      "annotated": "screenshots/annotated/05-stopped.png"
+    }
+  ]
+}

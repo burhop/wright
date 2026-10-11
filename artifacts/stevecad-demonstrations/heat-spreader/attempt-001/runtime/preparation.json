@@ -1,0 +1,63 @@
+{
+  "status": "prepared_not_executed",
+  "source_path": "stevecad/heat-spreader/native-001/prepared.workflow.wflow",
+  "accepted_source_path": "workflows/stevecad-heat-spreader-native-001.workflow.wflow",
+  "source_sha256": "3bd43f13ca0b09c86b5b215ddf7ab635c55c444c02d7f4abb8206120377d0209",
+  "inputs": [
+    {
+      "path": "stevecad/heat-spreader/native-001/inputs/baseline_40.step",
+      "sha256": "dc382401b229d99eaa55df7f543af4f1154ab9f3b3799d94488910089502ea2a"
+    },
+    {
+      "path": "stevecad/heat-spreader/native-001/inputs/revision_60.step",
+      "sha256": "a197cfe19cf31dcecd839373478942b31695f818fe576cac1417447b069648e9"
+    },
+    {
+      "path": "stevecad/heat-spreader/native-001/inputs/geometry-measurements.json",
+      "sha256": "0d83a90552817a78afbac2fe37ad8df9a6c65440e02089fc5b5185f2e0aa5866"
+    },
+    {
+      "path": "stevecad/heat-spreader/native-001/inputs/alternatives.csv",
+      "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f"
+    },
+    {
+      "path": "stevecad/heat-spreader/native-001/inputs/heat_conduction_skfem.py",
+      "sha256": "b71d692da20dfd729703f05922b571aa36920726ca7bd885e511ba3452d09a87"
+    }
+  ],
+  "step_count": 9,
+  "cad_measurements": {
+    "source": "SteveCAD full-build metadata, bound to exact exported STEP",
+    "cases": {
+      "baseline_40": {
+        "dimensions_mm": {
+          "x": 100.0,
+          "y": 40.0,
+          "z": 2.0
+        },
+        "step_sha256": "dc382401b229d99eaa55df7f543af4f1154ab9f3b3799d94488910089502ea2a",
+        "document_id": "c11c6df4-7536-4aa1-8f90-cab56d46fb03",
+        "revision": 1,
+        "model_id": "d8448dd2-290a-48dc-84b7-516f95b46c90"
+      },
+      "revision_60": {
+        "dimensions_mm": {
+          "x": 100.0,
+          "y": 60.0,
+          "z": 2.0
+        },
+        "step_sha256": "a197cfe19cf31dcecd839373478942b31695f818fe576cac1417447b069648e9",
+        "document_id": "b1294a0d-acf9-4f13-8586-08ed992fb685",
+        "revision": 1,
+        "model_id": "fe86d86c-0c2b-4610-a40f-dd6d60fa2397"
+      }
+    }
+  },
+  "solver_server": "3a8b50ba-2d5e-4ae4-8c40-133cfaa61523",
+  "output_template": "stevecad/heat-spreader/native-001/outputs/{{wright.run_id}}",
+  "limitations": [
+    "Exact STEP exports are explicit preparation inputs; no unattended transfer is claimed.",
+    "Solver constructs rectangular FE meshes from measured dimensions; it does not mesh arbitrary STEP topology.",
+    "OASiS critic remains false; real reviews are not granted by this preparer."
+  ]
+}

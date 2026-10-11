@@ -1,5 +1,40 @@
 # MCP Server Setup Recipes
 
+## SteveCAD demonstration follow-up — isolated selected providers
+
+The native coupon qualification and scoped neutral Linux read/inspection pass
+are indexed in `artifacts/stevecad-demonstrations/qualification/README.md`. The
+opt-in `examples/stevecad-demonstrations/qualify_container.py` is a fresh-container
+fixture: mount the current checkout read-only at `/source`, a fresh evidence
+directory at `/evidence`, and privately managed existing OAuth state read-only at
+`/run/stevecad-credentials.json`. It copies credentials to ephemeral `/tmp` solely
+for the existing refresh owner, creates a fresh database and uses the real
+registry/lifecycle/gateway/policy/audit with an explicit qualification workspace.
+It reads the retained coupon identity specified in the fixture; it does not create
+CAD or qualify the installed distribution or workspace UI. Authorize network/cloud
+access in the actual test context. A stale copied token can trigger new browser
+authorization even while an older native session still works. Never publish the
+mounted credential file or mistake that failure for an SDK incompatibility.
+
+For structural prerequisites use the external provider environment rather than
+the Wright base image. `examples/stevecad-demonstrations/oasis-native-fea.Dockerfile`
+copies the selected OASiS installation unchanged into the pinned Casys native image.
+Record both image IDs and the built image ID; recorded IDs and versions are in
+`artifacts/stevecad-demonstrations/qualification/oasis-native-fea-002/provenance.json`.
+Use a fresh provider container with `--network none`, a bounded memory/CPU budget,
+and only the new workspace mounted at `/workspace`. Register normal stdio as
+`docker exec -i -w /workspace <owned-container> <selected-python> -m server`, then
+install and enable it using Wright's normal MCP manager and required local gates.
+
+The retained `native_reaction_probe.py` is an engineering readiness fixture, not
+a new MCP server or a process executor. OASiS/scikit-fem's execution backend invokes
+native CalculiX explicitly; the physical engine attribution remains CalculiX.
+Supported result discovery requires actual VTU/VTK/PVD in its job directory. The
+fixture converts actual native DAT rows to VTU without inventing fields. Its
+mandatory independent critic remains separate; successful automatic checks do
+not authorize setting `critic_approved=true`. This path has not established the
+original equipment mount's mesh/load/support or numerical compliance.
+
 ## SteveCAD (STEVE CAD) — 11 October 2026
 
 - Source: [official MCP documentation](https://stevecad.studio/docs/agents/).

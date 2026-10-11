@@ -1,0 +1,54 @@
+[
+  {
+    "kind": "http",
+    "path": "/api/mcp/servers",
+    "status": 401,
+    "expected": false
+  },
+  {
+    "kind": "console",
+    "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  },
+  {
+    "kind": "console",
+    "text": "{\"timestamp\":\"2026-10-11T17:10:37.946Z\",\"level\":\"error\",\"message\":\"Failed to fetch MCP servers\",\"component\":\"McpService\",\"traceId\":null,\"metadata\":{\"status\":401}}"
+  },
+  {
+    "kind": "http",
+    "path": "/api/mcp/tools",
+    "status": 401,
+    "expected": false
+  },
+  {
+    "kind": "console",
+    "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  },
+  {
+    "kind": "console",
+    "text": "{\"timestamp\":\"2026-10-11T17:10:37.946Z\",\"level\":\"error\",\"message\":\"Failed to fetch MCP tools\",\"component\":\"McpService\",\"traceId\":null,\"metadata\":{\"status\":401}}"
+  },
+  {
+    "kind": "http",
+    "path": "/api/agent/sessions",
+    "status": 401,
+    "expected": false
+  },
+  {
+    "kind": "console",
+    "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  },
+  {
+    "kind": "console",
+    "text": "Failed to sync sessions with backend, falling back to localStorage Error: Failed to list sessions: Unauthorized\n    at Object.listSessions (http://wright.localhost:8891/assets/index-BHYKQogG.js:4223:28591)\n    at async http://wright.localhost:8891/assets/index-BHYKQogG.js:4224:12537"
+  },
+  {
+    "kind": "http",
+    "path": "/api/settings",
+    "status": 401,
+    "expected": false
+  },
+  {
+    "kind": "console",
+    "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  }
+]

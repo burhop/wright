@@ -1,0 +1,75 @@
+{
+  "schema_version": "wright.process-input-snapshot/1",
+  "snapshot_id": "inputs-2f6856c74d14430e941f8308aca67d58",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/stevecad-heat-spreader-native-003.workflow.wflow",
+    "source_digest": "9d7903dbcab5fba49ddb1063fa7e87e6d2f580feea42cf0a7be01f078b671ecd",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "created_at": "2026-10-11T17:01:53.847029+00:00",
+  "bindings": [
+    {
+      "kind": "file",
+      "input_id": "input_baseline_40_step",
+      "reference": {
+        "artifact_ref": "stevecad/heat-spreader/native-003/inputs/baseline_40.step",
+        "sha256": "dc382401b229d99eaa55df7f543af4f1154ab9f3b3799d94488910089502ea2a",
+        "media_type": null,
+        "result_id": null,
+        "representation_id": null
+      },
+      "provenance": "explicit_default"
+    },
+    {
+      "kind": "file",
+      "input_id": "input_revision_60_step",
+      "reference": {
+        "artifact_ref": "stevecad/heat-spreader/native-003/inputs/revision_60.step",
+        "sha256": "a197cfe19cf31dcecd839373478942b31695f818fe576cac1417447b069648e9",
+        "media_type": null,
+        "result_id": null,
+        "representation_id": null
+      },
+      "provenance": "explicit_default"
+    },
+    {
+      "kind": "file",
+      "input_id": "input_geometry_measurements_json",
+      "reference": {
+        "artifact_ref": "stevecad/heat-spreader/native-003/inputs/geometry-measurements.json",
+        "sha256": "0d83a90552817a78afbac2fe37ad8df9a6c65440e02089fc5b5185f2e0aa5866",
+        "media_type": null,
+        "result_id": null,
+        "representation_id": null
+      },
+      "provenance": "explicit_default"
+    },
+    {
+      "kind": "file",
+      "input_id": "input_alternatives_csv",
+      "reference": {
+        "artifact_ref": "stevecad/heat-spreader/native-003/inputs/alternatives.csv",
+        "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+        "media_type": null,
+        "result_id": null,
+        "representation_id": null
+      },
+      "provenance": "explicit_default"
+    },
+    {
+      "kind": "file",
+      "input_id": "input_heat_conduction_skfem_py",
+      "reference": {
+        "artifact_ref": "stevecad/heat-spreader/native-003/inputs/heat_conduction_skfem.py",
+        "sha256": "b71d692da20dfd729703f05922b571aa36920726ca7bd885e511ba3452d09a87",
+        "media_type": null,
+        "result_id": null,
+        "representation_id": null
+      },
+      "provenance": "explicit_default"
+    }
+  ],
+  "digest": "781bc317c4129af4dc557526a99d4db6a69cdbe09eae96abaaaf8c230a1bc318"
+}

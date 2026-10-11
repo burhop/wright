@@ -1,0 +1,5 @@
+{
+  "status": "failed",
+  "error_type": "GatewayError",
+  "message": "Unsupported gateway transport: qualification"
+}

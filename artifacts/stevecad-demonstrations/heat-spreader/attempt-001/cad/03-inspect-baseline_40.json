@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-10-11T16:55:17.616925+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__inspect_model",
+    "label": "03-inspect-baseline_40",
+    "output_dir": "artifacts/stevecad-demonstrations/heat-spreader/attempt-001/cad",
+    "print_summary": true,
+    "arguments": {
+      "document_id": "c11c6df4-7536-4aa1-8f90-cab56d46fb03",
+      "view": "isometric"
+    }
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Tool call timed out: stevecad-mcp__inspect_model"
+      }
+    ],
+    "structuredContent": {
+      "error": "timeout"
+    },
+    "isError": true
+  }
+}

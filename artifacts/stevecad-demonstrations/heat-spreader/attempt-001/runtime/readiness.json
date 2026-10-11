@@ -1,0 +1,187 @@
+{
+  "state": "blocked",
+  "assessment_id": "readiness-7817b0b47a9b4e829f9dcdbff5c76e1a",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/stevecad-heat-spreader-native-001.workflow.wflow",
+    "source_digest": "3bd43f13ca0b09c86b5b215ddf7ab635c55c444c02d7f4abb8206120377d0209",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "189c38fc00397cd000bbb69e10951c5532630abcf9f82790007233570b8c24c2",
+  "assessed_at": "2026-10-11T16:59:40.756561+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "input_baseline_40_step",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_revision_60_step",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_geometry_measurements_json",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_alternatives_csv",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_heat_conduction_skfem_py",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "review_basis.review_basis_subject",
+      "classification": "upstream_produced",
+      "producer_step": "record_basis",
+      "producer_port": "basis",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "compute_fields.dependency_read_baseline_40",
+      "classification": "upstream_produced",
+      "producer_step": "read_baseline_40",
+      "producer_port": "readback_baseline_40",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "compute_fields.dependency_generate_baseline_40",
+      "classification": "upstream_produced",
+      "producer_step": "generate_baseline_40",
+      "producer_port": "generated_baseline_40",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "compute_fields.dependency_read_revision_60",
+      "classification": "upstream_produced",
+      "producer_step": "read_revision_60",
+      "producer_port": "readback_revision_60",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "compute_fields.dependency_generate_revision_60",
+      "classification": "upstream_produced",
+      "producer_step": "generate_revision_60",
+      "producer_port": "generated_revision_60",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_basis",
+      "classification": "upstream_produced",
+      "producer_step": "record_basis",
+      "producer_port": "basis",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_baseline_40_coarse",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "baseline_40_coarse",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_baseline_40_fine",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "baseline_40_fine",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_revision_60_coarse",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "revision_60_coarse",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_revision_60_fine",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "revision_60_fine",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_baseline_40_geometry",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "baseline_40_geometry",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_revision_60_geometry",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "revision_60_geometry",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_decision",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "decision",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs.validate_correspondence",
+      "classification": "upstream_produced",
+      "producer_step": "compute_fields",
+      "producer_port": "correspondence",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "review_result.review_result_subject",
+      "classification": "upstream_produced",
+      "producer_step": "validate_outputs",
+      "producer_port": "assessment",
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": [
+    {
+      "code": "CAPABILITY_UNAVAILABLE",
+      "message": "Record the original thermal assumptions: the selected tool needs workspace authorization before this process can run.",
+      "correction": "Configure the required reviewed operation or choose an authorized provider before starting.",
+      "binding_id": null,
+      "step_id": null,
+      "navigation": null,
+      "technical_details_ref": null
+    }
+  ]
+}

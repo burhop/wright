@@ -1,5 +1,9 @@
 # Force LF line endings for shell scripts so they run correctly in bash/Docker
 *.sh text eol=lf
+
+# SteveCAD demonstration receipts and engineering files retain exact tool bytes.
+artifacts/stevecad-demonstrations/** -text -whitespace
+artifacts/ui-walkthrough/stevecad-thermal/** -text -whitespace
 docker/mcp/brep-mcp-launcher.cjs text eol=lf
 
 # Versioned Workspace Surface contracts are byte-hashed. Keep their source and

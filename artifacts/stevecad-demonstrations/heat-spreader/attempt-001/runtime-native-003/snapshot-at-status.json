@@ -1,0 +1,225 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+      "source_path": "workflows/stevecad-heat-spreader-native-003.workflow.wflow",
+      "source_digest": "9d7903dbcab5fba49ddb1063fa7e87e6d2f580feea42cf0a7be01f078b671ecd",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "b485b6eee86d4031bb4e654053e63f86",
+    "input_snapshot_id": "inputs-2f6856c74d14430e941f8308aca67d58",
+    "input_digest": "781bc317c4129af4dc557526a99d4db6a69cdbe09eae96abaaaf8c230a1bc318",
+    "cursor": 9,
+    "generated_at": "2026-10-11T17:36:52.831117+00:00"
+  },
+  "state": "waiting_human",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:basis",
+      "step_id": "record_basis",
+      "port_id": "basis",
+      "role": "deliverable",
+      "title": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/thermal-basis.md",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/thermal-basis.md",
+          "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+          "media_type": null,
+          "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:basis",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:record_basis_response",
+      "step_id": "record_basis",
+      "port_id": "record_basis_response",
+      "role": "deliverable",
+      "title": "Record the original thermal assumptions and backend readiness",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/basis-receipt.json",
+          "sha256": "1196ecb7cd77c7d073e4930ab1e4f271416b3d9cbafb4308a896e5632ef6ecec",
+          "media_type": null,
+          "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:record_basis_response",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [
+    {
+      "checkpoint_id": "checkpoint-0fb4357e0ce17f77f6b9d3f7",
+      "step_id": "review_basis",
+      "kind": "action",
+      "subject_digest": "a9eaceea5353f18ca482854fef46fed2555630167d7f7c67c13fb01454481739",
+      "instructions": "Review the exact conduction-only model and claim scope. No physical acceptance or manufacturing authorization.",
+      "response_schema": null,
+      "decisions": [
+        "approved",
+        "changes_requested"
+      ],
+      "evidence": [
+        {
+          "artifact_ref": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/basis-receipt.json",
+          "sha256": "1196ecb7cd77c7d073e4930ab1e4f271416b3d9cbafb4308a896e5632ef6ecec",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        {
+          "artifact_ref": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/thermal-basis.md",
+          "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        }
+      ],
+      "state": "waiting",
+      "decision": null,
+      "action_receipt": null
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "review-checkpoint-0fb4357e0ce17f77f6b9d3f7",
+      "operation": "review",
+      "title": "Review action",
+      "enabled": true,
+      "subject_digest": "a9eaceea5353f18ca482854fef46fed2555630167d7f7c67c13fb01454481739",
+      "reasons": [],
+      "checkpoint_id": "checkpoint-0fb4357e0ce17f77f6b9d3f7",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "continue-checkpoint-0fb4357e0ce17f77f6b9d3f7",
+      "operation": "action",
+      "title": "Continue process",
+      "enabled": false,
+      "subject_digest": "a9eaceea5353f18ca482854fef46fed2555630167d7f7c67c13fb01454481739",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not ready to continue.",
+          "correction": "Complete its required review; an already consumed action cannot be submitted again.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-0fb4357e0ce17f77f6b9d3f7",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "b6aa13f64537d1c3e198cd32da212189bfd2d9a7ab8f1e07476170c3c1c16bc7",
+      "reasons": [
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+          "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "waiting_human",
+      "observed_at": "2026-10-11T17:36:52.831117+00:00",
+      "stale_after": "2026-10-11T17:37:22.831117+00:00",
+      "operation_id": "b485b6eee86d4031bb4e654053e63f86",
+      "activity": "Review the exact conduction-only model and claim scope. No physical acceptance or manufacturing authorization.",
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 9,
+        "completed_steps": 1
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "b485b6eee86d4031bb4e654053e63f86",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "b485b6eee86d4031bb4e654053e63f86",
+      "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:basis",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "b485b6eee86d4031bb4e654053e63f86",
+      "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:basis",
+      "assessment_id": null,
+      "artifact_ref": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/thermal-basis.md"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "b485b6eee86d4031bb4e654053e63f86",
+      "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:record_basis_response",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "b485b6eee86d4031bb4e654053e63f86",
+      "result_id": "b485b6eee86d4031bb4e654053e63f86:record_basis:record_basis_response",
+      "assessment_id": null,
+      "artifact_ref": "stevecad/heat-spreader/native-003/outputs/b485b6eee86d4031bb4e654053e63f86/basis-receipt.json"
+    },
+    {
+      "kind": "block",
+      "block_id": "review_basis",
+      "run_id": "b485b6eee86d4031bb4e654053e63f86",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    }
+  ],
+  "next_page": null
+}

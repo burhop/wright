@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "scope": "Attempted SDK comparison in a child venv inside the base image",
+  "error_type": "ModuleNotFoundError",
+  "message": "No module named structlog",
+  "observation": "The base image's Python already belongs to a virtual environment. The child venv with system-site-packages did not include the base venv's dependencies. No MCP connection or CAD operation was proved by this attempt.",
+  "recovery": "Return to the unmodified base environment. Subsequent attempts used fresh OAuth account state instead of an SDK substitution."
+}

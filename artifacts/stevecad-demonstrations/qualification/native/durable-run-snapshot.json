@@ -1,0 +1,119 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+      "source_path": "workflows/stevecad-coupon-readback.workflow.wflow",
+      "source_digest": "9f2b416a3915b85968dc710ed6e2b963cd62b38a024d22523fdcc7b3101c2cc3",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "84559589afc54e12b7eac254ad57bd17",
+    "input_snapshot_id": "inputs-adcb51f370df41df9e78760a8e521047",
+    "input_digest": "668f0025f714fa884f2a17d5b0445e189658c865f701bf5ffd44ecd264d342c2",
+    "cursor": 7,
+    "generated_at": "2026-10-11T16:42:17.568291+00:00"
+  },
+  "state": "completed",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "84559589afc54e12b7eac254ad57bd17:read_coupon:response",
+      "step_id": "read_coupon",
+      "port_id": "response",
+      "role": "deliverable",
+      "title": "Read the exact SteveCAD coupon revision",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "qualification/source-readback/document.json",
+          "sha256": "a28fd2e3487721368cb79b7eea0a0154d6ab7bd92e5960cc102cee27a2f3dd61",
+          "media_type": null,
+          "result_id": "84559589afc54e12b7eac254ad57bd17:read_coupon:response",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [],
+  "actions": [
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "b90098a495ceae06573ab97c5ab390082442531ac8924c44153d7ac2b8115386",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This Wright run has completed; there is no active execution to cancel.",
+          "correction": "Open its saved results or prepare another run.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "completed",
+      "observed_at": "2026-10-11T16:42:17.568291+00:00",
+      "stale_after": "2026-10-11T16:42:47.568291+00:00",
+      "operation_id": "84559589afc54e12b7eac254ad57bd17",
+      "activity": null,
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 7,
+        "completed_steps": 1
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "84559589afc54e12b7eac254ad57bd17",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "84559589afc54e12b7eac254ad57bd17",
+      "result_id": "84559589afc54e12b7eac254ad57bd17:read_coupon:response",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "84559589afc54e12b7eac254ad57bd17",
+      "result_id": "84559589afc54e12b7eac254ad57bd17:read_coupon:response",
+      "assessment_id": null,
+      "artifact_ref": "qualification/source-readback/document.json"
+    }
+  ],
+  "next_page": null
+}

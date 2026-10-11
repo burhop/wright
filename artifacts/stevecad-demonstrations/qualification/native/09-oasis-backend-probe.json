@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-11T16:31:42.524562+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "label": "09-oasis-backend-probe",
+    "name": "3a8b50ba-2d5e-4ae4-8c40-133cfaa61523__run_simulation",
+    "arguments": {
+      "solver": "skfem",
+      "job_name": "stevecad-readiness-001",
+      "critic_approved": false,
+      "input_content": "import json\nfrom pathlib import Path\nimport numpy as np\nfrom skfem import MeshTri, Basis, ElementTriP1, asm, condense, solve\nfrom skfem.models.poisson import laplace, unit_load\nm = MeshTri().refined(3)\nb = Basis(m, ElementTriP1())\nu = solve(*condense(asm(laplace,b), asm(unit_load,b), D=b.get_dofs()))\np = Path('/workspace/qualification/oasis')\np.mkdir(parents=True,exist_ok=True)\n(p/'poisson-readiness.json').write_text(json.dumps({'solver':'scikit-fem','nodes':int(b.N),'maximum':float(u.max()),'all_finite':bool(np.isfinite(u).all()),'critic_approved':False}))\nprint('Actual Poisson probe:',b.N,float(u.max()))\n"
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"job_id\": \"655725d9\",\n  \"solver\": \"skfem\",\n  \"status\": \"completed_unverified\",\n  \"work_dir\": \"/selected/uv-cache/archive-v0/1Il1QJecgZbELjbfdXHuX/lib/python3.12/simulation_outputs/stevecad-readiness-001\",\n  \"elapsed\": \"0.54s\",\n  \"output_files\": [],\n  \"stdout_tail\": \"Actual Poisson probe: 81 0.07278262867647059\\n\",\n  \"warning\": \"Process exited cleanly but produced NO output files \\u2014 this is NOT a verified solve. Do not treat as a result.\",\n  \"trustworthy_result\": false,\n  \"verification\": \"NOT VERIFIED \\u2014 the process exited cleanly but produced NO output files, so no reported number is backed by run evidence. Per OASiS attestation this claim must NOT be reported as a result; revise the setup and re-run.\",\n  \"critic_review\": \"REQUIRED \\u2014 mandatory critic not yet performed\"\n}"
+      }
+    ],
+    "structuredContent": {
+      "result": "{\n  \"job_id\": \"655725d9\",\n  \"solver\": \"skfem\",\n  \"status\": \"completed_unverified\",\n  \"work_dir\": \"/selected/uv-cache/archive-v0/1Il1QJecgZbELjbfdXHuX/lib/python3.12/simulation_outputs/stevecad-readiness-001\",\n  \"elapsed\": \"0.54s\",\n  \"output_files\": [],\n  \"stdout_tail\": \"Actual Poisson probe: 81 0.07278262867647059\\n\",\n  \"warning\": \"Process exited cleanly but produced NO output files \\u2014 this is NOT a verified solve. Do not treat as a result.\",\n  \"trustworthy_result\": false,\n  \"verification\": \"NOT VERIFIED \\u2014 the process exited cleanly but produced NO output files, so no reported number is backed by run evidence. Per OASiS attestation this claim must NOT be reported as a result; revise the setup and re-run.\",\n  \"critic_review\": \"REQUIRED \\u2014 mandatory critic not yet performed\"\n}"
+    },
+    "isError": false
+  }
+}

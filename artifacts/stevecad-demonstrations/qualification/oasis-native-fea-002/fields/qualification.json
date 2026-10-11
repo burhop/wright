@@ -1,0 +1,20 @@
+{
+  "status": "native_reaction_output_observed",
+  "fixture": "Synthetic one-element 10x10x1 mm block; fixed lower nodes, -1 N total top load",
+  "reactions_n": [
+    0.0,
+    0.0,
+    1.0
+  ],
+  "fixed_nodes": 4,
+  "dat_sha256": "d1bc3676a20fd59812ae60073cfb89cbd878e2c94d463a03dd5827ffcd6d7e9d",
+  "deck_sha256": "421b2d97f94ad5629cadec9af55ee84f77f1640a83cd8ecca72072a91fb56d81",
+  "critic_approved": false,
+  "limitations": [
+    "Backend readiness only; not the original equipment-mount geometry or mesh refinement.",
+    "Provider critic and actual engineering reviews remain separate."
+  ],
+  "engine": "Native CalculiX; OASiS Python execution with selected native prerequisites",
+  "field_sha256": "49317cafd327ab464eb31c9bc0d5d6da0fe2335832d63d1e4261530c212accdd",
+  "skfem_environment_version": "12.0.2"
+}

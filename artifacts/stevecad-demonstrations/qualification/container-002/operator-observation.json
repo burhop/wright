@@ -1,0 +1,7 @@
+{
+  "status":"not_passed",
+  "scope":"fresh Linux remote MCP qualification",
+  "observation":"MCP SDK 1.30.0 attempted interactive OAuth instead of reusing the mounted private account state. Container had no browser callback. Native SDK 1.28.1 continued to read the same CAD document successfully.",
+  "recovery":"Stopped only the confirmed live read-only qualification container; no geometry was replayed. Next fresh attempt aligns the MCP SDK with the verified native 1.28.1 environment.",
+  "credentials":"Not included in evidence; ephemeral credential copy removed with the container."
+}
