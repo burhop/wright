@@ -79,16 +79,25 @@ describe("summarizeProgressPayload", () => {
   });
 });
 
-
 describe("platform-bound chat behavior", () => {
   it("keeps concurrent model catalogs separate by saved session", async () => {
     const pending: Record<string, (response: Response) => void> = {};
-    const fetchMock = vi.fn((url: string) => new Promise<Response>((resolve) => { pending[new URL(url, "http://localhost").searchParams.get("session_id")!] = resolve; }));
+    const fetchMock = vi.fn(
+      (url: string) =>
+        new Promise<Response>((resolve) => {
+          pending[
+            new URL(url, "http://localhost").searchParams.get("session_id")!
+          ] = resolve;
+        }),
+    );
     vi.stubGlobal("fetch", fetchMock);
     const service = new HermesAgentService();
     const hermes = service.listHermesModels(false, "hermes-session");
     const codex = service.listHermesModels(false, "codex-session");
-    const respond = (session: string, model: string) => pending[session](new Response(JSON.stringify({ current_model: model }), {status: 200}));
+    const respond = (session: string, model: string) =>
+      pending[session](
+        new Response(JSON.stringify({ current_model: model }), { status: 200 }),
+      );
     respond("codex-session", "gpt-6.1-sol");
     expect((await codex).current_model).toBe("gpt-6.1-sol");
     respond("hermes-session", "hermes-model");
@@ -100,9 +109,18 @@ describe("platform-bound chat behavior", () => {
     expect((await again).current_model).toBe("gpt-6.1-sol");
   });
 
-  it.each(["failed", "unknown", "interrupted"])("does not announce completion for %s", (status) => {
-    const service = new HermesAgentService();
-    service["parseSSEEvent"]("stream_end", JSON.stringify({status}), "session");
-    expect(notify.mock.calls.some(([title]) => title === "Agent Task Finished")).toBe(false);
-  });
+  it.each(["failed", "unknown", "interrupted"])(
+    "does not announce completion for %s",
+    (status) => {
+      const service = new HermesAgentService();
+      service["parseSSEEvent"](
+        "stream_end",
+        JSON.stringify({ status }),
+        "session",
+      );
+      expect(
+        notify.mock.calls.some(([title]) => title === "Agent Task Finished"),
+      ).toBe(false);
+    },
+  );
 });

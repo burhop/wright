@@ -277,6 +277,51 @@
       "sha256": "e6d2f83088b5c0769297e9727dca5540326b860c520270259cfd90ef571c5690",
       "bytes": 13365,
       "scope": "Executed source before formatting only; behavior unchanged"
+    },
+    {
+      "path": "/tmp/wright-codex-frontend-format-equivalence.json",
+      "sha256": "0c453b7df80179c9931c5b5a84c328351852cb8fd45a272faf86fe29941d6d43",
+      "bytes": 2148
+    },
+    {
+      "path": "/tmp/wright-codex-frontend-format-equivalence-2.json",
+      "sha256": "4c602fed189b7a84520c71c5f885ebf683752b5afd21419765b9bbd408da5b45",
+      "bytes": 2259
+    },
+    {
+      "path": "/tmp/wright-codex-frontend-format-equivalence-3.json",
+      "sha256": "a64436c0e88419884ce06fce3f8d2a02f5f8becb7206bd537543e858f755ca82",
+      "bytes": 2456
+    },
+    {
+      "path": "/tmp/wright-codex-web-lint-final.log",
+      "sha256": "72eebf7f847d2d3aa5775009290e60858bd6446e0dc7f0a829659b75e6426538",
+      "bytes": 73
+    },
+    {
+      "path": "/tmp/wright-codex-web-lint-final-2.log",
+      "sha256": "19c5c3c24f3c73a4e16e906ce4cf4836cb5816977a83d44c5ae50351c2dccd2f",
+      "bytes": 472
+    },
+    {
+      "path": "/tmp/wright-codex-web-format-final.log",
+      "sha256": "15f965d757a5d42698c3557bccb91d793ae5c7d6e5f27debee6e8351a4c48c9d",
+      "bytes": 615
+    },
+    {
+      "path": "/tmp/wright-codex-web-format-final-2.log",
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+      "bytes": 66
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-01/report.json",
+      "sha256": "1fea61a848c9d27bdecdc973b1feccd638e70d1d9aef82e9ce3b9494b3fc2e0a",
+      "bytes": 858
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-01/build.log",
+      "sha256": "20368337c164bfd1dafb094798fb0fd0d22bdd901c795cd40ea093a821eb632b",
+      "bytes": 124163
     }
   ],
   "notes": [

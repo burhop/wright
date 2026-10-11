@@ -154,9 +154,30 @@ describe("ChatProvider session state", () => {
   });
 
   it("restores backend history after StrictMode cleanup and reactivation", async () => {
-    vi.mocked(agentService.listSessions).mockResolvedValue([{sessionId:"session-1",title:"Codex pilot",createdAt:1000,updatedAt:1001}]);
-    vi.mocked(agentService.getSessionHistory).mockResolvedValue([{id:"reply",role:"assistant",content:"Restored Codex history",timestamp:1001,traceId:null}]);
-    render(<StrictMode><ChatProvider><ChatMessagesHarness /></ChatProvider></StrictMode>);
+    vi.mocked(agentService.listSessions).mockResolvedValue([
+      {
+        sessionId: "session-1",
+        title: "Codex pilot",
+        createdAt: 1000,
+        updatedAt: 1001,
+      },
+    ]);
+    vi.mocked(agentService.getSessionHistory).mockResolvedValue([
+      {
+        id: "reply",
+        role: "assistant",
+        content: "Restored Codex history",
+        timestamp: 1001,
+        traceId: null,
+      },
+    ]);
+    render(
+      <StrictMode>
+        <ChatProvider>
+          <ChatMessagesHarness />
+        </ChatProvider>
+      </StrictMode>,
+    );
     await screen.findByText(/assistant:Restored Codex history/);
   });
 

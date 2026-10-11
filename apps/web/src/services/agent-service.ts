@@ -530,9 +530,15 @@ export class HermesAgentService {
     } else if (event === "stream_end") {
       const outcome = JSON.parse(dataStr || "{}").status;
       if (!outcome || outcome === "completed") {
-        hostAdapter.notify("Agent Task Finished", "The agent has completed your request.");
+        hostAdapter.notify(
+          "Agent Task Finished",
+          "The agent has completed your request.",
+        );
       } else if (outcome === "interrupted") {
-        hostAdapter.notify("Agent response interrupted", "The response was interrupted.");
+        hostAdapter.notify(
+          "Agent response interrupted",
+          "The response was interrupted.",
+        );
       }
       return {
         type: "done",
@@ -628,10 +634,19 @@ export class HermesAgentService {
     return data.agent;
   }
 
-  async listHermesModels(refresh = false, sessionId?: string | null): Promise<HermesModelOptionsResponse> {
+  async listHermesModels(
+    refresh = false,
+    sessionId?: string | null,
+  ): Promise<HermesModelOptionsResponse> {
     const key = sessionId || "default";
-    if (!refresh && this.modelOptionsCache && this.modelOptionsCacheKey === key) return this.modelOptionsCache;
-    if (!refresh && this.modelOptionsRequest && this.modelOptionsRequestKey === key) return this.modelOptionsRequest;
+    if (!refresh && this.modelOptionsCache && this.modelOptionsCacheKey === key)
+      return this.modelOptionsCache;
+    if (
+      !refresh &&
+      this.modelOptionsRequest &&
+      this.modelOptionsRequestKey === key
+    )
+      return this.modelOptionsRequest;
     const request = (async () => {
       const response = await fetch(
         `${API_BASE}/api/agent/models${sessionId ? `?session_id=${encodeURIComponent(sessionId)}${refresh ? "&refresh=true" : ""}` : refresh ? "?refresh=true" : ""}`,
@@ -651,7 +666,8 @@ export class HermesAgentService {
     try {
       return await request;
     } finally {
-      if (!refresh && this.modelOptionsRequest === request) this.modelOptionsRequest = null;
+      if (!refresh && this.modelOptionsRequest === request)
+        this.modelOptionsRequest = null;
     }
   }
 

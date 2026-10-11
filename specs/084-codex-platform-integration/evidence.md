@@ -90,7 +90,12 @@ Raw logs remain under the feature worktree's ignored `.local-run`.
 | codex-final-web-regression.log | Four chat/service/session/transcript files: **71 passed**, 7.49 seconds |
 | codex-web-build-final-2.log | Production frontend TypeScript/Vite build passed; ordinary bundle-size warning retained |
 
-Ruff check, Ruff format and git diff whitespace checks passed. API test warnings are
+Ruff check, Ruff format and git diff whitespace checks passed. Focused ESLint
+passes with two existing WorkspacePanel hook warnings; Prettier 3.9.6 passes after
+formatting six touched files. Browser source hashes refer to implementation commit
+25476bce; [format equivalence](evidence/frontend-format-equivalence.json) proves
+the subsequent formatting emits the same JavaScript syntax for all six files.
+Raw-TS comparisons differed on JSX whitespace/grouping; their reports are retained. API test warnings are
 existing Starlette/httpx deprecations. Earlier failed probes/tests/browser attempts
 remain local; later fixes have explicit new result logs. Reproduction probes and
 isolated authentication/runtime setup are in [quickstart](quickstart.md).
@@ -104,7 +109,9 @@ vulnerabilities), then fails the required image-security scan because no immutab
 candidate image was supplied. Its public failure projection is retained under
 `test-results/docker-image-security/20261011T174820Z-94734761/public`. Docker 27.5.1 is
 responsive; this is an incomplete prerequisite, **not an unavailable-host waiver**.
-Subsequent clean-archive image/gate results, if available, are recorded separately.
+An ARM64 image from clean implementation commit 25476bce built successfully in
+100.69 seconds. Its source is pinned and its reports remain separate; a formatted
+candidate image and further gate results are recorded separately when available.
 No push/merge gate is claimed green.
 
 The existing manufacturing/heat preparation and Robot Tracking Diagnosis regression

@@ -1601,8 +1601,16 @@ describe("WorkspacePanel session selection", () => {
   it("preserves a Codex default while routing the existing chat model catalog by session", async () => {
     mockGetActiveAgent.mockResolvedValueOnce("codex");
     mockSetActiveAgent.mockClear();
-    render(<MemoryRouter><ViewerPanelProvider><WorkspacePanel workspaceId="workspace-1" sessionId="new-session" /></ViewerPanelProvider></MemoryRouter>);
-    await waitFor(() => expect(screen.getByLabelText("Agent for new chats")).toHaveValue("codex"));
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    await waitFor(() =>
+      expect(screen.getByLabelText("Agent for new chats")).toHaveValue("codex"),
+    );
     expect(mockSetActiveAgent).not.toHaveBeenCalled();
     expect(mockListHermesModels).toHaveBeenCalledWith(false, "new-session");
   });

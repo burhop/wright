@@ -312,7 +312,10 @@ export function WorkspacePanel({
   const loadHermesModels = useCallback(async () => {
     setIsLoadingModels(true);
     try {
-      const options = await agentService.listHermesModels(false, activeSessionId);
+      const options = await agentService.listHermesModels(
+        false,
+        activeSessionId,
+      );
       setModelGroups(options.groups);
       setModelSelectionSupported(options.selection_supported !== false);
       setModelSelectionMessage(options.selection_message || null);
@@ -350,7 +353,9 @@ export function WorkspacePanel({
       setDefaultAgent(selected);
       await loadHermesModels();
     } catch (error) {
-      setModelError(error instanceof Error ? error.message : "Agent selection failed");
+      setModelError(
+        error instanceof Error ? error.message : "Agent selection failed",
+      );
     }
   };
 
@@ -2155,8 +2160,11 @@ export function WorkspacePanel({
                 width: "100%",
               }}
             >
-              <AgentPlatformPicker value={defaultAgent} onChange={handlePlatformChange} />
-            {/* Model Select */}
+              <AgentPlatformPicker
+                value={defaultAgent}
+                onChange={handlePlatformChange}
+              />
+              {/* Model Select */}
               <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
                 Model
               </label>
@@ -3880,7 +3888,10 @@ export function WorkspacePanel({
               width: "100%",
             }}
           >
-            <AgentPlatformPicker value={defaultAgent} onChange={handlePlatformChange} />
+            <AgentPlatformPicker
+              value={defaultAgent}
+              onChange={handlePlatformChange}
+            />
             {/* Model Select */}
             <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
               Model
