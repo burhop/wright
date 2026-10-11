@@ -1,5 +1,24 @@
 # MCP Server Testing Problem Log
 
+## 2026-10-11 — SteveCAD native connection
+
+Problem:
+  A SteveCAD browser session is not an MCP client authorization. Initial public
+  tool metadata returned HTTP 401 on Windows.
+
+Solution:
+  Added the officially documented `https://stevecad.studio/mcp` endpoint to the
+  Wright catalog and used existing registry/installer/OAuth/secret/gateway owners
+  in isolated state. The browser account authorized Wright.
+
+Result:
+  STEVE CAD 4.0.10 initialized MCP 2025-11-25, exposed 26 tools, passed read-only
+  `list_skills`/`api_reference` calls and a Wright gateway API-reference proxy.
+  The expected catalog count changed from 81 to 82; all 17 relevant catalog
+  checks passed after updating that assertion. No vendor software or protocol
+  workaround was added. CAD and clean-container qualification remain pending.
+  Evidence: `docs/mcp-catalog/evidence/stevecad-2026-10-11/`.
+
 ## 2026-06-26
 
 Problem:

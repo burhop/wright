@@ -1,0 +1,149 @@
+{
+  "content": [
+    {
+      "text": "{\"skills\":[{\"name\":\"dfam-3d-printing\",\"description\":\"3D-printing review for FDM, SLA, SLS, MJF and metal PBF (overhangs vs build direction, walls, small holes, build volume, trapped voids, orientation) using inspect_model checks, and preparing a design's print set (marking printed parts with print=). Load for printability questions or before marking parts to print.\"},{\"name\":\"dfm-cnc\",\"description\":\"CNC machining manufacturability review (tool access, inside corners vs cutter, deep holes, thin walls, setups) using inspect_model checks. Load for machining DFM, quote readiness or redesign for CNC.\"},{\"name\":\"dfm-injection-molding\",\"description\":\"Injection-molding manufacturability review (draft vs pull, undercuts, wall thickness, sharp corners, ribs/bosses) using inspect_model checks. Load for molding DFM or redesign for molding.\"},{\"name\":\"dfm-sheet-metal\",\"description\":\"Sheet-metal manufacturability review (bend radii, flange lengths, reliefs, hole-to-bend/edge, flat pattern) using inspect_model checks. Load for sheet-metal DFM or redesign for bending/laser cutting.\"},{\"name\":\"electronics\",\"description\":\"Start here for any circuit (document kind \\\"circuit\\\", tscircuit TSX): the process from an idea to a board you can order, which stage skill to load when, the shape of a production-ready circuit, and what \\\"done\\\" means. Load before writing, editing or reviewing a circuit.\"},{\"name\":\"electronics-architecture\",\"description\":\"Stage 2 of a circuit: turn the requirements into blocks built from proven reference circuits (USB-C power, LDO, protection, batteries, RP2040, ESP32-C3 module, STM32, ATtiny, I2C sensors) and a power tree with a current budget, then explain it plainly. Load after the requirements are confirmed.\"},{\"name\":\"electronics-checks\",\"description\":\"Stage 7 of a circuit: read every diagnostic and the readiness verdict after each build, fix each class of issue (code, connectivity, electrical rules, placement, routing, parts, fab limits), review the images, and report to the person in plain words, until the verdict is Ready to order. Load after a build reports anything, and before calling a board done.\"},{\"name\":\"electronics-fabrication\",\"description\":\"Stage 8 of a circuit: hand over a board that's Ready to order. Covers the fabrication files (Gerbers and drill, BOM, pick-and-place), re-checking stock on JLCPCB (the snapshot is nightly), order settings, assembly and rotations, cost, a prototype run first, and what to test when boards arrive. Load when a board is ready, or when someone asks how to make it.\"},{\"name\":\"electronics-layout\",\"description\":\"Stage 5 of a circuit: board rules on <board> (1.6 mm, clearances, via sizes, power net widths), outline and size, placement (connectors at edges facing out, protection at the connector, decoupling within 2 mm, crystals within 5 mm, SMT on top), mounting holes, test points, keepouts, silkscreen. Load when sizing a board or placing parts.\"},{\"name\":\"electronics-parts\",\"description\":\"Stage 3 of a circuit: pin an exact, in-stock JLCPCB part on every component with find_electronic_parts (exact part numbers, basic vs extended, stock checked twice, ratings derated), always as supplierPartNumbers={{ jlcpcb: [\\\"C\u2026\\\"] }}, and give it the right footprint (its own \\\"jlcpcb:C\u2026\\\" footprint, or a verified footprint string). Load when choosing or changing parts.\"},{\"name\":\"electronics-requirements\",\"description\":\"Stage 1 of a circuit: interview a person who may know no electronics with one batch of plain questions (what it does, power, connections, size, surroundings, quantity, budget) with suggested answers, refuse unsafe requests, and write numbered requirements they confirm. Load when someone asks for a new board or a big change.\"},{\"name\":\"electronics-routing\",\"description\":\"Stage 6 of a circuit: get every connection routed with copper sized for its current. Covers routing as one explicit step (generate_model route=true), its budget, what to do when it fails, trace width per amp (IPC-2221), vias per amp, a ground pour, layers, keepouts, USB data lines and differential pairs. Load when connections are unrouted or a board carries real current.\"},{\"name\":\"electronics-schematic\",\"description\":\"Stage 4 of a circuit: write the TSX that connects the parts. Covers elements and ports, selectors, nets and power, chips with every pin's role declared (pinLabels, pinAttributes), schematic layout, and the electrical rules every board needs (decoupling, pull-ups, reset and boot pins, crystals, USB-C, ESD, LEDs, logic levels), then a pin-by-pin review against the datasheet.\"},{\"name\":\"sendcutsend-preflight\",\"description\":\"Preflight a part for a SendCutSend.com order: DXF/STEP choice, units, SKU specs, bend radii, flange lengths, hole and bridge sizes. Load only when preparing a SendCutSend order.\"},{\"name\":\"simulation-cht\",\"description\":\"Conjugate heat transfer with run_study (analysis \\\"cht_steady\\\"): one laminar fluid region and solid regions, interfaces, inlet temperature, heat flux and temperature boundaries, materials per body, mesh and solver options, the fixed iteration count, reading region temperatures, the fluid temperature rise and the energy/interface balances, hand estimates and what never to claim. Load before any study where heat moves between solids and a fluid that flows through or around them.\"},{\"name\":\"simulation-flow\",\"description\":\"Incompressible laminar flow with run_study (analysis \\\"flow_steady\\\" or \\\"flow_transient\\\"): the fluid volume, inlets/outlets/walls, mesh options (polyhedral dual, split concave edges, tetrahedral cells, mesher), solver controls, choosing steady or transient from the Reynolds number and geometry, reading convergence, pressure drop, mass balance, hand checks and what never to claim. Load before any air or liquid flow study, and for the flow side of conjugate heat transfer.\"},{\"name\":\"simulation-modal\",\"description\":\"Natural frequencies and mode shapes with run_study (analysis \\\"modal\\\"): supports, mode count, density, reading frequencies and effective mass, the independent eigen checks, hand checks and what never to claim. Load before any vibration, resonance or stiffness-frequency study.\"},{\"name\":\"simulation-structural\",\"description\":\"Static stress and deflection with run_study (analysis \\\"static\\\"): supports, forces, pressures, gravity/self-weight, materials, mesh choice, reading von Mises stress and displacement, hand checks, force balance, safety factors and what never to claim. Load before any stress, deflection, strength or self-weight study.\"},{\"name\":\"simulation-thermal\",\"description\":\"Heat conduction in one solid with run_study (analysis \\\"thermal_steady\\\" or \\\"thermal_transient\\\"): temperature, heat-flux and convection boundaries, internal heat generation, time settings, reading temperatures and the energy balance, hand checks and what never to claim. Load before any solid temperature or warm-up/cool-down study.\"},{\"name\":\"simulation-thermal-stress\",\"description\":\"Stress from temperature with run_study (analysis \\\"thermal_stress\\\"): the steady conduction then static sequence, the stress-free reference temperature, expansion coefficient, supports that do or do not restrain growth, hand checks and what never to claim. Load before any thermal expansion, thermal stress or warping study.\"},{\"name\":\"steve-cam-programs\",\"description\":\"CAM programs as code: a CAM document (kind \\\"cam\\\") whose main.py links the part and the shop and makes `program = {...}`: setups, stock, operations, tools, all by name. generate_model runs it end to end: every operation, the post for the machine and Steve's independent check of the G-code, which then downloads. Load before writing, changing or running any CAM program. The machine and tools come from the person's shop (load steve-shop first if the machine isn't set up).\"},{\"name\":\"steve-designs\",\"description\":\"Multi-component designs: params.py, one Component per file, placing instances, cross-component references, links to saved parts at a pinned revision, patterns, BOM, and fit checks (interference and clearance between instances, intended contacts, comparison with the previous revision). Load before any design (kind \\\"design\\\"), before checking whether a new or changed part fits its neighbours, and before building or migrating a large assembly (size limits, naming rules).\"},{\"name\":\"steve-drawings\",\"description\":\"Engineering drawings for manufacture: ISO or ANSI (ASME) sheets A4\u2013A0 and A\u2013E, first- or third-angle orthographic and isometric views, section views (hatched) and detail views, overall dimensions, feature dimensions with tolerances or ISO 286 fits attached to named model geometry, GD&T datums and feature control frames, title block fields, revision table, parts list (BOM) for assemblies with item balloons, hole tables read from hole features, cut list and notes, written as code with steve.drawing's Drawing (also edited by hand in the app's Drawing tab) and exported as SVG/PDF/DXF. Load before making, changing or explaining a drawing, title block, revision table, parts list or cut list.\"},{\"name\":\"steve-fusion-cam-import\",\"description\":\"Bringing a person's Autodesk Fusion Manufacture data into Steve's manufacturing library: tool libraries (cutters, holders, presets, tool numbers) and machines. Load when an agent is connected to both Fusion's MCP server and Steve's, or has Fusion tool JSON to convert. Covers reading from Fusion, the field-by-field mapping with exact units, what Steve doesn't model, and writing the items into the person's shop.\"},{\"name\":\"steve-fusion-design-migration\",\"description\":\"Moving a person's Autodesk Fusion designs into Steve as editable, parametric Steve parts: reading Fusion's user parameters, sketches and timeline through Fusion's MCP server, rebuilding them as Steve code, and proving the rebuild matches Fusion's own STEP export. Load when an agent is connected to both Fusion's MCP server and Steve's and the person wants Fusion designs (not CAM tools: steve-fusion-cam-import) brought over or remodeled in Steve.\"},{\"name\":\"steve-machine-setup\",\"description\":\"CNC machines in Steve's manufacturing library: machine models (axes, travels, rapids, spindle, tool changer), controllers (G-code dialect and capabilities) and machine instances, and how a maker's spec sheet maps onto them. Load to explain or plan a machine definition. In the library, \\\"Set up with STEVE\\\" drafts these records from a model number or a spec sheet.\"},{\"name\":\"steve-materials\",\"description\":\"model.material(...) for parts and bodies: library ids, finishes, colours, mass and material problems; model.decal(...) image decals on flat faces. Load before choosing or assigning materials, answering mass/weight questions, or putting a logo, label or screen image on a part.\"},{\"name\":\"steve-motion\",\"description\":\"Joints (rigid, revolute, slider, cylindrical) with axes from geometry, couplings (gear trains, belts, rack and pinion), limits, drives, poses, keyframed animations and collision sweeps in a design's main.py. Load before adding hinges, sliders, gears, spinning rotors, mechanisms or animation. Collision studies across several joints, cables through moving joints and the MuJoCo simulation export are in steve-motion-studies.\"},{\"name\":\"steve-motion-studies\",\"description\":\"Self-collision studies across several joints (depth, near misses, maps, recorded motion logs, scoring simplified collision shapes), cables and harnesses routed through moving joints (clearance, bend radius, length change, cut lengths), and preparing a design for the MuJoCo simulation export (mass overrides, lumped masses, sites, contact filtering). Load before any of these; joints, couplings and animation themselves are in steve-motion.\"},{\"name\":\"steve-sheet-metal\",\"description\":\"Native sheet metal (sheet_* features): rules and gauge/bend tables, flanges, hems, jogs, tabs, bends, corners, reliefs, rips, reusable lance/louver/dimple/emboss tools, unfold/refold, flat patterns, DXF, SM_* diagnostics. Load before any sheet_* code.\"},{\"name\":\"steve-shop\",\"description\":\"The workspace's machines, controllers, tools and tool setups as code: a shop document (kind \\\"shop\\\"). Starting from Steve's catalogue (clone a machine and controller, then change what the person's has), adding cutters, holders, assembled tools and tool setups, building the shop into the manufacturing library, and what \\\"executable\\\" and \\\"saved only\\\" controllers mean. Load before setting up or changing any machine, controller or tool, and before machining a part on a machine that isn't set up yet.\"},{\"name\":\"steve-simulation\",\"description\":\"Start here for any simulation: what run_study does, which physics skill to load (structural, modal, thermal, thermal stress, flow, conjugate heat transfer), faces, units, materials, designs and poses, failures, and what never to claim. Load before any simulation question, then load the physics skill it names.\"},{\"name\":\"steve-standard-parts\",\"description\":\"Off-the-shelf parts (bearings, screws, nuts, washers, motors, connectors, pulleys, gears, extrusions, electronics) from the step.parts catalog (find_standard_parts, insert_standard_part) and McMaster-Carr parts the user downloaded (list_mcmaster_parts, insert_mcmaster_part), and declared fasteners (design.fasten: screw fit, hole sizes, thread engagement, bottoming, walls, screwdriver access in assembly order, BOM). Load before modelling any bought-in part, when a placeholder should become the real one, and before joining parts with screws or checking them.\"},{\"name\":\"steve-step-import\",\"description\":\"Imported STEP geometry: import_step, file-order face names (import_1.face(n)), adding features to imported bodies, and selector references that survive renumbered faces. Load when a part contains import_step or the person wants to change an imported file, or when a feature on numbered faces (import_1.face(n), model.add's code_1.face(n)) broke after an upstream change. Also load before bringing many parts or a whole assembly in from another CAD system.\"}]}",
+      "type": "text"
+    }
+  ],
+  "isError": false,
+  "structuredContent": {
+    "skills": [
+      {
+        "name": "dfam-3d-printing",
+        "description": "3D-printing review for FDM, SLA, SLS, MJF and metal PBF (overhangs vs build direction, walls, small holes, build volume, trapped voids, orientation) using inspect_model checks, and preparing a design's print set (marking printed parts with print=). Load for printability questions or before marking parts to print."
+      },
+      {
+        "name": "dfm-cnc",
+        "description": "CNC machining manufacturability review (tool access, inside corners vs cutter, deep holes, thin walls, setups) using inspect_model checks. Load for machining DFM, quote readiness or redesign for CNC."
+      },
+      {
+        "name": "dfm-injection-molding",
+        "description": "Injection-molding manufacturability review (draft vs pull, undercuts, wall thickness, sharp corners, ribs/bosses) using inspect_model checks. Load for molding DFM or redesign for molding."
+      },
+      {
+        "name": "dfm-sheet-metal",
+        "description": "Sheet-metal manufacturability review (bend radii, flange lengths, reliefs, hole-to-bend/edge, flat pattern) using inspect_model checks. Load for sheet-metal DFM or redesign for bending/laser cutting."
+      },
+      {
+        "name": "electronics",
+        "description": "Start here for any circuit (document kind \"circuit\", tscircuit TSX): the process from an idea to a board you can order, which stage skill to load when, the shape of a production-ready circuit, and what \"done\" means. Load before writing, editing or reviewing a circuit."
+      },
+      {
+        "name": "electronics-architecture",
+        "description": "Stage 2 of a circuit: turn the requirements into blocks built from proven reference circuits (USB-C power, LDO, protection, batteries, RP2040, ESP32-C3 module, STM32, ATtiny, I2C sensors) and a power tree with a current budget, then explain it plainly. Load after the requirements are confirmed."
+      },
+      {
+        "name": "electronics-checks",
+        "description": "Stage 7 of a circuit: read every diagnostic and the readiness verdict after each build, fix each class of issue (code, connectivity, electrical rules, placement, routing, parts, fab limits), review the images, and report to the person in plain words, until the verdict is Ready to order. Load after a build reports anything, and before calling a board done."
+      },
+      {
+        "name": "electronics-fabrication",
+        "description": "Stage 8 of a circuit: hand over a board that's Ready to order. Covers the fabrication files (Gerbers and drill, BOM, pick-and-place), re-checking stock on JLCPCB (the snapshot is nightly), order settings, assembly and rotations, cost, a prototype run first, and what to test when boards arrive. Load when a board is ready, or when someone asks how to make it."
+      },
+      {
+        "name": "electronics-layout",
+        "description": "Stage 5 of a circuit: board rules on <board> (1.6 mm, clearances, via sizes, power net widths), outline and size, placement (connectors at edges facing out, protection at the connector, decoupling within 2 mm, crystals within 5 mm, SMT on top), mounting holes, test points, keepouts, silkscreen. Load when sizing a board or placing parts."
+      },
+      {
+        "name": "electronics-parts",
+        "description": "Stage 3 of a circuit: pin an exact, in-stock JLCPCB part on every component with find_electronic_parts (exact part numbers, basic vs extended, stock checked twice, ratings derated), always as supplierPartNumbers={{ jlcpcb: [\"C\u2026\"] }}, and give it the right footprint (its own \"jlcpcb:C\u2026\" footprint, or a verified footprint string). Load when choosing or changing parts."
+      },
+      {
+        "name": "electronics-requirements",
+        "description": "Stage 1 of a circuit: interview a person who may know no electronics with one batch of plain questions (what it does, power, connections, size, surroundings, quantity, budget) with suggested answers, refuse unsafe requests, and write numbered requirements they confirm. Load when someone asks for a new board or a big change."
+      },
+      {
+        "name": "electronics-routing",
+        "description": "Stage 6 of a circuit: get every connection routed with copper sized for its current. Covers routing as one explicit step (generate_model route=true), its budget, what to do when it fails, trace width per amp (IPC-2221), vias per amp, a ground pour, layers, keepouts, USB data lines and differential pairs. Load when connections are unrouted or a board carries real current."
+      },
+      {
+        "name": "electronics-schematic",
+        "description": "Stage 4 of a circuit: write the TSX that connects the parts. Covers elements and ports, selectors, nets and power, chips with every pin's role declared (pinLabels, pinAttributes), schematic layout, and the electrical rules every board needs (decoupling, pull-ups, reset and boot pins, crystals, USB-C, ESD, LEDs, logic levels), then a pin-by-pin review against the datasheet."
+      },
+      {
+        "name": "sendcutsend-preflight",
+        "description": "Preflight a part for a SendCutSend.com order: DXF/STEP choice, units, SKU specs, bend radii, flange lengths, hole and bridge sizes. Load only when preparing a SendCutSend order."
+      },
+      {
+        "name": "simulation-cht",
+        "description": "Conjugate heat transfer with run_study (analysis \"cht_steady\"): one laminar fluid region and solid regions, interfaces, inlet temperature, heat flux and temperature boundaries, materials per body, mesh and solver options, the fixed iteration count, reading region temperatures, the fluid temperature rise and the energy/interface balances, hand estimates and what never to claim. Load before any study where heat moves between solids and a fluid that flows through or around them."
+      },
+      {
+        "name": "simulation-flow",
+        "description": "Incompressible laminar flow with run_study (analysis \"flow_steady\" or \"flow_transient\"): the fluid volume, inlets/outlets/walls, mesh options (polyhedral dual, split concave edges, tetrahedral cells, mesher), solver controls, choosing steady or transient from the Reynolds number and geometry, reading convergence, pressure drop, mass balance, hand checks and what never to claim. Load before any air or liquid flow study, and for the flow side of conjugate heat transfer."
+      },
+      {
+        "name": "simulation-modal",
+        "description": "Natural frequencies and mode shapes with run_study (analysis \"modal\"): supports, mode count, density, reading frequencies and effective mass, the independent eigen checks, hand checks and what never to claim. Load before any vibration, resonance or stiffness-frequency study."
+      },
+      {
+        "name": "simulation-structural",
+        "description": "Static stress and deflection with run_study (analysis \"static\"): supports, forces, pressures, gravity/self-weight, materials, mesh choice, reading von Mises stress and displacement, hand checks, force balance, safety factors and what never to claim. Load before any stress, deflection, strength or self-weight study."
+      },
+      {
+        "name": "simulation-thermal",
+        "description": "Heat conduction in one solid with run_study (analysis \"thermal_steady\" or \"thermal_transient\"): temperature, heat-flux and convection boundaries, internal heat generation, time settings, reading temperatures and the energy balance, hand checks and what never to claim. Load before any solid temperature or warm-up/cool-down study."
+      },
+      {
+        "name": "simulation-thermal-stress",
+        "description": "Stress from temperature with run_study (analysis \"thermal_stress\"): the steady conduction then static sequence, the stress-free reference temperature, expansion coefficient, supports that do or do not restrain growth, hand checks and what never to claim. Load before any thermal expansion, thermal stress or warping study."
+      },
+      {
+        "name": "steve-cam-programs",
+        "description": "CAM programs as code: a CAM document (kind \"cam\") whose main.py links the part and the shop and makes `program = {...}`: setups, stock, operations, tools, all by name. generate_model runs it end to end: every operation, the post for the machine and Steve's independent check of the G-code, which then downloads. Load before writing, changing or running any CAM program. The machine and tools come from the person's shop (load steve-shop first if the machine isn't set up)."
+      },
+      {
+        "name": "steve-designs",
+        "description": "Multi-component designs: params.py, one Component per file, placing instances, cross-component references, links to saved parts at a pinned revision, patterns, BOM, and fit checks (interference and clearance between instances, intended contacts, comparison with the previous revision). Load before any design (kind \"design\"), before checking whether a new or changed part fits its neighbours, and before building or migrating a large assembly (size limits, naming rules)."
+      },
+      {
+        "name": "steve-drawings",
+        "description": "Engineering drawings for manufacture: ISO or ANSI (ASME) sheets A4\u2013A0 and A\u2013E, first- or third-angle orthographic and isometric views, section views (hatched) and detail views, overall dimensions, feature dimensions with tolerances or ISO 286 fits attached to named model geometry, GD&T datums and feature control frames, title block fields, revision table, parts list (BOM) for assemblies with item balloons, hole tables read from hole features, cut list and notes, written as code with steve.drawing's Drawing (also edited by hand in the app's Drawing tab) and exported as SVG/PDF/DXF. Load before making, changing or explaining a drawing, title block, revision table, parts list or cut list."
+      },
+      {
+        "name": "steve-fusion-cam-import",
+        "description": "Bringing a person's Autodesk Fusion Manufacture data into Steve's manufacturing library: tool libraries (cutters, holders, presets, tool numbers) and machines. Load when an agent is connected to both Fusion's MCP server and Steve's, or has Fusion tool JSON to convert. Covers reading from Fusion, the field-by-field mapping with exact units, what Steve doesn't model, and writing the items into the person's shop."
+      },
+      {
+        "name": "steve-fusion-design-migration",
+        "description": "Moving a person's Autodesk Fusion designs into Steve as editable, parametric Steve parts: reading Fusion's user parameters, sketches and timeline through Fusion's MCP server, rebuilding them as Steve code, and proving the rebuild matches Fusion's own STEP export. Load when an agent is connected to both Fusion's MCP server and Steve's and the person wants Fusion designs (not CAM tools: steve-fusion-cam-import) brought over or remodeled in Steve."
+      },
+      {
+        "name": "steve-machine-setup",
+        "description": "CNC machines in Steve's manufacturing library: machine models (axes, travels, rapids, spindle, tool changer), controllers (G-code dialect and capabilities) and machine instances, and how a maker's spec sheet maps onto them. Load to explain or plan a machine definition. In the library, \"Set up with STEVE\" drafts these records from a model number or a spec sheet."
+      },
+      {
+        "name": "steve-materials",
+        "description": "model.material(...) for parts and bodies: library ids, finishes, colours, mass and material problems; model.decal(...) image decals on flat faces. Load before choosing or assigning materials, answering mass/weight questions, or putting a logo, label or screen image on a part."
+      },
+      {
+        "name": "steve-motion",
+        "description": "Joints (rigid, revolute, slider, cylindrical) with axes from geometry, couplings (gear trains, belts, rack and pinion), limits, drives, poses, keyframed animations and collision sweeps in a design's main.py. Load before adding hinges, sliders, gears, spinning rotors, mechanisms or animation. Collision studies across several joints, cables through moving joints and the MuJoCo simulation export are in steve-motion-studies."
+      },
+      {
+        "name": "steve-motion-studies",
+        "description": "Self-collision studies across several joints (depth, near misses, maps, recorded motion logs, scoring simplified collision shapes), cables and harnesses routed through moving joints (clearance, bend radius, length change, cut lengths), and preparing a design for the MuJoCo simulation export (mass overrides, lumped masses, sites, contact filtering). Load before any of these; joints, couplings and animation themselves are in steve-motion."
+      },
+      {
+        "name": "steve-sheet-metal",
+        "description": "Native sheet metal (sheet_* features): rules and gauge/bend tables, flanges, hems, jogs, tabs, bends, corners, reliefs, rips, reusable lance/louver/dimple/emboss tools, unfold/refold, flat patterns, DXF, SM_* diagnostics. Load before any sheet_* code."
+      },
+      {
+        "name": "steve-shop",
+        "description": "The workspace's machines, controllers, tools and tool setups as code: a shop document (kind \"shop\"). Starting from Steve's catalogue (clone a machine and controller, then change what the person's has), adding cutters, holders, assembled tools and tool setups, building the shop into the manufacturing library, and what \"executable\" and \"saved only\" controllers mean. Load before setting up or changing any machine, controller or tool, and before machining a part on a machine that isn't set up yet."
+      },
+      {
+        "name": "steve-simulation",
+        "description": "Start here for any simulation: what run_study does, which physics skill to load (structural, modal, thermal, thermal stress, flow, conjugate heat transfer), faces, units, materials, designs and poses, failures, and what never to claim. Load before any simulation question, then load the physics skill it names."
+      },
+      {
+        "name": "steve-standard-parts",
+        "description": "Off-the-shelf parts (bearings, screws, nuts, washers, motors, connectors, pulleys, gears, extrusions, electronics) from the step.parts catalog (find_standard_parts, insert_standard_part) and McMaster-Carr parts the user downloaded (list_mcmaster_parts, insert_mcmaster_part), and declared fasteners (design.fasten: screw fit, hole sizes, thread engagement, bottoming, walls, screwdriver access in assembly order, BOM). Load before modelling any bought-in part, when a placeholder should become the real one, and before joining parts with screws or checking them."
+      },
+      {
+        "name": "steve-step-import",
+        "description": "Imported STEP geometry: import_step, file-order face names (import_1.face(n)), adding features to imported bodies, and selector references that survive renumbered faces. Load when a part contains import_step or the person wants to change an imported file, or when a feature on numbered faces (import_1.face(n), model.add's code_1.face(n)) broke after an upstream change. Also load before bringing many parts or a whole assembly in from another CAD system."
+      }
+    ]
+  }
+}

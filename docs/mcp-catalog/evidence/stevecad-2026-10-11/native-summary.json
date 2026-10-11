@@ -1,0 +1,8 @@
+{
+  "status": "protocol-and-read-only-probe-passed",
+  "tool_count": 26,
+  "backend_probe": "api_reference/list_skills",
+  "gateway": "not_yet_tested",
+  "cad_operation": "not_yet_tested",
+  "container": "not_yet_tested"
+}

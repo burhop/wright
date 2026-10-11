@@ -1,5 +1,31 @@
 # MCP Server Setup Recipes
 
+## SteveCAD (STEVE CAD) — 11 October 2026
+
+- Source: [official MCP documentation](https://stevecad.studio/docs/agents/).
+- Connection: `https://stevecad.studio/mcp`, **streamable HTTP**, **OAuth 2.1**.
+- Installation: register/select the remote server in Wright's MCP manager, install
+  it and enable it for the intended workspace. No local package, CAD host or AI
+  API key is needed. OAuth credentials are managed by Wright's existing secret
+  provider; they do not belong in catalog metadata or workflow exports.
+- Browser: sign in with the intended SteveCAD account and authorize Wright. A
+  browser session alone does not authorize the MCP client. Wright handles OAuth
+  discovery, dynamic registration, PKCE and refresh using its existing transport.
+- Fallback registration: name `SteveCAD (STEVE CAD)`, remote HTTP URL above,
+  transport `streamable_http` (stored internally as `type=sse` with the explicit
+  transport variant). Do not substitute the Fusion STEVE add-in or VibeCAD.
+- Safe probes: `list_skills({})`, `api_reference({})`, and
+  `api_reference({"name":"Model.box"})`. Discover tool schemas after connecting.
+- Observed on native Windows: STEVE CAD **4.0.10**, protocol **2025-11-25**, **26**
+  tools; direct probes and Wright gateway proxy passed. Evidence:
+  `docs/mcp-catalog/evidence/stevecad-2026-10-11/`.
+- Scope: authenticated connection/read-only tools are qualified. CAD geometry,
+  simulation accuracy, container support and licensing terms remain separate.
+- Local review workspace: `http://wright.localhost:8891/`; isolated state under
+  `.local-run/runtime/` in the `codex/stevecad-engineering-demos` worktree. The
+  helper `.local-run/serve_wright.py` starts this source workspace. This is a local
+  review instance, not a production release or a change to the existing instance.
+
 These notes capture the repeatable setup path for each MCP server validated in
 the engineering catalog sprint. They are intentionally operational: future
 agents should be able to retest a server after upstream changes without

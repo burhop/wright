@@ -18,8 +18,8 @@ from tool_registry.engineering_catalog import ENGINEERING_CATALOG
 def test_canonical_catalog_resource_is_schema_valid_and_exact() -> None:
     document = load_catalog_document()
     assert document["format_version"] == 1
-    assert len(document["servers"]) == 81
-    assert len(ENGINEERING_CATALOG) == 81
+    assert len(document["servers"]) == 82
+    assert len(ENGINEERING_CATALOG) == 82
     assert files("tool_registry.catalog").joinpath("schema.json").is_file()
     assert files("tool_registry.catalog").joinpath("engineering-catalog.yaml").is_file()
 
