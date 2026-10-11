@@ -87,7 +87,7 @@ it.each([
     );
     await screen.findByText(/readable assessment is unavailable/);
     expect(screen.getByText(raw)).toBeInTheDocument();
-    expect(ready).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(ready).toHaveBeenCalledTimes(1));
   },
 );
 

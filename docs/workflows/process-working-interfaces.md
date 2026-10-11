@@ -16,7 +16,7 @@ claim. Consult the
 
 ## Current-source setup
 
-This guide describes development source as of 10 October 2026. Published releases
+This guide describes development source as of 11 October 2026. Published releases
 may lag it. Current native and Docker builds enable the workflow editor, working
 views and workspace surfaces. For a standalone source frontend, enable these Vite
 flags **before building**:
@@ -49,10 +49,16 @@ The workspace shows only the observed configured model and directs intentional
 changes to Model Setup. Source/native hosts retain the HTTP transport unless an
 operator explicitly configures a qualified SDK installation.
 
-The stock-package test uses synthetic local endpoint responses; it proves
-request/evidence mechanics, not live provider inference or engineering acceptance.
-The fresh complete image/browser and merge gates remain pending. Gateway health
-alone is not routing qualification. See the
+The clean candidate image passes the installed stock-package test using synthetic
+local endpoint responses. Its normal packaged workspace walkthrough verifies blank
+authoring, save/reopen and discovery of the model from setup's named profile.
+These checks establish request/evidence mechanics and packaged authoring; live
+provider inference and engineering acceptance require separate evidence. See the
+[packaged profile qualification](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/mechanical-packaged-model-profile-092.md)
+for exact source/image identities and scope.
+
+The full delivery gate and publication remain pending. Gateway health alone is
+not routing qualification. See the
 [delivery checkpoint](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/dev-delivery-checkpoint-090.md)
 for its scope. Previously qualified native/provider evidence is separate.
 

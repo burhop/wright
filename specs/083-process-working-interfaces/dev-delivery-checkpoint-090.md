@@ -326,3 +326,33 @@ scoped evidence and pictures are in
 [profile repair evidence 092](evidence/mechanical-packaged-model-profile-092.md).
 The full current merge gate, pre-push checks, scanner approval, GitHub CI and dev
 integration remain required. The protected study is not answered or resumed.
+
+### 11 October — full gate result and assessment readiness assertion
+
+Gate 09 was interrupted during release/native coverage. Its original process and
+session were confirmed absent before gate 10 started; the partial log is retained.
+Gate 10 reached a terminal failure in the frontend suite after its dependency and
+image audits, blocking static checks, Python suites, coverage, production frontend build and
+native packaging passed. Coverage was 85.46% against the unchanged 85% requirement.
+Both the direct wheel and the wheel rebuilt from the source archive installed and
+imported cleanly; their bytes matched.
+The broader advisory MyPy invocation retained its duplicate-`conftest` warning;
+it is not counted as a passing type check.
+
+The frontend result was 1,789 passed and one failed. The assessment fallback test
+found the rendered fallback text and immediately expected its readiness callback.
+That callback runs in a React effect after presentation; observing the text does
+not await the effect. The failure recorded zero calls at that assertion. The
+original focused file passed all eight cases, consistent with an intermittent
+scheduling failure. The correction explicitly waits for the callback and retains
+the exactly-once requirement, original-record check and all four fallback cases.
+The corrected focused file passes all eight tests. No shipped behavior changes.
+
+The complete frontend rerun passes all 1,790 tests in 198 files. The strict
+documentation build also passes after the guide correction. Gate 10 is retained
+as failed; its documentation and browser stages were not reached in that attempt.
+The operator guide now records
+the already verified image/workspace profile qualification without implying that
+the full gate, publication or engineering goal is complete. Scanner disposition
+still requires the previously requested approval. No protected review, process
+continuation, supplier action or physical operation occurred during these checks.

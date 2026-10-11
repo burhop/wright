@@ -4364,3 +4364,21 @@ display. No process action or real inference occurs. Report structure and visual
 inspection pass. See [the illustrated evidence](evidence/mechanical-packaged-model-profile-092.md).
 The full development gate is next; scoped success does not complete delivery or
 the full engineering goal. All protected reviews remain untouched.
+
+## 11 October — delivery gate and asynchronous preview assertion
+
+The interrupted gate 09 was preserved after its process was confirmed absent.
+Gate 10 passed the dependency/image audits, blocking static checks, Python suites, coverage,
+frontend build and native wheel/source-archive validation. Its frontend suite
+then ended with 1,789 passes and one assessment fallback assertion failure.
+The test observed rendered text before the post-presentation readiness effect
+called its callback. The one-line correction waits for that effect while retaining
+the exactly-once assertion; the original and corrected focused runs each pass
+eight tests. The complete frontend rerun passes all 1,790 tests in 198 files, and
+the strict documentation build passes. Gate 10 remains failed; the complete
+current gate and its browser stage remain required.
+
+The guide now distinguishes the verified packaged model-profile walkthrough from
+the unfinished delivery gate. See the [delivery record](dev-delivery-checkpoint-090.md)
+for scope and retained failures. The full engineering objective, scanner approval,
+pre-push checks, CI and dev integration remain open. Protected runs remain unchanged.
