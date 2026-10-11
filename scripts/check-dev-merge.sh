@@ -124,7 +124,9 @@ run uv run python -m pytest -q \
 run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 # Build once with the developer's installed lockfile dependencies. Native packaging
 # reuses the fresh dist without running npm ci against a live Wright node_modules.
-run npm run build --workspace=apps/web
+run env VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1 \
+  VITE_WRIGHT_WORKFLOW_COMPOSER=1 VITE_WRIGHT_WORKFLOW_RECOVERY=1 \
+  VITE_WORKSPACE_SURFACES_ENABLED=1 npm run build --workspace=apps/web
 run env WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1 PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
 run uv run python -c "from pathlib import Path; from scripts.release.python_artifacts import validate_native_distribution; artifacts=[p for p in Path('dist/dev-merge-python').rglob('*') if p.suffix == '.whl' or p.name.endswith('.tar.gz')]; assert len(artifacts) == 2; [validate_native_distribution(p) for p in artifacts]"
 

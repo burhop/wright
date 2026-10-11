@@ -86,6 +86,7 @@ def build_frontend() -> None:
             "VITE_WRIGHT_PROCESS_DEFINITION_VIEW": "1",
             "VITE_WRIGHT_WORKFLOW_COMPOSER": "1",
             "VITE_WRIGHT_WORKFLOW_RECOVERY": "1",
+            "VITE_WORKSPACE_SURFACES_ENABLED": "1",
         }
     )
     _run([npm, "run", "build"], cwd=WEB_ROOT, env=environment)

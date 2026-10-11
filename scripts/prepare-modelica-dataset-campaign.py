@@ -532,7 +532,7 @@ Write a clear engineering assessment of this scenario's actual outputs and limit
     chain.extend([final_review, validator])
     for first, last in zip(chain, chain[1:]):
         sections.append({"kind": "connection", "id": "complete_sequence_" + last["id"], "fields": {"type": "order", "from": first["id"], "to": last["id"], "label": "complete native heater engineering chain", "when": None}})
-    rendered = h.render(sections)
+    rendered = h.render_new_draft(sections)
     validate_workspace_authoring_shape(rendered)
     plan = compile_prompt_workflow(rendered)
     allowlist = [selected_tools[name] for name in TOOLS] + supplemental_tools

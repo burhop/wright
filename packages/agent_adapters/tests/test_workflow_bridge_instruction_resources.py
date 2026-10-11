@@ -119,10 +119,10 @@ async def test_saved_bridge_translation_and_repair_capture_actual_submitted_chai
         {
             "kind": "tool_call",
             "name": "create_graph",
-            "arguments": "password=private-value",
+            "arguments": "password=fake-private-value",
         },
-        {"kind": "private-value", "name": "create_graph", "arguments": {}},
-        ["private-value"],
+        {"kind": "fake-private-value", "name": "create_graph", "arguments": {}},
+        ["fake-private-value"],
     ],
 )
 async def test_failed_repair_retains_response_shape_without_argument_values(
@@ -160,15 +160,15 @@ async def test_failed_repair_retains_response_shape_without_argument_values(
     if isinstance(last_decision, dict):
         assert detail["arguments_type"] == type(last_decision["arguments"]).__name__
         assert detail["kind"] in {"tool_call", "invalid"}
-    assert "private-value" not in json.dumps(responses)
+    assert "fake-private-value" not in json.dumps(responses)
     assert len(detail["sha256"]) == 64
 
 
 @pytest.mark.parametrize(
     "content",
     [
-        "Cannot continue; password=private-value Bearer private-value",
-        json.dumps({"response": "Cannot continue", "password": "private-value"}),
+        "Cannot continue; password=fake-private-value Bearer fake-private-value",
+        json.dumps({"response": "Cannot continue", "password": "fake-private-value"}),
         "x" * 5000,
     ],
 )
@@ -189,7 +189,7 @@ def test_final_message_diagnostic_is_redacted_and_bounded(content):
             ]
         }
     )
-    assert "private-value" not in json.dumps(detail)
+    assert "fake-private-value" not in json.dumps(detail)
     assert len(detail["message_excerpt"]) <= 4096
     assert detail["message_excerpt_truncated"] is (len(content) > 4096)
 

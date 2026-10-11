@@ -63,6 +63,25 @@ def render(sections: list[dict]) -> str:
     ) + "\n"
 
 
+def render_new_draft(sections: list[dict]) -> str:
+    """Capture shipped instructions for newly prepared example drafts only.
+
+    Existing embedded instructions remain authoritative. These examples retain
+    their prior explicit-requirements policy; enabling the saved action protocol
+    neither supplies missing requirements nor grants external-action authority.
+    """
+    from agent_adapters.workflow_instructions import load_default_workflow_instructions
+    from core.workflow_instructions import WorkflowInstructionSet
+    from workspace_service.workflow_instruction_settings import (
+        materialize_new_workflow_instructions,
+    )
+
+    snapshot = load_default_workflow_instructions().model_dump(mode="json")
+    snapshot["policy"]["assumption_policy"] = "require_specified"
+    instructions = WorkflowInstructionSet.model_validate(snapshot)
+    return materialize_new_workflow_instructions(render(sections), instructions)
+
+
 def add_reference(sections, producer, target, key, kind="engineering_document"):
     key = f"{target['id']}_{key}"
     target["fields"]["inputs"].append(port(key, kind))

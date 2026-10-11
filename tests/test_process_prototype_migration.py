@@ -74,7 +74,7 @@ def test_workspace_entry_and_client_use_shared_work_and_read_only_history():
         encoding="utf-8"
     )
     assert "PrintPartDemoPage" not in entry
-    assert "HistoricalResultView" in entry and "Use saved process" in entry
+    assert "HistoricalResultView" in entry and "Open working view" in entry
     assert 'historicalWorkflow === visiblePath' in entry
     assert "/print-demo/" not in client
     assert "uploadWorkflowImage" in client

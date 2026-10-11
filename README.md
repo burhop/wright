@@ -212,6 +212,13 @@ Wright is a modular monorepo with a FastAPI gateway, React/Vite web UI,
 agent-neutral workspace services, Hermes and future runtime adapters, an MCP
 tool registry, and local workspace state.
 
+### Workspace Artifacts
+
+Models, drawings, images and verification documents are kept in the workspace
+volume or checkout you control. Open them through **Workspace Files** or a
+workflow's results. SQLite stores durable run state and artifact references;
+files retain their exact revisions and remain available after a view closes.
+
 ```mermaid
 flowchart TD
     User([User Web Browser]) -->|HTTP / WebSockets| API[FastAPI API Gateway]

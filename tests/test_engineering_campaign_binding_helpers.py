@@ -49,6 +49,38 @@ def test_helpers_keep_exact_declared_input_connection():
     assert target["fields"]["inputs"][0]["required"] is True
 
 
+def test_new_draft_captures_complete_instructions_and_preserves_strict_policy():
+    from core.workflow_instructions import WorkflowInstructionSet
+    from workspace_service.workflow_source_execution import _parse
+
+    sections = [{"kind": "workflow", "id": "example", "fields": {"name": "Example"}}]
+    legacy = helpers.render(sections)
+    assert "instructions:" not in legacy
+    source = helpers.render_new_draft(sections)
+    snapshot = WorkflowInstructionSet.model_validate(_parse(source)[0]["fields"]["instructions"])
+    assert snapshot.action_intent_contract == "wright.workflow-action-intent/1"
+    assert snapshot.policy.assumption_policy == "require_specified"
+    assert any(asset.id == "protocol.action-intent" and asset.body for asset in snapshot.assets)
+    assert all(asset.body_digest for asset in snapshot.assets)
+    assert helpers.render(sections) == legacy
+
+
+def test_new_draft_preserves_existing_accepted_instructions():
+    from agent_adapters.workflow_instructions import load_default_workflow_instructions
+
+    saved = load_default_workflow_instructions().model_dump(mode="json")
+    saved["profile_version"] = "retained-test-revision"
+    saved["policy"]["assumption_policy"] = "document_reasonable"
+    sections = [{"kind": "workflow", "id": "example", "fields": {"instructions": saved}}]
+    assert helpers.render_new_draft(sections) == helpers.render(sections)
+
+
+def test_new_draft_rejects_invalid_saved_instructions_instead_of_replacing():
+    sections = [{"kind": "workflow", "id": "example", "fields": {"instructions": {}}}]
+    with pytest.raises(ValueError):
+        helpers.render_new_draft(sections)
+
+
 def test_printed_preparer_launches_without_scripts_namespace(tmp_path):
     collision = tmp_path / "scripts"
     collision.mkdir()

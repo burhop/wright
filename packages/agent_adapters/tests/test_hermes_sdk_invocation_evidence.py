@@ -54,7 +54,7 @@ def test_sdk_text_authoring_capture_retains_actual_fields_and_redacts_prompt_sec
         "operation": "generate",
         "messages": [
             {"role": "system", "content": "Confined author role"},
-            {"role": "user", "content": "password=private-secret"},
+            {"role": "user", "content": "password=fake-test-secret"},
         ],
     }
     invoke(
@@ -66,7 +66,7 @@ def test_sdk_text_authoring_capture_retains_actual_fields_and_redacts_prompt_sec
     )
     assert captured[0]["request_digest"] == canonical_digest(sdk.calls[0])
     assert captured[0]["request_fields"]["tools"] == []
-    assert "private-secret" not in json.dumps(captured)
+    assert "fake-test-secret" not in json.dumps(captured)
 
 
 @pytest.mark.asyncio

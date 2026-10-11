@@ -556,7 +556,7 @@ def prepare(args, directory, available):
         }})
     order(final, final_review, "review exact completed sheet-metal outputs")
     order(final_review, validator, "validate only after exact output review")
-    result = helpers.render(sections)
+    result = helpers.render_new_draft(sections)
     validate_workspace_authoring_shape(result)
     plan = compile_prompt_workflow(result)
     if any(identity not in [step.id for step in plan.steps] for identity in original_tasks):

@@ -97,7 +97,11 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
     for part in binding["scenarios"][report["scenario_id"]]["parts"]:
         assert report["output_root"] + "/" + part + ".psm" in intent.prompt
     research = next(step for step in plan.steps if step.id.startswith("supplier_research_"))
-    assert len(research.expected_files) == 16  # All eight raw HTML/text pairs; retained manifest is hash-bound by each read.
+    assert {Path(path).name for path in research.expected_files} == {
+        "supplier-evidence.json",
+        *(f"supplier-source-{index}.{extension}"
+          for index in range(1, 9) for extension in ("html", "txt")),
+    }  # The producer owns the manifest and all eight raw HTML/text pairs.
     assert "what-are-your-bend-relief-requirements" in research.prompt
     assert "what-are-your-channel-bend-requirements" in research.prompt
     assert "read_reference_text" in research.prompt
@@ -157,7 +161,10 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
         if action["action_kind"] != "local_review":
             assert action["destination"]["id"].startswith("test://fixture-campaign/")
             assert action["settings"]["manufacturing_release"] == "HOLD"
-    assert not (workspace / report["output_root"]).exists()
+    output_directory = workspace / report["output_root"]
+    assert list(output_directory.iterdir()) == [output_directory / "sealed"]
+    assert list((output_directory / "sealed").iterdir()) == []
+    assert not any((workspace / path).exists() for path in report["expected_tool_created_files"])
     assert [section for section in _parse(text) if section["kind"] == "task"]
 
 
@@ -197,7 +204,9 @@ def test_fresh_research_retains_material_identity_and_complete_table_contract(
     assert len(urls) == 8
     assert f"urls={urls!r}" in research.prompt  # The actual operation request matches the stated references.
     assert {Path(path).name for path in research.expected_files} == {
-        f"supplier-source-{index}.{extension}" for index in range(1, 9) for extension in ("html", "txt")
+        "supplier-evidence.json",
+        *(f"supplier-source-{index}.{extension}"
+          for index in range(1, 9) for extension in ("html", "txt")),
     }
     for requirement in [
         "column header plus the complete matching thickness row",

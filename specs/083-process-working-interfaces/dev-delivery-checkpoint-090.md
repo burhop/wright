@@ -148,3 +148,39 @@ The native distribution now includes the freshly built current UI and runtime lo
 The corrected source needs a fresh clean candidate image and complete merge-gate
 pass. Scanner approval, pre-push validation, GitHub CI and dev integration are still
 pending. The 130 mm engineering run remains at its declared human review.
+
+## Packaged UI alignment
+
+Reviewing the user documentation against the build exposed inconsistent frontend
+flags. Docker defaulted the process view off and omitted the editor/composer and
+surface flags; the merge gate's reused frontend build omitted all four. The native
+builder enabled the first three but omitted workspace surfaces. A successful build
+therefore did not prove the UI shown in the current screenshots was reachable.
+
+Gate 07 passed the new exact-image vulnerability scan and static checks, then was
+stopped during control-plane tests to correct this packaging discrepancy. It is
+not a completed gate. Docker, native and reused gate builds now explicitly enable
+the same four features. Their focused contracts, rebuilt assets, actual packaged
+workspace browser journey and complete gate must pass before delivery.
+
+## Remaining regression corrections
+
+The broad root-suite preview exposed older draft generators that omitted the
+saved action-intent instructions. Newly prepared Modelica, drill-jig and sheet-metal
+drafts now use the existing instruction materializer with packaged, versioned
+instruction bodies and their prior `require_specified` policy. Existing embedded
+instructions remain unchanged, malformed snapshots fail, and the legacy renderer
+is unchanged. No accepted engineering run or review was modified. The actual
+runtime readiness checks remain enforced.
+
+The Modelica test now constructs the real runtime instead of bypassing its
+initialization. Sheet-metal assertions require the supplier manifest plus all eight
+raw HTML/text pairs, and permit only the deliberately empty sealed-output directory
+before dispatch. The README again explains workspace artifact ownership. Four
+redaction fixture values are explicitly named synthetic/fake; their redaction
+assertions remain in place. No scanner policy was changed.
+
+The exact affected checks pass: 48 example/documentation/lightweight-scanner tests,
+21 redaction tests and 81 packaging/gate/migration tests. The production frontend
+build with all four flags passes. Native restaging, exact-image verification,
+the packaged browser journey and the full gate remain pending at this checkpoint.

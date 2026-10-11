@@ -8,6 +8,19 @@ def read_text(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
 
 
+def test_container_build_enables_the_qualified_workspace_ui() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+    build_stage = dockerfile.split("# Stage 2:", 1)[0]
+    for flag in (
+        "VITE_WRIGHT_PROCESS_DEFINITION_VIEW",
+        "VITE_WRIGHT_WORKFLOW_COMPOSER",
+        "VITE_WRIGHT_WORKFLOW_RECOVERY",
+        "VITE_WORKSPACE_SURFACES_ENABLED",
+    ):
+        assert f"ARG {flag}=1" in build_stage
+        assert f'{flag}="${{{flag}}}"' in build_stage
+
+
 def test_docker_smoke_script_matches_entrypoint_llm_contract() -> None:
     script = read_text("scripts/docker-smoke-test.sh")
     entrypoint = read_text("docker/entrypoint.sh")
@@ -98,7 +111,7 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
     assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
     assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
-    assert "ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0" in dockerfile
+    assert "ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1" in dockerfile
     assert (
         'VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}"'
         in dockerfile

@@ -67,10 +67,15 @@ def catalog(tmp_path):
         }.items()
         for name in names
     )
-    runtime = WorkflowMcpRuntime.__new__(WorkflowMcpRuntime)
-    runtime.gateway = SimpleNamespace(list_tools=lambda _: tools)
-    runtime.session_id = "static-test"
-    runtime._allowed_tool_identities = None
+    runtime = WorkflowMcpRuntime(
+        SimpleNamespace(
+            list_tools=lambda _: tools,
+            open_session=lambda **kwargs: None,
+            initialize_session=lambda *args, **kwargs: None,
+        ),
+        workspace_id="static-workspace",
+        session_id="static-test",
+    )
     projected = runtime.available()
     runtime.restrict_to(projected)
     tool_path = tmp_path / "tools.json"
@@ -94,6 +99,8 @@ def test_every_generated_heater_node_resolves_and_keeps_original_stages(tmp_path
         draft_root=str(tmp_path / "draft"), attempt="attempt-test", instance_source=None,
         manifest_catalog=str(manifest_path), tool_catalog=str(tool_path), server_id="selected-modelica"), directory)
     plan = compile_prompt_workflow(Path(result["source"]).read_text())
+    assert plan.instruction_set["action_intent_contract"] == "wright.workflow-action-intent/1"
+    assert plan.instruction_set["policy"]["assumption_policy"] == "require_specified"
     assert len(plan.steps) == steps
     assert sum(bool(step.tool_name) for step in plan.steps) == direct
     assert all(any(step.id.startswith(prefix + "_") for step in plan.steps) for prefix in preparer.ORIGINAL)

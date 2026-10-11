@@ -298,7 +298,7 @@ def prepare(args, directory, tools):
     for earlier, later in zip(chain, chain[1:]):
         sections.append(dict(kind="connection", id="sequence_" + later["id"], fields={"type": "order",
             "from": earlier["id"], "to": later["id"], "label": "full jig engineering sequence", "when": None}))
-    rendered = helpers.render(sections)
+    rendered = helpers.render_new_draft(sections)
     validate_workspace_authoring_shape(rendered)
     plan = compile_prompt_workflow(rendered)
     allowlist = []

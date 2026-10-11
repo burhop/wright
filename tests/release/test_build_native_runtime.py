@@ -94,3 +94,4 @@ def test_native_frontend_build_enables_workspace_workflow_surfaces(
     assert build["env"]["VITE_WRIGHT_PROCESS_DEFINITION_VIEW"] == "1"
     assert build["env"]["VITE_WRIGHT_WORKFLOW_COMPOSER"] == "1"
     assert build["env"]["VITE_WRIGHT_WORKFLOW_RECOVERY"] == "1"
+    assert build["env"]["VITE_WORKSPACE_SURFACES_ENABLED"] == "1"

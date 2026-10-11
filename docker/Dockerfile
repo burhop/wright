@@ -38,8 +38,14 @@ COPY apps/web/ apps/web/
 # neither source path is copied from the web builder into the runtime image.
 COPY packages/core/tests/fixtures/workflow_drafts/representative-workflow.json packages/core/tests/fixtures/workflow_drafts/representative-workflow.json
 COPY specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json
-ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0
+ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1
+ARG VITE_WRIGHT_WORKFLOW_COMPOSER=1
+ARG VITE_WRIGHT_WORKFLOW_RECOVERY=1
+ARG VITE_WORKSPACE_SURFACES_ENABLED=1
 RUN VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}" \
+    VITE_WRIGHT_WORKFLOW_COMPOSER="${VITE_WRIGHT_WORKFLOW_COMPOSER}" \
+    VITE_WRIGHT_WORKFLOW_RECOVERY="${VITE_WRIGHT_WORKFLOW_RECOVERY}" \
+    VITE_WORKSPACE_SURFACES_ENABLED="${VITE_WORKSPACE_SURFACES_ENABLED}" \
     npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.

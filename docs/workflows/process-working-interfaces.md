@@ -17,7 +17,9 @@ claim. Consult the
 ## Current-source setup
 
 This guide describes development source as of 10 October 2026. Published releases
-may lag it. For a source frontend, enable these Vite flags **before building**:
+may lag it. Current native and Docker builds enable the workflow editor, working
+views and workspace surfaces. For a standalone source frontend, enable these Vite
+flags **before building**:
 
 ```dotenv
 VITE_WRIGHT_WORKFLOW_RECOVERY=true
@@ -31,6 +33,11 @@ surfaces; they do not configure a model, install engineering applications or gra
 MCP permissions. Use the normal authenticated workspace and enable the providers
 needed by the selected process. Existing release installation instructions remain
 in the [getting-started guides](../getting-started/overview.md).
+
+Docker exposes the same four names as build arguments, defaulting to `1`.
+They are compiled into its frontend; changing container runtime environment
+variables does not enable a feature omitted during the image build. The native
+builder and merge gate use the same enabled features.
 
 ## Instructions, assumptions and deliberate questions
 

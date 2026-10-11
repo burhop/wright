@@ -64,7 +64,7 @@ def test_rejected_assumptions_name_exact_violation_and_retain_redacted_evidence(
                 "parameter": "length",
                 "value": "10",
                 "units": "mm",
-                "rationale": "Unspecified illustrative choice. api_key=super-secret-test-token",
+                "rationale": "Unspecified illustrative choice. api_key=fake-test-secret-token",
                 "affected_outputs": outputs,
             }
         ]
@@ -100,7 +100,7 @@ def test_rejected_assumptions_name_exact_violation_and_retain_redacted_evidence(
             "undeclared_outputs": [] if protected else ["not_declared"],
         }
     ]
-    assert "super-secret-test-token" not in str(rejection)
+    assert "fake-test-secret-token" not in str(rejection)
     assert not any(
         event["kind"]
         in {"assumptions_recorded", "result_ready", "step_completed", "input_requested"}

@@ -126,7 +126,7 @@ socket.create_connection = offline_connection
 toolchain.shutil.which = lambda _: None
 assert isinstance(toolchain.discover_build_toolchain(), toolchain.UnavailableBuildToolchain)
 resources = load_authoring_resources()
-assert resources.version == 'process-ui-author-1'
+assert resources.version == 'process-ui-author-2'
 public = files('workspace_service.process_interfaces.resources').joinpath('public')
 assert public.joinpath('process_client/src/index.ts').is_file()
 assert public.joinpath('ui_kit/src/styles.css').is_file()
