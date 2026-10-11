@@ -827,6 +827,11 @@ async def start_engineering_scenario_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409,
+            detail="Codex workflow execution is unavailable in the experimental chat pilot",
+        )
     _workflow_feature_enabled()
     _runner_feature_enabled()
     _operations_feature_enabled()
@@ -1599,8 +1604,14 @@ async def run_workflow_source_endpoint(
     body: WorkflowSourceRunRequest,
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     """Compatibility view over the same durable backend-owned source run."""
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409,
+            detail="Codex workflow execution is unavailable in the experimental chat pilot",
+        )
     from uuid import uuid4
     from core.process_interactions import ProcessRef
     from core.redaction import redact_text
@@ -2622,6 +2633,11 @@ async def start_workflow_run_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    if getattr(engine, "platform", None) == "codex":
+        raise HTTPException(
+            409,
+            detail="Codex workflow execution is unavailable in the experimental chat pilot",
+        )
     _runner_feature_enabled()
     _operations_feature_enabled()
     workspace = service.lifecycle.get_by_session(body.session_id)
@@ -3621,6 +3637,9 @@ async def recover_workflow_endpoint(
 
 def _active_agent_id(request: Request | None = None) -> str:
     if request is not None:
+        bound = getattr(getattr(request, "state", None), "agent_platform", None)
+        if bound:
+            return bound
         sync_manager = getattr(request.app.state, "agent_sync_manager", None)
         if sync_manager and getattr(sync_manager, "active_agent", None):
             return sync_manager.active_agent
@@ -4131,7 +4150,11 @@ def _api_owned_mcp_engine(request: Request | None):
     if request is None or not api_mcp_autostart_enabled():
         return None
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    if getattr(sync_manager, "active_agent", "") == "hermes":
+    if getattr(
+        getattr(request, "state", None),
+        "agent_platform",
+        getattr(sync_manager, "active_agent", ""),
+    ) in {"hermes", "codex"}:
         return None
     return getattr(request.app.state, "mcp_engine", None)
 

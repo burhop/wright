@@ -115,3 +115,22 @@ def test_workspace_repository_filters_synthetic_rows_and_updates_session(tmp_pat
     }
     repository.update_session("real", "session-next")
     assert repository.get_by_session("session-next")["workspace_id"] == "real"
+
+
+def test_session_platform_survives_default_pointer_changes_and_cannot_be_reassigned(
+    tmp_path,
+):
+    import pytest
+
+    db_path = str(tmp_path / "state.db")
+    upgrade_database(db_path)
+    repository = WorkspaceRepository(db_path, secrets=MemorySecrets())
+    repository.create("workspace", "codex-session", str(tmp_path), agent_id="codex")
+    repository.associate_session("workspace", "hermes-session", agent_id="hermes")
+    repository.update_session("workspace", "hermes-session")
+    repository.update_session("workspace", "codex-session")
+    repository.associate_session("workspace", "codex-session", title="Retitled")
+    assert repository.session_platform("codex-session") == "codex"
+    assert repository.session_platform("hermes-session") == "hermes"
+    with pytest.raises(ValueError, match="immutable"):
+        repository.associate_session("workspace", "codex-session", agent_id="hermes")

@@ -679,3 +679,34 @@ def test_native_start_receipt_checks_exact_owned_preparation_view(case):
         == 403
     )
     case.application.runs.cancel.assert_not_called()
+
+
+def test_codex_chat_exception_cannot_reuse_a_cached_authoring_model(case):
+    from agent_adapters.base import AgentInvocationCapabilities
+
+    prior = case.application.__dict__["_authoring"]
+
+    async def capabilities():
+        return AgentInvocationCapabilities(
+            adapter="codex",
+            available=False,
+            reason="Native tools remain; confined authoring is gated",
+        )
+
+    case.client.app.state.agent_engine = SimpleNamespace(
+        platform="codex", get_invocation_capabilities=capabilities
+    )
+    response = case.client.get(PREFIX + "/authoring-capabilities", params=case.query)
+    assert response.status_code == 200, response.text
+    assert not response.json()["available"]
+    assert response.json()["model"]["adapter"] == "codex"
+    submitted = case.client.post(
+        PREFIX + "/authoring-jobs",
+        json={
+            **case.query,
+            "request_id": "codex-gated-authoring",
+            "instruction": "Generate a process interface",
+        },
+    )
+    assert submitted.status_code == 503, submitted.text
+    assert case.application.__dict__["_authoring"] is prior

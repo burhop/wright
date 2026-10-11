@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 
-from agent_adapters import create_agent_engine
+from api.agent_platform_engines import create_agent_engine
 from api.config import (
     DATABASE_PATH,
     McpTransportSettings,
@@ -264,8 +264,6 @@ async def lifespan(app: FastAPI):
 
     # Startup initializes the MCP engine only. MCP server processes are started
     # when an active workspace has those installed servers assigned to it.
-    if not hasattr(app.state, "agent_engine"):
-        app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
     if not hasattr(app.state, "agent_sync_manager"):
         from api.services.wright_gateway_sync import (
             sync_workspace_tools_to_wright_gateway,
@@ -273,6 +271,10 @@ async def lifespan(app: FastAPI):
 
         app.state.agent_sync_manager = AgentSyncManager(
             DATABASE_PATH, sync_workspace_tools_to_wright_gateway
+        )
+    if not hasattr(app.state, "agent_engine"):
+        app.state.agent_engine = create_agent_engine(
+            app.state.agent_sync_manager.active_agent, db_path=DATABASE_PATH
         )
     mcp_settings = McpTransportSettings.from_env()
     app.state.mcp_engine = McpEngine(
@@ -328,6 +330,19 @@ async def lifespan(app: FastAPI):
             logger.info("api_startup_stage", stage="serving")
             yield
     finally:
+        engines = list(getattr(app.state, "agent_engines", {}).values())
+        engines.append(getattr(app.state, "agent_engine", None))
+        for engine in {
+            id(value): value for value in engines if value is not None
+        }.values():
+            close = getattr(engine, "close", None)
+            if callable(close):
+                try:
+                    await close()
+                except Exception as error:
+                    logger.error(
+                        "agent_shutdown_failed", error_type=type(error).__name__
+                    )
         # Shutdown owns every process and worker constructed during startup.
         try:
             native = getattr(app.state, "native_process_service", None)

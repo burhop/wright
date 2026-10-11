@@ -1,0 +1,83 @@
+{
+  "baseline": "ba2fad68c181165b96b9c15c40b1a1f63c88acb3",
+  "inputs_changed": false,
+  "mismatches": [
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.svg",
+      "manifest_sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c",
+      "committed_lf_sha256": "c864b34577b009cc9f066d2d50384ebf76c16666e9a8f34117533edaaedf0e27",
+      "crlf_sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+      "manifest_sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+      "committed_lf_sha256": "6009611f13ee11708f2b5b68efbf21c43a15f27387b72b9a3caeba15260c91f2",
+      "crlf_sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+      "manifest_sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+      "committed_lf_sha256": "03946f7e05842a53576f81d391ca602c704e5bdc79e95ca39b98ad0d9070a922",
+      "crlf_sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/scenario.json",
+      "manifest_sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2",
+      "committed_lf_sha256": "774d3b7296262d0d0bd515fa5d0a19955aa42515c32423cd92b9040049a2d7a3",
+      "crlf_sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/user-profile.md",
+      "manifest_sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f",
+      "committed_lf_sha256": "76d3dafa65504fb32aca1561423ae825cecbf7f263d8adf32e5e303c3bad999a",
+      "crlf_sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+      "manifest_sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+      "committed_lf_sha256": "d9d3c842a601d04a7deaaa6bf2c1aa234f3f67f4056b332867b08ddeaefb188a",
+      "crlf_sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/concept.svg",
+      "manifest_sha256": "445941494d109662f292fe33830693358dcab34132cc774fd09bf49a5ac10161",
+      "committed_lf_sha256": "0df3cb66e18ebee60e67a56891a981b88e8e8f394a598ab38a3a928d03dfa670",
+      "crlf_sha256": "445941494d109662f292fe33830693358dcab34132cc774fd09bf49a5ac10161",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+      "manifest_sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+      "committed_lf_sha256": "a996e0735e41a83f37878e60636e5d5b9a5ffa67376a83b40b1022623b194a4d",
+      "crlf_sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/prompt.txt",
+      "manifest_sha256": "f08a8caa5bc41b282b5386578be028bf60312da099b5613c600db9b73635e5d1",
+      "committed_lf_sha256": "282dfb62e7728962f634887c2303a8eb5f14fee934d238c7f91dce1dadf59f4d",
+      "crlf_sha256": "f08a8caa5bc41b282b5386578be028bf60312da099b5613c600db9b73635e5d1",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/scenario.json",
+      "manifest_sha256": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8",
+      "committed_lf_sha256": "1e02360e222105e63772b8a225f9a3b08e22a85a44fb9c6d75b509d1b5d09d51",
+      "crlf_sha256": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8",
+      "crlf_matches_manifest": true
+    },
+    {
+      "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/user-profile.md",
+      "manifest_sha256": "857f534051126b05af7a9345ebd4cc02372a5ba395ced50f78b41815bf79f146",
+      "committed_lf_sha256": "da30156d84f29b7432d3ef5b5955342f32aa3db87ac0741e53f8ec3837bf87e1",
+      "crlf_sha256": "857f534051126b05af7a9345ebd4cc02372a5ba395ced50f78b41815bf79f146",
+      "crlf_matches_manifest": true
+    }
+  ]
+}

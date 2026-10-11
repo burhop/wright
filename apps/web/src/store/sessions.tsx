@@ -680,6 +680,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const providerMountedRef = useRef(true);
 
   useEffect(() => {
+    providerMountedRef.current = true;
     return () => {
       providerMountedRef.current = false;
     };
@@ -1102,7 +1103,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         sessionId,
         entry: {
           kind: "status",
-          title: "Hermes is preparing a response",
+          title: "Agent is preparing a response",
           detail: "Waiting for the first response event.",
         },
       });
@@ -1195,7 +1196,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               role: "assistant",
               content:
                 accumulatedText.trim() ||
-                "Hermes ended the chat turn without returning a response.",
+                "The agent ended the chat turn without returning a response.",
               timestamp: Date.now(),
               traceId: accumulatedText.trim()
                 ? "tr-" + Math.random().toString(36).substring(7)

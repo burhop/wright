@@ -1,0 +1,27 @@
+{
+  "schema": "wright.codex-served-restart-gates/1",
+  "api": "http://127.0.0.1:18184",
+  "live_model_turns": 0,
+  "exact_saved_history_after_api_restart": true,
+  "confined_authoring_gated": true,
+  "native_start_gates": [
+    {
+      "path": "/api/native-processes/documents/example/runs",
+      "status": 409,
+      "code": "NATIVE_AGENT_UNAVAILABLE"
+    },
+    {
+      "path": "/api/native-processes/example/runs",
+      "status": 409,
+      "code": "NATIVE_AGENT_UNAVAILABLE"
+    }
+  ],
+  "result": "PASSED_SERVED_API_RESTART_AND_ROLE_GATES",
+  "served_source_hashes": {
+    "apps/api/src/api/routers/native_process.py": "934cf66c5e721cd3c4d79910c7a1bc944b7db294051e6769ed6c86e821d4d2de",
+    "apps/api/src/api/routers/process_interfaces.py": "daca8b11394aad4f64cb97b1618e5aa392ed9f8256443574f84fa88ebdbe6233",
+    "apps/api/src/api/routers/process_ui_authoring.py": "be88051ad4fb914287edc65db9f33363e2218b386543ab3b7992eca73e8c1ceb",
+    "packages/agent_adapters/src/agent_adapters/codex.py": "d6911f81bb6d11b290593c50093327ec1ce7e70420df2ba4e6e1a418e451eee3",
+    "packages/agent_adapters/src/agent_adapters/codex_transport.py": "249a70f5b1b0e8482910f077e45d8406153a252473d12d69be381994270051be"
+  }
+}

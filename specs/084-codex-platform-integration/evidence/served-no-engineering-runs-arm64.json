@@ -1,0 +1,22 @@
+{
+  "schema": "wright.codex-isolated-ui-state/1",
+  "scope": "read-only SQLite inspection of owned served workspace after shutdown",
+  "state_root": "/tmp/wright-codex-ui-pilot-20261011-02",
+  "counts": {
+    "catalog_update_previews": 0,
+    "engineering_scenario_runs": 0,
+    "mcp_onboarding_runs": 0,
+    "native_process_runs": 0,
+    "process_ui_authoring_jobs": 0,
+    "process_ui_authoring_records": 0,
+    "surface_presentations": 0,
+    "surface_runtimes": 0,
+    "workflow_artifact_reviews": 0,
+    "workspace_run_artifacts": 0,
+    "workspace_workflow_reviews": 0,
+    "workspace_workflow_run_events": 0,
+    "workspace_workflow_run_manifests": 0,
+    "workspace_workflow_runs": 0
+  },
+  "zero_engineering_runs_reviews_authoring_jobs_and_presentations": true
+}

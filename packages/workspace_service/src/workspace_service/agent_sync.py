@@ -41,7 +41,9 @@ class AgentSyncManager:
         logger.info("agent_active_runtime_selected", agent=self._active_agent)
         self._save_active_agent()
 
-    def sync_workspace_tools(self, session_id: str) -> bool:
+    def sync_workspace_tools(
+        self, session_id: str, *, agent_id: str | None = None
+    ) -> bool:
         """Record the active workspace for agent-neutral gateway/catalog sync.
 
         Provider-specific profile files are materialized by agent adapter/profile
@@ -56,7 +58,8 @@ class AgentSyncManager:
             )
             return self._gateway_restart_required
 
-        if self._active_agent == "hermes" and self._workspace_sync is not None:
+        selected = agent_id or self._active_agent
+        if selected == "hermes" and self._workspace_sync is not None:
             restart_required = bool(self._workspace_sync(session_id, self.db_path))
             if restart_required:
                 self._gateway_refresh_error = None
@@ -77,6 +80,9 @@ class AgentSyncManager:
         self._gateway_restart_required = False
         self._gateway_refresh_error = None
         self._gateway_restarted_revision = None
+
+    def sync_workspace_tools_for_agent(self, session_id: str, agent_id: str) -> bool:
+        return self.sync_workspace_tools(session_id, agent_id=agent_id)
 
     @property
     def gateway_refresh_in_progress(self) -> bool:

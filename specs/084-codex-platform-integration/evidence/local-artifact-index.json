@@ -1,0 +1,288 @@
+{
+  "worktree": "/tmp/wright-codex-platform-integration",
+  "artifacts": [
+    {
+      "path": ".local-run/codex-negative-control-20261011-final/report.json",
+      "sha256": "993aba35e92011e98094b63373ebbd8aa95bfce37b85b3fc51e739e11baab7cf",
+      "bytes": 985
+    },
+    {
+      "path": ".local-run/codex-negative-control-20261011-final/fixture-provider-requests.json",
+      "sha256": "b6c1af3f9ffd4fedd5fbef6b9cab16c97ff2d190dbba33bd9b66c59b8ecb58cf",
+      "bytes": 67446
+    },
+    {
+      "path": ".local-run/codex-lifecycle-20261011/report.json",
+      "sha256": "6203e353a5868d6acc8b24fb762ad04819e759f658279db46d9c0095ff3f98c9",
+      "bytes": 1095
+    },
+    {
+      "path": ".local-run/codex-lifecycle-20261011/fixture-provider-requests.json",
+      "sha256": "c7dd88f4fba398c03420911d5741d64711c156155fd1b14c34eae6ccfdff8a5e",
+      "bytes": 67448
+    },
+    {
+      "path": ".local-run/codex-bridge-lifecycle-20261011/report.json",
+      "sha256": "5ac95ad9ed45f3b4172f0a9a6e1049c424fd59ef0bc0d52a155b45c332d95890",
+      "bytes": 555
+    },
+    {
+      "path": ".local-run/codex-bridge-lifecycle-20261011/sdk-call-evidence.json",
+      "sha256": "ac513b1f17af4d13ff580ee07001900a8f71e9c4046e7da812f941f081afdd8a",
+      "bytes": 45308
+    },
+    {
+      "path": ".local-run/codex-bridge-lifecycle-20261011/fixture-provider-requests.json",
+      "sha256": "2e34b10cec76ba81526b65230866bdb756f61ce3a4b43f7af56316de0628e414",
+      "bytes": 67481
+    },
+    {
+      "path": ".local-run/codex-contrasting-workflow-regressions.log",
+      "sha256": "4fa761a59deffdd95ced90f8af429e68672f4f183262ca7978b894ac0ae1e93a",
+      "bytes": 199848
+    },
+    {
+      "path": ".local-run/codex-api-regression.log",
+      "sha256": "1563c0c1701d43035b8a16d8a44981c72dc9c1951caaa36fcb83a1baca2730f2",
+      "bytes": 99
+    },
+    {
+      "path": ".local-run/codex-api-selection-regression.log",
+      "sha256": "932d39762f3a17aaf9c34dde3f5c19413b86ae6e5da2b5b5f3af697c8b555e3c",
+      "bytes": 98
+    },
+    {
+      "path": ".local-run/codex-dev-push-gate.log",
+      "sha256": "68629acf1f7489633c54865aab234477b87e047f823a4e4974b184c07c15d642",
+      "bytes": 2380
+    },
+    {
+      "path": "/tmp/wright-codex-chat-pilot-20261011-07/report.json",
+      "sha256": "a1b0bb8b4561e4babfbc284e6fb8433ce1c5c581ed2f506f3ad1d0d9e4aa809e",
+      "bytes": 986
+    },
+    {
+      "path": "/tmp/wright-codex-authenticated-chat-20261011-01/report.json",
+      "sha256": "152137b68b5d3adc22f1c35f7d7288631c9e1c38de0d6d07412118f25f972ba3",
+      "bytes": 925
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/workspace-ui-report-2.json",
+      "sha256": "73c66d6b77b4c738000990d2d881fb293ccc027e372eabc44b5eba5d5d16775b",
+      "bytes": 671
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/workspace-ui-report-3.json",
+      "sha256": "1247d87b3fbdafb4565b5cc67314608dedeabeb1f66d2f6918013b949fa50b3a",
+      "bytes": 671
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/served-source-report.json",
+      "sha256": "48184d5e6649ecfda3f4c483efa0bbbaee3db6907dae2b49af65948a3780360d",
+      "bytes": 3683
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/api-restart-gates-report.json",
+      "sha256": "0e4f1f044dfe29e99f9fee34017e03f05b886c2fc781759d1996b8f926871367",
+      "bytes": 1209
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/credential-cleanup.json",
+      "sha256": "d0ee0c8189010cfb4ffad26c79e7784155bf603741afdca3a3a52ddfcf64f6e6",
+      "bytes": 81
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/credential-cleanup-restart.json",
+      "sha256": "d0ee0c8189010cfb4ffad26c79e7784155bf603741afdca3a3a52ddfcf64f6e6",
+      "bytes": 81
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-004/status.json",
+      "sha256": "2a3f74779a1506bcc12de49b629ede723e422d71a4660e78088767e7890430a6",
+      "bytes": 6433
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-007/status.json",
+      "sha256": "f28ace528c7747d1c135deac64dfa344fc19d704a8a5bd51651f74fcb4e2c80b",
+      "bytes": 3652
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-008/status.json",
+      "sha256": "6272374720c8e3c309c54186401de7a8278d2f499e50af6a5bc7c6e225feb129",
+      "bytes": 2323
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/no-engineering-runs-report.json",
+      "sha256": "9d3168afc2f475949f665f9031ba91da702268820c3406ba3e699de338c7975c",
+      "bytes": 772
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-fixture-normal-api.json",
+      "sha256": "4cd3fd6955db534457e1b179a4aa9faa69103ec54e607eba667e5bda8ac6cc94",
+      "bytes": 251
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-fixture-copy.json",
+      "sha256": "bbe4c28b6743e62804c3d453787331837ad60966404e198c8acaa065384cd297",
+      "bytes": 460
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-trace-004.zip",
+      "sha256": "9479c562ddda3eccef50c5fcf6f35bdf104c55535524a1c3f4007ab884c07628",
+      "bytes": 18010893
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-trace-007.zip",
+      "sha256": "cd221525b80aaa9b997d7d199c1ad48e93f3970aae4446e3e9faa57291b6124a",
+      "bytes": 5165865
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/editor-trace-008.zip",
+      "sha256": "70301872e08a0efae6f5c99afdee0b9e0320ec1d11986c41fd208aedc04d6d60",
+      "bytes": 4125036
+    },
+    {
+      "path": "/tmp/wright-codex-ui-pilot-20261011-02/workspace-workflows.png",
+      "sha256": "afb3af648e9d00d06719b9af67357e673de004c682bb54cb32c93f36384dd4c2",
+      "bytes": 202010
+    },
+    {
+      "path": ".local-run/codex-final-foundations.log",
+      "sha256": "a0224f60dc44dc02adff870dad7b1750934684245294f9bcd51b92e97e7f1ff2",
+      "bytes": 1234
+    },
+    {
+      "path": ".local-run/codex-final-safety-regression-2.log",
+      "sha256": "52e39f093c04ecef6e4470b9dc7c2586f9d828567a18e07a616c7781679eaf7f",
+      "bytes": 1059
+    },
+    {
+      "path": ".local-run/codex-final-routing-role-2.log",
+      "sha256": "fcccac5b0dbffde690bb640608afa3ead04b026b8dad71a4365901cbbd8bbb1b",
+      "bytes": 979
+    },
+    {
+      "path": ".local-run/codex-existing-platform-regression-2.log",
+      "sha256": "0ffda0ab543cc18b9bc9e0cfa285693340e9e00998a676308f7e3f45c416c0c8",
+      "bytes": 989
+    },
+    {
+      "path": ".local-run/codex-final-web-regression.log",
+      "sha256": "71bc65fd0309016b1fab7ac8485a3d4f3a5f8bf5955908a9ee94b0327ab2c13d",
+      "bytes": 437
+    },
+    {
+      "path": ".local-run/codex-web-build-final-2.log",
+      "sha256": "189667b7b0d491991d355ad179613ece67f3fc70a0e49be579546e932b4f37e5",
+      "bytes": 1035
+    },
+    {
+      "path": ".local-run/codex-dev-merge-gate.log",
+      "sha256": "c931f65f6dd62afe957d68f881091b42c26b225841eeca0b4a1493d53a71852b",
+      "bytes": 1573
+    },
+    {
+      "path": ".local-run/codex-chat-pilot-07.log",
+      "sha256": "a1b0bb8b4561e4babfbc284e6fb8433ce1c5c581ed2f506f3ad1d0d9e4aa809e",
+      "bytes": 986
+    },
+    {
+      "path": ".local-run/codex-authenticated-chat-01.log",
+      "sha256": "152137b68b5d3adc22f1c35f7d7288631c9e1c38de0d6d07412118f25f972ba3",
+      "bytes": 925
+    },
+    {
+      "path": ".local-run/codex-workspace-ui-2.log",
+      "sha256": "73c66d6b77b4c738000990d2d881fb293ccc027e372eabc44b5eba5d5d16775b",
+      "bytes": 671
+    },
+    {
+      "path": ".local-run/codex-workspace-ui-3.log",
+      "sha256": "1247d87b3fbdafb4565b5cc67314608dedeabeb1f66d2f6918013b949fa50b3a",
+      "bytes": 671
+    },
+    {
+      "path": ".local-run/codex-served-source-identity.log",
+      "sha256": "4d707099d2eaaee7c23b1d748b30942daff2e06d1d34ea2812fe855410c657a1",
+      "bytes": 38
+    },
+    {
+      "path": ".local-run/serve-codex-ui-pilot.py",
+      "sha256": "f5bb727f88184e85de446657fa5e40f8b6635c4d25970695deba7ff8a8b38674",
+      "bytes": 2232
+    },
+    {
+      "path": ".local-run/restart-codex-ui-pilot.py",
+      "sha256": "092de1db36fedd295ddfeab63401a799d6e5d9ca136e696d056520435fb98dae",
+      "bytes": 2236
+    },
+    {
+      "path": ".local-run/check-codex-workspace-ui.cjs",
+      "sha256": "6e39fadd312dae79af34ec53cfedcf2a7c86f808ff4f30cb87a1755acb9acfa5",
+      "bytes": 2369
+    },
+    {
+      "path": ".local-run/verify-served-codex-source.cjs",
+      "sha256": "00d013936dc72ebdf2407983e63bbe842aa36a06f63e18c8020ba694541b9ee0",
+      "bytes": 2378
+    },
+    {
+      "path": "test-results/docker-image-security/20261011T174820Z-94734761/public/raw-hashes.json",
+      "sha256": "288a332c224725b38baa33e51f95cc661fed419d9774b47403bcedfa864c3d02",
+      "bytes": 440
+    },
+    {
+      "path": "test-results/docker-image-security/20261011T174820Z-94734761/public/scan.json",
+      "sha256": "9e91d541bed50b73b3ee95db46783034aabaf12f80bdd04cf20e893a78775c55",
+      "bytes": 442
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_no_tools.py",
+      "sha256": "ea3641336bdb3212e56ee0d6bbb80288c54e409a540e51af730e8b2140f91449",
+      "bytes": 13494
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_workspace_editor_008.mjs",
+      "sha256": "7536a8857b1d6053a513271413daa4100414f45ec5320027b14aeeb54e3dffdd",
+      "bytes": 11446
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_authenticated_chat.py",
+      "sha256": "972b51d5f25554cfbc5500820a43be37a2c829306dee5d10ca83066cd48a2861",
+      "bytes": 7987
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_chat_pilot.py",
+      "sha256": "1043bdf1068f2ae0ad15d3acca0d524cf5ed62da5798b39421cdfb2d342e7c90",
+      "bytes": 13396,
+      "scope": "Committed formatter-normalized source; original executed bytes retained separately"
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_workspace_editor_004.mjs",
+      "sha256": "3271cab493f81abcbbbdeccf64dc859971c9e46d3cb054f5f74f2726b64c5fc3",
+      "bytes": 13885
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_bridge.py",
+      "sha256": "e85355414073000135f403ba841d6293de60fc933bd9aa54c9f0d1033a9bbacf",
+      "bytes": 7981
+    },
+    {
+      "path": "specs/084-codex-platform-integration/probes/qualify_workspace_editor_007.mjs",
+      "sha256": "c6c26b1184a6ad76d0f84fd90281a4c0b5c335b3cf7f6efad81d69ecaae7be31",
+      "bytes": 12872
+    },
+    {
+      "path": ".local-run/qualify_chat_pilot.executed.py",
+      "sha256": "e6d2f83088b5c0769297e9727dca5540326b860c520270259cfd90ef571c5690",
+      "bytes": 13365,
+      "scope": "Executed source before formatting only; behavior unchanged"
+    }
+  ],
+  "notes": [
+    "Historical observations and hashes are retained; later reports do not rewrite failed qualification.",
+    "Absolute /tmp paths are local artifacts, not portable bundled evidence. Credential files and raw SQLite/native transcript contents are not committed.",
+    "Editor harnesses preserve latest reviewed Feature 083 scenarios; 007 compact-viewport check is proved by stricter 008.",
+    "Repeated served-chat report JSONs were reconstructed from their retained console JSON after the probe reused its report filename; their distinct logs retain provenance."
+  ]
+}

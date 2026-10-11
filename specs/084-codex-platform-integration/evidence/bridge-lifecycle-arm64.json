@@ -1,0 +1,19 @@
+{
+  "schema": "wright.codex-bridge-qualification/1",
+  "result": "PASSED_LOCAL_BRIDGE_LIFECYCLE",
+  "live_openai_request": false,
+  "authenticated": false,
+  "same_thread_on_resume": true,
+  "resolved_configuration_unchanged": true,
+  "configuration_sha256": "2a940f935a964ecf6e954bda04bf810ade1371e1d5d1ddf69536a4342c22db73",
+  "interruption_acknowledgement": {},
+  "persisted_terminal_statuses": [
+    "completed",
+    "interrupted"
+  ],
+  "capture_scopes": [
+    "app_server_sdk_call"
+  ],
+  "no_tools_qualified": false,
+  "gateway_qualified": false
+}

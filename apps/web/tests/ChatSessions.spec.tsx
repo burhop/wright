@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { StrictMode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatProvider, useChat } from "../src/store/sessions";
 import agentService from "../src/services/agent-service";
@@ -150,6 +151,13 @@ describe("ChatProvider session state", () => {
       active: false,
       sessionId: "session-1",
     });
+  });
+
+  it("restores backend history after StrictMode cleanup and reactivation", async () => {
+    vi.mocked(agentService.listSessions).mockResolvedValue([{sessionId:"session-1",title:"Codex pilot",createdAt:1000,updatedAt:1001}]);
+    vi.mocked(agentService.getSessionHistory).mockResolvedValue([{id:"reply",role:"assistant",content:"Restored Codex history",timestamp:1001,traceId:null}]);
+    render(<StrictMode><ChatProvider><ChatMessagesHarness /></ChatProvider></StrictMode>);
+    await screen.findByText(/assistant:Restored Codex history/);
   });
 
   it("deduplicates sessions returned by backend refreshes", async () => {
@@ -805,7 +813,7 @@ describe("ChatProvider session state", () => {
     await waitFor(
       () => {
         expect(
-          screen.getByText(/Hermes ended the chat turn/i),
+          screen.getByText(/agent ended the chat turn/i),
         ).toBeInTheDocument();
       },
       { timeout: 5_000 },
