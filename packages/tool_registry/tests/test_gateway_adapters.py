@@ -70,6 +70,38 @@ def test_database_gateway_catalog_projects_only_policy_required_approvals(
     )
 
 
+def test_catalog_tools_reads_only_requested_server_and_rechecks_authority(
+    tmp_path, monkeypatch
+):
+    import tool_registry.gateway_adapters as adapters
+
+    db_path = str(tmp_path / "catalog-scope.db")
+    upgrade_database(db_path)
+    insert_server(db_path, _server("selected", risk_level="low"))
+    insert_server(db_path, _server("unrelated", risk_level="low"))
+    insert_tools(db_path, [_tool("selected")])
+    reads = []
+    original = adapters.get_server
+
+    def exact_server(db, server_id):
+        reads.append(server_id)
+        return original(db, server_id)
+
+    def forbidden_scan(*args):
+        raise AssertionError("A server tool read must not enumerate all servers")
+
+    monkeypatch.setattr(adapters, "get_server", exact_server)
+    monkeypatch.setattr(adapters, "get_servers", forbidden_scan)
+    catalog = DatabaseGatewayCatalog(db_path)
+    first = catalog.tools("selected")[0]
+    update_server(db_path, "selected", {"risk_level": "high"})
+    second = catalog.tools("selected")[0]
+    assert not first.required_approvals
+    assert second.required_approvals == frozenset({"wright-mcp-appliance-bundle"})
+    assert catalog.tools("missing") == ()
+    assert reads == ["selected", "selected", "missing"]
+
+
 def test_database_gateway_server_revision_ignores_health_but_tracks_authority(
     tmp_path,
 ) -> None:

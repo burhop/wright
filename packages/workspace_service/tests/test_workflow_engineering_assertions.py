@@ -1,3 +1,5 @@
+import pytest
+
 from workspace_service.workflow_additive_manufacturing import verify_print_package
 from workspace_service.workflow_enclosure_cfd import verify_enclosure_cfd
 from workspace_service.workflow_engineering_assertions import all_pass
@@ -6,6 +8,52 @@ from workspace_service.workflow_supplier_handoff import verify_supplier_preview
 
 DIGEST = "a" * 64
 EVIDENCE = ["artifacts/result.json#sha256=" + DIGEST]
+
+
+@pytest.mark.parametrize(
+    "dimensions, volume, volume_state",
+    [
+        ([80, 70, 60], [220, 220, 250], "pass"),
+        ([280, 150, 140], [300, 200, 150], "pass"),
+        ([221, 70, 60], [220, 220, 250], "fail"),
+        ([280, 150, 151], [300, 200, 150], "fail"),
+    ],
+)
+def test_print_package_guidance_uses_selected_profiles_for_different_machines(
+    dimensions, volume, volume_state
+):
+    results = verify_print_package(
+        {
+            "reference_dimension_mm": 40,
+            "scale_applied": True,
+            "manifold": True,
+            "watertight": True,
+            "dimensions_mm": dimensions,
+            "build_volume_mm": volume,
+            "supports_generated": True,
+            "toolpath_valid": True,
+            "profile_compatible": False,
+            "evidence": EVIDENCE,
+        }
+    )
+    assert (
+        next(
+            result
+            for result in results
+            if result.assertion_id == "additive.build-volume"
+        ).state
+        == volume_state
+    )
+    profile = next(
+        result
+        for result in results
+        if result.assertion_id == "additive.supported-slice"
+    )
+    assert profile.state == "fail"
+    assert profile.correction == (
+        "Regenerate and inspect the support-bearing slice with the selected "
+        "machine, material, and process profiles."
+    )
 
 
 def test_print_package_checks_actual_scale_topology_volume_and_slice():

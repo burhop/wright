@@ -12,6 +12,7 @@ import json
 import subprocess
 import time
 import urllib.parse
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -19,6 +20,7 @@ import psutil
 
 
 BACKEND_SOURCE_FILES = (
+    "packages/core/src/core/process_validation.py",
     "apps/api/src/api/main.py",
     "apps/api/src/api/routers/setup.py",
     "apps/api/src/api/routers/agent.py",
@@ -26,16 +28,23 @@ BACKEND_SOURCE_FILES = (
     "apps/api/src/api/schemas/workspace.py",
     "packages/agent_adapters/src/agent_adapters/hermes.py",
     "packages/agent_adapters/src/agent_adapters/hermes_config.py",
+    "packages/workspace_service/src/workspace_service/agent_sync.py",
+    "packages/workspace_service/src/workspace_service/process_validation/process.py",
     "packages/workspace_service/src/workspace_service/workflow_sources.py",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 )
 OPERATOR_SOURCE_FILE = "scripts/recovery/restart_authoring_api.py"
 MODULE_SOURCE_FILES = {
+    "core.process_validation": "packages/core/src/core/process_validation.py",
     "api.main": "apps/api/src/api/main.py",
     "api.routers.setup": "apps/api/src/api/routers/setup.py",
     "api.routers.agent": "apps/api/src/api/routers/agent.py",
     "agent_adapters.hermes": "packages/agent_adapters/src/agent_adapters/hermes.py",
     "agent_adapters.hermes_config": "packages/agent_adapters/src/agent_adapters/hermes_config.py",
+    "workspace_service.agent_sync": "packages/workspace_service/src/workspace_service/agent_sync.py",
+    "workspace_service.process_validation.process": "packages/workspace_service/src/workspace_service/process_validation/process.py",
     "workspace_service.workflow_sources": "packages/workspace_service/src/workspace_service/workflow_sources.py",
+    "workspace_service.workflow_source_execution": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
 }
 
 # Resolve leaf modules without importing any application package, including
@@ -78,8 +87,30 @@ def git_output(repo: Path, *args: str) -> str:
     return result.stdout.strip()
 
 
-def snapshot_code_identity(repo: Path) -> dict[str, object]:
-    if git_output(repo, "status", "--porcelain", "--untracked-files=no") or git_output(
+def snapshot_code_identity(
+    repo: Path, *, preserve_documents: tuple[str, ...] = ()
+) -> dict[str, object]:
+    preserved = {}
+    exclusions = []
+    for relative in preserve_documents:
+        path = (repo / relative).resolve(strict=True)
+        if (
+            Path(relative).is_absolute()
+            or not path.is_relative_to(repo.resolve())
+            or Path(relative).as_posix() != path.relative_to(repo.resolve()).as_posix()
+            or path.suffix.lower() != ".md"
+            or not (
+                relative == "AGENTS.md"
+                or relative.startswith(("docs/", "specs/", "tests/datasets/"))
+            )
+        ):
+            raise RuntimeError("Only explicit in-repository documentation may be preserved")
+        git_output(repo, "ls-files", "--error-unmatch", "--", relative)
+        preserved[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+        exclusions.append(f":(literal,exclude){relative}")
+    status_args = ("status", "--porcelain", "--untracked-files=no")
+    scoped_status = git_output(repo, *status_args, "--", ".", *exclusions) if exclusions else git_output(repo, *status_args)
+    if scoped_status or git_output(
         repo,
         "ls-files",
         "--others",
@@ -111,7 +142,8 @@ def snapshot_code_identity(repo: Path) -> dict[str, object]:
     return {
         "git_commit": git_output(repo, "rev-parse", "HEAD"),
         "git_tree": git_output(repo, "rev-parse", "HEAD^{tree}"),
-        "tracked_worktree_clean": True,
+        "tracked_worktree_clean": not bool(git_output(repo, *status_args)) if preserved else True,
+        "preserved_document_sha256": preserved,
         "backend_files": [file_identity(relative) for relative in BACKEND_SOURCE_FILES],
         "operator_helper": file_identity(OPERATOR_SOURCE_FILE),
     }
@@ -161,11 +193,14 @@ def probe_module_origins(
 
 
 def capture_code_provenance(
-    repo: Path, environment: dict[str, str]
+    repo: Path, environment: dict[str, str], *, preserve_documents: tuple[str, ...] = ()
 ) -> dict[str, object]:
-    before = snapshot_code_identity(repo)
+    def snapshot():
+        return snapshot_code_identity(repo, preserve_documents=preserve_documents) if preserve_documents else snapshot_code_identity(repo)
+
+    before = snapshot()
     origins = probe_module_origins(repo, environment)
-    if snapshot_code_identity(repo) != before:
+    if snapshot() != before:
         raise RuntimeError("Backend code changed during the module-origin probe")
     hashes = {value["path"]: value["sha256"] for value in before["backend_files"]}
     if any(
@@ -203,10 +238,15 @@ def validate_api_process_command(
         and Path(command[1]) == executable
         and command[2:] == suffix
     )
-    if (
-        not 1 <= port <= 65535
-        or Path(cwd).resolve() != repo / "apps/api"
-        or not (direct or wrapped)
+    module = (
+        len(command) == len(suffix) + 3
+        and Path(command[0]) == python
+        and command[1:3] == ["-m", "uvicorn"]
+        and command[3:] == suffix
+        and Path(cwd).resolve() == repo
+    )
+    if not 1 <= port <= 65535 or not (
+        module or (Path(cwd).resolve() == repo / "apps/api" and (direct or wrapped))
     ):
         raise RuntimeError("The requested process is not the exact owned API")
 
@@ -232,6 +272,49 @@ def find_launched_api_listener(
     raise RuntimeError("The launched API process tree does not own its listening port")
 
 
+def snapshot_local_workflows(workspace: Path) -> dict[str, str]:
+    """Protect even pre-existing invalid documents without repairing their bytes."""
+    workspace = workspace.resolve(strict=True)
+    directory = workspace / "workflows"
+    if not directory.is_dir() or not directory.resolve().is_relative_to(workspace):
+        raise RuntimeError("The registered workflow directory is unavailable")
+    result = {}
+    for path in directory.rglob("*"):
+        if not path.resolve().is_relative_to(workspace):
+            raise RuntimeError("A workflow file escaped the registered workspace")
+        if path.is_file():
+            result[path.relative_to(workspace).as_posix()] = hashlib.sha256(
+                path.read_bytes()
+            ).hexdigest()
+    return result
+
+
+def preserved_integrity_error(
+    error: urllib.error.HTTPError, path: str, snapshots: dict[str, str]
+) -> bool:
+    if error.code != 503 or path not in snapshots:
+        return False
+    try:
+        return json.load(error).get("error_code") == "workflow_source_integrity"
+    except (ValueError, AttributeError):
+        return False
+
+
+def wait_for_source(get, route, child, timeout_seconds):
+    """Observe this launch through bounded database/native startup, never relaunch."""
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline:
+        try:
+            return get(route, timeout=min(10, deadline - time.monotonic()))
+        except (OSError, ValueError):
+            if child.poll() is not None:
+                raise RuntimeError("Restarted API exited; inspect the scoped restart log")
+            remaining = deadline - time.monotonic()
+            if remaining > 0:
+                time.sleep(min(1, remaining))
+    raise RuntimeError("Restarted API is not ready within the observation deadline; inspect its process and scoped logs before taking further action")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pid", type=int, required=True)
@@ -241,7 +324,11 @@ def main() -> None:
     parser.add_argument("--workspace", required=True)
     parser.add_argument("--source", required=True)
     parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--startup-timeout", type=float, default=900, help="Bounded observation of the one launched process, including database integrity checks (seconds, maximum 1800).")
+    parser.add_argument("--preserve-document", action="append", default=[], help="Explicit tracked Markdown documentation allowed to remain dirty; bytes must stay unchanged. Runtime code must remain committed and clean.")
     args = parser.parse_args()
+    if not 0 < args.startup_timeout <= 1800:
+        parser.error("--startup-timeout must be positive and at most 1800 seconds")
     repo = args.repo.resolve(strict=True)
     evidence = args.evidence.resolve()
     if not evidence.is_relative_to(repo / ".local-run"):
@@ -249,8 +336,8 @@ def main() -> None:
             "Restart evidence must stay inside the checkout's .local-run directory"
         )
     process = psutil.Process(args.pid)
-    executable = repo / ".venv/Scripts/uvicorn.exe"
     command = process.cmdline()
+    working_directory = process.cwd()
     validate_api_process_command(repo, args.port, command, process.cwd())
     if not any(
         connection.laddr.port == args.port and connection.status == "LISTEN"
@@ -259,8 +346,8 @@ def main() -> None:
         raise RuntimeError("The requested process does not own the API listening port")
     base = f"http://127.0.0.1:{args.port}"
 
-    def get(route: str):
-        with urllib.request.urlopen(base + route, timeout=10) as response:
+    def get(route: str, *, timeout=10):
+        with urllib.request.urlopen(base + route, timeout=timeout) as response:
             if "application/json" not in response.headers.get("Content-Type", ""):
                 raise RuntimeError("The API route did not return JSON")
             return json.load(response)
@@ -271,6 +358,14 @@ def main() -> None:
     before = get(source_route)
     if before["workspace_id"] != args.workspace or before["path"] != args.source:
         raise RuntimeError("The before-state was not the exact workspace document")
+    registered = get(
+        "/api/workspace/by-id/" + urllib.parse.quote(args.workspace, safe="")
+    )
+    if registered["workspace_id"] != args.workspace:
+        raise RuntimeError("The registered workspace identity changed")
+    local_workspace = Path(registered["local_path"]).resolve(strict=True)
+    local_before = snapshot_local_workflows(local_workspace)
+    preserved_invalid_documents = []
     files_route = (
         "/api/workspace/workflow-sources/input-files?"
         + urllib.parse.urlencode({"session_id": args.session})
@@ -286,10 +381,28 @@ def main() -> None:
             route = "/api/workspace/workflow-sources?" + urllib.parse.urlencode(
                 {"session_id": args.session, "path": choice["path"]}
             )
-            before_documents[choice["path"]] = get(route)
+            try:
+                before_documents[choice["path"]] = get(route)
+            except urllib.error.HTTPError as error:
+                if not preserved_integrity_error(error, choice["path"], local_before):
+                    raise
+                preserved_invalid_documents.append(choice["path"])
     environment = process.environ()  # carried in memory only, never printed
-    code_before = capture_code_provenance(repo, environment)
+    preserve_documents = tuple(args.preserve_document)
+    code_before = capture_code_provenance(repo, environment, preserve_documents=preserve_documents)
+    if snapshot_local_workflows(local_workspace) != local_before:
+        raise RuntimeError("Workspace files changed during restart preflight")
     evidence.mkdir(parents=True, exist_ok=False)
+    (evidence / "before-restart.json").write_text(json.dumps({
+        "previous_pid": args.pid,
+        "code_provenance": code_before,
+        "local_workflow_file_sha256": local_before,
+        "source_identities": {
+            path: {key: document[key] for key in ("workspace_id", "path", "storage_revision", "storage_digest", "definition_revision")}
+            for path, document in before_documents.items()
+        },
+        "preexisting_integrity_errors_preserved": preserved_invalid_documents,
+    }, indent=2) + "\n", encoding="utf-8")
     process.terminate()
     process.wait(timeout=15)
     with (
@@ -297,30 +410,14 @@ def main() -> None:
         (evidence / "stderr.log").open("wb") as stderr,
     ):
         child = subprocess.Popen(
-            [
-                str(executable),
-                "api.main:app",
-                "--host",
-                "127.0.0.1",
-                "--port",
-                str(args.port),
-            ],
-            cwd=repo / "apps/api",
+            command,
+            cwd=working_directory,
             env=environment,
             stdout=stdout,
             stderr=stderr,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
-    for attempt in range(30):
-        try:
-            after = get(source_route)
-            break
-        except (OSError, ValueError):
-            if child.poll() is not None or attempt == 29:
-                raise RuntimeError(
-                    "Restarted API is unavailable; inspect the scoped restart log"
-                )
-            time.sleep(1)
+    after = wait_for_source(get, source_route, child, args.startup_timeout)
     keys = (
         "workspace_id",
         "path",
@@ -353,9 +450,11 @@ def main() -> None:
     if files["workspace_id"] != args.workspace:
         raise RuntimeError("File choices were not scoped to the requested workspace")
     listener = find_launched_api_listener(child.pid, repo, args.port)
-    code_after = capture_code_provenance(repo, listener.environ())
+    code_after = capture_code_provenance(repo, listener.environ(), preserve_documents=preserve_documents)
     if code_after != code_before:
         raise RuntimeError("Committed code or module origins changed across restart")
+    if snapshot_local_workflows(local_workspace) != local_before:
+        raise RuntimeError("Workspace file bytes changed across restart")
     result = {
         "started_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "previous_pid": args.pid,
@@ -369,6 +468,9 @@ def main() -> None:
         "code_provenance": code_after,
         "code_identity_unchanged_across_restart": True,
         "source_unchanged": True,
+        "all_local_workflow_files_unchanged": True,
+        "local_workflow_file_sha256": local_before,
+        "preexisting_integrity_errors_preserved": preserved_invalid_documents,
         "source_sha256": hashlib.sha256(after["source"].encode()).hexdigest(),
         "storage_revision": after["storage_revision"],
         "storage_digest": after["storage_digest"],

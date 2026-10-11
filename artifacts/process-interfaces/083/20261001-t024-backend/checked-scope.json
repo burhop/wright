@@ -1,0 +1,277 @@
+{
+  "date": "2026-10-01",
+  "python": "3.13.5",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "branch": "codex/083-process-working-interfaces",
+  "base_commit": "6d449f60",
+  "scope": "Real SQLite/files/source executor/recorder, with synthetic model/reviewer fixtures; no served API/browser or live engineering acceptance",
+  "result": {
+    "passed": 184,
+    "skipped": 0,
+    "duration_seconds": 58.45
+  },
+  "proofs": [
+    {
+      "test": "test_two_source_barriers_resum",
+      "run_id": "same-run",
+      "run_log_path": "runs/input.wflow/20261001T075128Z-6664b9277b15.json",
+      "run_log_sha256": "f5ca696ac6049ba9ec079f1797d96e1fce09ceef34550e1ac8ab5874106e64e4",
+      "recorded_state": "completed",
+      "completed_task_ids": [
+        "first",
+        "choice",
+        "second",
+        "choice_two",
+        "final"
+      ],
+      "resume_segments": {
+        "checkpoint-0487a3dc65b19170953df9fd": {
+          "state": "completed",
+          "subject_digest": "f30494ade6d839848bdde64c88feb08f8145af038b1b7e97116ec55af5773efb",
+          "started_at": "2026-10-01T07:51:29.619632+00:00",
+          "finished_at": "2026-10-01T07:51:30.094657+00:00"
+        },
+        "checkpoint-4cb90ec645dde7752b813754": {
+          "state": "completed",
+          "subject_digest": "0fd1fc90c2fa77bdcb717f73c3d1e14bc8f858b66af8d420c4d02f922ddf0b71",
+          "started_at": "2026-10-01T07:51:30.478487+00:00",
+          "finished_at": "2026-10-01T07:51:30.977545+00:00"
+        }
+      },
+      "checkpoints": [
+        {
+          "checkpoint_id": "checkpoint-0487a3dc65b19170953df9fd",
+          "state": "consumed",
+          "action_kind": "human_input",
+          "subject_digest": "f30494ade6d839848bdde64c88feb08f8145af038b1b7e97116ec55af5773efb",
+          "schema_version": 3,
+          "checkpoint_kind": "input",
+          "input_snapshot_id": "inputs-one",
+          "input_digest": "ebf743ac5da10f38c4bc83f1a7dbb3a5f4cdd522f9157b5a34425a3bc8aa7df7",
+          "response_id": "response-12b696bc4c5a0412ecc6c3d4",
+          "response_digest": "61335c4e68dd1387f8829e03a1ce334fb21de0c74a5bcfbe5a8bcad037e535bd",
+          "actor": "isolated-test-actor",
+          "reason": "Synthetic unit response; no engineering acceptance."
+        },
+        {
+          "checkpoint_id": "checkpoint-4cb90ec645dde7752b813754",
+          "state": "consumed",
+          "action_kind": "human_input",
+          "subject_digest": "0fd1fc90c2fa77bdcb717f73c3d1e14bc8f858b66af8d420c4d02f922ddf0b71",
+          "schema_version": 3,
+          "checkpoint_kind": "input",
+          "input_snapshot_id": "inputs-one",
+          "input_digest": "ebf743ac5da10f38c4bc83f1a7dbb3a5f4cdd522f9157b5a34425a3bc8aa7df7",
+          "response_id": "response-9fe585343773358d3a300f4f",
+          "response_digest": "7e10893b0b3c08008cac04f7c97ab8c674d79cbd140fbf81b132fbbb0b4afe19",
+          "actor": "isolated-test-actor",
+          "reason": "Synthetic unit response; no engineering acceptance."
+        }
+      ],
+      "responses": [
+        {
+          "actor": "isolated-test-actor",
+          "checkpoint_id": "checkpoint-0487a3dc65b19170953df9fd",
+          "created_at": "2026-10-01T07:51:29.384207+00:00",
+          "digest": "61335c4e68dd1387f8829e03a1ce334fb21de0c74a5bcfbe5a8bcad037e535bd",
+          "input_digest": "ebf743ac5da10f38c4bc83f1a7dbb3a5f4cdd522f9157b5a34425a3bc8aa7df7",
+          "integration_test": true,
+          "reason": "Synthetic unit response; no engineering acceptance.",
+          "request_id": "respond-one",
+          "response_id": "response-12b696bc4c5a0412ecc6c3d4",
+          "run_id": "same-run",
+          "schema_digest": "a474a42831a84585dbad3d139585ba095ccd94541122f8f14ef38be85d81b153",
+          "subject_digest": "f30494ade6d839848bdde64c88feb08f8145af038b1b7e97116ec55af5773efb",
+          "value": {
+            "selection": "a"
+          },
+          "workspace_id": "ws"
+        },
+        {
+          "actor": "isolated-test-actor",
+          "checkpoint_id": "checkpoint-4cb90ec645dde7752b813754",
+          "created_at": "2026-10-01T07:51:30.264578+00:00",
+          "digest": "7e10893b0b3c08008cac04f7c97ab8c674d79cbd140fbf81b132fbbb0b4afe19",
+          "input_digest": "ebf743ac5da10f38c4bc83f1a7dbb3a5f4cdd522f9157b5a34425a3bc8aa7df7",
+          "integration_test": true,
+          "reason": "Synthetic unit response; no engineering acceptance.",
+          "request_id": "respond-two",
+          "response_id": "response-9fe585343773358d3a300f4f",
+          "run_id": "same-run",
+          "schema_digest": "a474a42831a84585dbad3d139585ba095ccd94541122f8f14ef38be85d81b153",
+          "subject_digest": "0fd1fc90c2fa77bdcb717f73c3d1e14bc8f858b66af8d420c4d02f922ddf0b71",
+          "value": {
+            "selection": "b"
+          },
+          "workspace_id": "ws"
+        }
+      ]
+    },
+    {
+      "test": "test_v3_approval_after_input_r",
+      "run_id": "d4c67b00803d499a99d7a641b7c3bbb9",
+      "run_log_path": "runs/input.wflow/20261001T075133Z-f80c3e84f892.json",
+      "run_log_sha256": "3bc6f9e10f56ae031b807d80b2aa4b6b559eab52037b2653a70765e3a48edae0",
+      "recorded_state": "completed",
+      "completed_task_ids": [
+        "first",
+        "choice",
+        "second",
+        "review",
+        "finish"
+      ],
+      "resume_segments": {
+        "checkpoint-121cd5acdd846c667ef8fbda": {
+          "state": "completed",
+          "subject_digest": "b814916f4e097ffb641e39576e49697850d1b5e9a6202b78458368773a7b1479",
+          "started_at": "2026-10-01T07:51:34.221777+00:00",
+          "finished_at": "2026-10-01T07:51:34.627285+00:00"
+        },
+        "checkpoint-958b3625ac53e96702f6caa7": {
+          "state": "completed",
+          "subject_digest": "1575c76b0ec14ee8c8ef44d3539b9bba6479f4e6a25fdfa3d3b5490817c8f4ed",
+          "started_at": "2026-10-01T07:51:34.902620+00:00",
+          "finished_at": "2026-10-01T07:51:35.214628+00:00"
+        }
+      },
+      "checkpoints": [
+        {
+          "checkpoint_id": "checkpoint-121cd5acdd846c667ef8fbda",
+          "state": "consumed",
+          "action_kind": "human_input",
+          "subject_digest": "b814916f4e097ffb641e39576e49697850d1b5e9a6202b78458368773a7b1479",
+          "schema_version": 3,
+          "checkpoint_kind": "input",
+          "input_snapshot_id": "run-specific-inputs",
+          "input_digest": "1c67dfa22da3474b1a4adb223d0524324fab31325edd0df6ad95ae1e21d39cbe",
+          "response_id": "response-9ad9b1f0a597bff650f6d9a8",
+          "response_digest": "2b300e7008bbc86627f52a3cc9e56bcc034ad5f00d85cd75593fdf4b0813f057",
+          "actor": "isolated-test-actor",
+          "reason": "Synthetic unit response; no engineering acceptance."
+        },
+        {
+          "checkpoint_id": "checkpoint-958b3625ac53e96702f6caa7",
+          "state": "consumed",
+          "action_kind": "local_review",
+          "subject_digest": "1575c76b0ec14ee8c8ef44d3539b9bba6479f4e6a25fdfa3d3b5490817c8f4ed",
+          "schema_version": 3,
+          "checkpoint_kind": "approval",
+          "input_snapshot_id": "run-specific-inputs",
+          "input_digest": "1c67dfa22da3474b1a4adb223d0524324fab31325edd0df6ad95ae1e21d39cbe",
+          "response_id": null,
+          "response_digest": null,
+          "actor": "isolated-unit-reviewer",
+          "reason": "Synthetic unit decision, no engineering acceptance or external effects"
+        }
+      ],
+      "responses": [
+        {
+          "actor": "isolated-test-actor",
+          "checkpoint_id": "checkpoint-121cd5acdd846c667ef8fbda",
+          "created_at": "2026-10-01T07:51:33.978285+00:00",
+          "digest": "2b300e7008bbc86627f52a3cc9e56bcc034ad5f00d85cd75593fdf4b0813f057",
+          "input_digest": "1c67dfa22da3474b1a4adb223d0524324fab31325edd0df6ad95ae1e21d39cbe",
+          "integration_test": true,
+          "reason": "Synthetic unit response; no engineering acceptance.",
+          "request_id": "respond-one",
+          "response_id": "response-9ad9b1f0a597bff650f6d9a8",
+          "run_id": "d4c67b00803d499a99d7a641b7c3bbb9",
+          "schema_digest": "a474a42831a84585dbad3d139585ba095ccd94541122f8f14ef38be85d81b153",
+          "subject_digest": "b814916f4e097ffb641e39576e49697850d1b5e9a6202b78458368773a7b1479",
+          "value": {
+            "selection": "a"
+          },
+          "workspace_id": "ws"
+        }
+      ]
+    },
+    {
+      "test": "test_interrupted_input_contin",
+      "run_id": "fa619d81b06b4e6fbc17820684e379c2",
+      "run_log_path": "runs/input.wflow/20261001T075131Z-5b429c9c54dd.json",
+      "run_log_sha256": "8361b894faae52d0f90dbf44c4db5f40e789813717d18c44fc9607ee53515ceb",
+      "recorded_state": "failed",
+      "completed_task_ids": [
+        "first"
+      ],
+      "resume_segments": {
+        "checkpoint-6a6c65090dc8b6df25eed625": {
+          "state": "outcome_unknown",
+          "subject_digest": "c7551246db2fb64365232bfcfffac2e4032444ed6417eab49866dba1886ed2de",
+          "started_at": "2026-10-01T07:51:31.942935+00:00"
+        }
+      },
+      "checkpoints": [
+        {
+          "checkpoint_id": "checkpoint-6a6c65090dc8b6df25eed625",
+          "state": "consumed",
+          "action_kind": "human_input",
+          "subject_digest": "c7551246db2fb64365232bfcfffac2e4032444ed6417eab49866dba1886ed2de",
+          "schema_version": 3,
+          "checkpoint_kind": "input",
+          "input_snapshot_id": "inputs-one",
+          "input_digest": "6a9f6802ba6a0f602bc611a4a078f86acacaa4bcf6fe58b337796703df4a1f00",
+          "response_id": "response-48b70a9f4c61acd4a840ccbe",
+          "response_digest": "59e8de4c5475b5cfa8418536c5d940019b3d2f5d2b45a17abd2d3005b9d81435",
+          "actor": "isolated-test-actor",
+          "reason": "Synthetic unit response; no engineering acceptance."
+        }
+      ],
+      "responses": [
+        {
+          "actor": "isolated-test-actor",
+          "checkpoint_id": "checkpoint-6a6c65090dc8b6df25eed625",
+          "created_at": "2026-10-01T07:51:31.697960+00:00",
+          "digest": "59e8de4c5475b5cfa8418536c5d940019b3d2f5d2b45a17abd2d3005b9d81435",
+          "input_digest": "6a9f6802ba6a0f602bc611a4a078f86acacaa4bcf6fe58b337796703df4a1f00",
+          "integration_test": true,
+          "reason": "Synthetic unit response; no engineering acceptance.",
+          "request_id": "respond-one",
+          "response_id": "response-48b70a9f4c61acd4a840ccbe",
+          "run_id": "fa619d81b06b4e6fbc17820684e379c2",
+          "schema_digest": "a474a42831a84585dbad3d139585ba095ccd94541122f8f14ef38be85d81b153",
+          "subject_digest": "c7551246db2fb64365232bfcfffac2e4032444ed6417eab49866dba1886ed2de",
+          "value": {
+            "selection": "a"
+          },
+          "workspace_id": "ws"
+        }
+      ]
+    }
+  ],
+  "not_proven": [
+    "public scoped respond endpoint",
+    "backend supervised continuation task ownership",
+    "input interaction projection/forms",
+    "live default-model/MCP engineering proofs",
+    "installed/Docker distribution",
+    "human engineering acceptance"
+  ],
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "approved_context_equals_HEAD": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    },
+    "original_mixed_deltas_preserved": {
+      "main": true,
+      "workspace": true
+    }
+  }
+}

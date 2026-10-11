@@ -1,0 +1,105 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "checked-scope.json": {
+      "bytes": 6016,
+      "sha256": "93bef86ef85b8e58fde18ff26bf62a1c76d3731b074f8557d61156832baba75d"
+    },
+    "metadata-preflight.json": {
+      "bytes": 560,
+      "sha256": "77fa50856b857547dc83e7077d4d63c061d49fba5f178e01d90c8bb60a846c24"
+    },
+    "README.md": {
+      "bytes": 1717,
+      "sha256": "05949a715291baf06385f197a69721675ab1d21ad69783446fd523fdf2b22ef7"
+    },
+    "attempt-002/installation-command.json": {
+      "bytes": 171,
+      "sha256": "641b21fa27c08d701787e8634ced16e612736c84b91b934cc67f924e01b7772d"
+    },
+    "attempt-002/installation.log": {
+      "bytes": 164,
+      "sha256": "f1cd428d722b85213eb4aebb52bb50aff24c051ba5d7751d4f83a508fd28df54"
+    },
+    "attempt-002/outcome.json": {
+      "bytes": 1449,
+      "sha256": "58c21e9ad7d24066e70b73c53f6ddcacf99fca24ea82e20305435de0ef8bd707"
+    },
+    "attempt-002/source-inventory.json": {
+      "bytes": 154292,
+      "sha256": "4e206e5efbe8ac5989042145eec4bf716dc16aaad182b346ad066ee983cf4400"
+    },
+    "attempt-003/installation-command.json": {
+      "bytes": 175,
+      "sha256": "3dfa5a3498608f7d584d8d4d07add3ecc91ef496f965396c79a3268f92ada401"
+    },
+    "attempt-003/installation.log": {
+      "bytes": 351,
+      "sha256": "bb5b2213b905c4b30a2028697cd67a45bc5b382aece2b9b730a45eb990d46cda"
+    },
+    "attempt-003/outcome.json": {
+      "bytes": 8942,
+      "sha256": "c012576e852667e5471e48593c731c9805f7a14cd9eb6aa8cd053fb04d7fbe16"
+    },
+    "attempt-003/results.xml": {
+      "bytes": 18575,
+      "sha256": "b9b0322ba59023b5f73f896b07cd342100b53ef0fd4663e2fdb7a2582ce40a06"
+    },
+    "attempt-003/runtime-imports.log": {
+      "bytes": 4369,
+      "sha256": "a739c42c75733e38e4a563684551505dac5adb20dd17e91ad9b45128ef197284"
+    },
+    "attempt-003/source-inventory.json": {
+      "bytes": 154292,
+      "sha256": "4e206e5efbe8ac5989042145eec4bf716dc16aaad182b346ad066ee983cf4400"
+    },
+    "attempt-003/test-command.json": {
+      "bytes": 574,
+      "sha256": "591ead4f4095ead9031197cff1b8a7fb99d7b6bb59cce52def2256c887ff0817"
+    },
+    "attempt-003/test-output.log": {
+      "bytes": 1569,
+      "sha256": "69fdcab2886b19e46a10989a9bb697e75ab7a193ce42cccea4acbbc3d2021598"
+    },
+    "attempt-004/outcome.json": {
+      "bytes": 8803,
+      "sha256": "60b9ebaf584d38b8e03bb2f49065f1214ddcc8b64ec605f3e8d23d2d5963587e"
+    },
+    "attempt-004/results.xml": {
+      "bytes": 17538,
+      "sha256": "553f03bb4d44f95df053494c3c54e9bd2de22afdd02b4e470c01d5c9e8702aab"
+    },
+    "attempt-004/runtime-imports.log": {
+      "bytes": 4369,
+      "sha256": "a739c42c75733e38e4a563684551505dac5adb20dd17e91ad9b45128ef197284"
+    },
+    "attempt-004/source-inventory.json": {
+      "bytes": 171975,
+      "sha256": "19ae31fd4155e4f2068e695e7a92689f463f5d11231d52c5fbb4121e0ae8a0f7"
+    },
+    "attempt-004/test-command.json": {
+      "bytes": 574,
+      "sha256": "591ead4f4095ead9031197cff1b8a7fb99d7b6bb59cce52def2256c887ff0817"
+    },
+    "attempt-004/test-output.log": {
+      "bytes": 200,
+      "sha256": "66cb118886292058d9e1659c3f6f2587dd2779f885ae9652575b441134e39e8b"
+    },
+    "drivers/attempt-002.py": {
+      "bytes": 8821,
+      "sha256": "0caefd6e031ec69a23fefc0b68d93034a41c9b825cb174c69fccdc97a91be320"
+    },
+    "drivers/attempt-003.py": {
+      "bytes": 8833,
+      "sha256": "fa4053928e0bc2256ca993e948bddad2b7e12a84a70d8bf437f58d1b86b066c8"
+    },
+    "drivers/attempt-004.py": {
+      "bytes": 8508,
+      "sha256": "2b7952811b5b1b9e1475743ba72b6d807e374ed30a9a635c755a94adac617720"
+    }
+  },
+  "credential_value_scan": "passed"
+}

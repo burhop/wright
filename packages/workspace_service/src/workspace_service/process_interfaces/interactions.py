@@ -1,0 +1,410 @@
+"""Declared input checkpoint evidence, using the existing continuation store.
+
+The source executor and recorder own execution. This owner only retains a typed
+answer and consumes its exact barrier. Public scope/transport orchestration must
+validate current source/evidence before calling it; it never dispatches a tool.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+import secrets
+import time
+import json
+from dataclasses import asdict
+
+from pydantic import Field, field_validator, model_serializer, model_validator
+
+from core.process_interactions import (
+    PAGE_ITEMS,
+    InteractionResponse,
+    checked_json,
+    validate_response,
+)
+from core.process_validation import (
+    Contract,
+    Digest,
+    Identifier,
+    ResultIdentifier,
+    canonical_digest,
+    canonical_json,
+)
+from core.tracing import traced
+from data_vault.process_input_repository import (
+    ProcessInputRepository,
+    ProcessRecordConflict,
+)
+from data_vault.workflow_continuation_repository import (
+    WorkflowContinuationCheckpoint,
+    WorkflowContinuationRepository,
+    WorkflowContinuationStateConflict,
+)
+
+from ..workflow_human_input import HumanInputDeclaration
+from core.workflow_input_conditions import (
+    ConditionalInputEvaluation,
+    validate_requirements_resolution,
+)
+from .errors import ProcessInterfaceError
+
+
+class InputCheckpointSubject(Contract):
+    """Pins the declared question and actual connected upstream values."""
+
+    definition_digest: Digest
+    input_snapshot_id: Identifier
+    input_digest: Digest
+    input_digests: tuple[Digest, ...] = Field(max_length=PAGE_ITEMS)
+    artifact_digests: tuple[Digest, ...] = Field(max_length=PAGE_ITEMS)
+    step_id: Identifier
+    declaration: HumanInputDeclaration
+    upstream_digests: dict[ResultIdentifier, Digest] = Field(max_length=PAGE_ITEMS)
+    condition_evaluation: ConditionalInputEvaluation | None = None
+
+    @model_validator(mode="after")
+    def declared_evidence_scope(self):
+        # Old subjects keep both their required evidence and exact wire shape;
+        # no defaults/extra fields can change a historical subject's digest.
+        if self.declaration.version == 1 and not self.upstream_digests:
+            raise ValueError("Version 1 input checkpoints require upstream evidence")
+        if (self.declaration.version == 3) != (self.condition_evaluation is not None):
+            raise ValueError(
+                "A conditional input subject requires its recorded evaluation"
+            )
+        if self.condition_evaluation:
+            condition = self.declaration.when
+            evaluation = self.condition_evaluation
+            if (
+                evaluation.decision != "ask"
+                or evaluation.source != condition.source
+                or self.upstream_digests.get(condition.source)
+                != evaluation.source_digest
+            ):
+                raise ValueError(
+                    "The input evaluation does not match its upstream subject"
+                )
+            validate_requirements_resolution(
+                condition,
+                self.declaration.response_schema,
+                {
+                    "version": "wright.requirements-resolution/1",
+                    "unresolved_fields": list(evaluation.unresolved_fields),
+                    "resolved_values": evaluation.resolved_values,
+                },
+            )
+        return self
+
+    @model_serializer(mode="wrap")
+    def preserved_legacy_shape(self, serialize):
+        result = serialize(self)
+        if self.condition_evaluation is None:
+            result.pop("condition_evaluation", None)
+        return result
+
+    @field_validator("input_digests", "artifact_digests")
+    @classmethod
+    def ordered_digests(cls, value):
+        if value != tuple(sorted(value)):
+            raise ValueError("Checkpoint digests must be ordered")
+        return value
+
+
+def input_subject(subject) -> InputCheckpointSubject:
+    # Revalidate nested mutable JSON; frozen contracts do not freeze dictionaries.
+    checked_json(subject)
+    return InputCheckpointSubject.model_validate(subject)
+
+
+def input_subject_digest(subject) -> str:
+    return canonical_digest(input_subject(subject).model_dump(mode="json"))
+
+
+def _unavailable(message, *, code="SUBJECT_STALE"):
+    return ProcessInterfaceError(
+        code,
+        message,
+        "Reopen the saved run and inspect the declared input and its evidence.",
+    )
+
+
+async def prepare_input_continuation(
+    app, resolved, checkpoint, *, gateway=None, session_id=""
+):
+    """Qualify current source/input/provider/evidence with the existing preparation.
+
+    The returned capsule owns an opened runtime. Caller closes it or transfers it
+    to the run supervisor. Read/inspection invokes no model or provider mutation.
+    """
+    from ..workflow_run_preparation import prepare_authorized_workflow_run
+    from ..workflow_execution_continuation import inspect_input_continuation
+    from ..workflow_source_execution import WorkflowSourceExecutionError
+
+    frozen = app._input_snapshot(
+        resolved.process, checkpoint.continuation["input_snapshot_id"]
+    )
+    context = checkpoint.continuation.get("execution_context")
+    prepared = None
+    try:
+        prepared = await prepare_authorized_workflow_run(
+            service=app.workspace,
+            workspace_dir=resolved.workspace_dir,
+            workspace_id=resolved.process.workspace_id,
+            session_id=session_id,
+            source_path=resolved.process.source_path,
+            source_digest=resolved.process.source_digest,
+            input_snapshot=frozen,
+            gateway=gateway,
+            integration_policy_digest=(context or {}).get("integration_policy_digest"),
+            run_id=checkpoint.run_id,
+            expected_execution_context=context,
+        )
+        if prepared.execution_context != context:
+            raise _unavailable(
+                "The saved input continuation's execution policy changed."
+            )
+        if (
+            checkpoint.expires_at is not None
+            and checkpoint.expires_at <= int(time.time())
+            and checkpoint.state == "pending"
+        ):
+            raise _unavailable("The declared input checkpoint expired.")
+        await inspect_input_continuation(
+            state=checkpoint.continuation,
+            checkpoint=asdict(checkpoint),
+            plan=prepared.plan,
+            input_values=prepared.values,
+            service=app.workspace,
+            workspace_dir=resolved.workspace_dir,
+        )
+        return prepared
+    except BaseException as error:
+        if prepared is not None and prepared.runtime is not None:
+            await prepared.runtime.close()
+        if isinstance(error, WorkflowSourceExecutionError):
+            raise ProcessInterfaceError(
+                "SOURCE_CHANGED"
+                if error.code == "WORKFLOW_SOURCE_CONFLICT"
+                else "SUBJECT_STALE"
+                if error.code == "WORKFLOW_CONTINUATION_STALE"
+                else "CAPABILITY_UNAVAILABLE",
+                str(error),
+                error.correction,
+                details={"source_code": error.code},
+            ) from error
+        raise
+
+
+class HumanInputCheckpointService:
+    """Internal owner; actor and integration-test authority are supplied by Wright."""
+
+    def __init__(
+        self,
+        repository: WorkflowContinuationRepository,
+        inputs: ProcessInputRepository,
+    ):
+        if repository.db_path != inputs.db_path:
+            raise ValueError(
+                "Input responses and checkpoints must share one state store"
+            )
+        self.repository = repository
+        self.inputs = inputs
+
+    def _validate(self, checkpoint):
+        try:
+            subject = input_subject(checkpoint.subject)
+            continuation = checkpoint.continuation
+            if len(canonical_json(continuation).encode("utf-8")) > 20_971_520:
+                raise ValueError("Input continuation exceeds 20 MiB")
+            frozen = self.inputs.get_snapshot(
+                checkpoint.workspace_id, subject.input_snapshot_id
+            )
+            if (
+                checkpoint.action_kind != "human_input"
+                or checkpoint.checkpoint_kind != "input"
+                or type(continuation.get("schema_version")) is not int
+                or continuation["schema_version"] != 3
+                or checkpoint.subject_digest != input_subject_digest(checkpoint.subject)
+                or checkpoint.step_id != subject.step_id
+                or checkpoint.run_id != continuation.get("run_id")
+                or checkpoint.external_action is not None
+                or frozen.digest != subject.input_digest
+                or frozen.process.source_digest != subject.definition_digest
+                or frozen.process.source_path != checkpoint.workflow_id
+                or continuation.get("definition_digest") != subject.definition_digest
+                or continuation.get("input_snapshot_id") != subject.input_snapshot_id
+                or continuation.get("input_digest") != subject.input_digest
+                or bool(continuation.get("response_id"))
+                != bool(continuation.get("response_digest"))
+            ):
+                raise ValueError(
+                    "Input checkpoint identity does not match its evidence"
+                )
+            if subject.condition_evaluation is not None:
+                from ..workflow_execution_continuation import decode_value
+                from ..workflow_human_input_runtime import (
+                    condition_requirements_evidence,
+                )
+
+                evaluation = subject.condition_evaluation
+                encoded = continuation["responses"][evaluation.source]
+                if canonical_digest(encoded) != evaluation.source_digest:
+                    raise ValueError("Conditional input evidence changed")
+                _, resolution = condition_requirements_evidence(
+                    subject.declaration.model_dump(mode="json"), decode_value(encoded)
+                )
+                if (
+                    resolution.unresolved_fields != evaluation.unresolved_fields
+                    or resolution.resolved_values != evaluation.resolved_values
+                ):
+                    raise ValueError("Conditional input evaluation changed")
+        except (ValueError, TypeError, KeyError) as error:
+            raise _unavailable(
+                "The saved input checkpoint evidence is inconsistent."
+            ) from error
+        return subject
+
+    @traced("process.interaction.input.request")
+    def request(
+        self,
+        *,
+        workspace_id: str,
+        workflow_id: str,
+        run_id: str,
+        step_id: str,
+        subject: dict,
+        continuation: dict,
+        expires_at: int | None = None,
+    ) -> WorkflowContinuationCheckpoint:
+        now = int(time.time())
+        checkpoint = WorkflowContinuationCheckpoint(
+            checkpoint_id=f"checkpoint-{secrets.token_hex(12)}",
+            workspace_id=workspace_id,
+            workflow_id=workflow_id,
+            run_id=run_id,
+            step_id=step_id,
+            action_kind="human_input",
+            subject=input_subject(subject).model_dump(mode="json"),
+            subject_digest=input_subject_digest(subject),
+            state="pending",
+            continuation=json.loads(canonical_json(continuation)),
+            actor=None,
+            reason=None,
+            created_at=now,
+            updated_at=now,
+            expires_at=expires_at,
+            external_action=None,
+        )
+        self._validate(checkpoint)
+        if continuation.get("response_id") is not None:
+            raise _unavailable(
+                "A new input checkpoint cannot contain a prior response."
+            )
+        return self.repository.create(checkpoint)
+
+    @traced("process.interaction.input.read")
+    def get(self, checkpoint_id, *, workspace_id, run_id):
+        checkpoint = self.repository.get(checkpoint_id)
+        if checkpoint is None or (
+            checkpoint.workspace_id != workspace_id or checkpoint.run_id != run_id
+        ):
+            raise _unavailable(
+                "The declared input is not available in this run.", code="SCOPE_DENIED"
+            )
+        self._validate(checkpoint)
+        return checkpoint
+
+    @traced("process.interaction.input.respond")
+    def respond(
+        self,
+        checkpoint_id,
+        *,
+        workspace_id,
+        run_id,
+        expected_subject_digest,
+        value,
+        actor,
+        reason,
+        request_id,
+        integration_test=False,
+    ):
+        checkpoint = self.get(checkpoint_id, workspace_id=workspace_id, run_id=run_id)
+        if checkpoint.subject_digest != expected_subject_digest:
+            raise _unavailable("The response belongs to an earlier input subject.")
+        subject = self._validate(checkpoint)
+        try:
+            validate_response(subject.declaration.response_schema, value)
+            response = InteractionResponse.create(
+                response_id=f"response-{secrets.token_hex(12)}",
+                workspace_id=workspace_id,
+                run_id=run_id,
+                checkpoint_id=checkpoint_id,
+                subject_digest=checkpoint.subject_digest,
+                schema_digest=canonical_digest(subject.declaration.response_schema),
+                input_digest=subject.input_digest,
+                value=value,
+                actor=actor,
+                reason=reason,
+                request_id=request_id,
+                created_at=datetime.now(timezone.utc).isoformat(),
+                integration_test=integration_test,
+            )
+        except (ValueError, TypeError) as error:
+            raise _unavailable(
+                "The response does not match the declared input schema.",
+                code="RESPONSE_INVALID",
+            ) from error
+        try:
+            return self.repository.attach_input_response(
+                response, updated_at=int(time.time())
+            )
+        except (ProcessRecordConflict, WorkflowContinuationStateConflict) as error:
+            raise _unavailable(
+                "This checkpoint cannot accept a different or expired response.",
+                code="REQUEST_CONFLICT",
+            ) from error
+
+    @traced("process.interaction.input.consume")
+    def consume(self, checkpoint_id, *, workspace_id, run_id, response_id):
+        checkpoint = self.get(checkpoint_id, workspace_id=workspace_id, run_id=run_id)
+        response = self.response(checkpoint)
+        if response.response_id != response_id:
+            raise _unavailable("This response belongs to another continuation.")
+        try:
+            return self.repository.consume_input_response(
+                checkpoint_id,
+                workspace_id=workspace_id,
+                run_id=run_id,
+                subject_digest=checkpoint.subject_digest,
+                response_id=response.response_id,
+                response_digest=response.digest,
+                updated_at=int(time.time()),
+            )
+        except WorkflowContinuationStateConflict as error:
+            raise _unavailable(
+                "The input continuation was already consumed or is no longer current.",
+                code="REQUEST_CONFLICT",
+            ) from error
+
+    def response(self, checkpoint) -> InteractionResponse:
+        """Only immutable, scoped schema-valid evidence can release an input step."""
+        subject = self._validate(checkpoint)
+        try:
+            response = self.inputs.get_response(
+                checkpoint.workspace_id, checkpoint.continuation["response_id"]
+            )
+            if (
+                response.run_id != checkpoint.run_id
+                or response.checkpoint_id != checkpoint.checkpoint_id
+                or response.subject_digest != checkpoint.subject_digest
+                or response.input_digest != subject.input_digest
+                or response.schema_digest
+                != canonical_digest(subject.declaration.response_schema)
+                or response.digest != checkpoint.continuation.get("response_digest")
+            ):
+                raise ValueError("The immutable response does not match its checkpoint")
+            validate_response(subject.declaration.response_schema, response.value)
+        except (ValueError, TypeError, KeyError) as error:
+            raise _unavailable(
+                "There is no matching saved response for this input."
+            ) from error
+        return response

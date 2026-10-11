@@ -1,0 +1,62 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+ ❯ src/components/common/ResultRepresentation.spec.tsx (6 tests | 1 failed) 1224ms
+     × does not reread for a refreshed snapshot when client and exact context are unchanged 1023ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/common/ResultRepresentation.spec.tsx > shared exact result representation reader > does not reread for a refreshed snapshot when client and exact context are unchanged
+AssertionError: expected "vi.fn()" to be called 2 times, but got 1 times
+
+Ignored nodes: comments, script, style
+<html>
+  <head />
+  <body>
+    <div>
+      <div
+        class="wp-result-representation"
+      >
+        <pre
+          class="wp-text"
+        >
+          Exact evidence
+        </pre>
+        <a
+          class="wp-link"
+          download="evidence.txt"
+          href="blob:exact-evidence"
+        >
+          Download exact file
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
+ ❯ src/components/common/ResultRepresentation.spec.tsx:55:38
+     53|     expect(read).toHaveBeenCalledTimes(1);
+     54|     view.rerender(<ResultRepresentation client={client} snapshot={snap…
+     55|     await waitFor(() => expect(read).toHaveBeenCalledTimes(2));
+       |                                      ^
+     56|     const unmountSignal = read.mock.calls[1][1]!.signal!;
+     57|     view.unmount();
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 108 passed (109)
+   Start at  22:32:32
+   Duration  10.11s (transform 393ms, setup 388ms, import 1.02s, tests 4.30s, environment 3.71s)
+

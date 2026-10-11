@@ -16,7 +16,7 @@ from packages.workspace_service.tests.test_workflow_artifact_review import secti
 
 
 @pytest.mark.parametrize("checkpoint_times_out", [False, True])
-def test_disconnect_drains_real_file_checkpoint_without_recancelling_producer(
+def test_disconnect_keeps_work_running_and_explicit_cancel_drains_checkpoint(
     tmp_path, monkeypatch, checkpoint_times_out
 ):
     if checkpoint_times_out:
@@ -80,6 +80,11 @@ def test_disconnect_drains_real_file_checkpoint_without_recancelling_producer(
             ),
             ensure_workspace_path_safe=lambda value: value,
         )
+        from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+        from core.process_interactions import ProcessRef
+        from workspace_service.process_interfaces.service import ProcessScope
+
+        bind_process_interfaces(svc, tmp_path, "controlled")
         started = asyncio.Event()
         cancelled = asyncio.Event()
 
@@ -92,8 +97,14 @@ def test_disconnect_drains_real_file_checkpoint_without_recancelling_producer(
             started.set()
             try:
                 await asyncio.Event().wait()
-            finally:
+            except asyncio.CancelledError:
                 cancelled.set()
+                if checkpoint_times_out:
+                    await executor._capacity.acquire()
+                    asyncio.get_running_loop().call_later(
+                        0.25, executor._capacity.release
+                    )
+                raise
 
         monkeypatch.setattr(router, "generate_workflow_response", generate)
         saved = await svc.workflow_sources.create(str(tmp_path), path, text)
@@ -113,9 +124,7 @@ def test_disconnect_drains_real_file_checkpoint_without_recancelling_producer(
 
         async def receive():
             await started.wait()
-            asyncio.get_running_loop().call_later(
-                0.25 if checkpoint_times_out else 0.05, executor._capacity.release
-            )
+            asyncio.get_running_loop().call_later(0.05, executor._capacity.release)
             return {"type": "http.disconnect"}
 
         async def send(message):
@@ -124,7 +133,39 @@ def test_disconnect_drains_real_file_checkpoint_without_recancelling_producer(
         try:
             async with asyncio.timeout(2):
                 await response(scope, receive, send)
-            assert cancelled.is_set(), "Actual model execution must cancel immediately"
+            assert not cancelled.is_set(), (
+                "Disconnect cancels observation, not model execution"
+            )
+            run_id = response.headers["X-Wright-Run-Id"]
+            assert svc.process_interfaces.runs.is_live(run_id)
+            reference = ProcessRef(
+                workspace_id="controlled",
+                source_path=path,
+                source_digest=saved.storage_digest,
+            )
+            await svc.process_interfaces.runs.cancel(
+                ProcessScope(
+                    "local-control-plane",
+                    "controlled",
+                    frozenset({"process.read", "process.cancel"}),
+                ),
+                reference,
+                run_id,
+                "explicit-cancel",
+            )
+            actual = await svc.process_interfaces.runs.wait(
+                ProcessScope(
+                    "local-control-plane", "controlled", frozenset({"process.read"})
+                ),
+                reference,
+                run_id,
+            )
+            assert cancelled.is_set(), (
+                "The explicit request cancels actual local execution"
+            )
+            assert actual["status"] == (
+                "interrupted" if checkpoint_times_out else "cancelled"
+            )
             raw = json.loads(
                 next((tmp_path / "runs/disconnect").glob("*.json")).read_text()
             )
@@ -145,6 +186,7 @@ def test_disconnect_drains_real_file_checkpoint_without_recancelling_producer(
                 b'"kind": "completed"' in item.get("body", b"") for item in sent
             )
         finally:
+            await svc.process_interfaces.close()
             await executor.close()
 
     asyncio.run(scenario())

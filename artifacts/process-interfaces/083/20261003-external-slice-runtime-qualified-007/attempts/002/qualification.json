@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "scope": "Generated slice/response-retention/passive-inspection declarations on the accepted source and existing durable runtime; small digital qualification only",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "ai_generation": false,
+  "workspace": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-slice-runtime-002",
+  "error_type": "TypeError",
+  "diagnostic": "GatewayService.open_session() missing 1 required keyword-only argument: 'transport'",
+  "durable_runtime_owner_closed": true,
+  "gateway_closed": true,
+  "cleanup": [
+    {
+      "container_id": "a57c00ea8bbf5411f9f2fce54818cee5c236329362f9f14de8d0ee8081eff0c6",
+      "running": false
+    },
+    {
+      "container_id": "88b17c9a8a120e78f72a4b9f0340e1430918ca7edb82dc26eb4d758e3bb09a07",
+      "running": false
+    }
+  ]
+}

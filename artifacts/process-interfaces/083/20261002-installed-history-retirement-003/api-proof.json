@@ -1,0 +1,48 @@
+{
+  "history_http": 200,
+  "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "retired_urls": [
+    {
+      "operation": "prepare",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "capabilities",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "printer-status",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "print",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "dispatch",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "allow-retry",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "cancel",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "camera.mjpeg",
+      "status": 410,
+      "code": "PROTOTYPE_RETIRED"
+    }
+  ],
+  "provider_calls": 0,
+  "history_source_unchanged": true
+}

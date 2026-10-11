@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 import time
+import math
 from typing import Any, Mapping
 
 from core.canonical_json import canonical_json_bytes
@@ -63,7 +64,27 @@ def approval_subject_digest(subject: Mapping[str, Any]) -> str:
             )
 
     inspect(subject)
-    encoded = canonical_json_bytes(dict(subject))
+    if (subject.get("action") or {}).get("kind") == "mcp-operation":
+        # New operation subjects can contain measured decimal arguments.
+        # Historical aliases retain their original exact integer JSON hashes.
+        from core.process_validation import canonical_json
+
+        def finite(value):
+            if isinstance(value, float) and not math.isfinite(value):
+                raise WorkflowExternalActionError(
+                    "approval_subject_invalid", "Operation numbers must be finite"
+                )
+            if isinstance(value, Mapping):
+                for child in value.values():
+                    finite(child)
+            elif isinstance(value, (list, tuple)):
+                for child in value:
+                    finite(child)
+
+        finite(subject)
+        encoded = canonical_json(dict(subject)).encode("utf-8")
+    else:
+        encoded = canonical_json_bytes(dict(subject))
     if len(encoded) > 256 * 1024:
         raise WorkflowExternalActionError(
             "approval_subject_invalid", "Approval subject exceeds 256 KiB"
@@ -92,6 +113,7 @@ class WorkflowExternalActionService:
             "supplier_upload_preview",
             "cart_quote_handoff",
             "local_review",
+            "mcp-operation",
         }:
             raise WorkflowExternalActionError(
                 "external_action_unsupported", "External action is unsupported"
@@ -127,14 +149,60 @@ class WorkflowExternalActionService:
         actor: str,
         approved: bool,
         reason: str | None = None,
+        request_id: str | None = None,
     ) -> WorkflowContinuationCheckpoint:
         checkpoint = self._required(checkpoint_id, workspace_id)
         self._validate_current(checkpoint, expected_subject_digest)
         target = "approved" if approved else "changes_requested"
+        # The owning scoped service supplies actor; browser payloads cannot
+        # assert test attribution or obtain automatic decision authority.
+        integration_test = actor.startswith("integration_test:")
+        decision_receipt = (
+            {
+                "request_id": request_id,
+                "subject_digest": expected_subject_digest,
+                "actor": actor,
+                "decision": target,
+                "reason": reason,
+                "integration_test": integration_test,
+            }
+            if request_id is not None
+            else None
+        )
+        if decision_receipt is not None:
+            from core.process_validation import Identifier
+            from pydantic import TypeAdapter
+
+            TypeAdapter(Identifier).validate_python(request_id)
+            TypeAdapter(Identifier).validate_python(actor)
+            prior = checkpoint.continuation.get("decision_receipt")
+            if prior is not None:
+                if (
+                    (
+                        prior == decision_receipt
+                        or (
+                            "integration_test" not in prior
+                            and prior
+                            == {
+                                key: value
+                                for key, value in decision_receipt.items()
+                                if key != "integration_test"
+                            }
+                        )
+                    )
+                    and checkpoint.actor == actor
+                    and checkpoint.reason == reason
+                ):
+                    return checkpoint
+                raise WorkflowExternalActionError(
+                    "approval_state_conflict",
+                    "A different exact review request was already recorded",
+                )
         if (
             checkpoint.state == target
             and checkpoint.actor == actor
             and checkpoint.reason == reason
+            and request_id is None
         ):
             return checkpoint
         try:
@@ -145,6 +213,16 @@ class WorkflowExternalActionService:
                 updated_at=int(time.time()),
                 actor=actor,
                 reason=reason,
+                continuation={
+                    **checkpoint.continuation,
+                    "decision_receipt": decision_receipt,
+                    "decision_attribution": {
+                        "actor": actor,
+                        "integration_test": integration_test,
+                    },
+                }
+                if decision_receipt is not None or integration_test
+                else None,
             )
         except WorkflowContinuationStateConflict as error:
             raise WorkflowExternalActionError(
@@ -233,6 +311,7 @@ class WorkflowExternalActionService:
         workspace_id: str,
         current_subject: Mapping[str, Any],
         action_id: str,
+        principal_id: str | None = None,
     ) -> WorkflowContinuationCheckpoint:
         checkpoint = self._required(checkpoint_id, workspace_id)
         current_digest = approval_subject_digest(current_subject)
@@ -267,6 +346,7 @@ class WorkflowExternalActionService:
             "subject_digest": current_digest,
             "outcome": "not_dispatched",
             "dispatch_authorized_at": int(time.time()),
+            **({"principal_id": principal_id} if principal_id is not None else {}),
         }
         try:
             return self._repository.transition(
@@ -285,7 +365,12 @@ class WorkflowExternalActionService:
         self, checkpoint_id: str, workspace_id: str
     ) -> WorkflowContinuationCheckpoint:
         checkpoint = self._repository.get(checkpoint_id)
-        if checkpoint is None or checkpoint.workspace_id != workspace_id:
+        if (
+            checkpoint is None
+            or checkpoint.workspace_id != workspace_id
+            or checkpoint.checkpoint_kind != "approval"
+            or checkpoint.action_kind == "human_input"
+        ):
             raise WorkflowExternalActionError(
                 "approval_not_found", "Approval checkpoint was not found"
             )

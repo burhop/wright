@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "node",
+    "D:\\repos\\wright\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "tests/ui-integration/process-common-view.spec.ts",
+    "tests/ui-integration/process-declared-interactions.spec.ts",
+    "tests/ui-integration/process-two-input-recovery.spec.ts",
+    "tests/ui-integration/process-review-actions.spec.ts",
+    "tests/ui-integration/process-input-inspector.spec.ts",
+    "tests/ui-integration/process-validation.spec.ts",
+    "tests/ui-integration/workflow-recovery.spec.ts",
+    "tests/ui-integration/workflow-recovery-accessibility.spec.ts",
+    "--project=chromium",
+    "--workers=1",
+    "--max-failures=1",
+    "--trace=on",
+    "--reporter=line,json"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "base_url": "http://127.0.0.1:61743",
+  "api_proxy": "http://127.0.0.1:65534",
+  "live_opt_ins_removed": true,
+  "stop_at_first_failure": true,
+  "selected_modules": 8
+}

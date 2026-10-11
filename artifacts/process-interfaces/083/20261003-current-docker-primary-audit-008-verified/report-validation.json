@@ -1,0 +1,36 @@
+{
+  "reports": [
+    {
+      "report": "20261003-001-heat",
+      "exit_code": 1,
+      "output": "ERROR: report.html has no recognizable full-size image interaction\nERROR: report.html has no manual repeat section\n",
+      "scope": "No browser launch/screenshot existed; the generic validator expects images for every report."
+    },
+    {
+      "report": "20261003-002-heat",
+      "exit_code": 0,
+      "output": "Walkthrough artifact structure is valid.\n",
+      "scope": "Actual browser report."
+    },
+    {
+      "report": "20261003-001-printed",
+      "exit_code": 0,
+      "output": "Walkthrough artifact structure is valid.\n",
+      "scope": "Actual browser report."
+    },
+    {
+      "report": "20261003-003-heat",
+      "exit_code": 0,
+      "output": "Walkthrough artifact structure is valid.\n",
+      "scope": "Actual browser report."
+    },
+    {
+      "report": "20261003-004-heat",
+      "exit_code": 0,
+      "output": "Walkthrough artifact structure is valid.\n",
+      "scope": "Actual browser report."
+    }
+  ],
+  "primary_browser_reports_valid": 4,
+  "first_launch_report_limit": "Generic validator requires full-size image interaction and manual-repeat HTML even when browser launch fails before navigation. No image or browser success is invented. The original status/first launch script and fresh continuation remain retained."
+}

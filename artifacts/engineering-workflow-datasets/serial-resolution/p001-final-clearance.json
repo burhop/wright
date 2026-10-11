@@ -1,0 +1,61 @@
+{
+  "scope": "Independent read-only binary-STL triangle clipping to the central 65 mm X interval; linear triangles attain minimum Z at clipped polygon vertices. No physical performance or human approval. Coordinates use actual fixed mounting frame.",
+  "requirement_source": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md",
+  "method": "Intersect each real triangle with 15.5 <= X <= 80.5 and take the minimum surface Z relative to the supplied Z=0 drawer plane.",
+  "results": [
+    {
+      "file": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\attempt-017\\artifacts\\source_mesh.stl",
+      "sha256": "5dab38d3b0282aea0e1ae1baa0b51cccf8227f33c859fc278d9b934731ce7389",
+      "triangles": 3472,
+      "bounds_min": [
+        -9.0,
+        -12.0,
+        0.0
+      ],
+      "bounds_max": [
+        105.0,
+        12.0,
+        34.0
+      ],
+      "central_span_x_mm": [
+        15.5,
+        80.5
+      ],
+      "central_minimum_surface_z_mm": 24.816830929538362,
+      "minimum_at_mm": [
+        80.5,
+        1.8706887963845205,
+        24.816830929538362
+      ],
+      "required_clearance_mm": 25.0,
+      "meets_minimum": false
+    },
+    {
+      "file": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\attempt-017\\artifacts\\repaired_mesh.stl",
+      "sha256": "4c4fd617acf790c91869cd9502da018f7d8928c20cf9084b8800303e02a49255",
+      "triangles": 21588,
+      "bounds_min": [
+        -8.999920845031738,
+        -11.999500274658203,
+        0.0
+      ],
+      "bounds_max": [
+        104.99907684326172,
+        11.999500274658203,
+        33.999000549316406
+      ],
+      "central_span_x_mm": [
+        15.5,
+        80.5
+      ],
+      "central_minimum_surface_z_mm": 24.814040138432475,
+      "minimum_at_mm": [
+        80.5,
+        2.1593458793036064,
+        24.814040138432475
+      ],
+      "required_clearance_mm": 25.0,
+      "meets_minimum": false
+    }
+  ]
+}

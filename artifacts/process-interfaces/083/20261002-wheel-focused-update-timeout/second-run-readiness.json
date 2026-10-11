@@ -1,0 +1,348 @@
+{
+  "status": 200,
+  "body": {
+    "state": "ready",
+    "assessment_id": "readiness-4d670b2958054950a75b11ab9618dd7d",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+      "source_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "input_digest": "c5dde9f70d18b222e977a4bbfbdb4ccbdc7de4b746322ea89900f00dced03aa2",
+    "assessed_at": "2026-10-02T14:51:56.944626+00:00",
+    "expires_at": null,
+    "dependencies": [
+      {
+        "binding_id": "input_concept_png_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_concept_svg_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_context_md_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_prompt_txt_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_scenario_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_user_profile_md_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_requirements_md_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_machine_profile_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_process_profile_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_filament_profile_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_configured_geometry_basis_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_slice_call_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_passive_representations_py_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_inspect_manufacturing_package_py_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_inspection_call_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_retained_source_stl_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_retained_construction_observations_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_retained_producer_origin_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_retained_repair_call_json_retained_consumer_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "review_basis_retained_consumer_001.review_basis_retained_consumer_001_basis",
+        "classification": "upstream_produced",
+        "producer_step": "define_geometry_basis_retained_consumer_001",
+        "producer_port": "define_geometry_basis_retained_consumer_001_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "supports_and_slice_retained_consumer_001.supports_and_slice_retained_consumer_001_selected_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "repair_measure_orient_retained_consumer_001",
+        "producer_port": "repaired_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "retain_slice_response_retained_consumer_001.retain_slice_response_retained_consumer_001_actual_response",
+        "classification": "upstream_produced",
+        "producer_step": "supports_and_slice_retained_consumer_001",
+        "producer_port": "supports_and_slice_retained_consumer_001_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_slice_handoff_retained_consumer_001.inspect_slice_handoff_retained_consumer_001_slice_package",
+        "classification": "upstream_produced",
+        "producer_step": "supports_and_slice_retained_consumer_001",
+        "producer_port": "slice_package",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_slice_handoff_retained_consumer_001.inspect_slice_handoff_retained_consumer_001_provider_response",
+        "classification": "upstream_produced",
+        "producer_step": "retain_slice_response_retained_consumer_001",
+        "producer_port": "provider_response",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_slice_handoff_retained_consumer_001.inspect_slice_handoff_retained_consumer_001_slice_source",
+        "classification": "upstream_produced",
+        "producer_step": "repair_measure_orient_retained_consumer_001",
+        "producer_port": "repaired_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "summarize_preparation_retained_consumer_001.summarize_preparation_retained_consumer_001_repair",
+        "classification": "upstream_produced",
+        "producer_step": "repair_measure_orient_retained_consumer_001",
+        "producer_port": "repair_measure_orient_retained_consumer_001_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "summarize_preparation_retained_consumer_001.summarize_preparation_retained_consumer_001_slice_evidence",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "slice_evidence",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "summarize_preparation_retained_consumer_001.summarize_preparation_retained_consumer_001_support_preview",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "support_preview",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "authorize_transfer_retained_consumer_001.authorize_transfer_retained_consumer_001_exact_package",
+        "classification": "upstream_produced",
+        "producer_step": "supports_and_slice_retained_consumer_001",
+        "producer_port": "slice_package",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "authorize_transfer_retained_consumer_001.authorize_transfer_retained_consumer_001_preparation_review",
+        "classification": "upstream_produced",
+        "producer_step": "summarize_preparation_retained_consumer_001",
+        "producer_port": "summarize_preparation_retained_consumer_001_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_source_mesh",
+        "classification": "upstream_produced",
+        "producer_step": "repair_measure_orient_retained_consumer_001",
+        "producer_port": "source_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_repaired_mesh",
+        "classification": "upstream_produced",
+        "producer_step": "repair_measure_orient_retained_consumer_001",
+        "producer_port": "repaired_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_slice_package",
+        "classification": "upstream_produced",
+        "producer_step": "supports_and_slice_retained_consumer_001",
+        "producer_port": "slice_package",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_slice_evidence",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "slice_evidence",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_support_preview",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "support_preview",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_machine_profile",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "machine_profile",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_process_profile",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "process_profile",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_filament_profile",
+        "classification": "upstream_produced",
+        "producer_step": "inspect_slice_handoff_retained_consumer_001",
+        "producer_port": "filament_profile",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_source_report",
+        "classification": "upstream_produced",
+        "producer_step": "summarize_preparation_retained_consumer_001",
+        "producer_port": "summarize_preparation_retained_consumer_001_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_retained_consumer_001.validate_transfer_receipt",
+        "classification": "upstream_produced",
+        "producer_step": "authorize_transfer_retained_consumer_001",
+        "producer_port": "receipt",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "review_preparation_retained_consumer_001.review_preparation_retained_consumer_001_assessment",
+        "classification": "upstream_produced",
+        "producer_step": "validate_outputs_retained_consumer_001",
+        "producer_port": "assessment",
+        "interaction_step": null,
+        "reasons": []
+      }
+    ],
+    "reasons": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "8050d870b2254dfe92e84d9ddc144977",
+  "source_digest": "ef30253a7af2a3ca16820b3a568e351b24d598a1441fb5c21b956082dcab8061",
+  "workspace_checks": 9,
+  "actual_model_basis": true,
+  "declared_review_wait_and_reload": true,
+  "synthetic_review": true,
+  "continuation_http": 202,
+  "consumed_once": true,
+  "geometry_calls": 2,
+  "geometry_export_success": false,
+  "source_stl_exists": false,
+  "failure": "Safe-mode rejection followed by unsupported export option; task deadline exhausted. Transport success is not native engineering success.",
+  "installed_capability_query": "Separate read-only production-gateway query, actual Blender 4.5.10 operator parameters, no geometry mutation or export.",
+  "unchanged_final_gate": "Original full 18-check profile, not reached.",
+  "next_change": "Bounded qualified application guidance frozen as an explicit input; no safety bypass or engineering threshold change.",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false
+}

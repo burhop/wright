@@ -1,0 +1,21 @@
+{
+  "http": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-fresh-prompt-055",
+      "source_path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+      "source_digest": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "ui-start-7765fd8b86fe267103f5cd23fdd50f38a0966d1be1163f12d9d5c7efed3ab8e1",
+    "payload_digest": "5c4c4a4c4b4268efaeb920186a802fdd08bd89d595fa3a40970f0d3a874647bd",
+    "input_snapshot_id": "inputs-eacbd96669f1466eab450ec505503eb3",
+    "input_digest": "6ec6fd3c5b33e5c3cea6c03c2856b38a209548ac6377a59c1fbd2d0173ac2434",
+    "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+    "run_log_path": "runs/printed-replacement-part-common-digital-083/8c042141e6c7422aa58ca1bbab14d86e.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-04T02:01:55.536452+00:00"
+  }
+}

@@ -1,0 +1,2429 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "84b046eadbba0fb3575e117b07eacde03849d7faf392b701f8885b252b2e2d0e",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:26.902150+00:00",
+    "selected_assessment_id": "assessment-8ef210d67ef74c1abe11bb6e10c90f37",
+    "selected_attempt_id": "10fb3b0d54db46fbb352f3c5485cf7ac",
+    "selected_subject_ids": [
+      "board",
+      "schematic",
+      "bom",
+      "fabrication",
+      "erc",
+      "drc",
+      "basis"
+    ],
+    "latest_attempt_id": "10fb3b0d54db46fbb352f3c5485cf7ac",
+    "latest_assessment_id": "assessment-8ef210d67ef74c1abe11bb6e10c90f37",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PCB02-CONNECTIVITY",
+      "PCB02-PARTS",
+      "PCB02-CONNECTORS",
+      "PCB02-TEST-PADS",
+      "PCB02-QUALIFIED-PLACEMENT",
+      "PCB02-BOARD-RULES",
+      "PCB02-CHECKS",
+      "PCB02-CORRESPONDENCE",
+      "PCB02-DELIVERABLES",
+      "PCB02-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "kicad",
+      "version": "1",
+      "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded KiCad and fabrication reader v1",
+      "formats": [
+        "kicad_pcb",
+        "csv",
+        "json",
+        "zip"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PCB02-CONNECTIVITY",
+      "requirement_text": "Native schematic/PCB implement the exact two independent RAW_A→R1→ADC_A/C1 and RAW_B→R2→ADC_B/C2 networks, 5V decoupling C3/C4 and every supplied connector/test-pad net, with no capacitor or bridge between channels.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/netlist.csv",
+          "sha256": "9a1a76c635f295ce49d7598f3d5e22ef4f348837ce3927f300e92ca708764835",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Business, circuit and assumptions"
+        }
+      ],
+      "check_id": "native-netlist",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/netlist",
+      "expected": {
+        "operator": "equals",
+        "expected": 27,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        27
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#netlist"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-PARTS",
+      "requirement_text": "All component values, footprints, ratings and test-pad sizes match component-library.csv; exact real connector records remain required before production.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/component-library.csv",
+          "sha256": "ea7789635d75ad664e89ce1e3da217097a00c99a062cf17c5f365c6a70102630",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "native-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/components",
+      "expected": {
+        "operator": "equals",
+        "expected": 14,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        14
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#components"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-PARTS",
+      "requirement_text": "All component values, footprints, ratings and test-pad sizes match component-library.csv; exact real connector records remain required before production.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/component-library.csv",
+          "sha256": "ea7789635d75ad664e89ce1e3da217097a00c99a062cf17c5f365c6a70102630",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "bom-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/bom",
+      "expected": {
+        "operator": "equals",
+        "expected": 14,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        14
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923#bom"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-CORRESPONDENCE",
+      "requirement_text": "Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "bom-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/bom",
+      "expected": {
+        "operator": "equals",
+        "expected": 14,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        14
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923#bom"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-CONNECTORS",
+      "requirement_text": "J2/J3 geometric centers are (34.0,19.5)/(34.0,10.5) mm, pin order is 5V/RAW/GND with pin 1 toward the top, channels are visibly distinct, and J1 remains the approved 1x04 mapping.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Pinout and mechanical arrangement"
+        }
+      ],
+      "check_id": "required-placement",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/placement",
+      "expected": {
+        "operator": "equals",
+        "expected": 7,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        7
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#placement"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-TEST-PADS",
+      "requirement_text": "TP1..TP5 expose RAW_A,ADC_A,RAW_B,ADC_B,GND with at least 1.5 mm pads and 2.5 mm probe clearance; fixed TP1 origin is (10,14) mm.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/component-library.csv",
+          "sha256": "ea7789635d75ad664e89ce1e3da217097a00c99a062cf17c5f365c6a70102630",
+          "locator": "TP1..TP5"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/netlist.csv",
+          "sha256": "9a1a76c635f295ce49d7598f3d5e22ef4f348837ce3927f300e92ca708764835",
+          "locator": "TP rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Pinout and mechanical arrangement"
+        }
+      ],
+      "check_id": "required-placement",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/placement",
+      "expected": {
+        "operator": "equals",
+        "expected": 7,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        7
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#placement"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-QUALIFIED-PLACEMENT",
+      "requirement_text": "The current fresh board preserves J1=(4.5,18.81) at 180°, C2=(23,18.5) at 0°, C3=(8,23) at 0°, C4=(12,23) at 0° after the documented first move, and does not reuse the disqualified C3 90° hint.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "retained-board and recovery qualifications"
+        }
+      ],
+      "check_id": "required-placement",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/placement",
+      "expected": {
+        "operator": "equals",
+        "expected": 7,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        7
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#placement"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-BOARD-RULES",
+      "requirement_text": "The board is 40 by 30 mm, 1.6 mm two-layer/35 µm copper with the four declared NPTH holes, 1.0 mm hole-edge copper clearance, 0.25/0.25 mm track/clearance and 0.30 mm minimum via drill.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "board-outline-holes",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/board_geometry",
+      "expected": {
+        "operator": "equals",
+        "expected": 1,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        1
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#board_geometry"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-CHECKS",
+      "requirement_text": "Native connectivity has zero unconnected items and final ERC/DRC/placement audits have zero unreviewed errors, shorts, courtyard overlaps or mask bridges.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Pinout and mechanical arrangement; Deliverables"
+        }
+      ],
+      "check_id": "erc-errors",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/report",
+      "expected": {
+        "operator": "equals",
+        "expected": 0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:erc@59b65e47b5c71528ce867d9dcb33c1bacd9c5fab4950c0a704ba6ac0afc9290f#report"
+      ],
+      "subject_id": "erc",
+      "subject_sha256": "59b65e47b5c71528ce867d9dcb33c1bacd9c5fab4950c0a704ba6ac0afc9290f",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "erc"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-CHECKS",
+      "requirement_text": "Native connectivity has zero unconnected items and final ERC/DRC/placement audits have zero unreviewed errors, shorts, courtyard overlaps or mask bridges.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Pinout and mechanical arrangement; Deliverables"
+        }
+      ],
+      "check_id": "drc-errors",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/report",
+      "expected": {
+        "operator": "equals",
+        "expected": 0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:drc@24a44851ec928138eef49e14767447ba69a795db1c5b657014669d43f53dde90#report"
+      ],
+      "subject_id": "drc",
+      "subject_sha256": "24a44851ec928138eef49e14767447ba69a795db1c5b657014669d43f53dde90",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "drc"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-DELIVERABLES",
+      "requirement_text": "The output set contains editable native schematic/board, BOM, Gerber copper/outline, drill, ERC and DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/prompt.txt",
+          "sha256": "6a4d6b88a8263919d7cfd44a363023558b85b88f7479f45ddd6a3f022441dda4",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "fabrication-members",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/fabrication_bundle",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:fabrication@4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918#fabrication_bundle"
+      ],
+      "subject_id": "fabrication",
+      "subject_sha256": "4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fabrication"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-CORRESPONDENCE",
+      "requirement_text": "Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "fabrication-members",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/fabrication_bundle",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:fabrication@4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918#fabrication_bundle"
+      ],
+      "subject_id": "fabrication",
+      "subject_sha256": "4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fabrication"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-DELIVERABLES",
+      "requirement_text": "The output set contains editable native schematic/board, BOM, Gerber copper/outline, drill, ERC and DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/prompt.txt",
+          "sha256": "6a4d6b88a8263919d7cfd44a363023558b85b88f7479f45ddd6a3f022441dda4",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "deliverable-schematic",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 33807,
+          "present": true,
+          "sha256": "0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:schematic@0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a#"
+      ],
+      "subject_id": "schematic",
+      "subject_sha256": "0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "schematic"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-DELIVERABLES",
+      "requirement_text": "The output set contains editable native schematic/board, BOM, Gerber copper/outline, drill, ERC and DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/prompt.txt",
+          "sha256": "6a4d6b88a8263919d7cfd44a363023558b85b88f7479f45ddd6a3f022441dda4",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "deliverable-basis",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 18491,
+          "present": true,
+          "sha256": "6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:basis@6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a#"
+      ],
+      "subject_id": "basis",
+      "subject_sha256": "6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB02-ACTION-SCOPE",
+      "requirement_text": "The result lists supplied 5 V/sensor/ADC assumptions and does not claim pump safety, production connector approval, electrical qualification or board-order authorization.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+          "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+          "locator": "Business, circuit and assumptions; Board and shop requirements; Deliverables"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-f9c39f4c09324d1aa157a69b5ec2d764"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-8ef210d67ef74c1abe11bb6e10c90f37",
+    "attempt_id": "10fb3b0d54db46fbb352f3c5485cf7ac",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "sensor-interface-pcb-02",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "board",
+          "role": "board",
+          "result_id": "retained-successor:sensor-interface-pcb-02:board",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board"
+          },
+          "kind": "file",
+          "sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+          "value": null,
+          "locator": "design.kicad_pcb",
+          "format": "kicad_pcb",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "schematic",
+          "role": "schematic",
+          "result_id": "retained-successor:sensor-interface-pcb-02:schematic",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "schematic"
+          },
+          "kind": "file",
+          "sha256": "0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a",
+          "value": null,
+          "locator": "design.kicad_sch",
+          "format": "kicad_sch",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "bom",
+          "role": "bom",
+          "result_id": "retained-successor:sensor-interface-pcb-02:bom",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "bom"
+          },
+          "kind": "file",
+          "sha256": "8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923",
+          "value": null,
+          "locator": "design_bom.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fabrication",
+          "role": "fabrication",
+          "result_id": "retained-successor:sensor-interface-pcb-02:fabrication",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fabrication"
+          },
+          "kind": "file",
+          "sha256": "4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918",
+          "value": null,
+          "locator": "design-gerbers.zip",
+          "format": "zip",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "erc",
+          "role": "erc",
+          "result_id": "retained-successor:sensor-interface-pcb-02:erc",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "erc"
+          },
+          "kind": "file",
+          "sha256": "59b65e47b5c71528ce867d9dcb33c1bacd9c5fab4950c0a704ba6ac0afc9290f",
+          "value": null,
+          "locator": "erc.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "drc",
+          "role": "drc",
+          "result_id": "retained-successor:sensor-interface-pcb-02:drc",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "drc"
+          },
+          "kind": "file",
+          "sha256": "24a44851ec928138eef49e14767447ba69a795db1c5b657014669d43f53dde90",
+          "value": null,
+          "locator": "drc.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "basis",
+          "role": "basis",
+          "result_id": "retained-successor:sensor-interface-pcb-02:basis",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "basis"
+          },
+          "kind": "file",
+          "sha256": "6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a",
+          "value": null,
+          "locator": "electrical-basis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "sensor-interface-pcb-02-full",
+        "version": "1",
+        "sha256": "fc53c00f53c6e67b4ec0d896311c769859e29291ffafb09bcb33c4bacd3e10d5"
+      },
+      "baseline_ref": {
+        "id": "sensor-interface-pcb-02-basis",
+        "version": "1",
+        "sha256": "80c90a52422a8b25fccc23d4b430ce3543b8ebf63b92c989fa1a0591d4aea75d"
+      },
+      "idempotency_key": "sensor-interface-pcb-02",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "sensor-interface-pcb-02-full",
+      "version": "1",
+      "baseline": {
+        "id": "sensor-interface-pcb-02-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PCB02-CONNECTIVITY",
+            "text": "Native schematic/PCB implement the exact two independent RAW_A→R1→ADC_A/C1 and RAW_B→R2→ADC_B/C2 networks, 5V decoupling C3/C4 and every supplied connector/test-pad net, with no capacitor or bridge between channels.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/netlist.csv",
+                "sha256": "9a1a76c635f295ce49d7598f3d5e22ef4f348837ce3927f300e92ca708764835",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Business, circuit and assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-PARTS",
+            "text": "All component values, footprints, ratings and test-pad sizes match component-library.csv; exact real connector records remain required before production.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/component-library.csv",
+                "sha256": "ea7789635d75ad664e89ce1e3da217097a00c99a062cf17c5f365c6a70102630",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Board and shop requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-CONNECTORS",
+            "text": "J2/J3 geometric centers are (34.0,19.5)/(34.0,10.5) mm, pin order is 5V/RAW/GND with pin 1 toward the top, channels are visibly distinct, and J1 remains the approved 1x04 mapping.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Pinout and mechanical arrangement"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-TEST-PADS",
+            "text": "TP1..TP5 expose RAW_A,ADC_A,RAW_B,ADC_B,GND with at least 1.5 mm pads and 2.5 mm probe clearance; fixed TP1 origin is (10,14) mm.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/component-library.csv",
+                "sha256": "ea7789635d75ad664e89ce1e3da217097a00c99a062cf17c5f365c6a70102630",
+                "locator": "TP1..TP5"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/netlist.csv",
+                "sha256": "9a1a76c635f295ce49d7598f3d5e22ef4f348837ce3927f300e92ca708764835",
+                "locator": "TP rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Pinout and mechanical arrangement"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-QUALIFIED-PLACEMENT",
+            "text": "The current fresh board preserves J1=(4.5,18.81) at 180°, C2=(23,18.5) at 0°, C3=(8,23) at 0°, C4=(12,23) at 0° after the documented first move, and does not reuse the disqualified C3 90° hint.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "retained-board and recovery qualifications"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-BOARD-RULES",
+            "text": "The board is 40 by 30 mm, 1.6 mm two-layer/35 µm copper with the four declared NPTH holes, 1.0 mm hole-edge copper clearance, 0.25/0.25 mm track/clearance and 0.30 mm minimum via drill.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Board and shop requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-CHECKS",
+            "text": "Native connectivity has zero unconnected items and final ERC/DRC/placement audits have zero unreviewed errors, shorts, courtyard overlaps or mask bridges.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Pinout and mechanical arrangement; Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-CORRESPONDENCE",
+            "text": "Gerbers, drill and BOM correspond exactly to the same native schematic and routed board revision.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-DELIVERABLES",
+            "text": "The output set contains editable native schematic/board, BOM, Gerber copper/outline, drill, ERC and DRC reports.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/prompt.txt",
+                "sha256": "6a4d6b88a8263919d7cfd44a363023558b85b88f7479f45ddd6a3f022441dda4",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB02-ACTION-SCOPE",
+            "text": "The result lists supplied 5 V/sensor/ADC assumptions and does not claim pump safety, production connector approval, electrical qualification or board-order authorization.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+                "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+                "locator": "Business, circuit and assumptions; Board and shop requirements; Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "native-netlist",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-CONNECTIVITY"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/netlist",
+          "constraint": {
+            "operator": "equals",
+            "expected": 27,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_connections": [
+              {
+                "net": "5V",
+                "pin": "1",
+                "reference": "J1"
+              },
+              {
+                "net": "ADC_A",
+                "pin": "2",
+                "reference": "J1"
+              },
+              {
+                "net": "ADC_B",
+                "pin": "3",
+                "reference": "J1"
+              },
+              {
+                "net": "GND",
+                "pin": "4",
+                "reference": "J1"
+              },
+              {
+                "net": "5V",
+                "pin": "1",
+                "reference": "J2"
+              },
+              {
+                "net": "RAW_A",
+                "pin": "2",
+                "reference": "J2"
+              },
+              {
+                "net": "GND",
+                "pin": "3",
+                "reference": "J2"
+              },
+              {
+                "net": "5V",
+                "pin": "1",
+                "reference": "J3"
+              },
+              {
+                "net": "RAW_B",
+                "pin": "2",
+                "reference": "J3"
+              },
+              {
+                "net": "GND",
+                "pin": "3",
+                "reference": "J3"
+              },
+              {
+                "net": "RAW_A",
+                "pin": "1",
+                "reference": "R1"
+              },
+              {
+                "net": "ADC_A",
+                "pin": "2",
+                "reference": "R1"
+              },
+              {
+                "net": "RAW_B",
+                "pin": "1",
+                "reference": "R2"
+              },
+              {
+                "net": "ADC_B",
+                "pin": "2",
+                "reference": "R2"
+              },
+              {
+                "net": "ADC_A",
+                "pin": "1",
+                "reference": "C1"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C1"
+              },
+              {
+                "net": "ADC_B",
+                "pin": "1",
+                "reference": "C2"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C2"
+              },
+              {
+                "net": "5V",
+                "pin": "1",
+                "reference": "C3"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C3"
+              },
+              {
+                "net": "5V",
+                "pin": "1",
+                "reference": "C4"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C4"
+              },
+              {
+                "net": "RAW_A",
+                "pin": "1",
+                "reference": "TP1"
+              },
+              {
+                "net": "ADC_A",
+                "pin": "1",
+                "reference": "TP2"
+              },
+              {
+                "net": "RAW_B",
+                "pin": "1",
+                "reference": "TP3"
+              },
+              {
+                "net": "ADC_B",
+                "pin": "1",
+                "reference": "TP4"
+              },
+              {
+                "net": "GND",
+                "pin": "1",
+                "reference": "TP5"
+              }
+            ],
+            "operation": "netlist"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "native-components",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-PARTS"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/components",
+          "constraint": {
+            "operator": "equals",
+            "expected": 14,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_components": {
+              "C1": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "C2": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "C3": {
+                "footprint_contains": "C_0805_2012Metric",
+                "value": "1uF"
+              },
+              "C4": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "J1": {
+                "footprint_contains": "PinHeader_1x04_P2.54mm_Vertical",
+                "value": "controller"
+              },
+              "J2": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "sensor"
+              },
+              "J3": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "sensor"
+              },
+              "R1": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "R2": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "TP1": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP2": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP3": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP4": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP5": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              }
+            },
+            "operation": "components"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "bom-components",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-PARTS",
+            "PCB02-CORRESPONDENCE"
+          ],
+          "subject_role": "bom",
+          "reader": "kicad",
+          "selector": "pcb/bom",
+          "constraint": {
+            "operator": "equals",
+            "expected": 14,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_components": {
+              "C1": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "C2": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "C3": {
+                "footprint_contains": "C_0805_2012Metric",
+                "value": "1uF"
+              },
+              "C4": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "J1": {
+                "footprint_contains": "PinHeader_1x04_P2.54mm_Vertical",
+                "value": "controller"
+              },
+              "J2": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "sensor"
+              },
+              "J3": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "sensor"
+              },
+              "R1": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "R2": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              },
+              "TP1": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP2": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP3": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP4": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              },
+              "TP5": {
+                "footprint_contains": "TestPoint_Pad_D1.5mm",
+                "value": "test_pad"
+              }
+            },
+            "operation": "bom"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "required-placement",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-CONNECTORS",
+            "PCB02-TEST-PADS",
+            "PCB02-QUALIFIED-PLACEMENT"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/placement",
+          "constraint": {
+            "operator": "equals",
+            "expected": 7,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": "board_coordinates",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_placements": {
+              "C2": {
+                "rotation_deg": 0,
+                "xy_mm": [
+                  23,
+                  18.5
+                ]
+              },
+              "C3": {
+                "rotation_deg": 0,
+                "xy_mm": [
+                  8,
+                  23
+                ]
+              },
+              "C4": {
+                "rotation_deg": 0,
+                "xy_mm": [
+                  12,
+                  23
+                ]
+              },
+              "J1": {
+                "rotation_deg": 180,
+                "xy_mm": [
+                  4.5,
+                  18.81
+                ]
+              },
+              "J2": {
+                "point": "pad_centroid",
+                "xy_mm": [
+                  34,
+                  19.5
+                ]
+              },
+              "J3": {
+                "point": "pad_centroid",
+                "xy_mm": [
+                  34,
+                  10.5
+                ]
+              },
+              "TP1": {
+                "xy_mm": [
+                  10,
+                  14
+                ]
+              }
+            },
+            "operation": "placement",
+            "tolerance_mm": 0.02
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "board-outline-holes",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-BOARD-RULES"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/board_geometry",
+          "constraint": {
+            "operator": "equals",
+            "expected": 1,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": "board_coordinates",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "holes": {
+              "H1": [
+                3,
+                3
+              ],
+              "H2": [
+                37,
+                3
+              ],
+              "H3": [
+                3,
+                27
+              ],
+              "H4": [
+                37,
+                27
+              ]
+            },
+            "operation": "board_geometry",
+            "size_mm": [
+              40,
+              30
+            ],
+            "tolerance_mm": 0.02
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "erc-errors",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-CHECKS"
+          ],
+          "subject_role": "erc",
+          "reader": "kicad",
+          "selector": "pcb/report",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "report"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "drc-errors",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-CHECKS"
+          ],
+          "subject_role": "drc",
+          "reader": "kicad",
+          "selector": "pcb/report",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "report"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fabrication-members",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-DELIVERABLES",
+            "PCB02-CORRESPONDENCE"
+          ],
+          "subject_role": "fabrication",
+          "reader": "kicad",
+          "selector": "pcb/fabrication_bundle",
+          "constraint": {
+            "operator": "equals",
+            "expected": 5,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "fabrication_bundle",
+            "required_members": [
+              "design-F_Cu.gtl",
+              "design-B_Cu.gbl",
+              "design-Edge_Cuts.gm1",
+              "design.drl",
+              "design-job.gbrjob"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-schematic",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-DELIVERABLES"
+          ],
+          "subject_role": "schematic",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-basis",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-DELIVERABLES"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PCB02-ACTION-SCOPE"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:26.829173+00:00",
+    "measurements": [
+      {
+        "id": "m-956b14cb96667859fe53aefbd5782f2b4ddda14798fa5918b85af20be27d84b6",
+        "subject_id": "board",
+        "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+        "selector": "pcb/netlist",
+        "value": 27,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#netlist"
+        ]
+      },
+      {
+        "id": "m-332bd10f7570cfe004b317080930766159dc1d5811702344c5daf315f1cd6f72",
+        "subject_id": "board",
+        "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+        "selector": "pcb/components",
+        "value": 14,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#components"
+        ]
+      },
+      {
+        "id": "m-8a43fbe88a0985b7540cfe2ad34dfd1aa17eba2e0b7952549be281f0542a01a5",
+        "subject_id": "bom",
+        "subject_sha256": "8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923",
+        "selector": "pcb/bom",
+        "value": 14,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:bom@8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923#bom"
+        ]
+      },
+      {
+        "id": "m-41139af095ad8716c96373aa54c624ea301e34f4e295269663c7fba71e786d45",
+        "subject_id": "board",
+        "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+        "selector": "pcb/placement",
+        "value": 7,
+        "unit": "1",
+        "frame": "board_coordinates",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#placement"
+        ]
+      },
+      {
+        "id": "m-c489bbe1bc4af98d6dcbb69b5d672f020881baf3f2b28860a601f961e7b5f2d3",
+        "subject_id": "board",
+        "subject_sha256": "5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123",
+        "selector": "pcb/board_geometry",
+        "value": 1,
+        "unit": "1",
+        "frame": "board_coordinates",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#board_geometry"
+        ]
+      },
+      {
+        "id": "m-7465329c20da4e82734940f56ab14286d9c90d30a3b29fa7cd4450ac83ab0ed7",
+        "subject_id": "erc",
+        "subject_sha256": "59b65e47b5c71528ce867d9dcb33c1bacd9c5fab4950c0a704ba6ac0afc9290f",
+        "selector": "pcb/report",
+        "value": 0,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:erc@59b65e47b5c71528ce867d9dcb33c1bacd9c5fab4950c0a704ba6ac0afc9290f#report"
+        ]
+      },
+      {
+        "id": "m-a0b2589c5c8f8e03c9cd592f58b69d1dfff071c39934175ecf306ea32b01cbbd",
+        "subject_id": "drc",
+        "subject_sha256": "24a44851ec928138eef49e14767447ba69a795db1c5b657014669d43f53dde90",
+        "selector": "pcb/report",
+        "value": 0,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:drc@24a44851ec928138eef49e14767447ba69a795db1c5b657014669d43f53dde90#report"
+        ]
+      },
+      {
+        "id": "m-060fdf94e1e0b21cf96587a8aac7c6465f5b144a8ec10b00c432b94996fdf5e6",
+        "subject_id": "fabrication",
+        "subject_sha256": "4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918",
+        "selector": "pcb/fabrication_bundle",
+        "value": 5,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fabrication@4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918#fabrication_bundle"
+        ]
+      },
+      {
+        "id": "m-2b98d6a8240596802a006fce8b3a4be06088c6e888e9967f093cbabe1ac3d0e4",
+        "subject_id": "schematic",
+        "subject_sha256": "0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a",
+        "selector": "",
+        "value": {
+          "bytes": 33807,
+          "present": true,
+          "sha256": "0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:schematic@0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a#"
+        ]
+      },
+      {
+        "id": "m-ce434de80b6b93e3c2aad23191f0c31de528e6032e3738a29d9b2e38adaaba71",
+        "subject_id": "basis",
+        "subject_sha256": "6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a",
+        "selector": "",
+        "value": {
+          "bytes": 18491,
+          "present": true,
+          "sha256": "6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:basis@6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "native-netlist",
+        "requirement_ids": [
+          "PCB02-CONNECTIVITY"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-956b14cb96667859fe53aefbd5782f2b4ddda14798fa5918b85af20be27d84b6"
+        ],
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#netlist"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "native-components",
+        "requirement_ids": [
+          "PCB02-PARTS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-332bd10f7570cfe004b317080930766159dc1d5811702344c5daf315f1cd6f72"
+        ],
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#components"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "bom-components",
+        "requirement_ids": [
+          "PCB02-PARTS",
+          "PCB02-CORRESPONDENCE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-8a43fbe88a0985b7540cfe2ad34dfd1aa17eba2e0b7952549be281f0542a01a5"
+        ],
+        "evidence_refs": [
+          "subject:bom@8569c7b54783b2e1cfef23780be6ae04fe22101ce7af1a132645b421bc535923#bom"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "required-placement",
+        "requirement_ids": [
+          "PCB02-CONNECTORS",
+          "PCB02-TEST-PADS",
+          "PCB02-QUALIFIED-PLACEMENT"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-41139af095ad8716c96373aa54c624ea301e34f4e295269663c7fba71e786d45"
+        ],
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#placement"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "board-outline-holes",
+        "requirement_ids": [
+          "PCB02-BOARD-RULES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-c489bbe1bc4af98d6dcbb69b5d672f020881baf3f2b28860a601f961e7b5f2d3"
+        ],
+        "evidence_refs": [
+          "subject:board@5c4a03556d1849f008796bc0274180b1114e885fa54c05daefdd6ab7dc912123#board_geometry"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "erc-errors",
+        "requirement_ids": [
+          "PCB02-CHECKS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7465329c20da4e82734940f56ab14286d9c90d30a3b29fa7cd4450ac83ab0ed7"
+        ],
+        "evidence_refs": [
+          "subject:erc@59b65e47b5c71528ce867d9dcb33c1bacd9c5fab4950c0a704ba6ac0afc9290f#report"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "drc-errors",
+        "requirement_ids": [
+          "PCB02-CHECKS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a0b2589c5c8f8e03c9cd592f58b69d1dfff071c39934175ecf306ea32b01cbbd"
+        ],
+        "evidence_refs": [
+          "subject:drc@24a44851ec928138eef49e14767447ba69a795db1c5b657014669d43f53dde90#report"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fabrication-members",
+        "requirement_ids": [
+          "PCB02-DELIVERABLES",
+          "PCB02-CORRESPONDENCE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-060fdf94e1e0b21cf96587a8aac7c6465f5b144a8ec10b00c432b94996fdf5e6"
+        ],
+        "evidence_refs": [
+          "subject:fabrication@4514abb0d4ce9e2f71cf443908965dac62f1baa0000082e2d1c08bbb79aec918#fabrication_bundle"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-schematic",
+        "requirement_ids": [
+          "PCB02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-2b98d6a8240596802a006fce8b3a4be06088c6e888e9967f093cbabe1ac3d0e4"
+        ],
+        "evidence_refs": [
+          "subject:schematic@0c4c3ee28db21992dcd48d780a3e8e4b86041e6258d1f52eb9904e8f6a09e10a#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-basis",
+        "requirement_ids": [
+          "PCB02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-ce434de80b6b93e3c2aad23191f0c31de528e6032e3738a29d9b2e38adaaba71"
+        ],
+        "evidence_refs": [
+          "subject:basis@6f287fe9c449ef86b8cde24bd48391715fd425e4df820dc15ed7f12d24591b1a#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PCB02-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-f9c39f4c09324d1aa157a69b5ec2d764"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-f9c39f4c09324d1aa157a69b5ec2d764",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PCB02-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "basis",
+        "owner": {
+          "run_id": "retained-successor-sensor-interface-pcb-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "basis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/context.md",
+            "sha256": "0f6aeb6c774004d676601198107453ca8c11b8033baf7f8c7547c0c787929a14",
+            "locator": "Business, circuit and assumptions; Board and shop requirements; Deliverables"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "native-netlist",
+            "native-components",
+            "bom-components",
+            "required-placement",
+            "board-outline-holes",
+            "erc-errors",
+            "drc-errors",
+            "fabrication-members",
+            "deliverable-schematic",
+            "deliverable-basis",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": true,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 10
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

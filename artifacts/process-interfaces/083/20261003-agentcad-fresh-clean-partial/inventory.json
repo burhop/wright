@@ -1,0 +1,85 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 20,
+      "sha256": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae"
+    },
+    "checked-scope.json": {
+      "bytes": 3511,
+      "sha256": "cba5fa03af1e841907b143ee451079134109ea948111ca0d13add679554170ed"
+    },
+    "creation-definition.json": {
+      "bytes": 1158,
+      "sha256": "aff86dbb774f9dd441985b21749608287f312f7aea259194868e0b2a7ceb52b1"
+    },
+    "initialization.json": {
+      "bytes": 943,
+      "sha256": "57aeeb7053c45e82225a4e7b3b4c5fe5e3cbafa88faf785d4f4a2258ff2dba02"
+    },
+    "installation-command.json": {
+      "bytes": 586,
+      "sha256": "7eae11e8dc7de8376b9bda38444e7c5c33ed2b11d97f4c4b8889abda97088252"
+    },
+    "installation.log": {
+      "bytes": 17135,
+      "sha256": "7e5f4df31b109c3b391c53446c36a1f25e5e965434229984179bd0ee0f754afe"
+    },
+    "qualification.json": {
+      "bytes": 2322,
+      "sha256": "12666f413f4a7e44981c39d8f380ceca329d633d7b5410e9977316312983b2b5"
+    },
+    "readback-definition.json": {
+      "bytes": 1104,
+      "sha256": "f1e3858754f1e203dc8ca3d0fccd5aa6053d5031c0f847b91dfa405a16723e04"
+    },
+    "README.md": {
+      "bytes": 1509,
+      "sha256": "d029e12cbb94cf45d073379beaf7a2762884681aa61723c346ab0ad346ca7241"
+    },
+    "tools.json": {
+      "bytes": 19457,
+      "sha256": "41b8d933c56dcc7d1d6eccfe7e59bbe1908c2282e442ff6821c2573620240fe4"
+    },
+    "actual-native/meta.json": {
+      "bytes": 4241,
+      "sha256": "245e9e53ac8c3841611f05a29fa35cff2ca81611b5166e191e15237c77b5d110"
+    },
+    "actual-native/output.step": {
+      "bytes": 15378,
+      "sha256": "c68308d39103532dfbf14e6ecc98de1b819a5a881c3e5f14c3ad72875abdd250"
+    },
+    "actual-native/script.py": {
+      "bytes": 54,
+      "sha256": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+    },
+    "actual-native/tiny.py": {
+      "bytes": 54,
+      "sha256": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+    },
+    "gateway-create/gateway-tools.json": {
+      "bytes": 27629,
+      "sha256": "51c7744e8433420b624d106ccb2c9c7e45488efe017da3d2f08f5d24245b04f2"
+    },
+    "gateway-create/qualification.json": {
+      "bytes": 1011,
+      "sha256": "16fd3d5d3f980ed392f5f648669f0352ac9ba0868e9845e7b03a88ff87425a49"
+    },
+    "gateway-create/result.json": {
+      "bytes": 4851,
+      "sha256": "61a35502437991d26c9d72d835a087a62764efccfac95bfe5f4cb0226160714d"
+    },
+    "gateway-measure/gateway-tools.json": {
+      "bytes": 27981,
+      "sha256": "e0f53280799b39c967640a37038f1cc3f215258ecc7918f11db3c8248a1ff4d3"
+    },
+    "gateway-measure/qualification.json": {
+      "bytes": 5889,
+      "sha256": "52986112459c2808d51707a8f90d724821f3beee03174f3c34bc8b57318c32bf"
+    },
+    "gateway-measure/result.json": {
+      "bytes": 5198,
+      "sha256": "13133ecfcf0894645483ddc58ea9743e41b2f38a7a2eaff7c4ee8fa7357d58cd"
+    }
+  },
+  "credential_value_scan": "passed"
+}

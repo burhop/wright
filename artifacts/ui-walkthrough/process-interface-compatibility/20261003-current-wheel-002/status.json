@@ -1,0 +1,67 @@
+{
+  "title": "Saved interfaces across accepted workflow revisions",
+  "summary": "Focused supplemental installed proof: required binding mismatch is contained; complete authoring form stays disabled for explicit resource absence; common fallback visibly exposes current input without old run/review authority. Source restores through exact CAS; no execution or decision.",
+  "overall": "pass",
+  "updated": "2026-10-03T21:15:52.813Z",
+  "manualSteps": [
+    {
+      "label": "Prerequisite and contained saved view",
+      "instruction": "Use the isolated fixture with the required output conditionally renamed from first_out to changed_out. Open its saved working-interface link for the current accepted digest with no run attached. Confirm the binding error and absence of a generated frame. The prior twelve-step report covers normal Workflows/file entry."
+    },
+    {
+      "label": "Complete authoring request",
+      "instruction": "Click Create or choose interface. Select the existing saved interface and its current saved revision. Set Interface title to Update evidence interface. Fill How should this interface help the user? with Update the required output binding to the current accepted workflow, keeping the shared Wright controls. Confirm Create interface and Update selected interface remain disabled with The qualified interface compiler is unavailable."
+    },
+    {
+      "label": "Visible fallback",
+      "instruction": "Click Hide interface controls, then Use common working view. Confirm Brief (required) displays Synthetic review requirements and no old Approve action appears. Restore the isolated source through its exact conditional update; do not start or approve anything."
+    }
+  ],
+  "steps": [
+    {
+      "id": "C01",
+      "state": "pass",
+      "label": "Required binding mismatch remains contained",
+      "summary": "The same immutable saved UI is contained for this incompatible accepted revision.",
+      "purpose": "No frame; exact binding reason and fallback",
+      "action": "Open current saved UI link after controlled source CAS",
+      "controls": [
+        "Open current saved UI link after controlled source CAS"
+      ],
+      "expected": "No frame; exact binding reason and fallback",
+      "actual": "The same immutable saved UI is contained for this incompatible accepted revision.",
+      "raw": "screenshots/raw/C01.png",
+      "annotated": "screenshots/annotated/C01.png"
+    },
+    {
+      "id": "C02",
+      "state": "pass",
+      "label": "Unavailable authoring remains disabled with complete request",
+      "summary": "The old saved revision is selected and title/instructions supplied; explicit compiler/model unavailability still blocks creation/update. No authoring request is sent.",
+      "purpose": "Resource limitation keeps creation/update disabled",
+      "action": "Select existing revision and fill title/instructions",
+      "controls": [
+        "Select existing revision and fill title/instructions"
+      ],
+      "expected": "Resource limitation keeps creation/update disabled",
+      "actual": "The old saved revision is selected and title/instructions supplied; explicit compiler/model unavailability still blocks creation/update. No authoring request is sent.",
+      "raw": "screenshots/raw/C02.png",
+      "annotated": "screenshots/annotated/C02.png"
+    },
+    {
+      "id": "C03",
+      "state": "pass",
+      "label": "Common fallback form is fully inspectable",
+      "summary": "The common form displays the accepted input and its actual default. No old run/review or generated frame is attached.",
+      "purpose": "Current required input visible without old review authority",
+      "action": "Hide interface controls then Use common working view",
+      "controls": [
+        "Hide interface controls then Use common working view"
+      ],
+      "expected": "Current required input visible without old review authority",
+      "actual": "The common form displays the accepted input and its actual default. No old run/review or generated frame is attached.",
+      "raw": "screenshots/raw/C03.png",
+      "annotated": "screenshots/annotated/C03.png"
+    }
+  ]
+}

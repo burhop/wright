@@ -1,0 +1,17 @@
+{
+  "exit_code": 0,
+  "counts": {
+    "startTime": "2026-10-03T14:58:35.725Z",
+    "duration": 189825.11,
+    "expected": 33,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+  "exact_eight_module_collection": true,
+  "live_backend": false,
+  "live_model": false,
+  "live_mcp": false,
+  "physical_operation": false
+}

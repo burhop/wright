@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "branch": "codex/083-process-working-interfaces",
+  "baseline_commit": "6728c238",
+  "source_hashes": {
+    "apps/web/src/services/process-presentation-host.ts": "e9c46f29fe65612d9a3a034cd45e63e2997d9d575d2cd2cdd2c36e8eaf5d71f3",
+    "apps/web/src/services/process-presentation-host.spec.ts": "f2c54c0546ccadf15d15e75f778d25c9516e1c71b7c33e81db15d628e942443b",
+    "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py": "9b3ce94b1b06ba2f2907bc80302c491cafbfffc5669dd02ed9c9ce5bd775bd06",
+    "packages/workspace_service/tests/surfaces/test_process_ui_static.py": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+    "tests/packaging/test_process_interfaces_distribution.py": "18b85e61c84b5b01bd0d787e1a7b33de7634f6a2b28307658c7b59f10d5705bd"
+  },
+  "tests": {
+    "frontend": 47,
+    "client": 94,
+    "authority": 71,
+    "packaging": 3
+  },
+  "counts_overlap_prior_evidence": true,
+  "app_typecheck_exit": 0,
+  "browser_checks": 8,
+  "saved_actual_model_interfaces": 2,
+  "baseline_files_unchanged": 57,
+  "ui_authoring_records_unchanged": true,
+  "new_generation_or_compilation": false,
+  "new_process_starts": 0,
+  "review_decisions": 0,
+  "saved_preferences_changed": false,
+  "transport_authority": "Existing exact presentation bridge; no bearer token or generic tool call in frame messages.",
+  "limitations": [
+    "Existing browser-authoring, exact navigation and negative authority evidence retains its own recorded scope.",
+    "Older installed browser builds do not include this new fixed-runtime correction.",
+    "Fresh packaging checks establish shipped current modules and offline hosting, not a full new installed browser campaign.",
+    "Abrupt browser/OS termination and browser BFcache behavior remain unqualified.",
+    "The first backend attempt had 70 temporary-directory setup errors; it is not a product test failure.",
+    "The second browser attempt used the last response across hidden tabs; visible-frame inspection corrects that test assumption.",
+    "Full feature, engineering acceptance and physical verification remain incomplete."
+  ]
+}

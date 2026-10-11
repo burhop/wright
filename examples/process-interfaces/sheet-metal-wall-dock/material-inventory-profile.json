@@ -1,0 +1,133 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "wall-dock-native-inventory-contract",
+  "version": "1",
+  "baseline": {
+    "id": "wall-dock-native-inventory-contract-basis",
+    "version": "1",
+    "requirements": [
+      {
+        "id": "NATIVE-INVENTORY",
+        "text": "Read complete, unambiguous inventory from the pinned native provider in its actual structured schema.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "examples/process-interfaces/sheet-metal-wall-dock/material-inventory-contract.md",
+            "sha256": "1cfd9bc390e72c63c072fc9e37d0e39969ea66a5164ee05619848d834824c6ef",
+            "locator": "Complete native inventory handoff contract"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      }
+    ],
+    "unresolved_decisions": [],
+    "amendments": []
+  },
+  "checks": [
+    {
+      "id": "inventory-provider",
+      "version": "1",
+      "requirement_ids": [
+        "NATIVE-INVENTORY"
+      ],
+      "subject_role": "inventory",
+      "reader": "structured",
+      "selector": "/providerId",
+      "constraint": {
+        "operator": "equals",
+        "expected": "solid_edge",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "inventory-unique",
+      "version": "1",
+      "requirement_ids": [
+        "NATIVE-INVENTORY"
+      ],
+      "subject_role": "inventory",
+      "reader": "structured",
+      "selector": "/totalMatches",
+      "constraint": {
+        "operator": "equals",
+        "expected": 1,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "inventory-complete",
+      "version": "1",
+      "requirement_ids": [
+        "NATIVE-INVENTORY"
+      ],
+      "subject_role": "inventory",
+      "reader": "structured",
+      "selector": "/hasMore",
+      "constraint": {
+        "operator": "equals",
+        "expected": false,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    },
+    {
+      "id": "inventory-label",
+      "version": "1",
+      "requirement_ids": [
+        "NATIVE-INVENTORY"
+      ],
+      "subject_role": "inventory",
+      "reader": "structured",
+      "selector": "/materials/0/name",
+      "constraint": {
+        "operator": "equals",
+        "expected": "Aluminum Alloy:3.3523 , AlMg2.5, EN-AW 5052 ",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "structured_value",
+      "parameters": {},
+      "applicability_reason": null
+    }
+  ],
+  "excluded_scope": [],
+  "limitations": [
+    "This validates a native inventory handoff, not material assignment, supplier stock, certification or engineering release."
+  ],
+  "supported_kinds": [
+    "file",
+    "value"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "title": "Saved interfaces across accepted workflow revisions",
+  "summary": "Meaningful compatible source change: the same installed saved UI and common view both render the actual changed accepted input default without inheriting old run/review authority. Original source/default restores through exact CAS. No generation/compiler/execution/decision.",
+  "overall": "pass",
+  "updated": "2026-10-03T21:26:31.709Z",
+  "manualSteps": [
+    {
+      "label": "Meaningful compatible change",
+      "instruction": "Use the isolated fixture after a conditional accepted-source update changes the Brief default from Synthetic review requirements to Updated requirements for the current accepted process, preserving required bindings. Open the saved working-interface link for that current digest without attaching a run. Confirm Brief (required) shows the updated value and no old Approve action appears."
+    },
+    {
+      "label": "Common agreement",
+      "instruction": "Click Use common working view. Confirm Brief (required) shows the same updated default and no historical review is present. Do not start or approve anything."
+    },
+    {
+      "label": "Restore and reuse",
+      "instruction": "Restore the exact original accepted source through its conditional update. Open the same saved interface in preparation mode at the restored digest without a run. Confirm the original default returns and the old review is not automatically attached."
+    }
+  ],
+  "steps": [
+    {
+      "id": "D01",
+      "state": "pass",
+      "label": "Saved UI uses the changed accepted default",
+      "summary": "Saved UI renders the changed input default from the current accepted process, without old outputs or review permission.",
+      "purpose": "Same compiled UI; actual current default and no old run/review",
+      "action": "Open current saved UI after conditional input-default change",
+      "controls": [
+        "Open current saved UI after conditional input-default change"
+      ],
+      "expected": "Same compiled UI; actual current default and no old run/review",
+      "actual": "Saved UI renders the changed input default from the current accepted process, without old outputs or review permission.",
+      "raw": "screenshots/raw/D01.png",
+      "annotated": "screenshots/annotated/D01.png"
+    },
+    {
+      "id": "D02",
+      "state": "pass",
+      "label": "Common view agrees on the changed default",
+      "summary": "Common view shows the same accepted changed default and no historical review. No process is started.",
+      "purpose": "Same current input basis without old review",
+      "action": "Click Use common working view",
+      "controls": [
+        "Click Use common working view"
+      ],
+      "expected": "Same current input basis without old review",
+      "actual": "Common view shows the same accepted changed default and no historical review. No process is started.",
+      "raw": "screenshots/raw/D02.png",
+      "annotated": "screenshots/annotated/D02.png"
+    },
+    {
+      "id": "D03",
+      "state": "pass",
+      "label": "Restored source still reuses the immutable saved UI",
+      "summary": "Saved UI returns to the original accepted default after exact CAS restoration while preserving separate run/review identity.",
+      "purpose": "Original default; no old review automatically attached",
+      "action": "Open original-source saved preparation view",
+      "controls": [
+        "Open original-source saved preparation view"
+      ],
+      "expected": "Original default; no old review automatically attached",
+      "actual": "Saved UI returns to the original accepted default after exact CAS restoration while preserving separate run/review identity.",
+      "raw": "screenshots/raw/D03.png",
+      "annotated": "screenshots/annotated/D03.png"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "previous_public_root": "20261003-wheel-exact-source-ui",
+  "previous_revision": "revision-e699e31782df459986a1c795f9c2bf65",
+  "previous_saved_receipt_valid": true,
+  "previous_preview_result_parity_valid": true,
+  "previous_working_reload_claim_supported": false,
+  "finding": "Earlier 004 and 009 harnesses reloaded before the asynchronous saved-tab transition completed. Their parity URLs retained processUIKind=preview; Connected to Wright alone did not establish a working context.",
+  "correction": "011 requires the working URL, no preview job parameter, visible-tab assertions and backend read_only=false before accepting saved reload. Original reports and stopped journeys remain intact."
+}

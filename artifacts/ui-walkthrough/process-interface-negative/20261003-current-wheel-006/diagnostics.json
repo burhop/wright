@@ -1,0 +1,55 @@
+{
+  "diagnostics": {
+    "console": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:54345/assets/index-ClxcUrTE.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:54345/assets/index-ClxcUrTE.js:4160:3720)\n    at async http://wright.localhost:54345/assets/index-ClxcUrTE.js:4308:100927\n    at async http://wright.localhost:54345/assets/index-ClxcUrTE.js:4308:101340",
+      "Failed to load resource: the server responded with a status of 409 (Conflict)",
+      "Failed to load resource: the server responded with a status of 409 (Conflict)",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:54345/assets/index-ClxcUrTE.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:54345/assets/index-ClxcUrTE.js:4160:3720)\n    at async http://wright.localhost:54345/assets/index-ClxcUrTE.js:4308:100927\n    at async http://wright.localhost:54345/assets/index-ClxcUrTE.js:4308:101340"
+    ],
+    "pageErrors": [],
+    "failedResponses": [
+      {
+        "path": "/api/agent/models",
+        "status": 503
+      },
+      {
+        "path": "/api/workspace/process-interfaces/runs/1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "status": 409
+      },
+      {
+        "path": "/api/workspace/process-interfaces/runs/1ed6c2e1302a4eb18ff7575a3fbe5be0",
+        "status": 409
+      },
+      {
+        "path": "/api/agent/models",
+        "status": 503
+      }
+    ]
+  },
+  "posts": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-f1ca33c61df74d2ea8a96a3f284f2692/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    }
+  ],
+  "changedSource": true,
+  "missing": false
+}

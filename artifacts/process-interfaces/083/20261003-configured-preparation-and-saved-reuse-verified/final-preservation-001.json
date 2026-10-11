@@ -1,0 +1,69 @@
+{
+  "same_source_digest": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7",
+  "immutable_input_snapshot": "inputs-73d468d414dc47309c0d72203ef1afad",
+  "run_ids": [
+    "40a732fd2ccb46c2af8a0f466febee00",
+    "5c3a84a335854e88aa8bbe48a591ce0d"
+  ],
+  "frozen_files_per_run": [
+    42,
+    42
+  ],
+  "output_paths_disjoint": true,
+  "result_ids_disjoint": true,
+  "actual_gate_count_per_run": 1,
+  "native_calls_per_stage_per_run": 1,
+  "gates": [
+    {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    },
+    {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    }
+  ],
+  "assessment_ids": [
+    "assessment-da4a53f1a99f4c0b95358956e3dce7cf",
+    "assessment-5f34914203794f148d653c47e99f98d4"
+  ],
+  "saved_ui_files_unchanged": 6,
+  "authoring_tables_unchanged": {
+    "process_ui_authoring_jobs": 4,
+    "process_ui_authoring_records": 20
+  },
+  "older_failed_run_files_unchanged": 44,
+  "older_saved_assets_unchanged": 6,
+  "older_authoring_rows_preserved": {
+    "process_ui_authoring_jobs": 2,
+    "process_ui_authoring_records": 10
+  },
+  "browser_mutations_during_reuse": [],
+  "nominal_toolpath_layers_per_run": 90,
+  "generation_or_compilation_repeated_for_reuse": false,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "fresh_provider_qualification_established_by_this_record": false
+}

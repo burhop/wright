@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-22T23:59:18.648457+00:00",
+  "decision": "serial-resolution/p001-human-decision-019.json",
+  "episode_id": "printed02-final-feature-review",
+  "extension": {
+    "evidence": {
+      "path": "serial-resolution/p001-human-decision-019.json",
+      "sha256": "5903cae5c1e0f691ab12e03214c8bf5ad70cd497aa586b3efd1e95bf118f041f"
+    },
+    "authorized_max_corrections": 3,
+    "prior_attempts_sha256": "b603dc28be5509307eb2d600cb3a14e9233eb12aca12d26b4ec2d99f7f238159",
+    "prior_attempt_count": 2,
+    "recorded_at": "2026-09-22T23:59:18.678202+00:00"
+  },
+  "cleanup": {
+    "schema_version": 1,
+    "scenario_id": "printed-replacement-part-02",
+    "attempt_id": "attempt-019",
+    "model": "openai-codex::gpt-5.6-sol",
+    "status": "terminal_and_cleaned",
+    "cleanup_required": false,
+    "workflow_dispatched": true,
+    "server_id": "c062c7b5-384f-48ea-98f8-f5ac6451bc77",
+    "repair_server_id": "d6651401-357a-4f30-9dde-059799619932",
+    "native_session_id": "blender-57298354e27e4c09af66eb05fd1a55fe",
+    "native_pid": 42052,
+    "preflight": {
+      "cases": 1,
+      "passed": 1,
+      "review": 0,
+      "failed": 0
+    },
+    "workflow_completed": false,
+    "runner_phase": "changes_requested",
+    "runner_state": "D:\\repos\\wright\\.local-run\\feature-081-live\\campaign-runner-state\\validator082-printing02-attempt-019\\printed-replacement-part-02\\attempt-019.json",
+    "cleanup_allowed": true,
+    "cleanup": {
+      "status": "cleaned",
+      "server_id": "c062c7b5-384f-48ea-98f8-f5ac6451bc77",
+      "repair_server_id": "d6651401-357a-4f30-9dde-059799619932",
+      "session_id": "blender-57298354e27e4c09af66eb05fd1a55fe",
+      "pid": 42052,
+      "post_cleanup_identity": null
+    }
+  },
+  "campaign_credit": false
+}

@@ -65,6 +65,9 @@ def verify_print_package(
             expected="support-bearing valid toolpath with compatible machine/material/process profiles",
             predicate=lambda value: all(value.values()),
             evidence=refs,
-            correction="Regenerate and inspect the support-bearing slice with the selected P1S profiles.",
+            correction=(
+                "Regenerate and inspect the support-bearing slice with the selected "
+                "machine, material, and process profiles."
+            ),
         ),
     )

@@ -1,0 +1,80 @@
+{
+  "scope": "Controlled startup-refusal regressions and served recovery of an existing default-model-built heat interface",
+  "owner_presentation_tests": 18,
+  "manager_runtime_tests": 16,
+  "served_recovery_checks": 3,
+  "job_id": "job-42fee0f45ef249adba4dd993e96dbde4",
+  "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170",
+  "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+  "actual_result_cards": 18,
+  "generation_in_recovery": false,
+  "process_start_in_recovery": false,
+  "review_response": false,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "abandoned_browser_garbage_collection_proved": false,
+  "input_preparation_and_second_run_reuse_proved": false,
+  "failed_attempts_retained": true,
+  "files": {
+    "startup-owner-tests.xml": {
+      "sha256": "e09baa7c8097604070bfaadbbd53e4fc6498be280c68174c228a8e6d821505b6",
+      "bytes": 3464
+    },
+    "startup-runtime-tests.xml": {
+      "sha256": "62fa70fa1b9b4d35e7b1c3328099aacb18e29bf073a1eb15da6b2560bd821171",
+      "bytes": 3076
+    },
+    "saved-revision.json": {
+      "sha256": "6827f11b4a7f1f275f9da39e02124c2129f9401f94a6b5c10d81dc4b6ae5e305",
+      "bytes": 6983
+    },
+    "style-verification.json": {
+      "sha256": "dd0c207819be493a44194b9244026fb9e214258d0deaf4f2a17a7ac75e461463",
+      "bytes": 125
+    },
+    "walkthrough/status.json": {
+      "sha256": "b5fc586959fdf14091120cfe3ba93c1398169e63b5475ca405b1b62fdc788367",
+      "bytes": 2795
+    },
+    "walkthrough/report.html": {
+      "sha256": "1945e782834cb3baab5488ae48c02d418817fa7c0ae81f45e8439f13e75a97c2",
+      "bytes": 3815
+    },
+    "walkthrough/progress.md": {
+      "sha256": "579d91797b3b917c9e34c7fbae90bc409e452ed3676efda8e5150fdb7f6d92a7",
+      "bytes": 2883
+    },
+    "walkthrough/browser-diagnostics.json": {
+      "sha256": "5e3ef932fc74883e99f19d74797bc46c754257cd57ecb9161715d605c9cef9ff",
+      "bytes": 64
+    },
+    "walkthrough/screenshots/annotated/S01.png": {
+      "sha256": "f176532f7d335b91ff6590407cb39281438aef9d128225b6d677419f30e53eff",
+      "bytes": 89503
+    },
+    "walkthrough/screenshots/annotated/S02.png": {
+      "sha256": "661dd81d743f96440bb2416c52dd6ca8f1f0ee27cae1234d48ccd2b54c96af3b",
+      "bytes": 95328
+    },
+    "walkthrough/screenshots/annotated/S03.png": {
+      "sha256": "6631f20aac2afae8a99933a18ea3a6f669973bc4956a19a51b491f30ab065ed6",
+      "bytes": 85512
+    },
+    "walkthrough/screenshots/raw/S01.png": {
+      "sha256": "3a4bc9625a782f3f428b2b3f1cb2aaf565181e6135a8846129191860e0159560",
+      "bytes": 78130
+    },
+    "walkthrough/screenshots/raw/S02.png": {
+      "sha256": "aa041ad67a2653492f0999009c353aa0dd73965bb8fcf0fb3bd38131d00fe18b",
+      "bytes": 72458
+    },
+    "walkthrough/screenshots/raw/S03.png": {
+      "sha256": "5831084d24e9d334e029c4a5a6e19777216c0634fe3197c8f77caff8d6b5a652",
+      "bytes": 71958
+    },
+    "generated-source.json": {
+      "sha256": "dc26167470a851d7cecaa5a52b1cbba0b0de0ecddb6de3dff2257a8b32985ec4",
+      "bytes": 3882
+    }
+  }
+}

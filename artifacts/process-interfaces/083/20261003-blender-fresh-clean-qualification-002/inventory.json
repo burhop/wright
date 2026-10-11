@@ -1,0 +1,88 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "actual-geometry/tiny.stl": {
+      "bytes": 684,
+      "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    },
+    "blender.log": {
+      "bytes": 187,
+      "sha256": "5bf43286976468a3da188684c51eed406cad6d4caf7adcfc19058187c7003c77"
+    },
+    "checked-scope.json": {
+      "bytes": 6541,
+      "sha256": "819a32d97b22c26e42ba17618a544d19cb326d5afc8e3dbf11426628f03443a9"
+    },
+    "first-attempt/blender.log": {
+      "bytes": 1055,
+      "sha256": "c541e5746647c31580cea1093da44dbbe884cc09fd784d916d9a71b9ee8f8518"
+    },
+    "first-attempt/gateway/gateway-tools.json": {
+      "bytes": 63665,
+      "sha256": "ead282ea94013735b380e50e2204e06031f9138af1e6cc318e806cc0aa54c985"
+    },
+    "first-attempt/gateway/qualification.json": {
+      "bytes": 1097,
+      "sha256": "762ae3b9f0af271239964fe50adee5c1610563a2913e4f71ff4775d6d7b6ff62"
+    },
+    "first-attempt/gateway/result.json": {
+      "bytes": 465,
+      "sha256": "5b2df2a0440d44949bda1de8ad472cf1c6571d672da5bc8b3dfb291d26820c65"
+    },
+    "first-attempt/gateway-definition.json": {
+      "bytes": 1386,
+      "sha256": "2ef76c5a8b3205e8cd1127d04331b98954a77ce4ff84f68d937015cee17621ed"
+    },
+    "first-attempt/installation-command.json": {
+      "bytes": 608,
+      "sha256": "1c66cdc6699ea048a73b04894842aeb13f279a0592441258cfc19c983c6ff131"
+    },
+    "first-attempt/installation.log": {
+      "bytes": 122961,
+      "sha256": "694abbe0e84b9e70ee5b91ae017756611ae70804f63f4ab1e9198b5f060986ee"
+    },
+    "first-attempt/qualification.json": {
+      "bytes": 3579,
+      "sha256": "12e055d01cb928a0966b1299b37a3ab5596499254c149e60c3cf201b481a6624"
+    },
+    "first-attempt/tools.json": {
+      "bytes": 41097,
+      "sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89"
+    },
+    "gateway/gateway-tools.json": {
+      "bytes": 63665,
+      "sha256": "de1220f3f91eec06378b2f8ae4d852cddae1d98e572ae6148b5751a657816110"
+    },
+    "gateway/qualification.json": {
+      "bytes": 14826,
+      "sha256": "27d0e7f4faf940f6ac7a8b720ec2be0ba07fbf26dd263acc78f41983eb83e885"
+    },
+    "gateway/result.json": {
+      "bytes": 327,
+      "sha256": "b4f516c710040cde8c1165aa2d78509d4358b765e62c2f832470180f996a4590"
+    },
+    "gateway-definition.json": {
+      "bytes": 1402,
+      "sha256": "6b6aefdb7044ffa2d7deac6ba9c5a2b295c92b4144027c86fe4a852f5924d5a2"
+    },
+    "qualification.json": {
+      "bytes": 1426,
+      "sha256": "24a79a84f848804c96cc8c7b3d7e54cb8d43c211dcf7d1d0c91c796e3f49ac2e"
+    },
+    "README.md": {
+      "bytes": 1619,
+      "sha256": "977eb03130c2719dbb47ec8e534357767cf6c039023764b0d711da5fda5999e8"
+    },
+    "selected-host-bootstrap.py": {
+      "bytes": 367,
+      "sha256": "83cd774514bc9f3e68f6a00d7af1df330acee0a309327f17c31d3c41ec3e83b4"
+    },
+    "tools.json": {
+      "bytes": 41097,
+      "sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89"
+    }
+  }
+}

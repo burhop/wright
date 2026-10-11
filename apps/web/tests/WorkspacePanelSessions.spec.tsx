@@ -3,12 +3,17 @@ import {
   fireEvent,
   render,
   screen,
+  within,
   waitFor,
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import WorkspacePanel from "../src/components/chat/WorkspacePanel";
 import { ViewerPanelProvider } from "../src/store/viewer";
+import {
+  createProcessWorkspaceTab,
+  processWorkspaceQuery,
+} from "../src/services/process-workspace-tabs";
 
 const mockUseChat = vi.fn();
 const mockGetWorkspace = vi.fn();
@@ -21,6 +26,9 @@ const mockGetWorkspaceTools = vi.fn();
 const mockGetWorkspaceToolsById = vi.fn();
 const mockListHermesModels = vi.fn();
 const mockEnsureDefaultRivetWorkflow = vi.fn();
+const mockCreateWorkflowSource = vi.fn();
+const mockGetWorkspaceConfig = vi.fn();
+const mockUpdateWorkspaceConfig = vi.fn();
 
 function LocationProbe() {
   const location = useLocation();
@@ -57,6 +65,8 @@ vi.mock("../src/services/agent-service", () => ({
 vi.mock("../src/services/workspace-service", () => ({
   workspaceService: {
     getWorkspace: (...args: unknown[]) => mockGetWorkspace(...args),
+    createWorkspaceWorkflowSource: (...args: unknown[]) =>
+      mockCreateWorkflowSource(...args),
     updateWorkspaceSession: (...args: unknown[]) =>
       mockUpdateWorkspaceSession(...args),
     getWorkspaceFiles: (...args: unknown[]) => mockGetWorkspaceFiles(...args),
@@ -66,15 +76,9 @@ vi.mock("../src/services/workspace-service", () => ({
       changes: [],
     }),
     getGitHistory: vi.fn().mockResolvedValue({ commits: [] }),
-    getWorkspaceConfig: vi.fn().mockResolvedValue({
-      workspace_id: "workspace-1",
-      git_remote_url: null,
-      git_username: null,
-      has_token: false,
-      workspace_path: "/tmp/demo",
-      workspace_prompt: null,
-      git_large_file_threshold: null,
-    }),
+    getWorkspaceConfig: (...args: unknown[]) => mockGetWorkspaceConfig(...args),
+    updateWorkspaceConfig: (...args: unknown[]) =>
+      mockUpdateWorkspaceConfig(...args),
     getWorkspaceTools: (...args: unknown[]) => mockGetWorkspaceTools(...args),
     getWorkspaceToolsById: (...args: unknown[]) =>
       mockGetWorkspaceToolsById(...args),
@@ -109,6 +113,15 @@ vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
     workflowFilePath: string;
     reopenRequest?: number;
     onOpenWorkflow?: (path: string) => void;
+    onUnsavedChange?: (path: string, unsaved: boolean) => void;
+    onSavingChange?: (path: string, saving: boolean) => void;
+    onOpenProcess?: (process: {
+      workspace_id: string;
+      source_path: string;
+      source_digest: string;
+    }) => void;
+    createIfMissing?: boolean;
+    navigation?: import("../src/services/process-navigation").ProcessNavigationRequest;
   }) => (
     <div
       data-testid="workspace-workflow-fixture"
@@ -117,9 +130,126 @@ vi.mock("../src/components/pages/WorkflowRecoveryPage", () => ({
       data-workspace-name={props.workspaceName}
       data-workflow-file={props.workflowFilePath}
       data-reopen-request={props.reopenRequest}
+      data-create-if-missing={String(props.createIfMissing)}
+      data-navigation-block={props.navigation?.resolution.target.block_id}
     >
+      <input
+        aria-label="Fixture source draft"
+        defaultValue="Saved fixture source"
+        onChange={() => props.onUnsavedChange?.(props.workflowFilePath, true)}
+      />
+      <button
+        onClick={() => props.onUnsavedChange?.(props.workflowFilePath, false)}
+      >
+        Mark fixture saved
+      </button>
+      <button
+        onClick={() => props.onSavingChange?.(props.workflowFilePath, true)}
+      >
+        Start pending fixture save
+      </button>
+      <button
+        onClick={() => props.onSavingChange?.(props.workflowFilePath, false)}
+      >
+        Finish pending fixture save
+      </button>
       <button onClick={() => props.onOpenWorkflow?.(props.workflowFilePath)}>
         Reopen fixture file
+      </button>
+      <button
+        onClick={() =>
+          props.onOpenWorkflow?.("workflows/other-design.workflow.wflow")
+        }
+      >
+        Open other fixture workflow
+      </button>
+      <button
+        onClick={() =>
+          props.onOpenProcess?.({
+            workspace_id: props.workspaceId,
+            source_path: props.workflowFilePath.replace(/^\//, ""),
+            source_digest: "a".repeat(64),
+          })
+        }
+      >
+        Use saved fixture process
+      </button>
+    </div>
+  ),
+}));
+
+vi.mock("../src/components/process-interfaces/ProcessWorkspaceTab", () => ({
+  ProcessWorkspaceTab: (
+    props: import("../src/components/process-interfaces/ProcessWorkspaceTab").ProcessWorkspaceTabProps,
+  ) => (
+    <div
+      data-testid="working-view-host-fixture"
+      data-view-path={props.tab.path}
+      data-session-id={props.sessionId}
+      data-run-id={props.tab.processView.run_id ?? ""}
+      data-navigation-result={props.navigation?.resolution.target.result_id}
+      data-navigation-assessment={
+        props.navigation?.resolution.target.assessment_id
+      }
+    >
+      <button
+        onClick={() =>
+          props.onRunAttached(
+            props.tab.path,
+            props.tab.processView.process,
+            "accepted-run",
+          )
+        }
+      >
+        Accept fixture run
+      </button>
+      <button
+        onClick={() => props.onOpenDefinition?.(props.tab.processView.process)}
+      >
+        Open fixture definition
+      </button>
+      <button
+        onClick={() =>
+          void props.onNavigate?.(props.tab.processView.process, {
+            process: props.tab.processView.process,
+            target: {
+              kind: "block",
+              block_id: "exact-step",
+              run_id: props.tab.processView.run_id,
+            },
+          })
+        }
+      >
+        Navigate fixture step
+      </button>
+      <button
+        onClick={() =>
+          void props.onNavigate?.(props.tab.processView.process, {
+            process: props.tab.processView.process,
+            target: {
+              kind: "assessment",
+              result_id: "exact-result",
+              assessment_id: "exact-assessment",
+              run_id: props.tab.processView.run_id,
+            },
+          })
+        }
+      >
+        Navigate fixture assessment
+      </button>
+      <button
+        onClick={() =>
+          void props.onNavigate?.(props.tab.processView.process, {
+            process: props.tab.processView.process,
+            target: {
+              kind: "result",
+              result_id: "other-run-result",
+              run_id: "other-run",
+            },
+          })
+        }
+      >
+        Navigate fixture other run
       </button>
     </div>
   ),
@@ -130,7 +260,27 @@ describe("WorkspacePanel session selection", () => {
     vi.clearAllMocks();
     vi.unstubAllEnvs();
     localStorage.clear();
+    mockGetWorkspaceConfig.mockResolvedValue({
+      workspace_id: "workspace-1",
+      git_remote_url: null,
+      git_username: null,
+      has_token: false,
+      workspace_path: "/tmp/demo",
+      workspace_prompt: null,
+      git_large_file_threshold: 10 * 1024 * 1024,
+    });
+    mockUpdateWorkspaceConfig.mockResolvedValue({
+      success: true,
+      workspace_id: "workspace-1",
+    });
     mockSendMessage.mockResolvedValue(undefined);
+    mockCreateWorkflowSource.mockImplementation(
+      async (_session, path, source) => ({
+        workspace_id: "workspace-1",
+        path,
+        source,
+      }),
+    );
     mockUpdateWorkspaceSession.mockResolvedValue("new-session");
     mockSelectSession.mockResolvedValue(undefined);
     mockGetWorkspaceMcpStatus.mockResolvedValue({
@@ -235,6 +385,644 @@ describe("WorkspacePanel session selection", () => {
     });
   });
 
+  it.each([10485760, 26738688, 1, null])(
+    "round trips a byte threshold of %s through workspace settings",
+    async (bytes) => {
+      mockGetWorkspaceConfig.mockResolvedValue({
+        workspace_id: "workspace-1",
+        git_remote_url: null,
+        git_username: null,
+        has_token: false,
+        workspace_path: "/tmp/demo",
+        workspace_prompt: null,
+        git_large_file_threshold: bytes,
+      });
+      render(
+        <MemoryRouter>
+          <ViewerPanelProvider>
+            <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+          </ViewerPanelProvider>
+        </MemoryRouter>,
+      );
+      fireEvent.click(await screen.findByTestId("activity-bar-settings-btn"));
+      const threshold = await screen.findByTestId(
+        "workspace-settings-git-threshold",
+      );
+      await waitFor(() =>
+        expect(threshold).toHaveValue((bytes ?? 10485760) / 1048576),
+      );
+      expect(screen.getByLabelText("Large-file warning threshold (MiB)")).toBe(
+        threshold,
+      );
+      fireEvent.click(screen.getByTestId("workspace-settings-save-btn"));
+      await waitFor(() =>
+        expect(mockUpdateWorkspaceConfig).toHaveBeenCalledWith(
+          "new-session",
+          null,
+          null,
+          "",
+          null,
+          bytes ?? 10485760,
+        ),
+      );
+    },
+  );
+
+  it("saves an edited fractional MiB threshold as bytes and rejects empty input", async () => {
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    fireEvent.click(await screen.findByTestId("activity-bar-settings-btn"));
+    const threshold = await screen.findByTestId(
+      "workspace-settings-git-threshold",
+    );
+    await waitFor(() => expect(threshold).toHaveValue(10));
+    fireEvent.change(threshold, { target: { value: "25.5" } });
+    fireEvent.click(screen.getByTestId("workspace-settings-save-btn"));
+    await waitFor(() =>
+      expect(mockUpdateWorkspaceConfig).toHaveBeenCalledWith(
+        "new-session",
+        null,
+        null,
+        "",
+        null,
+        26738688,
+      ),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("workspace-settings-save-btn")).toBeEnabled(),
+    );
+    mockUpdateWorkspaceConfig.mockClear();
+    const reloadedThreshold = screen.getByTestId(
+      "workspace-settings-git-threshold",
+    );
+    fireEvent.change(reloadedThreshold, { target: { value: "" } });
+    fireEvent.submit(reloadedThreshold.closest("form")!);
+    expect(
+      await screen.findByText(/Enter a positive file-size threshold in MiB\./),
+    ).toBeVisible();
+    expect(mockUpdateWorkspaceConfig).not.toHaveBeenCalled();
+  });
+
+  it("opens a working view beside the retained workflow and navigates back in the same workspace", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    fireEvent.click(await screen.findByText("Use saved fixture process"));
+    const working = await screen.findByTestId("working-view-host-fixture");
+    expect(working).toBeVisible();
+    expect(working).toHaveAttribute("data-session-id", "new-session");
+    expect(
+      screen.getByTestId("workspace-workflow-fixture"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("workspace-workflow-fixture")).not.toBeVisible();
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(
+      screen.queryByTestId("viewer-inspector-toggle"),
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Open fixture definition"));
+    expect(
+      await screen.findByTestId("workspace-workflow-fixture"),
+    ).toBeVisible();
+    expect(screen.getByTestId("working-view-host-fixture")).not.toBeVisible();
+    expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
+      "data-reopen-request",
+      "0",
+    );
+    expect(screen.getByTestId("location-probe").textContent).not.toContain(
+      "processView=",
+    );
+  });
+
+  it("protects an unsaved workflow on tab close and keeps its draft", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    const draft = await screen.findByRole("textbox", {
+      name: "Fixture source draft",
+    });
+    fireEvent.change(draft, {
+      target: { value: "Keep this design instruction" },
+    });
+    fireEvent.click(
+      screen.getByTestId(
+        "editor-tab-close-/workflows/mounting-bracket.workflow.wflow",
+      ),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Unsaved workflow changes",
+    });
+    expect(
+      within(dialog).getByRole("button", { name: "Keep editing" }),
+    ).toHaveFocus();
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Keep editing" }),
+    );
+    expect(draft).toHaveValue("Keep this design instruction");
+    expect(
+      screen.getByTestId(
+        "editor-tab-dirty-/workflows/mounting-bracket.workflow.wflow",
+      ),
+    ).toBeVisible();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Mark fixture saved"));
+    expect(
+      screen.queryByTestId(
+        "editor-tab-dirty-/workflows/mounting-bracket.workflow.wflow",
+      ),
+    ).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByTestId(
+        "editor-tab-close-/workflows/mounting-bracket.workflow.wflow",
+      ),
+    );
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("keeps a saving workflow mounted until the write has settled", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    await screen.findByRole("textbox", { name: "Fixture source draft" });
+    const close = screen.getByTestId(
+      "editor-tab-close-/workflows/mounting-bracket.workflow.wflow",
+    );
+    fireEvent.click(screen.getByText("Start pending fixture save"));
+    expect(close).toBeDisabled();
+    fireEvent.click(close);
+    expect(
+      screen.getByTestId("workspace-workflow-fixture"),
+    ).toBeInTheDocument();
+    const unload = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(unload);
+    expect(unload.defaultPrevented).toBe(true);
+    fireEvent.click(screen.getByText("Finish pending fixture save"));
+    expect(close).toBeEnabled();
+    fireEvent.click(close);
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("discards workflow edits only after explicit confirmation and Escape keeps them", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    const draft = await screen.findByRole("textbox", {
+      name: "Fixture source draft",
+    });
+    fireEvent.change(draft, { target: { value: "Draft to discard" } });
+    const close = screen.getByTestId(
+      "editor-tab-close-/workflows/mounting-bracket.workflow.wflow",
+    );
+    fireEvent.click(close);
+    await screen.findByRole("dialog", { name: "Unsaved workflow changes" });
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(draft).toHaveValue("Draft to discard");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    fireEvent.click(close);
+    fireEvent.click(
+      within(await screen.findByRole("dialog")).getByRole("button", {
+        name: "Discard changes",
+      }),
+    );
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("keeps a background workflow draft when its close is cancelled", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    const original = await screen.findByRole("textbox", {
+      name: "Fixture source draft",
+    });
+    fireEvent.change(original, {
+      target: { value: "Original unsaved design" },
+    });
+    fireEvent.click(screen.getByText("Open other fixture workflow"));
+    const active = await screen.findByTestId(
+      "editor-tab-/workflows/other-design.workflow.wflow",
+    );
+    expect(active).toHaveAttribute("aria-selected", "true");
+    fireEvent.click(
+      screen.getByTestId(
+        "editor-tab-close-/workflows/mounting-bracket.workflow.wflow",
+      ),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Unsaved workflow changes",
+    });
+    expect(
+      within(dialog).getByText(/mounting-bracket.wflow has unsaved changes/),
+    ).toBeVisible();
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Keep editing" }),
+    );
+    expect(active).toHaveAttribute("aria-selected", "true");
+    expect(original).toHaveValue("Original unsaved design");
+    fireEvent.click(
+      screen.getByTestId(
+        "editor-tab-/workflows/mounting-bracket.workflow.wflow",
+      ),
+    );
+    expect(original).toBeVisible();
+  });
+
+  it("warns before browser unload only while a workflow has unsaved edits", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    const draft = await screen.findByRole("textbox", {
+      name: "Fixture source draft",
+    });
+    const clean = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(clean);
+    expect(clean.defaultPrevented).toBe(false);
+    fireEvent.change(draft, { target: { value: "Do not lose this" } });
+    const dirty = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(dirty);
+    expect(dirty.defaultPrevented).toBe(true);
+    fireEvent.click(screen.getByText("Mark fixture saved"));
+    const saved = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(saved);
+    expect(saved.defaultPrevented).toBe(false);
+  });
+
+  it("focuses an exact source step in the retained editor without discarding its draft", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const draft = await screen.findByRole("textbox", {
+      name: "Fixture source draft",
+    });
+    fireEvent.change(draft, {
+      target: { value: "Unsaved exact source edits" },
+    });
+    const editor = screen.getByTestId("workspace-workflow-fixture");
+    fireEvent.click(screen.getByText("Use saved fixture process"));
+    fireEvent.click(await screen.findByText("Accept fixture run"));
+    fireEvent.click(screen.getByText("Navigate fixture step"));
+    await waitFor(() => expect(editor).toBeVisible());
+    expect(editor).toHaveAttribute("data-navigation-block", "exact-step");
+    expect(editor).toHaveAttribute("data-reopen-request", "0");
+    expect(draft).toHaveValue("Unsaved exact source edits");
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getByTestId("working-view-host-fixture")).toHaveAttribute(
+      "data-run-id",
+      "accepted-run",
+    );
+  });
+
+  it("focuses an exact assessment in its existing run tab without creating another tab", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "recorded-view", runId: "recorded-run" },
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/workspace/workspace-1${processWorkspaceQuery("?workflow=canonical", tab)}`,
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const working = await screen.findByTestId("working-view-host-fixture");
+    fireEvent.click(screen.getByText("Navigate fixture assessment"));
+    await waitFor(() =>
+      expect(working).toHaveAttribute(
+        "data-navigation-assessment",
+        "exact-assessment",
+      ),
+    );
+    expect(working).toHaveAttribute("data-navigation-result", "exact-result");
+    expect(working).toHaveAttribute("data-run-id", "recorded-run");
+    expect(screen.getAllByRole("tab")).toHaveLength(1);
+    expect(screen.getByTestId("location-probe").textContent).toContain(
+      "processRun=recorded-run",
+    );
+    expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+  });
+
+  it("opens another recorded run in a separate tab without retargeting the original observer", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "recorded-view", runId: "recorded-run" },
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/workspace/workspace-1${processWorkspaceQuery("?workflow=canonical", tab)}`,
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    const original = await screen.findByTestId("working-view-host-fixture");
+    fireEvent.click(screen.getByText("Navigate fixture other run"));
+    await waitFor(() =>
+      expect(screen.getAllByTestId("working-view-host-fixture")).toHaveLength(
+        2,
+      ),
+    );
+    expect(original).toHaveAttribute("data-run-id", "recorded-run");
+    expect(original).not.toBeVisible();
+    const selected = screen
+      .getAllByTestId("working-view-host-fixture")
+      .find((element) => element.getAttribute("data-run-id") === "other-run");
+    expect(selected).toBeVisible();
+    expect(selected).toHaveAttribute(
+      "data-navigation-result",
+      "other-run-result",
+    );
+    expect(screen.getAllByRole("tab")).toHaveLength(2);
+    expect(screen.getByTestId("location-probe").textContent).toContain(
+      "processRun=other-run",
+    );
+  });
+
+  it("reopens an exact recorded-run link without creating the default workflow", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "recorded-view", runId: "recorded-run" },
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/workspace/workspace-1${processWorkspaceQuery("?workflow=canonical", tab)}`,
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByTestId("working-view-host-fixture"),
+    ).toHaveAttribute("data-run-id", "recorded-run");
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByRole("tab")).toHaveLength(1);
+    expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+  });
+
+  it("writes the accepted run into the active view link and closing removes that link", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+        <LocationProbe />
+      </MemoryRouter>,
+    );
+    fireEvent.click(await screen.findByText("Use saved fixture process"));
+    const fixture = await screen.findByTestId("working-view-host-fixture");
+    fireEvent.click(screen.getByText("Accept fixture run"));
+    await waitFor(() =>
+      expect(screen.getByTestId("location-probe").textContent).toContain(
+        "processRun=accepted-run",
+      ),
+    );
+    expect(fixture).toHaveAttribute("data-run-id", "accepted-run");
+    fireEvent.click(
+      screen.getByTestId(
+        `editor-tab-close-${fixture.getAttribute("data-view-path")}`,
+      ),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId("working-view-host-fixture"),
+      ).not.toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("location-probe").textContent).not.toContain(
+      "processView=",
+    );
+    expect(screen.getByTestId("workspace-workflow-fixture")).toBeVisible();
+  });
+
+  it("opens a linked definition without creation intent when its editor is not already open", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "recorded-view", runId: "recorded-run" },
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/workspace/workspace-1${processWorkspaceQuery("?workflow=canonical", tab)}`,
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    fireEvent.click(await screen.findByText("Open fixture definition"));
+    const panel = await screen.findByTestId("workspace-workflow-fixture");
+    expect(panel).toBeVisible();
+    expect(panel).toHaveAttribute(
+      "data-workflow-file",
+      "/workflows/inspection.workflow.wflow",
+    );
+    expect(panel).toHaveAttribute("data-create-if-missing", "false");
+    expect(panel).toHaveAttribute("data-reopen-request", "0");
+  });
+
+  it("ignores an incomplete saved process locator and reports how to reopen it", async () => {
+    localStorage.setItem(
+      "wright-workspace-layout-workspace-1",
+      JSON.stringify({
+        openTabs: [{ type: "process", name: "Missing locator" }],
+      }),
+    );
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByTestId("workspace-process-view-error"),
+    ).toHaveTextContent("incomplete");
+    expect(
+      screen.queryByTestId("working-view-host-fixture"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("restores a saved process tab in a plain workspace with the host session", async () => {
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "workspace-1",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "saved-view", runId: "saved-run" },
+    );
+    localStorage.setItem(
+      "wright-workspace-layout-workspace-1",
+      JSON.stringify({ openTabs: [tab], activeTabPath: tab.path }),
+    );
+    render(
+      <MemoryRouter initialEntries={["/workspace/workspace-1"]}>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    const fixture = await screen.findByTestId("working-view-host-fixture");
+    expect(fixture).toBeVisible();
+    expect(fixture).toHaveAttribute("data-run-id", "saved-run");
+    expect(fixture).toHaveAttribute("data-session-id", "new-session");
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("rejects foreign saved views and malformed links without resolving them as files", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    const tab = createProcessWorkspaceTab(
+      {
+        workspace_id: "another-workspace",
+        source_path: "workflows/inspection.workflow.wflow",
+        source_digest: "a".repeat(64),
+      },
+      { viewId: "foreign-view" },
+    );
+    localStorage.setItem(
+      "wright-workspace-layout-workspace-1",
+      JSON.stringify({ openTabs: [tab], activeTabPath: tab.path }),
+    );
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&processView=broken",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByTestId("workspace-process-view-error"),
+    ).toBeVisible();
+    expect(
+      screen.queryByTestId("working-view-host-fixture"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("workspace-workflow-fixture"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+  });
+
   it("keeps the parent-selected session when internal workspace info is stale", async () => {
     render(
       <MemoryRouter>
@@ -325,13 +1113,11 @@ describe("WorkspacePanel session selection", () => {
     vi.unstubAllGlobals();
   });
 
-  it("opens the workspace-owned workflow file from Workflows", async () => {
+  it("creates a separate empty workflow from Workflows", async () => {
     vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
 
     render(
-      <MemoryRouter
-        initialEntries={["/workspace/workspace-1?workflow=canonical"]}
-      >
+      <MemoryRouter initialEntries={["/workspace/workspace-1"]}>
         <ViewerPanelProvider>
           <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
         </ViewerPanelProvider>
@@ -355,14 +1141,24 @@ describe("WorkspacePanel session selection", () => {
       "data-workspace-name",
       "Demo",
     );
+    const createdPath = mockCreateWorkflowSource.mock.calls[0][1];
+    expect(createdPath).toMatch(
+      /^workflows\/untitled-workflow-[a-f0-9-]+\.workflow\.wflow$/,
+    );
+    expect(mockCreateWorkflowSource.mock.calls[0][0]).toBe("new-session");
+    expect(mockCreateWorkflowSource.mock.calls[0][2]).not.toMatch(
+      /(?:task|input|output|link) /,
+    );
     expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
       "data-workflow-file",
-      "/workflows/mounting-bracket.workflow.wflow",
+      "/" + createdPath,
     );
     expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
-    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
-      display: "none",
-    });
+    await waitFor(() =>
+      expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+        display: "none",
+      }),
+    );
     const maximize = screen.getByTestId("workspace-tab-focus");
     const openAgent = screen.getByTestId("agent-sidebar-toggle");
     expect(openAgent.parentElement).toBe(maximize.parentElement);
@@ -387,7 +1183,7 @@ describe("WorkspacePanel session selection", () => {
     });
   });
 
-  it("opens the canonical workflow from the explicit Workflows action in an ordinary workspace", async () => {
+  it("creates a blank workflow from the Workflows action in an ordinary workspace", async () => {
     vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
 
     render(
@@ -408,13 +1204,17 @@ describe("WorkspacePanel session selection", () => {
     expect(
       await screen.findByTestId("workspace-workflow-fixture"),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("location-probe")).toHaveTextContent(
-      "/workspace/workspace-1?workflow=canonical",
+    await waitFor(() =>
+      expect(screen.getByTestId("location-probe")).toHaveTextContent(
+        "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Funtitled-workflow-",
+      ),
     );
     expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
-    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
-      display: "none",
-    });
+    await waitFor(() =>
+      expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+        display: "none",
+      }),
+    );
   });
 
   it("keeps an explicit workflow agent-pane preference separate from ordinary workspace layout", async () => {
@@ -428,7 +1228,9 @@ describe("WorkspacePanel session selection", () => {
     );
     render(
       <MemoryRouter
-        initialEntries={["/workspace/workspace-1?workflow=canonical"]}
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+        ]}
       >
         <ViewerPanelProvider>
           <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
@@ -521,7 +1323,7 @@ describe("WorkspacePanel session selection", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("hides Workflows only when both workspace editors are disabled", async () => {
+  it("hides Workflows when the native editor is disabled", async () => {
     vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "false");
     vi.stubEnv("VITE_RIVET_WORKFLOWS_TAB_ENABLED", "false");
 
@@ -539,7 +1341,7 @@ describe("WorkspacePanel session selection", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("does not expose the canonical editor without both its flag and workspace query", async () => {
+  it("restores an explicitly retained workflow without requiring a special query", async () => {
     vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
     vi.stubEnv("VITE_RIVET_WORKFLOWS_TAB_ENABLED", "false");
     localStorage.setItem(
@@ -569,42 +1371,17 @@ describe("WorkspacePanel session selection", () => {
       screen.getByTestId("activity-bar-workflows-btn"),
     ).toBeInTheDocument();
     expect(
-      screen.queryByTestId("workspace-workflow-fixture"),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText("mounting-bracket.workflow.wflow"),
-    ).not.toBeInTheDocument();
+      await screen.findByTestId("workspace-workflow-fixture"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("workspace-workflow-fixture")).toHaveAttribute(
+      "data-workflow-file",
+      "/workflows/mounting-bracket.workflow.wflow",
+    );
   });
 
-  it("uses Rivet when the canonical query is present but its flag is off", async () => {
+  it("does not revive Rivet when the native editor is disabled", async () => {
     vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "false");
     vi.stubEnv("VITE_RIVET_WORKFLOWS_TAB_ENABLED", "true");
-    mockEnsureDefaultRivetWorkflow.mockReturnValue(new Promise(() => {}));
-
-    render(
-      <MemoryRouter
-        initialEntries={["/workspace/workspace-1?workflow=canonical"]}
-      >
-        <ViewerPanelProvider>
-          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
-        </ViewerPanelProvider>
-      </MemoryRouter>,
-    );
-
-    fireEvent.click(await screen.findByTestId("activity-bar-workflows-btn"));
-    expect(await screen.findByText("rivet.rivet-project")).toBeInTheDocument();
-    expect(
-      screen.queryByTestId("workspace-workflow-fixture"),
-    ).not.toBeInTheDocument();
-  });
-
-  it("keeps the agent pane live while maximizing the active surface", async () => {
-    vi.stubEnv("VITE_WORKSPACE_SURFACES_ENABLED", "true");
-    Object.defineProperty(window, "innerWidth", {
-      configurable: true,
-      value: 1440,
-    });
-
     render(
       <MemoryRouter>
         <ViewerPanelProvider>
@@ -612,8 +1389,38 @@ describe("WorkspacePanel session selection", () => {
         </ViewerPanelProvider>
       </MemoryRouter>,
     );
+    await screen.findByTestId("workspace-panel");
+    expect(
+      screen.queryByTestId("activity-bar-workflows-btn"),
+    ).not.toBeInTheDocument();
+    expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTestId("managed-rivet-fixture"),
+    ).not.toBeInTheDocument();
+  });
 
-    fireEvent.click(await screen.findByTestId("activity-bar-brep-btn"));
+  it("keeps the agent pane live while maximizing the active workflow", async () => {
+    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+    vi.stubEnv("VITE_WORKSPACE_SURFACES_ENABLED", "true");
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: 1440,
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Finspection.workflow.wflow",
+        ]}
+      >
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    await screen.findByTestId("workspace-workflow-fixture");
+    fireEvent.click(screen.getByTitle("Open Agent Console"));
     fireEvent.click(await screen.findByTestId("workspace-tab-focus"));
 
     await waitFor(() =>
@@ -839,7 +1646,7 @@ describe("WorkspacePanel session selection", () => {
     });
   });
 
-  it("shows the Git panel as a disabled coming soon placeholder", async () => {
+  it("shows usable Git status and controls", async () => {
     render(
       <MemoryRouter>
         <ViewerPanelProvider>
@@ -847,15 +1654,14 @@ describe("WorkspacePanel session selection", () => {
         </ViewerPanelProvider>
       </MemoryRouter>,
     );
-
     fireEvent.click(await screen.findByTestId("activity-bar-git-btn"));
-
-    const gitPanel = await screen.findByTestId("git-panel-coming-soon");
-    expect(gitPanel).toHaveAttribute("aria-disabled", "true");
-    expect(gitPanel).toHaveStyle({ pointerEvents: "none" });
-    expect(screen.getByText("Coming soon")).toBeInTheDocument();
-    expect(screen.queryByTestId("git-new-branch-btn")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("git-push-btn")).not.toBeInTheDocument();
+    expect(await screen.findByTestId("git-panel")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "Create branch" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("No changes to commit.")).toBeInTheDocument();
+    expect(screen.queryByText("Coming soon")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Push" })).toBeDisabled();
   });
 
   it("shows docs links and sends suggested prompts", async () => {
@@ -889,7 +1695,7 @@ describe("WorkspacePanel session selection", () => {
       undefined,
       false,
       undefined,
-      { activeRivetSlug: null },
+      undefined,
     );
   });
 

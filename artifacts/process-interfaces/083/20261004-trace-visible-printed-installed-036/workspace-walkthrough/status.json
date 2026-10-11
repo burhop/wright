@@ -1,0 +1,64 @@
+{
+  "title": "Visible current installed authoring request and trace",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-04T00:30:48.081Z",
+  "manualSteps": [
+    {
+      "label": "Open preview",
+      "instruction": "Open the retained preview link for the saved process."
+    },
+    {
+      "label": "Inspect generation",
+      "instruction": "Click Create or choose interface, then Creation details. Scroll until Request and Trace are visible."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Reopen the recorded preview",
+      "summary": "The saved preview retains the same exact engineering results.",
+      "purpose": "Continue the screenshot-only gap without engineering execution.",
+      "action": "Open the same recorded preview link.",
+      "controls": [
+        "Create or choose interface",
+        "Use common working view"
+      ],
+      "expected": "Read-only preview on the same run and revision.",
+      "actual": "The read-only preview opens with all 20 exact output identities.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Creation details are collapsed",
+      "summary": "Technical identities remain optional in the normal working interface.",
+      "purpose": "Capture the control before expanding it.",
+      "action": "Click Create or choose interface, then scroll to Creation details.",
+      "controls": [
+        "Creation details"
+      ],
+      "expected": "Saved job with collapsed diagnostics.",
+      "actual": "The actual saved job is restored and Creation details is collapsed.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "All creation identities are visible together",
+      "summary": "The expanded details show the original model, job, revision, request and trace.",
+      "purpose": "Close the retained compact screenshot framing gap.",
+      "action": "Click Creation details and scroll its Trace text into view.",
+      "controls": [
+        "Creation details"
+      ],
+      "expected": "All exact identity text inside the visible viewport.",
+      "actual": "The complete diagnostics fit in the viewport and all identities match the original actual-model authoring record.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    }
+  ]
+}

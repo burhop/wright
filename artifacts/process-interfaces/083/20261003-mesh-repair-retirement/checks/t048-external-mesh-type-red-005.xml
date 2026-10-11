@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="7" skipped="0" tests="7" time="0.389" timestamp="2026-10-03T06:26:39.302456-04:00" hostname="Work17"><testcase classname="tests.test_external_mesh_binding" name="test_pinned_policy_identity_preserves_json_types[version-bool]" time="0.044"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">prepared = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_p...:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_pr0/workspace')})
+defect = 'version-bool'
+
+    @pytest.mark.parametrize("defect", ["version-bool", "policy-bool-as-zero", "policy-zero-as-bool", "policy-float-limit"])
+    def test_pinned_policy_identity_preserves_json_types(prepared, defect):
+        path, value, tool, options = prepared
+        original = json.loads(json.dumps(options["policy"]))
+        if defect == "version-bool":
+            value["schema_version"] = True
+        elif defect == "policy-bool-as-zero":
+            value["policy"]["force_voxel_remesh"] = 0
+        elif defect == "policy-zero-as-bool":
+            value["policy"]["envelope_margin_mm"] = False
+        else:
+            value["policy"]["triangle_limit"] = float(value["policy"]["triangle_limit"])
+        options["policy"] = original
+        path.write_text(json.dumps(value), encoding="utf-8")
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:109: Failed</failure></testcase><testcase classname="tests.test_external_mesh_binding" name="test_pinned_policy_identity_preserves_json_types[policy-bool-as-zero]" time="0.029"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">prepared = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_p...:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_pr1/workspace')})
+defect = 'policy-bool-as-zero'
+
+    @pytest.mark.parametrize("defect", ["version-bool", "policy-bool-as-zero", "policy-zero-as-bool", "policy-float-limit"])
+    def test_pinned_policy_identity_preserves_json_types(prepared, defect):
+        path, value, tool, options = prepared
+        original = json.loads(json.dumps(options["policy"]))
+        if defect == "version-bool":
+            value["schema_version"] = True
+        elif defect == "policy-bool-as-zero":
+            value["policy"]["force_voxel_remesh"] = 0
+        elif defect == "policy-zero-as-bool":
+            value["policy"]["envelope_margin_mm"] = False
+        else:
+            value["policy"]["triangle_limit"] = float(value["policy"]["triangle_limit"])
+        options["policy"] = original
+        path.write_text(json.dumps(value), encoding="utf-8")
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:109: Failed</failure></testcase><testcase classname="tests.test_external_mesh_binding" name="test_pinned_policy_identity_preserves_json_types[policy-zero-as-bool]" time="0.022"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">prepared = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_p...:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_pr2/workspace')})
+defect = 'policy-zero-as-bool'
+
+    @pytest.mark.parametrize("defect", ["version-bool", "policy-bool-as-zero", "policy-zero-as-bool", "policy-float-limit"])
+    def test_pinned_policy_identity_preserves_json_types(prepared, defect):
+        path, value, tool, options = prepared
+        original = json.loads(json.dumps(options["policy"]))
+        if defect == "version-bool":
+            value["schema_version"] = True
+        elif defect == "policy-bool-as-zero":
+            value["policy"]["force_voxel_remesh"] = 0
+        elif defect == "policy-zero-as-bool":
+            value["policy"]["envelope_margin_mm"] = False
+        else:
+            value["policy"]["triangle_limit"] = float(value["policy"]["triangle_limit"])
+        options["policy"] = original
+        path.write_text(json.dumps(value), encoding="utf-8")
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:109: Failed</failure></testcase><testcase classname="tests.test_external_mesh_binding" name="test_pinned_policy_identity_preserves_json_types[policy-float-limit]" time="0.027"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">prepared = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_p...:/repos/wright/.local-run/process-interfaces-083/pytest-mesh-type-red-005/test_pinned_policy_identity_pr3/workspace')})
+defect = 'policy-float-limit'
+
+    @pytest.mark.parametrize("defect", ["version-bool", "policy-bool-as-zero", "policy-zero-as-bool", "policy-float-limit"])
+    def test_pinned_policy_identity_preserves_json_types(prepared, defect):
+        path, value, tool, options = prepared
+        original = json.loads(json.dumps(options["policy"]))
+        if defect == "version-bool":
+            value["schema_version"] = True
+        elif defect == "policy-bool-as-zero":
+            value["policy"]["force_voxel_remesh"] = 0
+        elif defect == "policy-zero-as-bool":
+            value["policy"]["envelope_margin_mm"] = False
+        else:
+            value["policy"]["triangle_limit"] = float(value["policy"]["triangle_limit"])
+        options["policy"] = original
+        path.write_text(json.dumps(value), encoding="utf-8")
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:109: Failed</failure></testcase><testcase classname="tests.test_external_mesh_binding" name="test_passive_inspection_rejects_invalid_types_and_unbounded_preview[boolean-tolerance]" time="0.007"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">files = {'measure_handle_features': False, 'output': 'evidence.json', 'policy': {'build_volume_mm': [1, 2, 3], 'build_volume_tolerance_mm': False, 'triangle_limit': 4}, 'preview': 'preview.png', ...}
+defect = 'boolean-tolerance'
+
+    @pytest.mark.parametrize("defect", ["boolean-tolerance", "float-limit", "oversized-preview"])
+    def test_passive_inspection_rejects_invalid_types_and_unbounded_preview(files, defect):
+        root = Path(files["workspace_root"])
+        if defect == "boolean-tolerance":
+            files["policy"]["build_volume_tolerance_mm"] = False
+        elif defect == "float-limit":
+            files["policy"]["triangle_limit"] = 4.0
+        else:
+            preview = root / files["preview"]
+            with preview.open("ab") as stream:
+                stream.write(b"\0" * (16 * 1024 * 1024))
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:163: Failed</failure></testcase><testcase classname="tests.test_external_mesh_binding" name="test_passive_inspection_rejects_invalid_types_and_unbounded_preview[float-limit]" time="0.007"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">files = {'measure_handle_features': False, 'output': 'evidence.json', 'policy': {'build_volume_mm': [1, 2, 3], 'build_volume_tolerance_mm': 1e-06, 'triangle_limit': 4.0}, 'preview': 'preview.png', ...}
+defect = 'float-limit'
+
+    @pytest.mark.parametrize("defect", ["boolean-tolerance", "float-limit", "oversized-preview"])
+    def test_passive_inspection_rejects_invalid_types_and_unbounded_preview(files, defect):
+        root = Path(files["workspace_root"])
+        if defect == "boolean-tolerance":
+            files["policy"]["build_volume_tolerance_mm"] = False
+        elif defect == "float-limit":
+            files["policy"]["triangle_limit"] = 4.0
+        else:
+            preview = root / files["preview"]
+            with preview.open("ab") as stream:
+                stream.write(b"\0" * (16 * 1024 * 1024))
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:163: Failed</failure></testcase><testcase classname="tests.test_external_mesh_binding" name="test_passive_inspection_rejects_invalid_types_and_unbounded_preview[oversized-preview]" time="0.041"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">files = {'measure_handle_features': False, 'output': 'evidence.json', 'policy': {'build_volume_mm': [1, 2, 3], 'build_volume_tolerance_mm': 1e-06, 'triangle_limit': 4}, 'preview': 'preview.png', ...}
+defect = 'oversized-preview'
+
+    @pytest.mark.parametrize("defect", ["boolean-tolerance", "float-limit", "oversized-preview"])
+    def test_passive_inspection_rejects_invalid_types_and_unbounded_preview(files, defect):
+        root = Path(files["workspace_root"])
+        if defect == "boolean-tolerance":
+            files["policy"]["build_volume_tolerance_mm"] = False
+        elif defect == "float-limit":
+            files["policy"]["triangle_limit"] = 4.0
+        else:
+            preview = root / files["preview"]
+            with preview.open("ab") as stream:
+                stream.write(b"\0" * (16 * 1024 * 1024))
+&gt;       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_external_mesh_binding.py:163: Failed</failure></testcase></testsuite></testsuites>

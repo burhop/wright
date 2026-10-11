@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "scenario_id": "sensor-fan-harness-01",
+  "attempt_id": "attempt-906",
+  "evidence_exporter_revision": 7,
+  "error": "Retrieve exact primary connector, wire, terminal and tooling records: MCP call failed (child_unavailable).",
+  "error_code": "MCP_CALL_FAILED",
+  "dataset_digest": "554f308eae79b333847fa95871714618f34958af96169e72986d210147f8a7d8",
+  "template_digest": "cecc682a5ab1c4a78d9f1b68c5fd735f635bc2baac0ab94fd6cf249f8cea86b5",
+  "definition_digest": "4d0ce2b6a05ad3db768e40cd214c746a9db58cb05464db2da995caa28f715380",
+  "run_id": "ee67fdbdde5a46689b79bf8c3c7b9e73",
+  "status": "failed",
+  "accepted_by_runtime": true,
+  "execution_kind": "integration",
+  "started_at": "2026-09-22T15:33:51.734816+00:00",
+  "finished_at": null,
+  "terminal_step_reached": false,
+  "all_required_steps_succeeded": false,
+  "external_effects": "none",
+  "content_validated": false,
+  "validations": [],
+  "required_step_ids": [
+    "research_exact_parts_sensor_fan_harness_01_attempt_906",
+    "define_harness_t90ac8225609b621794432c44",
+    "generate_harness_t90ac8225609b621794432c44",
+    "verify_harness_t90ac8225609b621794432c44",
+    "author_kicad_interconnect_sensor_fan_harness_01_attempt_906",
+    "verify_kicad_interconnect_sensor_fan_harness_01_attempt_906",
+    "collect_harness_sensor_fan_harness_01_attempt_906",
+    "review_harness_outputs_sensor_fan_harness_01_attempt_906",
+    "validate_harness_content_sensor_fan_harness_01_attempt_906"
+  ],
+  "completed_step_ids": [],
+  "produced_files": [],
+  "runtime_evidence": {
+    "path": "runs/campaign-sensor-fan-harness-01-attempt-906/20260922T153351Z-1e6f78fd7d76.json",
+    "sha256": "7a68fdae59007f44e0583ff033678d8763e9353229ee75f50d35b759007922b2"
+  },
+  "excluded_artifacts": [],
+  "integration_policy_digest": "5ba45da32273537a77c9c66266b5ab097f06dfbd92af7fc76fe228969478b279",
+  "approval_actor": "integration_test:081-engineering-datasets-v1",
+  "campaign_id": "081-engineering-datasets-v1",
+  "usage": {
+    "status": "reported",
+    "request_count": 1,
+    "reported_request_count": 1,
+    "models": [
+      "wright-hermes"
+    ],
+    "input_tokens": null,
+    "cached_input_tokens": null,
+    "output_tokens": null,
+    "reasoning_output_tokens": null,
+    "total_tokens": null
+  },
+  "approval_evidence": [],
+  "step_events": [
+    {
+      "kind": "run_started",
+      "at": "2026-09-22T15:33:51.734816+00:00",
+      "task_id": "",
+      "run_id": "ee67fdbdde5a46689b79bf8c3c7b9e73"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-09-22T15:33:51.852386+00:00",
+      "task_id": "research_exact_parts_sensor_fan_harness_01_attempt_906"
+    }
+  ]
+}

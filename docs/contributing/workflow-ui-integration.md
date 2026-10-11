@@ -2,6 +2,57 @@
 
 Updated 2026-09-05 following recovery of the later graphical editor.
 
+## Agreed process UI direction, 2026-09-30
+
+Read the [workflow platform vision](../design/workflow-platform-vision.md) and
+[process UI design](../design/process-apps.md) before planning working interfaces.
+Preserve complementary authoring and working views on one accepted process and
+durable run. Process UIs use the explicit interaction contract, shared Wright
+style/components, and a scoped client over existing services. Host them in
+workspace tabs by default, with navigation to exact blocks, results, and evidence.
+
+AI can compose a tailored interface and save it with checked workflow bindings;
+the common view remains usable. Generated presentation code does not execute the
+graph or own job state. Closing, reopening, and switching views must reconcile
+with backend state without replaying work. Verify both the existing authoring
+experience and this working journey through the served workspace entry. A new
+route, detached form, or extra tab strip alone is not proof of integration.
+
+The historical editor recovery evidence below remains intact. Feature 083's
+shared process UI foundation has local common-view, actual-model preview/save/update/reuse
+and current served-workspace/installed native/Linux evidence. The preserved editor
+is exercised through the normal workspace entry, including pointer/keyboard typed
+connections, pan/zoom, source/drafts, Undo/Redo, save/layout/reopen and CAS conflicts.
+Read its [completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md)
+for exact checked builds and limitations. Verification is separate from user
+acceptance, release and physical engineering acceptance.
+
+Use the [operator/developer guide](../workflows/process-working-interfaces.md)
+for implemented working-view and authoring controls. The
+[neutral examples](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/README.md) reuse Wright's
+owning services; they do not provide a separate process executor. Their API
+read checks and packaged-template read are narrower than served-editor or
+installed-workspace acceptance.
+
+Explicit workflow file links must take precedence over a restored active tab.
+Opening an existing source or its history must not create a missing workflow.
+Preserve exact legal source identifiers when converting between source and
+diagram identities, including repeated and trailing underscores. Collapsing
+separators can break connections or disagree with typed port references even
+when the backend accepts and executes the source. Check cold parse, formatted
+save/reopen, typed settings, and the same accepted source in the served editor.
+Historical result links attach only to their exact source and use the native
+read-only recorder adapter; they expose no process or device actions. Verify
+editor return and saved artifact navigation through the workspace entry. Retain
+failed walkthroughs when a repaired continuation passes.
+
+Connection identity includes its semantic kind as well as its endpoints. An
+execution-order connection and an approval connection may link the same two
+blocks; preserve both through diagram inspection, commands and source round
+trips. Reject duplicate connections of the same kind, including attempts to
+distinguish them only by label or condition. This does not relax port types,
+cardinality, cycle checks or the runtime's separate review authority.
+
 ## Continue the existing design
 
 The latest located implementation of the user's refined graphical editor is
@@ -49,6 +100,16 @@ examples. Newly authored templates remain unbound drafts. Their visible success
 does not prove live model generation, MCP execution or native-runtime integration.
 
 ## Required evidence before claiming UI readiness
+
+For automated working-interface walkthroughs, close the exact presentation through
+Wright before disposing the browser. Confirm the presentation-close response and
+preserve failures for reconciliation. Terminating a Playwright browser process
+does not prove that the application's page-leaving cleanup ran. Record the owned
+presentation identities so abandoned test views can be closed through the normal
+API; never clear surface records directly, raise the workspace capacity limit to
+hide a leak, or stop unrelated applications. Closing a view must leave its durable
+process and engineering outputs unchanged. Browser crash/orphan recovery is a
+separate lifecycle case from normal tab close and reload.
 
 1. Record branch, commit, checkout, frontend URL, API target, workspace, enabled
    feature flags, and the screenshots used as the design reference. Verify what

@@ -1,0 +1,21 @@
+{
+  "source_commit": "793cede68587234b8449aba3d194ded4980bbd5a",
+  "source_sha256": {
+    "specs/083-process-working-interfaces/evidence/pre-implementation-baseline.json": "1381a701ba71fddf01cb8533e18399332e6f4afdd7c0f11970f1bdfbc81062cf",
+    "examples/process-interfaces/proof-bindings.json": "55e3adfb166af0456ce8d614e36de71554e84420a446b312553b44db64bd3657",
+    ".specify/feature.json": "e219b5a390343726e89832221e50e087992b16483aefc10fd6aa85365d5ecba9",
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "specs/083-process-working-interfaces/evidence/baseline.md": "bce6ffd46285203081df1c29a1e9985f2842f43d847d5fb27ba5db257628395d",
+    "specs/083-process-working-interfaces/evidence/prerequisites.md": "57f09a898fc20895ab47082211663136369880232e9c9e4fb7ac71074a330e2c",
+    "specs/083-process-working-interfaces/evidence/proof-scope.md": "40ea961cb89ed2330de2720fa815f4372d0331ba3ccc49e584cdb57982e46712",
+    "artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/primary-review.json": "5efa2d821e574a467e0b105fcdb22e3733ea2d5aa48dd27116f2a01bcb1c4b4b",
+    "artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/checked-scope.json": "2b2f5cc51410d3d82e359f15800b8bee6b62ffdd76827a5f6a63b23392bb2ce9",
+    "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/actual-authoring/printed-ui-original-inputs-update-001-saved-revision.json": "529a18c461b34de9ef599fe03343ceab00d7712284bfe37da273415d9a6dc5c2",
+    "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-input-chain/prepared-run.json": "4de7a3a4bb910af31de870d7662be83e2f48027be43e0340ea59a919a504e2ea"
+  },
+  "initial_dirty_entries": 42,
+  "original_input_profile_binding_references_rehashed": 17,
+  "previous_feature_retained": "082",
+  "physical_or_human_acceptance": false,
+  "scope": "Read-only primary audit of setup, initial capability limits, frozen original requirements and exact isolated test enrollment. No process/provider/model/review replay."
+}

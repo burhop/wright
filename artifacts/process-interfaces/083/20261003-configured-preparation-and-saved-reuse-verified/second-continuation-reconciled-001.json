@@ -1,0 +1,20 @@
+{
+  "second_run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+  "http_acknowledgement": 503,
+  "acknowledgement_code": "OUTCOME_UNKNOWN",
+  "durable_status": "awaiting_approval",
+  "resume_segments": 1,
+  "exact_native_calls": {
+    "construction": 1,
+    "repair": 1
+  },
+  "request_replayed": false,
+  "first_run_files_unchanged": 42,
+  "saved_ui_files_unchanged": 6,
+  "authoring_tables_unchanged": {
+    "process_ui_authoring_jobs": 4,
+    "process_ui_authoring_records": 20
+  },
+  "physical_dispatch": false,
+  "engineering_acceptance": false
+}

@@ -1,0 +1,56 @@
+{
+  "observed_at": "2026-10-03T15:23:57.325044+00:00",
+  "refs": {
+    "HEAD": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+    "refs/tags/v0.6.0": "3c891070dd8595f10848c8092726eff741c6cda7"
+  },
+  "pypi_latest_version": "0.6.0",
+  "sources": {
+    "head-server.py": {
+      "url": "https://raw.githubusercontent.com/jdilla1277/agentcad/2a377583d9d250971a584acb7b5ac6e2a75737c0/src/agentcad/mcp/server.py",
+      "bytes": 14325,
+      "sha256": "3c263c3e47a6112cec7144fc073bd916070849f128257f8c7159b025882c3caf"
+    },
+    "head-pyproject.toml": {
+      "url": "https://raw.githubusercontent.com/jdilla1277/agentcad/2a377583d9d250971a584acb7b5ac6e2a75737c0/pyproject.toml",
+      "bytes": 4403,
+      "sha256": "91194a53577a80872a493e58fb4d1edb8b9e6eb72b636e977c259875b4e6bded"
+    },
+    "release-server.py": {
+      "url": "https://raw.githubusercontent.com/jdilla1277/agentcad/3c891070dd8595f10848c8092726eff741c6cda7/src/agentcad/mcp/server.py",
+      "bytes": 12577,
+      "sha256": "3ccb8716e518897dd4f72d43ae69de69b2b1528bc218bab2e676bc4102d1ae76"
+    },
+    "release-pyproject.toml": {
+      "url": "https://raw.githubusercontent.com/jdilla1277/agentcad/3c891070dd8595f10848c8092726eff741c6cda7/pyproject.toml",
+      "bytes": 4386,
+      "sha256": "7857b104502738b7a6302da23154de4532e08db76c4f74f6900e8d1d1e143f4b"
+    },
+    "pypi.json": {
+      "url": "https://pypi.org/pypi/agentcad/json",
+      "bytes": 43798,
+      "sha256": "8746dba16bd418f3148f04705245fd3f6cecf98152326b056bd875f6c5159a9c"
+    },
+    "head-tree.json": {
+      "url": "https://api.github.com/repos/jdilla1277/agentcad/git/trees/2a377583d9d250971a584acb7b5ac6e2a75737c0?recursive=1",
+      "bytes": 71769,
+      "sha256": "7594070f2e2238b92a2e4da5444fd6ded8c487933e8d325290d9e7002c855dac"
+    },
+    "head-cli.py": {
+      "url": "https://raw.githubusercontent.com/jdilla1277/agentcad/2a377583d9d250971a584acb7b5ac6e2a75737c0/src/agentcad/cli.py",
+      "bytes": 40732,
+      "sha256": "afcf334be16d070e7faa81817c195e5359522c25a93fd998d5516b4fe02249a9"
+    },
+    "release-cli.py": {
+      "url": "https://raw.githubusercontent.com/jdilla1277/agentcad/3c891070dd8595f10848c8092726eff741c6cda7/src/agentcad/cli.py",
+      "bytes": 32402,
+      "sha256": "61d4bd2d28508e11293c2065b52759d5d145c2d3c8b3be2199fe09147fc58f7f"
+    }
+  },
+  "cli_paths": [
+    "src/agentcad/cli.py"
+  ],
+  "native_or_mcp_calls": 0,
+  "provider_installations": 0,
+  "vendor_source_modified": false
+}

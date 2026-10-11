@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-22T23:08:16.025079+00:00",
+  "user_instruction": "Request changes and correct grip (Recommended)",
+  "run_id": "a93d7c564c7544c7afcacaf22808c31c",
+  "checkpoint_id": "checkpoint-36ca29b783528faed96b6456",
+  "subject_digest": "94e464fcfc14d725da036b7db92edd3e42734b6660efbbe5127d08cf35b76adf",
+  "state": "changes_requested",
+  "actor": "local_workspace_user",
+  "reason": "User explicitly selected Request changes and correct grip (Recommended) for this exact checkpoint. Correct sharp bow shoulders and junction rounding/blends under PRINT02-GRIP; final-STL shoulder face-normal changes are about 81 degrees and the authored geometry has no shoulder fillet. Construct the thumb recess along the full central 40 mm X=28..68 with 1.5 mm maximum depth; the current sphere cut affects only the central portion. Preserve successful 25 mm clearance, 96 mm mounting spacing, envelope, native design and orientation evidence. Qualify final features before canonical correction 2 in the existing two-correction episode. Preserve this rejected run and all exact artifacts; any successor requires its own human review.",
+  "updated_at": 1790118495,
+  "source_sha256": "dd22d1d4c242888c330b047cfeaee6ef49f5d2151f6a753e117864a9c3132bba",
+  "protected_files_unchanged": 21,
+  "automatic_approval": false,
+  "successor_approved": false,
+  "campaign_credit": false,
+  "solid_edge_touched": false
+}

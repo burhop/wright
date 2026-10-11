@@ -21,6 +21,10 @@ from agent_adapters.hermes_openai_bridge import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+fixture_spec = importlib.util.spec_from_file_location("external_slice_fixture", ROOT / "tests/fixtures/external_slice_binding.py")
+slice_fixture = importlib.util.module_from_spec(fixture_spec)
+fixture_spec.loader.exec_module(slice_fixture)
+
 spec = importlib.util.spec_from_file_location("jig_path_preparer", ROOT / "scripts/prepare-drill-jig-dataset-campaign.py")
 preparer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(preparer)
@@ -35,9 +39,21 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
         attempt="path-contract-unit", instance_source=None, initialize_agentcad=False)
     directory = next(p for p in (ROOT / "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig").iterdir()
         if p.name.startswith(f"{ordinal:02d}"))
+    args.slicer_binding, extra_tools = slice_fixture.make_binding(
+        tmp_path / "external-binding", json.loads((directory / "scenario.json").read_text())["scenario_id"],
+        config["slicer"]["process"],
+    )
+    tools = [item for item in tools if item["server_id"] != config["slicer"]["server"]] + extra_tools
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text(encoding="utf-8")
     report = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text())
+    binding = json.loads(
+        Path(report["input_binding_evidence"]["path"]).read_text(encoding="utf-8")
+    )
+    assert binding["complete"] is True
+    assert next(row for row in binding["bindings"] if row["raw_file"] == "concept.svg")[
+        "status"
+    ] == "mapped"
     plan = compile_prompt_workflow(source)
     original = _parse(preparer.TEMPLATE.read_text().replace("__instance__", report["scenario_id"].replace("-", "_") + "_path_contract_unit"))
     assert all(edge in _parse(source) for edge in original if edge["kind"] == "connection")
@@ -67,7 +83,24 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     generated = next(step for step in plan.steps if step.id.startswith("generate_jig_"))
     inspected = next(step for step in plan.steps if step.id.startswith("check_alignment_"))
     assert {Path(path).name for path in generated.expected_files} == set(config["expected_generated_files"])
+    validators = [step for step in plan.steps if step.validation]
+    assert len(validators) == 1
+    validator = validators[0]
+    scenario_id = f"parametric-drill-jig-{ordinal:02d}"
+    expected_resource = scenario_id + ("-full" if ordinal == 1 else "")
+    assert validator.validation["profile"]["name"] == expected_resource
+    assert set(validator.validation["subjects"]) == {
+        "jig_step",
+        "jig_stl",
+        "dxf",
+        "report",
+        "slice_package",
+        "slice_evidence",
+    }
+    assert generated.expected_file_ports["jig_step"].endswith("/jig.step")
+    assert generated.expected_file_ports["dxf"].endswith("/hole-layout.dxf")
     assert {Path(path).name for path in inspected.expected_files} == {"dimension-report.json"}
+    assert inspected.expected_file_ports["report"].endswith("/dimension-report.json")
     observer = next(step for step in plan.steps if step.id.startswith("inspect_jig_exports_"))
     assert not observer.references
     observer_section = next(node for node in _parse(source) if node.get("id") == observer.id)
@@ -75,6 +108,31 @@ def test_author_path_literals_match_actual_producers_and_native_run_arguments(tm
     assert any(node["kind"] == "connection" and node["fields"].get("type") == "order"
         and node["fields"].get("from") == inspected.id and node["fields"].get("to") == observer.id
         for node in _parse(source))
+    slicer = next(step for step in plan.steps if step.id.startswith("slice_jig_for_review_"))
+    assert slicer.tool_name == "independent-python__run_simulation"
+    native_slice = next(step for step in plan.steps if step.id.startswith("invoke_external_slice_"))
+    assert native_slice.tool_name == "independent-offline-slicer__slice_model_file"
+    assert Path(native_slice.arguments["source"]).name == "jig.stl"
+    assert "engineering_dataset_slice" not in source
+    assert not any("slice-operation" in row["path"] for row in report["input_manifest"])
+    assert native_slice.expected_file_ports["external_slice_package"].endswith(
+        "/additive-manufacturing/slice_package.gcode.3mf"
+    )
+    assert native_slice.expected_file_ports["external_slice_package"] not in slicer.expected_files
+    assert dict(validator.validation_sources)["slice_package"] == native_slice.id + ".external_slice_package"
+    assert any(
+        node["kind"] == "connection"
+        and node["fields"].get("type") == "order"
+        and node["fields"].get("from") == observer.id
+        and node["fields"].get("to") == slicer.id
+        for node in _parse(source)
+    )
+    final_review = next(
+        step for step in plan.steps if step.id.startswith("review_jig_outputs_")
+    )
+    assert final_review.external_action["settings"]["validation_review"][
+        "profile_ref"
+    ] == validator.validation["profile"]["reference"]
     for filename in (*config["expected_generated_files"], "dimension-report.json"):
         assert report["output_root"] + "/" + filename in observer.prompt
     assert "includeText=true,maxTextBytes=8192" in observer.prompt and "includeText=false" in observer.prompt

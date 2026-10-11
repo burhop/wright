@@ -107,18 +107,17 @@ def _restart_hermes_gateway_process() -> None:
     )
 
 
-async def _refresh_hermes_gateway(engine: BaseAgentEngine) -> None:
-    """Reload Hermes' persistent MCP connection after an explicit rebind."""
-    await asyncio.to_thread(_restart_hermes_gateway_process)
-    deadline = time.monotonic() + 45.0
-    while time.monotonic() < deadline:
+async def _wait_for_hermes_gateway(engine: BaseAgentEngine) -> None:
+    """Observe the issued restart, including bounded cold native initialization."""
+    deadline = time.monotonic() + 120.0
+    while (remaining := deadline - time.monotonic()) > 0:
         try:
-            health = await engine.check_health()
+            health = await asyncio.wait_for(engine.check_health(), min(5.0, remaining))
             if str(health.get("state") or "").lower() == "connected":
                 return
         except Exception:
             pass
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(min(0.25, max(0.0, deadline - time.monotonic())))
     raise RuntimeError("Hermes gateway did not become ready after workspace rebinding")
 
 
@@ -462,6 +461,8 @@ class HermesModelOptionsResponse(BaseModel):
     current_provider: Optional[str] = None
     current_model: Optional[str] = None
     groups: List[HermesModelOptionGroup]
+    selection_supported: bool = True
+    selection_message: Optional[str] = None
 
 
 class SetHermesModelRequest(BaseModel):
@@ -538,6 +539,19 @@ def _model_option_value(provider: str, model: str) -> str:
     return f"{provider}::{model}"
 
 
+def _provider_is_accessible(provider_row: dict, current_provider: str | None) -> bool:
+    """Expose models only for the provider selected in Hermes setup."""
+    provider = str(provider_row.get("slug") or "").strip()
+    return bool(current_provider and provider == current_provider)
+
+
+def _model_is_accessible(provider: str, model: str) -> bool:
+    # Hermes versions predating account-aware Codex discovery included API
+    # service-tier aliases in the ChatGPT OAuth picker. The Codex backend
+    # rejects those aliases, so they are not selectable account models.
+    return not (provider == "openai-codex" and model.endswith("-pro"))
+
+
 async def _hermes_json_request(
     method: str,
     path: str,
@@ -568,6 +582,19 @@ async def _hermes_json_request(
             )
             response.raise_for_status()
     except httpx.HTTPStatusError as exc:
+        if path.startswith("/api/model/") and exc.response.status_code in {
+            404,
+            405,
+            501,
+        }:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=(
+                    "The connected Hermes gateway does not expose the required "
+                    f"model service (HTTP {exc.response.status_code}). "
+                    "Check gateway compatibility and Model Setup."
+                ),
+            ) from exc
         detail = exc.response.text or exc.response.reason_phrase
         raise HTTPException(
             status_code=exc.response.status_code,
@@ -585,7 +612,14 @@ async def _hermes_json_request(
 
 def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
     current_provider = str(payload.get("provider") or "").strip() or None
-    current_model = str(payload.get("model") or "").strip() or None
+    discovered_current_model = str(payload.get("model") or "").strip() or None
+    current_model = (
+        discovered_current_model
+        if current_provider
+        and discovered_current_model
+        and _model_is_accessible(current_provider, discovered_current_model)
+        else None
+    )
     current_value = (
         _model_option_value(current_provider, current_model)
         if current_provider and current_model
@@ -597,12 +631,12 @@ def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
         if not isinstance(provider_row, dict):
             continue
         provider = str(provider_row.get("slug") or "").strip()
-        if not provider:
+        if not provider or not _provider_is_accessible(provider_row, current_provider):
             continue
         models = [
             str(model).strip()
             for model in (provider_row.get("models") or [])
-            if str(model).strip()
+            if str(model).strip() and _model_is_accessible(provider, str(model).strip())
         ]
         if not models:
             continue
@@ -962,7 +996,8 @@ async def chat(
     ):
         try:
             await sync_manager.refresh_gateway_if_needed(
-                lambda: _refresh_hermes_gateway(engine)
+                lambda: asyncio.to_thread(_restart_hermes_gateway_process),
+                wait_ready=lambda: _wait_for_hermes_gateway(engine),
             )
         except Exception as exc:
             log.exception("workspace_gateway_rebind_failed", error=str(exc))
@@ -985,12 +1020,40 @@ async def chat(
         )
         log.info("workspace_session_title_updated", updated=updated)
 
+    from api.composition import workspace_service as workspace_application
+
+    try:
+        instruction_defaults = await asyncio.to_thread(
+            workspace_application().workflow_instruction_settings.read
+        )
+    except ValueError as error:
+        raise HTTPException(
+            422,
+            detail={
+                "code": "workflow_instructions_invalid",
+                "message": "Global chat instructions are invalid. Inspect instruction defaults in Settings.",
+            },
+        ) from error
+    from workspace_service.chat_invocation_evidence import ChatInvocationRecorder
+    from api.routers.workspace import _workflow_source_scope
+
+    chat_application = workspace_application()
+    chat_scope = _workflow_source_scope(body.session_id, chat_application)
+    invocation_recorder = ChatInvocationRecorder(
+        chat_application,
+        workspace_id=chat_scope.workspace_id,
+        workspace_dir=chat_scope.workspace_dir,
+        session_id=body.session_id,
+        request_id=trace_id or secrets.token_hex(16),
+    )
     chat_request = AgentChatRequest(
         session_id=body.session_id,
         message=body.message,
         trace_id=trace_id,
         attachments=attachment_data_urls(body.attachments),
         active_rivet_slug=body.active_rivet_slug,
+        instruction_set=instruction_defaults["instructions"],
+        invocation_observer=invocation_recorder.observe,
     )
     registry = get_chat_stream_registry(request)
     job = await registry.start(chat_request, engine)
@@ -1020,6 +1083,25 @@ async def chat(
 @router.get("/models", response_model=HermesModelOptionsResponse)
 @traced("agent.models.list")
 async def list_hermes_models(refresh: bool = False):
+    from agent_adapters.workflow_sdk import (
+        sdk_transport_selected,
+        workflow_sdk_capabilities,
+    )
+
+    if sdk_transport_selected():
+        try:
+            route = (await workflow_sdk_capabilities())["resolution"]
+        except (ValueError, OSError, TimeoutError, KeyError) as error:
+            raise HTTPException(
+                status_code=503,
+                detail="The configured model cannot be resolved by the Hermes SDK. Check Model Setup and its qualified installation.",
+            ) from error
+        response = _build_model_options_response(
+            {"provider": route["provider"], "model": route["model_reference"]}
+        )
+        response.selection_supported = False
+        response.selection_message = "Using the configured model. Change it in Model Setup before starting a new run."
+        return response
     payload = await _hermes_json_request(
         "GET",
         "/api/model/options",
@@ -1036,6 +1118,13 @@ async def list_hermes_models(refresh: bool = False):
 @router.post("/model", response_model=SetHermesModelResponse)
 @traced("agent.model.set")
 async def set_hermes_model(body: SetHermesModelRequest):
+    from agent_adapters.workflow_sdk import sdk_transport_selected
+
+    if sdk_transport_selected():
+        raise HTTPException(
+            status_code=409,
+            detail="Remote model selection is unavailable for the configured SDK transport. Use Model Setup before starting a new run. No session model was changed.",
+        )
     provider = body.provider.strip()
     model = body.model.strip()
     if not provider or not model:

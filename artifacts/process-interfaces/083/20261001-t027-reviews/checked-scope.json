@@ -1,0 +1,1070 @@
+{
+  "task": "T027 partial: scoped review decisions",
+  "branch": "codex/083-process-working-interfaces",
+  "parent_commit": "b141e296f6bdc839b0a1d52e99b9f65ec68b1d22",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "node": "v25.2.0"
+  },
+  "code_hashes": {
+    "apps/api/src/api/routers/process_interfaces.py": "bca03f81f5ce116144d12d5097cc6ea44c88f60f03a3666a9723126c866a7cef",
+    "apps/api/src/api/schemas/process_interfaces.py": "db56c92205d5be76c003cfd2bba028c05412ab88a2b5c2cc47e7101bada0c302",
+    "apps/web/src/components/common/ProcessUIKit.spec.tsx": "b148db1d9a8381a56500980ce169ff85bc51bfa710f762a93078e9de86cbb93b",
+    "apps/web/src/services/process-client.spec.ts": "434edb19a71c959261d00f11b3e4b9a9e5eda0f2bf605ea48b0a88a7ccf2e950",
+    "packages/core/src/core/process_interactions.py": "1eb14455fdbe7e8a1b138fa29ba9a3cefde0bf5ed802db95af974923f6eca7ca",
+    "packages/core/src/core/process_schemas/contracts-v1.json": "c6835a5f0e8a002a9601f7f263b2c64f10d07e668fee16ca17f388b5119dd834",
+    "packages/data_vault/src/data_vault/workflow_artifact_review_repository.py": "1e0686e095cbe06bfb2c2df9c2a41109cc309b8d0b2266d78a97c583ea3f0095",
+    "packages/data_vault/src/data_vault/workflow_continuation_repository.py": "b3d3d3f0482ef878b5a43128de428c9383e7030a9169bfd9a46dd4029c5e428d",
+    "packages/process_client/src/client.ts": "c0fb5810257c8a00e07e7632a8ba980c7a88ae3735169ec309acfce7d1cc71cf",
+    "packages/process_client/src/contracts.generated.ts": "544b28000b8c56d106c685dbf9a8aea087233db4f76d526aa00bd9fada583d05",
+    "packages/process_client/src/schemas.generated.ts": "6bb2dd033f9361ba863e47e42a3bfa58cb0c89a24219289576db76af1e1b16ea",
+    "packages/ui_kit/src/patterns.tsx": "c63d357e096a51562b03faaddf53bad9be7d5071ce5e67865b9ad3acd406f7cc",
+    "packages/workspace_service/src/workspace_service/process_interfaces/owners.py": "413ec105527a5ecf33353575b48475ce215ab7e2bde564f65e27e15eb2a8fb33",
+    "packages/workspace_service/src/workspace_service/process_interfaces/service.py": "62755246bc183b3dacba4ed1ac4bba22020d316e29556a0b2db5ad46a78172e7",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py": "eaff368a20abc2252271a71be06ed8482711683b66a073464e99b243b3c4a075",
+    "packages/workspace_service/src/workspace_service/workflow_artifact_review.py": "d2abdc1b513083c1d163cadaf1cc5143e9d7909f5950a34d1a554c0ba3e0e952",
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py": "05f2dfa4e3395617172836a609e716f672685c01963edd1518a06cd06379b0c5",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "46251d2632a609e1ec9c9e54aa1156d05435f71a1419215229ebd0c557cc9c62",
+    "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py": "021c6d2cb74cd0f33cc46db3efa991585d8a57b0a4e0c4c0792990fb76c556fa",
+    "packages/workspace_service/tests/test_process_review_decisions.py": "f6d3f3527078702f448bccd654cb0480297487101fe1a0060046cc26de090478",
+    "apps/api/tests/test_process_interface_reviews.py": "b0d365fe15ca2ecb791bfd6d1d7d9b6f64663c8ac5d9c8203b5657ef984390bb"
+  },
+  "logs": {
+    "t027-backend-current.log": {
+      "sha256": "e5cc89a46889246972e36dc9ad307f697233427e90722dcf7715d2802878afcf"
+    },
+    "t027-review-ui-current.json": {
+      "sha256": "9e849871efcc3f540b76717f43e69fa4bf4f6309833e64c89da374e32c8617a2"
+    },
+    "t027-review-lint-current.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "t027-review-build-current.log": {
+      "sha256": "9a8ece1521a0ae88c93ef50c778e0efcaa42b693a9a9aa9f94652916b684010e"
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "recorded_unit_runs": [
+    {
+      "case": "test_changed_review_request_co0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_changed_review_request_co0\\runs\\test\\3a4882f40d1b4069a073acd24cbf91a7.json",
+      "run_log_sha256": "aceb2f95631eb1bf3dd1a4c3755af2d5452b57959ab8c9157f2b6c213eeb2f35",
+      "run_id": "3a4882f40d1b4069a073acd24cbf91a7",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-7acb392392138b6754c79ba2",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "local-control-plane",
+        "decision": "approved",
+        "reason": "Synthetic API review",
+        "request_id": "api-review",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-7acb392392138b6754c79ba2",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "api-review"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_changed_review_request_co1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_changed_review_request_co1\\runs\\test\\871486f674bc47e1865a65cc79a85506.json",
+      "run_log_sha256": "1719b2cd792622ab5982238743092c004f53bb7171194f5fcd9080f01e373d31",
+      "run_id": "871486f674bc47e1865a65cc79a85506",
+      "status": "completed",
+      "checkpoint_id": "afd4623e5b1640bdbe5825b82a4aac7e",
+      "subject_digest": "84cfbadea52d9b7e5af7948337eab59d886b84698f0a77ad328e6f6ad353ce07",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "local-control-plane",
+        "request_id": "api-review",
+        "reason": "Synthetic API review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "afd4623e5b1640bdbe5825b82a4aac7e",
+          "subject_digest": "84cfbadea52d9b7e5af7948337eab59d886b84698f0a77ad328e6f6ad353ce07",
+          "request_id": "api-review"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review0\\runs\\test\\1f320993b0f4471a899fcc6a76c58b51.json",
+      "run_log_sha256": "390a5af944ede79930ca19a1b0a1e69d017ef5c94d1d0b6582ea4e300393abe6",
+      "run_id": "1f320993b0f4471a899fcc6a76c58b51",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-b1500476d6dcd0b189418112",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review1\\runs\\test\\fa28ed3ae6f240a1a8ed0f713ed9a83e.json",
+      "run_log_sha256": "d6c3cdac71a937f2de5c5ec373a8751c6e1049ca0ff0cac4b9ef13c9021b1e3f",
+      "run_id": "fa28ed3ae6f240a1a8ed0f713ed9a83e",
+      "status": "pending_review",
+      "checkpoint_id": "b9e4129812fd4fe093beaff3f4192657",
+      "subject_digest": "6d543fd6c747b46d0627b89c72e325de5b983931193950675d0fb14c75179c96",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review2",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review2\\runs\\test\\2d878c511f4f4e0693504b437437a64e.json",
+      "run_log_sha256": "702db6b9ade68f7a52417bedddbb158547215a2ee486e82180b63380f6ed8fba",
+      "run_id": "2d878c511f4f4e0693504b437437a64e",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-2a67a98d298b1153d65b5cdd",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review3",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review3\\runs\\test\\c1a0476839df4c0f8568ec09555a5b54.json",
+      "run_log_sha256": "9c8f29f74f0d08ef616c95d96ab57cc4909f1b63f054b471103e321325df78e5",
+      "run_id": "c1a0476839df4c0f8568ec09555a5b54",
+      "status": "pending_review",
+      "checkpoint_id": "07219715540a4083887d797dce62d0e5",
+      "subject_digest": "7cc1a60888f3cf30cb09235053df09ab55977628d693c8a0b8253cebb7bcf503",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review4",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review4\\runs\\test\\5a44f37ef13947c992848e93d826abb3.json",
+      "run_log_sha256": "31f67cb54017ce09bc70cc697606f1d4c7826f22e816d7d9a3cd441fd568a575",
+      "run_id": "5a44f37ef13947c992848e93d826abb3",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-2b93a00d9e06ab8c76e2d4c0",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review5",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review5\\runs\\test\\89143a657aad4cdb892bafa5183af906.json",
+      "run_log_sha256": "be8b370d3a04a0e75e689cb9fcacd4db980f06073a9aaddbd90bc84091a31d8b",
+      "run_id": "89143a657aad4cdb892bafa5183af906",
+      "status": "pending_review",
+      "checkpoint_id": "5a87f3d797ca49f8b1aa095fbae541e8",
+      "subject_digest": "b4f2620c8cf746a1e1b5b59692e9d45213a4f9e6bedf8eb0d6b4edf5a0f017f3",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review6",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review6\\runs\\test\\8e09ff3d3f6345cca4885b941b640964.json",
+      "run_log_sha256": "af0940ab1a139016f539ccc4c3a34e9479bcca0647413c450041358ec3654301",
+      "run_id": "8e09ff3d3f6345cca4885b941b640964",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-2a54827b83cde1b60f7b4a7f",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review7",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review7\\runs\\test\\d8317d81a9184ef5a423ad5c3ae30603.json",
+      "run_log_sha256": "d5e059126a3fbed9f4357e39cdd7deb4e724991121ea3becd6ebb90527dcff9b",
+      "run_id": "d8317d81a9184ef5a423ad5c3ae30603",
+      "status": "pending_review",
+      "checkpoint_id": "8d6eef68a31e496aacd3bd26be2bea03",
+      "subject_digest": "a8a72b669acc907499146ea1bcda55e2fc80b43cd63a5d4278e46c0d61f21bcd",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review8",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review8\\runs\\test\\1426cde7575f488db38e95f159c92021.json",
+      "run_log_sha256": "7503f62697ee6b72752117de13231a9636ab426d3c8499799e4e18358614a94b",
+      "run_id": "1426cde7575f488db38e95f159c92021",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-6e1e0e39d31300dbeca46ed1",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_invalid_or_changed_review9",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_invalid_or_changed_review9\\runs\\test\\f0d838a2c5c54ef282a895faf55f9802.json",
+      "run_log_sha256": "00040fe668dc0d5fd85a896021e36813d4fb028344b26893c2db278dc158dea6",
+      "run_id": "f0d838a2c5c54ef282a895faf55f9802",
+      "status": "pending_review",
+      "checkpoint_id": "88359b31f1664e539646f7990dc5acd0",
+      "subject_digest": "7e5f04222f026fbbeaffdd2a621d0f657cea038678a4cde99e5d4095b022f0b9",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_lost_run_projection_can_b0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_lost_run_projection_can_b0\\runs\\test\\acd227acf0d14303a7744ee2242f0a2b.json",
+      "run_log_sha256": "100c93de8193d3008ae4fdbf20c1037935926c6d79e8616c4e57d6ac0113ee69",
+      "run_id": "acd227acf0d14303a7744ee2242f0a2b",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-8990aa77cff551dd3c02181e",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "reviewer",
+        "decision": "approved",
+        "reason": "Synthetic test review",
+        "request_id": "review-one",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-8990aa77cff551dd3c02181e",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_lost_run_projection_can_b1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_lost_run_projection_can_b1\\runs\\test\\1917c44aa2d6494788470b616fc7cf54.json",
+      "run_log_sha256": "e79118b6d11478fe90b3c6a7c28dc5483cb8dc61152963a3b8e76fd4c0e9adc7",
+      "run_id": "1917c44aa2d6494788470b616fc7cf54",
+      "status": "completed",
+      "checkpoint_id": "13a111f4881049d7a33c375608d3bedb",
+      "subject_digest": "03a3b993dea7258c65fbcf283d04d08d1a70f391688ea31c2831bc944bc04bc9",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "reviewer",
+        "request_id": "review-one",
+        "reason": "Synthetic test review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "13a111f4881049d7a33c375608d3bedb",
+          "subject_digest": "03a3b993dea7258c65fbcf283d04d08d1a70f391688ea31c2831bc944bc04bc9",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_is_scoped_durable_0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_is_scoped_durable_0\\runs\\test\\7cffa576b2674f358060ab86732d69c6.json",
+      "run_log_sha256": "5a00e04d01db019f130f82b888eba695dfd8311138fbd28cba9ac8870288fa29",
+      "run_id": "7cffa576b2674f358060ab86732d69c6",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-52c0d343ac559542fa7db730",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "reviewer",
+        "decision": "approved",
+        "reason": "Synthetic test review",
+        "request_id": "review-one",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-52c0d343ac559542fa7db730",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_is_scoped_durable_1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_is_scoped_durable_1\\runs\\test\\67a0b5ed0d9b45528ea3559141775038.json",
+      "run_log_sha256": "0b3c9be85a83948be0728238036a28ea46fcccdf9d884f9c6b6b826e8d378213",
+      "run_id": "67a0b5ed0d9b45528ea3559141775038",
+      "status": "completed",
+      "checkpoint_id": "8ef8f2f45f5f4270b661c6b903ccf819",
+      "subject_digest": "51f8d41672c142858d7f0192e489e6955285855752168e3b7d8d744e83e42bed",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "reviewer",
+        "request_id": "review-one",
+        "reason": "Synthetic test review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "8ef8f2f45f5f4270b661c6b903ccf819",
+          "subject_digest": "51f8d41672c142858d7f0192e489e6955285855752168e3b7d8d744e83e42bed",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c0\\runs\\test\\296620c66f6542fa9f6620aca5b9ed14.json",
+      "run_log_sha256": "e05a77a457e99a0c3fca912bc6aa5221fcd0e0375670a596d8b96767de384d5c",
+      "run_id": "296620c66f6542fa9f6620aca5b9ed14",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-e4146204418454e6a4c3e16d",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "reviewer",
+        "decision": "approved",
+        "reason": "Synthetic test review",
+        "request_id": "review-one",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-e4146204418454e6a4c3e16d",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c1\\runs\\test\\701ba81df80f48a9894bf96db51df868.json",
+      "run_log_sha256": "93b08c0c54a3fcfc6feddbbeeeeb572733e97daecb4a52f3412d266b32e22f2a",
+      "run_id": "701ba81df80f48a9894bf96db51df868",
+      "status": "completed",
+      "checkpoint_id": "4803b2d4160f44c288c47c285641ca52",
+      "subject_digest": "a34e7ce827a080fc3f1e89b78ec8219c7df4d9df55d2863a517dc891e7e7a110",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "reviewer",
+        "request_id": "review-one",
+        "reason": "Synthetic test review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "4803b2d4160f44c288c47c285641ca52",
+          "subject_digest": "a34e7ce827a080fc3f1e89b78ec8219c7df4d9df55d2863a517dc891e7e7a110",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c2",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c2\\runs\\test\\bf210c59503e48808ad210453a19f229.json",
+      "run_log_sha256": "7292197c7dc9f56cdf22a3b3bb889eda1330b36b63c4fb44bcc5f3e2694ffd60",
+      "run_id": "bf210c59503e48808ad210453a19f229",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-0d1d04576586d79c8c96e992",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "reviewer",
+        "decision": "approved",
+        "reason": "Synthetic test review",
+        "request_id": "review-one",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-0d1d04576586d79c8c96e992",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c3",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c3\\runs\\test\\9ef3134717fc45d6b897f5cd35bd4420.json",
+      "run_log_sha256": "2c1866b458dfc0ab1fa0a7c90f832bb287a321b4c19445d204b1dba86b9afe6b",
+      "run_id": "9ef3134717fc45d6b897f5cd35bd4420",
+      "status": "completed",
+      "checkpoint_id": "aaff939e506e4775b08dc8579c59c515",
+      "subject_digest": "92fca6721aec07454422c780078bb36be58450450e99c5402f06dfccf8dedb55",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "reviewer",
+        "request_id": "review-one",
+        "reason": "Synthetic test review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "aaff939e506e4775b08dc8579c59c515",
+          "subject_digest": "92fca6721aec07454422c780078bb36be58450450e99c5402f06dfccf8dedb55",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c4",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c4\\runs\\test\\91438aa9233f45009e1481c18af7507d.json",
+      "run_log_sha256": "f555e0e2edc0a10167ce442a98e7127b786d5fc31090d00b9df34b42f0207411",
+      "run_id": "91438aa9233f45009e1481c18af7507d",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-30578aad4b2ded855dcd9318",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "reviewer",
+        "decision": "approved",
+        "reason": "Synthetic test review",
+        "request_id": "review-one",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-30578aad4b2ded855dcd9318",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c5",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c5\\runs\\test\\6e712dbbc543434b9cbc8acb5b4e95c0.json",
+      "run_log_sha256": "441adddd6bfc3dd44e76b05ddc321d4fdfbcc4a98f307dd21f39ff649482f37e",
+      "run_id": "6e712dbbc543434b9cbc8acb5b4e95c0",
+      "status": "completed",
+      "checkpoint_id": "cca2cfc5b7bc4bd29706ff1bd45e3679",
+      "subject_digest": "6888c3d7a8d2bec7641a5e5f1a3e133de87755388f971d04ee5b5cc68d027244",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "reviewer",
+        "request_id": "review-one",
+        "reason": "Synthetic test review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "cca2cfc5b7bc4bd29706ff1bd45e3679",
+          "subject_digest": "6888c3d7a8d2bec7641a5e5f1a3e133de87755388f971d04ee5b5cc68d027244",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c6",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c6\\runs\\test\\53dce7dcee054921b91a75f6ff4ae373.json",
+      "run_log_sha256": "47e02a2da90c6bbd19774747f4610763caeea4a429eb1610c151f9ab4c759ba3",
+      "run_id": "53dce7dcee054921b91a75f6ff4ae373",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-d1d6989b219b033873f740e1",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "reviewer",
+        "decision": "approved",
+        "reason": "Synthetic test review",
+        "request_id": "review-one",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-d1d6989b219b033873f740e1",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_request_identity_c7",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_request_identity_c7\\runs\\test\\caa0086db6224cca9f954f50391e0f2b.json",
+      "run_log_sha256": "b7002813401aad651859525e3e45f5861bd7604669087b24572aa5372141a089",
+      "run_id": "caa0086db6224cca9f954f50391e0f2b",
+      "status": "completed",
+      "checkpoint_id": "e71145629ebb4e6abaa8f029441d3751",
+      "subject_digest": "ba99db60a3036eaccb6ec8ba3160945ccb1bb4588061bdb63ead044f311452fc",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "reviewer",
+        "request_id": "review-one",
+        "reason": "Synthetic test review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "e71145629ebb4e6abaa8f029441d3751",
+          "subject_digest": "ba99db60a3036eaccb6ec8ba3160945ccb1bb4588061bdb63ead044f311452fc",
+          "request_id": "review-one"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_route_derives_acto0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_route_derives_acto0\\runs\\test\\d21d80c78ba2475ea5532894ab2f3c9a.json",
+      "run_log_sha256": "6c22ffcae3a391ef1b89b022ab02c37a2a4d37e5327c13df2037e5fa6f43a313",
+      "run_id": "d21d80c78ba2475ea5532894ab2f3c9a",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-8bdec2abff1a54af3a4171c6",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "actor": "local-control-plane",
+        "decision": "approved",
+        "reason": "Synthetic API review",
+        "request_id": "api-review",
+        "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "approval_decided",
+          "checkpoint_id": "checkpoint-8bdec2abff1a54af3a4171c6",
+          "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+          "request_id": "api-review"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_route_derives_acto1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_route_derives_acto1\\runs\\test\\f8d72b8a874246b88dc896d7c8c89aa9.json",
+      "run_log_sha256": "40d79dd255a0b63825a209d17d2b632286537f0dd272d8e1149a6387309fe4a0",
+      "run_id": "f8d72b8a874246b88dc896d7c8c89aa9",
+      "status": "completed",
+      "checkpoint_id": "0054f9166a4e4730ae690ad076e6f121",
+      "subject_digest": "2df2af0c672827f203ba60f3579c3d4d3251db04b43fa0981eeec20b9306155c",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "approved",
+        "actor": "local-control-plane",
+        "request_id": "api-review",
+        "reason": "Synthetic API review"
+      },
+      "external_action": null,
+      "decision_events": [
+        {
+          "kind": "review_decided",
+          "checkpoint_id": "0054f9166a4e4730ae690ad076e6f121",
+          "subject_digest": "2df2af0c672827f203ba60f3579c3d4d3251db04b43fa0981eeec20b9306155c",
+          "request_id": "api-review"
+        }
+      ],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_0",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_0\\runs\\test\\56a5ce9a71734b3388a3855c70077ce2.json",
+      "run_log_sha256": "1e4008535eb4dd2e632e6f1d6e06007d21580440dd21e1654015c563ec8d53e5",
+      "run_id": "56a5ce9a71734b3388a3855c70077ce2",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-c65c8f8d257a5dbc2a26a9ce",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_1",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_1\\runs\\test\\fb22e83ac1904f6f8810edc29e2abfdb.json",
+      "run_log_sha256": "4641351cc3d2b0f581f224b1b25e1b4847d6bbcd2e4bf6e6fcb80749d4cd84d6",
+      "run_id": "fb22e83ac1904f6f8810edc29e2abfdb",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-e013928cac7139cbeef3a268",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_2",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_2\\runs\\test\\d29914bda8d24a11ab3108df04ce89b1.json",
+      "run_log_sha256": "0faedbfcfb1396ecb75bbe7bd78f1c374ddb15d4196674061effdfd950d63c7d",
+      "run_id": "d29914bda8d24a11ab3108df04ce89b1",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-1ea8529d0f982d828abd23e6",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_3",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_3\\runs\\test\\b1a4b18a12f048e7a070623116048a5a.json",
+      "run_log_sha256": "4b70d0f56b745fa2c0bcad2fe7620eb0bee2043f22830373023d3410e99ba6bf",
+      "run_id": "b1a4b18a12f048e7a070623116048a5a",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-3704f651bf88ca6802c8292d",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_4",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_4\\runs\\test\\c3d2a78361f1418a80f895c1ab634a31.json",
+      "run_log_sha256": "4ca765f23beac651edd32309a05d52679b6545e8f54aefe7025097e17c9402ed",
+      "run_id": "c3d2a78361f1418a80f895c1ab634a31",
+      "status": "awaiting_approval",
+      "checkpoint_id": "checkpoint-340d91b64ab840fe88a731e0",
+      "subject_digest": "1db0edeaabed7e29961f856ffe0042563a6634d6d6349173d54acdd37321d444",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": null,
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_5",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_5\\runs\\test\\71f07ad0242e4eb7979b8c05a2e330af.json",
+      "run_log_sha256": "f265e31bae66176ce1d30b39983fb9acdc6bcd27040db50d363cb1b202ce66dc",
+      "run_id": "71f07ad0242e4eb7979b8c05a2e330af",
+      "status": "pending_review",
+      "checkpoint_id": "6e8d38e8b6d2487a946516bc9d6bdf7e",
+      "subject_digest": "b9cc0f0da68a8b9119088850e82273ebd755b76e4584f19005878ee1276ecd81",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_6",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_6\\runs\\test\\57897bce57fe4fc0bf788540281e98f5.json",
+      "run_log_sha256": "8de597728598ee7c9fc00f0f6fb9fb8f2845f508c93d78e17c00a82c2c3a74c9",
+      "run_id": "57897bce57fe4fc0bf788540281e98f5",
+      "status": "pending_review",
+      "checkpoint_id": "04a96313eecc4e46a015bdaeb896dbca",
+      "subject_digest": "3dd41f3feb1b0d8da5112d4b29a9c86eb55175399152cbd209f0e2066b7441d1",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_7",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_7\\runs\\test\\b4fb097a0b23410c9bd032e4d94e2d5f.json",
+      "run_log_sha256": "7b725b5fc677f5f0c10cca7b4859ca78481c972a04bad30fbcdb9a60341ab223",
+      "run_id": "b4fb097a0b23410c9bd032e4d94e2d5f",
+      "status": "pending_review",
+      "checkpoint_id": "55ec3d5f8bc247c288fafc34bf911b83",
+      "subject_digest": "8e8f602915856f9ad21f72a41351aab77bd7d09cafd29bf50b2c55d9222c5b72",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_8",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_8\\runs\\test\\322b69a864074ab5b5e15a9cd9d4982e.json",
+      "run_log_sha256": "1a693543710e0138dbe471b6b25a63699057b3d4de48d1e93cb522ddcc6dfbb3",
+      "run_id": "322b69a864074ab5b5e15a9cd9d4982e",
+      "status": "pending_review",
+      "checkpoint_id": "c07f8fbb75e541bea5388f0392512398",
+      "subject_digest": "b172a06b0ea8950df07ba0f3f0ccb6bd8d6161d8d6a0618b328faa74a9c1855a",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    },
+    {
+      "case": "test_review_transport_rejects_9",
+      "run_log": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\process-interfaces-083-tests\\t027-backend-current\\test_review_transport_rejects_9\\runs\\test\\467f618aefb848ab985af5c5fe2974ee.json",
+      "run_log_sha256": "a1ba1489c15dc700bd473372480b45ee90c951231d98867793fcd0350814d75f",
+      "run_id": "467f618aefb848ab985af5c5fe2974ee",
+      "status": "pending_review",
+      "checkpoint_id": "502bda266ba6464ca9aae36c50cb07b7",
+      "subject_digest": "9fe27df5d5e870612ef0a49ba4c038b9efa5d8d6008054f1873543280dca759e",
+      "artifact_digests": [
+        "b4e90a8e763ef6c11b0b53a74f4764eab48b7c5ccbc6cf42e94376f929b7f16f"
+      ],
+      "decision": {
+        "state": "pending",
+        "actor": null,
+        "request_id": null,
+        "reason": null
+      },
+      "external_action": null,
+      "decision_events": [],
+      "synthetic_model_and_reviewer": true,
+      "human_engineering_acceptance": false
+    }
+  ],
+  "counts": {
+    "backend": 710,
+    "client_kit_common_view": 139,
+    "production_modules": 927,
+    "backend_skips": 0
+  },
+  "commands": {
+    "backend": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "-rs",
+      "--tb=short",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t027-backend-current",
+      "packages/agent_adapters/tests/test_workflow_unattended_outcomes.py",
+      "packages/agent_adapters/tests/test_workflow_response_timeout.py",
+      "packages/workspace_service/tests/test_workflow_mcp_operations.py",
+      "packages/workspace_service/tests/test_workflow_unattended_policy.py",
+      "packages/workspace_service/tests/test_workflow_response_format_repair.py",
+      "packages/workspace_service/tests/test_workflow_mcp_execution.py",
+      "packages/workspace_service/tests/test_workflow_failed_tool_evidence.py",
+      "packages/workspace_service/tests/test_workflow_design_check.py",
+      "packages/workspace_service/tests/test_process_input_supervision.py",
+      "packages/workspace_service/tests/test_process_interface_continuation.py",
+      "packages/workspace_service/tests/test_workflow_execution_continuation.py",
+      "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+      "packages/workspace_service/tests/test_process_human_input_source.py",
+      "packages/workspace_service/tests/test_process_run_supervisor.py",
+      "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "packages/workspace_service/tests/test_workflow_approval_resume.py",
+      "packages/workspace_service/tests/test_process_approval_inspection.py",
+      "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+      "packages/workspace_service/tests/test_process_input_execution_overlay.py",
+      "packages/workspace_service/tests/test_process_preparation_service.py",
+      "packages/workspace_service/tests/test_process_interaction_projection.py",
+      "packages/workspace_service/tests/test_workflow_source_execution.py",
+      "packages/workspace_service/tests/test_workflow_async_operations.py",
+      "packages/workspace_service/tests/test_process_operation_cancel.py",
+      "packages/workspace_service/tests/test_process_operation_observations.py",
+      "packages/workspace_service/tests/test_workflow_integration_policy.py",
+      "packages/workspace_service/tests/test_workflow_mcp_integration_restriction.py",
+      "packages/workspace_service/tests/test_workflow_process_validation.py",
+      "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+      "packages/workspace_service/tests/test_validation_result_identity.py",
+      "packages/workspace_service/tests/test_process_validation_feedback.py",
+      "packages/core/tests/test_process_interface_contracts.py",
+      "packages/data_vault/tests/test_workflow_continuation_repository.py",
+      "packages/data_vault/tests/test_process_interface_migrations.py",
+      "apps/api/tests/test_process_interface_checkpoints.py",
+      "apps/api/tests/test_process_interfaces_api.py",
+      "apps/api/tests/test_process_interface_run_lifecycle.py",
+      "packages/workspace_service/tests/test_process_review_decisions.py",
+      "apps/api/tests/test_process_interface_reviews.py",
+      "packages/workspace_service/tests/test_workflow_artifact_review.py",
+      "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "packages/data_vault/tests/test_workflow_artifact_review_repository.py"
+    ],
+    "frontend": [
+      "node",
+      "../../node_modules/vitest/vitest.mjs",
+      "run",
+      "src/services/process-client.spec.ts",
+      "src/components/common/ProcessUIKit.spec.tsx",
+      "src/components/process-interfaces/CommonProcessView.spec.tsx",
+      "--reporter=json",
+      "--outputFile=D:/repos/wright/.local-run/process-interfaces-083/t027-review-ui-current.json"
+    ],
+    "frontend_cwd": "D:/repos/wright/apps/web",
+    "typecheck": [
+      "node",
+      "apps/web/node_modules/typescript/bin/tsc",
+      "-p",
+      "apps/web/tsconfig.app.json",
+      "--noEmit"
+    ],
+    "build": [
+      "node",
+      "../../node_modules/vite/bin/vite.js",
+      "build",
+      "--outDir",
+      "D:/repos/wright/.local-run/process-interfaces-083/t027-review-build-current"
+    ],
+    "lint": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "--config",
+      "apps/web/eslint.config.js",
+      "packages/process_client/src/client.ts",
+      "packages/ui_kit/src/patterns.tsx",
+      "apps/web/src/services/process-client.spec.ts",
+      "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+      "--rule",
+      "no-control-regex: off"
+    ],
+    "schema": [
+      ".venv/Scripts/python.exe",
+      "packages/process_client/scripts/generate_contracts.py",
+      "--check"
+    ],
+    "ruff": [
+      ".venv/Scripts/python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "--no-cache",
+      "apps/api/src/api/routers/process_interfaces.py",
+      "apps/api/src/api/schemas/process_interfaces.py",
+      "packages/core/src/core/process_interactions.py",
+      "packages/data_vault/src/data_vault/workflow_artifact_review_repository.py",
+      "packages/data_vault/src/data_vault/workflow_continuation_repository.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/owners.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/service.py",
+      "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+      "packages/workspace_service/src/workspace_service/workflow_artifact_review.py",
+      "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+      "packages/workspace_service/src/workspace_service/workflow_run_record.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py",
+      "packages/workspace_service/tests/test_process_review_decisions.py",
+      "apps/api/tests/test_process_interface_reviews.py"
+    ]
+  },
+  "limitations": [
+    "T027 remains pending for review/action forms, supervised action transport and source/inspector editing",
+    "No served browser verification in this milestone",
+    "Synthetic unit/transport model and reviewers; no live model/MCP/engineering/user acceptance",
+    "No hardware/supplier effects, protected campaign work, pushes, merges or releases",
+    "Full M0\u2013M5 goal remains active"
+  ]
+}

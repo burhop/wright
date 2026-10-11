@@ -1,0 +1,67 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+    "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687",
+    "parent_revision": "revision-e699e31782df459986a1c795f9c2bf65",
+    "title": "Focus-wheel preparation review",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+      "source_digest": "8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [],
+    "capabilities": [
+      "process.action",
+      "process.cancel",
+      "process.inputs",
+      "process.navigate",
+      "process.read",
+      "process.respond",
+      "process.results",
+      "process.review",
+      "process.start"
+    ],
+    "navigation": [],
+    "viewers": [
+      "ThreeDViewer",
+      "ToolpathViewer"
+    ]
+  },
+  "source_digest": "dd61d8657be13c50ce84a2c28cda12fa4a67cb9388dd010381e5c0c33fca3276",
+  "build": {
+    "build_id": "build-05938f67af46491a9fbe39b5d6c24bcd",
+    "source_digest": "dd61d8657be13c50ce84a2c28cda12fa4a67cb9388dd010381e5c0c33fca3276",
+    "manifest_digest": "39ed04d0e7d0a0f4a99e401a84b70f6f64bf29c99ff5963d6e61745bb880a2a6",
+    "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+    "bundle_digest": "de4f467709d9dce1739eb1a014af3c916db5a8d49a3e62ceb00c096a61701544",
+    "state": "built",
+    "created_at": "2026-10-03T02:36:17.296593+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 1063594
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+    "capability_scope": []
+  },
+  "generation_request_digest": "ec8fbe13d05b1e824d41c31a6a580387fc2c67355be6aa333d617e4cfee51810",
+  "created_at": "2026-10-03T02:36:17.296593+00:00",
+  "previewed_at": "2026-10-03T02:37:45.620027+00:00"
+}

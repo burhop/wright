@@ -49,9 +49,19 @@ class AuthorizedSurfaceRoute:
     authority_valid: Callable[[], bool]
     target_valid: Callable[[], bool]
     activity: Callable[[], None]
+    source_version: str = ""
 
 
 class SurfaceRouteAuthority:
+    @staticmethod
+    def authorize_process(route, *, application, grants, operation="process.read"):
+        """Extend an authenticated pinned route with the exact process grant."""
+        from workspace_service.process_interfaces.surface_bridge import (
+            ProcessSurfaceBridge,
+        )
+
+        return ProcessSurfaceBridge(application, grants).authorize(route, operation)
+
     def __init__(
         self,
         *,
@@ -84,16 +94,27 @@ class SurfaceRouteAuthority:
         except (PresentationTokenError, LiveAppManagerError) as error:
             raise self._translate(error) from error
 
+        identity_fields = (
+            "presentation_id",
+            "user_id",
+            "workspace_id",
+            "session_id",
+            "surface_id",
+            "source_id",
+            "source_version",
+            "instance_id",
+            "generation",
+            "effective_origin",
+        )
+        identity = tuple(getattr(presentation, field) for field in identity_fields)
+
         def authority_valid() -> bool:
             try:
                 current = self._tokens.authorize(host=host, cookie=cookie)
             except PresentationTokenError:
                 return False
             return (
-                current.presentation_id == presentation.presentation_id
-                and current.instance_id == presentation.instance_id
-                and current.generation == presentation.generation
-                and current.effective_origin == presentation.effective_origin
+                tuple(getattr(current, field) for field in identity_fields) == identity
             )
 
         def target_valid() -> bool:
@@ -124,6 +145,7 @@ class SurfaceRouteAuthority:
             authority_valid=authority_valid,
             target_valid=target_valid,
             activity=lambda: manager.record_route_activity(presentation.instance_id),
+            source_version=presentation.source_version,
         )
 
 

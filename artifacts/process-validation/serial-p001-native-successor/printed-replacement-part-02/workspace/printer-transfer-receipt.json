@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "integration_test": true,
+  "simulated_handoff": true,
+  "network_dispatch": false,
+  "run_id": "detached-printed02-successor",
+  "step_id": "simulated-transfer",
+  "checkpoint_id": "detached-no-approval",
+  "action_id": "detached-no-dispatch",
+  "campaign_id": "081-engineering-datasets-v1",
+  "dataset_id": "printed-replacement-part-02",
+  "destination": {
+    "kind": "integration_test",
+    "id": "test://081-engineering-datasets-v1/printer/printed-replacement-part-02"
+  },
+  "action_kind": "printer_transfer",
+  "artifact_digests": [
+    "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+    "1406a6442bd0e79f1d26b85b18da4df165980ba598fcfff4f6bce27fa2977e96",
+    "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+    "2f633cc7ac0187059bfd8a4f6dabd1061b55b46c8784a081a08a8018678fff9f",
+    "341c98d42fac82cde3b920a8dc1ce9778cb26556314c8573b6e3daf33a0b606e",
+    "3f7fdad2b2bf0ade0c61ca1ea42221b75f4b257a91e37003d9e3169b27927b0a",
+    "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+    "5bc6b9878657f5817deedb27f5db43beca5ab36cd1aaaf9bbcfd0cf740fd1bec",
+    "93707c4a78dd4e714bbcfccebb0d39fd3e3a58729c0817692edfaddb4034f966",
+    "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993",
+    "bf7d112b29757aa7211a8c600be7106aabbebc90ece2f915342c612e2e99a7f0",
+    "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+  ]
+}

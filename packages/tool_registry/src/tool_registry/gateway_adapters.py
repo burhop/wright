@@ -87,10 +87,9 @@ class DatabaseGatewayCatalog:
         return get_servers(self.db_path)
 
     def tools(self, server_id: str) -> Sequence[GatewayTool]:
-        server = next(
-            (item for item in get_servers(self.db_path) if item.server_id == server_id),
-            None,
-        )
+        # Re-read this server's current authority without reparsing every other
+        # installed provider for each server in a catalog enumeration.
+        server = get_server(self.db_path, server_id)
         if server is None:
             return ()
         policy = McpSafetyPolicy()

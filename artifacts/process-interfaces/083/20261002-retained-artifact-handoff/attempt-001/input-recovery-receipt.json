@@ -1,0 +1,90 @@
+{
+  "status": 200,
+  "body": {
+    "schema_version": "wright.process-input-snapshot/1",
+    "snapshot_id": "inputs-57ed49be2d5d455a84169a0f90702fef",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-handoff-001.workflow.wflow",
+      "source_digest": "3cc48d6fd830ee6db4bc5ef83edb27954a34023f8b56d4cd7a6cb2b286274d05",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "created_at": "2026-10-02T16:28:21.290852+00:00",
+    "bindings": [
+      {
+        "kind": "file",
+        "input_id": "input_slice_package_gcode_3mf_retained_handoff_001",
+        "reference": {
+          "artifact_ref": "process-proofs/printed-replacement-part/retained-handoff-001/inputs/slice_package.gcode.3mf",
+          "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        "provenance": "explicit_default"
+      },
+      {
+        "kind": "file",
+        "input_id": "input_source_report_json_retained_handoff_001",
+        "reference": {
+          "artifact_ref": "process-proofs/printed-replacement-part/retained-handoff-001/inputs/source-report.json",
+          "sha256": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        "provenance": "explicit_default"
+      },
+      {
+        "kind": "file",
+        "input_id": "input_machine_profile_json_retained_handoff_001",
+        "reference": {
+          "artifact_ref": "process-proofs/printed-replacement-part/retained-handoff-001/inputs/machine-profile.json",
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        "provenance": "explicit_default"
+      },
+      {
+        "kind": "file",
+        "input_id": "input_process_profile_json_retained_handoff_001",
+        "reference": {
+          "artifact_ref": "process-proofs/printed-replacement-part/retained-handoff-001/inputs/process-profile.json",
+          "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        "provenance": "explicit_default"
+      },
+      {
+        "kind": "file",
+        "input_id": "input_filament_profile_json_retained_handoff_001",
+        "reference": {
+          "artifact_ref": "process-proofs/printed-replacement-part/retained-handoff-001/inputs/filament-profile.json",
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        "provenance": "explicit_default"
+      },
+      {
+        "kind": "file",
+        "input_id": "input_producer_origin_json_retained_handoff_001",
+        "reference": {
+          "artifact_ref": "process-proofs/printed-replacement-part/retained-handoff-001/inputs/producer-origin.json",
+          "sha256": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+          "media_type": null,
+          "result_id": null,
+          "representation_id": null
+        },
+        "provenance": "explicit_default"
+      }
+    ],
+    "digest": "1267a72308046b609653a9c0d61e88ff6d8bd17a56b0ed18a978ecb4a5a9106e"
+  }
+}

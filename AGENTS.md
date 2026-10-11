@@ -1,13 +1,108 @@
+Before planning or changing workflow execution, process UI, validation, external
+actions, or tool integration, read `docs/design/workflow-platform-vision.md`
+and `docs/architecture/workflow-platform-refactoring-plan.md`. Apply V1-V7.
+Start from the general engineering user journey and shared platform mechanisms;
+a reference prototype's vendor difficulties do not determine the product roadmap.
+
+Preserve two complementary experiences on one accepted process and durable run:
+the flowchart/blocks/source/inspectors for building and inspecting, and an optional
+working UI for inputs, results, questions, decisions, and progress. Process UIs
+open in Wright workspace tabs by default and link to exact blocks and evidence.
+A dashboard, comparison view, interactive model, questionnaire, or guided sequence
+may suit the job; no mandatory layout or manufacturing lifecycle applies.
+
+For process UI work, read `docs/design/process-apps.md`. Design around an explicit
+interaction contract describing available inputs, outputs/evidence, pending
+interactions, observed state, and permitted actions with exact subjects. Reuse
+the existing runtime, gateway, validator, results, surfaces, and storage. The
+backend owns execution, state, reviews, permitted actions, and recovery. Generated
+UI code must not contain another executor or independent job-status authority.
+
+AI authors and refines interfaces using shared Wright style/components and a
+scoped process client. Users request UI generation and updates through Wright,
+initially using its default LLM with prepared API/UI instructions. Map a coding
+role/profile into existing agent configuration/adapters; keep role, model,
+versioned instructions, and platform replaceable and record resolved provenance.
+Save and version interfaces with their workflow bindings
+and supported contract/client/kit versions; reuse them across runs and check
+compatibility after changes. Keep a usable common view. Closing/reopening a tab
+reconciles with durable state without replaying uncertain actions. Current MCP
+App/WebMCP hosting does not itself provide the proposed general process client.
+
+Resolve user-supplied requirements and readiness before starting a process.
+Required inputs must be supplied, explicitly defaulted, automatically produced
+by declared upstream work, or assigned to a declared user-interaction step.
+Long-running unattended sections do not ask opportunistic AI questions. At a
+declared human review/action step, persist waiting state and resume the same run
+after the response. Predictable missing
+configuration is a readiness defect; changed external conditions follow the
+configured wait/recovery/failure policy without guessing or uncertain replay.
+
+Before changing model calls or workflow instruction behavior, read
+`docs/architecture/workflow-instructions-and-interactions-plan.md`. Behavioral
+policy belongs in inspectable, versioned instruction assets/settings or accepted
+workflow/step source; never introduce policy prose in executor/adapter literals.
+Saved workflows retain their instruction bodies and explicit typed policy.
+Default changes affect newly authored processes; updating accepted instructions
+requires a visible new revision. Branch only on validated typed configuration,
+not wording in a prompt. Keep deterministic scope, schema, identity, validation
+and approval enforcement in the backend; a prompt cannot grant their authority.
+
+Freeze resolved model/adapter configuration before execution and verify it on
+continuation. Record actual requests at observable transport boundaries,
+including helper/recovery calls and failures, using the existing evidence owners
+and redaction. Distinguish requested aliases, confirmed routing and any reported
+upstream revision; do not claim provider-internal prompts or unobserved outcomes.
+Declared input answers are distinct from review/approval; model routing metadata
+and integration-test attribution never create automatic review or dispatch grants.
+Portable export/import preserves instructions and required reference/validation/UI
+dependencies, diagnoses unavailable capabilities, and transfers no credentials,
+live runs, answers, approval authority or trusted UI builds.
+
+Prefer existing independent MCP providers. Keep vendor protocols and compatibility
+workarounds external; no new Wright-owned Bambu MCP is planned. Catalog metadata,
+example bindings, and historical evidence may name vendors. Embedded vendor
+prototype code is migration debt, not a pattern for new platform features.
+
+Applicable specs, plans, tasks, and PRs must explain the user journey, shared and
+external ownership, reused mechanisms, interaction/evidence identities,
+invalidation, missing-capability behaviour, and UI compatibility/fallback where
+relevant. Prove new shared mechanisms with a substantially different existing
+workflow. Keep engineering requirements and exact-output verification intact.
+Distinguish agreed direction, proposed work, implementation, verified behaviour,
+and user acceptance. Preserve existing evidence and the refined workflow editor.
+Keep this guidance outside the managed Spec Kit section during context refresh.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/081-engineering-workflow-templates/plan.md
+at specs/083-process-working-interfaces/plan.md
 
-Deferred output-content validation is planned in
-specs/081-engineering-workflow-templates/content-validation/plan.md, with the
-future-agent handoff in specs/081-engineering-workflow-templates/content-validation/quickstart.md.
-Do not activate it until the user assigns it and its all-30-output G0 gate passes.
+Feature 083 implements the complete common and AI-created working-interface
+experience on the existing accepted process and durable source runtime. Read its
+implementation-goal.md, tasks.md, contracts and acceptance-cases.md. The user
+submitted the saved goal and approved local implementation/testing through M0-M5
+without routine intermediate lifecycle approvals. Real process reviews and
+external effects retain their separate authority. The user authorized feature-branch push and PR integration to `dev` on
+10 October 2026, subject to the repository gates. No production release is
+authorized. Keep progress/evidence current and preserve existing dirty work.
+
+Reuse Feature 082's validator/rework/result contracts; its per-subject checks
+remain authority and its implementation evidence is retained. The earlier 081
+campaign is reference material and remains separate. Use fresh isolated digital
+proof runs; do not resume or approve protected campaign subjects. Reporting UI
+belongs to another branch. Existing independent MCPs own vendor implementation.
 <!-- SPECKIT END -->
+
+Before selecting, describing, changing, or evaluating engineering workflow
+examples or planning their campaign, read
+`docs/design/engineering-demonstration-principles.md`. Wright's central
+demonstration is an extended process using multiple existing engineering tools
+through MCP servers, with actual engineering outputs handed between meaningful
+stages to accomplish an overall job. A long graph, valid files, or campaign
+counts alone do not establish demonstration value. Show engineering tools and
+their contributions; keep software plumbing secondary. Align and reuse the
+existing 30 examples, not a wholesale rewrite without explicit agreement.
 
 Before changing the workflow/process editor or its workspace entry point, read
 `docs/contributing/workflow-ui-integration.md`. Locate the latest reviewed UI

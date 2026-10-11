@@ -18,13 +18,28 @@ import { installElectronReturnAccelerator } from "../../services/surfaces/focus-
 import { SurfaceToolbar } from "./SurfaceToolbar";
 import { LiveAppControls } from "./LiveAppControls";
 
-interface Props {
+export interface LiveAppSurfaceProps {
   readonly descriptor: SurfaceDescriptor;
   readonly sessionId: string;
-  readonly onFocusMode: () => void;
+  readonly onFocusMode?: () => void;
+  /** Issued by a native owner that uses its own exact process presentation scope. */
+  readonly managedPresentation?: {
+    readonly launch: PresentationLaunch;
+    readonly close: () => Promise<void>;
+    readonly connect?: (
+      frame: HTMLIFrameElement,
+      ready: () => void,
+    ) => () => void;
+    readonly onCloseFailure?: (error: unknown) => void;
+    readonly closeOnUnmount?: boolean;
+  };
 }
 
 type ActiveLaunches = Partial<Record<"panel" | "browser", PresentationLaunch>>;
+
+// Give a same-presentation StrictMode remount one turn to retain its issued
+// view. A real close disposes/revokes it; this never controls process execution.
+const deferredClosures = new Map<string, ReturnType<typeof setTimeout>>();
 
 function recoveryOperation(
   lifecycle: SurfaceDescriptor["lifecycle"],
@@ -62,7 +77,12 @@ function shouldAutoOpenPanel(descriptor: SurfaceDescriptor): boolean {
   );
 }
 
-export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
+export function LiveAppSurface({
+  descriptor,
+  sessionId,
+  onFocusMode,
+  managedPresentation,
+}: LiveAppSurfaceProps) {
   const root = useRef<HTMLDivElement>(null);
   const panelHost = useRef<HTMLDivElement>(null);
   const runtimeControls = useRef<HTMLDivElement>(null);
@@ -77,8 +97,16 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [diagnostics, setDiagnostics] = useState(false);
   const [busy, setBusy] = useState(false);
+  const managed = useRef(managedPresentation);
+  const managedDescriptor = useRef(descriptor);
+  const isManaged = managedPresentation !== undefined;
+  useEffect(() => {
+    managed.current = managedPresentation;
+    managedDescriptor.current = descriptor;
+  }, [managedPresentation, descriptor]);
 
   useEffect(() => {
+    if (isManaged) return;
     void getPresentationPreference(
       descriptor.surfaceId,
       descriptor.workspaceId,
@@ -93,6 +121,45 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
     descriptor.surfaceId,
     descriptor.workspaceId,
     sessionId,
+    isManaged,
+  ]);
+
+  useEffect(() => {
+    const port = managed.current;
+    if (!port || !panelHost.current) return;
+    const launch = port.launch;
+    const pending = deferredClosures.get(launch.presentationId);
+    if (pending !== undefined) clearTimeout(pending);
+    deferredClosures.delete(launch.presentationId);
+    const next = new LiveAppPresenter(
+      launch,
+      managedDescriptor.current,
+      setFrameStatus,
+    );
+    presenter.current?.dispose();
+    presenter.current = next;
+    next.mount(panelHost.current);
+    const frame = panelHost.current.querySelector<HTMLIFrameElement>("iframe");
+    const disconnect = frame
+      ? port.connect?.(frame, () => next.confirmReady())
+      : undefined;
+    setLaunches({ panel: launch });
+    return () => {
+      disconnect?.();
+      next.dispose();
+      if (presenter.current === next) presenter.current = null;
+      if (port.closeOnUnmount === false) return;
+      const timer = setTimeout(() => {
+        deferredClosures.delete(launch.presentationId);
+        void port.close().catch((error) => port.onCloseFailure?.(error));
+      }, 0);
+      deferredClosures.set(launch.presentationId, timer);
+    };
+  }, [
+    managedPresentation?.launch.presentationId,
+    managedPresentation?.launch.generation,
+    managedPresentation?.launch.absoluteBootstrapUrl,
+    descriptor.surfaceId,
   ]);
 
   useEffect(() => {
@@ -135,6 +202,7 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
   );
 
   const open = async (kind: "panel" | "browser"): Promise<boolean> => {
+    if (managed.current) return false;
     setBusy(true);
     setError(null);
     let launch: PresentationLaunch | null = null;
@@ -194,6 +262,7 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
     const key = `${descriptor.surfaceId}:${instanceId}:${generation}`;
     if (
       busy ||
+      managed.current ||
       launches.panel ||
       autoPanelKeys.current.has(key) ||
       !shouldAutoOpenPanel(descriptor)
@@ -209,12 +278,14 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
     if (!launch) return;
     setError(null);
     try {
-      await closePresentation(
-        descriptor.surfaceId,
-        launch.presentationId,
-        descriptor.workspaceId,
-        sessionId,
-      );
+      if (managed.current) await managed.current.close();
+      else
+        await closePresentation(
+          descriptor.surfaceId,
+          launch.presentationId,
+          descriptor.workspaceId,
+          sessionId,
+        );
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : String(reason));
       return;
@@ -234,58 +305,82 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
     <div
       ref={root}
       data-testid="live-app-surface"
+      className={managedPresentation ? "process-managed-surface" : undefined}
       style={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
-      <div data-focus-region="toolbar">
-        <SurfaceToolbar
-          descriptor={descriptor}
-          activeKinds={Object.keys(launches) as ("panel" | "browser")[]}
-          rememberPreference={rememberPreference}
-          preferredKind={preferredKind}
-          frameStatus={
-            frameStatus === "unknown" || frameStatus === "blocked"
-              ? frameStatus
-              : undefined
-          }
-          busy={busy}
-          onOpen={(kind) => {
-            void open(kind);
-          }}
-          onOpenBoth={async () => {
-            const panelOpened = await open("panel");
-            const browserOpened = await open("browser");
-            if (panelOpened !== browserOpened) {
-              setError(
-                panelOpened
-                  ? "The panel opened, but the system browser presentation failed."
-                  : "The browser opened, but the workspace panel presentation failed.",
-              );
+      {!managedPresentation && (
+        <div data-focus-region="toolbar">
+          <SurfaceToolbar
+            descriptor={descriptor}
+            activeKinds={Object.keys(launches) as ("panel" | "browser")[]}
+            rememberPreference={rememberPreference}
+            preferredKind={preferredKind}
+            frameStatus={
+              frameStatus === "unknown" || frameStatus === "blocked"
+                ? frameStatus
+                : undefined
             }
-          }}
-          onFocus={() => presenter.current?.focus()}
-          onClosePresentation={close}
-          onStopApplication={() => {
-            runtimeControls.current
-              ?.querySelector<HTMLButtonElement>('[data-operation="stop"]')
-              ?.click();
-          }}
-          onDiagnostics={() => setDiagnostics((value) => !value)}
-          onRememberPreferenceChange={setRememberPreference}
-        />
-      </div>
-      <div ref={runtimeControls}>
-        <LiveAppControls
-          descriptor={descriptor}
-          sessionId={sessionId}
-          onRuntimeChange={(runtime) => {
-            if (runtime.state === "stopped" || runtime.state === "failed") {
-              presenter.current?.dispose();
-              presenter.current = null;
-              setLaunches({});
-            }
-          }}
-        />
-      </div>
+            busy={busy}
+            onOpen={(kind) => {
+              void open(kind);
+            }}
+            onOpenBoth={async () => {
+              const panelOpened = await open("panel");
+              const browserOpened = await open("browser");
+              if (panelOpened !== browserOpened) {
+                setError(
+                  panelOpened
+                    ? "The panel opened, but the system browser presentation failed."
+                    : "The browser opened, but the workspace panel presentation failed.",
+                );
+              }
+            }}
+            onFocus={() => presenter.current?.focus()}
+            onClosePresentation={close}
+            onStopApplication={() => {
+              runtimeControls.current
+                ?.querySelector<HTMLButtonElement>('[data-operation="stop"]')
+                ?.click();
+            }}
+            onDiagnostics={() => setDiagnostics((value) => !value)}
+            onRememberPreferenceChange={setRememberPreference}
+          />
+        </div>
+      )}
+      {!managedPresentation && (
+        <div ref={runtimeControls}>
+          <LiveAppControls
+            descriptor={descriptor}
+            sessionId={sessionId}
+            onRuntimeChange={(runtime) => {
+              if (runtime.state === "stopped" || runtime.state === "failed") {
+                presenter.current?.dispose();
+                presenter.current = null;
+                setLaunches({});
+              }
+            }}
+          />
+        </div>
+      )}
+      {managedPresentation && launches.panel && (
+        <div
+          className="process-surface-toolbar"
+          role="group"
+          aria-label="Interface view controls"
+          data-focus-region="toolbar"
+        >
+          <button
+            type="button"
+            data-testid="surface-focus"
+            onClick={() => presenter.current?.focus()}
+          >
+            Enter interface
+          </button>
+          <button type="button" onClick={() => void close("panel")}>
+            Close interface view
+          </button>
+        </div>
+      )}
       {error && (
         <p role="alert" data-testid="surface-presentation-error">
           {error}
@@ -297,14 +392,16 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
           lifecycle {descriptor.lifecycle}.
         </aside>
       )}
-      <button
-        type="button"
-        onClick={onFocusMode}
-        data-testid="surface-enter-focus"
-      >
-        Maximize surface while keeping chat
-      </button>
-      {launches.panel && (
+      {onFocusMode && (
+        <button
+          type="button"
+          onClick={onFocusMode}
+          data-testid="surface-enter-focus"
+        >
+          Maximize surface while keeping chat
+        </button>
+      )}
+      {launches.panel && !managedPresentation && (
         <button
           type="button"
           className="workspace-surface-control"
@@ -337,8 +434,8 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
           data-testid="surface-frame-unverified"
         >
           Keyboard escape from this application is unverified. Use Return to
-          surface controls, the desktop return shortcut, or open the application
-          in your browser.
+          surface controls, the desktop return shortcut
+          {!managedPresentation && ", or open the application in your browser"}.
         </p>
       )}
     </div>

@@ -1,0 +1,11 @@
+{
+  "status": "failed_publication",
+  "exit_code": 1,
+  "diagnostic": "AttributeError: 'str' object has no attribute 'items'",
+  "cause": "Publication helper passed an installation log string to mapping-only redact_validation_payload.",
+  "owned_containers_revalidated_stopped_before_failure": 3,
+  "provider_installation_repeated": false,
+  "solver_call_repeated": false,
+  "qualification_failure": false,
+  "next_attempt": "20261003-oasis-fresh-clean-qualification-002"
+}

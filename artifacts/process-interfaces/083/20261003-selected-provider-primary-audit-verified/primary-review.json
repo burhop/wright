@@ -1,0 +1,34 @@
+{
+  "obligations": [
+    {
+      "id": "FR-015",
+      "behaviors": [
+        "The current migration primary review proves the active embedded device/Studio/slicing prototype paths retired, historical operational URLs inert, and retained history readable. Current migration source bytes are unchanged; seven inherited integration owners remain explicitly scoped migration debt.",
+        "Four independently installed, pinned providers retain selected Linux prerequisites outside the neutral Wright base. Direct initialize/tools/list and the normal Windows api.gateway_stdio gateway list exact matching input schemas, including selected tool options; five safe backend invocations are retained with policy audit and actual output bytes.",
+        "Native geometry, slicing, CAD and solver behavior remains in those independent providers. No Wright vendor protocol, replacement wrapper or new vendor MCP is introduced. Pinned AgentCAD upstream is explicitly unreleased; the published 0.6.0 failure stays retained.",
+        "Original engineering demonstrations retain their distinct host/provider versions and full mandatory profiles. Qualification inputs establish selected backends only; no hardware, all-tools, catalog promotion, critic or human acceptance is inferred."
+      ]
+    },
+    {
+      "id": "T043",
+      "behaviors": [
+        "Fresh selected installations for Blender geometry, the independent offline slicer, AgentCAD and OASiS have recorded exact install/source/image/dependency identities; all 86 retained qualification files match their inventories. Blender successful export reuses the initial clean install in a new isolated runtime, preserving the original failed operator call.",
+        "Actual direct discovery reports 28/11/11/17 tools; five selected native invocations through normal api.gateway_stdio retain exact schema/argument keys, policy started/succeeded pairs, canonical response identities and distinct exact saved response hashes. Current gateway owner bytes are unchanged from the qualification checkpoint.",
+        "Independent byte inspection confirms 12-triangle 10x8x6 unitless STL, actual 30,054-byte sliced package and 103,622-byte G-code with PETG/four-wall/35%/0.2 settings and exact profiles, two real skfem field CSVs with provider trust/critic false, and 15,378-byte STEP with separate 2x3x4 mm/24 mm3 readback.",
+        "Eleven exact owned proof containers are revalidated stopped without restart or provider replay. Read-only primary inspection qualifies the recorded selected pin/backend/gateway scopes; installed UI, all listed tools, in-container API installation and physical acceptance keep their separate limits."
+      ]
+    }
+  ],
+  "current_gateway_owner_parity": [
+    "apps/api/src/api/gateway_stdio.py",
+    "packages/tool_registry/src/tool_registry/gateway_service.py",
+    "packages/tool_registry/src/tool_registry/manager.py"
+  ],
+  "current_migration_owner_hashes_verified": 86,
+  "limits": [
+    "Qualification retains original pin/platform/backend scopes; no model, provider, process, review, install or replay occurs during primary inspection.",
+    "Seven inherited vendor integration owners remain bounded documented migration debt; no universal vendor-free repository or all-tool qualification claim.",
+    "Earlier actual AI construction attaches the original image and receives the reviewed numeric basis, but its native user_prompt is a stage instruction, not the original user prompt; those two runs subsequently fail before repair/slicing/source gate. They do not substitute for the completed configured source gates or dispose JOB-A-stage1/FR-016/T047.",
+    "Remaining contracts/runtime, common-view independent start and final post-trace installed packaging remain open. Mandatory engineering reviews and critic state are unchanged."
+  ]
+}

@@ -48,6 +48,38 @@ class WorkspaceDocumentArtifactError(ValueError):
     pass
 
 
+def validate_python_source(content: str) -> None:
+    """Check bounded source without executing it or importing native packages.
+
+    This catches local Python syntax errors only, not CAD API compatibility or
+    engineering correctness. No filename, source line or upstream exception text
+    is included in the diagnostic.
+    """
+    try:
+        payload = content.encode("utf-8", errors="strict")
+    except UnicodeError as error:
+        raise WorkspaceDocumentArtifactError(
+            "Python source must be valid UTF-8 text"
+        ) from error
+    if len(payload) > MAX_DOCUMENT_BYTES:
+        raise WorkspaceDocumentArtifactError(
+            f"Python source exceeds the {MAX_DOCUMENT_BYTES}-byte limit"
+        )
+    try:
+        compile(content, "<workflow-source>", "exec", dont_inherit=True)
+    except SyntaxError as error:
+        location = f" at line {error.lineno or 1}, column {error.offset or 1}"
+        raise WorkspaceDocumentArtifactError(
+            f"Python source syntax is invalid{location}. "
+            "Correct the source content before publishing; no file was written."
+        ) from error
+    except (ValueError, RecursionError) as error:
+        raise WorkspaceDocumentArtifactError(
+            "Python source syntax could not be checked; remove invalid characters "
+            "or excessive nesting before publishing. No file was written."
+        ) from error
+
+
 def document_producer_declaration() -> dict[str, object]:
     return {
         "effect_kind": "workspace_document",
@@ -210,6 +242,8 @@ class WorkspaceDocumentArtifactService:
             media_type,
             integration_python=integration_python,
         )
+        if target.suffix.lower() == ".py":
+            validate_python_source(content)
         workspace = WorkspacePath(session.workspace_path)
         parent_parts = normalized.split("/")[:-1]
         current = workspace.root

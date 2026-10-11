@@ -374,3 +374,77 @@ def test_handoff_receipt_is_verified_and_attached_to_original_run(tmp_path, chan
         "binding_digest": None,
     }
     assert final["outputs"][-1]["output_path"] == "receipt.json"
+
+
+def test_verified_handoff_receipt_output_can_feed_a_downstream_step(tmp_path):
+    import hashlib
+
+    text = (
+        source()
+        .replace(
+            "outputs: []",
+            'outputs: [{"key":"handoff_receipt","kind":"workspace_file","name":"Receipt"}]',
+        )
+        .replace(
+            '"approval_settings": {"material": "PLA", "profile": "0.20-standard"}',
+            '"approval_settings": {"receipt_path": "receipt.json"}',
+        )
+    )
+    text += task("after", fmt="text")
+    text += """connection receipt_to_after
+  type: item
+  from: "approve.handoff_receipt"
+  to: "after.after_prompt"
+  label: "verified receipt"
+  when: null
+end
+"""
+    plan = replace(compile_prompt_workflow(text), definition_digest="a" * 64)
+    services = service(tmp_path)
+    prompts = []
+
+    async def generate(prompt, fmt):
+        prompts.append(prompt)
+        return '{"package":"ready"}' if fmt == "json" else "Receipt consumed"
+
+    async def execute(**kwargs):
+        return await execute_prompt_workflow(
+            service=services,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=generate,
+            **kwargs,
+        )
+
+    first = asyncio.run(execute())
+    checkpoint = authorize(services, first)
+    raw = b'{"integration_test":true,"verified":"receipt-output"}'
+    (tmp_path / "receipt.json").write_bytes(raw)
+    checkpoint["external_action"]["evidence"] = {
+        "produced_files": [
+            {
+                "output_path": "receipt.json",
+                "sha256": hashlib.sha256(raw).hexdigest(),
+                "output_bytes": len(raw),
+                "output_format": "json",
+                "output_port": "receipt",
+            }
+        ]
+    }
+
+    result = asyncio.run(
+        execute(
+            continuation=checkpoint["continuation"],
+            completed_checkpoint=checkpoint,
+        )
+    )
+
+    assert result["steps"][-1]["task_id"] == "after"
+    assert "receipt-output" in prompts[-1]
+    receipt = next(
+        item
+        for item in result["results"]
+        if item["artifact_role"] == "external_action_receipt"
+    )
+    assert receipt["provenance"]["output_port"] == "handoff_receipt"

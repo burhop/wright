@@ -1,0 +1,221 @@
+{
+  "title": "Exact evidence navigation from the saved heat comparison",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-02T05:08:23.058Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Heat-spreader comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved heat-spreader workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Open saved comparison",
+      "instruction": "Open the saved heat comparison workspace link. On revision_60_fine click Open representation, Open assessment, then Open producing step, reopening the comparison between actions."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Heat-spreader comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the heat workflow",
+      "summary": "The exact accepted heat workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow"
+      ],
+      "expected": "The accepted heat workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original heat assignment opens with its connected review, CAD and analysis stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted heat workflow file.",
+      "controls": [
+        "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual heat run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded heat run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing heat run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Reopen saved comparison",
+      "summary": "The saved revised comparison reads all actual heat results in a Wright workspace tab.",
+      "purpose": "Reuse compiled saved assets without regeneration.",
+      "action": "Open the recorded saved-interface workspace link.",
+      "controls": [
+        "Open representation",
+        "Open assessment",
+        "Open producing step"
+      ],
+      "expected": "Saved comparison connects and exposes all eighteen actual results.",
+      "actual": "Saved interface connected and eighteen actual results visible.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Exact fine-field evidence opens",
+      "summary": "The comparison opens the actual fine-grid temperature table through Wright’s common evidence view.",
+      "purpose": "Verify authorized evidence navigation from the generated interface.",
+      "action": "Click Open representation on revision_60_fine.",
+      "controls": [
+        "Open representation",
+        "View numerical samples"
+      ],
+      "expected": "Native common view shows the exact numerical CSV.",
+      "actual": "Actual numerical table and temperature column opened from the tailored interface.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "All recorded field samples",
+      "summary": "The evidence viewer renders all 765 supplied samples using explicitly selected axes.",
+      "purpose": "Inspect actual solver outputs from the saved UI.",
+      "action": "Expand View numerical samples and select x_m, y_m, temperature_c.",
+      "controls": [
+        "View numerical samples",
+        "Horizontal column",
+        "Vertical column",
+        "Value column"
+      ],
+      "expected": "765 actual field samples.",
+      "actual": "All recorded samples rendered.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Exact held assessment opens",
+      "summary": "The saved comparison opens its full recorded assessment and retains exact result focus.",
+      "purpose": "Preserve engineering verification and held human review.",
+      "action": "Reopen the saved comparison and click Open assessment on revision_60_fine.",
+      "controls": [
+        "Open assessment"
+      ],
+      "expected": "25 passed checks and one held review, focused on the requested result.",
+      "actual": "Exact assessment and fine-result focus retained.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "Producing engineering step opens",
+      "summary": "The saved comparison returns to the actual producing step in the accepted process editor.",
+      "purpose": "Keep the tailored interface and refined editor connected.",
+      "action": "Reopen the saved comparison and click Open producing step on revision_60_fine.",
+      "controls": [
+        "Open producing step",
+        "Workflow files"
+      ],
+      "expected": "The accepted heat process editor opens at its producer.",
+      "actual": "Accepted heat editor opened from the exact result.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    }
+  ]
+}

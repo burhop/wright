@@ -1,5 +1,12 @@
 # Rivet workflow testing
 
+**Historical compatibility documentation.** The current Wright workspace uses
+its canonical workflow editor and working views. Rivet is not the workspace's
+new-workflow entry or an automatically installed workspace server. These pages
+retain legacy contracts and evidence; remaining compatibility code is migration
+debt. Use the [current workflow guide](../workflows/process-working-interfaces.md)
+for ordinary authoring and execution.
+
 Wright's normal Rivet suite is deterministic and local. It uses supervised fixture processes and fake MCP children; it does not require credentials, proprietary applications, paid services, network access, GPUs, or hardware.
 
 ## MCP gateway layers

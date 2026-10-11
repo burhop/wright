@@ -252,6 +252,7 @@ def test_decision_is_idempotent_after_restart_preserves_every_original_and_never
         and first["actor"] == "local-workspace-user"
     )
     assert calls == ["json", "html"]
+    assert first["integration_test"] is False
     for path, data in before.items():
         assert (tmp_path / path).read_bytes() == data
     with pytest.raises(WorkflowSourceExecutionError, match="different decision"):

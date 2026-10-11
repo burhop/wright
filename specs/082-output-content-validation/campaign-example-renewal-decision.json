@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "decision_id": "campaign-example-renewal-r1-approved-2026-09-22",
+  "decided_at": "2026-09-22",
+  "decision": "approved",
+  "source": "explicit_user_message_in_goal_task",
+  "approved_artifacts": [
+    "specs/082-output-content-validation/campaign-example-renewal-lineup.json",
+    "specs/082-output-content-validation/campaign-example-renewal-engineering-input-proposal.json"
+  ],
+  "approved_case_count": 30,
+  "approved_design_package_target": 30,
+  "approved_scope_expansions": [
+    "water-heater-sizing-01",
+    "water-heater-sizing-02",
+    "water-heater-sizing-03",
+    "robot-tracking-diagnosis-01",
+    "robot-tracking-diagnosis-02",
+    "robot-tracking-diagnosis-03"
+  ],
+  "approved_new_handoffs": [
+    "parametric_jig_to_bambu_studio",
+    "wireviz_pin_net_table_to_kicad_correspondence_and_erc",
+    "solid_edge_flat_dxf_to_qualified_headless_dxf_review"
+  ],
+  "not_authorized": [
+    "approve_robot_010",
+    "broad_campaign_dispatch",
+    "reset_retries",
+    "physical_action",
+    "supplier_submission",
+    "push",
+    "merge",
+    "release"
+  ]
+}

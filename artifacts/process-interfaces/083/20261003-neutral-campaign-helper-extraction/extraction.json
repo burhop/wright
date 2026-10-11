@@ -1,0 +1,50 @@
+{
+  "scope": "Neutral helper extraction; no vendor operation retired by this change",
+  "generic_function_asts_unchanged": [
+    "_renewal_module",
+    "_agentcad_guidance",
+    "digest",
+    "confined",
+    "write_once",
+    "port",
+    "render",
+    "add_reference",
+    "add_file_input",
+    "selected_tool",
+    "publish_input_binding_evidence"
+  ],
+  "example_guidance_bytes_preserved": true,
+  "caller_paths": [
+    "scripts/prepare-bracket-dataset-campaign.py",
+    "scripts/prepare-drill-jig-dataset-campaign.py",
+    "scripts/prepare-harness-dataset-campaign.py",
+    "scripts/prepare-heat-dataset-campaign.py",
+    "scripts/prepare-modelica-dataset-campaign.py",
+    "scripts/prepare-pcb-dataset-campaign.py",
+    "scripts/prepare-pi-dataset-campaign.py",
+    "scripts/prepare-pi-fixed-dataset-campaign.py",
+    "scripts/prepare-pi-visual-dataset-campaign.py",
+    "scripts/prepare-robot-dataset-campaign.py",
+    "scripts/prepare-sheet-metal-dataset-campaign.py",
+    "tests/test_engineering_dataset_input_bindings.py"
+  ],
+  "caller_original_sha256": {
+    "scripts/prepare-bracket-dataset-campaign.py": "5c45b1a946a96d691f9c68bd3302e53f54674ae03de5472ff6d19faa32b5194f",
+    "scripts/prepare-drill-jig-dataset-campaign.py": "6365a0d6a5099279c46c3484ed15d52ca98326d1f29d8292bd03cd57b74e26c7",
+    "scripts/prepare-harness-dataset-campaign.py": "0dfd7c0b0b9a3c93e002cde5a936eb022ab704bccb89b769308b851186bdfc93",
+    "scripts/prepare-heat-dataset-campaign.py": "e38e01ee2a88ff01f27be7ee04d2c82757d6990b29d480d9e4d3ffcb573da8ba",
+    "scripts/prepare-modelica-dataset-campaign.py": "5c33b3683c1cc2db68c46309a6aea538c137a244785b484f2a544ba8a1fcca3a",
+    "scripts/prepare-pcb-dataset-campaign.py": "e143e460e1454d9608dc1aabb28f686760fe6d64d31d0e9d5fd059413f520166",
+    "scripts/prepare-pi-dataset-campaign.py": "38faacc839cec1f75a3d696e3d7bcfcc6064d5e177ad56f1f2280250bf4a6c63",
+    "scripts/prepare-pi-fixed-dataset-campaign.py": "e68f6d79598cec6dd90daf2c2994709432b81fc54a697ca2e74795e065c53e2d",
+    "scripts/prepare-pi-visual-dataset-campaign.py": "bf0b8c921f29d16ef9afe888d90504853f23ce6258714013d36e70c38718330f",
+    "scripts/prepare-robot-dataset-campaign.py": "da77c4bcc22ceff3430b38df2ad9db47817de4d8fbe1c473bf8f00e3b176898c",
+    "scripts/prepare-sheet-metal-dataset-campaign.py": "d9ecc717c5c8db0ddc4b219ae4a8b362fe03a551abbd0cf2d02a8f0d010eb477",
+    "tests/test_engineering_dataset_input_bindings.py": "e0c64c60b70087dd8f9f825f08419cc85f672e58c54386e7a0a7cf51a2f41d85"
+  },
+  "printed_preparer_original_sha256": "e1499b15ba14f1d29a1283520c2155088f034b408da45014b13e99ac31e13c29",
+  "original_campaign_bindings_changed": false,
+  "engineering_execution": false,
+  "remaining_vendor_migration": true,
+  "T048_T049_complete": false
+}

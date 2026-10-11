@@ -1,0 +1,25 @@
+{
+  "business_tables_unchanged": true,
+  "engineering_and_saved_asset_files_unchanged": true,
+  "workspace_file_count": 142,
+  "metadata_changes": [
+    {
+      "path": ".hermes.md",
+      "reason": "Normal workspace initialization rewrites agent context for the isolated Linux workspace; not an engineering output."
+    },
+    {
+      "path": ".wright/apps/process.ui-512d6109b37f4c0f89b86d86a34827b2.revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0.surface.json",
+      "changed_fields": [
+        "launch"
+      ],
+      "reason": "Installed Linux launch path replaces the copied Windows runtime path; same source UI assets."
+    }
+  ],
+  "table_hashes": {
+    "workflow_continuation_checkpoints": "cbe941c3941d919cdcc208acef02f0676adee40f016f36aa323bc45a6f9e6c73",
+    "process_uis": "8b47a5d878c78155a618e23c7b67efee7177b94fb4d53379a5d6c9f4a8c5ce68",
+    "process_ui_revisions": "15be6c59995ead4ebaa92a1cdb5e43a93f144f4547e9ec20087774474b1e20dd",
+    "process_ui_authoring_jobs": "72fb5a037919e61f8e157025999b07b22617392fe78e8781c8fc1d876b43287d",
+    "process_ui_authoring_records": "e6082398f45a653e9fc19f7735151e851ed0551279ee7aa59a4d93b88fe05221"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "files": {
+    "checked-scope.json": {
+      "bytes": 13360,
+      "sha256": "09197bae701542254fa2f8ee00bf3f7c1f537d9d60a53e492b891cc6f3384e48"
+    },
+    "envelope-attempt-001.xml": {
+      "bytes": 7774,
+      "sha256": "06b0a026dce7e5e0e33396c25a412314badb61d3ca17ed0a40072a551893d62b"
+    },
+    "envelope-attempt-002.xml": {
+      "bytes": 7774,
+      "sha256": "de720f6a068cc42e43b7381f05764f6253a18aa8ea6ade34a6e995f1b25d0234"
+    },
+    "envelope-command-and-attempts.json": {
+      "bytes": 966,
+      "sha256": "23aa157b49a66d917267ee3e64bec354388164ac090aef958a9708b58fcd14a2"
+    },
+    "first-attempts.json": {
+      "bytes": 923,
+      "sha256": "ee854cb1ada50d7391e0b5dc42b10ada7516ca2189f8890b147c55d54106a6b2"
+    },
+    "primary-case-index.json": {
+      "bytes": 34763,
+      "sha256": "31ffc9146d5d274d11cfd90c2dcacdf4619229fa8959204cd590e5ba4dae1aab"
+    },
+    "primary-review.json": {
+      "bytes": 47345,
+      "sha256": "b5df053523009826f12fb2b15fbcb32e71205450fb7895a8c5d6b34374ea3df6"
+    },
+    "README.md": {
+      "bytes": 2221,
+      "sha256": "ddcbe8e84e2c66095b0cbf88e1065b41e73f7b0ee57cfb1281fd79bc1373eb18"
+    },
+    "semantic-ledger.json": {
+      "bytes": 181673,
+      "sha256": "0486730bc8f96d8906d980d1deedd6e3636cdc0438e7cc90fd4156fc2f742910"
+    }
+  }
+}

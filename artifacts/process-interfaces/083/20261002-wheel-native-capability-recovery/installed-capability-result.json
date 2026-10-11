@@ -1,0 +1,13 @@
+{
+  "_meta": {},
+  "content": [
+    {
+      "type": "text",
+      "text": "Code executed successfully: INSTALLED_STL_OPERATORS {'version': '4.5.10 LTS', 'import': ['rna_type', 'filepath', 'directory', 'files', 'check_existing', 'filter_blender', 'filter_backup', 'filter_image', 'filter_movie', 'filter_python', 'filter_font', 'filter_sound', 'filter_text', 'filter_archive', 'filter_btx', 'filter_collada', 'filter_alembic', 'filter_usd', 'filter_obj', 'filter_volume', 'filter_folder', 'filter_blenlib', 'filemode', 'display_type', 'sort_method', 'global_scale', 'use_scene_unit', 'use_facet_normal', 'forward_axis', 'up_axis', 'use_mesh_validate', 'filter_glob'], 'export': ['rna_type', 'filepath', 'check_existing', 'filter_blender', 'filter_backup', 'filter_image', 'filter_movie', 'filter_python', 'filter_font', 'filter_sound', 'filter_text', 'filter_archive', 'filter_btx', 'filter_collada', 'filter_alembic', 'filter_usd', 'filter_obj', 'filter_volume', 'filter_folder', 'filter_blenlib', 'filemode', 'display_type', 'sort_method', 'ascii_format', 'use_batch', 'export_selected_objects', 'collection', 'global_scale', 'use_scene_unit', 'forward_axis', 'up_axis', 'apply_modifiers', 'filter_glob']}\n"
+    }
+  ],
+  "structuredContent": {
+    "result": "Code executed successfully: INSTALLED_STL_OPERATORS {'version': '4.5.10 LTS', 'import': ['rna_type', 'filepath', 'directory', 'files', 'check_existing', 'filter_blender', 'filter_backup', 'filter_image', 'filter_movie', 'filter_python', 'filter_font', 'filter_sound', 'filter_text', 'filter_archive', 'filter_btx', 'filter_collada', 'filter_alembic', 'filter_usd', 'filter_obj', 'filter_volume', 'filter_folder', 'filter_blenlib', 'filemode', 'display_type', 'sort_method', 'global_scale', 'use_scene_unit', 'use_facet_normal', 'forward_axis', 'up_axis', 'use_mesh_validate', 'filter_glob'], 'export': ['rna_type', 'filepath', 'check_existing', 'filter_blender', 'filter_backup', 'filter_image', 'filter_movie', 'filter_python', 'filter_font', 'filter_sound', 'filter_text', 'filter_archive', 'filter_btx', 'filter_collada', 'filter_alembic', 'filter_usd', 'filter_obj', 'filter_volume', 'filter_folder', 'filter_blenlib', 'filemode', 'display_type', 'sort_method', 'ascii_format', 'use_batch', 'export_selected_objects', 'collection', 'global_scale', 'use_scene_unit', 'forward_axis', 'up_axis', 'apply_modifiers', 'filter_glob']}\n"
+  },
+  "isError": false
+}

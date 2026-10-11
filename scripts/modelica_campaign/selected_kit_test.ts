@@ -2,7 +2,7 @@ import { createDefaultKitRegistry } from "/app/src/kits/registry.ts";
 import { numericalArguments, numericalFlags, parseNumericalControls } from "/app/src/domain/wright-numerical-controls.ts";
 import { runtimeCompatibilityPolicy } from "/app/src/domain/runtime-compatibility.ts";
 import { validateExportInput } from "/app/src/recorded-export.ts";
-import { observeCsv } from "/app/src/study-summary.ts";
+import { buildKitRunParameters, observeCsv } from "/app/src/study-summary.ts";
 
 function assert(value: unknown, message: string): asserts value {
   if (!value) throw new Error(message);
@@ -64,4 +64,10 @@ Deno.test("independent sample integration and target interpolation preserve ener
   let rejected = false;
   try { observeCsv(source.replace("1,21", "-1,21"), parameters, 20.5); } catch { rejected = true; }
   assert(rejected, "Backward solver time was accepted");
+});
+
+Deno.test("study parameter evidence includes the selected kit identity", () => {
+  const result = buildKitRunParameters(700, 180, [350, 500, 700], [0.6], []);
+  assert(result.kit_id === "wright-water-heater-v1", "Selected kit ID is missing");
+  assert(result.kit_version === "0.1.0", "Selected kit version is missing");
 });

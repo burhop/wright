@@ -1,0 +1,32 @@
+{
+  "assessment_id": "assessment-2dbc4906081b42b1ae1d4dcab54531b8",
+  "native_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "report_run_id": "97f4c017f8a04d7eab8011e4ad6c5298",
+  "handoff_run_id": "b513166fb7014f23a7187a34be6e7710",
+  "summary": {
+    "content_verified": null,
+    "requirements_compliant": null,
+    "evaluation_complete": false,
+    "release_eligible": false,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 1,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 17
+    }
+  },
+  "actual_simulator_receipt_exact_package_bound": true,
+  "supplied_files_explicit_opt_in": true,
+  "report_and_receipt_exact_durable_results_not_validator_registry": true,
+  "independent_multi_producer_assessment": true,
+  "original_gate_not_executed_or_rewritten": true,
+  "original_records_unchanged": true,
+  "profile_and_baseline_unchanged": true,
+  "native_replay": false,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false
+}

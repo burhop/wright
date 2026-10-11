@@ -1,0 +1,92 @@
+{
+  "title": "Exact preparation geometry, toolpaths and held assessment in both working views",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T11:32:31.005Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved wheel process and click Use saved process."
+    },
+    {
+      "label": "Inspect the held preparation run",
+      "instruction": "Open the recorded second-run link and inspect its preparation results and human-review hold."
+    },
+    {
+      "label": "Reuse the interface",
+      "instruction": "Click Create or choose interface, select Focus-wheel configured preparation and click Open saved interface."
+    },
+    {
+      "label": "Inspect geometry",
+      "instruction": "Reload the saved working interface, then click Open representation on repaired_mesh.stl."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Return to the saved interface and click Open producing step on repaired_mesh.stl."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Installed preparation workspace",
+      "summary": "Continue the retained walkthrough at its first unverified assessment.",
+      "purpose": "Reuse the same isolated installed host without replaying preparation.",
+      "action": "Open the proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Normal workspace available.",
+      "actual": "The existing workspace opens.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S10A",
+      "state": "pass",
+      "label": "The original exact held assessment opens",
+      "summary": "The digital checks and required human review remain distinct from release.",
+      "purpose": "Verify exact assessment navigation and requested result focus.",
+      "action": "Click Open assessment on repaired_mesh.stl.",
+      "controls": [
+        "Open assessment"
+      ],
+      "expected": "17 passed checks, one mandatory review hold, exact repaired result focus.",
+      "actual": "The original full source assessment opens on the exact requested result.",
+      "raw": "screenshots/raw/S10A.png",
+      "annotated": "screenshots/annotated/S10A.png"
+    },
+    {
+      "id": "S10T",
+      "state": "pass",
+      "label": "Saved interface exposes the same actual nominal toolpaths",
+      "summary": "The shared viewer retains the recorded layers and honest passive scope.",
+      "purpose": "Verify common/tailored actual toolpath identity and control parity.",
+      "action": "Reopen the saved interface, open support-preview.json and exercise layer and support visibility controls.",
+      "controls": [
+        "Open representation",
+        "Layers",
+        "Support paths"
+      ],
+      "expected": "The same 90 recorded layers and controls.",
+      "actual": "Identical nominal toolpath evidence renders in the saved interface.",
+      "raw": "screenshots/raw/S10T.png",
+      "annotated": "screenshots/annotated/S10T.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Exact producer opens in the accepted editor",
+      "summary": "The partial result leads to its actual repair and orientation block.",
+      "purpose": "Retain the complementary working view and detailed engineering inspection.",
+      "action": "Return to the saved view and click Open producing step on repaired_mesh.stl.",
+      "controls": [
+        "Open producing step"
+      ],
+      "expected": "Accepted process and exact repaired-mesh producer selected.",
+      "actual": "The original producing block opens in the preserved editor.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    }
+  ]
+}

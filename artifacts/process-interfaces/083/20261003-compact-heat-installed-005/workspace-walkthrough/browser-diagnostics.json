@@ -1,0 +1,13 @@
+{
+  "console": [
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:52049/assets/index-C2UuwfnC.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:52049/assets/index-C2UuwfnC.js:4160:3720)\n    at async http://wright.localhost:52049/assets/index-C2UuwfnC.js:4308:100927\n    at async http://wright.localhost:52049/assets/index-C2UuwfnC.js:4308:101340"
+  ],
+  "pageErrors": [],
+  "failedResponses": [
+    {
+      "path": "/api/agent/models",
+      "status": 503
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    "checked-scope.json": {
+      "bytes": 1344,
+      "sha256": "fa6804d45371ff3e44f4eb57ad3d4cfd9b8b198c815e3687aedbb4a54d8c471b"
+    },
+    "guidance-first-stop.json": {
+      "bytes": 441,
+      "sha256": "ec2da2341fa4b54eb4a528f707c1c94475a3c53f0cedf1a19d1764b0b5a36d2e"
+    },
+    "guidance-review.json": {
+      "bytes": 5745,
+      "sha256": "5f20666004147bc067819c8ab362873a7192c8f37b5627643ef67043d54672f6"
+    },
+    "local-links.json": {
+      "bytes": 13997,
+      "sha256": "64427cb29e485af7be0f1acd300dfff9a6d60ed7157c15a65152f62aa6c58ba5"
+    },
+    "README.md": {
+      "bytes": 650,
+      "sha256": "12204fffe99b89717a802ed6a17638fa537eb3494db855114958edc19058bbe8"
+    },
+    "semantic-ledger.json": {
+      "bytes": 401198,
+      "sha256": "531f58facf93655730a4693964323d1e2a020f91a44ff2299798f5fe997e96ce"
+    }
+  }
+}

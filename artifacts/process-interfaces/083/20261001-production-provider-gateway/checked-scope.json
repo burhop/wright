@@ -1,0 +1,62 @@
+{
+  "parent": "02daedc7b50a6018872f3768648d1ff4291865ec",
+  "scope": "actual production gateway selected backend qualification plus declarative heat example preparation; complete engineering/UI/distribution proof pending",
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "tests": {
+    "passes": 7,
+    "seconds": "2.297",
+    "junit_sha256": "7021cfe7bb1d68da34a826f80c2fbc4e933bd9bff2a032f097b07545200cc4cb",
+    "native_or_model_execution": false
+  },
+  "ruff": "passed",
+  "owned_source_hashes": {
+    "examples/process-interfaces/definition.py": "005dc62c6343b1507c1c87b902a08f5d996212e2ab0aab73a927eabb59511ce2",
+    "examples/process-interfaces/heat-spreader-sizing/prepare.py": "022e9509751ada3879f6dbd8a178a29547081e307083f4a5da5ab5b252d880cf",
+    "examples/process-interfaces/heat-spreader-sizing/bindings.example.json": "c2876deda4657aab05f067169db621aa3282b6e3a76126110d43dfc3960092d4",
+    "examples/process-interfaces/heat-spreader-sizing/README.md": "642dd00e3266234dd858ee1fd0313f8b65312e65a6283c189e32f19200d72c3e",
+    "tests/test_process_interface_examples.py": "430c4104d602a960be536e57e988a9c80286ee488c0c7f0528b458ff1badd390",
+    "specs/083-process-working-interfaces/evidence/provider-qualification.md": "5e691cbcbef9357f76ef457d19e25e9477cd7f58763fe5388f542f7d529336cd",
+    "specs/083-process-working-interfaces/evidence/heat-proof.md": "e82dbeef6c1817956459548200912bd07fc6bc6365790b38ab0fe53b96928546",
+    "specs/083-process-working-interfaces/progress.md": "7c51751359a6f386e6991913672ca22fe502a8318346881dc67385200dd262c6",
+    "specs/083-process-working-interfaces/tasks.md": "f446a9a7e11294a1930830e7b8bf90e79485659be6377e43f07bad14ada926e6",
+    "artifacts/process-interfaces/083/20261001-production-provider-gateway/slicer.json": "691a0294526a014b9ad55bd327ce9ff09dfb1022d7a92ba82b37bf01de0ed61f",
+    "artifacts/process-interfaces/083/20261001-production-provider-gateway/blender.json": "929abd3ab11dab973ccfc9fd08713b5ab2a0fb75012aea5f3053c6ff960c12da",
+    "artifacts/process-interfaces/083/20261001-production-provider-gateway/oasis.json": "214c60f87cf62f250f2e4ba1aa1ba9898a3f639e0a97fcedf3abc332172c9740",
+    "artifacts/process-interfaces/083/20261001-production-provider-gateway/agentcad-readback.json": "58901482f647e527fd19e4a29d2972169bdd59f3db5e4a0088086007e3c32596"
+  },
+  "claims": {
+    "production_gateway_proxy": true,
+    "cad_creation_response_qualified": false,
+    "live_full_assignment": false,
+    "rendered_engineering_ui": false,
+    "physical": false,
+    "public_catalog_promotion": false,
+    "complete_feature": false
+  }
+}

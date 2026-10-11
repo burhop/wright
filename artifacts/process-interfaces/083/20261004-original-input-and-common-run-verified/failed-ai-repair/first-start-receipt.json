@@ -1,0 +1,21 @@
+{
+  "http": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-fresh-prompt-055",
+      "source_path": "workflows/printed-replacement-part-prompt-default-055.workflow.wflow",
+      "source_digest": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "fresh-prompt-first-055",
+    "payload_digest": "12d640d624218ce3df24644295399db7f10f38412597d03a6a9f1ed507d44d1f",
+    "input_snapshot_id": "inputs-3dd0cc80d73847a3a54c643703d593f2",
+    "input_digest": "7d5c0f7bf17a7e736b56ce0d376e5868a439a66c89cf8fcb1c1fd06096acd9d2",
+    "run_id": "b12008ec35a14bc39b3d63ff6a8f3f18",
+    "run_log_path": "runs/printed-replacement-part-prompt-default-055/b12008ec35a14bc39b3d63ff6a8f3f18.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-04T01:17:06.929228+00:00"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "diagnostics": {
+    "console": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "pageErrors": [],
+    "failedResponses": [
+      {
+        "path": "/api/workspace/workflow-sources",
+        "status": 404
+      }
+    ]
+  },
+  "posts": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/workflow-sources",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    }
+  ]
+}

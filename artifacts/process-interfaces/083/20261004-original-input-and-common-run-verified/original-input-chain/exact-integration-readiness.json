@@ -1,0 +1,11 @@
+{
+  "state": "qualified",
+  "scope": "Existing explicitly enrolled private integration authority only.",
+  "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+  "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+  "integration_policy_digest": "45925c2c911333d3d0d5d9f86cdba369ae7a7b54e39c50cfed4823388e61e2fb",
+  "steps": 11,
+  "run_allocated": false,
+  "public_readiness_remains_blocked": true,
+  "physical_dispatch": false
+}

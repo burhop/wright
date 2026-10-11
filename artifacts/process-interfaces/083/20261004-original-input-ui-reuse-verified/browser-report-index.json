@@ -1,0 +1,44 @@
+[
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T024148Z-mixed-first-exact-parity-117",
+    "overall": "blocked",
+    "pass_steps": 0,
+    "stop": [
+      "Browser spawn EPERM before navigation; no product result is claimed."
+    ]
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T024148Z-mixed-first-exact-parity-120-continuation",
+    "overall": "blocked",
+    "pass_steps": 11,
+    "stop": [
+      "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByRole('img', { name: /Rotatable 3D/ })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByRole('img', { name: /Rotatable 3D/ })\n"
+    ]
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T024148Z-mixed-first-exact-parity-122-host-navigation-continuation",
+    "overall": "pass",
+    "pass_steps": 15,
+    "stop": []
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T024148Z-mixed-second-exact-parity-123-host-navigation",
+    "overall": "pass",
+    "pass_steps": 15,
+    "stop": []
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004-assessment-readback-126",
+    "overall": "blocked",
+    "pass_steps": 0,
+    "stop": [
+      "expect(received).toBe(expected) // Object.is equality\n\nExpected: \"assessment-e16a660ca1854022ad82e2a2fefe0cea\"\nReceived: undefined"
+    ]
+  },
+  {
+    "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004-assessment-readback-128-continuation",
+    "overall": "pass",
+    "pass_steps": 2,
+    "stop": []
+  }
+]

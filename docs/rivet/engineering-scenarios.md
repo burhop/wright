@@ -1,5 +1,12 @@
 # Rivet Engineering Scenarios
 
+**Historical compatibility documentation.** The current Wright workspace uses
+its canonical workflow editor and working views. Rivet is not the workspace's
+new-workflow entry or an automatically installed workspace server. These pages
+retain legacy contracts and evidence; remaining compatibility code is migration
+debt. Use the [current workflow guide](../workflows/process-working-interfaces.md)
+for ordinary authoring and execution.
+
 Engineering scenarios are curated Rivet workflows that coordinate several
 workspace-enabled MCP capabilities and then check whether the resulting
 engineering evidence is meaningful. A successful tool call is not automatically

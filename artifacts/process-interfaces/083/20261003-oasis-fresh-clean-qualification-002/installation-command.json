@@ -1,0 +1,14 @@
+[
+  "docker",
+  "exec",
+  "--user",
+  "root",
+  "-e",
+  "UV_CACHE_DIR=/selected/uv-cache",
+  "-e",
+  "UV_PYTHON_INSTALL_DIR=/selected/python",
+  "1aaf22edbda8d29a0533f93b20c954ab19f4a90a706137eb0d796c7e66149e6a",
+  "sh",
+  "-c",
+  "set -eu\napt-get update\napt-get install -y --no-install-recommends libgl1 libglu1-mesa libxrender1 libsm6 git\nuv run --isolated --python 3.12 --with git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780 --with \"mcp[cli]==1.28.1\" --with scikit-fem==12.0.2 python -c \"import server,skfem; print('SELECTED_PROVIDER_IMPORT_OK')\"\nchmod -R a+rX /selected"
+]

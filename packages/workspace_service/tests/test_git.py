@@ -47,6 +47,14 @@ async def test_git_use_cases_status_commit_history_branch_and_diff(tmp_path):
     assert (await use_cases.history(str(workspace)))[0]["message"] == "initial"
     message = await use_cases.branch(str(workspace), "feature/test", create=True)
     assert "branch" in message.lower() or message
+    await use_cases.branch(str(workspace), status["branch_name"], create=False)
+    assert (await use_cases.status(str(workspace)))["branch_name"] == status[
+        "branch_name"
+    ]
+    await use_cases.initialize(str(workspace))
+    assert (await use_cases.history(str(workspace)))[0]["commit_hash"] == commit[
+        "commit_hash"
+    ]
     (workspace / "part.txt").write_text("v2", encoding="utf-8")
     assert await use_cases.diff(str(workspace), "part.txt")
     await executor.close()

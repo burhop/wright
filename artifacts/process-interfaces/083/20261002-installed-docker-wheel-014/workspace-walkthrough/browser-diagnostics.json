@@ -1,0 +1,55 @@
+{
+  "console": [
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:8033/assets/index-jeTHihDr.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:8033/assets/index-jeTHihDr.js:4160:3720)\n    at async http://wright.localhost:8033/assets/index-jeTHihDr.js:4308:99828\n    at async http://wright.localhost:8033/assets/index-jeTHihDr.js:4308:100241",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:8033/assets/index-jeTHihDr.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:8033/assets/index-jeTHihDr.js:4160:3720)\n    at async http://wright.localhost:8033/assets/index-jeTHihDr.js:4308:99828\n    at async http://wright.localhost:8033/assets/index-jeTHihDr.js:4308:100241",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:8033/assets/index-jeTHihDr.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:8033/assets/index-jeTHihDr.js:4160:3720)\n    at async http://wright.localhost:8033/assets/index-jeTHihDr.js:4308:99828\n    at async http://wright.localhost:8033/assets/index-jeTHihDr.js:4308:100241"
+  ],
+  "pageErrors": [],
+  "failedResponses": [
+    {
+      "path": "/api/agent/models",
+      "status": 503
+    },
+    {
+      "path": "/api/agent/models",
+      "status": 503
+    },
+    {
+      "path": "/api/agent/models",
+      "status": 503
+    }
+  ],
+  "mutations": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    }
+  ]
+}

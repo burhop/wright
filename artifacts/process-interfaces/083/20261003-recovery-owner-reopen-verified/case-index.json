@@ -1,0 +1,337 @@
+[
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_response_survives_recreation_and_restores_exact_typed_value",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_exact_lost_ack_retry_retains_original_answer_after_consumption",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_concurrent_duplicate_response_and_consumption_are_single_use",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_different_response_cannot_replace_retained_evidence[changes0]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_different_response_cannot_replace_retained_evidence[changes1]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_different_response_cannot_replace_retained_evidence[changes2]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_different_response_cannot_replace_retained_evidence[changes3]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_different_response_cannot_replace_retained_evidence[changes4]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes0-RESPONSE_INVALID]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes1-RESPONSE_INVALID]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes2-RESPONSE_INVALID]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes3-RESPONSE_INVALID]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes4-RESPONSE_INVALID]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes5-SCOPE_DENIED]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes6-SCOPE_DENIED]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes7-SUBJECT_STALE]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_attachment_rolls_back_response_when_checkpoint_write_fails",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_an_answer_cannot_be_approved_or_reconciled_as_an_action",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[not_consumed]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[cursor]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[completed]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[definition]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[input]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[snapshot]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[schema]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[upstream]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[artifact]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[response_ref]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[state_version]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_browser_two_input_source_matches_actual_continuation_fixture",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_two_source_barriers_resume_original_record_and_retry_without_model_replay",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_interrupted_input_continuation_blocks_replay_of_uncertain_segment",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_expired_input_cannot_accept_or_consume_an_answer[False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_expired_input_cannot_accept_or_consume_an_answer[True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_approval_after_input_restores_frozen_overlay_through_existing_dispatcher",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_projection_is_a_declared_form_and_reads_never_execute_or_respond",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_response_owns_task_returns_before_model_and_retries_never_repeat",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_changed_subject_has_disabled_projection_and_cannot_accept_answer[source]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_changed_subject_has_disabled_projection_and_cannot_accept_answer[artifact]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_changed_subject_has_disabled_projection_and_cannot_accept_answer[expiry]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_changed_subject_has_disabled_projection_and_cannot_accept_answer[subject]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_bad_value_scope_and_checkpoint_never_consume",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_recreated_owner_resumes_pending_checkpoint_with_original_run",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_unfinished_saved_claim_is_unknown_and_is_never_replayed",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_two_supervised_checkpoints_survive_reopen_and_duplicate_submissions",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_saved_response_without_execution_claim_can_finish_handoff[False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_saved_response_without_execution_claim_can_finish_handoff[True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_incomplete_retained_checkpoint_cannot_skip_actual_evidence_checks[artifact_files]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_supervision",
+    "name": "test_incomplete_retained_checkpoint_cannot_skip_actual_evidence_checks[result_ids]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_first_simulated_handoff_seals_exact_supplied_binary_without_generation",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changed_supplied_handoff_artifact_never_dispatches[before_decision]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changed_supplied_handoff_artifact_never_dispatches[after_decision]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_first_local_review_approves_exact_upload_then_produces_real_output",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changed_initial_review_upload_cannot_be_auto_approved",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_initial_upload_review_does_not_enable_external_transfer",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_auto_resume_and_restart_retry_complete_same_run_without_replay[False]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_auto_resume_and_restart_retry_complete_same_run_without_replay[True]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changes_after_checkpoint_block_decision_and_resume_before_dispatch[artifact]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changes_after_checkpoint_block_decision_and_resume_before_dispatch[source]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changes_after_checkpoint_block_decision_and_resume_before_dispatch[input]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_changes_after_checkpoint_block_decision_and_resume_before_dispatch[revoked]",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_auto_cannot_borrow_manual_grant_and_normal_manual_review_still_runs",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_failed_continuation_has_unknown_mutation_protection_on_retry",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_uncertain_handoff_is_never_dispatched_again",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_preexisting_test_receipt_blocks_before_consuming_authority",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_auto_request_cannot_upgrade_a_manually_enrolled_policy",
+    "passed": true
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_approval_execution",
+    "name": "test_concurrent_resume_requests_share_one_dispatch_and_continuation",
+    "passed": true
+  }
+]

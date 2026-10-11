@@ -1,0 +1,36 @@
+{
+  "console": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-ce377446f6d44705846a32f7c3eb94b2/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-af7a2afa-ee16-46bc-96bf-4526fa2fd762.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-af7a2afa-ee16-46bc-96bf-4526fa2fd762.localhost%3A8030/__wright/process/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/navigation"
+    }
+  ],
+  "representationHeaders": [],
+  "contexts": [
+    {
+      "read_only": false,
+      "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687"
+    }
+  ]
+}

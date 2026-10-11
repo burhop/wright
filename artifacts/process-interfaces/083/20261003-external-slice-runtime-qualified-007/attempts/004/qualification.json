@@ -1,0 +1,54 @@
+{
+  "status": "failed",
+  "scope": "Generated slice/response-retention/passive-inspection declarations on the accepted source and existing durable runtime; small digital qualification only",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "ai_generation": false,
+  "workspace": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-slice-runtime-004",
+  "declaration": {
+    "binding_sha256": "c948ed3252264c7a52f742f90b1786cbea06345fe7a1aca5bcabe866e9d4c517",
+    "selected_tools": {
+      "slicer": {
+        "server_id": "qualification-083-runtime-slicer",
+        "tool_name": "slice_model_file",
+        "name": "qualification-083-runtime-slicer__slice_model_file",
+        "schema_digest": "e24911fa0a05d3d4bfe02a9ed4e074238f8399fb7424490f256bf5714d417b95"
+      },
+      "files": {
+        "server_id": "wright-workspace-files",
+        "tool_name": "write_text_document",
+        "name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12"
+      },
+      "inspection": {
+        "server_id": "qualification-083-runtime-inspection",
+        "tool_name": "run_simulation",
+        "name": "qualification-083-runtime-inspection__run_simulation",
+        "schema_digest": "98de6985474f89dc3f58a914f9db808585a52f76e74158415f5284c35c0748c8"
+      }
+    },
+    "profile_sha256": {
+      "machine": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "process": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "filament": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "vendor_implementation": "independent_provider",
+    "inspection": "passive_actual_package",
+    "engineering_acceptance": false
+  },
+  "error_type": "WorkflowSourceExecutionError",
+  "diagnostic": "workflow external_slice_qualification is missing authoring fields: discipline, purpose, reviewed_ai_suggestions.",
+  "durable_runtime_owner_closed": true,
+  "gateway_closed": true,
+  "cleanup": [
+    {
+      "container_id": "8e012ca8f678755cbf90024827c9cd26a4b2066b6ff7f193e0e915d1a3b5b571",
+      "running": false
+    },
+    {
+      "container_id": "0a4b1c80eaae0dde6085ae65c9add1124f91e186b644abea30c3dc9b5043fbd6",
+      "running": false
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+[
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-001/report.html",
+    "overall": "blocked",
+    "steps": [
+      {
+        "id": "LAUNCH",
+        "state": "blocked"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": false
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-002/report.html",
+    "overall": "blocked",
+    "steps": [
+      {
+        "id": "S01",
+        "state": "pass"
+      },
+      {
+        "id": "S02",
+        "state": "pass"
+      },
+      {
+        "id": "S03",
+        "state": "pass"
+      },
+      {
+        "id": "STOP",
+        "state": "blocked"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-003/report.html",
+    "overall": "blocked",
+    "steps": [
+      {
+        "id": "S01",
+        "state": "pass"
+      },
+      {
+        "id": "S02",
+        "state": "pass"
+      },
+      {
+        "id": "S03",
+        "state": "pass"
+      },
+      {
+        "id": "S04",
+        "state": "pass"
+      },
+      {
+        "id": "S05",
+        "state": "pass"
+      },
+      {
+        "id": "S06",
+        "state": "pass"
+      },
+      {
+        "id": "S07",
+        "state": "pass"
+      },
+      {
+        "id": "S08",
+        "state": "pass"
+      },
+      {
+        "id": "S09",
+        "state": "pass"
+      },
+      {
+        "id": "S10",
+        "state": "pass"
+      },
+      {
+        "id": "STOP",
+        "state": "blocked"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-004/report.html",
+    "overall": "blocked",
+    "steps": [
+      {
+        "id": "C01",
+        "state": "pass"
+      },
+      {
+        "id": "C02",
+        "state": "pass"
+      },
+      {
+        "id": "S11",
+        "state": "pass"
+      },
+      {
+        "id": "S12",
+        "state": "pass"
+      },
+      {
+        "id": "STOP",
+        "state": "blocked"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-005/report.html",
+    "overall": "blocked",
+    "steps": [
+      {
+        "id": "C01",
+        "state": "pass"
+      },
+      {
+        "id": "C02",
+        "state": "pass"
+      },
+      {
+        "id": "S13",
+        "state": "pass"
+      },
+      {
+        "id": "S14",
+        "state": "pass"
+      },
+      {
+        "id": "S15",
+        "state": "pass"
+      },
+      {
+        "id": "STOP",
+        "state": "blocked"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-006/report.html",
+    "overall": "blocked",
+    "steps": [
+      {
+        "id": "C01",
+        "state": "pass"
+      },
+      {
+        "id": "C02",
+        "state": "pass"
+      },
+      {
+        "id": "S15",
+        "state": "pass"
+      },
+      {
+        "id": "STOP",
+        "state": "blocked"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-007/report.html",
+    "overall": "pass",
+    "steps": [
+      {
+        "id": "C01",
+        "state": "pass"
+      },
+      {
+        "id": "C02",
+        "state": "pass"
+      },
+      {
+        "id": "S15",
+        "state": "pass"
+      },
+      {
+        "id": "S16",
+        "state": "pass"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  },
+  {
+    "report": "artifacts/ui-walkthrough/process-interface-negative/20261003-current-wheel-008/report.html",
+    "overall": "pass",
+    "steps": [
+      {
+        "id": "C01",
+        "state": "pass"
+      },
+      {
+        "id": "C02",
+        "state": "pass"
+      },
+      {
+        "id": "S11",
+        "state": "pass"
+      },
+      {
+        "id": "S12",
+        "state": "pass"
+      },
+      {
+        "id": "S13",
+        "state": "pass"
+      },
+      {
+        "id": "S14",
+        "state": "pass"
+      },
+      {
+        "id": "S15",
+        "state": "pass"
+      },
+      {
+        "id": "S16",
+        "state": "pass"
+      }
+    ],
+    "structure_valid": true,
+    "screenshots_available": true
+  }
+]

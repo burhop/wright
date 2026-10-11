@@ -1,0 +1,12 @@
+{
+  "command": [
+    "D:/Users/markb/miniconda3/Scripts/uv.exe",
+    "venv",
+    "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment",
+    "--python",
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "Using CPython 3.13.5 interpreter at: .venv\\Scripts\\python.exe\nCreating virtual environment at: .local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\nActivate with: .local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\activate\n"
+}

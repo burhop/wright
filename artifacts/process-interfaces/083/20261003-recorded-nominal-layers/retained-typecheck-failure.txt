@@ -1,0 +1,3 @@
+apps/web/src/prototypes/workflow-recovery/mcp-settings.spec.ts(2,30): error TS2307: Cannot find module 'node:fs' or its corresponding type declarations.
+apps/web/src/prototypes/workflow-recovery/mcp-settings.spec.ts(3,34): error TS2307: Cannot find module 'node:path' or its corresponding type declarations.
+apps/web/src/prototypes/workflow-recovery/mcp-settings.spec.ts(4,31): error TS2307: Cannot find module 'node:url' or its corresponding type declarations.

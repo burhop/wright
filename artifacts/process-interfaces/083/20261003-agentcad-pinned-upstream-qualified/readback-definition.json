@@ -1,0 +1,43 @@
+{
+  "server_id": "qualification-083-agentcad-head-measure-002",
+  "schemas": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-fresh-head-002\\tools.json",
+  "schemas_file_sha256": "b20059df7513252349a05bdf9e9521e1db0a34c5c46cc003364be6470ae7f237",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "-e",
+    "UV_CACHE_DIR=/selected/uv-cache",
+    "-e",
+    "UV_PYTHON_INSTALL_DIR=/selected/python",
+    "d97c4afc94b1a01b085a3590dea482a09c29fb63bcdd8685c23dc0f6735b7cab",
+    "uv",
+    "run",
+    "--offline",
+    "--isolated",
+    "--python",
+    "3.12",
+    "--with",
+    "agentcad[mcp] @ git+https://github.com/jdilla1277/agentcad.git@2a377583d9d250971a584acb7b5ac6e2a75737c0",
+    "--with",
+    "build123d==0.10.0",
+    "--with",
+    "numpy==2.5.2",
+    "--with",
+    "mcp[cli]==1.28.1",
+    "python",
+    "-m",
+    "agentcad.mcp"
+  ],
+  "safe_tool": "measure",
+  "arguments": {
+    "file": "/workspace/project/build/v1_clean-probe/output.step",
+    "cwd": "/workspace/project",
+    "build_dir": "build"
+  },
+  "expected_result_fields": {
+    "status": "success"
+  }
+}

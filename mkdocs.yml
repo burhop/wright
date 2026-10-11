@@ -65,12 +65,16 @@ nav:
       - Capability Library: getting-started/capability-library.md
   - User Guide:
       - Engineering Workflow Templates: workflows/engineering-workflow-templates.md
+      - Process Output Validation: workflows/process-output-validation.md
+      - Process Working Interfaces: workflows/process-working-interfaces.md
+      - Engineering Workspace Tour: workflows/engineering-workspace-tour.md
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Open Web Applications: workspace-surfaces/opening-surfaces.md
-      - Rivet MCP Workflows: rivet/mcp-gateway.md
-      - Rivet Engineering Scenarios: rivet/engineering-scenarios.md
-      - Model-enabled Rivet Scenarios: rivet/model-enabled-scenarios.md
-      - Rivet Workflow Testing: rivet/testing.md
+      - Legacy Rivet compatibility:
+          - MCP Gateway: rivet/mcp-gateway.md
+          - Engineering Scenarios: rivet/engineering-scenarios.md
+          - Model-enabled Scenarios: rivet/model-enabled-scenarios.md
+          - Testing: rivet/testing.md
       - Local Chatter Model: models/chatter-local-model.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md
@@ -78,6 +82,9 @@ nav:
       - Maintenance & Updates: user-guide/maintenance.md
       - Recovery Runbook: user-guide/recovery.md
   - Architecture:
+      - Workflow Platform Vision: design/workflow-platform-vision.md
+      - Process UI Design: design/process-apps.md
+      - Workflow Platform Refactoring: architecture/workflow-platform-refactoring-plan.md
       - System Overview: architecture/system-overview.md
       - Project Structure: architecture/project-structure.md
       - Python Package Boundaries: architecture/package-boundaries.md

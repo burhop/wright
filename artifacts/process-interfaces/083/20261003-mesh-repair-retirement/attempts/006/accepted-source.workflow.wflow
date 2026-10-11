@@ -1,0 +1,457 @@
+workflow external_mesh_qualification
+  name: "Independent geometry-to-slice runtime qualification"
+  purpose: "Qualify actual handoffs through the accepted source runtime without physical dispatch or engineering-assignment acceptance"
+  discipline: "engineering.integration"
+  reviewed_ai_suggestions: true
+end
+
+task qualified_geometry
+  name: "Create isolated qualification geometry"
+  purpose: "Actual small native geometry for stage integration; not the engineering assignment"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: []
+  outputs: [{"key":"geometry_result","name":"geometry result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"source_mesh","name":"source mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  prompt: ""
+  tool: null
+  reusable_step: null
+  settings: {"authoring_template":"mcp-tool","mcp_server":"qualification-083-runtime-geometry","mcp_tool":"qualification-083-runtime-geometry__execute_blender_code","mcp_schema_digest":"4ba33d139ab90a523444b2d31c47a2bed1a7bd0764c18ee5a4adfe2cd632c6b8","mcp_arguments":"{\"code\": \"import bpy\\nbpy.ops.mesh.primitive_cube_add(size=1)\\nobj=bpy.context.object\\nobj.name='RuntimeQualificationCube'\\nobj.dimensions=(10,8,6)\\nbpy.ops.object.transform_apply(location=False,rotation=False,scale=True)\\nbpy.ops.wm.stl_export(filepath='/workspace/qualification/artifacts/source_mesh.stl',export_selected_objects=True)\\nprint('Actual qualification geometry exported: 10 x 8 x 6 model units')\\n\", \"user_prompt\": \"resume\"}","output_format":"json","save_output":true,"output_filename":"qualification/artifacts/geometry-response.json","file_policy":"overwrite","expected_files":"qualification/artifacts/source_mesh.stl","expected_file_ports":{"source_mesh":"qualification/artifacts/source_mesh.stl"},"timeout_seconds":600}
+end
+
+task qualified_repair
+  name: "Independent native geometry preparation"
+  purpose: "Apply supplied native arguments to the actual source; small integration geometry only"
+  group: null
+  inputs: [{"key":"qualified_repair_qualified_operation","name":"qualified repair qualified operation","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"qualified_repair_actual_source","name":"qualified repair actual source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"qualified_repair_original_policy","name":"qualified repair original policy","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  outputs: [{"key":"qualified_repair_result","name":"qualified repair result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"repaired_mesh","name":"repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"geometry_preview","name":"geometry preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"qualification-083-runtime-geometry","mcp_tool":"qualification-083-runtime-geometry__execute_blender_code","mcp_schema_digest":"4ba33d139ab90a523444b2d31c47a2bed1a7bd0764c18ee5a4adfe2cd632c6b8","mcp_arguments":"{}","mcp_arguments_source":"connection","mcp_arguments_input":"qualified_repair_qualified_operation","timeout_seconds":600,"output_format":"json","save_output":true,"output_filename":"qualification/artifacts/repair-model-report.json","file_policy":"overwrite","expected_files":"qualification/artifacts/repaired_mesh.stl\nqualification/artifacts/mesh-preview.png","expected_file_ports":{"repaired_mesh":"qualification/artifacts/repaired_mesh.stl","geometry_preview":"qualification/artifacts/mesh-preview.png"},"mcp_file_dependencies":{"qualified_repair_actual_source":"qualification/artifacts/source_mesh.stl","qualified_repair_original_policy":"qualification/inputs/mesh-inspection-policy.json"}}
+  step_type: "work"
+  performed_by: "configured_tool"
+  prompt: ""
+  tool: null
+  reusable_step: null
+end
+
+task inspect_actual_package
+  name: "Inspect actual package"
+  purpose: "Retain passive evidence from the actual independently sliced package"
+  group: null
+  inputs: [{"key":"inspect_actual_package_actual_package","name":"inspect actual package actual package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_actual_response","name":"inspect actual package actual response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_actual_source","name":"inspect actual package actual source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_machine_profile_input","name":"inspect actual package machine profile input","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_process_profile_input","name":"inspect actual package process profile input","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_filament_profile_input","name":"inspect actual package filament profile input","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_reader","name":"inspect actual package reader","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_actual_package_operation","name":"inspect actual package operation","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  outputs: [{"key":"inspect_actual_package_result","name":"inspect actual package result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"slice_evidence","name":"slice evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"support_preview","name":"support preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"machine_profile","name":"machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"process_profile","name":"process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"filament_profile","name":"filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"toolpath_preview","name":"toolpath preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"toolpath_summary","name":"toolpath summary","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"slice_preview","name":"slice preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"qualification-083-runtime-inspection","mcp_tool":"qualification-083-runtime-inspection__run_simulation","mcp_schema_digest":"965589c823c90e14e9cf5b95f0a2cd01c4db6607caddaccb6488bcc19421d63b","mcp_arguments":"{\"solver\":\"skfem\",\"input_content\":\"import hashlib\\nfrom pathlib import Path\\nreader=Path('/workspace/qualification/inputs/passive-representations.py').read_bytes()\\nassert hashlib.sha256(reader).hexdigest()=='c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38'\\noperation=Path('/workspace/qualification/inputs/inspect_manufacturing_package.py').read_bytes()\\nassert hashlib.sha256(operation).hexdigest()=='7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568'\\nreader_namespace={'__name__':'passive_reader'}\\noperation_namespace={'__name__':'package_inspection'}\\nexec(compile(reader,'passive-representations.py','exec'),reader_namespace)\\nexec(compile(operation,'inspect_manufacturing_package.py','exec'),operation_namespace)\\nprint(operation_namespace['run']({'workspace_root': '/workspace', 'source_mesh': 'qualification/artifacts/repaired_mesh.stl', 'slice_package': 'qualification/artifacts/slice_package.gcode.3mf', 'provider_response': 'qualification/artifacts/slice-provider-response.json', 'output_root': 'qualification/artifacts', 'profiles': {'machine': 'qualification/inputs/machine-profile.json', 'process': 'qualification/inputs/process-profile.json', 'filament': 'qualification/inputs/filament-profile.json'}, 'gcode_entry': 'Metadata/plate_1.gcode', 'success_field': 'ok', 'success_contract': 'Selected independent slicer revision 7b50d0288fb7b91af8af422b96c4df4db0f1110c reports ok=true only after offline CLI return code zero; the original provider response and package are retained. This is provider-contract evidence, not an independently observed exit code.', 'expected_response_fields': {'source': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-mesh-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\repaired_mesh.stl', 'output': 'C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-mesh-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\slice_package.gcode.3mf', 'plate': 1}, 'operation_label': 'actual_local_bambu_slice', 'legacy_previews': True, 'nominal_layer_section': {'start_marker': '; MACHINE_START_GCODE_END', 'end_marker': '; MACHINE_END_GCODE_START'}},reader_namespace['read_3mf_toolpaths']))\\n\",\"job_name\":\"/workspace/qualification/artifacts/package-inspection\",\"critic_approved\":false}","timeout_seconds":600,"output_format":"json","save_output":true,"output_filename":"qualification/artifacts/package-inspection-result.json","file_policy":"overwrite","expected_files":"qualification/artifacts/slice-evidence.json\nqualification/artifacts/support-preview.svg\nqualification/artifacts/machine-profile.json\nqualification/artifacts/process-profile.json\nqualification/artifacts/filament-profile.json\nqualification/artifacts/support-preview.json\nqualification/artifacts/toolpath-summary.json\nqualification/artifacts/slice-preview.png","expected_file_ports":{"slice_evidence":"qualification/artifacts/slice-evidence.json","support_preview":"qualification/artifacts/support-preview.svg","machine_profile":"qualification/artifacts/machine-profile.json","process_profile":"qualification/artifacts/process-profile.json","filament_profile":"qualification/artifacts/filament-profile.json","toolpath_preview":"qualification/artifacts/support-preview.json","toolpath_summary":"qualification/artifacts/toolpath-summary.json","slice_preview":"qualification/artifacts/slice-preview.png"},"mcp_file_dependencies":{"inspect_actual_package_actual_package":"qualification/artifacts/slice_package.gcode.3mf","inspect_actual_package_actual_response":"qualification/artifacts/slice-provider-response.json","inspect_actual_package_actual_source":"qualification/artifacts/repaired_mesh.stl","inspect_actual_package_machine_profile_input":"qualification/inputs/machine-profile.json","inspect_actual_package_process_profile_input":"qualification/inputs/process-profile.json","inspect_actual_package_filament_profile_input":"qualification/inputs/filament-profile.json","inspect_actual_package_reader":"qualification/inputs/passive-representations.py","inspect_actual_package_operation":"qualification/inputs/inspect_manufacturing_package.py"}}
+  step_type: "work"
+  performed_by: "configured_tool"
+  prompt: ""
+  tool: null
+  reusable_step: null
+end
+
+input campaign_mesh_provider_arguments_json_qualified_repair
+  name: "mesh provider arguments json"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_mesh_provider_arguments_json_qualified_repair_document","name":"campaign mesh provider arguments json qualified repair document","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/mesh-provider-arguments.json"}
+  tool: null
+  reusable_step: null
+end
+
+input campaign_mesh_inspection_policy_json_qualified_repair
+  name: "mesh inspection policy json"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_mesh_inspection_policy_json_qualified_repair_document","name":"campaign mesh inspection policy json qualified repair document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/mesh-inspection-policy.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_qualified_repair_qualified_repair_qualified_operation
+  type: "item"
+  from: "campaign_mesh_provider_arguments_json_qualified_repair.campaign_mesh_provider_arguments_json_qualified_repair_document"
+  to: "qualified_repair.qualified_repair_qualified_operation"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_qualified_repair_qualified_repair_actual_source
+  type: "item"
+  from: "qualified_geometry.source_mesh"
+  to: "qualified_repair.qualified_repair_actual_source"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_qualified_repair_qualified_repair_original_policy
+  type: "item"
+  from: "campaign_mesh_inspection_policy_json_qualified_repair.campaign_mesh_inspection_policy_json_qualified_repair_document"
+  to: "qualified_repair.qualified_repair_original_policy"
+  label: "campaign input binding"
+  when: null
+end
+
+task inspect_repaired_mesh_qualified_repair
+  name: "Measure the exact repaired STL against the original policy"
+  purpose: "Independent final-byte mesh and requested feature measurements"
+  group: null
+  inputs: [{"key":"inspect_repaired_mesh_qualified_repair_source","name":"inspect repaired mesh qualified repair source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_repaired_mesh_qualified_repair_repaired","name":"inspect repaired mesh qualified repair repaired","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_repaired_mesh_qualified_repair_preview","name":"inspect repaired mesh qualified repair preview","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_repaired_mesh_qualified_repair_operation","name":"inspect repaired mesh qualified repair operation","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"inspect_repaired_mesh_qualified_repair_policy","name":"inspect repaired mesh qualified repair policy","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  outputs: [{"key":"inspect_repaired_mesh_qualified_repair_result","name":"inspect repaired mesh qualified repair result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"mesh_evidence","name":"mesh evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"qualification-083-runtime-inspection","mcp_tool":"qualification-083-runtime-inspection__run_simulation","mcp_schema_digest":"965589c823c90e14e9cf5b95f0a2cd01c4db6607caddaccb6488bcc19421d63b","mcp_arguments":"{\"solver\": \"skfem\", \"input_content\": \"import hashlib\\nfrom pathlib import Path\\nraw=Path('/workspace/qualification/inputs/inspect_repaired_mesh.py').read_bytes()\\nassert hashlib.sha256(raw).hexdigest()=='88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c'\\nnamespace={'__name__':'passive_mesh_inspection'}\\nexec(compile(raw,'inspect_repaired_mesh.py','exec'),namespace)\\nprint(namespace['run']({'workspace_root': '/workspace', 'source': 'qualification/artifacts/source_mesh.stl', 'repaired': 'qualification/artifacts/repaired_mesh.stl', 'preview': 'qualification/artifacts/mesh-preview.png', 'output': 'qualification/artifacts/mesh-inspection-evidence.json', 'policy': {'build_volume_mm': [256.0, 256.0, 256.0], 'build_volume_tolerance_mm': 1e-06, 'triangle_limit': 80000, 'merge_tolerance_mm': 0.001, 'degenerate_tolerance_mm': 1e-06, 'force_voxel_remesh': False, 'envelope_margin_mm': 0.0, 'planar_cleanup': False}, 'measure_handle_features': False}))\\n\", \"job_name\": \"/workspace/qualification/artifacts/mesh-inspection\", \"critic_approved\": false}","timeout_seconds":600,"output_format":"json","save_output":true,"output_filename":"qualification/artifacts/mesh-inspection-provider-result.json","file_policy":"overwrite","expected_files":"qualification/artifacts/mesh-inspection-evidence.json","expected_file_ports":{"mesh_evidence":"qualification/artifacts/mesh-inspection-evidence.json"},"mcp_file_dependencies":{"inspect_repaired_mesh_qualified_repair_source":"qualification/artifacts/source_mesh.stl","inspect_repaired_mesh_qualified_repair_repaired":"qualification/artifacts/repaired_mesh.stl","inspect_repaired_mesh_qualified_repair_preview":"qualification/artifacts/mesh-preview.png","inspect_repaired_mesh_qualified_repair_operation":"qualification/inputs/inspect_repaired_mesh.py","inspect_repaired_mesh_qualified_repair_policy":"qualification/inputs/mesh-inspection-policy.json"}}
+  instructions: "Keep original mandatory geometry checks; this is digital evidence, not human acceptance."
+  step_type: "work"
+  performed_by: "configured_tool"
+  prompt: ""
+  tool: null
+  reusable_step: null
+end
+
+input campaign_inspect_repaired_mesh_py_qualified_repair
+  name: "inspect repaired mesh py"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_inspect_repaired_mesh_py_qualified_repair_document","name":"campaign inspect repaired mesh py qualified repair document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/inspect_repaired_mesh.py"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_inspect_repaired_mesh_qualified_repair_inspect_repaired_mesh_qualified_repair_source
+  type: "item"
+  from: "qualified_geometry.source_mesh"
+  to: "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_source"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_repaired_mesh_qualified_repair_inspect_repaired_mesh_qualified_repair_repaired
+  type: "item"
+  from: "qualified_repair.repaired_mesh"
+  to: "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_repaired"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_repaired_mesh_qualified_repair_inspect_repaired_mesh_qualified_repair_preview
+  type: "item"
+  from: "qualified_repair.geometry_preview"
+  to: "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_preview"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_repaired_mesh_qualified_repair_inspect_repaired_mesh_qualified_repair_operation
+  type: "item"
+  from: "campaign_inspect_repaired_mesh_py_qualified_repair.campaign_inspect_repaired_mesh_py_qualified_repair_document"
+  to: "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_operation"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_repaired_mesh_qualified_repair_inspect_repaired_mesh_qualified_repair_policy
+  type: "item"
+  from: "campaign_mesh_inspection_policy_json_qualified_repair.campaign_mesh_inspection_policy_json_qualified_repair_document"
+  to: "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_policy"
+  label: "campaign input binding"
+  when: null
+end
+
+connection mesh_inspection_order_qualified_repair
+  type: "order"
+  from: "qualified_repair"
+  to: "inspect_repaired_mesh_qualified_repair"
+  when: null
+  label: "verify actual geometry before slicing"
+end
+
+task validate_repaired_mesh_qualified_repair
+  name: "Validate exact repaired geometry before slicing"
+  purpose: "Existing 082 validator enforces original geometry requirements on exact native STL and inspection subjects"
+  step_type: "work"
+  performed_by: "configured_tool"
+  group: null
+  inputs: [{"key":"validate_repaired_mesh_qualified_repair_repaired_mesh","name":"validate repaired mesh qualified repair repaired mesh","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"validate_repaired_mesh_qualified_repair_mesh_evidence","name":"validate repaired mesh qualified repair mesh evidence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  outputs: [{"key":"validate_repaired_mesh_qualified_repair_assessment","name":"validate repaired mesh qualified repair assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  prompt: ""
+  tool: null
+  reusable_step: null
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"workspace","name":"qualification/inputs/mesh-validation-profile.json","reference":{"id":"repaired-mesh-integrity","version":"1","sha256":"ed64211dce4f7cf9c9bd99ca5c12318eed7d399bf82ac5c2fcf0c0d5a9d1c350"}},"baseline":{"id":"original-repaired-mesh-policy","version":"1","sha256":"29d36e2aad197e879b53288ee360b8a010ec0daa901eebf1bb1d32ef12259b74"},"subjects":{"repaired_mesh":"validate_repaired_mesh_qualified_repair_repaired_mesh","mesh_evidence":"validate_repaired_mesh_qualified_repair_mesh_evidence"},"budget":{"max_entities":240000,"max_bytes":16777216,"timeout_seconds":120,"memory_limit_mb":512}}}
+end
+
+connection bind_validate_repaired_mesh_qualified_repair_validate_repaired_mesh_qualified_repair_repaired_mesh
+  type: "item"
+  from: "qualified_repair.repaired_mesh"
+  to: "validate_repaired_mesh_qualified_repair.validate_repaired_mesh_qualified_repair_repaired_mesh"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_validate_repaired_mesh_qualified_repair_validate_repaired_mesh_qualified_repair_mesh_evidence
+  type: "item"
+  from: "inspect_repaired_mesh_qualified_repair.mesh_evidence"
+  to: "validate_repaired_mesh_qualified_repair.validate_repaired_mesh_qualified_repair_mesh_evidence"
+  label: "campaign input binding"
+  when: null
+end
+
+connection mesh_validator_order_qualified_repair
+  type: "order"
+  from: "inspect_repaired_mesh_qualified_repair"
+  to: "validate_repaired_mesh_qualified_repair"
+  when: null
+  label: "backend validation controls downstream permission"
+end
+
+connection geometry_to_repair
+  type: "order"
+  from: "qualified_geometry"
+  to: "qualified_repair"
+  when: null
+  label: "actual source"
+end
+
+task invoke_external_slice_inspect_actual_package
+  name: "Slice the actual upstream geometry with the selected independent provider"
+  purpose: "Slice the actual upstream geometry with the selected independent provider"
+  group: null
+  inputs: [{"key":"selected_geometry","name":"selected geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"invoke_external_slice_inspect_actual_package_machine_profile_input","name":"invoke external slice inspect actual package machine profile input","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"invoke_external_slice_inspect_actual_package_process_profile_input","name":"invoke external slice inspect actual package process profile input","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"invoke_external_slice_inspect_actual_package_filament_profile_input","name":"invoke external slice inspect actual package filament profile input","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  outputs: [{"key":"invoke_external_slice_inspect_actual_package_result","name":"invoke external slice inspect actual package result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"external_slice_package","name":"external slice package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"qualification-083-runtime-slicer","mcp_tool":"qualification-083-runtime-slicer__slice_model_file","mcp_schema_digest":"8bad0ed4490ce18e8ccc928ede70e920f95c28aec75f495b9770c4e4d6441bff","mcp_arguments":"{\"source\":\"C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\external-mesh-runtime-006\\\\qualification\\\\artifacts\\\\repaired_mesh.stl\",\"output\":\"C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\external-mesh-runtime-006\\\\qualification\\\\artifacts\\\\slice_package.gcode.3mf\",\"plate\":1,\"orient\":false,\"arrange\":true,\"confirm\":true}","timeout_seconds":600,"output_format":"json","save_output":true,"output_filename":"qualification/artifacts/slicer-execution.json","file_policy":"overwrite","expected_files":"qualification/artifacts/slice_package.gcode.3mf","expected_file_ports":{"external_slice_package":"qualification/artifacts/slice_package.gcode.3mf"},"mcp_file_dependencies":{"selected_geometry":"qualification/artifacts/repaired_mesh.stl","invoke_external_slice_inspect_actual_package_machine_profile_input":"qualification/inputs/machine-profile.json","invoke_external_slice_inspect_actual_package_process_profile_input":"qualification/inputs/process-profile.json","invoke_external_slice_inspect_actual_package_filament_profile_input":"qualification/inputs/filament-profile.json"}}
+  step_type: "work"
+  performed_by: "configured_tool"
+  prompt: ""
+  tool: null
+  reusable_step: null
+end
+
+connection slice_geometry_inspect_actual_package
+  type: "item"
+  from: "qualified_repair.repaired_mesh"
+  to: "invoke_external_slice_inspect_actual_package.selected_geometry"
+  label: "actual same-attempt geometry"
+  when: null
+end
+
+task retain_slice_response_inspect_actual_package
+  name: "Retain the actual external provider response"
+  purpose: "Retain the actual external provider response"
+  group: null
+  inputs: [{"key":"retain_slice_response_inspect_actual_package_actual_response","name":"retain slice response inspect actual package actual response","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  outputs: [{"key":"retain_slice_response_inspect_actual_package_result","name":"retain slice response inspect actual package result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"},{"key":"provider_response","name":"provider response","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"wright-workspace-files","mcp_tool":"wright-workspace-files__write_text_document","mcp_schema_digest":"66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12","mcp_arguments":"{\"relativePath\":\"qualification/artifacts/slice-provider-response.json\",\"mediaType\":\"application/json\",\"overwrite\":false}","timeout_seconds":600,"output_format":"json","save_output":true,"output_filename":"qualification/artifacts/response-retention-receipt.json","file_policy":"overwrite","expected_files":"qualification/artifacts/slice-provider-response.json","expected_file_ports":{"provider_response":"qualification/artifacts/slice-provider-response.json"},"mcp_arguments_source":"fields","mcp_argument_ports":"{\"retain_slice_response_inspect_actual_package_actual_response\": \"content\"}"}
+  step_type: "work"
+  performed_by: "configured_tool"
+  prompt: ""
+  tool: null
+  reusable_step: null
+end
+
+connection bind_retain_slice_response_inspect_actual_package_retain_slice_response_inspect_actual_package_actual_response
+  type: "item"
+  from: "invoke_external_slice_inspect_actual_package.invoke_external_slice_inspect_actual_package_result"
+  to: "retain_slice_response_inspect_actual_package.retain_slice_response_inspect_actual_package_actual_response"
+  label: "campaign input binding"
+  when: null
+end
+
+input campaign_machine_profile_json_inspect_actual_package
+  name: "machine profile json"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_machine_profile_json_inspect_actual_package_document","name":"campaign machine profile json inspect actual package document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/machine-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_invoke_external_slice_inspect_actual_package_invoke_external_slice_inspect_actual_package_machine_profile_input
+  type: "item"
+  from: "campaign_machine_profile_json_inspect_actual_package.campaign_machine_profile_json_inspect_actual_package_document"
+  to: "invoke_external_slice_inspect_actual_package.invoke_external_slice_inspect_actual_package_machine_profile_input"
+  label: "campaign input binding"
+  when: null
+end
+
+input campaign_process_profile_json_inspect_actual_package
+  name: "process profile json"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_process_profile_json_inspect_actual_package_document","name":"campaign process profile json inspect actual package document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/process-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_invoke_external_slice_inspect_actual_package_invoke_external_slice_inspect_actual_package_process_profile_input
+  type: "item"
+  from: "campaign_process_profile_json_inspect_actual_package.campaign_process_profile_json_inspect_actual_package_document"
+  to: "invoke_external_slice_inspect_actual_package.invoke_external_slice_inspect_actual_package_process_profile_input"
+  label: "campaign input binding"
+  when: null
+end
+
+input campaign_filament_profile_json_inspect_actual_package
+  name: "filament profile json"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_filament_profile_json_inspect_actual_package_document","name":"campaign filament profile json inspect actual package document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/filament-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_invoke_external_slice_inspect_actual_package_invoke_external_slice_inspect_actual_package_filament_profile_input
+  type: "item"
+  from: "campaign_filament_profile_json_inspect_actual_package.campaign_filament_profile_json_inspect_actual_package_document"
+  to: "invoke_external_slice_inspect_actual_package.invoke_external_slice_inspect_actual_package_filament_profile_input"
+  label: "campaign input binding"
+  when: null
+end
+
+input campaign_passive_representations_py_inspect_actual_package
+  name: "passive representations py"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_passive_representations_py_inspect_actual_package_document","name":"campaign passive representations py inspect actual package document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/passive-representations.py"}
+  tool: null
+  reusable_step: null
+end
+
+input campaign_inspect_manufacturing_package_py_inspect_actual_package
+  name: "inspect manufacturing package py"
+  purpose: "Human-submitted campaign context"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"campaign_inspect_manufacturing_package_py_inspect_actual_package_document","name":"campaign inspect manufacturing package py inspect actual package document","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Campaign input or same-run output"}]
+  instructions: "Use the original supplied document; do not invent measurements."
+  settings: {"input_mode":"workspace-file","workspace_file":"qualification/inputs/inspect_manufacturing_package.py"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_actual_package
+  type: "item"
+  from: "invoke_external_slice_inspect_actual_package.external_slice_package"
+  to: "inspect_actual_package.inspect_actual_package_actual_package"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_actual_response
+  type: "item"
+  from: "retain_slice_response_inspect_actual_package.provider_response"
+  to: "inspect_actual_package.inspect_actual_package_actual_response"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_actual_source
+  type: "item"
+  from: "qualified_repair.repaired_mesh"
+  to: "inspect_actual_package.inspect_actual_package_actual_source"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_machine_profile_input
+  type: "item"
+  from: "campaign_machine_profile_json_inspect_actual_package.campaign_machine_profile_json_inspect_actual_package_document"
+  to: "inspect_actual_package.inspect_actual_package_machine_profile_input"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_process_profile_input
+  type: "item"
+  from: "campaign_process_profile_json_inspect_actual_package.campaign_process_profile_json_inspect_actual_package_document"
+  to: "inspect_actual_package.inspect_actual_package_process_profile_input"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_filament_profile_input
+  type: "item"
+  from: "campaign_filament_profile_json_inspect_actual_package.campaign_filament_profile_json_inspect_actual_package_document"
+  to: "inspect_actual_package.inspect_actual_package_filament_profile_input"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_reader
+  type: "item"
+  from: "campaign_passive_representations_py_inspect_actual_package.campaign_passive_representations_py_inspect_actual_package_document"
+  to: "inspect_actual_package.inspect_actual_package_reader"
+  label: "campaign input binding"
+  when: null
+end
+
+connection bind_inspect_actual_package_inspect_actual_package_operation
+  type: "item"
+  from: "campaign_inspect_manufacturing_package_py_inspect_actual_package.campaign_inspect_manufacturing_package_py_inspect_actual_package_document"
+  to: "inspect_actual_package.inspect_actual_package_operation"
+  label: "campaign input binding"
+  when: null
+end
+
+connection external_sequence_invoke_external_slice_inspect_actual_package
+  type: "order"
+  from: "qualified_repair"
+  to: "invoke_external_slice_inspect_actual_package"
+  label: "actual slice and retained passive inspection"
+  when: null
+end
+
+connection external_sequence_retain_slice_response_inspect_actual_package
+  type: "order"
+  from: "invoke_external_slice_inspect_actual_package"
+  to: "retain_slice_response_inspect_actual_package"
+  label: "actual slice and retained passive inspection"
+  when: null
+end
+
+connection external_sequence_inspect_actual_package
+  type: "order"
+  from: "retain_slice_response_inspect_actual_package"
+  to: "inspect_actual_package"
+  label: "actual slice and retained passive inspection"
+  when: null
+end
+
+connection measured_before_slice
+  type: "order"
+  from: "validate_repaired_mesh_qualified_repair"
+  to: "invoke_external_slice_inspect_actual_package"
+  when: null
+  label: "mandatory exact mesh checks before slicing"
+end

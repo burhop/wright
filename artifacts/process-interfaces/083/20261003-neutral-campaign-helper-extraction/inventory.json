@@ -1,0 +1,41 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 20,
+      "sha256": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae"
+    },
+    "caller-regressions-003.xml": {
+      "bytes": 6115,
+      "sha256": "2a18f6763cfe46120846ad9845dc1f4089da6d828e6239c39c273e68bc0ffe67"
+    },
+    "checked-scope.json": {
+      "bytes": 4576,
+      "sha256": "37ec4f17bbcb072a484fc6e5983aa1968ecf52843099e92b9791208201cac9bf"
+    },
+    "extraction.json": {
+      "bytes": 2805,
+      "sha256": "de8940d6df65b9ea0a6bb61477039387c6ae111e8faae96f455730e589c04175"
+    },
+    "initial-check-failures.json": {
+      "bytes": 634,
+      "sha256": "f9ecb04c5eb59371903672a971e6b3c9ff2e4afa8361fca9ce39ad2f9eb6732c"
+    },
+    "protected-preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 1388,
+      "sha256": "c70b19fea3b398ceba43b8c077b3b2469a977612f288edf59c03cfb3fde07ab0"
+    },
+    "regressions-002.xml": {
+      "bytes": 5379,
+      "sha256": "d0268400adc2e3ccf0e436d1ac1ac3bfc5a8da72d897759121399b722ad229dc"
+    },
+    "regressions.xml": {
+      "bytes": 37337,
+      "sha256": "22bdc7fb5200ac022ce57c77dec5cee07d4789932038722c9e9f4466411c1ee5"
+    }
+  },
+  "credential_value_scan": "passed"
+}

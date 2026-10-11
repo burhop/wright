@@ -1,0 +1,38 @@
+{
+  "specs\\083-process-working-interfaces\\spec.md": {
+    "bytes": 13717,
+    "sha256": "28e251777722048d2de3cd493eeb33ed6a2a8b38b16df47386e99b21a4e84331"
+  },
+  "specs\\083-process-working-interfaces\\plan.md": {
+    "bytes": 17662,
+    "sha256": "1e4305ab40e7020735bbfa9e83ec10e1e64401fb669ef87a5df1b4a4fd9bbcea"
+  },
+  "specs\\083-process-working-interfaces\\tasks.md": {
+    "bytes": 28946,
+    "sha256": "b9c723b198eda5b216f3a81fdde13b878a4256480d9df74430f5e41db1576129"
+  },
+  "specs\\083-process-working-interfaces\\acceptance-cases.md": {
+    "bytes": 9352,
+    "sha256": "726cf038622439d6a8b3c9fe0e628abc2be6a669f97a60d10211f7f8c8d6de62"
+  },
+  "specs\\083-process-working-interfaces\\implementation-goal.md": {
+    "bytes": 11147,
+    "sha256": "042f3df1f7563815cec015c898ba96eabdd445fe9e756bd0fc3569375e84134c"
+  },
+  "specs\\083-process-working-interfaces\\quickstart.md": {
+    "bytes": 4468,
+    "sha256": "f4ad077308b0363d33883fd14246fccefa65bc8edbec4c095bba4ac41f67aeba"
+  },
+  "specs\\083-process-working-interfaces\\contracts\\process-interaction.md": {
+    "bytes": 10914,
+    "sha256": "018331320b3945fa114e5fd518d36d250019dbf708e4b84390a77aeb3b4b0487"
+  },
+  "specs\\083-process-working-interfaces\\contracts\\runtime-and-source.md": {
+    "bytes": 17888,
+    "sha256": "8e9bbe83f3a365f418bff41847f5a3404497ffb45a9b56d7624a099b36d01c6e"
+  },
+  "specs\\083-process-working-interfaces\\contracts\\ui-authoring-and-hosting.md": {
+    "bytes": 9810,
+    "sha256": "400ea55a806407bd82f88f9f65d5ede22b9cd896e194dc1d8509a7b7d1f08344"
+  }
+}

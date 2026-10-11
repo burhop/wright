@@ -1,0 +1,13 @@
+{
+  "controlled_tests_passed": 17,
+  "relative_links_checked": 64,
+  "packaged_reference_read_characters": 1825,
+  "earlier_real_scoped_GETs": 2,
+  "resumed_latest_source_probe": "WRIGHT_READ_UNAVAILABLE",
+  "resumed_api_8030_listener": false,
+  "resumed_frontend_5243_listener": false,
+  "mkdocs_render_verified": false,
+  "new_model_or_process_submission": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false
+}

@@ -8,6 +8,18 @@
 
 **Input**: User description: "$ARGUMENTS"
 
+**Architecture alignment**: For workflow, review, validation, external-action,
+or tool-integration features, identify the applicable decisions in
+`docs/design/workflow-platform-vision.md`. Keep reusable platform requirements
+separate from reference-workflow choices and external integration requirements.
+Start with the general user journey. For process UI work, apply
+`docs/design/process-apps.md`: complementary authoring and working views of the
+same accepted process/run, explicit interactions, workspace tabs, reusable Wright
+components, saved UI compatibility, and a common fallback. State supported scope
+without treating a demonstration as universal support or provider limitations
+as a reason to build a new vendor project.
+For unrelated features, state why this is not applicable.
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--

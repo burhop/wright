@@ -54,6 +54,7 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             "calculix_run_get",
         ],
         "fields": ["export_recorded_fields_and_reactions"],
+        "wright-drill-jig-slicer": ["slice_jig_file"],
     }
     tools = [
         {
@@ -83,6 +84,27 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         ).iterdir()
         if path.name.startswith(f"{ordinal:02d}")
     )
+    if script == "drill-jig":
+        fixture_spec = importlib.util.spec_from_file_location(
+            "external_slice_fixture", ROOT / "tests/fixtures/external_slice_binding.py"
+        )
+        fixture = importlib.util.module_from_spec(fixture_spec)
+        fixture_spec.loader.exec_module(fixture)
+        make_binding = fixture.make_binding
+
+        scenario = json.loads((directory / "scenario.json").read_text(encoding="utf-8"))
+        config = json.loads(preparer.BINDING.read_text(encoding="utf-8"))
+        args.slicer_binding, external_tools = make_binding(
+            tmp_path / "external-slice",
+            scenario["scenario_id"],
+            config["slicer"]["process"],
+        )
+        tools = [
+            tool
+            for tool in tools
+            if (tool["server_id"], tool["tool_name"])
+            not in {(row["server_id"], row["tool_name"]) for row in external_tools}
+        ] + external_tools
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text(encoding="utf-8")
     plan = compile_prompt_workflow(source)
@@ -110,7 +132,14 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
     assert any(
         tool["tool_name"] == "inspect_file" for tool in manifest["tool_allowlist"]
     )
-    assert not (Path(args.workspace_root) / manifest["output_root"]).exists()
+    output_root = Path(args.workspace_root) / manifest["output_root"]
+    if script == "drill-jig":
+        # External slicing prepares only an empty destination, never artifacts.
+        assert output_root.is_dir() and all(
+            path.is_dir() for path in output_root.rglob("*")
+        )
+    else:
+        assert not output_root.exists()
     assert any(
         path.endswith(".step") for path in manifest["expected_tool_created_files"]
     )
@@ -187,6 +216,16 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
         )
         assert authority["selection_and_disclosure"] in basis.prompt
         assert "numbered Boolean-operation/parameter table" in basis.prompt
+        # Bracket 01 previously stopped because an approved pocket transition
+        # specified only a minimum radius and left its actual shape undecided.
+        assert "state the exact radius, construction side" in basis.prompt
+        assert "centers and tangent endpoints" in basis.prompt
+        assert "uniquely determines them" in basis.prompt
+        assert "Delete an optional" in basis.prompt
+        assert (
+            "source authoring may not choose its geometry after approval"
+            in basis.prompt
+        )
         assert "original target as an unproven acceptance criterion" in basis.prompt
         assert "genuine conflict among mandatory constraints" in basis.prompt
         assert (
@@ -223,7 +262,47 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
                 assert (Path(args.workspace_root) / item["path"]).read_bytes() == (
                     directory / name
                 ).read_bytes()
-        assert len(plan.steps) == 12 and len(manifest["tool_allowlist"]) == 11
+        final_review = next(
+            step for step in plan.steps if step.id.startswith("review_bracket_outputs_")
+        )
+        validator = next(
+            step
+            for step in plan.steps
+            if step.id.startswith("validate_bracket_content_")
+        )
+        assert set(cad.expected_file_ports) == {
+            "baseline_step",
+            "revised_step",
+            "mass_comparison",
+            "fea_requests",
+        }
+        field_roles = {
+            f"{variant}_{mesh}_{kind}"
+            for variant in ("baseline", "revised")
+            for mesh in ("coarse", "fine")
+            for kind in ("receipt", "displacement", "stress", "reaction")
+        }
+        for expansion in [step for step in plan.steps if step.id.startswith("expand_")]:
+            assert len(expansion.expected_file_ports) == 4
+        assert {role for role, _ in validator.validation_sources} == {
+            "mechanical_basis",
+            "analysis_report",
+            "baseline_step",
+            "revised_step",
+            "mass_comparison",
+            "fea_requests",
+            *field_roles,
+        }
+        configured_review = final_review.external_action["settings"][
+            "validation_review"
+        ]
+        assert (
+            configured_review["profile_ref"]
+            == validator.validation["profile"]["reference"]
+        )
+        assert configured_review["requirement_ids"]
+        assert plan.revisions == {}
+        assert len(plan.steps) == 14 and len(manifest["tool_allowlist"]) == 11
     if script == "drill-jig":
         author = next(
             step for step in plan.steps if step.id.startswith("author_jig_source_")
@@ -251,6 +330,50 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             for path in manifest["expected_tool_created_files"]
         )
     if script == "heat":
+        basis = next(
+            step for step in plan.steps if step.id.startswith("define_thermal_case_")
+        )
+        solver_setup = next(
+            step for step in plan.steps if step.id.startswith("prepare_exact_fe_call_")
+        )
+        assert "only this scenario" in basis.prompt
+        assert "planned numerical operation" in basis.prompt
+        assert "not an already computed FE result" in basis.prompt
+        assert "approved engineering brief" in basis.prompt
+        from workspace_service.process_validation.profiles import load_profile
+
+        thermal_profile = load_profile(f"heat-spreader-sizing-{ordinal:02d}-full")
+        numerical_requirements = [
+            requirement.text
+            for requirement in thermal_profile.baseline.requirements
+            if requirement.id.endswith(("-ANALYTICAL", "-BALANCE", "-REFINEMENT"))
+        ]
+        assert len(numerical_requirements) == 3
+        assert all(text in basis.prompt for text in numerical_requirements)
+        assert "not optional aims or unspecified limits" in basis.prompt
+        brief_input = next(
+            section
+            for section in _parse(source)
+            if section["kind"] == "input"
+            and section["fields"]
+            .get("settings", {})
+            .get("workspace_file", "")
+            .endswith("/approved-engineering-brief.json")
+        )
+        assert any(
+            reference.split(".")[0] == brief_input["id"]
+            for _, reference in basis.references
+        )
+        for prompt in (basis.prompt, solver_setup.prompt):
+            if ordinal == 3:
+                assert "total_contact_resistance_k_per_w" in prompt
+                assert "each actual interface area" in prompt
+                assert "K/W is not an area-specific resistance" in prompt
+            else:
+                assert "no contact resistance" in prompt
+                assert "copper" not in prompt.lower()
+                assert "0.15" not in prompt
+                assert "area conversion" not in prompt
         execution = next(
             step
             for step in plan.steps
@@ -277,8 +400,12 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             - 1
         )
         assert (
-            len(execution.expected_files) == candidate_count * 4 + 3
+            len(execution.expected_files) == candidate_count * 4 + 4
             and not verification.expected_files
+        )
+        assert any(
+            path.endswith("/geometry-analysis-correspondence.json")
+            for path in execution.expected_files
         )
         assert (
             verification.agent_task
@@ -319,6 +446,9 @@ def test_canonical_preparers_preserve_stages_and_bind_actual_observations(
             validate=lambda step, value, schema: Draft202012Validator(schema).validate(
                 value
             ),
+        )
+        runtime._connected_arguments = lambda step, responses, tool: (
+            WorkflowMcpRuntime._connected_arguments(runtime, step, responses, tool)
         )
         arguments = WorkflowMcpRuntime.arguments(
             runtime, execution, {execution.arguments_from: exact}

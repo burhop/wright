@@ -1,0 +1,139 @@
+{
+  "source_commit": "5228d49c",
+  "workspace_id": "083-heat-repeat-013",
+  "source_digest": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+  "input_digest": "348876719f2c86aeaa672aae8bec1b1fb769123db2c936081110e688ef6cbb7d",
+  "third_run_id": "63b639c7a8f446cd90a9285921ab9072",
+  "output_count": 18,
+  "native_version": "selected-cad-project/build/v3_plates_63b639c7a8f446cd90a9285921ab9072",
+  "retained": {
+    "first-run-frozen.json": {
+      "run_id": "503a32a91e454a219bcbe2f2da3b99b2",
+      "files_unchanged": 35,
+      "native_version": "selected-cad-project/build/v1_plates_503a32a91e454a219bcbe2f2da3b99b2"
+    },
+    "failed-second-run-frozen.json": {
+      "run_id": "50942bb6d23649b5bbb4d4e51a019af6",
+      "files_unchanged": 21,
+      "native_version": "selected-cad-project/build/v2_plates_50942bb6d23649b5bbb4d4e51a019af6"
+    }
+  },
+  "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+  "first_assessment_id": "assessment-08cb0398e4ed441595df764bf0ebc17e",
+  "assessment_summary": {
+    "content_verified": null,
+    "requirements_compliant": null,
+    "evaluation_complete": false,
+    "release_eligible": false,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 1,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 25
+    }
+  },
+  "actual_source_gate_executed": true,
+  "earlier_validator_conflict_preserved": true,
+  "manual_assessment_substitution": false,
+  "authoring_default_model": "gpt-5.6-sol",
+  "adapter": "hermes",
+  "reports": {
+    "first-setup-stop": {
+      "overall": "blocked",
+      "passed": 1,
+      "blocked": 1
+    },
+    "first-model-timeout": {
+      "overall": "blocked",
+      "passed": 9,
+      "blocked": 1
+    },
+    "actual-generation": {
+      "overall": "pass",
+      "passed": 13,
+      "blocked": 0
+    },
+    "focused-update": {
+      "overall": "pass",
+      "passed": 13,
+      "blocked": 0
+    },
+    "first-reuse-loading-stop": {
+      "overall": "blocked",
+      "passed": 7,
+      "blocked": 1
+    },
+    "saved-waiting-reuse": {
+      "overall": "pass",
+      "passed": 10,
+      "blocked": 0
+    },
+    "first-complete-viewer-assumption": {
+      "overall": "blocked",
+      "passed": 9,
+      "blocked": 1
+    },
+    "first-complete-producer-selector": {
+      "overall": "blocked",
+      "passed": 12,
+      "blocked": 1
+    },
+    "complete-repeat-reuse": {
+      "overall": "pass",
+      "passed": 13,
+      "blocked": 0
+    }
+  },
+  "ui_id": "ui-512d6109b37f4c0f89b86d86a34827b2",
+  "latest_revision": "revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0",
+  "unchanged_saved_assets": 6,
+  "common_tailored_result_ids": [
+    "63b639c7a8f446cd90a9285921ab9072:author_cad_repeatable_default_013:cad_source",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+    "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+    "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:geometry_measurements",
+    "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+    "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+    "63b639c7a8f446cd90a9285921ab9072:validate_outputs_repeatable_default_013:diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json"
+  ],
+  "field_sample_count": 765,
+  "authoring_tables_unchanged": [
+    "process_ui_authoring_jobs",
+    "process_ui_authoring_records"
+  ],
+  "authoring_table_row_counts": {
+    "process_ui_authoring_jobs": 3,
+    "process_ui_authoring_records": 11
+  },
+  "generation_or_compile_repeated_for_reuse": false,
+  "browser_execution_mutations": [],
+  "diagnostics": {
+    "console": [],
+    "pageErrors": [],
+    "failedResponses": []
+  },
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "limits": [
+    "Serial shared-project proof; native project concurrency not established.",
+    "Selected cached CAD and solver installations; fresh clean provider qualification remains T043.",
+    "Digital thermal idealization and final human-review hold; no thermal performance certification.",
+    "Source-served current browser, not installed current-build editor acceptance.",
+    "Printed chain, migration and remaining Feature083 obligations remain open."
+  ]
+}

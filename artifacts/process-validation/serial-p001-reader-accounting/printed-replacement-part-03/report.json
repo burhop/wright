@@ -1,0 +1,3346 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "4e7d1328dd0cd86937e55e8a885c6877fbff2781d2d29bcb3dff762fa3d52c60",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:31.681394+00:00",
+    "selected_assessment_id": "assessment-9871a6f6fb234196a897e97df2e6ea07",
+    "selected_attempt_id": "50551d6900ba4a1ab5c7289d6f4041a6",
+    "selected_subject_ids": [
+      "source-mesh",
+      "repaired-mesh",
+      "support-preview",
+      "slice-package",
+      "slice-evidence",
+      "machine-profile",
+      "filament-profile",
+      "process-profile",
+      "transfer-receipt",
+      "source-report"
+    ],
+    "latest_attempt_id": "50551d6900ba4a1ab5c7289d6f4041a6",
+    "latest_assessment_id": "assessment-9871a6f6fb234196a897e97df2e6ea07",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PRINT03-BODY",
+      "PRINT03-HOLES",
+      "PRINT03-COUNTERBORES",
+      "PRINT03-PAD-RECESS",
+      "PRINT03-CABLE-KEEPOUT",
+      "PRINT03-HANDEDNESS",
+      "PRINT03-MESH-LINEAGE",
+      "PRINT03-SLICE",
+      "PRINT03-SUPPORT",
+      "PRINT03-DELIVERABLES",
+      "PRINT03-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and production release require authenticated engineering review."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "printing",
+      "version": "1",
+      "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded print artifact reader v1",
+      "formats": [
+        "stl",
+        "json",
+        "3mf"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PRINT03-BODY",
+      "requirement_text": "The rear-left foot uses the 26 by 38 mm mounting rectangle, remains at most 26 mm wide, and increases linearly from 8 mm height at Y=0 to 17 mm at Y=38 with a flat Z=0 mounting face and 3 mm side fillets.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "shape request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "repaired-envelope-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/x_span_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 26.0,
+        "tolerance": 0.01,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        26.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/x_span_mm"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-BODY",
+      "requirement_text": "The rear-left foot uses the 26 by 38 mm mounting rectangle, remains at most 26 mm wide, and increases linearly from 8 mm height at Y=0 to 17 mm at Y=38 with a flat Z=0 mounting face and 3 mm side fillets.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "shape request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "repaired-envelope-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/y_span_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 38.0,
+        "tolerance": 0.01,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        38.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/y_span_mm"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-BODY",
+      "requirement_text": "The rear-left foot uses the 26 by 38 mm mounting rectangle, remains at most 26 mm wide, and increases linearly from 8 mm height at Y=0 to 17 mm at Y=38 with a flat Z=0 mounting face and 3 mm side fillets.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "shape request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "repaired-envelope-z",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/z_span_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 17.0,
+        "tolerance": 0.01,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "model_axes",
+      "observed": [
+        17.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "model_axes"
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/z_span_mm"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-MESH-LINEAGE",
+      "requirement_text": "Source and repaired printable meshes remain separate and the final slice binds to the reviewed repaired-mesh revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "repaired-mesh-integrity",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/integrity",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/integrity"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-DELIVERABLES",
+      "requirement_text": "The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        }
+      ],
+      "check_id": "repaired-mesh-integrity",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/integrity",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/integrity"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-MESH-LINEAGE",
+      "requirement_text": "Source and repaired printable meshes remain separate and the final slice binds to the reviewed repaired-mesh revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "distinct-mesh-lineage",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "mesh/lineage",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/lineage",
+        "subject:source-mesh@4258f4037851d503b4acca1023e37ac816307eddeb9f9287edfe1b0ea772254f#mesh-lineage"
+      ],
+      "subject_id": "repaired-mesh",
+      "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "machine-name",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/name",
+      "expected": {
+        "operator": "equals",
+        "expected": "Bambu Lab P1S 0.4 nozzle",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "Bambu Lab P1S 0.4 nozzle"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+      ],
+      "subject_id": "machine-profile",
+      "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "machine_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "machine-nozzle",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/nozzle_diameter",
+      "expected": {
+        "operator": "equals",
+        "expected": [
+          "0.4"
+        ],
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        [
+          "0.4"
+        ]
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+      ],
+      "subject_id": "machine-profile",
+      "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "machine_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "filament-name",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/name",
+      "expected": {
+        "operator": "equals",
+        "expected": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "Bambu PETG HF @BBL P1S 0.4 nozzle"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+      ],
+      "subject_id": "filament-profile",
+      "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "filament_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "filament-type",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/filament_type",
+      "expected": {
+        "operator": "equals",
+        "expected": [
+          "PETG"
+        ],
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        [
+          "PETG"
+        ]
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+      ],
+      "subject_id": "filament-profile",
+      "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "filament_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "layer-height",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/layer_height",
+      "expected": {
+        "operator": "equals",
+        "expected": "0.16",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "0.16"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/layer_height"
+      ],
+      "subject_id": "process-profile",
+      "subject_sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "wall-loops",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/wall_loops",
+      "expected": {
+        "operator": "equals",
+        "expected": "5",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "5"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/wall_loops"
+      ],
+      "subject_id": "process-profile",
+      "subject_sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "infill-density",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/sparse_infill_density",
+      "expected": {
+        "operator": "equals",
+        "expected": "45%",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "45%"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/sparse_infill_density"
+      ],
+      "subject_id": "process-profile",
+      "subject_sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "slice-package-inventory",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "package/required_members",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#package/required_members"
+      ],
+      "subject_id": "slice-package",
+      "subject_sha256": "4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "slice_package"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-DELIVERABLES",
+      "requirement_text": "The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        }
+      ],
+      "check_id": "slice-package-inventory",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "package/required_members",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#package/required_members"
+      ],
+      "subject_id": "slice-package",
+      "subject_sha256": "4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "slice_package"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-MESH-LINEAGE",
+      "requirement_text": "Source and repaired printable meshes remain separate and the final slice binds to the reviewed repaired-mesh revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "slice-lineage",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "slice/hash_binding",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-evidence@e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded#slice/hash_binding",
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#slice-input",
+        "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#slice-output"
+      ],
+      "subject_id": "slice-evidence",
+      "subject_sha256": "e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "slice_evidence"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-SLICE",
+      "requirement_text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "slice-lineage",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "slice/hash_binding",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:slice-evidence@e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded#slice/hash_binding",
+        "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#slice-input",
+        "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#slice-output"
+      ],
+      "subject_id": "slice-evidence",
+      "subject_sha256": "e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "slice_evidence"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-DELIVERABLES",
+      "requirement_text": "The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        }
+      ],
+      "check_id": "simulated-transfer-binding",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "printing",
+      "evidence_method": "independent_measurement",
+      "selector": "transfer/package_binding",
+      "expected": {
+        "operator": "equals",
+        "expected": true,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        true
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:transfer-receipt@3351a2914e8c8f9a16c4b16af78cb6298f7926362031e58c0f10e1bb91746d33#transfer/package_binding",
+        "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#simulated-transfer"
+      ],
+      "subject_id": "transfer-receipt",
+      "subject_sha256": "3351a2914e8c8f9a16c4b16af78cb6298f7926362031e58c0f10e1bb91746d33",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "transfer_receipt"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-DELIVERABLES",
+      "requirement_text": "The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        }
+      ],
+      "check_id": "support-preview-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1138195,
+          "present": true,
+          "sha256": "467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:support-preview@467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c#"
+      ],
+      "subject_id": "support-preview",
+      "subject_sha256": "467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "support_preview"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-DELIVERABLES",
+      "requirement_text": "The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "requested outputs"
+        }
+      ],
+      "check_id": "source-report-present",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1972,
+          "present": true,
+          "sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:source-report@1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912#"
+      ],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PRINT03-ACTION-SCOPE",
+      "requirement_text": "The result makes no load, stability, screw-fit, creep, finish or material-certification claim and performs no instrument modification, physical transfer or print start.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Product and use assumptions; Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT03-CABLE-KEEPOUT",
+      "requirement_text": "The rear-right region X=21..26,Y=31..38 is removed for the full body depth with a 2 mm internal fillet.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "keepout request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT03-COUNTERBORES",
+      "requirement_text": "Each screw recess is a cylindrical 6.5 mm diameter by 2.5 mm deep counterbore from the sole, never a conical countersink or tapped hole, with at least 2.0 mm external wall.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT03-HANDEDNESS",
+      "requirement_text": "The model remains the specified rear-left part and is not automatically mirrored for the other side.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+          "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+          "locator": "handedness instruction"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Product and use assumptions"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT03-HOLES",
+      "requirement_text": "Two 3.4 mm through holes lie at (13,9) and (13,29), normal to the mounting face.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT03-PAD-RECESS",
+      "requirement_text": "A 16 by 28 mm recess centered at (13,19) is 1.0 mm deep normal to the sloped sole with 2 mm corner rounds and does not add printed rubber geometry.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Dimensioned intent"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PRINT03-SUPPORT",
+      "requirement_text": "Support planning avoids screw bores and the pad seating face where orientation permits and retains actual support evidence for any sculpted-side supports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+          "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+          "locator": "Manufacturing capability and policy"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "source-report",
+      "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+      "producer": {
+        "run_id": "retained-successor-printed-replacement-part-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "source_report"
+      },
+      "finding_ids": [
+        "f-bdf564e45aed413f91225f6800a5a685"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-9871a6f6fb234196a897e97df2e6ea07",
+    "attempt_id": "50551d6900ba4a1ab5c7289d6f4041a6",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "printed-replacement-part-03",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "source-mesh",
+          "role": "source_mesh",
+          "result_id": "retained-successor:printed-replacement-part-03:source_mesh",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_mesh"
+          },
+          "kind": "file",
+          "sha256": "4258f4037851d503b4acca1023e37ac816307eddeb9f9287edfe1b0ea772254f",
+          "value": null,
+          "locator": "source_mesh.stl",
+          "format": "stl",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "repaired-mesh",
+          "role": "repaired_mesh",
+          "result_id": "retained-successor:printed-replacement-part-03:repaired_mesh",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "repaired_mesh"
+          },
+          "kind": "file",
+          "sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+          "value": null,
+          "locator": "repaired_mesh.stl",
+          "format": "stl",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "support-preview",
+          "role": "support_preview",
+          "result_id": "retained-successor:printed-replacement-part-03:support_preview",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "support_preview"
+          },
+          "kind": "file",
+          "sha256": "467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c",
+          "value": null,
+          "locator": "support-preview.svg",
+          "format": "svg",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "slice-package",
+          "role": "slice_package",
+          "result_id": "retained-successor:printed-replacement-part-03:slice_package",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "slice_package"
+          },
+          "kind": "file",
+          "sha256": "4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be",
+          "value": null,
+          "locator": "slice_package.gcode.3mf",
+          "format": "3mf",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "slice-evidence",
+          "role": "slice_evidence",
+          "result_id": "retained-successor:printed-replacement-part-03:slice_evidence",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "slice_evidence"
+          },
+          "kind": "file",
+          "sha256": "e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded",
+          "value": null,
+          "locator": "slice-evidence.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "machine-profile",
+          "role": "machine_profile",
+          "result_id": "retained-successor:printed-replacement-part-03:machine_profile",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "machine_profile"
+          },
+          "kind": "file",
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+          "value": null,
+          "locator": "machine-profile.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "filament-profile",
+          "role": "filament_profile",
+          "result_id": "retained-successor:printed-replacement-part-03:filament_profile",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "filament_profile"
+          },
+          "kind": "file",
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+          "value": null,
+          "locator": "filament-profile.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "process-profile",
+          "role": "process_profile",
+          "result_id": "retained-successor:printed-replacement-part-03:process_profile",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "process_profile"
+          },
+          "kind": "file",
+          "sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+          "value": null,
+          "locator": "process-profile.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "transfer-receipt",
+          "role": "transfer_receipt",
+          "result_id": "retained-successor:printed-replacement-part-03:transfer_receipt",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "transfer_receipt"
+          },
+          "kind": "file",
+          "sha256": "3351a2914e8c8f9a16c4b16af78cb6298f7926362031e58c0f10e1bb91746d33",
+          "value": null,
+          "locator": "printer-transfer-receipt.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "source-report",
+          "role": "source_report",
+          "result_id": "retained-successor:printed-replacement-part-03:source_report",
+          "producer": {
+            "run_id": "retained-successor-printed-replacement-part-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "source_report"
+          },
+          "kind": "file",
+          "sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+          "value": null,
+          "locator": "source-model-report.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "printed-replacement-part-03-full",
+        "version": "1",
+        "sha256": "881423783fbb3588df6717f4f2eb9f7d1d30305c8849f2fa6bdfa015399f5ce3"
+      },
+      "baseline_ref": {
+        "id": "printed-replacement-part-03-basis",
+        "version": "1",
+        "sha256": "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"
+      },
+      "idempotency_key": "printed-replacement-part-03",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "printed-replacement-part-03-full",
+      "version": "1",
+      "baseline": {
+        "id": "printed-replacement-part-03-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PRINT03-BODY",
+            "text": "The rear-left foot uses the 26 by 38 mm mounting rectangle, remains at most 26 mm wide, and increases linearly from 8 mm height at Y=0 to 17 mm at Y=38 with a flat Z=0 mounting face and 3 mm side fillets.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+                "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+                "locator": "shape request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Dimensioned intent"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT03-HOLES",
+            "text": "Two 3.4 mm through holes lie at (13,9) and (13,29), normal to the mounting face.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Dimensioned intent"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT03-COUNTERBORES",
+            "text": "Each screw recess is a cylindrical 6.5 mm diameter by 2.5 mm deep counterbore from the sole, never a conical countersink or tapped hole, with at least 2.0 mm external wall.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Dimensioned intent"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT03-PAD-RECESS",
+            "text": "A 16 by 28 mm recess centered at (13,19) is 1.0 mm deep normal to the sloped sole with 2 mm corner rounds and does not add printed rubber geometry.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Dimensioned intent"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT03-CABLE-KEEPOUT",
+            "text": "The rear-right region X=21..26,Y=31..38 is removed for the full body depth with a 2 mm internal fillet.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+                "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+                "locator": "keepout request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Dimensioned intent"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT03-HANDEDNESS",
+            "text": "The model remains the specified rear-left part and is not automatically mirrored for the other side.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+                "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+                "locator": "handedness instruction"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Product and use assumptions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT03-MESH-LINEAGE",
+            "text": "Source and repaired printable meshes remain separate and the final slice binds to the reviewed repaired-mesh revision.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+                "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Manufacturing capability and policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT03-SLICE",
+            "text": "The final package uses confirmed P1S 0.4 mm PETG profiles, 0.16 mm layers, five perimeters and 45% infill; any PLA package is labeled PLA.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Manufacturing capability and policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT03-SUPPORT",
+            "text": "Support planning avoids screw bores and the pad seating face where orientation permits and retains actual support evidence for any sculpted-side supports.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Manufacturing capability and policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PRINT03-DELIVERABLES",
+            "text": "The output set contains inspectable source mesh, repaired STL, support-aware P1S PETG package and a digest-bound simulator-only transfer receipt.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+                "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+                "locator": "requested outputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PRINT03-ACTION-SCOPE",
+            "text": "The result makes no load, stability, screw-fit, creep, finish or material-certification claim and performs no instrument modification, physical transfer or print start.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+                "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+                "locator": "Product and use assumptions; Manufacturing capability and policy"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "repaired-envelope-x",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-BODY"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/x_span_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 26.0,
+            "tolerance": 0.01,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "stl_dimension",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "repaired-envelope-y",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-BODY"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/y_span_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 38.0,
+            "tolerance": 0.01,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "stl_dimension",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "repaired-envelope-z",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-BODY"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/z_span_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 17.0,
+            "tolerance": 0.01,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "model_axes",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "stl_dimension",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "repaired-mesh-integrity",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-MESH-LINEAGE",
+            "PRINT03-DELIVERABLES"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/integrity",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mesh_integrity",
+            "unit_convention": "mm"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "distinct-mesh-lineage",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-MESH-LINEAGE"
+          ],
+          "subject_role": "repaired_mesh",
+          "reader": "printing",
+          "selector": "mesh/lineage",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "mesh_lineage",
+            "related_roles": [
+              "source_mesh"
+            ],
+            "span_tolerance_mm": 0.01
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "machine-name",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "machine_profile",
+          "reader": "structured",
+          "selector": "/name",
+          "constraint": {
+            "operator": "equals",
+            "expected": "Bambu Lab P1S 0.4 nozzle",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "machine-nozzle",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "machine_profile",
+          "reader": "structured",
+          "selector": "/nozzle_diameter",
+          "constraint": {
+            "operator": "equals",
+            "expected": [
+              "0.4"
+            ],
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "filament-name",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "filament_profile",
+          "reader": "structured",
+          "selector": "/name",
+          "constraint": {
+            "operator": "equals",
+            "expected": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "filament-type",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "filament_profile",
+          "reader": "structured",
+          "selector": "/filament_type",
+          "constraint": {
+            "operator": "equals",
+            "expected": [
+              "PETG"
+            ],
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "layer-height",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "process_profile",
+          "reader": "structured",
+          "selector": "/layer_height",
+          "constraint": {
+            "operator": "equals",
+            "expected": "0.16",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "wall-loops",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "process_profile",
+          "reader": "structured",
+          "selector": "/wall_loops",
+          "constraint": {
+            "operator": "equals",
+            "expected": "5",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "infill-density",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "process_profile",
+          "reader": "structured",
+          "selector": "/sparse_infill_density",
+          "constraint": {
+            "operator": "equals",
+            "expected": "45%",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "slice-package-inventory",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-SLICE",
+            "PRINT03-DELIVERABLES"
+          ],
+          "subject_role": "slice_package",
+          "reader": "printing",
+          "selector": "package/required_members",
+          "constraint": {
+            "operator": "equals",
+            "expected": 5,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "package_inventory",
+            "required_members": [
+              "3D/3dmodel.model",
+              "3D/Objects/object_1.model",
+              "Metadata/plate_1.gcode",
+              "Metadata/project_settings.config",
+              "Metadata/slice_info.config"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "slice-lineage",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-MESH-LINEAGE",
+            "PRINT03-SLICE"
+          ],
+          "subject_role": "slice_evidence",
+          "reader": "printing",
+          "selector": "slice/hash_binding",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_operation": "actual_local_bambu_slice",
+            "operation": "slice_binding",
+            "related_roles": [
+              "repaired_mesh",
+              "slice_package"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "simulated-transfer-binding",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-DELIVERABLES"
+          ],
+          "subject_role": "transfer_receipt",
+          "reader": "printing",
+          "selector": "transfer/package_binding",
+          "constraint": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "transfer_binding",
+            "related_roles": [
+              "slice_package"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "support-preview-present",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-DELIVERABLES"
+          ],
+          "subject_role": "support_preview",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "source-report-present",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-DELIVERABLES"
+          ],
+          "subject_role": "source_report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PRINT03-ACTION-SCOPE",
+            "PRINT03-CABLE-KEEPOUT",
+            "PRINT03-COUNTERBORES",
+            "PRINT03-HANDEDNESS",
+            "PRINT03-HOLES",
+            "PRINT03-PAD-RECESS",
+            "PRINT03-SUPPORT"
+          ],
+          "subject_role": "source_report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Detailed mating features, grip geometry, orientation/support decisions, tolerance statements, physical fit/load/print performance and production release require authenticated engineering review."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:31.602353+00:00",
+    "measurements": [
+      {
+        "id": "m-826e4f786aff7699cdcc64c8c28bab873c7e4b26b9e5264fbc1165a0cad396f3",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+        "selector": "mesh/x_span_mm",
+        "value": 26.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/x_span_mm"
+        ]
+      },
+      {
+        "id": "m-d14f4213049d368050769af5532d3f2fe34d2d883d9c2607b819fb286e903d8a",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+        "selector": "mesh/y_span_mm",
+        "value": 38.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/y_span_mm"
+        ]
+      },
+      {
+        "id": "m-b504e33751846669dc165420c90b1d73d6a131823ad11c4e892b3ab63d5b478b",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+        "selector": "mesh/z_span_mm",
+        "value": 17.0,
+        "unit": "mm",
+        "frame": "model_axes",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/z_span_mm"
+        ]
+      },
+      {
+        "id": "m-c0d0f8ae16c4825051ca9c6078caba56b3a63fe5433d0ab27209f0061a98cca4",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+        "selector": "mesh/integrity",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/integrity"
+        ]
+      },
+      {
+        "id": "m-4257d8d478d6dd95d3c50fa4012841a45f74df0bea79b36d10c026b0d724720f",
+        "subject_id": "repaired-mesh",
+        "subject_sha256": "d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0",
+        "selector": "mesh/lineage",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/lineage",
+          "subject:source-mesh@4258f4037851d503b4acca1023e37ac816307eddeb9f9287edfe1b0ea772254f#mesh-lineage"
+        ]
+      },
+      {
+        "id": "m-eb928b8995077653798e35fb7bbe3f2be7dce1cdd1c445fdbe59d67d6dc14dd7",
+        "subject_id": "machine-profile",
+        "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "selector": "/name",
+        "value": "Bambu Lab P1S 0.4 nozzle",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+        ]
+      },
+      {
+        "id": "m-4f922f2e83737f2baee08e74b03a715db664ec5e6236aa8785660c797ce3e1be",
+        "subject_id": "machine-profile",
+        "subject_sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "selector": "/nozzle_diameter",
+        "value": [
+          "0.4"
+        ],
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+        ]
+      },
+      {
+        "id": "m-f99812b4bcc1e3eff839faadecd49de14cdd352a085e49ea95e55b7bb92e2b8c",
+        "subject_id": "filament-profile",
+        "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "selector": "/name",
+        "value": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+        ]
+      },
+      {
+        "id": "m-4e5b3733a52cc85d4ddce6310afef329936c8184e1d69d6f6305027f302488a1",
+        "subject_id": "filament-profile",
+        "subject_sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "selector": "/filament_type",
+        "value": [
+          "PETG"
+        ],
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+        ]
+      },
+      {
+        "id": "m-7595f49c8aaebf71d9e39eb72706ff7731ab0092ffa7763bd3d4c210579a04a8",
+        "subject_id": "process-profile",
+        "subject_sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+        "selector": "/layer_height",
+        "value": "0.16",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/layer_height"
+        ]
+      },
+      {
+        "id": "m-5e0b058497c3f32c8dcd15b521eba57e6e5a2558b09a52c3d5d18166fb90cc40",
+        "subject_id": "process-profile",
+        "subject_sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+        "selector": "/wall_loops",
+        "value": "5",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/wall_loops"
+        ]
+      },
+      {
+        "id": "m-dcabbb2a596c49eb7d3886e2250ca5c03c333147e88bebdc7a30b7393d30ab15",
+        "subject_id": "process-profile",
+        "subject_sha256": "cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400",
+        "selector": "/sparse_infill_density",
+        "value": "45%",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/sparse_infill_density"
+        ]
+      },
+      {
+        "id": "m-6c59c566e399fe15337b028d993458f212bd8ccd67465ec43075b70682aa4146",
+        "subject_id": "slice-package",
+        "subject_sha256": "4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be",
+        "selector": "package/required_members",
+        "value": 5,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#package/required_members"
+        ]
+      },
+      {
+        "id": "m-fbf0b516349ae68a4d523b35627b54a648261a341f45385d7ef4c994793f2c7e",
+        "subject_id": "slice-evidence",
+        "subject_sha256": "e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded",
+        "selector": "slice/hash_binding",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:slice-evidence@e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded#slice/hash_binding",
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#slice-input",
+          "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#slice-output"
+        ]
+      },
+      {
+        "id": "m-09655a8dcec77acbcb5c04bcf284a133a79e83320358c58425d42ee5b4b17bad",
+        "subject_id": "transfer-receipt",
+        "subject_sha256": "3351a2914e8c8f9a16c4b16af78cb6298f7926362031e58c0f10e1bb91746d33",
+        "selector": "transfer/package_binding",
+        "value": true,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "printing",
+          "version": "1",
+          "config_digest": "c13bf654986f76f55285d95e92f8edc152c171e027613a6eeac43df93675dbbf",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded print artifact reader v1",
+          "formats": [
+            "stl",
+            "json",
+            "3mf"
+          ]
+        },
+        "evidence_refs": [
+          "subject:transfer-receipt@3351a2914e8c8f9a16c4b16af78cb6298f7926362031e58c0f10e1bb91746d33#transfer/package_binding",
+          "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#simulated-transfer"
+        ]
+      },
+      {
+        "id": "m-0373481b1e6d1aed0d89431d534d06094f92add150a18d675a5ad7bed8dbb150",
+        "subject_id": "support-preview",
+        "subject_sha256": "467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c",
+        "selector": "",
+        "value": {
+          "bytes": 1138195,
+          "present": true,
+          "sha256": "467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:support-preview@467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c#"
+        ]
+      },
+      {
+        "id": "m-c5daab7f219b9747b089b2152109cc5634013123140087ffad558da8521c730c",
+        "subject_id": "source-report",
+        "subject_sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912",
+        "selector": "",
+        "value": {
+          "bytes": 1972,
+          "present": true,
+          "sha256": "1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:source-report@1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "repaired-envelope-x",
+        "requirement_ids": [
+          "PRINT03-BODY"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-826e4f786aff7699cdcc64c8c28bab873c7e4b26b9e5264fbc1165a0cad396f3"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/x_span_mm"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "repaired-envelope-y",
+        "requirement_ids": [
+          "PRINT03-BODY"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d14f4213049d368050769af5532d3f2fe34d2d883d9c2607b819fb286e903d8a"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/y_span_mm"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "repaired-envelope-z",
+        "requirement_ids": [
+          "PRINT03-BODY"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-b504e33751846669dc165420c90b1d73d6a131823ad11c4e892b3ab63d5b478b"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/z_span_mm"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "repaired-mesh-integrity",
+        "requirement_ids": [
+          "PRINT03-MESH-LINEAGE",
+          "PRINT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-c0d0f8ae16c4825051ca9c6078caba56b3a63fe5433d0ab27209f0061a98cca4"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/integrity"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "distinct-mesh-lineage",
+        "requirement_ids": [
+          "PRINT03-MESH-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4257d8d478d6dd95d3c50fa4012841a45f74df0bea79b36d10c026b0d724720f"
+        ],
+        "evidence_refs": [
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#mesh/lineage",
+          "subject:source-mesh@4258f4037851d503b4acca1023e37ac816307eddeb9f9287edfe1b0ea772254f#mesh-lineage"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "machine-name",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-eb928b8995077653798e35fb7bbe3f2be7dce1cdd1c445fdbe59d67d6dc14dd7"
+        ],
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/name"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "machine-nozzle",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4f922f2e83737f2baee08e74b03a715db664ec5e6236aa8785660c797ce3e1be"
+        ],
+        "evidence_refs": [
+          "subject:machine-profile@93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc#/nozzle_diameter"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "filament-name",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f99812b4bcc1e3eff839faadecd49de14cdd352a085e49ea95e55b7bb92e2b8c"
+        ],
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/name"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "filament-type",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4e5b3733a52cc85d4ddce6310afef329936c8184e1d69d6f6305027f302488a1"
+        ],
+        "evidence_refs": [
+          "subject:filament-profile@e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db#/filament_type"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "layer-height",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7595f49c8aaebf71d9e39eb72706ff7731ab0092ffa7763bd3d4c210579a04a8"
+        ],
+        "evidence_refs": [
+          "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/layer_height"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "wall-loops",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-5e0b058497c3f32c8dcd15b521eba57e6e5a2558b09a52c3d5d18166fb90cc40"
+        ],
+        "evidence_refs": [
+          "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/wall_loops"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "infill-density",
+        "requirement_ids": [
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-dcabbb2a596c49eb7d3886e2250ca5c03c333147e88bebdc7a30b7393d30ab15"
+        ],
+        "evidence_refs": [
+          "subject:process-profile@cdf9ad44a7b82583bda925a5dc6c70e1af9765727235b2518a55c9535e1a4400#/sparse_infill_density"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "slice-package-inventory",
+        "requirement_ids": [
+          "PRINT03-SLICE",
+          "PRINT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-6c59c566e399fe15337b028d993458f212bd8ccd67465ec43075b70682aa4146"
+        ],
+        "evidence_refs": [
+          "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#package/required_members"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "slice-lineage",
+        "requirement_ids": [
+          "PRINT03-MESH-LINEAGE",
+          "PRINT03-SLICE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-fbf0b516349ae68a4d523b35627b54a648261a341f45385d7ef4c994793f2c7e"
+        ],
+        "evidence_refs": [
+          "subject:slice-evidence@e655554f5af3bdaee4dd2f53042769b0687b1d4c998bfc9fdc7224aa60225ded#slice/hash_binding",
+          "subject:repaired-mesh@d0a5b3b68e6e13268ab63ba98366800ef807e555cdfc2628c1765922ec3be5b0#slice-input",
+          "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#slice-output"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "simulated-transfer-binding",
+        "requirement_ids": [
+          "PRINT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-09655a8dcec77acbcb5c04bcf284a133a79e83320358c58425d42ee5b4b17bad"
+        ],
+        "evidence_refs": [
+          "subject:transfer-receipt@3351a2914e8c8f9a16c4b16af78cb6298f7926362031e58c0f10e1bb91746d33#transfer/package_binding",
+          "subject:slice-package@4a5b65303eef80c77100e5b8ee860f33dbe58a626647973fe45d1e0b6dda20be#simulated-transfer"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "support-preview-present",
+        "requirement_ids": [
+          "PRINT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-0373481b1e6d1aed0d89431d534d06094f92add150a18d675a5ad7bed8dbb150"
+        ],
+        "evidence_refs": [
+          "subject:support-preview@467cf555a33bc062e76bd7814dd34d5a2dd0bdfbdd16073521585a1b0bdacb0c#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "source-report-present",
+        "requirement_ids": [
+          "PRINT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-c5daab7f219b9747b089b2152109cc5634013123140087ffad558da8521c730c"
+        ],
+        "evidence_refs": [
+          "subject:source-report@1f7938be900b08b49b8c4eb9355be6c3be0380c1370e2d9853f75d3cee4f1912#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PRINT03-ACTION-SCOPE",
+          "PRINT03-CABLE-KEEPOUT",
+          "PRINT03-COUNTERBORES",
+          "PRINT03-HANDEDNESS",
+          "PRINT03-HOLES",
+          "PRINT03-PAD-RECESS",
+          "PRINT03-SUPPORT"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-bdf564e45aed413f91225f6800a5a685"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-bdf564e45aed413f91225f6800a5a685",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PRINT03-ACTION-SCOPE",
+          "PRINT03-CABLE-KEEPOUT",
+          "PRINT03-COUNTERBORES",
+          "PRINT03-HANDEDNESS",
+          "PRINT03-HOLES",
+          "PRINT03-PAD-RECESS",
+          "PRINT03-SUPPORT"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "source-report",
+        "owner": {
+          "run_id": "retained-successor-printed-replacement-part-03",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "source_report"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+            "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+            "locator": "Dimensioned intent"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+            "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+            "locator": "keepout request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/prompt.txt",
+            "sha256": "053c1f0df93c455b1b008dadda5a49bf9417ae823329389521620fa37e8ec688",
+            "locator": "handedness instruction"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+            "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+            "locator": "Product and use assumptions"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+            "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+            "locator": "Manufacturing capability and policy"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/context.md",
+            "sha256": "1d5e1247e2543e0719bc8e556adb9ffaeea2adf923d7ec977375983be06df18d",
+            "locator": "Product and use assumptions; Manufacturing capability and policy"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "repaired-envelope-x",
+            "repaired-envelope-y",
+            "repaired-envelope-z",
+            "repaired-mesh-integrity",
+            "distinct-mesh-lineage",
+            "machine-name",
+            "machine-nozzle",
+            "filament-name",
+            "filament-type",
+            "layer-height",
+            "wall-loops",
+            "infill-density",
+            "slice-package-inventory",
+            "slice-lineage",
+            "simulated-transfer-binding",
+            "support-preview-present",
+            "source-report-present",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 17
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

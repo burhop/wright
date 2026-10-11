@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "parent": "e7aca677c74de55391e6af3bc7d6f3428ae33e0a",
+  "owned_source_hashes": {
+    "apps/api/src/api/routers/process_interfaces.py": "2a72b40366f7dd0e591cf9c00323e6345ad9bfda681544d03d685f3822d9a7af",
+    "apps/api/src/api/routers/process_ui_authoring.py": "24525856a99786f80b383909ec3e181dfc28fe280f91ea99751313e45afd5d18",
+    "apps/api/src/api/schemas/process_interfaces.py": "f46c055576a8a442c87694cb183f843e9367e465dccc9fcfcd5ae96020779fd7",
+    "apps/api/tests/test_process_ui_authoring_api.py": "167cd7b2a20077982d34a53a97fde628e5357b01cb8d6c260e77183a53911c5a",
+    "packages/data_vault/src/data_vault/process_interface_repository.py": "ca87d01d9f9fb05f4c5d250e317fe8981ebfbde5bde262876168097557644550",
+    "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py": "0cbf4cfce21734d4a68a80494ac235f9ea26401682860d6f71dc8596c9b82676",
+    "packages/workspace_service/src/workspace_service/process_interfaces/toolchain.py": "a6dcbe25b1867f7ed474d305d4f6712ddd617da2e9ed0bcca29b7738798c4524",
+    "packages/workspace_service/tests/test_process_ui_presentations.py": "675342376518fdac761e0d289339654fea0db1615bf13905c21090b9f5c2e16b",
+    "packages/workspace_service/tests/test_process_ui_toolchain.py": "ec7ef396e219bfada2cfa5b50e8c92b0f1f5f57b4f52d8059e106e39c90d0ae6",
+    "specs/083-process-working-interfaces/tasks.md": "acd2c31102c633eb2dab7ac7b0d983dbba68b424e788a81e88c945d0fcdfe0e9",
+    "specs/083-process-working-interfaces/progress.md": "22f20ca2bfb46128e8bd261b9c7c8ca419bb967ef1caf8573c1be5874bf63c33",
+    "specs/083-process-working-interfaces/evidence/native-ui-authoring.md": "b2f50ac5219aede0684b809dd0f965591cc3f9b9407934b92e5eec3f5adceaae"
+  },
+  "task_scope": {
+    "T038": "native API/controlled lifecycle checked",
+    "T034": "presentation owner added; real managed host/browser pending",
+    "T037": "native frontend and handshake pending"
+  },
+  "commands": {
+    "backend": "from pathlib import Path\nimport subprocess\nimport sys\n\nroot = Path('D:/repos/wright')\nlocal = root / '.local-run/process-interfaces-083'\nlabel = sys.argv[1]\npaths = [\n    'apps/api/tests/test_process_ui_authoring_api.py',\n    'packages/workspace_service/tests/test_process_ui_presentations.py',\n    'packages/workspace_service/tests/test_process_ui_toolchain.py',\n    'packages/workspace_service/tests/test_process_ui_authoring.py',\n    'packages/workspace_service/tests/test_process_ui_build.py',\n    'packages/data_vault/tests/test_process_interface_migrations.py',\n    'apps/api/tests/test_process_ui_surface_authority.py',\n    'apps/api/tests/test_process_interfaces_api.py',\n    'packages/workspace_service/tests/test_process_interface_service_boundaries.py',\n    'packages/workspace_service/tests/surfaces/test_process_ui_static.py',\n    'packages/workspace_service/tests/surfaces/test_live_app_service.py',\n]\nassert all((root / path).is_file() for path in paths)\nargv = [sys.executable, '-m', 'pytest', *paths, '-q', '--tb=short', '-p', 'no:cacheprovider',\n        '--basetemp', str(local / ('t038-' + label))]\nwith (local / ('t038-' + label + '.log')).open('w', encoding='utf-8') as log:\n    log.write('argv=' + repr(argv) + '\\n')\n    child = subprocess.Popen(argv, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,\n                             text=True, encoding='utf-8', errors='replace')\n    for line in child.stdout:\n        log.write(line)\n        log.flush()\n        print(line, end='', flush=True)\n    code = child.wait()\n    log.write(f'\\nowned_exit_code={code}\\n')\nsys.exit(code)\n"
+  },
+  "checks": {
+    "ruff": {
+      "argv": [
+        "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "apps/api/src/api/routers/process_interfaces.py",
+        "apps/api/src/api/routers/process_ui_authoring.py",
+        "apps/api/src/api/schemas/process_interfaces.py",
+        "apps/api/tests/test_process_ui_authoring_api.py",
+        "packages/data_vault/src/data_vault/process_interface_repository.py",
+        "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py",
+        "packages/workspace_service/src/workspace_service/process_interfaces/toolchain.py",
+        "packages/workspace_service/tests/test_process_ui_presentations.py",
+        "packages/workspace_service/tests/test_process_ui_toolchain.py"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    "whitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": "warning: in the working copy of 'apps/api/src/api/main.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/api/routers/workspace.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/api/schemas/process_interfaces.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/components/pages/PrintPartDemoPage.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/surfaces/surface-client.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/workspace-service.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/data_vault/src/data_vault/process_interface_repository.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/workspace_service/src/workspace_service/print_part_demo_printer.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/configure_print_demo_offline.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/print_demo_p1s_mcp.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'specs/083-process-working-interfaces/progress.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'specs/083-process-working-interfaces/tasks.md', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  },
+  "logs": {
+    "t038-qualified-first.log": {
+      "sha256": "3588ab59031e43cdd69eca8dff4b15e100ccc87eab05e5c645232f8ec469f21d",
+      "exit_code": 0,
+      "summaries": [
+        "143 passed, 2 warnings in 107.99s (0:01:47)"
+      ]
+    },
+    "t038-qualified-final.log": {
+      "sha256": "2649d037c16ecd5070c855d04288fb65c7c62734c51bc854f2486ec9f80bc338",
+      "exit_code": 0,
+      "summaries": [
+        "150 passed, 2 warnings in 102.38s (0:01:42)"
+      ]
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "claims": {
+    "controlled_model_compiler_runtime": true,
+    "actual_repositories_and_surface_owners": true,
+    "two_durable_controlled_source_runs": true,
+    "saved_ui_no_model_or_build_on_reuse": true,
+    "real_fixed_local_compilation_regression": true,
+    "synthetic_preview_observation": true,
+    "real_default_model_this_checkpoint": false,
+    "managed_browser_preview": false,
+    "served_workspace_authoring": false,
+    "live_engineering_MCP": false,
+    "hardware_or_supplier_dispatch": false,
+    "installed_distribution": false,
+    "human_engineering_acceptance": false,
+    "full_feature_complete": false
+  }
+}

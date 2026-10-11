@@ -1,0 +1,52 @@
+{
+  "server_id": "qualification-083-slicer-clean-002",
+  "schemas": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-clean-base-002\\tools.json",
+  "schemas_file_sha256": "6577bdd0684a84ab33613005f327b99c33db246e000aa416a36a6ea8dbe97dab",
+  "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+  "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "-e",
+    "BAMBU_MCP_SKIP_DOTENV=1",
+    "-e",
+    "BAMBU_IP=127.0.0.1",
+    "-e",
+    "BAMBU_ACCESS_CODE=OFFLINE_NOT_A_PRINTER_CREDENTIAL",
+    "-e",
+    "BAMBU_SERIAL=OFFLINE_QUALIFICATION_ONLY",
+    "-e",
+    "BAMBU_MODEL=P1S",
+    "-e",
+    "BAMBU_SLICER=/selected/squashfs-root/AppRun",
+    "-e",
+    "BAMBU_STUDIO_CONFIG=/workspace/config",
+    "-e",
+    "BAMBU_SLICE_DIR=/workspace/slices",
+    "-e",
+    "BAMBU_MACHINE_JSON=/workspace/presets/machine-profile.json",
+    "-e",
+    "BAMBU_PROCESS_JSON=/workspace/presets/process-profile.json",
+    "-e",
+    "BAMBU_FILAMENT_JSON=/workspace/presets/filament-profile.json",
+    "-e",
+    "PYTHONPATH=",
+    "45cb9f66d8bf9f53526f9bdc2c5b73e263acbe9322522ae48a1a6d0188e0be5a",
+    "/selected/venv/bin/python",
+    "-m",
+    "bambu_p1s_mcp"
+  ],
+  "safe_tool": "slice_model_file",
+  "arguments": {
+    "source": "/workspace/tiny.stl",
+    "output": "/workspace/sliced.gcode.3mf",
+    "plate": 1,
+    "orient": false,
+    "arrange": true,
+    "confirm": true
+  },
+  "expected_result_fields": {
+    "ok": true
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "Summary": {
+      "additionalProperties": false,
+      "properties": {
+        "content_verified": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Content Verified"
+        },
+        "requirements_compliant": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Requirements Compliant"
+        },
+        "evaluation_complete": {
+          "title": "Evaluation Complete",
+          "type": "boolean"
+        },
+        "release_eligible": {
+          "title": "Release Eligible",
+          "type": "boolean"
+        },
+        "physical_validation": {
+          "const": "not_assessed",
+          "default": "not_assessed",
+          "title": "Physical Validation",
+          "type": "string"
+        },
+        "counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "pass",
+              "fail",
+              "blocked",
+              "inconclusive",
+              "error",
+              "not_applicable"
+            ]
+          },
+          "title": "Counts",
+          "type": "object"
+        }
+      },
+      "required": [
+        "content_verified",
+        "requirements_compliant",
+        "evaluation_complete",
+        "release_eligible",
+        "counts"
+      ],
+      "title": "Summary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "wright.process-validation/1",
+      "default": "wright.process-validation/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "assessment_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "assessment_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Assessment Digest",
+      "type": "string"
+    },
+    "attempt_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Attempt Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "is_current": {
+      "title": "Is Current",
+      "type": "boolean"
+    },
+    "release_eligible": {
+      "title": "Release Eligible",
+      "type": "boolean"
+    },
+    "summary": {
+      "$ref": "#/$defs/Summary"
+    },
+    "finding_count": {
+      "minimum": 0,
+      "title": "Finding Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "assessment_digest",
+    "attempt_id",
+    "workspace_id",
+    "is_current",
+    "release_eligible",
+    "summary",
+    "finding_count"
+  ],
+  "title": "AssessmentReference",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:wright:process-validation:1:AssessmentReference"
+}

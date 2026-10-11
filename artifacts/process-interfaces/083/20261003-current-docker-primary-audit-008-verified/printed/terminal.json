@@ -1,0 +1,18 @@
+{
+  "container_id": "da000db25f03994aaaa82c93dbb5d9f3b2fa271742bd0559fc3fce5cfdc0e544",
+  "state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-03T22:07:45.52482924Z",
+    "FinishedAt": "2026-10-03T22:16:25.313033781Z"
+  },
+  "owned_stop_request": true,
+  "stopped_normally": true
+}

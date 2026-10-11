@@ -1,0 +1,27 @@
+{
+  "component_tests": 59,
+  "reader_inspection_example_tests": 87,
+  "frontend_typecheck": "passed",
+  "actual_package_scope": "Read-only nominal section of retained failed-run 3MF; not successful full workflow",
+  "failed_run_id": "aee8d1771e1442babd28ff0fab3df0cf",
+  "actual_layers": 90,
+  "full_engineering_assessment_reached": false,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "served_preparation_reuse_complete": false,
+  "previous_failed_reports_retained": true,
+  "files": {
+    "actual-package-reader-qualification.json": {
+      "sha256": "9cf7e486b14a2aea23aa763b7cbcf85cb76db4d76f33a0d5e2945b95635fcf8b",
+      "bytes": 1764
+    },
+    "component-tests.json": {
+      "sha256": "17f63d67180d42ca60790f58e4c750f05b9b0e1d3983f12777dd720b31ab903d",
+      "bytes": 19417
+    },
+    "reader-inspection-example-tests.xml": {
+      "sha256": "482af8acf96c5ca295a949f82c70d9af3e327124e710e532d38ee13f74d5eb7a",
+      "bytes": 23389
+    }
+  }
+}

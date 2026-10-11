@@ -1,0 +1,18 @@
+{
+  "run_id": "dc342991f8ba4f90962e836f513c7038",
+  "source_path": "workflows/printed-replacement-part-retained-consumer-002.workflow.wflow",
+  "source_sha256": "860f3aa85ae421ab04992b9483945a3312cf916c288d1f4e284e0daf4547b7e2",
+  "input_snapshot_id": "inputs-d2227bb75ee24ad791f1e509fbcbb494",
+  "input_digest": "af12a84dceda57b2132afdacd0617b8463d4aa875ff44d4b8282485ca766654e",
+  "integration_policy_digest": "b8a8e5df92366d1b1d2491431e7317ffaf80d2053c441ac85420dac26fb2946f",
+  "readiness_state": "ready",
+  "step_count": 10,
+  "tool_count": 5,
+  "state_at_start": "accepted",
+  "engineering_gate_executed": false,
+  "basis_review_answered": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "original_failed_consumer_preserved": true,
+  "initial_harness_failure": "Wrong memory budget field rejected before source creation; original private bindings retained; corrected memory_limit_mb=512."
+}

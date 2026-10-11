@@ -1,0 +1,58 @@
+{
+  "actual_job": {
+    "job_id": "job-971c977de22741b1a49cf21451b232b8",
+    "request_id": "interface-e3b47bd3-c3ea-4b12-bd1f-872ad83e09f7",
+    "state": "saved",
+    "revision_id": "revision-d38d8f51a4674fe7816f9b00ca43ad73",
+    "trace_id": "e62aeef9dcf74040ba3a862404f77726",
+    "process": {
+      "semantic_digest": null,
+      "source_contract": "canonical-source",
+      "source_digest": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7",
+      "source_path": "workflows/printed-replacement-part-configured-default-016.workflow.wflow",
+      "workspace_id": "083-printed-repeat-015"
+    }
+  },
+  "bounds": {
+    "top": 682.984375,
+    "bottom": 831.984375,
+    "height": 149,
+    "viewport": 1000
+  },
+  "result_ids": [
+    "5c3a84a335854e88aa8bbe48a591ce0d:authorize_transfer_configured_default_016:receipt",
+    "5c3a84a335854e88aa8bbe48a591ce0d:create_mesh_configured_default_016:create_mesh_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:create_mesh_configured_default_016:source_mesh",
+    "5c3a84a335854e88aa8bbe48a591ce0d:define_geometry_basis_configured_default_016:define_geometry_basis_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:filament_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:inspect_slice_handoff_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:machine_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:process_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:slice_evidence",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:support_preview",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:toolpath_summary",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:mesh_preview",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repair_measure_orient_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repaired_mesh",
+    "5c3a84a335854e88aa8bbe48a591ce0d:retain_slice_response_configured_default_016:provider_response",
+    "5c3a84a335854e88aa8bbe48a591ce0d:retain_slice_response_configured_default_016:retain_slice_response_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:summarize_preparation_configured_default_016:summarize_preparation_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:supports_and_slice_configured_default_016:slice_package",
+    "5c3a84a335854e88aa8bbe48a591ce0d:supports_and_slice_configured_default_016:supports_and_slice_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:validate_outputs_configured_default_016:diagnostic:validation/assessment-5f34914203794f148d653c47e99f98d4.json"
+  ],
+  "authoringOrExecutionPosts": [],
+  "diagnostics": {
+    "console": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to fetch Hermes model options Error: Failed to list Hermes models: Service Unavailable\n    at http://wright.localhost:58474/assets/index-D1ReSuw4.js:4160:3563\n    at async Object.listHermesModels (http://wright.localhost:58474/assets/index-D1ReSuw4.js:4160:3720)\n    at async http://wright.localhost:58474/assets/index-D1ReSuw4.js:4308:101155\n    at async http://wright.localhost:58474/assets/index-D1ReSuw4.js:4308:101568"
+    ],
+    "pageErrors": [],
+    "failedResponses": [
+      {
+        "path": "/api/agent/models",
+        "status": 503
+      }
+    ]
+  }
+}

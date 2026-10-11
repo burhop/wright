@@ -1,0 +1,66 @@
+{
+  "run_id": "84cd89a395af406e80d094ec071abe59",
+  "ui_id": "ui-f47e26fbcc2e44a2a7c4dc939aef1948",
+  "revision_id": "revision-b1d66dc13ace45889297568cd38c6ee0",
+  "common_result_ids": [
+    "84cd89a395af406e80d094ec071abe59:authorize_transfer_mixed_default_071:receipt",
+    "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:create_mesh_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:source_mesh",
+    "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:filament_profile",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:inspect_slice_handoff_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:machine_profile",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:process_profile",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:slice_evidence",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:toolpath_summary",
+    "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:mesh_preview",
+    "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repair_measure_orient_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+    "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:provider_response",
+    "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:retain_slice_response_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:slice_package",
+    "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:supports_and_slice_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:validate_outputs_mixed_default_071:diagnostic:validation/assessment-55acf245b63f4f2d8e34a83bfaac8480.json"
+  ],
+  "tailored_result_ids": [
+    "84cd89a395af406e80d094ec071abe59:authorize_transfer_mixed_default_071:receipt",
+    "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:create_mesh_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:create_mesh_mixed_default_071:source_mesh",
+    "84cd89a395af406e80d094ec071abe59:define_geometry_basis_mixed_default_071:define_geometry_basis_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:filament_profile",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:inspect_slice_handoff_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:machine_profile",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:process_profile",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:slice_evidence",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+    "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:toolpath_summary",
+    "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:mesh_preview",
+    "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repair_measure_orient_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+    "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:provider_response",
+    "84cd89a395af406e80d094ec071abe59:retain_slice_response_mixed_default_071:retain_slice_response_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:summarize_preparation_mixed_default_071:summarize_preparation_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:slice_package",
+    "84cd89a395af406e80d094ec071abe59:supports_and_slice_mixed_default_071:supports_and_slice_mixed_default_071_result",
+    "84cd89a395af406e80d094ec071abe59:validate_outputs_mixed_default_071:diagnostic:validation/assessment-55acf245b63f4f2d8e34a83bfaac8480.json"
+  ],
+  "diagnostic_codes": [
+    "PROCESS_VALIDATION_NEEDS_INPUT"
+  ],
+  "toolpath_layers": 90,
+  "toolpath_artifact": {
+    "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json",
+    "sha256": "8bb38c5dc49d03d8c8a17304356b24d589dbbd3290e9ac55a2a7f1fad2d31f30",
+    "media_type": null,
+    "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+    "representation_id": null
+  },
+  "authoringOrExecutionPosts": [],
+  "diagnostics": {
+    "console": [],
+    "pageErrors": [],
+    "failedResponses": []
+  }
+}

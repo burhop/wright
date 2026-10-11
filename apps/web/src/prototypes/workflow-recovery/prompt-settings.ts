@@ -1,5 +1,34 @@
 import type { RecoveryCommand } from "./command-system";
 import { findPort, type RecoveryBlock, type RecoveryWorkflow } from "./model";
+import { configuredOutputs } from "./output-contracts";
+
+const IMAGE_FORMATS = new Set([
+  "png",
+  "jpg",
+  "jpeg",
+  "webp",
+  "gif",
+  "screenshot_jpeg",
+  "screenshot_png",
+]);
+export function isImageSource(
+  portId: string,
+  workflow: RecoveryWorkflow,
+): boolean {
+  const port = findPort(workflow, portId);
+  const owner = workflow.blocks.find(
+    (block) => block.id === port?.ownerBlockId,
+  );
+  if (!port || !owner) return false;
+  if (port.typeId === "type.image.reference-set") return true;
+  const format = configuredOutputs(owner, workflow).get(
+    sourceKey(port.id),
+  )?.format;
+  if (format && IMAGE_FORMATS.has(format)) return true;
+  const path =
+    port.typeId === "type.file.workspace" && owner.configuration.workspace_file;
+  return typeof path === "string" && /\.(png|jpe?g|webp|gif)$/i.test(path);
+}
 
 export const RESPONSE_FORMATS = {
   text: ".txt",
@@ -17,6 +46,33 @@ export const isPromptBlock = (block: RecoveryBlock | null) =>
   block?.executionKind === "ai_capable" &&
   block.kind === "work" &&
   block.bindingId === null;
+export function promptIsConfigured(
+  block: RecoveryBlock,
+  workflow: RecoveryWorkflow,
+): boolean {
+  return block.configuration.prompt_source === "connection"
+    ? workflow.ports.some(
+        (port) =>
+          port.ownerBlockId === block.id &&
+          port.direction === "input" &&
+          sourceKey(port.id) === block.configuration.prompt_input &&
+          workflow.relationships.some(
+            (edge) =>
+              edge.kind === "data" &&
+              edge.targetId === port.id &&
+              findPort(workflow, edge.sourceId)?.direction === "output",
+          ),
+      )
+    : Boolean(block.instructions.trim());
+}
+export function promptConfigurationLabel(
+  block: RecoveryBlock,
+  workflow: RecoveryWorkflow,
+): string {
+  return promptIsConfigured(block, workflow)
+    ? "Configured AI prompt"
+    : "Prompt not configured";
+}
 export function isFinalPrompt(
   block: RecoveryBlock,
   workflow: RecoveryWorkflow,
@@ -69,13 +125,13 @@ export function promptSourceCandidates(
     "type.report.check",
     "type.result.structured",
   ]);
-  if (references && block.configuration.authoring_template !== "mcp-task")
-    types.add("type.image.reference-set");
+  if (references) types.add("type.image.reference-set");
   return workflow.ports.filter(
     (port) =>
       port.direction === "output" &&
       !descendants.has(port.ownerBlockId) &&
       types.has(port.typeId) &&
+      (references || !isImageSource(port.id, workflow)) &&
       port.cardinality !== "many",
   );
 }
@@ -85,9 +141,19 @@ export function connectPromptCommands(
   sourceId: string,
 ): RecoveryCommand[] {
   const oldKey = block.configuration.prompt_input;
-  const oldPort = workflow.ports.find(
-    (port) => port.ownerBlockId === block.id && sourceKey(port.id) === oldKey,
-  );
+  const oldPort =
+    workflow.ports.find(
+      (port) =>
+        port.ownerBlockId === block.id &&
+        port.direction === "input" &&
+        sourceKey(port.id) === oldKey,
+    ) ??
+    workflow.ports.find(
+      (port) =>
+        port.ownerBlockId === block.id &&
+        port.direction === "input" &&
+        port.name === "Prompt",
+    );
   const commands: RecoveryCommand[] = workflow.relationships
     .filter((edge) => edge.kind === "data" && edge.targetId === oldPort?.id)
     .map((edge) => ({ kind: "disconnect", relationshipId: edge.id }));
@@ -105,7 +171,18 @@ export function connectPromptCommands(
     (port) => port.id === sourceId,
   );
   if (!source) throw new Error("Choose a compatible upstream response.");
+  const reusable =
+    oldPort &&
+    !oldPort.artifactContractId &&
+    !workflow.relationships.some(
+      (edge) =>
+        (edge.sourceId === oldPort.id || edge.targetId === oldPort.id) &&
+        edge.kind !== "data",
+    )
+      ? oldPort
+      : undefined;
   const targetId =
+    reusable?.id ??
     workflow.ports.find(
       (port) =>
         port.ownerBlockId === block.id &&
@@ -114,6 +191,12 @@ export function connectPromptCommands(
         port.typeId === source.typeId,
     )?.id ??
     `port.${block.id.slice(6)}-prompt-${source.typeId.slice(5).replaceAll(".", "-")}`;
+  if (reusable && reusable.typeId !== source.typeId)
+    commands.push({
+      kind: "set_port_type",
+      portId: targetId,
+      typeId: source.typeId,
+    });
   if (!findPort(workflow, targetId))
     commands.push({
       kind: "add_port",
@@ -159,15 +242,50 @@ export function connectReferenceCommands(
   block: RecoveryBlock,
   workflow: RecoveryWorkflow,
   sourceId: string,
+  targetPortId?: string,
 ): RecoveryCommand[] {
   const source = promptSourceCandidates(block, workflow, true).find(
     (port) => port.id === sourceId,
   );
   if (!source) return [];
-  const targetId = `port.${block.id.slice(6)}-reference-${source.id.slice(5)}`;
-  if (workflow.relationships.some((edge) => edge.targetId === targetId))
+  const imagePort = workflow.ports.find(
+    (port) =>
+      port.ownerBlockId === block.id &&
+      port.direction === "input" &&
+      port.name === "Reference image" &&
+      !workflow.relationships.some((edge) => edge.targetId === port.id),
+  );
+  const targetId =
+    targetPortId ??
+    (isImageSource(sourceId, workflow) ? imagePort?.id : undefined) ??
+    `port.${block.id.slice(6)}-reference-${source.id.slice(5)}`;
+  const target = findPort(workflow, targetId);
+  if (
+    targetPortId &&
+    (!target ||
+      target.ownerBlockId !== block.id ||
+      target.name !== "Reference image" ||
+      !isImageSource(sourceId, workflow))
+  )
     return [];
+  const incoming = workflow.relationships.filter(
+    (edge) => edge.targetId === targetId,
+  );
+  if (incoming.some((edge) => edge.sourceId === sourceId)) return [];
   return [
+    ...incoming.map((edge) => ({
+      kind: "disconnect" as const,
+      relationshipId: edge.id,
+    })),
+    ...(target && target.typeId !== source.typeId
+      ? [
+          {
+            kind: "set_port_type" as const,
+            portId: targetId,
+            typeId: source.typeId,
+          },
+        ]
+      : []),
     ...(!findPort(workflow, targetId)
       ? [
           {

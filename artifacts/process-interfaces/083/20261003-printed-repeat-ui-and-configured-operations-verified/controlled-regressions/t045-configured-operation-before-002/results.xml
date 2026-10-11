@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="9" time="2.526" timestamp="2026-10-03T03:05:14.134398-04:00" hostname="Work17"><testcase classname="tests.test_process_interface_examples" name="test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding" time="0.130"><failure message="assert True is False&#10; +  where True = PromptStep(id='create_mesh_configured_operations', title='Create source mesh', prompt=&quot;Use the existing Blender execut...ces=(), revision_policy='', file_dependencies={}, task_tool_allowlist=(), human_interaction=None, run_path_template='').agent_task">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_qualifie...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+
+    def test_qualified_geometry_can_explicitly_use_existing_configured_tool_binding(
+        printed_configuration,
+    ):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = "configured_tool"
+        report = module.prepare(workspace, "configured-operations", tools, bindings)
+        source = (workspace / report["source_path"]).read_text(encoding="utf-8")
+        plan = compile_prompt_workflow(source)
+        assert len(plan.steps) == 11
+        for prefix, role in (("create_mesh", "construction"), ("repair_measure_orient", "repair")):
+            step = next(s for s in plan.steps if s.id.startswith(prefix))
+&gt;           assert step.agent_task is False
+E           assert True is False
+E            +  where True = PromptStep(id='create_mesh_configured_operations', title='Create source mesh', prompt="Use the existing Blender execut...ces=(), revision_policy='', file_dependencies={}, task_tool_allowlist=(), human_interaction=None, run_path_template='').agent_task
+
+tests\test_process_interface_examples.py:526: AssertionError</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[None]" time="0.035"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = None
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[]" time="0.034"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = ''
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[automatic]" time="0.036"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = 'automatic'
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[mode3]" time="0.034"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = []
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[mode4]" time="0.033"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = {}
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[1]" time="0.033"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = 1
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_invalid_geometry_operation_mode_blocks_before_staging[False]" time="0.034"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_invalid_...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+mode = False
+
+    @pytest.mark.parametrize("mode", [None, "", "automatic", [], {}, 1, False])
+    def test_invalid_geometry_operation_mode_blocks_before_staging(printed_configuration, mode):
+        workspace, bindings, tools = printed_configuration
+        module = printed_preparer()
+        configured_geometry(bindings, workspace, module)
+        bindings["geometry_operation_mode"] = mode
+&gt;       with pytest.raises(ValueError, match="geometry operation mode"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:559: Failed</failure></testcase><testcase classname="tests.test_process_interface_examples" name="test_configured_geometry_requires_qualified_inputs_before_staging" time="0.032"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">printed_configuration = (WindowsPath('D:/repos/wright/.local-run/process-interfaces-083/t045-configured-operation-before-002/tmp/test_configur...aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'server_id': 'fixture-inspection', 'tool_name': 'run_simulation'}])
+
+    def test_configured_geometry_requires_qualified_inputs_before_staging(printed_configuration):
+        workspace, bindings, tools = printed_configuration
+        bindings["geometry_operation_mode"] = "configured_tool"
+&gt;       with pytest.raises(ValueError, match="pinned basis and both qualified"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tests\test_process_interface_examples.py:567: Failed</failure></testcase></testsuite></testsuites>

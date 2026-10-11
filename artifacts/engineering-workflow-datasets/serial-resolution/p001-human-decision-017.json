@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-22T22:46:17.327776+00:00",
+  "user_instruction": "Request changes for these gaps (Recommended)",
+  "run_id": "1f472a8acb4a430a816895f1ed85f5cc",
+  "checkpoint_id": "checkpoint-8e310e7cc440f53f219c9ebe",
+  "subject_digest": "f35423d9cd6951dc046efc2b10867e5eb9941aea4273bda2bf9fb6a142ad0eed",
+  "state": "changes_requested",
+  "actor": "local_workspace_user",
+  "reason": "User explicitly selected Request changes for these gaps (Recommended) in this task. Provide a recorded pads-down versus side orientation comparison and support-contact evidence, save an editable native .blend deliverable, and independently measure mounting holes and finger clearance in the final mesh. Triangle-clipped measurement found final central-span clearance 24.814040 mm, below the unchanged 25 mm requirement: correct the geometry. Preserve this run and its artifacts; prepare a bounded corrected successor, repair and re-slice changed geometry, and present fresh hashes for a new human review.",
+  "updated_at": 1790117177,
+  "source_sha256": "27bc09d4273a94b1157c67a40e55790e912ba700e22d709435d88f8833d98705",
+  "protected_files_unchanged": 20,
+  "automatic_approval": false,
+  "successor_approved": false,
+  "campaign_credit": false,
+  "solid_edge_touched": false
+}

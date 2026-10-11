@@ -1,0 +1,57 @@
+{
+  "workflow_path": "workflows/printed-replacement-part-retained-handoff-001.workflow.wflow",
+  "source_digest": "3cc48d6fd830ee6db4bc5ef83edb27954a34023f8b56d4cd7a6cb2b286274d05",
+  "owner": {
+    "host": "Work17",
+    "lease": "workflow-run:083-heat-live-005:fd63c394122a48fcbca3fdea67242cc0"
+  },
+  "started_at": "2026-10-02T16:28:45.850850+00:00",
+  "status": "failed",
+  "events": [
+    {
+      "kind": "run_started",
+      "run_id": "fd63c394122a48fcbca3fdea67242cc0",
+      "at": "2026-10-02T16:28:45.850850+00:00",
+      "task_id": "",
+      "task_title": "printed-replacement-part-retained-handoff-001",
+      "run_log_path": "runs/printed-replacement-part-retained-handoff-001/fd63c394122a48fcbca3fdea67242cc0.json"
+    }
+  ],
+  "execution_context": {
+    "allowed_tools": [],
+    "approval_mode": "auto",
+    "campaign_id": "083-private-digital-wheel-retained-handoff-001",
+    "created_at": 1790958117,
+    "dataset_digest": "55e3adfb166af0456ce8d614e36de71554e84420a446b312553b44db64bd3657",
+    "dataset_id": "printed-replacement-part-01",
+    "expires_at": 1791044517,
+    "input_files": {
+      "process-proofs/printed-replacement-part/retained-handoff-001/inputs/filament-profile.json": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "process-proofs/printed-replacement-part/retained-handoff-001/inputs/machine-profile.json": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "process-proofs/printed-replacement-part/retained-handoff-001/inputs/process-profile.json": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "process-proofs/printed-replacement-part/retained-handoff-001/inputs/producer-origin.json": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+      "process-proofs/printed-replacement-part/retained-handoff-001/inputs/slice_package.gcode.3mf": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+      "process-proofs/printed-replacement-part/retained-handoff-001/inputs/source-report.json": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d"
+    },
+    "output_root": "process-proofs/printed-replacement-part/retained-handoff-001/outputs",
+    "schema_version": 1,
+    "source_digest": "3cc48d6fd830ee6db4bc5ef83edb27954a34023f8b56d4cd7a6cb2b286274d05",
+    "source_path": "workflows/printed-replacement-part-retained-handoff-001.workflow.wflow",
+    "test_destinations": [
+      "test://083-private-digital-wheel-retained-handoff-001/printer/printed-replacement-part-01"
+    ],
+    "workspace_id": "083-heat-live-005",
+    "integration_policy_digest": "a5e01268a938743cbf5f87efa59e066704eb22dd4032968af3111584905e6595",
+    "actor": "integration_test:083-private-digital-wheel-retained-handoff-001",
+    "execution_kind": "integration"
+  },
+  "run_id": "fd63c394122a48fcbca3fdea67242cc0",
+  "required_step_ids": [
+    "authorize_transfer_retained_handoff_001"
+  ],
+  "error": "Authorize exact package transfer: exact source and artifact digests are required before approval.",
+  "code": "WORKFLOW_NOT_READY",
+  "correction": "Correct the highlighted workflow settings and save before running.",
+  "execution_ended_at": "2026-10-02T16:28:45.942134+00:00",
+  "completed_at": "2026-10-02T16:28:45.942134+00:00"
+}

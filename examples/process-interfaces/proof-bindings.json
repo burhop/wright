@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "feature": "083-process-working-interfaces",
+  "private_root": ".local-run/process-interfaces-083",
+  "physical_dispatch_allowed": false,
+  "cases": [
+    {
+      "template_id": "printed-replacement-part",
+      "scenario_id": "printed-replacement-part-01",
+      "inputs": [
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.png",
+          "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.svg",
+          "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+          "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+          "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/scenario.json",
+          "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/user-profile.md",
+          "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f"
+        }
+      ],
+      "baseline_profile": {
+        "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json",
+        "sha256": "3950b7e088a9eb9c3f3b51971db8b4a1813feece448f1c7517a7fa98f7d51d7a"
+      },
+      "historical_bindings": {
+        "path": "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json",
+        "sha256": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791"
+      },
+      "live_bindings_qualification": "pending",
+      "final_boundary": "digital-preparation-review"
+    },
+    {
+      "template_id": "heat-spreader-sizing",
+      "scenario_id": "heat-spreader-sizing-01",
+      "inputs": [
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+          "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/concept.png",
+          "sha256": "84bb3847254d05164c8dcb447cf3a001e9d9b859ad6c2a67c26260ac54aa5f57"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/concept.svg",
+          "sha256": "445941494d109662f292fe33830693358dcab34132cc774fd09bf49a5ac10161"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+          "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/prompt.txt",
+          "sha256": "f08a8caa5bc41b282b5386578be028bf60312da099b5613c600db9b73635e5d1"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/scenario.json",
+          "sha256": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8"
+        },
+        {
+          "path": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/user-profile.md",
+          "sha256": "857f534051126b05af7a9345ebd4cc02372a5ba395ced50f78b41815bf79f146"
+        }
+      ],
+      "baseline_profile": {
+        "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-01-full.json",
+        "sha256": "33859475386debc00c574f54cb09d5ddc0a95933b8da2872104219c87ac35122"
+      },
+      "historical_bindings": {
+        "path": "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json",
+        "sha256": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e"
+      },
+      "live_bindings_qualification": "pending",
+      "final_boundary": "analysis-review"
+    }
+  ],
+  "test_decision_policy": {
+    "enrollment_required": true,
+    "exact_source_subject_destination_required": true,
+    "integration_test": true,
+    "actor": "process-interface-private-test-driver",
+    "measured_failures_overridable": false,
+    "un_enrolled_human_reviews": "wait",
+    "protected_campaign_subjects": [
+      "heat01-attempt902",
+      "printed01-attempt901",
+      "water01-attempt905"
+    ],
+    "policy_not_enrolled_yet": true
+  }
+}

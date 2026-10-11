@@ -10,6 +10,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
   WorkflowRecoveryConcept as Editor,
+  RelationshipInspector,
   type WorkflowRecoveryConceptProps,
   type WorkflowRecoveryPersistedSource,
 } from "./WorkflowRecoveryConcept";
@@ -17,6 +18,7 @@ import savedWorkflowSource from "../../../../../specs/080-canonical-workflow-rec
 import { cloneWorkflow, initialWorkflow, initialLayout } from "./model";
 import { createAuthoringObject } from "./authoring-objects";
 import { formatRecoveryAuthoringSource } from "./recovery-authoring";
+import { blankWorkflowSource } from "../../services/blank-workflow";
 import type { WorkflowRunOptions } from "./WorkflowRecoveryConcept";
 import type { WorkspaceEngineeringResult } from "../../services/workspace-service";
 import {
@@ -61,6 +63,157 @@ class MockResizeObserver {
 
 beforeAll(() => {
   vi.stubGlobal("ResizeObserver", MockResizeObserver);
+});
+
+it.each([
+  ["empty", () => blankWorkflowSource("Readiness check")],
+  ["configured", () => reportWorkflowSource],
+] as const)(
+  "does not call a %s unstarted workflow ready to run",
+  async (kind, source) => {
+    const onRun = vi.fn();
+    render(
+      <Editor
+        workflowSource={source()}
+        workflowFilePath="workflows/readiness.workflow.wflow"
+        storageDigest={"a".repeat(64)}
+        definitionRevision={1}
+        onRun={onRun}
+        templateReadiness={
+          {
+            state: "not_template",
+          } as import("../../services/workspace-service").WorkspaceWorkflowSourceReadiness
+        }
+      />,
+    );
+    const toggle = screen.getByTestId("workflow-recovery-run-details-toggle");
+    await waitFor(() => expect(toggle).toHaveTextContent("Not started"));
+    expect(toggle).not.toHaveTextContent("Ready to run");
+    fireEvent.click(toggle);
+    expect(screen.getByTestId("workflow-native-run-summary")).toHaveTextContent(
+      "Not started",
+    );
+    expect(
+      screen.getByTestId("workflow-native-run-summary"),
+    ).not.toHaveTextContent("Ready to run");
+    fireEvent.click(screen.getByRole("button", { name: "View run readiness" }));
+    expect(
+      screen.getByTestId("workflow-recovery-run-readiness"),
+    ).toHaveAttribute("open");
+    expect(
+      screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+    ).toHaveFocus();
+    if (kind === "empty") {
+      expect(
+        screen.getByTestId("workflow-recovery-run-readiness-toggle"),
+      ).not.toHaveTextContent("Authoring checks pass");
+      expect(
+        screen.getByTestId("workflow-recovery-run-readiness"),
+      ).toHaveTextContent("Add a processing step");
+    }
+    expect(onRun).not.toHaveBeenCalled();
+  },
+);
+
+it("explains that input blocks alone do not make a runnable process", async () => {
+  const onRun = vi.fn();
+  render(
+    <Editor
+      workflowSource={blankWorkflowSource("Input only")}
+      workflowFilePath="workflows/input-only.workflow.wflow"
+      storageDigest={"a".repeat(64)}
+      definitionRevision={1}
+      onRun={onRun}
+    />,
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-create-group-input"));
+  fireEvent.click(
+    screen.getByTestId("workflow-recovery-create-template-text-input"),
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-run-readiness-toggle"));
+  expect(
+    screen.getByTestId("workflow-recovery-readiness-no-tasks"),
+  ).toHaveTextContent("Input blocks supply data");
+  expect(
+    screen.getByTestId("workflow-recovery-run-details-toggle"),
+  ).toHaveTextContent("Not started");
+  expect(onRun).not.toHaveBeenCalled();
+});
+
+it("follows an exact source step without reloading or replacing an open source draft", async () => {
+  const process = {
+    workspace_id: "workspace",
+    source_path: "workflows/report.workflow.wflow",
+    source_digest: "a".repeat(64),
+  };
+  const props = {
+    workflowSource: reportWorkflowSource,
+    workspaceId: "workspace",
+    workflowFilePath: process.source_path,
+    storageDigest: process.source_digest,
+    definitionRevision: 2,
+  };
+  const view = render(<Editor {...props} />);
+  fireEvent.change(screen.getByTestId("workflow-recovery-view-select"), {
+    target: { value: "code" },
+  });
+  const editor = screen.getByTestId(
+    "workflow-recovery-source-editor",
+  ) as HTMLTextAreaElement;
+  const draft = `${reportWorkflowSource}\nunsaved draft`;
+  fireEvent.change(editor, { target: { value: draft } });
+  view.rerender(
+    <Editor
+      {...props}
+      navigation={{
+        requestId: "step-one",
+        resolution: {
+          process,
+          target: { kind: "block", block_id: "document_1" },
+        },
+      }}
+    />,
+  );
+  expect(screen.getByTestId("workflow-recovery-source-editor")).toHaveValue(
+    draft,
+  );
+  expect(screen.getByTestId("workflow-recovery-inspector")).toBeVisible();
+  expect(
+    screen.queryByTestId("workflow-navigation-error"),
+  ).not.toBeInTheDocument();
+  const selected = screen.getByTestId("workflow-recovery-inspector");
+  expect(selected).toHaveTextContent("Create report.html in this workspace.");
+});
+
+it("explains a mismatched saved revision while preserving the open editor", async () => {
+  const props = {
+    workflowSource: reportWorkflowSource,
+    workspaceId: "workspace",
+    workflowFilePath: "workflows/report.workflow.wflow",
+    storageDigest: "a".repeat(64),
+    definitionRevision: 2,
+  };
+  render(
+    <Editor
+      {...props}
+      navigation={{
+        requestId: "other-revision",
+        resolution: {
+          process: {
+            workspace_id: "workspace",
+            source_path: props.workflowFilePath,
+            source_digest: "b".repeat(64),
+          },
+          target: { kind: "block", block_id: "document_1" },
+        },
+      }}
+    />,
+  );
+  await screen.findByTestId("workflow-navigation-error");
+  expect(screen.getByTestId("workflow-navigation-error")).toHaveTextContent(
+    "different saved workflow revision",
+  );
+  expect(screen.getByTestId("workflow-recovery-concept")).toBeInTheDocument();
 });
 
 it("rehydrates a pending review into the normal run drawer without running or pulsing", async () => {
@@ -299,6 +452,78 @@ function renameBlock(id: string, title: string) {
 }
 
 describe("WorkflowRecoveryConcept component states", () => {
+  it("renames the workflow through metadata commands, Undo/Redo, save and cold reopen without running", async () => {
+    const onSave = vi.fn(async (source: string) => ({
+      source,
+      definition_revision: 3,
+      storage_digest: "c".repeat(64),
+    }));
+    const onRun = vi.fn();
+    const view = render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        definitionRevision={2}
+        storageDigest={"b".repeat(64)}
+        onSave={onSave}
+        onRun={onRun}
+      />,
+    );
+    const name = screen.getByRole("textbox", { name: "Workflow name" });
+    await userEvent.click(name);
+    await userEvent.keyboard("Material comparison{Enter}");
+    expect(
+      screen.getByRole("heading", { name: "Material comparison", level: 1 }),
+    ).toBeVisible();
+    expect(
+      screen.getByTestId("workflow-recovery-save-status"),
+    ).toHaveTextContent("Unsaved");
+    await userEvent.click(screen.getByTestId("workflow-recovery-undo"));
+    expect(name).toHaveValue("Prompt to HTML");
+    await userEvent.click(screen.getByTestId("workflow-recovery-redo"));
+    expect(name).toHaveValue("Material comparison");
+    await userEvent.click(name);
+    await userEvent.keyboard("Engineering material comparison");
+    await userEvent.click(screen.getByTestId("workflow-recovery-save"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledOnce());
+    const saved = onSave.mock.calls[0]![0];
+    expect(saved).toContain('name: "Engineering material comparison"');
+    expect(saved).toContain("workflow prompt_to_html");
+    expect(saved).toContain(reportPrompt);
+    expect(saved).toContain('"output_filename":"report.html"');
+    expect(onRun).not.toHaveBeenCalled();
+    view.unmount();
+    render(
+      <Editor
+        workflowSource={saved}
+        definitionRevision={3}
+        storageDigest={"c".repeat(64)}
+        onSave={onSave}
+        onRun={onRun}
+      />,
+    );
+    expect(screen.getByRole("textbox", { name: "Workflow name" })).toHaveValue(
+      "Engineering material comparison",
+    );
+    expect(screen.getByTestId("workflow-recovery-save")).toBeDisabled();
+    expect(onRun).not.toHaveBeenCalled();
+  });
+
+  it("locks the workflow name while an unapplied source draft is present", () => {
+    render(<Editor workflowSource={reportWorkflowSource} />);
+    fireEvent.change(screen.getByTestId("workflow-recovery-view-select"), {
+      target: { value: "code" },
+    });
+    fireEvent.change(screen.getByTestId("workflow-recovery-source-editor"), {
+      target: { value: `${reportWorkflowSource}\nunfinished source` },
+    });
+    expect(
+      screen.getByRole("textbox", { name: "Workflow name" }),
+    ).toHaveAttribute("readonly");
+    expect(screen.getByTestId("workflow-recovery-source-editor")).toHaveValue(
+      `${reportWorkflowSource}\nunfinished source`,
+    );
+  });
+
   it("renames a block from its inspector heading through the normal undo and save commands", async () => {
     const onSave = vi.fn(async (source: string) => ({
       source,
@@ -844,6 +1069,193 @@ describe("WorkflowRecoveryConcept component states", () => {
     expect(screen.getByTestId("workflow-external-approval")).toHaveTextContent(
       "waiting for the qualified adapter",
     );
+    decide.mockRestore();
+    resume.mockRestore();
+  });
+
+  it("explains a data connection in engineering terms without changing its definition", () => {
+    const connection = initialWorkflow.relationships.find(
+      (r) => r.kind === "data",
+    )!;
+    const apply = vi.fn();
+    render(
+      <RelationshipInspector
+        relationshipId={connection.id}
+        workflow={initialWorkflow}
+        readOnly={false}
+        onApply={apply}
+        onDisconnect={vi.fn()}
+      />,
+    );
+    const explanation = screen.getByTestId(
+      "workflow-engineering-connection-context",
+    );
+    const sourcePort = initialWorkflow.ports.find(
+      (p) => p.id === connection.sourceId,
+    )!;
+    const targetPort = initialWorkflow.ports.find(
+      (p) => p.id === connection.targetId,
+    )!;
+    expect(explanation).toHaveTextContent(
+      initialWorkflow.blocks.find((b) => b.id === sourcePort.ownerBlockId)!
+        .title,
+    );
+    expect(explanation).toHaveTextContent(
+      initialWorkflow.blocks.find((b) => b.id === targetPort.ownerBlockId)!
+        .title,
+    );
+    expect(explanation).toHaveTextContent("Information carried:");
+    expect(explanation).not.toHaveTextContent(connection.sourceId);
+    expect(
+      screen.getByTestId(
+        `workflow-recovery-relationship-label-${connection.id}`,
+      ),
+    ).toHaveValue(connection.label);
+    expect(apply).not.toHaveBeenCalled();
+  });
+
+  it("presents a local validation checkpoint as an exact requirements review", async () => {
+    const pending: WorkflowApprovalCheckpoint = {
+      checkpoint_id: "checkpoint-validation-review",
+      workspace_id: "workspace-1",
+      workflow_id: "workflows/validated.workflow.wflow",
+      run_id: "run-validation-1",
+      step_id: "review_requirements",
+      action_kind: "local_review",
+      subject: {
+        definition_digest: "a".repeat(64),
+        input_digests: ["b".repeat(64)],
+        artifact_digests: ["c".repeat(64)],
+        binding: { server: "wright", tool: "review_artifacts" },
+        destination: { kind: "local_review", id: "workspace" },
+        settings: {
+          validation_review: {
+            profile_ref: {
+              id: "robot-arm-design-01",
+              version: "1.0.0",
+              sha256: "d".repeat(64),
+            },
+            requirement_ids: ["ARM-REQ-001", "ARM-REQ-004"],
+          },
+          validation_review_requirements: [
+            {
+              id: "ARM-REQ-001",
+              text: "The arm reaches every declared target pose.",
+              scope: "design",
+              sources: [
+                {
+                  artifact_ref: "requirements/robot-arm.md",
+                  locator: "R1",
+                  sha256: "f".repeat(64),
+                },
+              ],
+            },
+            {
+              id: "ARM-REQ-004",
+              text: "The report identifies all unreachable poses.",
+              scope: "content",
+              sources: [
+                {
+                  artifact_ref: "requirements/robot-arm.md",
+                  locator: "R4",
+                  sha256: "1".repeat(64),
+                },
+              ],
+            },
+          ],
+        },
+        action: { kind: "local_review", mode: "review_only" },
+      },
+      subject_digest: "e".repeat(64),
+      state: "pending",
+      continuation: {
+        next_step_index: 3,
+        artifact_files: [
+          { path: "results/arm-report.md", sha256: "c".repeat(64) },
+        ],
+        execution_context: { campaign_id: "controlled-test" },
+      },
+      actor: null,
+      reason: null,
+      created_at: 1,
+      updated_at: 1,
+      expires_at: null,
+      external_action: null,
+    };
+    const onRun = vi.fn().mockResolvedValue({
+      status: "awaiting_approval" as const,
+      approval: pending,
+      outputPath: "robot-arm.step",
+      outputBytes: 4096,
+      taskTitle: "Review requirements",
+      taskId: "review_requirements",
+      outputs: [],
+    });
+    const onOpenFile = vi.fn();
+    const decide = vi
+      .spyOn(workspaceService, "decideWorkflowApproval")
+      .mockResolvedValue({ ...pending, state: "approved", updated_at: 2 });
+    const resume = vi.spyOn(workspaceService, "resumeWorkflowApproval");
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        workflowFilePath="workflows/validated.workflow.wflow"
+        definitionRevision={2}
+        storageDigest={"a".repeat(64)}
+        workspaceSessionId="session-1"
+        onRun={onRun}
+        onOpenFile={onOpenFile}
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId("workflow-recovery-run-start"));
+    const panel = await screen.findByTestId("workflow-external-approval");
+    expect(panel).toHaveTextContent("Review results against the requirements");
+    expect(
+      screen.getByTestId("workflow-recovery-run-details-toggle"),
+    ).toHaveTextContent("Awaiting your review");
+    const technical = screen.getByTestId("workflow-approval-technical-record");
+    expect(technical).not.toHaveAttribute("open");
+    expect(panel).toHaveTextContent("robot-arm-design-01");
+    expect(panel).toHaveTextContent("1.0.0");
+    expect(
+      screen.getByTestId("workflow-validation-review-requirements"),
+    ).not.toHaveTextContent("ARM-REQ-001");
+    expect(
+      screen.getByTestId("workflow-validation-review-requirements"),
+    ).not.toHaveTextContent("ARM-REQ-004");
+    expect(panel).toHaveTextContent(
+      "The arm reaches every declared target pose.",
+    );
+    expect(panel).toHaveTextContent("requirements/robot-arm.md");
+    expect(panel).toHaveTextContent("R4");
+    expect(panel).not.toHaveTextContent("campaign runner");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Open arm-report.md" }),
+    );
+    expect(onOpenFile).toHaveBeenCalledWith("results/arm-report.md");
+    expect(
+      screen.getByTestId("workflow-external-approval-approve"),
+    ).toHaveTextContent("Approve reviewed requirements");
+    await userEvent.click(
+      screen.getByTestId("workflow-external-approval-approve"),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("workflow-recovery-run-details-toggle"),
+      ).toHaveTextContent("Review approved · waiting to continue"),
+    );
+    expect(
+      screen.queryByTestId("workflow-external-approval-resume"),
+    ).toBeNull();
+    expect(decide).toHaveBeenCalledWith(
+      "session-1",
+      pending,
+      "approved",
+      null,
+      expect.any(String),
+    );
+    expect(resume).not.toHaveBeenCalled();
     decide.mockRestore();
     resume.mockRestore();
   });
@@ -1482,6 +1894,102 @@ end`;
     ).toHaveValue("Keep this edit.");
   });
 
+  it.each(["success", "failure"])(
+    "holds source and history editing until a pending save ends with %s",
+    async (outcome) => {
+      let resolveSave!: (value: WorkflowRecoveryPersistedSource) => void;
+      let rejectSave!: (error: Error) => void;
+      const onSave = vi.fn(
+        () =>
+          new Promise<WorkflowRecoveryPersistedSource>((resolve, reject) => {
+            resolveSave = resolve;
+            rejectSave = reject;
+          }),
+      );
+      render(
+        <Editor
+          workflowSource={reportWorkflowSource}
+          definitionRevision={2}
+          storageDigest={"b".repeat(64)}
+          onSave={onSave}
+        />,
+      );
+      fireEvent.click(
+        screen.getByTestId("workflow-recovery-block-block.document-1"),
+      );
+      fireEvent.change(
+        screen.getByTestId(
+          "workflow-recovery-block-instructions-block.document-1",
+        ),
+        { target: { value: "Snapshot being saved." } },
+      );
+      fireEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+      const source = screen.getByTestId("workflow-recovery-source-editor");
+      const snapshot = (source as HTMLTextAreaElement).value;
+      fireEvent.click(screen.getByTestId("workflow-recovery-save"));
+      expect(source).toHaveAttribute("readonly");
+      expect(screen.getByTestId("workflow-recovery-undo")).toBeDisabled();
+      expect(screen.getByTestId("workflow-recovery-redo")).toBeDisabled();
+      expect(
+        screen.getByTestId("workflow-recovery-source-apply"),
+      ).toBeDisabled();
+      fireEvent.change(source, {
+        target: {
+          value: snapshot.replace(
+            "Snapshot being saved.",
+            "Unaccepted late change",
+          ),
+        },
+      });
+      fireEvent.click(screen.getByTestId("workflow-recovery-save"));
+      expect(source).toHaveValue(snapshot);
+      expect(onSave).toHaveBeenCalledOnce();
+      await act(async () => {
+        if (outcome === "success")
+          resolveSave({
+            source: snapshot,
+            definition_revision: 3,
+            storage_digest: "c".repeat(64),
+          });
+        else rejectSave(new Error("Save failed for this fixture"));
+      });
+      expect(source).not.toHaveAttribute("readonly");
+      expect(source).toHaveValue(snapshot);
+      expect(screen.getByTestId("workflow-recovery-undo")).toBeEnabled();
+      const next = snapshot.replace(
+        "Snapshot being saved.",
+        "Next edit after save.",
+      );
+      fireEvent.change(source, { target: { value: next } });
+      expect(source).toHaveValue(next);
+      expect(
+        screen.getByTestId("workflow-recovery-source-apply"),
+      ).toBeEnabled();
+    },
+  );
+
+  it("blocks native execution of an unapplied or invalid source draft", async () => {
+    const onRun = vi.fn();
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        definitionRevision={2}
+        storageDigest={"b".repeat(64)}
+        onRun={onRun}
+      />,
+    );
+    await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+    fireEvent.change(screen.getByTestId("workflow-recovery-source-editor"), {
+      target: { value: "workflow malformed\nend\n" },
+    });
+    const start = screen.getByTestId("workflow-recovery-run-start");
+    expect(start).toBeDisabled();
+    fireEvent.click(start);
+    await userEvent.click(screen.getByTestId("workflow-recovery-source-apply"));
+    expect(start).toBeDisabled();
+    expect(onRun).not.toHaveBeenCalled();
+  });
+
   it("connects another response as the prompt and derives terminal saving from that connection", async () => {
     render(
       <Editor
@@ -1755,7 +2263,8 @@ end`;
   });
 
   it("stores a workspace-relative file path and treats a bare filename as the workspace root", async () => {
-    render(<WorkflowRecoveryConcept />);
+    const onOpenFile = vi.fn();
+    render(<WorkflowRecoveryConcept onOpenFile={onOpenFile} />);
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -1775,6 +2284,14 @@ end`;
     expect(
       screen.getByTestId("workflow-recovery-input-file-block.file-input-1"),
     ).toHaveValue("requirements.docx");
+    expect(
+      screen.getByTestId("workflow-recovery-input-selected-path"),
+    ).toHaveTextContent("requirements.docx");
+    expect(
+      screen.getByTestId("workflow-recovery-input-selected-path"),
+    ).toHaveAttribute("title", "requirements.docx");
+    await userEvent.click(screen.getByTestId("workflow-recovery-input-open"));
+    expect(onOpenFile).toHaveBeenCalledWith("requirements.docx");
     await userEvent.click(screen.getByTestId("workflow-recovery-view-code"));
     expect(
       screen.getByTestId<HTMLTextAreaElement>("workflow-recovery-source-editor")
@@ -2081,6 +2598,9 @@ end`;
     expect(onSave.mock.calls[0]?.[0]).toContain(
       'name: "Design intent and loads"',
     );
+    expect(
+      screen.getByRole("textbox", { name: "Workflow name" }),
+    ).toHaveAttribute("readonly");
     await act(async () => finishSave());
     await waitFor(() =>
       expect(screen.getByTestId("workflow-recovery-concept")).toHaveAttribute(
@@ -2197,6 +2717,9 @@ end`;
     expect(
       screen.getByTestId("workflow-recovery-run-definition-lock"),
     ).toHaveTextContent("Canvas layout moves remain available");
+    expect(
+      screen.getByRole("textbox", { name: "Workflow name" }),
+    ).toHaveAttribute("readonly");
 
     await userEvent.click(screen.getByTestId("workflow-recovery-redo"));
     expect(

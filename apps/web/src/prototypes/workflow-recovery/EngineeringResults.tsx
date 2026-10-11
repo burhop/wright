@@ -1,4 +1,5 @@
 import type { WorkspaceEngineeringResult } from "../../services/workspace-service";
+import { fileName } from "./engineering-run-presentation";
 
 export function EngineeringResults({
   results,
@@ -14,7 +15,11 @@ export function EngineeringResults({
     >
       {results.map((result) => (
         <article key={result.id} className="recovery-engineering-result">
-          <b>{result.name}</b>
+          <b title={result.name}>
+            {result.representations.some((r) => r.location === result.name)
+              ? fileName(result.name)
+              : result.name}
+          </b>
           {result.kind === "cad_model" && <small> · CAD model</small>}
           {result.kind === "analysis" && <small> · Analysis result</small>}
           {!result.representations.some((r) => r.durability === "persistent") &&
@@ -33,9 +38,10 @@ export function EngineeringResults({
                     type="button"
                     className="recovery-button recovery-button--secondary"
                     data-testid="workflow-recovery-native-run-output-link"
+                    title={r.location}
                     onClick={() => onOpenFile(r.location)}
                   >
-                    Open {r.location}
+                    Open {fileName(r.location)}
                   </button>
                 ) : (
                   r.location

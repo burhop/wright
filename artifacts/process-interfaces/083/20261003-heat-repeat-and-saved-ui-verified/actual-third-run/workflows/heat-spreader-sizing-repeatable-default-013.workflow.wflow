@@ -1,0 +1,683 @@
+workflow repeatable_default_013
+  name: "Conduction Heat-Spreader Sizing"
+  purpose: "Compare plate widths using computed temperature fields, an analytical baseline, heat balance, and mesh sensitivity."
+  discipline: "thermal.analysis"
+  reviewed_ai_suggestions: true
+end
+
+task define_thermal_case_repeatable_default_013
+  name: "Define geometry, material, load, and boundaries"
+  purpose: "Record a complete conduction model and target temperature before geometry or solving."
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"define_thermal_case_repeatable_default_013_alternatives_csv","name":"define thermal case repeatable default 013 alternatives csv","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_concept_png","name":"define thermal case repeatable default 013 concept png","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_concept_svg","name":"define thermal case repeatable default 013 concept svg","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_context_md","name":"define thermal case repeatable default 013 context md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_prompt_txt","name":"define thermal case repeatable default 013 prompt txt","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_scenario_json","name":"define thermal case repeatable default 013 scenario json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_user_profile_md","name":"define thermal case repeatable default 013 user profile md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"define_thermal_case_repeatable_default_013_mandatory_requirements","name":"define thermal case repeatable default 013 mandatory requirements","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"define_thermal_case_repeatable_default_013_result","name":"define thermal case repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  prompt: "Record only the supplied case's exact basis and mandatory requirements. Preserve 100 mm length, 40/60 mm widths, 2 mm thickness, k=200 W/(m K), 4 W uniform full X=100 mm face, full X=0 face at 25 C, four insulated longitudinal faces, synthetic comparative density=2700 kg/m3, 45 C limit. Preserve <=2% analytical rise agreement/refinement and <=1% heat imbalance. No material certification, physical qualification or invented critic review. Numerical results have not been computed yet."
+  settings: {"output_format":"markdown","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/thermal-basis.md","file_policy":"overwrite","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+task create_plate_geometry_repeatable_default_013
+  name: "Create measured plate alternatives"
+  purpose: "Generate exact geometries for each candidate heat-spreader width."
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"create_plate_geometry_repeatable_default_013_exact_arguments","name":"create plate geometry repeatable default 013 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"create_plate_geometry_repeatable_default_013_authored_source","name":"create plate geometry repeatable default 013 authored source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"create_plate_geometry_repeatable_default_013_result","name":"create plate geometry repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"baseline_40_geometry","name":"baseline 40 geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"revision_60_geometry","name":"revision 60 geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"geometry_measurements","name":"geometry measurements","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Create and measure the baseline and revised plates; export their geometry manifests."
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-agentcad","mcp_tool":"proof-083-agentcad__run","mcp_schema_digest":"31e527d2464b2055e664139e71fbb4bdd6bc1eae7bf4f194cb30504f95759a16","mcp_arguments_source":"connection","mcp_arguments_input":"create_plate_geometry_repeatable_default_013_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/cad-execution.json","file_policy":"overwrite","expected_files":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40.step\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60.step\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/geometry-measurements.json","run_path_template":"wright.run-path/1","mcp_file_dependencies":{"create_plate_geometry_repeatable_default_013_authored_source":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/plate-source.py"},"expected_file_ports":{"baseline_40_geometry":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40.step","revision_60_geometry":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60.step","geometry_measurements":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/geometry-measurements.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+task solve_and_verify_repeatable_default_013
+  name: "Solve and verify thermal sizing"
+  purpose: "Use computed fields to compare analytical agreement, heat balance, mesh sensitivity, and the temperature requirement."
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"solve_and_verify_repeatable_default_013_computed_result","name":"solve and verify repeatable default 013 computed result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"solve_and_verify_repeatable_default_013_basis","name":"solve and verify repeatable default 013 basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"solve_and_verify_repeatable_default_013_cad_readback","name":"solve and verify repeatable default 013 cad readback","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"solve_and_verify_repeatable_default_013_reviewable_solver_source","name":"solve and verify repeatable default 013 reviewable solver source","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"solve_and_verify_repeatable_default_013_result","name":"solve and verify repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/thermal-verification.json","file_policy":"overwrite","run_path_template":"wright.run-path/1","authoring_template":"mcp-task","mcp_server":"wright-workspace-files","max_tool_calls":16,"timeout_seconds":180,"expected_files":"","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval."}
+  tool: null
+  reusable_step: null
+  prompt: "Inspect the actual heat-balance.json, mesh-comparison.json, sizing-decision.json and geometry-analysis-correspondence.json in the supplied exact output root. Follow paginated inspect_file text until all JSON is read. Compare the actual two candidate temperatures, mass, original limit, analytical agreement, refinement, heat balance and exact STEP hashes. Keep critic_approved=false and pending independent critic explicit. Preserve failures and unsupported evidence; never invent a pass or execute another solver. Native comparisons are not physical qualification."
+end
+
+connection basis_to_geometry_repeatable_default_013
+  type: "order"
+  from: "define_thermal_case_repeatable_default_013"
+  to: "create_plate_geometry_repeatable_default_013"
+  label: "accepted thermal basis"
+  when: null
+end
+
+connection geometry_to_solver_repeatable_default_013
+  type: "order"
+  from: "create_plate_geometry_repeatable_default_013"
+  to: "solve_and_verify_repeatable_default_013"
+  label: "measured alternatives"
+  when: null
+end
+
+input input_alternatives_csv_repeatable_default_013
+  name: "alternatives.csv"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_alternatives_csv_repeatable_default_013_out","name":"input alternatives csv repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/alternatives.csv"}
+  tool: null
+  reusable_step: null
+end
+
+input input_concept_png_repeatable_default_013
+  name: "concept.png"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_png_repeatable_default_013_out","name":"input concept png repeatable default 013 out","kind":"reference_images","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/concept.png"}
+  tool: null
+  reusable_step: null
+end
+
+input input_concept_svg_repeatable_default_013
+  name: "concept.svg"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_concept_svg_repeatable_default_013_out","name":"input concept svg repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/concept.svg"}
+  tool: null
+  reusable_step: null
+end
+
+input input_context_md_repeatable_default_013
+  name: "context.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_context_md_repeatable_default_013_out","name":"input context md repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/context.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_prompt_txt_repeatable_default_013
+  name: "prompt.txt"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_prompt_txt_repeatable_default_013_out","name":"input prompt txt repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/prompt.txt"}
+  tool: null
+  reusable_step: null
+end
+
+input input_scenario_json_repeatable_default_013
+  name: "scenario.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_scenario_json_repeatable_default_013_out","name":"input scenario json repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/scenario.json"}
+  tool: null
+  reusable_step: null
+end
+
+input input_user_profile_md_repeatable_default_013
+  name: "user-profile.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_user_profile_md_repeatable_default_013_out","name":"input user profile md repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/user-profile.md"}
+  tool: null
+  reusable_step: null
+end
+
+input input_requirements_md_repeatable_default_013
+  name: "requirements.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_requirements_md_repeatable_default_013_out","name":"input requirements md repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/requirements.md"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_alternatives_csv
+  type: "item"
+  from: "input_alternatives_csv_repeatable_default_013.input_alternatives_csv_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_alternatives_csv"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_concept_png
+  type: "item"
+  from: "input_concept_png_repeatable_default_013.input_concept_png_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_concept_png"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_concept_svg
+  type: "item"
+  from: "input_concept_svg_repeatable_default_013.input_concept_svg_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_concept_svg"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_context_md
+  type: "item"
+  from: "input_context_md_repeatable_default_013.input_context_md_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_context_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_prompt_txt
+  type: "item"
+  from: "input_prompt_txt_repeatable_default_013.input_prompt_txt_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_prompt_txt"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_scenario_json
+  type: "item"
+  from: "input_scenario_json_repeatable_default_013.input_scenario_json_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_scenario_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_user_profile_md
+  type: "item"
+  from: "input_user_profile_md_repeatable_default_013.input_user_profile_md_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_user_profile_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_define_thermal_case_repeatable_default_013_mandatory_requirements
+  type: "item"
+  from: "input_requirements_md_repeatable_default_013.input_requirements_md_repeatable_default_013_out"
+  to: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_mandatory_requirements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task review_basis_repeatable_default_013
+  name: "Review the thermal model and original limits"
+  purpose: "Review the thermal model and original limits"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"review_basis_repeatable_default_013_basis","name":"review basis repeatable default 013 basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"review_basis_repeatable_default_013","validation_review":{"profile_ref":{"id":"heat-spreader-sizing-01-full","version":"1","sha256":"da8e16b33bd69313b020c0aabc21ce6e0e6fb21bd465941b92ad224a86756252"},"requirement_ids":["HEAT01-BOUNDARIES","HEAT01-CLAIM-SCOPE","HEAT01-MATERIAL"]}},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review these exact basis bytes and original engineering assumptions. No physical acceptance follows."
+end
+
+connection bind_review_basis_repeatable_default_013_basis
+  type: "item"
+  from: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_result"
+  to: "review_basis_repeatable_default_013.review_basis_repeatable_default_013_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task cad_documentation_repeatable_default_013
+  name: "Read the selected CAD project and authoring instructions"
+  purpose: "Read the selected CAD project and authoring instructions"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"cad_documentation_repeatable_default_013_reviewed_basis","name":"cad documentation repeatable default 013 reviewed basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"cad_documentation_repeatable_default_013_result","name":"cad documentation repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/cad-documentation.json","file_policy":"overwrite","run_path_template":"wright.run-path/1","authoring_template":"mcp-task","mcp_server":"proof-083-agentcad","max_tool_calls":3,"timeout_seconds":180,"expected_files":"","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval."}
+  tool: null
+  reusable_step: null
+  prompt: "Call context(cwd='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\selected-cad-project',build_dir='build'), docs(section='quickstart',cwd='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\selected-cad-project',build_dir='build') and docs(section='helpers',cwd='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\selected-cad-project',build_dir='build'). Return actual project identity and exact source authoring instructions. Empty geometry is expected before the next stage. Report missing configuration; do not execute geometry here."
+end
+
+connection bind_cad_documentation_repeatable_default_013_reviewed_basis
+  type: "item"
+  from: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_result"
+  to: "cad_documentation_repeatable_default_013.cad_documentation_repeatable_default_013_reviewed_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task author_cad_repeatable_default_013
+  name: "Author the exact plate candidates"
+  purpose: "Author the exact plate candidates"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"author_cad_repeatable_default_013_cad_docs","name":"author cad repeatable default 013 cad docs","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"author_cad_repeatable_default_013_basis","name":"author cad repeatable default 013 basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"author_cad_repeatable_default_013_source_contract","name":"author cad repeatable default 013 source contract","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"author_cad_repeatable_default_013_result","name":"author cad repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"cad_source","name":"cad source","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/cad-authoring.json","file_policy":"overwrite","run_path_template":"wright.run-path/1","authoring_template":"mcp-task","mcp_server":"wright-workspace-files","max_tool_calls":4,"timeout_seconds":180,"expected_files":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/plate-source.py","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval.","expected_file_ports":{"cad_source":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/plate-source.py"}}
+  tool: null
+  reusable_step: null
+  prompt: "Inspect process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/plate-source.py first. If absent, use write_text_document once to create it, text/plain, real build123d source. If present on a later run, read all bytes and compare against the exact connected basis and source contract before explicitly reporting reuse; never overwrite or pretend to create it. A mismatch blocks this stage and requires an explicitly revised source path before a new run. Follow the supplied selected-runtime source contract and actual CAD docs. Write source that, when executed by the next declared CAD stage, constructs both baseline_40=100x40x2 and revision_60=100x60x2 unperforated rectangles in mm with minimum corner (0,0,0). The source must export each actual STEP to C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-heat-repeat-013\\process-proofs\\heat-spreader-sizing\\repeatable-default-013\\outputs\\{{wright.run_id}}/<case_id>.step, reopen each STEP with the native kernel, measure bounding-box x/y/z, and write C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-heat-repeat-013\\process-proofs\\heat-spreader-sizing\\repeatable-default-013\\outputs\\{{wright.run_id}}/geometry-measurements.json with cases indexed by those exact IDs containing dimensions_mm as x/y/z and step_sha256 of actual exported bytes. Call injected show_object on actual shapes. Invoke main unconditionally if used; __file__ is not the input pathname. Use explicit supplied paths. This authoring stage is complete once its source is created and checked. Do not execute CAD here or mark this stage blocked because STEP/measurement exports do not yet exist: the next declared native CAD operation produces them. No solver or acceptance results here."
+end
+
+input input_selected_cad_source_contract_txt_repeatable_default_013
+  name: "selected-cad-source-contract.txt"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_selected_cad_source_contract_txt_repeatable_default_013_out","name":"input selected cad source contract txt repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/selected-cad-source-contract.txt"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_author_cad_repeatable_default_013_cad_docs
+  type: "item"
+  from: "cad_documentation_repeatable_default_013.cad_documentation_repeatable_default_013_result"
+  to: "author_cad_repeatable_default_013.author_cad_repeatable_default_013_cad_docs"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_author_cad_repeatable_default_013_basis
+  type: "item"
+  from: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_result"
+  to: "author_cad_repeatable_default_013.author_cad_repeatable_default_013_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_author_cad_repeatable_default_013_source_contract
+  type: "item"
+  from: "input_selected_cad_source_contract_txt_repeatable_default_013.input_selected_cad_source_contract_txt_repeatable_default_013_out"
+  to: "author_cad_repeatable_default_013.author_cad_repeatable_default_013_source_contract"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_cad_call_json_repeatable_default_013
+  name: "cad-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_cad_call_json_repeatable_default_013_out","name":"input cad call json repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/cad-call.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_create_plate_geometry_repeatable_default_013_exact_arguments
+  type: "item"
+  from: "input_cad_call_json_repeatable_default_013.input_cad_call_json_repeatable_default_013_out"
+  to: "create_plate_geometry_repeatable_default_013.create_plate_geometry_repeatable_default_013_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_create_plate_geometry_repeatable_default_013_authored_source
+  type: "item"
+  from: "author_cad_repeatable_default_013.cad_source"
+  to: "create_plate_geometry_repeatable_default_013.create_plate_geometry_repeatable_default_013_authored_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task measure_candidates_repeatable_default_013
+  name: "Reopen and measure the exported candidates"
+  purpose: "Reopen and measure the exported candidates"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"measure_candidates_repeatable_default_013_creation_response","name":"measure candidates repeatable default 013 creation response","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"measure_candidates_repeatable_default_013_result","name":"measure candidates repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/cad-readback.json","file_policy":"overwrite","run_path_template":"wright.run-path/1","authoring_template":"mcp-task","mcp_server":"proof-083-agentcad","max_tool_calls":2,"timeout_seconds":180,"expected_files":"","task_guidance":"Use only actual selected tools; retain raw failures and observations. Never fabricate files, measurements, reviews or provider approval."}
+  tool: null
+  reusable_step: null
+  prompt: "Call measure(file='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\process-proofs\\\\heat-spreader-sizing\\\\repeatable-default-013\\\\outputs\\\\{{wright.run_id}}\\\\baseline_40.step',cwd='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\selected-cad-project',build_dir='build') and measure(file='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\process-proofs\\\\heat-spreader-sizing\\\\repeatable-default-013\\\\outputs\\\\{{wright.run_id}}\\\\revision_60.step',cwd='C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\t047-heat-repeat-013\\\\selected-cad-project',build_dir='build'). Retain each actual result and dimensions. Preserve any upstream creation error separately from measured native geometry; do not rerun creation or claim a successful creation receipt. Fail if a measured candidate is invalid, missing or mismatched. This read-back is not physical qualification."
+end
+
+connection bind_measure_candidates_repeatable_default_013_creation_response
+  type: "item"
+  from: "create_plate_geometry_repeatable_default_013.create_plate_geometry_repeatable_default_013_result"
+  to: "measure_candidates_repeatable_default_013.measure_candidates_repeatable_default_013_creation_response"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_heat_conduction_skfem_py_repeatable_default_013
+  name: "heat_conduction_skfem.py"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_heat_conduction_skfem_py_repeatable_default_013_out","name":"input heat conduction skfem py repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/heat_conduction_skfem.py"}
+  tool: null
+  reusable_step: null
+end
+
+input input_solver_call_json_repeatable_default_013
+  name: "solver-call.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_solver_call_json_repeatable_default_013_out","name":"input solver call json repeatable default 013 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/heat-spreader-sizing/repeatable-default-013/inputs/solver-call.json","run_path_template":"wright.run-path/1"}
+  tool: null
+  reusable_step: null
+end
+
+task compute_fields_repeatable_default_013
+  name: "Compute coarse and refined temperature fields"
+  purpose: "Compute coarse and refined temperature fields"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"compute_fields_repeatable_default_013_exact_arguments","name":"compute fields repeatable default 013 exact arguments","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"compute_fields_repeatable_default_013_baseline_40_geometry","name":"compute fields repeatable default 013 baseline 40 geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"compute_fields_repeatable_default_013_revision_60_geometry","name":"compute fields repeatable default 013 revision 60 geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"compute_fields_repeatable_default_013_geometry_measurements","name":"compute fields repeatable default 013 geometry measurements","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"compute_fields_repeatable_default_013_result","name":"compute fields repeatable default 013 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"baseline_40_coarse","name":"baseline 40 coarse","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"baseline_40_fine","name":"baseline 40 fine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"revision_60_coarse","name":"revision 60 coarse","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"revision_60_fine","name":"revision 60 fine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"decision","name":"decision","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"correspondence","name":"correspondence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"mcp-tool","mcp_server":"proof-083-oasis","mcp_tool":"proof-083-oasis__run_simulation","mcp_schema_digest":"e8e313d199ece3b6b979f9b0bd21caff4b2e3f03fef1b02eefeaab28c79f183e","mcp_arguments_source":"connection","mcp_arguments_input":"compute_fields_repeatable_default_013_exact_arguments","mcp_arguments":"{}","timeout_seconds":180,"output_format":"json","save_output":true,"output_filename":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/solver-execution.json","file_policy":"overwrite","expected_files":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40-coarse-temperature.csv\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40-coarse-temperature.vtu\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40-fine-temperature.csv\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40-fine-temperature.vtu\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60-coarse-temperature.csv\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60-coarse-temperature.vtu\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60-fine-temperature.csv\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60-fine-temperature.vtu\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/heat-balance.json\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/mesh-comparison.json\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/sizing-decision.json\nprocess-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/geometry-analysis-correspondence.json","run_path_template":"wright.run-path/1","mcp_file_dependencies":{"compute_fields_repeatable_default_013_baseline_40_geometry":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40.step","compute_fields_repeatable_default_013_revision_60_geometry":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60.step","compute_fields_repeatable_default_013_geometry_measurements":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/geometry-measurements.json"},"expected_file_ports":{"baseline_40_coarse":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40-coarse-temperature.csv","baseline_40_fine":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/baseline_40-fine-temperature.csv","revision_60_coarse":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60-coarse-temperature.csv","revision_60_fine":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/revision_60-fine-temperature.csv","decision":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/sizing-decision.json","correspondence":"process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/{{wright.run_id}}/geometry-analysis-correspondence.json"}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection bind_compute_fields_repeatable_default_013_exact_arguments
+  type: "item"
+  from: "input_solver_call_json_repeatable_default_013.input_solver_call_json_repeatable_default_013_out"
+  to: "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_exact_arguments"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_compute_fields_repeatable_default_013_baseline_40_geometry
+  type: "item"
+  from: "create_plate_geometry_repeatable_default_013.baseline_40_geometry"
+  to: "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_baseline_40_geometry"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_compute_fields_repeatable_default_013_revision_60_geometry
+  type: "item"
+  from: "create_plate_geometry_repeatable_default_013.revision_60_geometry"
+  to: "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_revision_60_geometry"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_compute_fields_repeatable_default_013_geometry_measurements
+  type: "item"
+  from: "create_plate_geometry_repeatable_default_013.geometry_measurements"
+  to: "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_geometry_measurements"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_solve_and_verify_repeatable_default_013_computed_result
+  type: "item"
+  from: "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_result"
+  to: "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_computed_result"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_solve_and_verify_repeatable_default_013_basis
+  type: "item"
+  from: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_result"
+  to: "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_basis"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_solve_and_verify_repeatable_default_013_cad_readback
+  type: "item"
+  from: "measure_candidates_repeatable_default_013.measure_candidates_repeatable_default_013_result"
+  to: "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_cad_readback"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_solve_and_verify_repeatable_default_013_reviewable_solver_source
+  type: "item"
+  from: "input_heat_conduction_skfem_py_repeatable_default_013.input_heat_conduction_skfem_py_repeatable_default_013_out"
+  to: "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_reviewable_solver_source"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+task validate_outputs_repeatable_default_013
+  name: "Check exact current engineering outputs"
+  purpose: "Check exact current engineering outputs"
+  step_type: "work"
+  group: null
+  performed_by: "configured_tool"
+  inputs: [{"key":"validate_basis","name":"validate basis","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_baseline_40_geometry","name":"validate baseline 40 geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_revision_60_geometry","name":"validate revision 60 geometry","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_baseline_40_coarse","name":"validate baseline 40 coarse","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_baseline_40_fine","name":"validate baseline 40 fine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_revision_60_coarse","name":"validate revision 60 coarse","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_revision_60_fine","name":"validate revision 60 fine","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_decision","name":"validate decision","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"validate_correspondence","name":"validate correspondence","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"assessment","name":"assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":0,"validation":{"profile":{"source":"packaged","name":"heat-spreader-sizing-01-full","reference":{"id":"heat-spreader-sizing-01-full","version":"1","sha256":"da8e16b33bd69313b020c0aabc21ce6e0e6fb21bd465941b92ad224a86756252"}},"baseline":{"id":"heat-spreader-sizing-01-basis","version":"1","sha256":"648762c15d9461eedc7067bc51272e7fcc5e75e1a785efdfaa47efc123dd4e20"},"subjects":{"basis":"validate_basis","baseline_40_geometry":"validate_baseline_40_geometry","revision_60_geometry":"validate_revision_60_geometry","baseline_40_coarse":"validate_baseline_40_coarse","baseline_40_fine":"validate_baseline_40_fine","revision_60_coarse":"validate_revision_60_coarse","revision_60_fine":"validate_revision_60_fine","decision":"validate_decision","correspondence":"validate_correspondence"}}}
+  tool: null
+  reusable_step: null
+  prompt: ""
+end
+
+connection validate_bind_basis_repeatable_default_013
+  type: "item"
+  from: "define_thermal_case_repeatable_default_013.define_thermal_case_repeatable_default_013_result"
+  to: "validate_outputs_repeatable_default_013.validate_basis"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_baseline_40_geometry_repeatable_default_013
+  type: "item"
+  from: "create_plate_geometry_repeatable_default_013.baseline_40_geometry"
+  to: "validate_outputs_repeatable_default_013.validate_baseline_40_geometry"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_revision_60_geometry_repeatable_default_013
+  type: "item"
+  from: "create_plate_geometry_repeatable_default_013.revision_60_geometry"
+  to: "validate_outputs_repeatable_default_013.validate_revision_60_geometry"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_baseline_40_coarse_repeatable_default_013
+  type: "item"
+  from: "compute_fields_repeatable_default_013.baseline_40_coarse"
+  to: "validate_outputs_repeatable_default_013.validate_baseline_40_coarse"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_baseline_40_fine_repeatable_default_013
+  type: "item"
+  from: "compute_fields_repeatable_default_013.baseline_40_fine"
+  to: "validate_outputs_repeatable_default_013.validate_baseline_40_fine"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_revision_60_coarse_repeatable_default_013
+  type: "item"
+  from: "compute_fields_repeatable_default_013.revision_60_coarse"
+  to: "validate_outputs_repeatable_default_013.validate_revision_60_coarse"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_revision_60_fine_repeatable_default_013
+  type: "item"
+  from: "compute_fields_repeatable_default_013.revision_60_fine"
+  to: "validate_outputs_repeatable_default_013.validate_revision_60_fine"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_decision_repeatable_default_013
+  type: "item"
+  from: "compute_fields_repeatable_default_013.decision"
+  to: "validate_outputs_repeatable_default_013.validate_decision"
+  label: "exact current validation subject"
+  when: null
+end
+
+connection validate_bind_correspondence_repeatable_default_013
+  type: "item"
+  from: "compute_fields_repeatable_default_013.correspondence"
+  to: "validate_outputs_repeatable_default_013.validate_correspondence"
+  label: "exact current validation subject"
+  when: null
+end
+
+task analysis_review_repeatable_default_013
+  name: "Review the sizing decision and current findings"
+  purpose: "Review the sizing decision and current findings"
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"analysis_review_repeatable_default_013_comparison","name":"analysis review repeatable default 013 comparison","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"analysis_review_repeatable_default_013_assessment","name":"analysis review repeatable default 013 assessment","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: []
+  settings: {"authoring_template":"external-action-approval","action_kind":"local_review","approval_binding":{"server":"wright","tool":"review_artifacts","schema":"f11ab6c48e47a727cdfc1cd8efefb6f21cf08483c801e0e2cc882a825d96a338"},"approval_destination":{"kind":"local_review","id":"workspace"},"approval_settings":{"review_task_id":"analysis_review_repeatable_default_013"},"approval_action":{"kind":"local_review","mode":"review_only"}}
+  tool: null
+  reusable_step: null
+  instructions: "Review exact candidate fields, CAD correspondence, independent checks and 082 findings. Preserve any measured mandatory failures and pending critic. Execution does not establish engineering acceptance."
+end
+
+connection bind_analysis_review_repeatable_default_013_comparison
+  type: "item"
+  from: "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_result"
+  to: "analysis_review_repeatable_default_013.analysis_review_repeatable_default_013_comparison"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection bind_analysis_review_repeatable_default_013_assessment
+  type: "item"
+  from: "validate_outputs_repeatable_default_013.assessment"
+  to: "analysis_review_repeatable_default_013.analysis_review_repeatable_default_013_assessment"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+connection sequence_review_basis_repeatable_default_013
+  type: "order"
+  from: "define_thermal_case_repeatable_default_013"
+  to: "review_basis_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_cad_documentation_repeatable_default_013
+  type: "order"
+  from: "review_basis_repeatable_default_013"
+  to: "cad_documentation_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_author_cad_repeatable_default_013
+  type: "order"
+  from: "cad_documentation_repeatable_default_013"
+  to: "author_cad_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_create_plate_geometry_repeatable_default_013
+  type: "order"
+  from: "author_cad_repeatable_default_013"
+  to: "create_plate_geometry_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_measure_candidates_repeatable_default_013
+  type: "order"
+  from: "create_plate_geometry_repeatable_default_013"
+  to: "measure_candidates_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_compute_fields_repeatable_default_013
+  type: "order"
+  from: "measure_candidates_repeatable_default_013"
+  to: "compute_fields_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_solve_and_verify_repeatable_default_013
+  type: "order"
+  from: "compute_fields_repeatable_default_013"
+  to: "solve_and_verify_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_validate_outputs_repeatable_default_013
+  type: "order"
+  from: "solve_and_verify_repeatable_default_013"
+  to: "validate_outputs_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end
+
+connection sequence_analysis_review_repeatable_default_013
+  type: "order"
+  from: "validate_outputs_repeatable_default_013"
+  to: "analysis_review_repeatable_default_013"
+  label: "accepted process order"
+  when: null
+end

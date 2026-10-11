@@ -1,0 +1,21 @@
+{
+  "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+  "outputs": 18,
+  "browser_steps_passed": 12,
+  "actual_field_samples": 765,
+  "rendered_assessment": "assessment-c1cc56ecf12341938996ff0fa1c07b4e",
+  "assessment_file_sha256": "60ce2fbe08492f4a729f286f99b720b0cb60d197f694ffce57027a17381c509e",
+  "method": "read current durable results, real normal-workspace UI, exact CSV and recorded full assessment; no model/provider/physical invocation during result walkthrough",
+  "test_only_review": true,
+  "human_acceptance": false,
+  "tailored_ui_complete": false,
+  "checks": {
+    "readback": 124,
+    "authoring_api": 131,
+    "adapter_timeout": 35,
+    "frontend": 96,
+    "typescript": true,
+    "ruff": true
+  },
+  "browser_report": "workspace-walkthrough/report.html"
+}

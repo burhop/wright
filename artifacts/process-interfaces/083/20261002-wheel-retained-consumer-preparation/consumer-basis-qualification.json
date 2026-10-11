@@ -1,0 +1,32 @@
+{
+  "read_only": true,
+  "strict_object_identity": false,
+  "numeric_choices_unchanged_after_explicit_key_alias": true,
+  "key_alias": {
+    "/scallops/resulting_minimum_grip_diameter": "/scallops/minimum_grip_diameter"
+  },
+  "numeric_choices": {
+    "/body/maximum_diameter": 38.0,
+    "/body/body_height": 16.0,
+    "/body/overall_height": 18.0,
+    "/scallops/count": 6,
+    "/scallops/radial_depth": 2.25,
+    "/scallops/minimum_grip_diameter": 33.5,
+    "/hub/diameter": 12.0,
+    "/hub/height": 2.0,
+    "/dots/count": 12,
+    "/dots/diameter": 1.2,
+    "/dots/height": 0.35,
+    "/rounds/nominal_radius": 1.0,
+    "/socket/round_radius": 3.2,
+    "/socket/shaft_flat_coordinate": -2.2,
+    "/socket/cleared_flat_coordinate": -2.4,
+    "/socket/resulting_flat_to_far_round": 5.6,
+    "/socket/depth": 10.0,
+    "/socket/minimum_roof_thickness": 6.0
+  },
+  "semantic_comparison": "Descriptions shorten wording while retaining arc R8/center R24.75/phases 0..300, front hub z16..18, dots radius13.5 at 30+60n +/-8, R1 nominal treatment, D radius3.2/flat-2.4/rear depth10, and socket-up orientation.",
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "remaining_limits": "Actual hub-root blend, exposed rounds, mating fit and support outcome still require original verification/review."
+}

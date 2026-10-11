@@ -1,0 +1,7 @@
+{
+  "original_report_overall": "pass",
+  "actual_working_ui_verified": false,
+  "observed_url_kind": "preview",
+  "managed_contexts_all_read_only": true,
+  "limitation": "Harness reloaded before the asynchronous compatibility/open-saved transition completed. Connected banner is insufficient view-kind evidence. Preserve original report and use the stronger fresh continuation."
+}

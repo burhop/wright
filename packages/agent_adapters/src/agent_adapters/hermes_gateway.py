@@ -20,12 +20,16 @@ from .gateway import (
 
 
 def hermes_config_paths() -> list[str]:
-    """Return every config location Hermes may use on this host, active first."""
+    """Use an explicit config exclusively; otherwise discover host locations.
+
+    A selected profile/isolated instance must not also synchronize unrelated
+    host configurations merely because those locations are installed.
+    """
     hermes_home = Path(os.environ.get("HERMES_HOME") or os.path.expanduser("~/.hermes"))
     candidates: list[Path] = []
     explicit = os.environ.get("HERMES_CONFIG_PATH")
-    if explicit:
-        candidates.append(Path(explicit))
+    if explicit and explicit.strip():
+        return [str(Path(explicit.strip()).expanduser())]
     local_app_data = os.environ.get("LOCALAPPDATA")
     if local_app_data:
         candidates.append(Path(local_app_data) / "hermes" / "config.yaml")

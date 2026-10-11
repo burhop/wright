@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+    "--basetemp=D:\\repos\\wright\\.pytest-tmp\\t056-ui-revision-audit-006",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-ui-revision-audit-006\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "modules": [
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "packages/workspace_service/tests/test_process_ui_revision_compatibility.py"
+  ],
+  "source_sha256": {
+    "apps/api/tests/test_process_ui_surface_authority.py": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+    "packages/workspace_service/tests/test_process_ui_revision_compatibility.py": "2946f4584234966a32b3fa307bfaa90f882cc9f18b6433540eeca4d4d8422ea1",
+    "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py": "1acd52b7e0ec376cd9a8404581b7c1626acef5f4960915be8ff54219bfe31888",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py": "7f35fac4dc6d62ef30a5103dd158b3418d36ae1c68ad57979c32f7167939a33a",
+    "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py": "567f0123166b07fe33f023c2cf714425048c6da16d59b13103418927abb1eef6",
+    "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py": "f3019ceeda0c35566ec5f89c7463d0a4647959f388f2663db1526a060986981f",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py": "d37cc5c8ac07a8ec4b9b695906ec2352b0552ac6d3da39dd96f47021b7c0041f",
+    "apps/api/src/api/routers/process_ui_authoring.py": "fad9227a5c401529f22f00a2312273138b92a8a3463343a1f99363aba54123ec",
+    "apps/api/src/api/routers/process_surface.py": "b78546ebc9f184756bd150096e9dde2967f4157be448bfd18927666ca910d1dd"
+  },
+  "live_opt_ins_removed": true
+}

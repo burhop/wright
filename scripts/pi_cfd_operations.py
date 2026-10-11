@@ -6,6 +6,7 @@ Gmsh/OCC derives the actual conformal mesh; OpenFOAM performs the actual solve.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import math
@@ -20,6 +21,175 @@ import time
 
 MAX_CLOSED_SOLIDS_PER_REGION = 64
 MAX_IMPORTED_SOLIDS = 128
+CONVERGENCE_WINDOW_ITERATIONS = 5
+CONVERGENCE_MAX_INITIAL_RESIDUAL = 1e-4
+CONVERGENCE_MAX_FINAL_RESIDUAL = 1e-6
+CONVERGENCE_MAX_RELATIVE_TEMPERATURE_CHANGE = 1e-5
+
+
+_TIME_LINE = re.compile(r"^Time = ([0-9]+(?:\.[0-9]+)?)s?$", re.MULTILINE)
+_RESIDUAL_LINE = re.compile(
+    r"Solving for ([A-Za-z0-9_]+), Initial residual = ([0-9.eE+-]+), "
+    r"Final residual = ([0-9.eE+-]+)"
+)
+_TEMPERATURE_LINE = re.compile(r"Min/max T:([0-9.eE+-]+) ([0-9.eE+-]+)")
+
+
+def summarize_steady_convergence(log_text, expected_iterations):
+    """Measure a fixed steady-state criterion from the actual solver log."""
+    matches = list(_TIME_LINE.finditer(log_text))
+    if len(matches) < CONVERGENCE_WINDOW_ITERATIONS or "\nEnd\n" not in log_text:
+        raise ValueError("Solver log lacks a complete convergence window")
+    samples = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(log_text)
+        block = log_text[match.end() : end]
+        residuals = _RESIDUAL_LINE.findall(block)
+        temperatures = _TEMPERATURE_LINE.findall(block)
+        if not residuals or not temperatures:
+            raise ValueError("Solver log convergence sample is incomplete")
+        samples.append(
+            {
+                "iteration": float(match.group(1)),
+                "maximum_initial_residual": max(float(row[1]) for row in residuals),
+                "maximum_final_residual": max(float(row[2]) for row in residuals),
+                "maximum_temperature_k": max(float(row[1]) for row in temperatures),
+            }
+        )
+    window = samples[-CONVERGENCE_WINDOW_ITERATIONS:]
+    if not math.isclose(window[-1]["iteration"], float(expected_iterations)):
+        raise ValueError("Solver log did not reach the declared final iteration")
+    temperature_scale = max(abs(window[-1]["maximum_temperature_k"]), 1.0)
+    observed = {
+        "maximum_initial_residual": max(row["maximum_initial_residual"] for row in window),
+        "maximum_final_residual": max(row["maximum_final_residual"] for row in window),
+        "relative_temperature_change": abs(
+            window[-1]["maximum_temperature_k"] - window[0]["maximum_temperature_k"]
+        )
+        / temperature_scale,
+    }
+    criteria = {
+        "window_iterations": CONVERGENCE_WINDOW_ITERATIONS,
+        "maximum_initial_residual": CONVERGENCE_MAX_INITIAL_RESIDUAL,
+        "maximum_final_residual": CONVERGENCE_MAX_FINAL_RESIDUAL,
+        "maximum_relative_temperature_change": CONVERGENCE_MAX_RELATIVE_TEMPERATURE_CHANGE,
+    }
+    passed = (
+        observed["maximum_initial_residual"] <= criteria["maximum_initial_residual"]
+        and observed["maximum_final_residual"] <= criteria["maximum_final_residual"]
+        and observed["relative_temperature_change"]
+        <= criteria["maximum_relative_temperature_change"]
+    )
+    return {
+        "method": "last-five-iteration-residual-and-temperature-window-v1",
+        "criteria": criteria,
+        "observed": observed,
+        "samples": window,
+        "passed": passed,
+    }
+
+
+def external_boundary_patches(boundary_text):
+    """Return physical patches while excluding the Foam header and coupled interfaces."""
+    patches = re.findall(
+        r"\n\s*([a-zA-Z][a-zA-Z0-9_]*)\s*\n\s*\{([^}]+)\}",
+        boundary_text,
+    )
+    return [
+        (patch, body)
+        for patch, body in patches
+        if patch != "FoamFile" and "sampleRegion" not in body
+    ]
+
+
+def extract_region_boundary_energy_rows(case, contract, region, grid, pv):
+    """Measure one region's external faces, excluding internal coupled interfaces."""
+    identity = region["name"]
+    material = region["material"]
+    is_fluid = region["kind"] == "fluid"
+    boundary_text = (case / "constant" / identity / "polyMesh/boundary").read_text()
+    roles = {item["name"]: item["role"] for item in contract["boundaries"]}
+    energy_rows = []
+    for patch, _ in external_boundary_patches(boundary_text):
+        paths = list((case / "VTK" / identity / patch).glob("*.vtk"))
+        if len(paths) != 1:
+            raise ValueError("Expected one latest-time external boundary field")
+        surface = pv.read(paths[0]).compute_normals(
+            cell_normals=True,
+            point_normals=False,
+            consistent_normals=False,
+        )
+        required = {"T", "grad(T)", "Normals"}
+        if is_fluid:
+            required |= {"U", "rho"}
+        if not required <= set(surface.cell_data):
+            raise ValueError("External boundary lacks energy-balance fields")
+        areas = surface.compute_cell_sizes()["Area"]
+        normals = surface.cell_data["Normals"]
+        centers = surface.cell_centers().points
+        from_center = centers - grid.center
+        if float((normals * from_center).sum(axis=1).mean()) < 0:
+            normals = -normals
+        normal_velocity = (surface.cell_data["U"] * normals).sum(axis=1) if is_fluid else None
+        normal_gradient = (surface.cell_data["grad(T)"] * normals).sum(axis=1)
+        for index in range(surface.n_cells):
+            energy_rows.append(
+                {
+                    "patch": f"{identity}/{patch}",
+                    "role": roles.get(patch, "wall"),
+                    "area_m2": float(areas[index]),
+                    "normal_velocity_m_s": float(normal_velocity[index]) if is_fluid else 0.0,
+                    "density_kg_m3": float(surface.cell_data["rho"][index]) if is_fluid else float(material["rho"]),
+                    "temperature_k": float(surface.cell_data["T"][index]),
+                    "temperature_gradient_normal_k_m": float(normal_gradient[index]),
+                    "cp_j_kg_k": float(material["cp"]),
+                    "conductivity_w_m_k": float(material["kappa"]),
+                    "ambient_k": float(contract["ambient_k"]),
+                }
+            )
+    return energy_rows
+
+
+def extract_boundary_energy(case, contract, region_grids, pv, results):
+    """Integrate all external fluid and solid faces; never omit a material region."""
+    expected_regions = {region["name"] for region in contract["regions"]}
+    if set(region_grids) != expected_regions:
+        raise ValueError("Heat balance requires exported fields for every contract region")
+    energy_rows = []
+    for region in contract["regions"]:
+        energy_rows.extend(extract_region_boundary_energy_rows(
+            case, contract, region, region_grids[region["name"]], pv,
+        ))
+    if not energy_rows:
+        raise ValueError("No external boundary energy fields were extracted")
+    energy_path = results / "boundary-energy.csv"
+    with energy_path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(energy_rows[0]))
+        writer.writeheader()
+        writer.writerows(energy_rows)
+    heat_out_w = sum(
+        row["area_m2"]
+        * (
+            row["density_kg_m3"]
+            * row["cp_j_kg_k"]
+            * (row["temperature_k"] - row["ambient_k"])
+            * row["normal_velocity_m_s"]
+            - row["conductivity_w_m_k"]
+            * row["temperature_gradient_normal_k_m"]
+        )
+        for row in energy_rows
+    )
+    input_heat_w = sum(float(region.get("heat_w", 0)) for region in contract["regions"])
+    if input_heat_w <= 0:
+        raise ValueError("Heat balance requires a positive declared source load")
+    return {
+        "heat_balance_file": energy_path.name,
+        "heat_balance_file_sha256": sha(energy_path),
+        "input_heat_w": input_heat_w,
+        "net_outward_heat_w": heat_out_w,
+        "heat_balance_relative": abs(input_heat_w - heat_out_w) / input_heat_w,
+        "heat_balance_method": "external-region-face sensible-enthalpy-plus-conduction-v2",
+    }
 
 
 def sha(path):
@@ -574,15 +744,20 @@ def solve_and_extract(case):
         return result
     with claim.open("x") as stream:
         json.dump({**dispatch_identity, "status": "dispatched"}, stream)
-    foam_command(case, ["chtMultiRegionFoam"])
+    solver_log = foam_command(case, ["chtMultiRegionFoam"])
     contract = json.loads((case/"contract.json").read_text())
+    profile = numerical_profile(contract)
+    convergence = summarize_steady_convergence(solver_log.read_text(), profile["end"])
+    convergence["solver_log_sha256"] = sha(solver_log)
     import pyvista as pv
     records = []
     boundary_records = []
+    region_grids = {}
     results = case/"results"
     results.mkdir()
     for region in contract["regions"]:
         identity = region["name"]
+        foam_command(case, ["chtMultiRegionFoam", "-postProcess", "-func", "grad(T)", "-latestTime", "-region", identity])
         foam_command(case, ["foamToVTK", "-region", identity, "-latestTime"])
         candidates = list((case/"VTK"/identity).rglob("*.vtu")) + list((case/"VTK"/identity).rglob("*.vtk"))
         internal = [path for path in candidates if "internal" in path.name or path.parent.name == identity]
@@ -590,6 +765,7 @@ def solve_and_extract(case):
             raise ValueError("No actual VTK internal field exported for "+identity)
         mesh_path = max(internal, key=lambda path: path.stat().st_size)
         grid = pv.read(mesh_path)
+        region_grids[identity] = grid
         if "T" not in grid.array_names or not grid.n_cells:
             raise ValueError("Actual computed cell temperature is missing")
         temperature = grid["T"]
@@ -614,7 +790,9 @@ def solve_and_extract(case):
                                      "area_mean_static_pressure_pa": float((pressure*areas).sum()/area),
                                      "area_mean_total_pressure_pa": float(((pressure+.5*density*(velocity**2).sum(axis=1))*areas).sum()/area),
                                      "field": target.name, "sha256": sha(target), "normals": "Actual VTK boundary polygon winding"})
-    result = {"actual_regions": records, "actual_boundaries": boundary_records, "contract_sha256": sha(case/"contract.json"), "compiler_sha256": sha(__file__), "solver": "chtMultiRegionFoam OpenFOAM10", "numerical_profile": numerical_profile(contract), "engineering_validation_complete": False, "steady_state_convergence_claimed": False}
+    energy_summary = extract_boundary_energy(case, contract, region_grids, pv, results)
+    result = {"actual_regions": records, "actual_boundaries": boundary_records, "contract_sha256": sha(case/"contract.json"), "compiler_sha256": sha(__file__), "solver": "chtMultiRegionFoam OpenFOAM10", "numerical_profile": profile, "engineering_validation_complete": convergence["passed"] and energy_summary["heat_balance_relative"] <= 0.01, "steady_state_convergence_claimed": convergence["passed"], "convergence_evidence": convergence,
+              **energy_summary}
     write(results/"computed-fields.json", json.dumps(result, indent=2))
     write(claim, json.dumps({**dispatch_identity, "status": "completed", "result_sha256": sha(results/"computed-fields.json")}, indent=2))
     return result

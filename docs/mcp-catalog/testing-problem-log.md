@@ -2154,3 +2154,41 @@ unconnected items; actual FreeRouter routing then produced zero DRC violations.
 Native BOM and fabrication exports passed. Local registration lists 18 tools;
 no dataset dispatch or full gateway/correctness claim.
 [Evidence and recovery recipe](https://github.com/burhop/wright/blob/dev/specs/081-engineering-workflow-templates/dataset-campaign/kicad-prerequisite.md).
+
+### 2026-09-22 — Selected Modelica renewal export boundary
+
+Problem:
+  Isolated water-heater 901 reached a stopped historical Modelica container.
+  After recovery, 902 completed its first native simulation but failed at
+  `modelica_export_recorded_result`; the old container had no attempt-902 export
+  mount. Reusing the installer's historical display name also caused a duplicate
+  registration rejection for a new runtime.
+Solution:
+  Preserve both failed runs and the historical provider. Prepare a separate
+  no-network `wright-082-modelica-renewal` container from the retained immutable
+  selected image, with a fresh native store and exact qualification/903 export
+  mounts. Verify actual image, container identity, running state and mount set
+  against the receipt before registration; require same-container native export
+  proof and use a distinct registration name.
+Result:
+  Actual native simulation plus ten-file sealed export passed through Wright
+  StdioRunner/GatewayService. Host readback matched every file's size and digest;
+  repeated export was idempotent. All 15 tools are registered in the demo
+  workspace. Eighteen focused binding/runtime/export tests passed. This is a
+  selected-runtime repair proof, not a new public catalog qualification or a
+  completed Modelica/CAD/thermal-package campaign. See
+  `artifacts/campaign-example-renewal/qualification/modelica-renewal-native-export.json`
+  and the renewal recipe below the historical Modelica setup notes.
+
+### 2026-09-22 — Selected KiCad harness correspondence
+
+The old native-save qualification omitted required splices. The planner now
+uses the actual released schedule and frozen profile map. Real Wright Gateway
+execution and independent native XML/ERC comparison passed cases 01/02, including
+B1/B0; 4/5 library-configuration warnings are retained with zero ERC errors.
+Case 03 stopped at `add_component`: the selected MCP rejects `S_ZX`. No alias
+repair, reserve-pin/ERC qualification or complete case-03 proof is claimed.
+The user then stopped campaign work for cleanup and process redesign. Keep the
+failure and resume only with new direction. This changes neither public catalog
+qualification nor engineering limits. Portable exact evidence:
+`artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.

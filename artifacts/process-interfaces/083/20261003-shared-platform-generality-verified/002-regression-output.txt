@@ -1,0 +1,42 @@
+..F..................................................................... [ 20%]
+........................................................................ [ 40%]
+........................................................................ [ 60%]
+........................................................................ [ 80%]
+........................................................................ [100%]
+================================== FAILURES ===================================
+________ test_original_slice_profiles_already_declare_their_operation _________
+
+    def test_original_slice_profiles_already_declare_their_operation():
+        root = (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+        )
+        profiles = [
+            root / f"{prefix}-{index:02}.json"
+            for prefix in ("printed-replacement-part", "parametric-drill-jig")
+            for index in range(1, 4)
+        ]
+        for path in profiles:
+            profile = json.loads(path.read_bytes())
+            checks = [
+                check
+                for check in profile["checks"]
+                if check.get("parameters", {}).get("operation") == "slice_binding"
+            ]
+>           assert checks
+E           assert []
+
+tests\test_process_platform_generality.py:100: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\repos\wright\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  D:\repos\wright\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_process_platform_generality.py::test_original_slice_profiles_already_declare_their_operation
+1 failed, 359 passed, 2 warnings in 91.96s (0:01:31)

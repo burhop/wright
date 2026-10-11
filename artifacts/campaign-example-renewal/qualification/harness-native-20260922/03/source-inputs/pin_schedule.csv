@@ -1,0 +1,27 @@
+wire_id,cable_id,conductor,from_connector,from_pin,to_connector,to_pin,net,view,color_requirement
+W017,PAIR01,1,JSX,3,ZX,4,PRESSURE_X,numbered mating-face cavities; source drawing controls position,white
+W022,PAIR01,2,ZX,5,JSX,2,SENSOR_RETURN_X,numbered mating-face cavities; source drawing controls position,gray
+W018,PAIR02,1,ZX,4,J0,5,PRESSURE_X,numbered mating-face cavities; source drawing controls position,white
+W021,PAIR02,2,J0,7,ZX,5,SENSOR_RETURN_X,numbered mating-face cavities; source drawing controls position,gray
+W019,PAIR03,1,JSY,3,ZY,4,PRESSURE_Y,numbered mating-face cavities; source drawing controls position,white
+W024,PAIR03,2,ZY,5,JSY,2,SENSOR_RETURN_Y,numbered mating-face cavities; source drawing controls position,gray
+W020,PAIR04,1,ZY,4,J0,6,PRESSURE_Y,numbered mating-face cavities; source drawing controls position,white
+W023,PAIR04,2,J0,8,ZY,5,SENSOR_RETURN_Y,numbered mating-face cavities; source drawing controls position,gray
+W001,W001,1,J0,1,B0,PLUS,24V,numbered mating-face cavities; source drawing controls position,red
+W002,W002,1,J0,2,B0,RETURN,FAN_RETURN,numbered mating-face cavities; source drawing controls position,black
+W003,W003,1,B0,PLUS,ZX,1,24V,numbered mating-face cavities; source drawing controls position,red
+W004,W004,1,B0,RETURN,ZX,2,FAN_RETURN,numbered mating-face cavities; source drawing controls position,black
+W005,W005,1,B0,PLUS,ZY,1,24V,numbered mating-face cavities; source drawing controls position,red
+W006,W006,1,B0,RETURN,ZY,2,FAN_RETURN,numbered mating-face cavities; source drawing controls position,black
+W007,W007,1,S_ZX,POWER,JFX,1,24V,numbered mating-face cavities; source drawing controls position,red
+W008,W008,1,ZX,2,JFX,2,FAN_RETURN,numbered mating-face cavities; source drawing controls position,black
+W009,W009,1,S_ZX,POWER,JSX,1,24V,numbered mating-face cavities; source drawing controls position,red
+W010,W010,1,S_ZY,POWER,JFY,1,24V,numbered mating-face cavities; source drawing controls position,red
+W011,W011,1,ZY,2,JFY,2,FAN_RETURN,numbered mating-face cavities; source drawing controls position,black
+W012,W012,1,S_ZY,POWER,JSY,1,24V,numbered mating-face cavities; source drawing controls position,red
+W013,W013,1,JFX,3,ZX,3,TACH_X,numbered mating-face cavities; source drawing controls position,yellow
+W014,W014,1,ZX,3,J0,3,TACH_X,numbered mating-face cavities; source drawing controls position,yellow
+W015,W015,1,JFY,3,ZY,3,TACH_Y,numbered mating-face cavities; source drawing controls position,blue
+W016,W016,1,ZY,3,J0,4,TACH_Y,numbered mating-face cavities; source drawing controls position,blue
+P_ZX,P_ZX,1,ZX,1,S_ZX,POWER,24V,numbered mating-face cavities; source drawing controls position,red
+P_ZY,P_ZY,1,ZY,1,S_ZY,POWER,24V,numbered mating-face cavities; source drawing controls position,red

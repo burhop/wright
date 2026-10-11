@@ -19,29 +19,28 @@ interface BrowserHostAdapterOptions {
   ) => Window | null;
 }
 
-const LOOPBACK_DEVELOPMENT_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+const LOOPBACK_SURFACE_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
-function usesDevelopmentSurfaceProxy(control: URL): boolean {
-  return (
-    ["5173", "5174"].includes(control.port) ||
-    (import.meta.env.DEV && LOOPBACK_DEVELOPMENT_HOSTS.has(control.hostname))
-  );
+function usesLocalSurfaceProxy(control: URL): boolean {
+  // Installed local builds need the same isolated cookie exchange as the dev
+  // server. Port numbers and the build mode do not establish host authority.
+  return LOOPBACK_SURFACE_HOSTS.has(control.hostname);
 }
 
-function devSurfaceProxyUrl(value: string, control: URL): string {
+function localSurfaceProxyUrl(value: string, control: URL): string {
   const preview = new URL(value);
-  if (!usesDevelopmentSurfaceProxy(control)) return value;
+  if (!usesLocalSurfaceProxy(control)) return value;
   if (preview.origin === control.origin) return value;
   const path = `/__wright-surface/${encodeURIComponent(preview.host)}${preview.pathname}${preview.search}${preview.hash}`;
   const proxyOrigin = `${control.protocol}//${preview.hostname}:${control.port}`;
   return new URL(path, proxyOrigin).toString();
 }
 
-function existingDevSurfaceProxyUrl(
+function existingLocalSurfaceProxyUrl(
   value: string,
   control: URL,
 ): { readonly proxyUrl: string; readonly issuedUrl: string } | null {
-  if (!usesDevelopmentSurfaceProxy(control)) return null;
+  if (!usesLocalSurfaceProxy(control)) return null;
   const proxy = new URL(value);
   if (
     proxy.protocol !== control.protocol ||
@@ -61,7 +60,7 @@ function existingDevSurfaceProxyUrl(
   const issued = new URL(issuedUrl);
   if (proxy.origin !== control.origin && proxy.hostname !== issued.hostname)
     return null;
-  return { proxyUrl: devSurfaceProxyUrl(issuedUrl, control), issuedUrl };
+  return { proxyUrl: localSurfaceProxyUrl(issuedUrl, control), issuedUrl };
 }
 
 export class BrowserHostAdapter implements HostAdapter {
@@ -111,10 +110,10 @@ export class BrowserHostAdapter implements HostAdapter {
 
   validateIssuedPreviewUrl(value: string): string {
     const control = this.controlUrl();
-    const existingProxy = existingDevSurfaceProxyUrl(value, control);
+    const existingProxy = existingLocalSurfaceProxyUrl(value, control);
     if (existingProxy) return existingProxy.proxyUrl;
     const validated = validateIssuedSurfacePreviewUrl(value, control.origin);
-    return devSurfaceProxyUrl(validated, control);
+    return localSurfaceProxyUrl(validated, control);
   }
 
   async openExternal(
@@ -122,7 +121,7 @@ export class BrowserHostAdapter implements HostAdapter {
     options: ExternalOpenOptions = {},
   ): Promise<void> {
     const control = this.controlUrl();
-    const existingProxy = existingDevSurfaceProxyUrl(value, control);
+    const existingProxy = existingLocalSurfaceProxyUrl(value, control);
     const validated = options.approvedDirectUrl
       ? validateApprovedDirectSurfaceUrl(value)
       : (existingProxy?.issuedUrl ??

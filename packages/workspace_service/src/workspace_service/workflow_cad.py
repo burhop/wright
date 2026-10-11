@@ -363,13 +363,21 @@ class CadTask:
             if self.creation_path
             else {}
         )
+        from agent_adapters.workflow_instructions import (
+            embedded_asset,
+            embedded_instruction_set,
+        )
+
         context = {
             "model_source": source,
             "document": self.document,
             "native_creation_path": self.creation_path[1]
             if self.creation_path
             else None,
-            "instructions": "Modify only this document. Do not select the active document, close documents, save or export; Wright handles deliverables. For creation keep the new document open (closeAfterSave=false).",
+            "instructions": embedded_asset(
+                embedded_instruction_set(getattr(self.step, "instruction_set", None)),
+                "context.cad",
+            ).body,
         }
         return "\n\nCAD task target (authoritative):\n" + json.dumps(context)
 

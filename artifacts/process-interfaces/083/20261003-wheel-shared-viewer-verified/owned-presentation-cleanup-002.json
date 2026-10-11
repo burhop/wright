@@ -1,0 +1,65 @@
+{
+  "workspace_id": "083-heat-live-005",
+  "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+  "before_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "selected_presentations": [
+    [
+      "aa68601c-619f-42db-a23c-8994f8db414b",
+      "4e82c503-a333-4f6a-bf0d-7c20653c1d0e",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "de38b70c-cf85-4d9b-b8eb-ed09c4f1e20e",
+      "5b819c89-2ea1-4804-a16e-cda9fdb72215",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "feed9f6d-1ce0-4a12-b700-3e909f0e377d",
+      "8416da96-00d3-419a-a425-98c2b5fcbb6f",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ],
+    [
+      "04aac20f-a0ec-42ac-88b8-784132c1780b",
+      "993e617f-8b9f-4df6-89dd-fe9347e0cd08",
+      "local-control-plane",
+      "083-heat-live-session-005",
+      "active",
+      "process.ui-ce377446f6d44705846a32f7c3eb94b2.revision-5d5d6defda104980a2455c7ddc95e687"
+    ]
+  ],
+  "closures": [
+    {
+      "presentation_id": "aa68601c-619f-42db-a23c-8994f8db414b",
+      "surface_id": "4e82c503-a333-4f6a-bf0d-7c20653c1d0e",
+      "status": 204
+    },
+    {
+      "presentation_id": "de38b70c-cf85-4d9b-b8eb-ed09c4f1e20e",
+      "surface_id": "5b819c89-2ea1-4804-a16e-cda9fdb72215",
+      "status": 204
+    },
+    {
+      "presentation_id": "feed9f6d-1ce0-4a12-b700-3e909f0e377d",
+      "surface_id": "8416da96-00d3-419a-a425-98c2b5fcbb6f",
+      "status": 204
+    },
+    {
+      "presentation_id": "04aac20f-a0ec-42ac-88b8-784132c1780b",
+      "surface_id": "993e617f-8b9f-4df6-89dd-fe9347e0cd08",
+      "status": 204
+    }
+  ],
+  "engineering_operation_or_decision": false,
+  "after_run_sha256": "7abc4025bd840e9fb308753fc57524797cb3462337de3ad5b9b0643a85cb8b16",
+  "remaining_exact_ui_presentations": 0,
+  "run_bytes_unchanged": true
+}

@@ -1,0 +1,54 @@
+{
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "server_id": "qualification-083-blender",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "selected_tool_count": 28,
+  "tool": "qualification-083-blender__execute_blender_code",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "status": "passed",
+  "checked_scope": "actual agent-facing production gateway protocol/catalog/workspace/lifecycle and selected backend; not complete engineering assignment or clean-base installation",
+  "audit": [
+    {
+      "operation": "tool.call",
+      "target": "execute_blender_code",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "execute_blender_code",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "qualification": {
+    "path": ".local-run/process-interfaces-083/t043-blender-production-001/gateway/qualification.json",
+    "sha256": "d73955e4f0893583625582f1c16b6d4ad96d7971246e1500dfb32ca44f19890e"
+  },
+  "response": {
+    "path": ".local-run/process-interfaces-083/t043-blender-production-001/gateway/result.json",
+    "sha256": "cf060aff5d2014ff9f4a1889fcfd2c848fd03a98f045c73518a4c13a2efa9ba6"
+  },
+  "listed_tools": {
+    "path": ".local-run/process-interfaces-083/t043-blender-production-001/gateway/gateway-tools.json",
+    "sha256": "02c41fdc37fe372ee4e6b6a3745d7bfad353ae70c68b3ec399671f6d0391a875"
+  },
+  "outputs": [
+    {
+      "path": ".local-run/process-interfaces-083/t043-blender-production-001/gateway/tiny.stl",
+      "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    }
+  ],
+  "gateway_stopped": true,
+  "additional_dispatches": 0,
+  "public_catalog_promoted": false,
+  "native_version": "4.5.10 LTS",
+  "owned_native_closed": true,
+  "recovery_sha256": "3e304cf5e0c4348a8f8b4df287bece30fb36bbe0651b5a2ebf01e363f86a0728",
+  "native_record": {
+    "path": ".local-run/process-interfaces-083/t043-blender-production-001/native.json",
+    "sha256": "fbf43a8c03805a7c0b22889135ce787797f1cd3a66cb028595d019621a3fb2d4"
+  }
+}

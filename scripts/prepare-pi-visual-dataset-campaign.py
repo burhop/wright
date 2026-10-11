@@ -27,6 +27,10 @@ BINDING = (
     ROOT
     / "tests/datasets/engineering-workflows/bindings/raspberry-pi-enclosure-visual.json"
 )
+VALIDATION_COVERAGE = (
+    ROOT
+    / "packages/workspace_service/src/workspace_service/process_validation/profiles/coverage.json"
+)
 PI_AGENTCAD_GUIDANCE = (
     "AgentCAD 0.6.0 runs source with __name__='__agentcad_script__': invoke main() "
     "unconditionally after defining it. Call the injected show_object(actual_shape) "
@@ -42,10 +46,15 @@ PI_AGENTCAD_GUIDANCE = (
     "Compound.children: children is not the solid enumeration and can be empty."
 )
 spec = importlib.util.spec_from_file_location(
-    "pi_fixed_draft_helpers", ROOT / "scripts/prepare-printed-dataset-campaign.py"
+    "pi_fixed_draft_helpers", ROOT / "scripts/engineering_campaign_binding_helpers.py"
 )
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
+renewal_spec = importlib.util.spec_from_file_location(
+    "campaign_example_renewal", ROOT / "scripts/campaign_example_renewal.py"
+)
+renewal = importlib.util.module_from_spec(renewal_spec)
+renewal_spec.loader.exec_module(renewal)
 
 
 def add_scoped_file_inspection(
@@ -145,6 +154,20 @@ def prepare(args, directory, available):
 
     scenario = json.loads((directory / "scenario.json").read_text())
     identity = scenario["scenario_id"]
+    coverage = json.loads(VALIDATION_COVERAGE.read_text(encoding="utf-8"))
+    support = next(
+        row for row in coverage["scenarios"] if row["scenario_id"] == identity
+    )
+    validation_profile = support.get("full_profile")
+    if not validation_profile:
+        raise ValueError("The Raspberry Pi full validator profile is unavailable")
+    profile_document = json.loads(
+        (
+            ROOT
+            / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+            / (validation_profile["profile_resource"] + ".json")
+        ).read_text(encoding="utf-8")
+    )
     workspace = Path(args.workspace_root).resolve()
     draft = Path(args.draft_root).resolve() / identity / args.attempt
     if draft.exists():
@@ -194,6 +217,11 @@ def prepare(args, directory, available):
                 path.read_bytes(),
                 {"original": path.relative_to(ROOT).as_posix()},
             )
+    stage(
+        "approved-engineering-brief.json",
+        renewal.contract_bytes(scenario),
+        {"role": "approved_engineering_brief"},
+    )
     sources = [
         ROOT / "scripts" / name
         for name in (
@@ -313,13 +341,13 @@ def prepare(args, directory, available):
             ("compiler_source", "pi_cfd_operations.py"),
             ("reference_source", "pi_reference_visual_mcp.py"),
             ("native_setup", "native-initialization.json"),
+            ("approved_engineering_brief", "approved-engineering-brief.json"),
             ("styling_image", "concept.png"),
         )
     }
     next(s for s in sections if s["id"] == references["styling_image"].split(".")[0])[
         "fields"
     ]["outputs"][0]["kind"] = "reference_images"
-
     def new(prefix, title):
         task = {
             "kind": "task",
@@ -428,6 +456,12 @@ def prepare(args, directory, available):
         "design-basis.md",
     )
     helpers.add_reference(
+        sections,
+        references["approved_engineering_brief"],
+        stages["design_basis"],
+        "approved_engineering_brief",
+    )
+    helpers.add_reference(
         sections, research, stages["design_basis"], "retrieved_primary_evidence"
     )
     helpers.add_reference(
@@ -456,7 +490,17 @@ def prepare(args, directory, available):
             "action_kind": "local_review",
             "approval_binding": LOCAL_REVIEW_BINDING,
             "approval_destination": LOCAL_REVIEW_DESTINATION,
-            "approval_settings": {"review_task_id": review["id"]},
+            "approval_settings": {
+                "review_task_id": review["id"],
+                "validation_review": {
+                    "profile_ref": validation_profile["profile_ref"],
+                    "requirement_ids": sorted(
+                        requirement["id"]
+                        for requirement in profile_document["baseline"]["requirements"]
+                        if requirement["review_required"]
+                    ),
+                },
+            },
             "approval_action": {"kind": "local_review", "mode": "review_only"},
         },
     )
@@ -481,6 +525,12 @@ def prepare(args, directory, available):
         ("enclosure-source.py",),
         include_human_context=False,
     )
+    author["fields"]["outputs"].append(
+        helpers.port("cad_source", "workspace_file")
+    )
+    author["fields"]["settings"]["expected_file_ports"] = {
+        "cad_source": output + "/enclosure-source.py"
+    }
     helpers.add_reference(sections, references["native_setup"], author, "native_setup")
     run_matches = [
         tool
@@ -529,6 +579,26 @@ def prepare(args, directory, available):
         "timeout_seconds": 600,
         "mcp_source_contract": "agentcad-build123d-0.10",
     }
+    geometry_files = {
+        "enclosure_a": output + "/enclosure-a.step",
+        "enclosure_b": output + "/enclosure-b.step",
+        "fluid_domain_a": output + "/fluid-domain-a.step",
+        "fluid_domain_b": output + "/fluid-domain-b.step",
+        "contract_a": output + "/cfd-contract-a.json",
+        "contract_b": output + "/cfd-contract-b.json",
+        "board_a": output + "/board-a.step",
+        "board_b": output + "/board-b.step",
+    }
+    for index, region in enumerate(heats):
+        role = "source_primary" if index == 0 else "source_secondary"
+        for variant in ("a", "b"):
+            geometry_files[role + "_" + variant] = (
+                output + "/" + region + "-" + variant + ".step"
+            )
+    cad_task["fields"]["outputs"].extend(
+        helpers.port(role, "workspace_file") for role in geometry_files
+    )
+    cad_task["fields"]["settings"]["expected_file_ports"] = geometry_files
     cad = cad_task["id"] + "." + cad_task["id"] + "_result"
     # The author-to-CAD dependency is carried by the ordered process chain. The
     # direct tool receives the exact durable workspace path above, so attaching
@@ -627,13 +697,82 @@ def prepare(args, directory, available):
     )
     bind(
         collection,
-        f"After actual Foam-Agent run, call collect_pi_cfd_comparison once with operation_source_document={inputs + '/pi_cfd_operations.py'!r}, output_directory={output!r}. It requires completed matching solver records and actual nonempty computed fields; no input copies or design-target values may substitute. Summarize the real region temperatures, pressure/flow observations and unresolved physical/convergence assumptions against the original requirements. Preserve both variants and explain that content validity remains unmeasured.",
+        f"After actual Foam-Agent run, call collect_pi_cfd_comparison once with operation_source_document={inputs + '/pi_cfd_operations.py'!r}, output_directory={output!r}. It requires completed matching solver records, actual nonempty computed fields, measured residual/temperature convergence windows and per-face external energy evidence; no input copies or design-target values may substitute. Summarize the real region temperatures, pressure/flow observations, convergence result and heat-balance result against the original requirements. Preserve failures and both variants. The following process validator independently recomputes requirements-compliance credit from the exact current outputs.",
         "cfd-handoff.md",
         "wright-campaign-pi-cfd",
         ("cfd-comparison.json", "cfd-fields.zip"),
     )
     helpers.add_reference(sections, solved_a, collection, "actual_solver_run_a")
     helpers.add_reference(sections, solved_b, collection, "actual_solver_run_b")
+    result_files = {
+        "comparison": output + "/cfd-comparison.json",
+        "field_archive": output + "/cfd-fields.zip",
+    }
+    collection["fields"]["outputs"].extend(
+        helpers.port(role, "workspace_file") for role in result_files
+    )
+    collection["fields"]["settings"]["expected_file_ports"] = result_files
+    validation_sources = {
+        "manufacturer_research": (
+            stages["source_dimensions"],
+            stages["source_dimensions"]["id"] + "_result",
+            "engineering_document",
+        ),
+        "design_basis": (
+            stages["design_basis"],
+            stages["design_basis"]["id"] + "_result",
+            "engineering_document",
+        ),
+        "cad_source": (author, "cad_source", "workspace_file"),
+        **{
+            role: (cad_task, role, "workspace_file") for role in geometry_files
+        },
+        **{
+            role: (collection, role, "workspace_file") for role in result_files
+        },
+    }
+    validator = new(
+        "validate_pi_content", "Validate current enclosure and CFD outputs"
+    )
+    validator["fields"].update(
+        performed_by="configured_tool",
+        inputs=[
+            helpers.port("validate_" + role, kind)
+            for role, (_, _, kind) in validation_sources.items()
+        ],
+        outputs=[helpers.port("assessment")],
+        prompt="",
+        settings={
+            "authoring_template": "process-validator",
+            "output_format": "json",
+            "max_revisions": 0,
+            "validation": {
+                "profile": {
+                    "source": "packaged",
+                    "name": validation_profile["profile_resource"],
+                    "reference": validation_profile["profile_ref"],
+                },
+                "baseline": validation_profile["baseline_ref"],
+                "subjects": {
+                    role: "validate_" + role for role in validation_sources
+                },
+            },
+        },
+    )
+    for role, (producer, producer_port, _) in validation_sources.items():
+        sections.append(
+            {
+                "kind": "connection",
+                "id": "bind_" + validator["id"] + "_" + role,
+                "fields": {
+                    "type": "item",
+                    "from": producer["id"] + "." + producer_port,
+                    "to": validator["id"] + ".validate_" + role,
+                    "label": "current enclosure output to validate",
+                    "when": None,
+                },
+            }
+        )
     chain = [
         stages["source_dimensions"],
         stages["design_basis"],
@@ -645,6 +784,7 @@ def prepare(args, directory, available):
         preparation_b,
         stages["cfd_compare"],
         collection,
+        validator,
     ]
     existing = {(edge["fields"]["from"], edge["fields"]["to"]) for edge in edges}
     for left, right in zip(chain, chain[1:]):
@@ -698,7 +838,7 @@ def prepare(args, directory, available):
         "output_root": output,
         "input_manifest": staged,
         "tool_allowlist": selected,
-        "expected_outputs": scenario["expected_outputs"],
+        "expected_outputs": renewal.expected_outputs(scenario),
         "compiled_stages": [step.id for step in plan.steps],
         "preserved_original_stages": original,
         "preserved_original_edges": [edge["id"] for edge in edges],

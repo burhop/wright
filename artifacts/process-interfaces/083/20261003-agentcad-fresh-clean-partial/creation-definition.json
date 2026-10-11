@@ -1,0 +1,47 @@
+{
+  "server_id": "qualification-083-agentcad-clean-001",
+  "schemas": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-agentcad-clean-base-001\\tools.json",
+  "schemas_file_sha256": "4c2ca28fd5c6dff0544953c21bbf99a8b26601f3de225d29f78b4da984f7caea",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "0.6.0",
+  "command": [
+    "docker",
+    "exec",
+    "-i",
+    "-e",
+    "UV_CACHE_DIR=/selected/uv-cache",
+    "-e",
+    "UV_PYTHON_INSTALL_DIR=/selected/python",
+    "991f992262d4e1b7f0e8ea86bd8f0299cee59064d431431c16a1f8975ccf7aa9",
+    "uv",
+    "run",
+    "--offline",
+    "--isolated",
+    "--python",
+    "3.12",
+    "--with",
+    "agentcad[mcp]==0.6.0",
+    "--with",
+    "build123d==0.10.0",
+    "--with",
+    "numpy==2.5.2",
+    "--with",
+    "mcp[cli]==1.28.1",
+    "python",
+    "-m",
+    "agentcad.mcp"
+  ],
+  "safe_tool": "run",
+  "arguments": {
+    "script": "/workspace/project/tiny.py",
+    "output": "clean-probe",
+    "cwd": "/workspace/project",
+    "build_dir": "build",
+    "preview": false,
+    "view": false,
+    "diff": false
+  },
+  "expected_result_fields": {
+    "status": "success"
+  }
+}

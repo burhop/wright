@@ -2,11 +2,55 @@
 
 from pathlib import Path
 import hashlib
+import io
+import urllib.error
 
 import pytest
 
 from scripts.recovery import restart_authoring_api as helper
 from scripts.recovery.restart_authoring_api import validate_api_process_command
+
+
+def test_local_snapshot_preserves_invalid_workflow_bytes_and_detects_changes(tmp_path):
+    folder = tmp_path / "workflows"
+    folder.mkdir()
+    path = folder / "old.workflow.wflow"
+    path.write_bytes(b"not valid workflow syntax")
+    before = helper.snapshot_local_workflows(tmp_path)
+    assert before == {
+        "workflows/old.workflow.wflow": hashlib.sha256(path.read_bytes()).hexdigest()
+    }
+    path.write_bytes(b"changed invalid source")
+    assert helper.snapshot_local_workflows(tmp_path) != before
+
+
+@pytest.mark.parametrize(
+    "status,code,known,allowed",
+    [
+        (503, "workflow_source_integrity", True, True),
+        (503, "workflow_source_integrity", False, False),
+        (503, "workspace_timeout", True, False),
+        (500, "workflow_source_integrity", True, False),
+    ],
+)
+def test_only_fingerprinted_preexisting_integrity_errors_allow_preservation(
+    status, code, known, allowed
+):
+    error = urllib.error.HTTPError(
+        "http://127.0.0.1/local",
+        status,
+        "error",
+        {},
+        io.BytesIO(('{"error_code":"' + code + '"}').encode()),
+    )
+    assert (
+        helper.preserved_integrity_error(
+            error,
+            "workflows/old.workflow.wflow",
+            {"workflows/old.workflow.wflow": "a" * 64} if known else {},
+        )
+        is allowed
+    )
 
 
 def command(repo: Path, *, python_wrapper: bool = True) -> list[str]:
@@ -50,6 +94,29 @@ def test_similar_or_changed_process_commands_are_rejected(tmp_path, mutation):
 def test_wrong_working_directory_is_rejected(tmp_path):
     with pytest.raises(RuntimeError, match="exact owned API"):
         validate_api_process_command(tmp_path, 8018, command(tmp_path), tmp_path)
+
+
+def test_exact_source_tree_module_launcher_is_accepted_without_extra_flags(tmp_path):
+    module = [
+        str(tmp_path / ".venv/Scripts/python.exe"),
+        "-m",
+        "uvicorn",
+        "api.main:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000",
+    ]
+    validate_api_process_command(tmp_path, 8000, module, tmp_path)
+    for changed in [
+        module + ["--reload"],
+        [*module[:-1], "8001"],
+        ["python", *module[1:]],
+    ]:
+        with pytest.raises(RuntimeError, match="exact owned API"):
+            validate_api_process_command(tmp_path, 8000, changed, tmp_path)
+    with pytest.raises(RuntimeError, match="exact owned API"):
+        validate_api_process_command(tmp_path, 8000, module, tmp_path / "apps/api")
 
 
 @pytest.mark.parametrize("port", [0, -1, 65536])
@@ -96,7 +163,48 @@ def test_code_identity_records_commit_tree_and_exact_source_hashes(
     ]
 
 
+def test_explicit_dirty_document_is_hashed_without_claiming_clean_worktree(tmp_path, monkeypatch):
+    for relative in (*helper.BACKEND_SOURCE_FILES, helper.OPERATOR_SOURCE_FILE, "docs/user-notes.md"):
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(relative.encode())
+
+    def git(_repo, *args):
+        if args[0] == "status":
+            return "" if ":(literal,exclude)docs/user-notes.md" in args else " M docs/user-notes.md"
+        return ""
+
+    monkeypatch.setattr(helper, "git_output", git)
+    result = helper.snapshot_code_identity(tmp_path, preserve_documents=("docs/user-notes.md",))
+    assert result["tracked_worktree_clean"] is False
+    assert result["preserved_document_sha256"] == {
+        "docs/user-notes.md": hashlib.sha256(b"docs/user-notes.md").hexdigest()
+    }
+
+
+@pytest.mark.parametrize("relative", ["apps/api/src/unsafe.py", "apps/api/src/runtime.md", "docs/../runtime.md"])
+def test_preserve_document_cannot_exempt_runtime_or_traversal(tmp_path, relative):
+    path = tmp_path / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("not an allowed document")
+    with pytest.raises(RuntimeError, match="explicit in-repository documentation"):
+        helper.snapshot_code_identity(tmp_path, preserve_documents=(relative,))
+
+
+def test_other_dirty_source_still_blocks_with_document_exemption(tmp_path, monkeypatch):
+    document = tmp_path / "docs/notes.md"
+    document.parent.mkdir()
+    document.write_text("user notes")
+    monkeypatch.setattr(helper, "git_output", lambda _repo, *args: " M changed.py" if args[0] == "status" else "")
+    with pytest.raises(RuntimeError, match="clean committed"):
+        helper.snapshot_code_identity(tmp_path, preserve_documents=("docs/notes.md",))
+
+
 def test_module_origin_validation_rejects_another_checkout(tmp_path):
+    for relative in helper.MODULE_SOURCE_FILES.values():
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# expected module\n", encoding="utf-8")
     origins = {
         name: str(tmp_path / relative)
         for name, relative in helper.MODULE_SOURCE_FILES.items()
@@ -180,7 +288,9 @@ def test_nested_module_origin_probe_never_imports_application_packages(
         assert parent_paths == [str(tmp_path / parent.replace(".", "/"))]
         nested_calls.append(name)
         if name in helper.MODULE_SOURCE_FILES:
-            return ModuleSpec(name, None, origin=str(tmp_path / helper.MODULE_SOURCE_FILES[name]))
+            return ModuleSpec(
+                name, None, origin=str(tmp_path / helper.MODULE_SOURCE_FILES[name])
+            )
         return package_spec(name)
 
     monkeypatch.setattr(importlib.util, "find_spec", top_level)
@@ -191,7 +301,7 @@ def test_nested_module_origin_probe_never_imports_application_packages(
         name: str((tmp_path / relative).resolve())
         for name, relative in helper.MODULE_SOURCE_FILES.items()
     }
-    assert set(top_level_calls) == {"api", "agent_adapters", "workspace_service"}
+    assert set(top_level_calls) == {"api", "agent_adapters", "workspace_service", "core"}
     assert "api.routers" in nested_calls
 
 
@@ -283,3 +393,38 @@ def test_no_listener_in_launched_tree_fails_without_scanning_unrelated_processes
     monkeypatch.setattr(helper.psutil, "Process", lambda _pid: launcher)
     with pytest.raises(RuntimeError, match="does not own"):
         helper.find_launched_api_listener(101, tmp_path, 8018)
+
+
+def test_startup_observation_allows_slow_database_checks_without_restarting(monkeypatch):
+    from types import SimpleNamespace
+
+    clock = [0.0]
+    calls = []
+    monkeypatch.setattr(helper.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(helper.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds))
+
+    def get(route, *, timeout):
+        calls.append((route, timeout))
+        if clock[0] < 455:
+            raise OSError("still checking database")
+        return {"source": "unchanged"}
+
+    child = SimpleNamespace(poll=lambda: None)
+    assert helper.wait_for_source(get, "/exact-source", child, 900) == {"source":"unchanged"}
+    assert clock[0] == 455
+    assert all(route == "/exact-source" and 0 < timeout <= 10 for route, timeout in calls)
+
+
+@pytest.mark.parametrize("exited", [False, True])
+def test_startup_observation_is_bounded_and_stops_for_exited_process(monkeypatch, exited):
+    from types import SimpleNamespace
+
+    clock = [0.0]
+    monkeypatch.setattr(helper.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(helper.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds))
+    def get(route, *, timeout):
+        raise OSError("not ready")
+    child = SimpleNamespace(poll=lambda: 1 if exited else None)
+    with pytest.raises(RuntimeError, match="Restarted API"):
+        helper.wait_for_source(get, "/exact-source", child, 5)
+    assert clock[0] == (0 if exited else 5)

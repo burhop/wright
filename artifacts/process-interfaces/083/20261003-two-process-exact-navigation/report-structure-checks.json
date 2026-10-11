@@ -1,0 +1,27 @@
+[
+  {
+    "report": "retained-wheel-navigation-failure",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n"
+  },
+  {
+    "report": "wheel-navigation",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n"
+  },
+  {
+    "report": "retained-heat-loading-assertion",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n"
+  },
+  {
+    "report": "retained-heat-capacity-stop",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n"
+  },
+  {
+    "report": "heat-results-and-navigation",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n"
+  }
+]

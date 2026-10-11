@@ -181,12 +181,12 @@ async def test_complete_semantic_parts_survive_real_hermes_boundary(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("item", ["task", "observation", "schema"])
+@pytest.mark.parametrize("item", ["system", "observation", "schema"])
 async def test_indivisible_oversized_item_fails_before_http(item):
     messages = [{"role": "user", "content": "Inspect every required observation."}]
     tools = [TOOL]
-    if item == "task":
-        messages[0]["content"] = "x" * 66_000
+    if item == "system":
+        messages.insert(0, {"role": "system", "content": "x" * 66_000})
     elif item == "observation":
         messages.extend(observation_exchange("large", {"evidence": "x" * 66_000}))
     else:

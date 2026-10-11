@@ -1,0 +1,24 @@
+{
+  "process": {
+    "workspace_id": "083-fresh-prompt-055",
+    "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+    "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "target": {
+    "kind": "assessment",
+    "block_id": "repair_measure_orient_mixed_default_071",
+    "run_id": "84cd89a395af406e80d094ec071abe59",
+    "result_id": "84cd89a395af406e80d094ec071abe59:repair_measure_orient_mixed_default_071:repaired_mesh",
+    "assessment_id": "assessment-55acf245b63f4f2d8e34a83bfaac8480",
+    "artifact_ref": null
+  },
+  "representation": {
+    "artifact_ref": "validation/assessment-55acf245b63f4f2d8e34a83bfaac8480.json",
+    "sha256": "dcd19cecfa3f5b0f5b9dcc93fd13660b08a0a99a4d3b7172c667115bd0cd8ddc",
+    "media_type": null,
+    "result_id": "84cd89a395af406e80d094ec071abe59:validate_outputs_mixed_default_071:diagnostic:validation/assessment-55acf245b63f4f2d8e34a83bfaac8480.json",
+    "representation_id": null
+  }
+}

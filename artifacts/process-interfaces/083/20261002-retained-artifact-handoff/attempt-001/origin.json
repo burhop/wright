@@ -1,0 +1,17 @@
+{
+  "retained_native_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "retained_native_state": "failed",
+  "independent_report_run_id": "97f4c017f8a04d7eab8011e4ad6c5298",
+  "original_records": [
+    {
+      "path": "runs/printed-replacement-part-retained-consumer-001/a87d84b40a244bcaa035d9ed8308ac5a.json",
+      "sha256": "565f1adfdc441ec6b3af7285caf8baf2b5bfbeab2ef4c01bb32607d3a1a2cbca"
+    },
+    {
+      "path": "runs/printed-replacement-part-retained-report-002/97f4c017f8a04d7eab8011e4ad6c5298.json",
+      "sha256": "45e01c60b6eb2b609611ede0f7eb9a5b09fe5865ec12bc9301759d9e8837debe"
+    }
+  ],
+  "engineering_acceptance": false,
+  "physical_dispatch": false
+}

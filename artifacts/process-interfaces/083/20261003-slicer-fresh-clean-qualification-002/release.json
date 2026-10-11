@@ -1,0 +1,10 @@
+{
+  "tag": "v02.08.02.61",
+  "url": "https://github.com/bambulab/BambuStudio/releases/tag/v02.08.02.61",
+  "asset": {
+    "name": "BambuStudio_ubuntu22.04-v02.08.02.61-20260820225108.AppImage",
+    "size": 229153272,
+    "digest": "sha256:69426a59682574591590f51c913d3889baa19252d1c8e9fcae2497eb0ed6bf92",
+    "browser_download_url": "https://github.com/bambulab/BambuStudio/releases/download/v02.08.02.61/BambuStudio_ubuntu22.04-v02.08.02.61-20260820225108.AppImage"
+  }
+}

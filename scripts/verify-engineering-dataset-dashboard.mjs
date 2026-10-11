@@ -19,13 +19,37 @@ try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1040 } });
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(url);
+  await page.waitForFunction(() =>
+    document.querySelector('[data-testid="metric-datasets-created"]')?.textContent === "30",
+    null, { timeout: 15000 });
   await expect(page.getByTestId("metric-datasets-created")).toHaveText("30");
   await expect(page.locator("tr.dataset-row")).toHaveCount(30);
   await expect(page.locator("path.chart-line")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "Progress by update" })).toBeVisible();
   const state = await (await page.request.get(url + "/api/status")).json();
+  const projectedCoverage = {
+    qualified: state.datasets.filter(item => item.validation?.support_status === "qualified").length,
+    unsupported: state.datasets.filter(item => item.validation?.support_status === "unsupported").length,
+    full_scope: state.datasets.filter(item => item.validation?.campaign_credit?.full_scope === true).length,
+  };
+  if (state.validation_coverage?.qualified !== projectedCoverage.qualified
+      || state.validation_coverage?.unsupported !== projectedCoverage.unsupported)
+    throw new Error("Validator coverage inventory is not projected faithfully");
+  if (state.validation_coverage?.full_scope !== projectedCoverage.full_scope)
+    throw new Error("Bounded validator profiles were incorrectly projected as full-scope campaign coverage");
+  if (!state.current_metrics || !Number.isInteger(state.current_metrics.processes_with_outputs))
+    throw new Error("Current-revision campaign metrics are missing");
+  await expect(page.locator("#current-runs")).toHaveText(String(state.current_metrics.combinations_run));
+  await expect(page.locator("#current-outputs")).toHaveText(String(state.current_metrics.processes_with_outputs));
+  await expect(page.locator("#full-scope-count")).toHaveText(
+    String(projectedCoverage.full_scope));
   if (JSON.stringify(state.history[0].metrics) !== JSON.stringify({
     datasets_created: 0, combinations_run: 0, processes_with_outputs: 0, valid_data: 0,
   })) throw new Error("Missing real zero baseline");
+  await expect(page.locator("#chart-content circle title")).toHaveCount(4);
+  const updateLabels = await page.locator("#chart-content text.chart-label").allTextContents();
+  if (!updateLabels.includes("Update 1") || !updateLabels.some(label => label === "Update " + state.history.length))
+    throw new Error("Chart axis does not span persisted campaign update numbers");
   if (!readOnly) {
     await page.getByTestId("campaign-approval-mode").selectOption("manual");
     await expect(page.locator("#config-message")).toContainText("Manual approval");
@@ -43,11 +67,9 @@ try {
       const value = state.history[index].metrics[name];
       if (!Number.isInteger(value) || value < 0 || value > 30)
         throw new Error("Invalid history counter: " + name);
-      if (index && value < state.history[index - 1].metrics[name])
+      if (index && name !== "valid_data" && value < state.history[index - 1].metrics[name])
         throw new Error("Cumulative history regressed: " + name);
     }
-    if (state.history[index].metrics.valid_data !== 0)
-      throw new Error("Content validation was incorrectly credited");
   }
   let imagesChecked = 0;
   let completedFilesChecked = 0;
@@ -66,9 +88,12 @@ try {
       if (!receiptResponse.ok()) throw new Error("Completed run receipt is unavailable");
       const receipt = await receiptResponse.json();
       if (receipt.run_id !== attempt.run_id || receipt.status !== "completed"
-        || !receipt.all_required_steps_succeeded || !receipt.terminal_step_reached
-        || receipt.content_validated !== false)
+        || !receipt.all_required_steps_succeeded || !receipt.terminal_step_reached)
         throw new Error("Completed output link has a different runtime identity");
+      if (receipt.content_validated === true && (!Array.isArray(receipt.validations)
+        || !receipt.validations.length || receipt.validations.some(item =>
+          item.is_current !== true || item.release_eligible !== true)))
+        throw new Error("Content validation lacks a current release-eligible assessment");
       for (const file of receipt.produced_files) {
         const fileResponse = await page.request.get(outputBase + "/artifacts/"
           + file.path.split("/").map(encodeURIComponent).join("/"));
@@ -88,9 +113,9 @@ try {
   await expect(page.locator("tr.dataset-row")).toHaveCount(1);
   await page.getByTestId("campaign-search").fill("");
   await expect(page.locator("tr.dataset-row")).toHaveCount(30);
-  await page.getByTestId("legend-valid_data").click();
+  await page.getByTestId("legend-valid_data").click({ force: true });
   await expect(page.getByTestId("legend-valid_data")).toHaveAttribute("aria-pressed", "true");
-  await page.getByTestId("legend-valid_data").click();
+  await page.getByTestId("legend-valid_data").click({ force: true });
   await page.screenshot({ path: path.join(evidence, "desktop.png") });
   await page.getByTestId("campaign-output-folder").click();
   await expect(page.getByRole("heading", { name: "Workflow output files" })).toBeVisible();

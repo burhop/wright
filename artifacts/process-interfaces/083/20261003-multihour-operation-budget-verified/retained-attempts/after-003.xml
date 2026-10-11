@@ -1,0 +1,1021 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="30" failures="0" skipped="0" tests="87" time="4.795" timestamp="2026-10-03T12:48:58.336952-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_submission_is_polled_to_completion_once" time="0.065" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_multihour_observation_keeps_each_gateway_call_short" time="0.243" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded" time="0.246" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_multihour_profile_does_not_extend_model_decision_budget[before]" time="0.108" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_multihour_profile_does_not_extend_model_decision_budget[after]" time="0.107" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_multihour_observation_does_not_refill_spent_model_budget" time="0.453" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_interrupting_multihour_ai_monitor_does_not_cancel_or_resubmit" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[True]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[None]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[7200]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[0]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[-1]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[604801]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[nan]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_timeout_rejected_before_submission[inf]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_explicit_observation_timeout_retains_uncertainty_and_single_submit" time="1.091" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_timeout_requests_cancel_without_resubmission_or_false_completion" time="1.080" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_missing_status_capability_rejected_before_submission" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[failed]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[cancelled]" time="0.025" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[input_required]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[mystery]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_progress_is_provider_observed_and_only_configured_metrics_are_used" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[True]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[50]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[-1]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[101]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[nan]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[inf]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_another_operation_status_never_becomes_this_operations_progress" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_interrupting_monitor_does_not_send_a_remote_cancellation" time="0.003" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission" time="0.075" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_status_binding_changed_during_submission_is_not_adopted" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change0]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change1]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change2]" time="0.018" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change3]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change4]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change5]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_missing_cancel_authority_is_unavailable_without_a_runtime_question" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_status_authority_is_required_before_submission" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_missing_submission_identity_is_unknown_without_resubmission" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_exact_digital_subject_freezes_connected_file_and_survives_snapshot" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_exact_digital_subject_freezes_connected_file_and_survives_snapshot&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch0]" time="0.003" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch1]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch2]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch3]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch4]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch5]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch6]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch7]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_invalid_operation_contract_rejected_by_compiler[patch8]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[missing]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[missing]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[changed]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[changed]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[authority]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[authority]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[arguments]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_later_provider_preflight_blocks_before_any_upstream_model_or_dispatch[arguments]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_test_authority_cannot_qualify_non_digital_provider[physical]" time="0.005" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_test_authority_cannot_qualify_non_digital_provider[supplier]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_submission_metadata_is_part_of_existing_schema_identity" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_connected_document_arguments_are_explicit_and_detached[json-{&quot;option&quot;:&quot;explicit&quot;}-expected0]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_connected_document_arguments_are_explicit_and_detached[json-{"option":"explicit"}-expected0]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_connected_document_arguments_are_explicit_and_detached[json-supplied1-expected1]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_connected_document_arguments_are_explicit_and_detached[json-supplied1-expected1]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_connected_document_arguments_are_explicit_and_detached[text-explicit option-explicit option]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_connected_document_arguments_are_explicit_and_detached[text-explicit option-explicit option]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_enrolled_exact_digital_operation_records_test_actor_and_receipt" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_enrolled_exact_digital_operation_records_test_actor_and_receipt&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_enrolled_test_policy_cannot_authorize_actual_physical_qualification" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_enrolled_test_policy_cannot_authorize_actual_physical_qualification&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_destination_must_match_reviewed_actual_argument" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_destination_must_match_reviewed_actual_argument&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_qualified_digital_submission_and_duplicate_resume_never_repeat_effect" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_qualified_digital_submission_and_duplicate_resume_never_repeat_effect&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_qualified_rejection_retained_and_never_replayed[False]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_qualified_rejection_retained_and_never_replayed[False]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_qualified_rejection_retained_and_never_replayed[True]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_qualified_rejection_retained_and_never_replayed[True]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_uncertain_submission_retains_consumption_and_blocks_repeat[timeout]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_uncertain_submission_retains_consumption_and_blocks_repeat[timeout]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_uncertain_submission_retains_consumption_and_blocks_repeat[disconnect]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_uncertain_submission_retains_consumption_and_blocks_repeat[disconnect]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_uncertain_submission_retains_consumption_and_blocks_repeat[unknown_status]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_uncertain_submission_retains_consumption_and_blocks_repeat[unknown_status]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_uncertain_submission_retains_consumption_and_blocks_repeat[no_reference]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_uncertain_submission_retains_consumption_and_blocks_repeat[no_reference]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_uncertain_submission_retains_consumption_and_blocks_repeat[unqualified_error]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_uncertain_submission_retains_consumption_and_blocks_repeat[unqualified_error]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_accepted_receipt_precedes_actual_observed_completion" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_accepted_receipt_precedes_actual_observed_completion&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_approved_multihour_observation_keeps_submission_budget_and_receipt" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_approved_multihour_observation_keeps_submission_budget_and_receipt&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_monitor_disconnect_keeps_acceptance_but_cannot_release_or_resubmit" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_monitor_disconnect_keeps_acceptance_but_cannot_release_or_resubmit&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_observation_schema_changes_cannot_acquire_dispatch_authority" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_observation_schema_changes_cannot_acquire_dispatch_authority&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_gateway_dispatch_hook_rechecks_artifact_after_consumption" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_gateway_dispatch_hook_rechecks_artifact_after_consumption&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_real_gateway_runs_final_file_guard_after_lifecycle_before_provider" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_real_gateway_runs_final_file_guard_after_lifecycle_before_provider&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_actual_receipt_file_is_bound_to_same_run_and_provider_reference" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_actual_receipt_file_is_bound_to_same_run_and_provider_reference&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_approved_action_currentness_is_rechecked_before_consumption[schema]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_approved_action_currentness_is_rechecked_before_consumption[schema]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_approved_action_currentness_is_rechecked_before_consumption[artifact]" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_approved_action_currentness_is_rechecked_before_consumption[artifact]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_finite_decimal_arguments_are_exactly_pinned_and_dispatched" time="0.001"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_finite_decimal_arguments_are_exactly_pinned_and_dispatched&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_sensitive_or_nonfinite_arguments_are_rejected_before_upstream[args0-approval_subject_sensitive]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_sensitive_or_nonfinite_arguments_are_rejected_before_upstream[args1-approval_subject_invalid]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_sensitive_or_nonfinite_arguments_are_rejected_before_upstream[args2-approval_subject_invalid]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_mcp_operations" name="test_confirmed_cancellation_is_distinct_from_accepted_submission" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_confirmed_cancellation_is_distinct_from_accepted_submission&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/repos/wright/.pytest-tmp/t056-observation-budget-003')
+mode = 448, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+&gt;           os.mkdir(self, mode)
+E           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\repos\\wright\\.pytest-tmp\\t056-observation-budget-003'
+
+D:\Users\markb\miniconda3\Lib\pathlib\_local.py:722: FileNotFoundError</error></testcase></testsuite></testsuites>

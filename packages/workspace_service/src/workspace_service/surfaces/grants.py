@@ -10,6 +10,10 @@ from pathlib import Path
 from typing import Any, Literal
 
 from data_vault import SurfaceGrantRecord, SurfaceGrantRepository
+from pydantic import Field, StrictBool, ValidationError
+from core.process_interactions import ProcessRef
+from core.process_validation import Contract, Identifier
+from core.surfaces.live_app_manifest import PROCESS_SURFACE_CAPABILITIES
 
 from .service import ActorRole, SurfaceActor
 
@@ -21,6 +25,22 @@ GrantDecision = Literal["allow", "deny"]
 
 class CapabilityGrantError(RuntimeError):
     pass
+
+
+class ProcessPresentationBinding(Contract):
+    """Exact server-derived UI/process/run context for a presentation grant.
+
+    This declaration grants access to the process owner, not permission to
+    execute an external effect, decide an engineering review or replay a command.
+    """
+
+    process: ProcessRef
+    ui_id: Identifier
+    revision_id: Identifier
+    run_id: Identifier | None
+    read_only: StrictBool
+    presentation_id: Identifier
+    generation: int = Field(strict=True, ge=1, le=2_147_483_647)
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,6 +125,28 @@ class CapabilityGrantService:
             raise CapabilityGrantError("Capability constraints are invalid") from error
         if len(encoded.encode("utf-8")) > 16 * 1024:
             raise CapabilityGrantError("Capability constraints are too large")
+        if request.capability in PROCESS_SURFACE_CAPABILITIES:
+            try:
+                binding = ProcessPresentationBinding.model_validate(request.constraints)
+            except ValidationError:
+                raise CapabilityGrantError(
+                    "Process capability requires its exact presentation binding"
+                ) from None
+            read = request.capability in {
+                "process.read",
+                "process.results",
+                "process.navigate",
+            }
+            if (
+                binding.process.workspace_id != actor.workspace_id
+                or request.operation != request.capability
+                or request.risk_tier != ("low" if read else "mutating")
+                or request.persistence != "instance"
+                or (binding.read_only and not read)
+            ):
+                raise CapabilityGrantError(
+                    "Process presentation capability exceeds its bound scope"
+                )
 
     def decide(
         self, *, actor: SurfaceActor, request: CapabilityRequest

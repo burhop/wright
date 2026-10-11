@@ -1,0 +1,33 @@
+{
+  "title": "Saved engineering interfaces release their views on reload",
+  "summary": "Actual common host cleanup on two saved model-created interfaces; no process restart or review response.",
+  "overall": "blocked",
+  "updated": "2026-10-03T03:31:16.135455+00:00",
+  "manualSteps": [
+    {
+      "label": "Open interface",
+      "instruction": "Open the saved Heat comparison or Focus-wheel working-interface link."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the page three times. Check that the same saved interface and exact results return."
+    },
+    {
+      "label": "Leave workspace",
+      "instruction": "Navigate away. Return to the saved interface and check its results. Leave all review decisions unchanged."
+    }
+  ],
+  "steps": [
+    {
+      "id": "PRELAUNCH",
+      "state": "blocked",
+      "label": "Browser launch denied before navigation",
+      "summary": "Sandbox policy prevented Chromium from starting.",
+      "purpose": "Record the actual environment boundary.",
+      "action": "Launch the owned headless walkthrough.",
+      "controls": [],
+      "expected": "Browser starts before workspace navigation.",
+      "actual": "Chromium spawn EPERM; no browser, navigation or screenshot exists."
+    }
+  ]
+}

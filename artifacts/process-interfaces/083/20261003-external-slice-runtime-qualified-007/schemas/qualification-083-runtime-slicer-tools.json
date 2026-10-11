@@ -1,0 +1,259 @@
+{
+  "tools": [
+    {
+      "name": "printer_doctor",
+      "description": "Check env, LAN ports, MQTT, FTPS, and slicer CLI. Does not print or change printer state.",
+      "inputSchema": {
+        "properties": {},
+        "title": "printer_doctorArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_status",
+      "description": "Current P1S state: idle/printing, job name, progress, temps, remaining time.\n\nSet fresh=true to request a full P1S pushall (avoid calling that in a tight loop).\n",
+      "inputSchema": {
+        "properties": {
+          "fresh": {
+            "default": false,
+            "title": "Fresh",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_statusArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_ams",
+      "description": "AMS / external spool trays: type, color, empty, active tray.",
+      "inputSchema": {
+        "properties": {},
+        "title": "printer_amsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_files",
+      "description": "List files on the printer SD card via FTPS.",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "default": "/",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "title": "printer_filesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_pause",
+      "description": "Pause the current print. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_pauseArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_resume",
+      "description": "Resume a paused print. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_resumeArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_stop",
+      "description": "Stop the current print. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "printer_stopArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_speed",
+      "description": "Set speed profile: silent, standard, sport, ludicrous. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "profile": {
+            "title": "Profile",
+            "type": "string"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profile"
+        ],
+        "title": "printer_speedArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_upload",
+      "description": "Upload a sliced .gcode.3mf / .3mf / .gcode to the printer over FTPS. Requires confirm=true.",
+      "inputSchema": {
+        "properties": {
+          "local_path": {
+            "title": "Local Path",
+            "type": "string"
+          },
+          "remote_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Remote Name"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "local_path"
+        ],
+        "title": "printer_uploadArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "printer_print",
+      "description": "Start a print from a local sliced file (upload first) or a filename already on the printer.\n\nRequires confirm=true. Check printer_status first \u2014 do not start if a job is RUNNING.\n",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "plate": {
+            "default": 1,
+            "title": "Plate",
+            "type": "integer"
+          },
+          "use_ams": {
+            "default": true,
+            "title": "Use Ams",
+            "type": "boolean"
+          },
+          "bed_levelling": {
+            "default": true,
+            "title": "Bed Levelling",
+            "type": "boolean"
+          },
+          "flow_cali": {
+            "default": false,
+            "title": "Flow Cali",
+            "type": "boolean"
+          },
+          "vibration_cali": {
+            "default": true,
+            "title": "Vibration Cali",
+            "type": "boolean"
+          },
+          "layer_inspect": {
+            "default": true,
+            "title": "Layer Inspect",
+            "type": "boolean"
+          },
+          "timelapse": {
+            "default": false,
+            "title": "Timelapse",
+            "type": "boolean"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "title": "printer_printArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "slice_model_file",
+      "description": "Slice an STL/3MF with the Bambu Studio CLI into a printable .gcode.3mf. Requires confirm=true.\n\nSTL/STEP needs machine/process/filament JSON (auto-discovered from BambuStudio config when present).\nA project .3mf that already contains settings can be sliced without extra profiles.\n",
+      "inputSchema": {
+        "properties": {
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "plate": {
+            "default": 1,
+            "title": "Plate",
+            "type": "integer"
+          },
+          "output": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output"
+          },
+          "orient": {
+            "default": false,
+            "title": "Orient",
+            "type": "boolean"
+          },
+          "arrange": {
+            "default": false,
+            "title": "Arrange",
+            "type": "boolean"
+          },
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "title": "slice_model_fileArguments",
+        "type": "object"
+      }
+    }
+  ]
+}

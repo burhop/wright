@@ -59,7 +59,7 @@ def test_visual_pi_preserves_real_stages_review_and_bounded_artifacts(
     report = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()
     )
-    assert len(plan.steps) == 11
+    assert len(plan.steps) == 12
     assert len(report["preserved_original_stages"]) == 4
     assert all(
         any(step.id == original for step in plan.steps)
@@ -118,6 +118,22 @@ def test_visual_pi_preserves_real_stages_review_and_bounded_artifacts(
     assert "children is not the solid enumeration and can be empty" in author.prompt
     inspection = next(s for s in plan.steps if s.id.startswith("inspect_cad_exports_"))
     cad = next(s for s in plan.steps if s.id.startswith("agentcad_enclosure_"))
+    assert set(author.expected_file_ports) == {"cad_source"}
+    expected_geometry_roles = {
+        "enclosure_a",
+        "enclosure_b",
+        "fluid_domain_a",
+        "fluid_domain_b",
+        "contract_a",
+        "contract_b",
+        "board_a",
+        "board_b",
+        "source_primary_a",
+        "source_primary_b",
+    }
+    if ordinal in {2, 3}:
+        expected_geometry_roles.update({"source_secondary_a", "source_secondary_b"})
+    assert set(cad.expected_file_ports) == expected_geometry_roles
     assert not cad.agent_task
     assert cad.server_id == "agentcad"
     assert cad.tool_name == "agentcad__run"
@@ -181,6 +197,27 @@ def test_visual_pi_preserves_real_stages_review_and_bounded_artifacts(
         p["key"].endswith("human_context") for p in author_section["fields"]["inputs"]
     )
     assert any(s.id.startswith("inspect_cad_exports_") for s in plan.steps)
+    collection = next(s for s in plan.steps if s.id.startswith("collect_cfd_results_"))
+    validator = next(s for s in plan.steps if s.id.startswith("validate_pi_content_"))
+    assert set(collection.expected_file_ports) == {"comparison", "field_archive"}
+    assert {role for role, _ in validator.validation_sources} == {
+        "manufacturer_research",
+        "design_basis",
+        "cad_source",
+        *expected_geometry_roles,
+        "comparison",
+        "field_archive",
+    }
+    assert (
+        validator.validation["profile"]["name"] == f"raspberry-pi-enclosure-0{ordinal}"
+    )
+    review = next(s for s in plan.steps if s.id.startswith("review_design_"))
+    configured_review = review.external_action["settings"]["validation_review"]
+    assert (
+        configured_review["profile_ref"] == validator.validation["profile"]["reference"]
+    )
+    assert configured_review["requirement_ids"]
+    assert plan.revisions == {}
     assert "prototype design authority" in (
         Path(args.workspace_root)
         / report["output_root"].replace("/artifacts", "/inputs/assembled-context.md")

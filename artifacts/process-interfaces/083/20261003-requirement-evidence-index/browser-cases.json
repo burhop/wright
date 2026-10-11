@@ -1,0 +1,233 @@
+[
+  {
+    "source": "tests/ui-integration/process-common-view.spec.ts",
+    "name": "shows an unattended-input diagnostic without inventing a form and reopens the same failed run",
+    "line": 39,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-common-view.spec.ts",
+    "name": "uses the normal workspace to prepare, follow and inspect an exact run while retaining source edits",
+    "line": 103,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-common-view.spec.ts",
+    "name": "reconciles a lost start acknowledgement after reload using the original request identity",
+    "line": 234,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-declared-interactions.spec.ts",
+    "name": "preserves declared input schemas through workspace source editing, saving and reopening",
+    "line": 21,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-declared-interactions.spec.ts",
+    "name": "declared response resumes the saved workspace run after closing and reopening its tab",
+    "line": 101,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-declared-interactions.spec.ts",
+    "name": "declared response resumes the saved workspace run after explicit lost-ack reconciliation",
+    "line": 101,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-input-inspector.spec.ts",
+    "name": "edits input and human declarations through the workspace inspector and preserves undo, save and reopen",
+    "line": 18,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-input-inspector.spec.ts",
+    "name": "creates a saveable draft user step without inventing a question or response",
+    "line": 122,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-review-actions.spec.ts",
+    "name": "reviews then explicitly submits an exact action in the normal workspace (none lost acknowledgement)",
+    "line": 25,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-review-actions.spec.ts",
+    "name": "reviews then explicitly submits an exact action in the normal workspace (review lost acknowledgement)",
+    "line": 25,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-review-actions.spec.ts",
+    "name": "reviews then explicitly submits an exact action in the normal workspace (action lost acknowledgement)",
+    "line": 25,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-review-actions.spec.ts",
+    "name": "reviews then explicitly submits an exact action in the normal workspace (unknown lost acknowledgement)",
+    "line": 25,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-two-input-recovery.spec.ts",
+    "name": "two declared inputs preserve one workspace run (accepted)",
+    "line": 24,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-two-input-recovery.spec.ts",
+    "name": "two declared inputs preserve one workspace run (lost)",
+    "line": 24,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-two-input-recovery.spec.ts",
+    "name": "two declared inputs preserve one workspace run (schema)",
+    "line": 24,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-two-input-recovery.spec.ts",
+    "name": "two declared inputs preserve one workspace run (stale)",
+    "line": 24,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-validation.spec.ts",
+    "name": "authors a validator and shows correction diagnostics with assessment links from Workflows",
+    "line": 123,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/process-validation.spec.ts",
+    "name": "shows the exact human requirements review from the workspace Workflows control",
+    "line": 280,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery-accessibility.spec.ts",
+    "name": "supports representative authoring and component inspection with keyboard actions and ordered focus",
+    "line": 22,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery-accessibility.spec.ts",
+    "name": "keeps the complete screen-reader contract available at a two-times page scale",
+    "line": 126,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "automatically creates the default workflow when Workflows is opened",
+    "line": 52,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "loads and saves the workspace workflow with its current CAS identity",
+    "line": 77,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "binds decision and revision edges to explicit typed routing handles",
+    "line": 103,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "keeps the engineer's local edit visible when a CAS save conflicts",
+    "line": 162,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "persists authored input text and a scoped workspace file reference across reopen",
+    "line": 191,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "keeps the canvas-first editor bounded with an optional inspector at 1070 by 791",
+    "line": 266,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "expands a reusable component without adding search clutter to a small graph",
+    "line": 345,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "keeps overlapping edge labels behind blocks without losing keyboard edge selection",
+    "line": 391,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "keeps one accepted definition across canvas, source, and AI review",
+    "line": 416,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "uses real typed handles and preserves source across a layout save",
+    "line": 566,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "promotes valid source and reviewed AI commands while production execution remains fail-closed",
+    "line": 725,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "keeps paired diagram and source edits inside the local one-second feedback bound",
+    "line": 785,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  },
+  {
+    "source": "tests/ui-integration/workflow-recovery.spec.ts",
+    "name": "keeps production readiness accessible, reduced-motion legible, and mobile-contained",
+    "line": 826,
+    "kind": "mocked-served-browser",
+    "evidence": "artifacts/process-interfaces/083/20261003-current-regression-verified/browser/attempt-002/case-index.json"
+  }
+]

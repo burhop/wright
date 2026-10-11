@@ -1,0 +1,20 @@
+{
+  "schema": "wright.campaign-repair-evidence/1",
+  "observed_at": "2026-09-22T20:57:40Z",
+  "status": "actual_gateway_export_and_known_defect_rejection_passed",
+  "scope": "Pinned isolated native KiCad export through Wright StdioRunner/GatewayService; independent reader rejects the retained missing-B1-splice schematic even when a producer claims pass.",
+  "image": "sha256:5203521497814b23db6eab50ebd2a5cef208ee0bf164bbdf4164eb3268f72cd9",
+  "source_sha256": "665e59cc33eb81edd3c67bacd70b2867c559b6bad9e1ae8f7cbaf599291714f4",
+  "source_mount": "read_only",
+  "source_unchanged": true,
+  "receipt": ".local-run/renewal-qualification/harness-native-gateway-proof/receipt.json",
+  "receipt_sha256": "c71e89ce6d7a7dd8a4c2a6fff867bd7c49e686a62e8e2d118709e429d07da848",
+  "finding_code": "harness.kicad_correspondence",
+  "corrected_native_design_demonstrated": false,
+  "engineering_assumptions_adopted": false,
+  "human_approval": false,
+  "campaign_dispatches": 0,
+  "campaign_credit": false,
+  "solid_edge_operations": 0,
+  "remaining": "Correct native pin/net/splice correspondence, an approved resistance basis and a complete canonical current-revision package."
+}

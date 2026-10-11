@@ -4,6 +4,8 @@ import copy
 import json
 from pathlib import Path
 
+import pytest
+
 from core.workflow_definitions import (
     WorkflowCommandBatch,
     WorkflowDefinition,
@@ -180,6 +182,79 @@ def test_invalid_multi_command_batch_preserves_exact_current_definition() -> Non
     assert result.candidate is None
     assert current.model_dump_json() == before
     assert any(item.code == "WFR-RELATIONSHIP-DIRECTION" for item in result.diagnostics)
+
+
+def test_order_and_approval_share_blocks_without_losing_either_relationship() -> None:
+    current = load_definition()
+    before = current.model_dump_json()
+    approval = next(
+        row for row in current.relationships if row.id == "rel.review-accepted"
+    )
+    order = {
+        **approval.model_dump(mode="json"),
+        "id": "rel.review-order",
+        "kind": "control",
+        "condition": None,
+        "label": "Continue after review",
+    }
+    batch = WorkflowCommandBatch.model_validate(
+        {
+            "document_kind": "workflow-command-batch",
+            "schema_version": "1.0.0",
+            "base_revision": current.revision,
+            "origin": "graph",
+            "commands": [{"kind": "connect", "relationship": order}],
+        }
+    )
+    result = apply_workflow_commands(current, batch)
+    assert result.ok, result.diagnostics
+    assert result.candidate is not None
+    accepted = accept_workflow_candidate(current, result.candidate)
+    reopened = WorkflowDefinition.model_validate_json(accepted.model_dump_json())
+    pair = [
+        row
+        for row in reopened.relationships
+        if (row.source_id, row.target_id) == (approval.source_id, approval.target_id)
+    ]
+    assert {row.kind for row in pair} == {"control", "decision"}
+    assert approval in pair
+    assert (
+        next(row for row in pair if row.kind == "control").model_dump(mode="json")
+        == order
+    )
+    projected = project_workflow_definition(reopened)
+    assert {row.semantic_id for row in projected.edges} >= {approval.id, order["id"]}
+    assert canonical_definition_bytes(reopened) == canonical_definition_bytes(accepted)
+    assert current.model_dump_json() == before
+
+
+@pytest.mark.parametrize("kind", ["data", "control", "decision", "feedback"])
+def test_duplicate_relationships_of_same_kind_remain_rejected(kind: str) -> None:
+    current = load_definition()
+    payload = current.model_dump(mode="json")
+    if kind == "control":
+        original = {
+            **next(
+                row for row in payload["relationships"] if row["kind"] == "decision"
+            ),
+            "id": "rel.order",
+            "kind": kind,
+            "condition": None,
+        }
+        payload["relationships"].append(original)
+    else:
+        original = next(row for row in payload["relationships"] if row["kind"] == kind)
+    payload["relationships"].append(
+        {
+            **original,
+            "id": "rel.duplicate",
+            "label": "Another label",
+            "condition": "Another condition",
+        }
+    )
+    payload["semantic_sha256"] = None
+    with pytest.raises(ValueError, match="WFR-RELATIONSHIP-ENDPOINT-DUPLICATE"):
+        WorkflowDefinition.model_validate(payload)
 
 
 def test_legacy_promotion_is_exactly_rollbackable_without_layout_authority() -> None:

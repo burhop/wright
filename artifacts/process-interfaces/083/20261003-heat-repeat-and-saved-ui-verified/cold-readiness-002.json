@@ -1,0 +1,313 @@
+{
+  "http": 200,
+  "body": {
+    "state": "blocked",
+    "assessment_id": "readiness-a1e125a01d244d00aee04bd1581bde1d",
+    "process": {
+      "workspace_id": "083-heat-repeat-013",
+      "source_path": "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow",
+      "source_digest": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "input_digest": "348876719f2c86aeaa672aae8bec1b1fb769123db2c936081110e688ef6cbb7d",
+    "assessed_at": "2026-10-03T05:45:32.128988+00:00",
+    "expires_at": null,
+    "dependencies": [
+      {
+        "binding_id": "input_alternatives_csv_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_concept_png_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_concept_svg_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_context_md_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_prompt_txt_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_scenario_json_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_user_profile_md_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_requirements_md_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_selected_cad_source_contract_txt_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_cad_call_json_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_heat_conduction_skfem_py_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_solver_call_json_repeatable_default_013",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "review_basis_repeatable_default_013.review_basis_repeatable_default_013_basis",
+        "classification": "upstream_produced",
+        "producer_step": "define_thermal_case_repeatable_default_013",
+        "producer_port": "define_thermal_case_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "cad_documentation_repeatable_default_013.cad_documentation_repeatable_default_013_reviewed_basis",
+        "classification": "upstream_produced",
+        "producer_step": "define_thermal_case_repeatable_default_013",
+        "producer_port": "define_thermal_case_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "author_cad_repeatable_default_013.author_cad_repeatable_default_013_cad_docs",
+        "classification": "upstream_produced",
+        "producer_step": "cad_documentation_repeatable_default_013",
+        "producer_port": "cad_documentation_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "author_cad_repeatable_default_013.author_cad_repeatable_default_013_basis",
+        "classification": "upstream_produced",
+        "producer_step": "define_thermal_case_repeatable_default_013",
+        "producer_port": "define_thermal_case_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "create_plate_geometry_repeatable_default_013.create_plate_geometry_repeatable_default_013_authored_source",
+        "classification": "upstream_produced",
+        "producer_step": "author_cad_repeatable_default_013",
+        "producer_port": "cad_source",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "measure_candidates_repeatable_default_013.measure_candidates_repeatable_default_013_creation_response",
+        "classification": "upstream_produced",
+        "producer_step": "create_plate_geometry_repeatable_default_013",
+        "producer_port": "create_plate_geometry_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_baseline_40_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "create_plate_geometry_repeatable_default_013",
+        "producer_port": "baseline_40_geometry",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_revision_60_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "create_plate_geometry_repeatable_default_013",
+        "producer_port": "revision_60_geometry",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "compute_fields_repeatable_default_013.compute_fields_repeatable_default_013_geometry_measurements",
+        "classification": "upstream_produced",
+        "producer_step": "create_plate_geometry_repeatable_default_013",
+        "producer_port": "geometry_measurements",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_computed_result",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "compute_fields_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_basis",
+        "classification": "upstream_produced",
+        "producer_step": "define_thermal_case_repeatable_default_013",
+        "producer_port": "define_thermal_case_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "solve_and_verify_repeatable_default_013.solve_and_verify_repeatable_default_013_cad_readback",
+        "classification": "upstream_produced",
+        "producer_step": "measure_candidates_repeatable_default_013",
+        "producer_port": "measure_candidates_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_basis",
+        "classification": "upstream_produced",
+        "producer_step": "define_thermal_case_repeatable_default_013",
+        "producer_port": "define_thermal_case_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_baseline_40_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "create_plate_geometry_repeatable_default_013",
+        "producer_port": "baseline_40_geometry",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_revision_60_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "create_plate_geometry_repeatable_default_013",
+        "producer_port": "revision_60_geometry",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_baseline_40_coarse",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "baseline_40_coarse",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_baseline_40_fine",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "baseline_40_fine",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_revision_60_coarse",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "revision_60_coarse",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_revision_60_fine",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "revision_60_fine",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_decision",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "decision",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "validate_outputs_repeatable_default_013.validate_correspondence",
+        "classification": "upstream_produced",
+        "producer_step": "compute_fields_repeatable_default_013",
+        "producer_port": "correspondence",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "analysis_review_repeatable_default_013.analysis_review_repeatable_default_013_comparison",
+        "classification": "upstream_produced",
+        "producer_step": "solve_and_verify_repeatable_default_013",
+        "producer_port": "solve_and_verify_repeatable_default_013_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "analysis_review_repeatable_default_013.analysis_review_repeatable_default_013_assessment",
+        "classification": "upstream_produced",
+        "producer_step": "validate_outputs_repeatable_default_013",
+        "producer_port": "assessment",
+        "interaction_step": null,
+        "reasons": []
+      }
+    ],
+    "reasons": [
+      {
+        "code": "CAPABILITY_UNAVAILABLE",
+        "message": "Create measured plate alternatives: the MCP tool definition has changed.",
+        "correction": "Select the tool again to review its current inputs, then save and run.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      }
+    ]
+  },
+  "retained_outputs_unchanged": true,
+  "native_project_unchanged": true,
+  "source_sha256": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b"
+}

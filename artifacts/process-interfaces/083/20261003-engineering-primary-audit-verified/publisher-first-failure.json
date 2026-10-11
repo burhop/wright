@@ -1,0 +1,9 @@
+{
+  "command": ".venv/Scripts/python.exe .local-run/process-interfaces-083/t056-publish-engineering-primary-024.py",
+  "first_exit_code": 1,
+  "first_exception": "KeyError: status",
+  "cause": "Stored 082 check outcomes expose state; status was an incorrect audit-helper assumption.",
+  "correction": "Inspect actual stored outcome and use its state field. No report or product contract is modified.",
+  "failed_before_publication": true,
+  "fresh_provider_process_or_review_effects": false
+}

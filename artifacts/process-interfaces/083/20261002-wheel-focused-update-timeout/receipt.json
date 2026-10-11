@@ -1,0 +1,38 @@
+{
+  "status": 202,
+  "body": {
+    "job_id": "job-97f5219a3d74414685cc3f30347a8345",
+    "request_id": "083-wheel-tailored-ui-update-002",
+    "request_digest": "b298fdc600cbedb7ae59ad833952c2d38c84edcb014df3289029da6af09dced0",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+      "source_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "base_revision": "revision-2bf6d4d49c224290a0416503a627d0e7",
+    "role_resolution": {
+      "profile": {
+        "role": "process-ui-author",
+        "version": "1",
+        "instructions_version": "process-ui-author-1",
+        "instructions_digest": "2f36a2737b8ec57182ab4912fd2c83863f0d5fcf5f37affa56b07ae198609e0a",
+        "model_policy": "inherit_default",
+        "allowed_tools": [],
+        "max_repairs": 2
+      },
+      "adapter": "hermes",
+      "model_reference": "gpt-5.6-sol",
+      "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+      "effective_instructions_digest": "2f36a2737b8ec57182ab4912fd2c83863f0d5fcf5f37affa56b07ae198609e0a",
+      "capability_scope": []
+    },
+    "state": "queued",
+    "repair_attempt": 0,
+    "revision_id": null,
+    "created_at": "2026-10-02T14:51:21.023129+00:00",
+    "updated_at": "2026-10-02T14:51:21.023129+00:00",
+    "diagnostics": []
+  }
+}

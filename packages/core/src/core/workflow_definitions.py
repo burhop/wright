@@ -20,11 +20,13 @@ from pydantic import (
     Field,
     StringConstraints,
     ValidationError,
+    model_serializer,
     model_validator,
 )
 
 from .rivet_mcp import reject_secret_material
 from .workflow_drafts import WorkflowDraft, WorkflowLayout, canonical_json_bytes
+from .workflow_instructions import WorkflowInstructionSet
 
 
 WORKFLOW_DEFINITION_KIND = "workflow-ir"
@@ -66,6 +68,14 @@ class WorkflowDefinitionMetadata(_ClosedModel):
     purpose: BoundedText
     engineering_domain: Identifier
     authorship: Literal["human", "human_with_ai_proposal"]
+    instructions: WorkflowInstructionSet | None = None
+
+    @model_serializer(mode="wrap")
+    def omit_legacy_instruction_gap(self, handler):
+        value = handler(self)
+        if self.instructions is None:
+            value.pop("instructions", None)
+        return value
 
 
 class WorkflowPhase(_ClosedModel):
@@ -499,13 +509,20 @@ def _validate_definition(definition: WorkflowDefinition) -> None:
                 f"WFR-PORT-ARTIFACT: {port.artifact_contract_id} does not exist"
             )
     incoming: dict[str, int] = {}
-    endpoints: set[tuple[str, str]] = set()
+    endpoints: set[tuple[str, str, str]] = set()
     forward: dict[str, set[str]] = {identity: set() for identity in blocks}
     for relationship in definition.relationships:
-        endpoint = (relationship.source_id, relationship.target_id)
+        # Execution order and approval can connect the same blocks. Their
+        # distinct kinds must survive editor validation and source round trips.
+        endpoint = (
+            relationship.kind,
+            relationship.source_id,
+            relationship.target_id,
+        )
         if endpoint in endpoints:
             raise ValueError(
-                f"WFR-RELATIONSHIP-ENDPOINT-DUPLICATE: {relationship.id} repeats endpoints"
+                f"WFR-RELATIONSHIP-ENDPOINT-DUPLICATE: {relationship.id} "
+                f"repeats {relationship.kind} endpoints"
             )
         endpoints.add(endpoint)
         if relationship.kind == "data":

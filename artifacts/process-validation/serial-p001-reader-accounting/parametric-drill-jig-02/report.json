@@ -1,0 +1,3927 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "4b2f36d8f9ce3dea4360a9da105633c62f773174c0f99d94b9cddc5e70eeb72b",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:23.675253+00:00",
+    "selected_assessment_id": "assessment-39ca21a41eea447083f47c6a33837481",
+    "selected_attempt_id": "d0a98e58695344a984c6a3e3f06ee43d",
+    "selected_subject_ids": [
+      "jig-step",
+      "dxf",
+      "report"
+    ],
+    "latest_attempt_id": "d0a98e58695344a984c6a3e3f06ee43d",
+    "latest_assessment_id": "assessment-39ca21a41eea447083f47c6a33837481",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "JIG02-H1",
+      "JIG02-H2",
+      "JIG02-H3",
+      "JIG02-H4",
+      "JIG02-SEATS",
+      "JIG02-STACKUP",
+      "JIG02-CHIP-WINDOW",
+      "JIG02-CLAMPS",
+      "JIG02-DATUMS",
+      "JIG02-KEY",
+      "JIG02-ACCESS",
+      "JIG02-DRILL-INTENT",
+      "JIG02-MARKING",
+      "JIG02-MATERIAL",
+      "JIG02-DELIVERABLES",
+      "JIG02-CLAIM-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Physical fit, machining, drilling, guarding and supplier qualification remain outside this digital validation gate."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "step-seat-geometry",
+      "version": "1",
+      "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+      "method": "native_inspection",
+      "tool_identity": "wright bounded STEP circle-placement reader v1",
+      "formats": [
+        "step",
+        "stp"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "JIG02-H1",
+      "requirement_text": "H1 seat center is (30.00,20.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H1"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h1-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H1/center_x_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 30.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        30.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H1",
+      "requirement_text": "H1 seat center is (30.00,20.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H1"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h1-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H1/center_y_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 20.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        20.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h1-body",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H1/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 12.15,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        12.15
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h1-flange",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H1-flange/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 18.3,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        18.3
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1-flange"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H2",
+      "requirement_text": "H2 seat center is (30.00,60.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H2"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h2-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H2/center_x_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 30.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        30.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H2",
+      "requirement_text": "H2 seat center is (30.00,60.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H2"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h2-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H2/center_y_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 60.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        60.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h2-body",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H2/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 12.15,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        12.15
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h2-flange",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H2-flange/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 18.3,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        18.3
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2-flange"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H3",
+      "requirement_text": "H3 seat center is (150.00,20.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H3"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h3-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H3/center_x_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 150.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        150.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H3",
+      "requirement_text": "H3 seat center is (150.00,20.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H3"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h3-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H3/center_y_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 20.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        20.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h3-body",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H3/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 12.15,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        12.15
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h3-flange",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H3-flange/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 18.3,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        18.3
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3-flange"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H4",
+      "requirement_text": "H4 seat center is (150.00,60.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H4"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h4-x",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H4/center_x_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 150.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        150.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-H4",
+      "requirement_text": "H4 seat center is (150.00,60.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "row:H4"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "h4-y",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H4/center_y_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 60.0,
+        "tolerance": 0.15,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        60.0
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h4-body",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H4/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 12.15,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        12.15
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-SEATS",
+      "requirement_text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+          "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+          "locator": "row:B66"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "h4-flange",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "step-seat-geometry",
+      "evidence_method": "native_inspection",
+      "selector": "seat/H4-flange/diameter_mm",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 18.3,
+        "tolerance": 0.1,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "mm",
+      "expected_frame": "workpiece_datum",
+      "observed": [
+        18.3
+      ],
+      "observed_units": [
+        "mm"
+      ],
+      "observed_frames": [
+        "workpiece_datum"
+      ],
+      "evidence_refs": [
+        "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4-flange"
+      ],
+      "subject_id": "jig-step",
+      "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "jig_step"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-STACKUP",
+      "requirement_text": "The 15.00 mm body spans the remaining bridge thickness and no secondary retainer or straight-sleeve substitution is asserted.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements; Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-CHIP-WINDOW",
+      "requirement_text": "No jig material occupies X=65..115 mm, Y=15..65 mm in the declared chip-removal region, and the workpiece is not cut there.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/keepouts.csv",
+          "sha256": "651ff9df2177886650835e7f2b974d2ce07056163b772c0c22ab1b79b907519a",
+          "locator": "row:CHIP_WINDOW"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Hole and fixture requirements"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-CLAMPS",
+      "requirement_text": "Jig material has no positive-volume intersection with FRONT_CLAMP or REAR_CLAMP; the approved 2.85 mm end-facing ligaments remain outside those volumes.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/keepouts.csv",
+          "sha256": "651ff9df2177886650835e7f2b974d2ce07056163b772c0c22ab1b79b907519a",
+          "locator": "rows:FRONT_CLAMP,REAR_CLAMP"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-DATUMS",
+      "requirement_text": "Two front pads occupy the approved X=-4..0 ranges, the left fence occupies X=18..162,Y=-4..0,Z=0..12, and their connector remains at Y=-8..0 outside clamps.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-KEY",
+      "requirement_text": "One integral key tongue occupies X=0..3.8,Y=9.2..14.8,Z=-2.8..0 when seated, matching but not altering the supplied indexing notch with 0.20 mm in-plane clearance per side.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-ACCESS",
+      "requirement_text": "The jig is no more than 17.5 mm above the tube top and non-bushing material stays outside a 25 mm diameter vertical access cylinder at every drill axis.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-DRILL-INTENT",
+      "requirement_text": "The design guides 6.6 mm drilling through only the nominal 3 mm top wall and does not imply drilling or locating from the opposite wall.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+          "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+          "locator": "top-wall-only instruction"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+          "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+          "locator": "drill_diameter_mm,nominal_wall_mm"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Workpiece and production context"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-MARKING",
+      "requirement_text": "A clear front arrow provides visual wrong-end confirmation in addition to the positive key.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+          "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+          "locator": "front-arrow request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-MATERIAL",
+      "requirement_text": "The design note explicitly identifies machined acetal as the assumed digital-study material and does not imply production approval.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Capability, policy, and limits"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-CLAIM-SCOPE",
+      "requirement_text": "The result leaves supplier fit, evacuation, spindle clearance, runout, guarding, breakthrough, setup, and physical tolerance verification for later human review and makes no standards claim.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Capability, policy, and limits; Authorized prototype design decisions"
+        }
+      ],
+      "check_id": "design-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [
+        "f-3a680828eb944303863b81c14b6135d0"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "JIG02-DELIVERABLES",
+      "requirement_text": "The output set contains a STEP or STL jig, hole-layout DXF, and machine-readable dimension/clearance report.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+          "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Capability, policy, and limits"
+        }
+      ],
+      "check_id": "deliverable-dxf",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 5241,
+          "present": true,
+          "sha256": "d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:dxf@d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942#"
+      ],
+      "subject_id": "dxf",
+      "subject_sha256": "d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "dxf"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "JIG02-DELIVERABLES",
+      "requirement_text": "The output set contains a STEP or STL jig, hole-layout DXF, and machine-readable dimension/clearance report.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+          "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+          "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+          "locator": "Capability, policy, and limits"
+        }
+      ],
+      "check_id": "deliverable-report",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 17251,
+          "present": true,
+          "sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:report@c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a#"
+      ],
+      "subject_id": "report",
+      "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+      "producer": {
+        "run_id": "retained-successor-parametric-drill-jig-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "report"
+      },
+      "finding_ids": [],
+      "action": null
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-39ca21a41eea447083f47c6a33837481",
+    "attempt_id": "d0a98e58695344a984c6a3e3f06ee43d",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "parametric-drill-jig-02",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "jig-step",
+          "role": "jig_step",
+          "result_id": "retained-successor:parametric-drill-jig-02:jig_step",
+          "producer": {
+            "run_id": "retained-successor-parametric-drill-jig-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "jig_step"
+          },
+          "kind": "file",
+          "sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+          "value": null,
+          "locator": "jig.step",
+          "format": "step",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "dxf",
+          "role": "dxf",
+          "result_id": "retained-successor:parametric-drill-jig-02:dxf",
+          "producer": {
+            "run_id": "retained-successor-parametric-drill-jig-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "dxf"
+          },
+          "kind": "file",
+          "sha256": "d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942",
+          "value": null,
+          "locator": "hole-layout.dxf",
+          "format": "dxf",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "report",
+          "role": "report",
+          "result_id": "retained-successor:parametric-drill-jig-02:report",
+          "producer": {
+            "run_id": "retained-successor-parametric-drill-jig-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "report"
+          },
+          "kind": "file",
+          "sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+          "value": null,
+          "locator": "dimension-report.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "parametric-drill-jig-02-full",
+        "version": "1",
+        "sha256": "fd39181e0c3a7d5262b27b17ff837f4cbd86fab7d67a524f101d9cd259bec754"
+      },
+      "baseline_ref": {
+        "id": "parametric-drill-jig-02-basis",
+        "version": "1",
+        "sha256": "01ab65b9f751d126beb09c310e17339bd32fbae19581f86b27313b4e443df4b0"
+      },
+      "idempotency_key": "parametric-drill-jig-02",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "parametric-drill-jig-02-full",
+      "version": "1",
+      "baseline": {
+        "id": "parametric-drill-jig-02-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "JIG02-H1",
+            "text": "H1 seat center is (30.00,20.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+                "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+                "locator": "row:H1"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Hole and fixture requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "JIG02-H2",
+            "text": "H2 seat center is (30.00,60.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+                "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+                "locator": "row:H2"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Hole and fixture requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "JIG02-H3",
+            "text": "H3 seat center is (150.00,20.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+                "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+                "locator": "row:H3"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Hole and fixture requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "JIG02-H4",
+            "text": "H4 seat center is (150.00,60.00) mm within ±0.15 mm per axis in the exterior top-face workpiece datum.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+                "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+                "locator": "row:H4"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Hole and fixture requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "JIG02-SEATS",
+            "text": "Every bushing uses a 12.15 mm body hole and an 18.30 mm diameter by 2.50 mm deep top counterbore with the flange bearing downward.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/bushings.csv",
+                "sha256": "16c1f97b7c45e77ed1bd55e275c4b26957f28208ef7295d2ed59ee92d2e97f86",
+                "locator": "row:B66"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "JIG02-STACKUP",
+            "text": "The 15.00 mm body spans the remaining bridge thickness and no secondary retainer or straight-sleeve substitution is asserted.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Hole and fixture requirements; Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-CHIP-WINDOW",
+            "text": "No jig material occupies X=65..115 mm, Y=15..65 mm in the declared chip-removal region, and the workpiece is not cut there.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/keepouts.csv",
+                "sha256": "651ff9df2177886650835e7f2b974d2ce07056163b772c0c22ab1b79b907519a",
+                "locator": "row:CHIP_WINDOW"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Hole and fixture requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-CLAMPS",
+            "text": "Jig material has no positive-volume intersection with FRONT_CLAMP or REAR_CLAMP; the approved 2.85 mm end-facing ligaments remain outside those volumes.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/keepouts.csv",
+                "sha256": "651ff9df2177886650835e7f2b974d2ce07056163b772c0c22ab1b79b907519a",
+                "locator": "rows:FRONT_CLAMP,REAR_CLAMP"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-DATUMS",
+            "text": "Two front pads occupy the approved X=-4..0 ranges, the left fence occupies X=18..162,Y=-4..0,Z=0..12, and their connector remains at Y=-8..0 outside clamps.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-KEY",
+            "text": "One integral key tongue occupies X=0..3.8,Y=9.2..14.8,Z=-2.8..0 when seated, matching but not altering the supplied indexing notch with 0.20 mm in-plane clearance per side.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-ACCESS",
+            "text": "The jig is no more than 17.5 mm above the tube top and non-bushing material stays outside a 25 mm diameter vertical access cylinder at every drill axis.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-DRILL-INTENT",
+            "text": "The design guides 6.6 mm drilling through only the nominal 3 mm top wall and does not imply drilling or locating from the opposite wall.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+                "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+                "locator": "top-wall-only instruction"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+                "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+                "locator": "drill_diameter_mm,nominal_wall_mm"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Workpiece and production context"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-MARKING",
+            "text": "A clear front arrow provides visual wrong-end confirmation in addition to the positive key.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+                "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+                "locator": "front-arrow request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-MATERIAL",
+            "text": "The design note explicitly identifies machined acetal as the assumed digital-study material and does not imply production approval.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Capability, policy, and limits"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "JIG02-DELIVERABLES",
+            "text": "The output set contains a STEP or STL jig, hole-layout DXF, and machine-readable dimension/clearance report.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+                "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Capability, policy, and limits"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "JIG02-CLAIM-SCOPE",
+            "text": "The result leaves supplier fit, evacuation, spindle clearance, runout, guarding, breakthrough, setup, and physical tolerance verification for later human review and makes no standards claim.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+                "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+                "locator": "Capability, policy, and limits; Authorized prototype design decisions"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "h1-x",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H1"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H1/center_x_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 30.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h1-y",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H1"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H1/center_y_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 20.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h1-body",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H1/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 12.15,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h1-flange",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H1-flange/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 18.3,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 18.3,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h2-x",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H2"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H2/center_x_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 30.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h2-y",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H2"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H2/center_y_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 60.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h2-body",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H2/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 12.15,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h2-flange",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H2-flange/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 18.3,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              30.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 18.3,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h3-x",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H3"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H3/center_x_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 150.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h3-y",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H3"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H3/center_y_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 20.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h3-body",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H3/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 12.15,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h3-flange",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H3-flange/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 18.3,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              20.0
+            ],
+            "nominal_diameter_mm": 18.3,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h4-x",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H4"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H4/center_x_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 150.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h4-y",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-H4"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H4/center_y_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 60.0,
+            "tolerance": 0.15,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h4-body",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H4/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 12.15,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 12.15,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "h4-flange",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-SEATS"
+          ],
+          "subject_role": "jig_step",
+          "reader": "step-seat-geometry",
+          "selector": "seat/H4-flange/diameter_mm",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 18.3,
+            "tolerance": 0.1,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "mm",
+          "frame": "workpiece_datum",
+          "evidence_method": "native_inspection",
+          "parameters": {
+            "capture_radius_mm": 4.0,
+            "datum_transform_model_to_workpiece": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ],
+            "nominal_center_mm": [
+              150.0,
+              60.0
+            ],
+            "nominal_diameter_mm": 18.3,
+            "radius_match_tolerance_mm": 0.08
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "design-review",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-STACKUP",
+            "JIG02-CHIP-WINDOW",
+            "JIG02-CLAMPS",
+            "JIG02-DATUMS",
+            "JIG02-KEY",
+            "JIG02-ACCESS",
+            "JIG02-DRILL-INTENT",
+            "JIG02-MARKING",
+            "JIG02-MATERIAL",
+            "JIG02-CLAIM-SCOPE"
+          ],
+          "subject_role": "report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-dxf",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-DELIVERABLES"
+          ],
+          "subject_role": "dxf",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-report",
+          "version": "1",
+          "requirement_ids": [
+            "JIG02-DELIVERABLES"
+          ],
+          "subject_role": "report",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Physical fit, machining, drilling, guarding and supplier qualification remain outside this digital validation gate."
+      ],
+      "supported_kinds": [
+        "file"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:23.593512+00:00",
+    "measurements": [
+      {
+        "id": "m-58ad0c6378ae96df3a512334baeae50d8006bf038dd8b863b690b2d64380d286",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H1/center_x_mm",
+        "value": 30.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+        ]
+      },
+      {
+        "id": "m-6ea8070fcac7463cf5913fa4feab084b60c70febf6c212a955bacd3468b433fa",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H1/center_y_mm",
+        "value": 20.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+        ]
+      },
+      {
+        "id": "m-7ec829fb9a8e34206235d49df52a09fa62604121fc37ec127cdfb6b62ca96480",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H1/diameter_mm",
+        "value": 12.15,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+        ]
+      },
+      {
+        "id": "m-f4ca250b6201757f5d03a738db4d19536b7b08c8e86ed7cab41daeb1ed49ed23",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H1-flange/diameter_mm",
+        "value": 18.3,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1-flange"
+        ]
+      },
+      {
+        "id": "m-6a44fb542bb26b4994f4c0be50a3fce5815016c61ace3cdcd0fce480061072e3",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H2/center_x_mm",
+        "value": 30.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+        ]
+      },
+      {
+        "id": "m-f4f41fab4d01cfb4c862903a09ef1de5ae46932eab318922af474c9cda92d0ab",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H2/center_y_mm",
+        "value": 60.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+        ]
+      },
+      {
+        "id": "m-6d4a6297fe7b783eca937733636e212a28e3c675ed06bf6b5fdd9e6816550096",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H2/diameter_mm",
+        "value": 12.15,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+        ]
+      },
+      {
+        "id": "m-ba52dbb6e021dda01844a603d12254ea63fab27d2df5abecc4db26376dd3d6f2",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H2-flange/diameter_mm",
+        "value": 18.3,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2-flange"
+        ]
+      },
+      {
+        "id": "m-cd803667f11a100c2066e4af5e8c090b00a318279572caed6770b144a7900201",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H3/center_x_mm",
+        "value": 150.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+        ]
+      },
+      {
+        "id": "m-a808f74e41b6f34ac8bdbf0ba2389de5e6139978477308bf60f72a7b78ca6dd4",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H3/center_y_mm",
+        "value": 20.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+        ]
+      },
+      {
+        "id": "m-1220de61710e46bfc8efa3c3f33d904f8896b022c4a0cdf351bf9fb00da0de32",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H3/diameter_mm",
+        "value": 12.15,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+        ]
+      },
+      {
+        "id": "m-3d1478e630880a1936ea7333fff0f4f67a0bc8c151d1e796fe0bf4fb1cea6e4f",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H3-flange/diameter_mm",
+        "value": 18.3,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3-flange"
+        ]
+      },
+      {
+        "id": "m-3e01d54acf4ab3a2cfa4050151a4817c207afb18b577fedfced3e58fe0774ea2",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H4/center_x_mm",
+        "value": 150.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+        ]
+      },
+      {
+        "id": "m-08f7cfd2abddf25c41f0152a7332540824aab3267b2e48d54a01327ddd7bd941",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H4/center_y_mm",
+        "value": 60.0,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+        ]
+      },
+      {
+        "id": "m-94de2192e452c480acdbb38d831ecc46a5d8396d6191080ece52a19b3c6e9700",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H4/diameter_mm",
+        "value": 12.15,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+        ]
+      },
+      {
+        "id": "m-193cd09b2d68c47c707a969c8f3336d78d1164bf2d04b448074db03828ca4180",
+        "subject_id": "jig-step",
+        "subject_sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+        "selector": "seat/H4-flange/diameter_mm",
+        "value": 18.3,
+        "unit": "mm",
+        "frame": "workpiece_datum",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "step-seat-geometry",
+          "version": "1",
+          "config_digest": "d5e8ebcd34dc69e47e4ae09951ed078608438f7f90e9d5e439f2d3a0bc1dae30",
+          "method": "native_inspection",
+          "tool_identity": "wright bounded STEP circle-placement reader v1",
+          "formats": [
+            "step",
+            "stp"
+          ]
+        },
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4-flange"
+        ]
+      },
+      {
+        "id": "m-f5c8227f9e70ac811042c548653972e18f435aaab7dd195dc2d644bad068431b",
+        "subject_id": "dxf",
+        "subject_sha256": "d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942",
+        "selector": "",
+        "value": {
+          "bytes": 5241,
+          "present": true,
+          "sha256": "d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:dxf@d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942#"
+        ]
+      },
+      {
+        "id": "m-47aa3b57906d6b4380b794d96447ae29ae80600a49827bf86a3f8f63cdb08e31",
+        "subject_id": "report",
+        "subject_sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a",
+        "selector": "",
+        "value": {
+          "bytes": 17251,
+          "present": true,
+          "sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:report@c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "h1-x",
+        "requirement_ids": [
+          "JIG02-H1"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-58ad0c6378ae96df3a512334baeae50d8006bf038dd8b863b690b2d64380d286"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h1-y",
+        "requirement_ids": [
+          "JIG02-H1"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-6ea8070fcac7463cf5913fa4feab084b60c70febf6c212a955bacd3468b433fa"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h1-body",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-7ec829fb9a8e34206235d49df52a09fa62604121fc37ec127cdfb6b62ca96480"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h1-flange",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f4ca250b6201757f5d03a738db4d19536b7b08c8e86ed7cab41daeb1ed49ed23"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H1-flange"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h2-x",
+        "requirement_ids": [
+          "JIG02-H2"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-6a44fb542bb26b4994f4c0be50a3fce5815016c61ace3cdcd0fce480061072e3"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h2-y",
+        "requirement_ids": [
+          "JIG02-H2"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f4f41fab4d01cfb4c862903a09ef1de5ae46932eab318922af474c9cda92d0ab"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h2-body",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-6d4a6297fe7b783eca937733636e212a28e3c675ed06bf6b5fdd9e6816550096"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h2-flange",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-ba52dbb6e021dda01844a603d12254ea63fab27d2df5abecc4db26376dd3d6f2"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H2-flange"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h3-x",
+        "requirement_ids": [
+          "JIG02-H3"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cd803667f11a100c2066e4af5e8c090b00a318279572caed6770b144a7900201"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h3-y",
+        "requirement_ids": [
+          "JIG02-H3"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a808f74e41b6f34ac8bdbf0ba2389de5e6139978477308bf60f72a7b78ca6dd4"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h3-body",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1220de61710e46bfc8efa3c3f33d904f8896b022c4a0cdf351bf9fb00da0de32"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h3-flange",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-3d1478e630880a1936ea7333fff0f4f67a0bc8c151d1e796fe0bf4fb1cea6e4f"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H3-flange"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h4-x",
+        "requirement_ids": [
+          "JIG02-H4"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-3e01d54acf4ab3a2cfa4050151a4817c207afb18b577fedfced3e58fe0774ea2"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h4-y",
+        "requirement_ids": [
+          "JIG02-H4"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-08f7cfd2abddf25c41f0152a7332540824aab3267b2e48d54a01327ddd7bd941"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h4-body",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-94de2192e452c480acdbb38d831ecc46a5d8396d6191080ece52a19b3c6e9700"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "h4-flange",
+        "requirement_ids": [
+          "JIG02-SEATS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-193cd09b2d68c47c707a969c8f3336d78d1164bf2d04b448074db03828ca4180"
+        ],
+        "evidence_refs": [
+          "subject:jig-step@90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831#step-circle/H4-flange"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "design-review",
+        "requirement_ids": [
+          "JIG02-STACKUP",
+          "JIG02-CHIP-WINDOW",
+          "JIG02-CLAMPS",
+          "JIG02-DATUMS",
+          "JIG02-KEY",
+          "JIG02-ACCESS",
+          "JIG02-DRILL-INTENT",
+          "JIG02-MARKING",
+          "JIG02-MATERIAL",
+          "JIG02-CLAIM-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-3a680828eb944303863b81c14b6135d0"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-dxf",
+        "requirement_ids": [
+          "JIG02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f5c8227f9e70ac811042c548653972e18f435aaab7dd195dc2d644bad068431b"
+        ],
+        "evidence_refs": [
+          "subject:dxf@d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-report",
+        "requirement_ids": [
+          "JIG02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-47aa3b57906d6b4380b794d96447ae29ae80600a49827bf86a3f8f63cdb08e31"
+        ],
+        "evidence_refs": [
+          "subject:report@c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-3a680828eb944303863b81c14b6135d0",
+        "code": "review.required",
+        "check_id": "design-review",
+        "requirement_ids": [
+          "JIG02-STACKUP",
+          "JIG02-CHIP-WINDOW",
+          "JIG02-CLAMPS",
+          "JIG02-DATUMS",
+          "JIG02-KEY",
+          "JIG02-ACCESS",
+          "JIG02-DRILL-INTENT",
+          "JIG02-MARKING",
+          "JIG02-MATERIAL",
+          "JIG02-CLAIM-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "report",
+        "owner": {
+          "run_id": "retained-successor-parametric-drill-jig-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "report"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+            "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+            "locator": "Hole and fixture requirements; Authorized prototype design decisions"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/keepouts.csv",
+            "sha256": "651ff9df2177886650835e7f2b974d2ce07056163b772c0c22ab1b79b907519a",
+            "locator": "row:CHIP_WINDOW"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+            "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+            "locator": "Hole and fixture requirements"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/keepouts.csv",
+            "sha256": "651ff9df2177886650835e7f2b974d2ce07056163b772c0c22ab1b79b907519a",
+            "locator": "rows:FRONT_CLAMP,REAR_CLAMP"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+            "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+            "locator": "Authorized prototype design decisions"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+            "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+            "locator": "top-wall-only instruction"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/holes.csv",
+            "sha256": "38f9761fe747c97fa80904de7258dc5d4459e800cb033be99f6f2c3952133140",
+            "locator": "drill_diameter_mm,nominal_wall_mm"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+            "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+            "locator": "Workpiece and production context"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/prompt.txt",
+            "sha256": "730ff730de0c7d178c438f0485eabb35f5ccca9bbbecea370aaaecfbdad7ccab",
+            "locator": "front-arrow request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+            "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+            "locator": "Capability, policy, and limits"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/context.md",
+            "sha256": "ff90ef7bec7a1e3b1694a0920086617dde8602159766918789f7898fe9298c7a",
+            "locator": "Capability, policy, and limits; Authorized prototype design decisions"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "h1-x",
+            "h1-y",
+            "h1-body",
+            "h1-flange",
+            "h2-x",
+            "h2-y",
+            "h2-body",
+            "h2-flange",
+            "h3-x",
+            "h3-y",
+            "h3-body",
+            "h3-flange",
+            "h4-x",
+            "h4-y",
+            "h4-body",
+            "h4-flange",
+            "design-review",
+            "deliverable-dxf",
+            "deliverable-report"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 18
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

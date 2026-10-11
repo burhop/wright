@@ -1,0 +1,7 @@
+{
+  "only_generated_workspace_locator_and_surface_launch_paths_changed": true,
+  "surface_executable_in_isolated_current_install": true,
+  "surface_asset_root_in_copied_workspace": true,
+  "no_generated_code_or_manifest_or_run_or_review_changes": true,
+  "normal_owned_host_stop_confirmed": true
+}

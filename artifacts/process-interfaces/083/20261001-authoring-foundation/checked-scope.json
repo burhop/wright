@@ -1,0 +1,178 @@
+{
+  "parent_commit": "c289fba7d8b8a0dcfac3fc838d1230bf515e4fc8",
+  "tasks_completed_at_owner_boundary": [
+    "T029",
+    "T030",
+    "T031",
+    "T033"
+  ],
+  "tasks_partial": [
+    "T032"
+  ],
+  "tasks_pending_integration": [
+    "T034",
+    "T035",
+    "T036",
+    "T037",
+    "T038",
+    "T039",
+    "T040",
+    "T041",
+    "T042"
+  ],
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+    "node": "v25.2.0"
+  },
+  "final_command": ".venv/Scripts/python.exe -m pytest packages/workspace_service/tests/test_process_ui_authoring.py packages/workspace_service/tests/test_process_ui_build.py packages/agent_adapters/tests/test_process_ui_author_role.py packages/agent_adapters/tests/test_hermes_role_worker.py packages/agent_adapters/tests/test_hermes_gateway_adapter.py packages/data_vault/tests/test_process_interface_migrations.py packages/data_vault/tests/test_migrations.py packages/workspace_service/tests/test_process_preparation_service.py packages/workspace_service/tests/test_process_artifact_access.py -q -p no:cacheprovider --basetemp=C:/Users/markb/.codex/visualizations/2026/09/24/01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056/process-interfaces-083-tests/t029-t033-qualified",
+  "final_result": {
+    "passed": 155,
+    "skipped": 0,
+    "seconds": 67.51
+  },
+  "logs": {
+    "t029-t032-sdk-qualified.log": {
+      "sha256": "6cd0d37636cf16ab3b70b3352b4accc3a9917c1ac388c302245e2f4ef714de07",
+      "tail": [
+        "........................................................................ [ 98%]",
+        ".                                                                        [100%]",
+        "73 passed in 34.34s"
+      ]
+    },
+    "t031-first.log": {
+      "sha256": "2dccc47af913856ed715116c875dddff6daa4ff59408a52990ed57bcd0cb3089",
+      "tail": [
+        "",
+        "packages\\workspace_service\\tests\\test_process_ui_authoring.py:236: AssertionError",
+        "=========================== short test summary info ===========================",
+        "FAILED packages/workspace_service/tests/test_process_ui_authoring.py::test_actual_fixed_compiler_builds_controlled_model_output",
+        "1 failed, 17 passed in 9.89s"
+      ]
+    },
+    "t031-second.log": {
+      "sha256": "f5bd024b5d3e3de1246907665dd3cea9eb05a2bea906f0fc6d6eb5c74113b345",
+      "tail": [
+        "",
+        "packages\\data_vault\\tests\\test_process_interface_migrations.py:190: AssertionError",
+        "=========================== short test summary info ===========================",
+        "FAILED packages/data_vault/tests/test_process_interface_migrations.py::test_additive_migration_preserves_v2_checkpoint_and_legacy_run",
+        "1 failed, 29 passed in 33.23s"
+      ]
+    },
+    "t029-t033-checkpoint.log": {
+      "sha256": "a4889312bfc7c81dd985a4b895cf0a710d8cb54b97a525936f636a25e66d08e4",
+      "tail": [
+        "........................................................................ [ 55%]",
+        "..........................................................               [100%]",
+        "130 passed in 53.80s"
+      ]
+    },
+    "t029-t033-final.log": {
+      "sha256": "d9ea1a54057b9c6cc9d7cf715bf7e5b5e688483739cffc3bf4b01689ac67ddc1",
+      "tail": [
+        "",
+        "no tests ran in 0.00s",
+        "ERROR: file or directory not found: packages/workspace_service/tests/test_process_input_artifacts.py",
+        ""
+      ]
+    },
+    "t029-t033-qualified.log": {
+      "sha256": "47a102928a1c0e956da255574142b262e8db802995b80cc516f7dfad3bd37c96",
+      "tail": [
+        "........................................................................ [ 46%]",
+        "........................................................................ [ 92%]",
+        "...........                                                              [100%]",
+        "155 passed in 67.51s (0:01:07)"
+      ]
+    },
+    "t029-t033-lint.log": {
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "tail": [
+        "All checks passed!"
+      ]
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "code_hashes": {
+    "packages/agent_adapters/src/agent_adapters/base.py": "8362f014e7aad8808ac60d0fa2d072b6c3327e97a76f06652111a58a26c13870",
+    "packages/agent_adapters/src/agent_adapters/hermes.py": "4ccba8ee3a812b2ec363c40d3defffc45019642114def91be747ed1fbdadf436",
+    "packages/agent_adapters/src/agent_adapters/hermes_role.py": "d8171b63d9c3b32d4f338fede9ff7a2c1bec106bcbda99d43a075e27655be1a9",
+    "packages/agent_adapters/src/agent_adapters/hermes_role_worker.py": "d44f7dcfec1a815ce3c4cf2e484b82bb398eb7acffbbf35bdd3cc6986291c497",
+    "packages/agent_adapters/tests/test_process_ui_author_role.py": "53361ceb62efb3928953bcd6dfc6b4a8417f86fa9a014bf5a299d9c5f4daefe4",
+    "packages/agent_adapters/tests/test_hermes_role_worker.py": "2d7566bb507214285c93d1fd58809aade10d240d9a24a8ff98f5ac6a05609e78",
+    "packages/data_vault/src/data_vault/migrations.py": "72b35d8687be9f96ac4e23c1ac2033b3d2faf4a33ab755a9fbc8728ce0b773d2",
+    "packages/data_vault/src/data_vault/process_interface_repository.py": "930440357408380157de27ca60db589d6fbf52fe2f68ea4e7cfba3aa3a255d30",
+    "packages/data_vault/src/data_vault/process_ui_artifacts.py": "c15bc11133ce03cd49c948f580434c12a2f0080362197f2c540c23d00e54a6fa",
+    "packages/data_vault/tests/test_migrations.py": "8d024b3f90e4497243f750d3db00c0b4a3fbe47796a43a615b0d5f949cd14cad",
+    "packages/data_vault/tests/test_process_interface_migrations.py": "479128494363d3108c7b159cc1767c4b007b30b5fed98ee12ea76112322b4965",
+    "packages/workspace_service/src/workspace_service/process_interfaces/service.py": "5e09c418750e13c0b80d1072294cdaee1eeb6fe62f8129a2852e938604ef4c42",
+    "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py": "a54653cf5ea557af5962c50e950c3def23f749f00c9269bed7622b812889a848",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py": "a1cc7ca160fedaf0eda302fa9cb970cbf279989f59399eb3cf83d676281a2e7e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py": "50a81de0dc5511017d6ee294984b34428e6b3a842b14e0282ad6f87f7a3d61f8",
+    "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py": "82174096a37e9e138599307f73ce5c53ef9dccec947a05c5af02cea5cd0fcb62",
+    "packages/workspace_service/tests/test_process_ui_build.py": "06fcf63673c5b1863fc670a5c362bcc5e975078b24ea974dab8f52b09d0b0e44",
+    "packages/workspace_service/tests/test_process_ui_authoring.py": "f83361ea738acbc387f877f275ec0ebfcb825092b9aaff2ff6179025aed2c458",
+    "specs/083-process-working-interfaces/progress.md": "90fe26020282140d4e90301680e57647ec9fc5a9a02c3a71c1e354ecdc9609f8",
+    "specs/083-process-working-interfaces/tasks.md": "bebc7cf788d89e039ceccc5b1a758707c67efbdcfad41d382b3dad85c818440c",
+    "specs/083-process-working-interfaces/evidence/live-ui-authoring.md": "379965b500111c4b69a7772026e4c0141380f52bce6b2fe853308b5d83525e61",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/__init__.py": "f160cda97b2d0d841a8cd98fd49775c8c4e88ffad2c0041d62d3ee12229368a0",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/fixed-builder.mjs": "e399c1bb31176c10125cde4ff4a6d5153661e2a5c3cfbec016a2c88a3aa03098",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/instructions.md": "d6604eeb8d80e429f515d99bb63b6363046ee808c0952a6bf5b8a02faf5c8e6e",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md": "aa9f6093e65d69ea42bf09ae6877ff87d07a6a69d826228144010cdf4ddf0277",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/reference.tsx": "5973a01a5df4faefdede7b7b8346b726f277e22ade79a6f525f940103f626e29",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/toolchain.json": "ad733ea57ec02e1a7c0771788f76e4fcef8c222ce152ab945a62c749f960cc43"
+  },
+  "model_evidence": {
+    "artifacts/process-interfaces/083/20261001-authoring-foundation/model/checked-scope.json": "1c010d34138da051d4715c4e1e4cca48f36b2ce54e4e848d427c58c2385cc698",
+    "artifacts/process-interfaces/083/20261001-authoring-foundation/model/egress-audit.json": "f45053b2063d20e68797e70de74eec6c46e1aa5d21c9aad1bd448c41f7142427",
+    "artifacts/process-interfaces/083/20261001-authoring-foundation/model/events-0.json": "2b94f6e8f6ef933ac80a5bc81bf55fabc8ada29ef735ef079a27c2bffe6cc61f",
+    "artifacts/process-interfaces/083/20261001-authoring-foundation/model/output-0.json": "741ee09464cdcb907bf03573fb005698c16a7963fc10f6b1c4aa0094361e378d",
+    "artifacts/process-interfaces/083/20261001-authoring-foundation/model/prompt-0.json": "6449079d9d160e499d319741eff146e699d23744c6db22dca92a571003c26f91"
+  },
+  "checked_scope": {
+    "actual_default_model_adapter_smoke": true,
+    "actual_local_compiler": true,
+    "durable_owner_tests": true,
+    "preview_observation_is_synthetic": true,
+    "actual_managed_preview": false,
+    "native_authoring_api": false,
+    "live_mcp": false,
+    "engineering_acceptance": false,
+    "hardware_dispatch": false,
+    "installed_distribution": false,
+    "user_acceptance": false
+  },
+  "limitations": [
+    "Public client/kit distributions remain T032/T050.",
+    "Actual managed preview/save/update authoring through Wright remains T034-T042.",
+    "No engineering process or hardware is executed by this proof.",
+    "T021 and M4-M5 are pending."
+  ]
+}

@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { telemetry } from "./services/telemetry";
 import { registerTraceIdProvider, logger } from "./services/logger";
 import "./index.css";
-import App from "./App.tsx";
+import App, { createAppRouter } from "./App.tsx";
 import { restoreCachedTheme } from "./services/ui-preferences";
 
 restoreCachedTheme();
@@ -13,8 +13,9 @@ registerTraceIdProvider(() => telemetry.getActiveTraceId());
 
 logger.info("Application initialized", { env: "browser" });
 
+const router = createAppRouter();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <App router={router} />
   </StrictMode>,
 );

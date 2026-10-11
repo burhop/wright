@@ -1,0 +1,185 @@
+[
+  {
+    "width": 1440,
+    "metrics": {
+      "width": 1392,
+      "scrollWidth": 1392,
+      "buttons": [
+        {
+          "label": "Open workflow",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Create or choose interface",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Use common working view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Reopen interface view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Focus interface",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Close interface view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Enter embedded application",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Return to surface controls",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    "focused": {
+      "label": "Create or choose interface",
+      "outline": "3px"
+    }
+  },
+  {
+    "width": 1024,
+    "metrics": {
+      "width": 976,
+      "scrollWidth": 976,
+      "buttons": [
+        {
+          "label": "Open workflow",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Create or choose interface",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Use common working view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Reopen interface view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Focus interface",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Close interface view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Enter embedded application",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Return to surface controls",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    "focused": {
+      "label": "Create or choose interface",
+      "outline": "3px"
+    }
+  },
+  {
+    "width": 480,
+    "metrics": {
+      "width": 432,
+      "scrollWidth": 432,
+      "buttons": [
+        {
+          "label": "Open workflow",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Create or choose interface",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Use common working view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Reopen interface view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Focus interface",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Close interface view",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Enter embedded application",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        },
+        {
+          "label": "Return to surface controls",
+          "height": 44,
+          "border": "1px",
+          "font": "Outfit, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif"
+        }
+      ]
+    },
+    "focused": {
+      "label": "Create or choose interface",
+      "outline": "3px"
+    }
+  }
+]

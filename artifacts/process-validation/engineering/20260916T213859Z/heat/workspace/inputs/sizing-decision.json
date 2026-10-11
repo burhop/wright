@@ -1,0 +1,166 @@
+{
+  "operation": "3D P1 tetrahedral scikit-fem conduction",
+  "cases": [
+    {
+      "case_id": "baseline_40",
+      "geometry": {
+        "path": "/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step",
+        "sha256": "df6a60815339a5644312ca2b6c6db25ed56cb42d5b486e901e324757c8ebbcea"
+      },
+      "input": {
+        "case_id": "baseline_40",
+        "length_mm": "100",
+        "width_mm": "40",
+        "thickness_mm": "2",
+        "conductivity_w_mk": "200",
+        "density_kg_m3": "2700",
+        "heat_input_w": "4",
+        "cold_face_temperature_c": "25",
+        "limit_c": "45"
+      },
+      "mesh_levels": [
+        {
+          "mesh": "coarse",
+          "divisions": [
+            8,
+            4,
+            2
+          ],
+          "nodes": 135,
+          "elements": 384,
+          "maximum_temperature_c": 49.99999999999844,
+          "minimum_temperature_c": 25.0,
+          "heat_input_w": 4.0,
+          "heat_removed_w": 3.9999999999983977,
+          "relative_heat_imbalance": 4.005684672847565e-13,
+          "analytical_hot_end_c": 50.0,
+          "relative_analytical_rise_error": 6.252776074688882e-14,
+          "cold_boundary": "Dirichlet",
+          "interface_coefficient_w_m2k": null,
+          "field": {
+            "path": "/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-coarse-temperature.vtu",
+            "sha256": "c02be52b9e78e6a06234e3f560984934f546da0754c9bb28a15d1c353b6fd2e6",
+            "bytes": 4383
+          }
+        },
+        {
+          "mesh": "fine",
+          "divisions": [
+            16,
+            8,
+            4
+          ],
+          "nodes": 765,
+          "elements": 3072,
+          "maximum_temperature_c": 49.99999999991165,
+          "minimum_temperature_c": 25.0,
+          "heat_input_w": 3.999999999999999,
+          "heat_removed_w": 3.9999999999732925,
+          "relative_heat_imbalance": 6.676659225490766e-12,
+          "analytical_hot_end_c": 50.0,
+          "relative_analytical_rise_error": 3.5339553505764344e-12,
+          "cold_boundary": "Dirichlet",
+          "interface_coefficient_w_m2k": null,
+          "field": {
+            "path": "/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-fine-temperature.vtu",
+            "sha256": "a65a7e08a01f96e86a9ed1274ee396e510d832bcddb79cf84b9ebc186c670797",
+            "bytes": 29200
+          }
+        }
+      ],
+      "relative_mesh_sensitivity": 3.4714275898418134e-12,
+      "mass_kg": 0.021599999999999998,
+      "maximum_temperature_c": 49.99999999991165,
+      "within_declared_limit": false,
+      "original_workflow_checks": {
+        "analytical_2_percent": true,
+        "mesh_2_percent": true,
+        "heat_balance_1_percent": true
+      }
+    },
+    {
+      "case_id": "revision_60",
+      "geometry": {
+        "path": "/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/revision_60.step",
+        "sha256": "c3918f8011a7b7143b321b15ddae8c91832c2ee41c4e4b64b7c4f3a98832566c"
+      },
+      "input": {
+        "case_id": "revision_60",
+        "length_mm": "100",
+        "width_mm": "60",
+        "thickness_mm": "2",
+        "conductivity_w_mk": "200",
+        "density_kg_m3": "2700",
+        "heat_input_w": "4",
+        "cold_face_temperature_c": "25",
+        "limit_c": "45"
+      },
+      "mesh_levels": [
+        {
+          "mesh": "coarse",
+          "divisions": [
+            8,
+            4,
+            2
+          ],
+          "nodes": 135,
+          "elements": 384,
+          "maximum_temperature_c": 41.66666666666441,
+          "minimum_temperature_c": 25.0,
+          "heat_input_w": 4.0,
+          "heat_removed_w": 3.999999999999411,
+          "relative_heat_imbalance": 1.4721557306529576e-13,
+          "analytical_hot_end_c": 41.66666666666667,
+          "relative_analytical_rise_error": 1.3557155398302708e-13,
+          "cold_boundary": "Dirichlet",
+          "interface_coefficient_w_m2k": null,
+          "field": {
+            "path": "/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-coarse-temperature.vtu",
+            "sha256": "c127479729f46f66ca5b1f9ace7412535f4e86ab01fb024f42281258524d6fea",
+            "bytes": 4427
+          }
+        },
+        {
+          "mesh": "fine",
+          "divisions": [
+            16,
+            8,
+            4
+          ],
+          "nodes": 765,
+          "elements": 3072,
+          "maximum_temperature_c": 41.6666666665829,
+          "minimum_temperature_c": 25.0,
+          "heat_input_w": 4.0,
+          "heat_removed_w": 3.9999999999753264,
+          "relative_heat_imbalance": 6.16839912481737e-12,
+          "analytical_hot_end_c": 41.66666666666667,
+          "relative_analytical_rise_error": 5.026379312766947e-12,
+          "cold_boundary": "Dirichlet",
+          "interface_coefficient_w_m2k": null,
+          "field": {
+            "path": "/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-fine-temperature.vtu",
+            "sha256": "4674660d7ccf117959521c2ab5fc59e61dc4f8edfecbc1b326247ca144813d07",
+            "bytes": 29260
+          }
+        }
+      ],
+      "relative_mesh_sensitivity": 4.890807758808503e-12,
+      "mass_kg": 0.0324,
+      "maximum_temperature_c": 41.6666666665829,
+      "within_declared_limit": true,
+      "original_workflow_checks": {
+        "analytical_2_percent": true,
+        "mesh_2_percent": true,
+        "heat_balance_1_percent": true
+      }
+    }
+  ],
+  "selected_case_id": "revision_60",
+  "status": "candidate_selected",
+  "limitations": [
+    "Synthetic constant-property conduction model only; no physical qualification.",
+    "Uniform end loading gives a linear field exactly representable by P1 elements; mesh stability does not independently validate the physics.",
+    "Campaign correctness-validation count remains zero."
+  ]
+}

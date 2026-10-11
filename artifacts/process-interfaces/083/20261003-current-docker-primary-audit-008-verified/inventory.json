@@ -1,0 +1,76 @@
+{
+  "files": {
+    "checked-scope.json": {
+      "bytes": 25255,
+      "sha256": "d37278feb604cbaa320dd18947a0284ed97e50210f3344173b9bd374a5243379"
+    },
+    "first-attempts.json": {
+      "bytes": 2318,
+      "sha256": "772c9c64d0464363567fa2d9365ea594d1227ce6db8e13c44ff51c971e49c18e"
+    },
+    "heat/closed-presentations.json": {
+      "bytes": 151,
+      "sha256": "ad39240c60af0f0d0531591651c6519bb4452dbc52f52afbfed58a8328bfff20"
+    },
+    "heat/docker-identity.json": {
+      "bytes": 1041,
+      "sha256": "ddd8139795117f687d2697e1f304f8c6a1204363cc726ca7181e8ea0213eabd4"
+    },
+    "heat/host-identity.json": {
+      "bytes": 483,
+      "sha256": "2e28ab5e3d7e6661ecbd853b10d799e753a82dad9ff233560c087088f45410f5"
+    },
+    "heat/original-preservation.json": {
+      "bytes": 114,
+      "sha256": "f0e5acd5f4f4936f2ac359548329a991a1192b041e25b5d93119c7f0f4027f48"
+    },
+    "heat/preservation.json": {
+      "bytes": 1155,
+      "sha256": "47fe6f6ee7cc57704877f76547e8ebacad8e1a2afc132864fbecec8d1d095fe3"
+    },
+    "heat/terminal.json": {
+      "bytes": 452,
+      "sha256": "987f8149fa8e66e0cf9d8f8845dc390a8e11e8d3813158b067ef429336cb07d2"
+    },
+    "primary-review.json": {
+      "bytes": 1722,
+      "sha256": "c694ed28cbc36785f26ad551f9170926e50d6b49a3d3e51c828938ec56c8696e"
+    },
+    "printed/closed-presentations.json": {
+      "bytes": 150,
+      "sha256": "a7bbfc9559c4cf28c18932061216b4df110901f0fe3f6402533d7272ab301310"
+    },
+    "printed/docker-identity.json": {
+      "bytes": 1043,
+      "sha256": "1427cf4271932623fd7eed76633d1c54818787e7fd6e1ea33e52aa111e483caa"
+    },
+    "printed/host-identity.json": {
+      "bytes": 483,
+      "sha256": "2e28ab5e3d7e6661ecbd853b10d799e753a82dad9ff233560c087088f45410f5"
+    },
+    "printed/original-preservation.json": {
+      "bytes": 114,
+      "sha256": "c87011164ee8b95a8818360d23ca08197a9a9641e2a4ca515b3145b4c260353f"
+    },
+    "printed/preservation.json": {
+      "bytes": 1155,
+      "sha256": "187723719f491884cd6e6ac89902d4f9f8f2ef87db2dc1c9c34c1cefb6e2d4eb"
+    },
+    "printed/terminal.json": {
+      "bytes": 451,
+      "sha256": "d58a5ff457492b2a9853437f2b85b3c6ab3791d48512576e02a7ba7c0eb3f4f8"
+    },
+    "README.md": {
+      "bytes": 1777,
+      "sha256": "caa613f5f86408ff37a0884f9ba2600b6d28b1b0318ea5db00b400e42c9ef41e"
+    },
+    "report-validation.json": {
+      "bytes": 1361,
+      "sha256": "9b47acac62cf7fce818ac70a7c5bf1e1c205c91a62dcd0c10904be355360644d"
+    },
+    "semantic-ledger.json": {
+      "bytes": 184943,
+      "sha256": "4596f82c10b4b2a361eecbeaa7c8d9de0e67e48eb60ae4da0c919326fd975b96"
+    }
+  }
+}

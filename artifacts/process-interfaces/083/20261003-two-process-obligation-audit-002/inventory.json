@@ -1,0 +1,17 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "audit.json": {
+      "bytes": 7785,
+      "sha256": "08b4aae47c49f47a22b4629b0dfaec3377c2287282a6c237b1fce169f08822dd"
+    },
+    "README.md": {
+      "bytes": 480,
+      "sha256": "f96d5b010c1eb8ad942523ff3ca20fd37b6692d2481be695075c067fab797319"
+    }
+  },
+  "credential_content": "No authentication context or trace copied"
+}

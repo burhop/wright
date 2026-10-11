@@ -1,0 +1,350 @@
+[
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "89333f9b1df725ad192265a0c3d2b8e00814829db4bbd2f09f51dc2496a2ae5e",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": null,
+      "input_snapshot_id": null,
+      "input_digest": null,
+      "cursor": 0,
+      "generated_at": "2026-10-03T21:26:21.438418+00:00"
+    },
+    "state": "ready",
+    "inputs": [
+      {
+        "input_id": "brief",
+        "block_id": "brief",
+        "port_id": "brief_out",
+        "title": "Brief",
+        "value_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "binding_kind": "value",
+        "required": true,
+        "unit": null,
+        "frame": null,
+        "default": {
+          "kind": "value",
+          "input_id": "brief",
+          "value": "Updated requirements for the current accepted process",
+          "provenance": "explicit_default"
+        },
+        "current_value": null,
+        "option_source": null,
+        "available_options": [],
+        "options_observed_at": null,
+        "options_stale_after": null,
+        "dependencies": []
+      }
+    ],
+    "readiness": {
+      "state": "ready",
+      "assessment_id": "readiness-ae92fac8ab414481820036b35d9f9241",
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "89333f9b1df725ad192265a0c3d2b8e00814829db4bbd2f09f51dc2496a2ae5e",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "input_digest": null,
+      "assessed_at": "2026-10-03T21:26:21.391098+00:00",
+      "expires_at": null,
+      "dependencies": [
+        {
+          "binding_id": "brief",
+          "classification": "explicit_default",
+          "producer_step": null,
+          "producer_port": null,
+          "interaction_step": null,
+          "reasons": []
+        },
+        {
+          "binding_id": "review.evidence",
+          "classification": "upstream_produced",
+          "producer_step": "first",
+          "producer_port": "first_out",
+          "interaction_step": null,
+          "reasons": []
+        }
+      ],
+      "reasons": []
+    },
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "start",
+        "operation": "start",
+        "title": "Start process",
+        "enabled": false,
+        "subject_digest": null,
+        "reasons": [
+          {
+            "code": "INPUT_REQUIRED",
+            "message": "Prepare the inputs before starting.",
+            "correction": "Save these values as this run's input preparation.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "89333f9b1df725ad192265a0c3d2b8e00814829db4bbd2f09f51dc2496a2ae5e",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": null,
+      "input_snapshot_id": null,
+      "input_digest": null,
+      "cursor": 0,
+      "generated_at": "2026-10-03T21:26:22.699593+00:00"
+    },
+    "state": "ready",
+    "inputs": [
+      {
+        "input_id": "brief",
+        "block_id": "brief",
+        "port_id": "brief_out",
+        "title": "Brief",
+        "value_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "binding_kind": "value",
+        "required": true,
+        "unit": null,
+        "frame": null,
+        "default": {
+          "kind": "value",
+          "input_id": "brief",
+          "value": "Updated requirements for the current accepted process",
+          "provenance": "explicit_default"
+        },
+        "current_value": null,
+        "option_source": null,
+        "available_options": [],
+        "options_observed_at": null,
+        "options_stale_after": null,
+        "dependencies": []
+      }
+    ],
+    "readiness": {
+      "state": "ready",
+      "assessment_id": "readiness-a287517d318545978198994109038dd7",
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "89333f9b1df725ad192265a0c3d2b8e00814829db4bbd2f09f51dc2496a2ae5e",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "input_digest": null,
+      "assessed_at": "2026-10-03T21:26:22.625370+00:00",
+      "expires_at": null,
+      "dependencies": [
+        {
+          "binding_id": "brief",
+          "classification": "explicit_default",
+          "producer_step": null,
+          "producer_port": null,
+          "interaction_step": null,
+          "reasons": []
+        },
+        {
+          "binding_id": "review.evidence",
+          "classification": "upstream_produced",
+          "producer_step": "first",
+          "producer_port": "first_out",
+          "interaction_step": null,
+          "reasons": []
+        }
+      ],
+      "reasons": []
+    },
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "start",
+        "operation": "start",
+        "title": "Start process",
+        "enabled": false,
+        "subject_digest": null,
+        "reasons": [
+          {
+            "code": "INPUT_REQUIRED",
+            "message": "Prepare the inputs before starting.",
+            "correction": "Save these values as this run's input preparation.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": null,
+      "input_snapshot_id": null,
+      "input_digest": null,
+      "cursor": 0,
+      "generated_at": "2026-10-03T21:26:31.002874+00:00"
+    },
+    "state": "ready",
+    "inputs": [
+      {
+        "input_id": "brief",
+        "block_id": "brief",
+        "port_id": "brief_out",
+        "title": "Brief",
+        "value_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "binding_kind": "value",
+        "required": true,
+        "unit": null,
+        "frame": null,
+        "default": {
+          "kind": "value",
+          "input_id": "brief",
+          "value": "Synthetic review requirements",
+          "provenance": "explicit_default"
+        },
+        "current_value": null,
+        "option_source": null,
+        "available_options": [],
+        "options_observed_at": null,
+        "options_stale_after": null,
+        "dependencies": []
+      }
+    ],
+    "readiness": {
+      "state": "ready",
+      "assessment_id": "readiness-9f786b6c0ee540459025c16a7eb73770",
+      "process": {
+        "workspace_id": "06ac6649-2ca2-4b6c-88db-02cc9b69ff4e",
+        "source_path": "workflows/ui-evidence-negative-001.workflow.wflow",
+        "source_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "input_digest": null,
+      "assessed_at": "2026-10-03T21:26:30.959800+00:00",
+      "expires_at": null,
+      "dependencies": [
+        {
+          "binding_id": "brief",
+          "classification": "explicit_default",
+          "producer_step": null,
+          "producer_port": null,
+          "interaction_step": null,
+          "reasons": []
+        },
+        {
+          "binding_id": "review.evidence",
+          "classification": "upstream_produced",
+          "producer_step": "first",
+          "producer_port": "first_out",
+          "interaction_step": null,
+          "reasons": []
+        }
+      ],
+      "reasons": []
+    },
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "start",
+        "operation": "start",
+        "title": "Start process",
+        "enabled": false,
+        "subject_digest": null,
+        "reasons": [
+          {
+            "code": "INPUT_REQUIRED",
+            "message": "Prepare the inputs before starting.",
+            "correction": "Save these values as this run's input preparation.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  }
+]

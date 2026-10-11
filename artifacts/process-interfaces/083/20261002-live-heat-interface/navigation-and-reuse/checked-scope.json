@@ -1,0 +1,29 @@
+{
+  "schema_version": "wright.process-ui-checked-scope/1",
+  "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+  "revision_id": "revision-13d5997c275849df87ce1cd08bfa0ac2",
+  "first_run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+  "second_run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+  "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+  "navigation_checks": 12,
+  "second_run_checks": 10,
+  "navigation": "Actual evidence, 765 numerical samples, exact held assessment/result focus, producing editor opened from the saved UI.",
+  "ui_records_unchanged": true,
+  "saved_bundle_files_unchanged": true,
+  "ui_authoring_calls_on_reuse": 0,
+  "ui_builds_on_reuse": 0,
+  "basis_process_model_call": "The second run generated its thermal basis through the configured workflow model; this is process work, not UI regeneration.",
+  "second_run_outcome": "waiting_human; declared basis checkpoint remains undecided and unconsumed; one recorded output.",
+  "physical_dispatch": false,
+  "human_acceptance": false,
+  "second_full_cad_solver_chain": false,
+  "engineering_limitations": "Original thermal gate remains held. The saved compact comparison still has no preparation or mutation controls; common-view controls remain available. Printed proof and installed workspace acceptance remain pending.",
+  "earlier_attempts": "First saved-navigation browser failed on missing run identity; shared bridge repaired. Second navigation attempt used a wrong table label. First two reuse preparations made no start request (422 extra fields, then wrong assertion key). Their private reports are retained; one run start was submitted.",
+  "saved_file_sha256": {
+    "569daf4a-6102-44de-9ad9-8e21835b7842.json": "a5fb963d84e0a226882ca9fa307d3926dbb7c8380aad750a78efe91960de91f3",
+    "91dfe297-5dc9-4e7a-890b-479d05ced92d.js": "ad4a40d37c54876b58f747ddc94d5b40dc277990af4436afed38cc13a48f873e",
+    "c5d395ce-9f48-461d-8fe2-319fce1f4490.json": "4ce6e270633435d5325386ab8e48cd6045939ce78bb69ed8c399136139af11fa",
+    "f90c9cae-76f9-4f32-b97a-afa7c56b61c3.json": "39292a8f3f5bc081d20946d45033efe736406cb9706ffc8032aac5845ba7036c",
+    "inventory.json": "ec263cf03afc6a2c61bc42aa5b54c631fb9d2d92f5cca633f588beb531e471bc"
+  }
+}

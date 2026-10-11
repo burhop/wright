@@ -1,0 +1,118 @@
+{
+  "scope": "Eleven served workspace/editor/common/tailored preparation and saved-reuse checks with actual heat basis output; exact source/build and authoring records unchanged",
+  "files": {
+    "verified-reuse.json": {
+      "sha256": "f76472ebd57911a2afc2f1b3086a6bc3b726514c6b9834015fa369c085f98e2a",
+      "bytes": 511
+    },
+    "walkthrough/status.json": {
+      "sha256": "ffbc04be6d80b38eb50cb1964988617c16702452331b333ca7c17550f89b2e26",
+      "bytes": 8230
+    },
+    "walkthrough/progress.md": {
+      "sha256": "4a595230fde7a937307cec4ee535c75a8156bb0fb89ad0d1f33d0d66219696b6",
+      "bytes": 7494
+    },
+    "walkthrough/report.html": {
+      "sha256": "4c8149b694a418f806a6c0c874ac064b98d783122c6c30bf1aba2ca9fc5ed26d",
+      "bytes": 10963
+    },
+    "walkthrough/browser-diagnostics.json": {
+      "sha256": "5e3ef932fc74883e99f19d74797bc46c754257cd57ecb9161715d605c9cef9ff",
+      "bytes": 64
+    },
+    "walkthrough/screenshots/annotated/S01.png": {
+      "sha256": "04a0e498f115eade26bfdd93adb76c60693e4c09299899e7ccfc473c1a96e299",
+      "bytes": 45156
+    },
+    "walkthrough/screenshots/annotated/S02.png": {
+      "sha256": "e3981a4cfd9fc485142f2936ec4fb321a41aad487b8b9568a1f0ac51b3743d84",
+      "bytes": 355384
+    },
+    "walkthrough/screenshots/annotated/S03.png": {
+      "sha256": "b8862e889e37d3c1b89a3d9a7509f4e8bb40b009d8f2b3e196ab2cc6997f9c7d",
+      "bytes": 357457
+    },
+    "walkthrough/screenshots/annotated/S04.png": {
+      "sha256": "e0d49f0e86e8852d5574b9a2210a30d7a784b652d2bf86ca3d88dab77ab4adaf",
+      "bytes": 315502
+    },
+    "walkthrough/screenshots/annotated/S05.png": {
+      "sha256": "8e5331ade62b1e566d24704dce5f14e972931d0d35f0bd261942b4ed7ee537a4",
+      "bytes": 440494
+    },
+    "walkthrough/screenshots/annotated/S06.png": {
+      "sha256": "ee5e97dc360520f4c31eb72e10d5b269fcc8a43f05f5042f846aff7a0c1d018c",
+      "bytes": 58614
+    },
+    "walkthrough/screenshots/annotated/S07.png": {
+      "sha256": "dffddccd5e7a668696fa7ed8d17bdc6880933153121302b94ebd4f6419a58e25",
+      "bytes": 58603
+    },
+    "walkthrough/screenshots/annotated/S08.png": {
+      "sha256": "1db28f2bf9e8037bb97aeaa7c22900efc48326bfe4fdd22540704df1b2008a7e",
+      "bytes": 103834
+    },
+    "walkthrough/screenshots/annotated/S08a.png": {
+      "sha256": "b93043bb2a27fcbce13bfae39307610bcab5b56529021e2b6e2dc16ea8682fb6",
+      "bytes": 100153
+    },
+    "walkthrough/screenshots/annotated/S09.png": {
+      "sha256": "baabc9e9680831d5ff76bd17b180eb7ac81dc9982d3f326b6e536eb83c27e7fc",
+      "bytes": 95453
+    },
+    "walkthrough/screenshots/annotated/S10.png": {
+      "sha256": "5a4553907713efd1ee914b6449b6039a21de89d25a4c613315fff927d50643fe",
+      "bytes": 95578
+    },
+    "walkthrough/screenshots/raw/S01.png": {
+      "sha256": "24932b7f0b13cb488e151f81730284ac879b4dd6227c219e37e7ea3b367beb09",
+      "bytes": 37915
+    },
+    "walkthrough/screenshots/raw/S02.png": {
+      "sha256": "e6284973153ae8bbf03316b4ec632cbe8b5a51f86ae68ecbdf5c3d476f04281e",
+      "bytes": 326463
+    },
+    "walkthrough/screenshots/raw/S03.png": {
+      "sha256": "2c54d16ebe3270b94a6d85029ff4955a7b78e16c8880e6f3486d88b68d4d1a77",
+      "bytes": 329398
+    },
+    "walkthrough/screenshots/raw/S04.png": {
+      "sha256": "722e4f647dfcbebde224c5150863387bb9cdb5e02897461974e40b2c08a0d8a4",
+      "bytes": 262431
+    },
+    "walkthrough/screenshots/raw/S05.png": {
+      "sha256": "fc777c1e3adca7deac4f8a88d6380d39fbaf2d95922ca72c6865fe047daec4c7",
+      "bytes": 405501
+    },
+    "walkthrough/screenshots/raw/S06.png": {
+      "sha256": "472626b9bf12967bd3fb6cfe7e2374b04bb384a98c429c76e44fdf4d3d1eeb7c",
+      "bytes": 45294
+    },
+    "walkthrough/screenshots/raw/S07.png": {
+      "sha256": "335b77c40da52eb2cbb9fbe17727d8ad4d1398ac5b17161b1e22d86bea3b6f2c",
+      "bytes": 45095
+    },
+    "walkthrough/screenshots/raw/S08.png": {
+      "sha256": "a52f6ac3260caa9168855fdf179443bde00321189d56d619e7f1d5cf5574c803",
+      "bytes": 87157
+    },
+    "walkthrough/screenshots/raw/S08a.png": {
+      "sha256": "350a652d377833ba02dcd79092954129f52b267105bd96d26a2948e9a49ae6e6",
+      "bytes": 78210
+    },
+    "walkthrough/screenshots/raw/S09.png": {
+      "sha256": "280a0a7110c7136fb5690bc3428ebba385f62492da84ab3eae5eae0b9227699e",
+      "bytes": 73501
+    },
+    "walkthrough/screenshots/raw/S10.png": {
+      "sha256": "c7e73d6ea81c09c09473047a68f80b3b3987e2c41ed2e01aa9aea43d8fc9c8bc",
+      "bytes": 73940
+    }
+  },
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "review_response": false,
+  "process_start": false,
+  "feature_complete": false
+}

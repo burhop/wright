@@ -1,0 +1,65 @@
+{
+  "scope": "New accepted stage-binding proposal on the same isolated owned host; no old run replay or recipe algorithm change.",
+  "original_failed_files_unchanged": 24,
+  "native_execution": false,
+  "physical_dispatch": false,
+  "engineering_acceptance": false,
+  "roles": {
+    "construction": {
+      "original_sha256": "63af34a7e68fbcb969f11774a5d4e12330a9dc5472f44b5ca55f7f9008b3561e",
+      "staged_sha256": "7d41e1f3b1729d94e75cecd646501870f984df7c54c7f83700e25471b83d78c8",
+      "changes": [
+        {
+          "from": "W083_prompt_{{wright.run_id}}_r3_",
+          "to": "W083_mixed_{{wright.run_id}}_r3_"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\source_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\source_mesh.stl"
+        }
+      ],
+      "algorithm_and_numeric_literals_unchanged": true,
+      "guarded_syntax_passed": true
+    },
+    "repair": {
+      "original_sha256": "1d1f961fd8837e65fc8d54b7148d8897ad47efa9c84927c245a1d2814425c9f1",
+      "staged_sha256": "cd2decbf3e83e5b6539e914c4690b97c70a1b3fe3421266d2f9838bfe442c7d7",
+      "changes": [
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\source_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\source_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\repaired_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\repaired_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\mesh-preview.png",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\mesh-preview.png"
+        },
+        {
+          "from": "W083_prompt_{{wright.run_id}}_",
+          "to": "W083_mixed_{{wright.run_id}}_"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\source_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\source_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\repaired_mesh.stl",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\repaired_mesh.stl"
+        },
+        {
+          "from": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\prompt-default-055\\outputs\\{{wright.run_id}}\\mesh-preview.png",
+          "to": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\{{wright.run_id}}\\mesh-preview.png"
+        },
+        {
+          "from": "W083_prompt_{{wright.run_id}}_",
+          "to": "W083_mixed_{{wright.run_id}}_"
+        }
+      ],
+      "algorithm_and_numeric_literals_unchanged": true,
+      "guarded_syntax_passed": true
+    }
+  }
+}

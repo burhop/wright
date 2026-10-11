@@ -1,0 +1,16 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('Arc center differs from a point on the curve'),'2;1');
+ENDSEC;
+DATA;
+#1=CARTESIAN_POINT('',(30.,30.,0.));
+#2=DIRECTION('',(0.,0.,1.));
+#3=DIRECTION('',(1.,0.,0.));
+#4=AXIS2_PLACEMENT_3D('',#1,#2,#3);
+#5=CIRCLE('',#4,5.1);
+#6=CARTESIAN_POINT('',(35.1,30.,0.));
+#7=CARTESIAN_POINT('',(170.,30.,0.));
+#8=AXIS2_PLACEMENT_3D('',#7,#2,#3);
+#9=CIRCLE('',#8,5.1);
+ENDSEC;
+END-ISO-10303-21;

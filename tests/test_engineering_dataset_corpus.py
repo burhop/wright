@@ -1,6 +1,7 @@
 """The committed corpus must contain 10 × 3 complete human input packs."""
 
 import json
+import re
 from collections import Counter
 
 import pytest
@@ -25,6 +26,38 @@ def test_corpus_has_exact_three_scenarios_for_each_current_template():
     assert Counter(row["template_id"] for row in data) == {key: 3 for key in catalog_ids}
     assert CONFIG["content_validation_enabled"] is False
     assert CONFIG["approval_mode"] == "auto"
+
+
+def test_engineering_guide_covers_existing_cases_without_replacing_inputs():
+    guide_path = DEFAULT_INPUTS / "ENGINEERING-GUIDE.md"
+    guide = guide_path.read_text(encoding="utf-8")
+    assert "[engineering example guide](ENGINEERING-GUIDE.md)" in (
+        DEFAULT_INPUTS / "README.md"
+    ).read_text(encoding="utf-8")
+
+    sections = dict(re.findall(r'<a id="([^"]+)"></a>\s*(.*?)(?=<a id=|\Z)', guide, re.S))
+    scenario_sections = {key for key in sections if re.search(r"-\d{2}$", key)}
+    expected_ids = set()
+    for manifest in MANIFESTS:
+        scenario = json.loads(manifest.read_text(encoding="utf-8-sig"))
+        scenario_id = scenario["scenario_id"]
+        expected_ids.add(scenario_id)
+        assert guide.count(f'<a id="{scenario_id}"></a>') == 1
+        section = sections[scenario_id]
+        for label in ("Purpose", "Work", "Useful result"):
+            assert f"**{label}:**" in section, scenario_id
+        source_dir = manifest.parent.relative_to(DEFAULT_INPUTS).as_posix()
+        assert f"]({source_dir}/{scenario['files']['prompt']})" in section
+        assert f"]({source_dir}/context.md)" in section
+        # Presentation copy is not another uploaded requirement or hashed input.
+        assert guide_path.name not in json.dumps(scenario["files"])
+
+    assert scenario_sections == expected_ids
+    for target in re.findall(r"\]\(([^)]+)\)", guide):
+        if target.startswith("#"):
+            assert target[1:] in sections, target
+        else:
+            assert (DEFAULT_INPUTS / target).is_file(), target
 
 
 @pytest.mark.parametrize("manifest", MANIFESTS, ids=[p.parent.name + "-" + p.parent.parent.name for p in MANIFESTS])

@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-09-22T22:38:11.007216+00:00",
+  "problem_id": "P001",
+  "scenario_id": "printed-replacement-part-02",
+  "attempt_id": "attempt-017",
+  "run_id": "1f472a8acb4a430a816895f1ed85f5cc",
+  "state": "running_source_authoring",
+  "manifest": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-017-pilot.json",
+  "preflight": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-017-preflight.json",
+  "runner_state": ".local-run/feature-081-live/campaign-runner-state/validator082-printing02-attempt-017/printed-replacement-part-02/attempt-017.json",
+  "runner_session": 60164,
+  "native_receipt": ".local-run/feature-081-live/printing02-runtime-attempt-017/lifecycle.json",
+  "local_commit": "f98bec1f",
+  "next": "Observe this exact owned run; do not dispatch duplicate. Preserve mandatory review. P001 remains active."
+}

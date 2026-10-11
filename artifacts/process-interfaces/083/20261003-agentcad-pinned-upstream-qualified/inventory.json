@@ -1,0 +1,93 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 20,
+      "sha256": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae"
+    },
+    "checked-scope.json": {
+      "bytes": 13029,
+      "sha256": "9d8dedd927e44e38f4c30664ef54d99c5a7e5247281c531ead2b902955b5beeb"
+    },
+    "creation-definition.json": {
+      "bytes": 1275,
+      "sha256": "0cf74e1450bfa9b9d4da2820bd32e6ac0b3ea83be8f7930291fb7bf11524b56e"
+    },
+    "initialization.json": {
+      "bytes": 943,
+      "sha256": "909cd66faa7e780ba550ecb6d240f509a3add613ac50761a86f1d64740ced98e"
+    },
+    "installation-command.json": {
+      "bytes": 673,
+      "sha256": "674ee548680a2faa2c6a28b510c89e06461cd64e55d784b5726d9d68fbc2cb93"
+    },
+    "installation.log": {
+      "bytes": 23199,
+      "sha256": "55ae7dfaff82633c3cc22ef4a595034df70f8592e436a0ae40f30b532200941f"
+    },
+    "publication-first-failure.json": {
+      "bytes": 411,
+      "sha256": "6c911a2a0a1c15d26357eca8f84c8c0123746af0147cda68005a21a53a440acf"
+    },
+    "qualification.json": {
+      "bytes": 2593,
+      "sha256": "a1f4c269294ad9cba7ac00c9d525d20a71fd9b2854989cba4f9257fa5e6cf5eb"
+    },
+    "readback-definition.json": {
+      "bytes": 1221,
+      "sha256": "e3d12dcfe58229d054173d743a54cfef61b4aa105a44eb9cc9cc8df51886a924"
+    },
+    "README.md": {
+      "bytes": 2536,
+      "sha256": "cf755de04824525fc372a336aeff878ab56c20a20225b7994d442d1ea5d85597"
+    },
+    "tools.json": {
+      "bytes": 20464,
+      "sha256": "2b7bb8687389db3764dd8551611168f694b51a518c32ee08f76bb4f6c58485da"
+    },
+    "upstream-source-status.json": {
+      "bytes": 2455,
+      "sha256": "6ef35554f8172c4da4a6dccb8d2ad2979ce3f966c23d68d8c3020330752174bf"
+    },
+    "actual-native/meta.json": {
+      "bytes": 5750,
+      "sha256": "94d111f7b71a9d39ac9f8fc56f63aac9754d6c63f8a5a6273e3e9108f03c86a7"
+    },
+    "actual-native/output.step": {
+      "bytes": 15378,
+      "sha256": "f0ef048e50b45d63348e4186dba10e0013f210a27092e4e835ba8c6034e91341"
+    },
+    "actual-native/script.py": {
+      "bytes": 54,
+      "sha256": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+    },
+    "actual-native/tiny.py": {
+      "bytes": 54,
+      "sha256": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+    },
+    "gateway-create/gateway-tools.json": {
+      "bytes": 28977,
+      "sha256": "8fe15538c611af27b599ae3e35d654b88142806d83d311da9422db2a8de14e07"
+    },
+    "gateway-create/qualification.json": {
+      "bytes": 5894,
+      "sha256": "020a17846ec37be1b26e71aae54811b2e4e87109ea04514fc6bd75c3af3d8b38"
+    },
+    "gateway-create/result.json": {
+      "bytes": 7038,
+      "sha256": "c31919a8321245a152dfaed2dd6b9e4b1cf739ce3c53cb922744c48112db7d2f"
+    },
+    "gateway-measure/gateway-tools.json": {
+      "bytes": 29329,
+      "sha256": "d12ec720287d74ffd142362d5a271992421baa47544424e0d42c84fa957c7ffe"
+    },
+    "gateway-measure/qualification.json": {
+      "bytes": 5922,
+      "sha256": "e08ee2e41adbfbb84b38669ad66de98bed8f8dc28b16a7e349614686a00da71e"
+    },
+    "gateway-measure/result.json": {
+      "bytes": 5810,
+      "sha256": "dc79217f1544e6dda7a2ed56a36865c5754f5c6aea489274f226780ec52b0b04"
+    }
+  },
+  "credential_value_scan": "passed"
+}

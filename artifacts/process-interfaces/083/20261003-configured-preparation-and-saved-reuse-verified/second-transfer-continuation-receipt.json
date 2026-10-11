@@ -1,0 +1,22 @@
+{
+  "http": 503,
+  "seconds": 12.878763100001379,
+  "snapshot": {
+    "error_code": "OUTCOME_UNKNOWN",
+    "message": "The action request is still awaiting durable confirmation.",
+    "trace_id": "701d12324d9353f13d3f05dd3fcb68f1",
+    "details": {
+      "correction": "Reconcile this same request; do not submit a new action identity.",
+      "reason": {
+        "code": "OUTCOME_UNKNOWN",
+        "message": "The action request is still awaiting durable confirmation.",
+        "correction": "Reconcile this same request; do not submit a new action identity.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      },
+      "diagnostic": {}
+    }
+  }
+}

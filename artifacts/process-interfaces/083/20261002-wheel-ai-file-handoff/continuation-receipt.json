@@ -1,0 +1,203 @@
+{
+  "http": 202,
+  "seconds": 7.971669599995948,
+  "snapshot": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "083-heat-live-005",
+        "source_path": "workflows/printed-replacement-part-live-default-model-010.workflow.wflow",
+        "source_digest": "66100986382b98449bb49ce200d5aef761d0e116a83b71af77af65d316c45fae",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "9e96b255a24b44fda968ec10a5b2ed73",
+      "input_snapshot_id": "inputs-6d0752498ac744ec9259bcafebbf373f",
+      "input_digest": "1a96282f1dd2681210aaa2d7166a19395c55e8718b599a1a0f8310faa98dc7aa",
+      "cursor": 8,
+      "generated_at": "2026-10-02T07:54:22.433271+00:00"
+    },
+    "state": "waiting_human",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "9e96b255a24b44fda968ec10a5b2ed73:define_geometry_basis_live_default_model_010:define_geometry_basis_live_default_model_010_result",
+        "step_id": "define_geometry_basis_live_default_model_010",
+        "port_id": "define_geometry_basis_live_default_model_010_result",
+        "role": "deliverable",
+        "title": "Interpret the original wheel and manufacturing requirements",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "process-proofs/printed-replacement-part/live-default-model-010/outputs/geometry-basis.json",
+            "sha256": "14d6750f923501396e9f16c067e3143eb4dcd989326cce64771c39a08b252aad",
+            "media_type": null,
+            "result_id": "9e96b255a24b44fda968ec10a5b2ed73:define_geometry_basis_live_default_model_010:define_geometry_basis_live_default_model_010_result",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "checkpoint-46c40581a9c13c304a918cb9",
+        "step_id": "review_basis_live_default_model_010",
+        "kind": "action",
+        "subject_digest": "a3e63034ae51835da911714626f857742a9df3059d88f79328f8b58a278cdf75",
+        "instructions": "Review the exact process action and its evidence before continuing.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [],
+        "state": "consumed",
+        "decision": {
+          "decision": "approved",
+          "actor": "integration_test:083-private-digital-wheel-010",
+          "reason": "Integration campaign 083-private-digital-wheel-010 policy 13bc92dc8bbf61cf574e1725908c9ffc4d0c46cd2cebb32d82962f7e07ee5daa",
+          "request_id": "synthetic-wheel-basis-review-010",
+          "integration_test": true
+        },
+        "action_receipt": {
+          "request_id": "wheel-basis-continuation-010",
+          "principal_id": "local-control-plane",
+          "submission": "accepted",
+          "delivery_completed": true,
+          "observed_outcome": null,
+          "provider_reference": null,
+          "cancellation_requested": false,
+          "cancellation_outcome": null
+        }
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-checkpoint-46c40581a9c13c304a918cb9",
+        "operation": "review",
+        "title": "Review action",
+        "enabled": false,
+        "subject_digest": "a3e63034ae51835da911714626f857742a9df3059d88f79328f8b58a278cdf75",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This run is already executing a segment.",
+            "correction": "Follow the saved run and its current action receipt.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "checkpoint-46c40581a9c13c304a918cb9",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "continue-checkpoint-46c40581a9c13c304a918cb9",
+        "operation": "action",
+        "title": "Continue process",
+        "enabled": false,
+        "subject_digest": "a3e63034ae51835da911714626f857742a9df3059d88f79328f8b58a278cdf75",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This run is already executing a segment.",
+            "correction": "Follow the saved run and its current action receipt.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "checkpoint-46c40581a9c13c304a918cb9",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "be6170aacaf6a869f2824a7c4d836a64408fbbd4b84a6ce7d51ad7da3077eec6",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "The active provider operation has no currently qualified cancellation capability.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_human",
+        "observed_at": "2026-10-02T07:54:22.433271+00:00",
+        "stale_after": null,
+        "operation_id": "9e96b255a24b44fda968ec10a5b2ed73",
+        "activity": "Approval is approved.",
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 8,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "9e96b255a24b44fda968ec10a5b2ed73",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "9e96b255a24b44fda968ec10a5b2ed73",
+        "result_id": "9e96b255a24b44fda968ec10a5b2ed73:define_geometry_basis_live_default_model_010:define_geometry_basis_live_default_model_010_result",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "9e96b255a24b44fda968ec10a5b2ed73",
+        "result_id": "9e96b255a24b44fda968ec10a5b2ed73:define_geometry_basis_live_default_model_010:define_geometry_basis_live_default_model_010_result",
+        "assessment_id": null,
+        "artifact_ref": "process-proofs/printed-replacement-part/live-default-model-010/outputs/geometry-basis.json"
+      },
+      {
+        "kind": "block",
+        "block_id": "review_basis_live_default_model_010",
+        "run_id": "9e96b255a24b44fda968ec10a5b2ed73",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  }
+}

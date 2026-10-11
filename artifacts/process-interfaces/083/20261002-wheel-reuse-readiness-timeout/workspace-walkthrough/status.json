@@ -1,0 +1,169 @@
+{
+  "title": "Saved wheel preparation reused on a second durable run",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-02T15:07:33.564Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Focus-wheel comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved focus-wheel workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Reuse comparison",
+      "instruction": "Open the same saved wheel preparation with the second run selected. Inspect its one geometry-basis result and declared review, then reload. Leave the review waiting."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Focus-wheel comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the wheel workflow",
+      "summary": "The exact accepted wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow"
+      ],
+      "expected": "The accepted wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original wheel assignment opens with its connected review, repair and slice stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Second run waits at its declared review",
+      "summary": "The new private wheel run has produced its geometry basis and stopped at the accepted source’s declared review.",
+      "purpose": "Preserve deliberate interaction without opportunistic questions.",
+      "action": "Open the second durable run in the common working tab.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "Actual waiting review with the second run’s exact subject.",
+      "actual": "Second run is waiting for the declared geometry-basis review.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByRole('heading', { name: 'Prepare the process', exact: true })\nExpected: visible\nTimeout: 120000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 120000ms\n  - waiting for locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByRole('heading', { name: 'Prepare the process', exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

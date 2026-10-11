@@ -1,0 +1,278 @@
+{
+  "run_id": "40a732fd2ccb46c2af8a0f466febee00",
+  "state": "failed",
+  "code": "PROCESS_VALIDATION_NEEDS_INPUT",
+  "source_digest": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7",
+  "files": [
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/concept.png",
+      "size": 67577,
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/concept.svg",
+      "size": 2295,
+      "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/configured-geometry-basis.json",
+      "size": 3882,
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/construction-operation-review.json",
+      "size": 5280,
+      "sha256": "4169e15fee90024db2939be866791af6da839f27c583ab7fe6281e104d0af087"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/construction-provider-arguments.json",
+      "size": 5280,
+      "sha256": "4169e15fee90024db2939be866791af6da839f27c583ab7fe6281e104d0af087"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/context.md",
+      "size": 2236,
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/filament-profile.json",
+      "size": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/geometry-capability-guidance.md",
+      "size": 1833,
+      "sha256": "71bf5bf22969ff377d0ed7af71c8b9cb72e2801d070df35caa96300d660a0fd3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/inspect_manufacturing_package.py",
+      "size": 6040,
+      "sha256": "9c8612207b0ba82dd2bb337981a0aea33cabdbcc93493ae2c4fe59597f2ae848"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/inspection-call.json",
+      "size": 3139,
+      "sha256": "c8e6d9ec1172d127cbcff52e368e11332bacd914ccfca1bffdf56d36015484b1"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/machine-profile.json",
+      "size": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/passive-representations.py",
+      "size": 25554,
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/process-profile.json",
+      "size": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/prompt.txt",
+      "size": 697,
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/repair-operation-review.json",
+      "size": 13817,
+      "sha256": "f93276cf42d4de699ebd4fdc232f3396796af347a843a65f5b48e9c23fcb53df"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/repair-provider-arguments.json",
+      "size": 13817,
+      "sha256": "f93276cf42d4de699ebd4fdc232f3396796af347a843a65f5b48e9c23fcb53df"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/requirements.md",
+      "size": 1759,
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/scenario.json",
+      "size": 1662,
+      "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/slice-call.json",
+      "size": 572,
+      "sha256": "d45330a7e03c8b4bf557a4734e07014960261991e727988ab491b4972d7c366f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/inputs/user-profile.md",
+      "size": 584,
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/filament-profile.json",
+      "size": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/geometry-basis.json",
+      "size": 3607,
+      "sha256": "782d8d8df58c13d04689352f1bb7e875ac768ff45b177d3b8d9eddc74b8a07d2"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/machine-profile.json",
+      "size": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/mesh-preview.png",
+      "size": 266982,
+      "sha256": "9aee815223763093b331c61f5041846ab038256f4c183d86f51028bc50a13407"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/mesh-repair-report.json",
+      "size": 6213,
+      "sha256": "85a95811d29e58db6e15633f68c1c5d4d417f8fd991c7267c770ce1651465f4b"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/package-inspection-result.json",
+      "size": 1888,
+      "sha256": "f6fbb32cb50dc6731fe7472ebed7bdc1672bd54bcfe51762fd7a5ed4de226d57"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/process-profile.json",
+      "size": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/repaired_mesh.stl",
+      "size": 540484,
+      "sha256": "c2de5efc46b527be07a5acde04cf48ea7e2cb5d8d4d5ad64a31e7978ba02af4b"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/response-retention-receipt.json",
+      "size": 349,
+      "sha256": "e6a22d3c693dc61a2b2ea7bb9893bc3d945f438142f535284e14451ec5cfb419"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/simulated-transfer-receipt.json",
+      "size": 2084,
+      "sha256": "37e394e4d8a980891f147226b3e6eb7d77a787462686bb8d73757ef155325e3a"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/slice-evidence.json",
+      "size": 1336,
+      "sha256": "d98d54346cf4a7ffd94aa893e1f251c49617a749e765e0821bf6122f9e050cdb"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/slice-provider-response.json",
+      "size": 2169,
+      "sha256": "6c2058f9c722bca5bc968187056a9cb71cf7b44aed6cc7349eb3b9fe98b16c59"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/slice_package.gcode.3mf",
+      "size": 361005,
+      "sha256": "8bd0ccf8049adc0bd0f8effcf32b52cb523956465fb9a324060465a728b7f6bd"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/slicer-execution.json",
+      "size": 2169,
+      "sha256": "6c2058f9c722bca5bc968187056a9cb71cf7b44aed6cc7349eb3b9fe98b16c59"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/source-model-report.json",
+      "size": 1307,
+      "sha256": "bb2efea66a2f0aa0aff789dac818760e8d815e308e436f3bfda77592c510ed6b"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/source-report.json",
+      "size": 5559,
+      "sha256": "35cd880e309308919a05538d69bc0dabe64964e6ff3356e73a5218c242e50fef"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/source_mesh.stl",
+      "size": 541284,
+      "sha256": "d66be89a9a7e32da3360872cecd999a76581ebddeebe8ebaebecc924fd96b904"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/support-preview.json",
+      "size": 4493753,
+      "sha256": "1fd8e8ab67be94fb7637fa15c4b3a8aee2e9b1a95baaca9052fc58d5cba58e24"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/configured-default-016/outputs/40a732fd2ccb46c2af8a0f466febee00/toolpath-summary.json",
+      "size": 1659,
+      "sha256": "6f61337598cf1f16daefe09065afc82b998c1ee391ccfe55a8c576479bb1334f"
+    },
+    {
+      "path": "runs/printed-replacement-part-configured-default-016/40a732fd2ccb46c2af8a0f466febee00.json",
+      "size": 3161614,
+      "sha256": "d7381373916f67270a0bb3def71322b21243650576f507b7e54182895332a66b"
+    },
+    {
+      "path": "validation/assessment-da4a53f1a99f4c0b95358956e3dce7cf.json",
+      "size": 71513,
+      "sha256": "dae29eb07428b4abd4bb35f2c481f52001b992deb991432c3f591622ad4f4c88"
+    },
+    {
+      "path": "workflows/printed-replacement-part-configured-default-016.workflow.wflow",
+      "size": 74800,
+      "sha256": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7"
+    }
+  ],
+  "argument_parity": [
+    {
+      "role": "construction",
+      "step_id": "create_mesh_configured_default_016",
+      "tool": "proof-083-blender-repeat-015__execute_blender_code",
+      "exact_configured_arguments": true,
+      "arguments_sha256": "a07504f912e87c2b6cd49f347969808894b3d4ad00f5d25aaec3242cf8c12c84"
+    },
+    {
+      "role": "repair",
+      "step_id": "repair_measure_orient_configured_default_016",
+      "tool": "proof-083-blender-repeat-015__execute_blender_code",
+      "exact_configured_arguments": true,
+      "arguments_sha256": "97a75572941c13bdbbc438c179b6a4a544b549bfc52eaa8ad883fa813d8cd900"
+    }
+  ],
+  "gate": {
+    "kind": "design_check",
+    "at": "2026-10-03T07:28:21.902887+00:00",
+    "task_id": "validate_outputs_configured_default_016",
+    "task_title": "Check exact current engineering outputs",
+    "report": {
+      "schema_version": "wright.process-validation/1",
+      "assessment_id": "assessment-da4a53f1a99f4c0b95358956e3dce7cf",
+      "assessment_digest": "5e47a8cbbf37d884ffe3513299321d8008008309fab8ef2463e39aa058755e76",
+      "attempt_id": "e4f28d4e7cd54cc3bac47e96a437c14f",
+      "workspace_id": "083-printed-repeat-015",
+      "is_current": true,
+      "release_eligible": false,
+      "summary": {
+        "content_verified": null,
+        "requirements_compliant": null,
+        "evaluation_complete": false,
+        "release_eligible": false,
+        "physical_validation": "not_assessed",
+        "counts": {
+          "blocked": 1,
+          "error": 0,
+          "fail": 0,
+          "inconclusive": 0,
+          "not_applicable": 0,
+          "pass": 17
+        }
+      },
+      "finding_count": 1,
+      "verdict": "needs_input",
+      "assessment_path": "validation/assessment-da4a53f1a99f4c0b95358956e3dce7cf.json",
+      "corrections": [
+        "An authenticated human review is required for this requirement."
+      ]
+    },
+    "revision": 0,
+    "status": "needs_input",
+    "message": "Validation is holding downstream work; inspect the saved findings.",
+    "assessment_id": "assessment-da4a53f1a99f4c0b95358956e3dce7cf",
+    "assessment_path": "validation/assessment-da4a53f1a99f4c0b95358956e3dce7cf.json",
+    "release_eligible": false
+  },
+  "older_failed_run_files_unchanged": 44,
+  "scope": "Actual configured preparation and original source validator: 17 passes, one mandatory human-review hold; no physical or human engineering acceptance."
+}

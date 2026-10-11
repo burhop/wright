@@ -1,0 +1,61 @@
+{
+  "run_id": "8c042141e6c7422aa58ca1bbab14d86e",
+  "source_digest": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06",
+  "state": "completed",
+  "files": [
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/inputs/construction-arguments.json",
+      "bytes": 5998,
+      "sha256": "7314c297a23d68d073f5cc6f697b7f49bac437b3a1ecf3ffe4dcbef3d0850266"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/inputs/repair-arguments.json",
+      "bytes": 14505,
+      "sha256": "406997ae2041b758c65623a4b73c65683637d57908a0dababbc722ae346496c9"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/construction-response.json",
+      "bytes": 1301,
+      "sha256": "c3f3f032b798678f47782f33675e38966a80ef17f8d53837fb07420ca92b7efb"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/mesh-preview.png",
+      "bytes": 266982,
+      "sha256": "c31d80f081817095733432c23c561a92516c78c0376ffbe13acf12c60237e53e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repair-response.json",
+      "bytes": 6183,
+      "sha256": "10025784522aec6d5750ba5974cefc67b9f02483ef11999acab5536b771e916f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/repaired_mesh.stl",
+      "bytes": 540484,
+      "sha256": "4f5e7c1ad333b56ccfaa97cfee0a3d1056800af9db73035f1f028481b12d4ca2"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/8c042141e6c7422aa58ca1bbab14d86e/source_mesh.stl",
+      "bytes": 541284,
+      "sha256": "6b380ba47c5927c8619809c9991116e84b9368d2e732ccd27562c3d9e02d4e34"
+    },
+    {
+      "path": "runs/printed-replacement-part-common-digital-083/8c042141e6c7422aa58ca1bbab14d86e.json",
+      "bytes": 90937,
+      "sha256": "178f7ff868e0bef7249e9e5c1d656d176e4405995251666636c117af3b95a51c"
+    },
+    {
+      "path": "workflows/printed-replacement-part-common-digital-083.workflow.wflow",
+      "bytes": 7824,
+      "sha256": "88edffded48c36532efc8c49d7e1a78206753d3b52d658d8d3b9d18b1684eb06"
+    }
+  ],
+  "normal_common_ui_start": true,
+  "outputs": 5,
+  "exact_native_argument_roles": 2,
+  "model_invocations": 0,
+  "generated_ui": false,
+  "integration_policy": false,
+  "review_response": false,
+  "physical_dispatch": false,
+  "scope": "Supporting two-stage digital mesh preparation, not a replacement for the original full preparation chain or mandatory engineering review."
+}

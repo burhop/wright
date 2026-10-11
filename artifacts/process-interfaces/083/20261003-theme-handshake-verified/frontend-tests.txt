@@ -1,0 +1,13 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+ ✓ src/components/process-interfaces/ProcessInterfaceView.spec.tsx (11 tests) 697ms
+ ✓ src/services/process-presentation-host.spec.ts (11 tests) 247ms
+ ✓ src/services/process-ui-authoring.spec.ts (25 tests) 32ms
+
+ Test Files  3 passed (3)
+      Tests  47 passed (47)
+   Start at  23:54:14
+   Duration  6.88s (transform 491ms, setup 401ms, import 819ms, tests 975ms, environment 3.99s)
+
+JUNIT report written to D:/repos/wright/.local-run/process-interfaces-083/t037-theme-frontend-tests-002.xml

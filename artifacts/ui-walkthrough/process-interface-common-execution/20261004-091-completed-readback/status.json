@@ -1,0 +1,82 @@
+{
+  "title": "Run a saved digital process through the common working view",
+  "summary": "Fresh read-only continuation verifies the one actual common-view-started process completed, its five exact outputs and same-run refresh/reload. The prior label assumption failure is retained. No new execution, generated interface, model, integration policy, review or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-04T02:05:27.137Z",
+  "manualSteps": [
+    {
+      "label": "Open completed run",
+      "instruction": "Open the supplied exact-run workspace link."
+    },
+    {
+      "label": "Completion",
+      "instruction": "Inspect Process completed, then click Refresh view."
+    },
+    {
+      "label": "Results",
+      "instruction": "Scroll to Results and checks, then reload the workspace."
+    }
+  ],
+  "steps": [
+    {
+      "id": "C01",
+      "state": "pass",
+      "label": "Same completed digital run",
+      "summary": "The same common-view-started run has five actual outputs and no generated interface or review. The UI correctly says Process completed.",
+      "purpose": "Actual common view and backend agree on completion",
+      "action": "Open the exact-run workspace link",
+      "controls": [
+        "Open the exact-run workspace link"
+      ],
+      "expected": "Actual common view and backend agree on completion",
+      "actual": "The same common-view-started run has five actual outputs and no generated interface or review. The UI correctly says Process completed.",
+      "raw": "screenshots/raw/C01.png",
+      "annotated": "screenshots/annotated/C01.png"
+    },
+    {
+      "id": "C02",
+      "state": "pass",
+      "label": "Reconcile completion without replay",
+      "summary": "Refresh reads the same completed digital mesh process without starting it again.",
+      "purpose": "Same completed run and accepted source",
+      "action": "Click Refresh view",
+      "controls": [
+        "Click Refresh view"
+      ],
+      "expected": "Same completed run and accepted source",
+      "actual": "Refresh reads the same completed digital mesh process without starting it again.",
+      "raw": "screenshots/raw/C02.png",
+      "annotated": "screenshots/annotated/C02.png"
+    },
+    {
+      "id": "C03",
+      "state": "pass",
+      "label": "Inspect actual result cards",
+      "summary": "Five exact backend-recorded result cards are available. Native geometry remains digital preparation, without manufacturing release or physical acceptance.",
+      "purpose": "Exact native source STL, repaired STL, preview and native responses",
+      "action": "Scroll to Results and checks",
+      "controls": [
+        "Scroll to Results and checks"
+      ],
+      "expected": "Exact native source STL, repaired STL, preview and native responses",
+      "actual": "Five exact backend-recorded result cards are available. Native geometry remains digital preparation, without manufacturing release or physical acceptance.",
+      "raw": "screenshots/raw/C03.png",
+      "annotated": "screenshots/annotated/C03.png"
+    },
+    {
+      "id": "C04",
+      "state": "pass",
+      "label": "Reload preserves the completed run",
+      "summary": "The exact completed run restores after reload; no generated interface is required.",
+      "purpose": "The same durable run returns with no new start",
+      "action": "Reload the workspace",
+      "controls": [
+        "Reload the workspace"
+      ],
+      "expected": "The same durable run returns with no new start",
+      "actual": "The exact completed run restores after reload; no generated interface is required.",
+      "raw": "screenshots/raw/C04.png",
+      "annotated": "screenshots/annotated/C04.png"
+    }
+  ]
+}

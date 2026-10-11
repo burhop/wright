@@ -1,0 +1,5 @@
+{
+  "117": "Host browser spawn EPERM before navigation. Authorized fresh host continuation; no product page reached.",
+  "120": "The harness expected an inline frame viewer. The actual saved AI composition declares exact host navigation through client.navigate; the common host rendered the requested result. Fresh continuation verifies source/run/result/artifact/hash and viewer controls, without changing product or UI code.",
+  "126": "Assessment JSON was incorrectly assumed to have a flat assessment_id field. Fresh continuation compares the complete displayed JSON to the exact recorded assessment file, and scrolls it into the screenshot. No schema or engineering requirement changed."
+}

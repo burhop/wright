@@ -1,0 +1,38 @@
+{
+  "scope": "Isolated native qualification of correction 2 to the exact retained AI-authored case: tangent 5 mm shoulders, full-span 40 mm recess, post-union junction rounds, and native save-as-copy. No canonical dispatch, approval, or campaign credit.",
+  "attempt": "qualification-p001-010",
+  "source_code_before_sha256": "79f71889d9c234b19c9d137d1ffb7305ed07f3aafc574a7d05aa9e5fe61635f3",
+  "source_code_after_sha256": "5df4b85d13f50c7945dcca3f81ff6411c5e370f81cac4951d630bef05b7ead72",
+  "operation_sha256": "95dcb6b22a69fd94a90b665c115d47e36bf809b855c6badb0327dc5845b70f80",
+  "campaign_credit": false,
+  "launch": {
+    "status": "ready",
+    "server_id": "f69b4c06-3260-4551-a2ca-756bd5adcce8",
+    "repair_server_id": "c38615f5-45fa-4777-8fdc-22dbbc98c37c",
+    "session_id": "blender-66b52995c88248588ffeda95b19d015b",
+    "pid": 30912,
+    "post_cleanup_identity": null
+  },
+  "author_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Code executed successfully: Info: File exported successfully\nInfo: Saved copy as \"native-design.blend\"\n{'object': 'Wright_Handle_GripCorrection2_001_FinalSource', 'stl': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-010/artifacts/source_mesh.stl', 'blend': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-010/artifacts/native-design.blend', 'design': {'bolt_centers_mm': 96.0, 'pads_mm': [18.0, 24.0, 5.0], 'bores_diameter_mm': 4.5, 'grip_section_mm': [12.0, 9.0], 'clearance_span_x_mm': [15.5, 80.5], 'clearance_min_z_mm': 25.0, 'outer_max_z_mm': 34.0, 'thumb_recess_max_mm': 1.5}}\n"
+      }
+    ],
+    "structuredContent": {
+      "result": "Code executed successfully: Info: File exported successfully\nInfo: Saved copy as \"native-design.blend\"\n{'object': 'Wright_Handle_GripCorrection2_001_FinalSource', 'stl': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-010/artifacts/source_mesh.stl', 'blend': 'C:/Users/markb/wright-feature-081/engineering-workflow-demos/campaign/printed-replacement-part-02/qualification-p001-010/artifacts/native-design.blend', 'design': {'bolt_centers_mm': 96.0, 'pads_mm': [18.0, 24.0, 5.0], 'bores_diameter_mm': 4.5, 'grip_section_mm': [12.0, 9.0], 'clearance_span_x_mm': [15.5, 80.5], 'clearance_min_z_mm': 25.0, 'outer_max_z_mm': 34.0, 'thumb_recess_max_mm': 1.5}}\n"
+    },
+    "isError": false
+  },
+  "status": "failed",
+  "error": "Fixed repair MCP failed: Error executing tool repair_model_file: Communication error with Blender: Code execution error: Repair did not satisfy normals or triangle limit: {\"vertices\": 12855, \"edges\": 37155, \"faces\": 24298, \"triangles\": 25714, \"boundary_edges\": 0, \"nonmanifold_edges\": 0, \"degenerate_faces\": 0, \"connected_components\": 1, \"signed_volume_mm3\": 11270.43776}",
+  "cleanup": {
+    "status": "cleaned",
+    "server_id": "f69b4c06-3260-4551-a2ca-756bd5adcce8",
+    "repair_server_id": "c38615f5-45fa-4777-8fdc-22dbbc98c37c",
+    "session_id": "blender-66b52995c88248588ffeda95b19d015b",
+    "pid": 30912,
+    "post_cleanup_identity": null
+  }
+}

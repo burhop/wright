@@ -7,6 +7,22 @@ docker/mcp/brep-mcp-launcher.cjs text eol=lf
 specs/053-workspace-surfaces/contracts/** text eol=lf
 packages/core/src/core/surfaces/schemas/** text eol=lf
 
+# Validator baselines are byte-hashed and copied into installed runtime profiles.
+packages/workspace_service/src/workspace_service/process_validation/baselines/*.json text eol=lf
+packages/workspace_service/src/workspace_service/process_validation/profiles/*.md text eol=lf
+packages/workspace_service/src/workspace_service/process_validation/profiles/*.json text eol=lf
+tests/datasets/process-validation/** text eol=lf
+specs/082-output-content-validation/contracts/schemas/*.json text eol=lf
+
+# Retained process-validation demonstrations carry their own byte manifests.
+# Store and check out every evidence file exactly as hashed by the runner.
+artifacts/process-validation/** -text -whitespace
+
+# Exact native CAD/solver outputs and their recorded hashes are proof evidence.
+# Preserve original bytes, including the native STEP writer's whitespace.
+artifacts/process-interfaces/083/20261002-live-heat-analysis/** -text -whitespace
+artifacts/process-interfaces/083/20261002-live-heat-interface/** -text -whitespace
+
 # Process-definition contracts are byte-hashed and installed byte-for-byte.
 specs/078-process-definition-view/contracts/*.json text eol=lf
 src/wright_engineering/static/process-definitions/*.json text eol=lf
@@ -53,3 +69,46 @@ integrations/rivet/runner/dist/** -text -whitespace
 integrations/rivet/editor/patches/** text eol=lf -whitespace
 integrations/rivet/editor/wrapper/** text eol=lf
 integrations/rivet/runner/src/** text eol=lf
+
+# Captured native qualification files are hash-bound; do not normalize bytes.
+artifacts/campaign-example-renewal/qualification/harness-native-20260922/** -text whitespace=cr-at-eol
+artifacts/engineering-workflow-datasets/retry-evidence/heat01-aluminum-scope-902.json -text whitespace=cr-at-eol
+
+# Private digital-process proof records retain their captured byte identities.
+artifacts/process-interfaces/083/20261002-wheel-preparation-review/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-native-capability-recovery/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-retained-native-export/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-ai-file-handoff/** -text -whitespace
+artifacts/process-interfaces/083/20261002-shared-working-controls/** -text -whitespace
+artifacts/process-interfaces/083/20261002-live-heat-shared-controls/** -text -whitespace
+artifacts/process-interfaces/083/20261002-preparation-and-nominal-view/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-actual-slice/** -text -whitespace
+artifacts/process-interfaces/083/20261002-managed-preview-recovery/** -text -whitespace
+artifacts/process-interfaces/083/20261002-heat-preparation-and-saved-reuse/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-frozen-provider-inputs/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-retained-consumer-preparation/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-retained-native-chain/** -text -whitespace
+artifacts/process-interfaces/083/20261002-wheel-isolated-assessments/** -text -whitespace
+# Retained model reports and independent assessment preserve exact evidence bytes.
+artifacts/process-interfaces/083/20261002-wheel-retained-reports/** -text
+artifacts/process-interfaces/083/20261002-wheel-live-interface/** -text
+artifacts/process-interfaces/083/20261002-wheel-focused-update-timeout/** -text
+artifacts/process-interfaces/083/20261002-wheel-reuse-readiness-timeout/** -text
+# Fresh source assessments and immutable UI inventories retain their exact bytes.
+artifacts/process-interfaces/083/20261003-retained-consumer-003-source-gate/** -text -whitespace
+artifacts/process-interfaces/083/20261003-wheel-exact-source-ui/** -text -whitespace
+artifacts/process-interfaces/083/20261003-recorded-nominal-layers/** -text -whitespace
+artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-two-process-exact-navigation/** -text -whitespace
+artifacts/process-interfaces/083/20261003-presentation-departure-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-installed-host-audit/** -text -whitespace
+artifacts/process-interfaces/083/20261003-theme-handshake-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-repeat-path-audit-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-original-history-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-editor-native-regression-002/** -text -whitespace
+artifacts/process-interfaces/083/20261003-run-path-binding-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-heat-run-path-preparation-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-run-path-authority-fields-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-validator-run-identity-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/** -text -whitespace
+artifacts/process-interfaces/083/20261003-run-receipts-and-printed-paths-verified/** -text -whitespace

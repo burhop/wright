@@ -1,0 +1,69 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 20,
+      "sha256": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae"
+    },
+    "browser-cases.json": {
+      "bytes": 11823,
+      "sha256": "4d9dafb7f5f226da45c9df43d97ebc516d3096bdf563697da6f3808b56770c70"
+    },
+    "checked-scope.json": {
+      "bytes": 1839,
+      "sha256": "c288eb6da9a510ef84cb21e4ef555c64db8c55de7e19e0c95ff54103dfe77f71"
+    },
+    "controlled-cases.json": {
+      "bytes": 656265,
+      "sha256": "d8c6f2ee6b019e4165099f0d219e4fa9c3508b539af78fe5d8a7db1fbf1a6375"
+    },
+    "frontend-cases.json": {
+      "bytes": 335916,
+      "sha256": "47fcc968600f7a8d19df6f0e2a81b56d81fcc10c9d4246bc60e7ee32a34ceb70"
+    },
+    "obligations.json": {
+      "bytes": 8226594,
+      "sha256": "1d6098c1a11726550024eb37c44b7f39325dc55d203dd3ec8b37ddb2ba8bb111"
+    },
+    "proofs.json": {
+      "bytes": 2186,
+      "sha256": "65e03439c713aadc62940232cdcbb86f8b1a74dfbb0f84e4810c2892f562004d"
+    },
+    "README.md": {
+      "bytes": 2261,
+      "sha256": "31c98a9d5c095e898bbb5f55250545efeff86670d96f6e88465b22cd3e1e7b63"
+    },
+    "requirement-matrix.md": {
+      "bytes": 21063,
+      "sha256": "c2da9ea1f2f912b4f740ab738f1c40b9ed90ac8dfdd11136823cb52ee2f5fdd3"
+    },
+    "route-distribution-supplement.json": {
+      "bytes": 31804,
+      "sha256": "87468df8d3d5077c264986fa97559c630ef270684f38038682dbd7212388e1b1"
+    },
+    "sources.json": {
+      "bytes": 1594,
+      "sha256": "9ea01239d4ac49fa2b03e58b03ff7f798b7aa2b8b81f0e45c623fecdbcd58a3c"
+    },
+    "summary.json": {
+      "bytes": 742,
+      "sha256": "c8a37e6c36babae4c843c4744da92aecee5b8d467a09eb29ce0a1d76f1810926"
+    },
+    "task-targets.json": {
+      "bytes": 24052,
+      "sha256": "f88961e041ff81bac36bce6949923ef4927e669982a9236c2a41f6cfbe356c96"
+    },
+    "retained-findings/t056-audit-first-failure.json": {
+      "bytes": 412,
+      "sha256": "77ee5e1bcc26ea47b7e473cba6bee1b4fa624d7524fbde02d9b2d1d075d95b5b"
+    },
+    "retained-findings/t056-audit-second-failure.json": {
+      "bytes": 365,
+      "sha256": "bfb73bca1f89e816190bcecf2aabbfe3d2c35d7b32e4eaa07375a51058f2f445"
+    },
+    "retained-findings/t056-route-first-finding.json": {
+      "bytes": 476,
+      "sha256": "7ed130d76818f53cfcc224169b4d5567ac5b1e7652fc0d015d14ca874eb70d42"
+    }
+  },
+  "credential_value_scan": "passed"
+}

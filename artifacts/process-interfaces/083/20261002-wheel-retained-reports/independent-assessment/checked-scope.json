@@ -1,0 +1,31 @@
+{
+  "assessment_id": "assessment-af6ee9073b5d418e8fdd9a1e105aa497",
+  "retained_native_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "report_run_id": "97f4c017f8a04d7eab8011e4ad6c5298",
+  "independent_multi_producer_assessment": true,
+  "native_subjects_canonical_registry_verified": true,
+  "report_subject_exact_durable_result_and_file_verified_not_validator_registry": true,
+  "original_gate_or_failed_run_not_rewritten": true,
+  "original_profile_and_baseline_unchanged": true,
+  "actual_report_role_bound": true,
+  "report_key_fact_checks_not_full_engineering_review": true,
+  "summary": {
+    "content_verified": null,
+    "requirements_compliant": null,
+    "evaluation_complete": false,
+    "release_eligible": false,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 2,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 16
+    }
+  },
+  "missing_simulated_transfer_receipt_not_fabricated": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false
+}

@@ -1,0 +1,73 @@
+{
+  "state": "ready",
+  "assessment_id": "readiness-686961fc92e348ab8d0dd56b4b889b77",
+  "process": {
+    "workspace_id": "083-heat-live-005",
+    "source_path": "workflows/printed-replacement-part-retained-report-002.workflow.wflow",
+    "source_digest": "69a7065c7e9cb1e859a0fd162d872710c9bd854a40b406b4e0cd148289c1c5cc",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "63700375ac868cedf758c162d8738a901b737ee73bec69b013a6c837aedb8655",
+  "assessed_at": "2026-10-02T14:23:08.073386+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "input_actual_artifact_facts_json_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_actual_native_responses_json_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_bounded_report_correction_json_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_original_requirements_md_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_machine_profile_json_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_process_profile_json_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_filament_profile_json_retained_report_002",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": []
+}

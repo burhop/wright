@@ -1,0 +1,18 @@
+{
+  "scope": "First exact-path commit guard stopped before commit",
+  "error": "Captured Windows CRLF was treated as trailing whitespace by the Git gate",
+  "correction": "Declare CR-at-EOL only for the two exact raw captured Windows records; preserve their bytes and check they contain no trailing horizontal spaces",
+  "initial_gitattributes": "* -text\n",
+  "initial_gitattributes_sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+  "raw_captured_bytes_unchanged": {
+    "output.log": {
+      "bytes": 981,
+      "sha256": "9a2db4e3bda75af148aa26c3eeb16db76249612bcbd17b49544c61999d92df6a"
+    },
+    "v2-owner-readback.json": {
+      "bytes": 1778,
+      "sha256": "8b23bc6c99cc820cc72898c5d9158ab5dc548d45e9e85e711c74d7a186bd540d"
+    }
+  },
+  "product_or_provider_review_effects": false
+}

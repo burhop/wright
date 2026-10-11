@@ -1,0 +1,12 @@
+{
+  "source_commit": "b9ce9a1417086f940c0b771744b7807a5a53296a",
+  "helpers": [
+    "t052-build-installed-web-006.mjs",
+    "t052-build-current-wheel-006.py",
+    "t052-prepare-installed-fixture-014.py",
+    "t052-prepare-installed-fixture-015.py"
+  ],
+  "new_frontend_build": true,
+  "new_backend_build": true,
+  "provider_or_model_or_engineering_execution": false
+}

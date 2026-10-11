@@ -1,0 +1,38 @@
+{
+  "summary": "Constructed and exported the reviewed focus-wheel source mesh.",
+  "output_path": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-fresh-prompt-055\\process-proofs\\printed-replacement-part\\mixed-default-071\\outputs\\85d929ee36e64afdaee61a5cdb0fc2a6\\source_mesh.stl",
+  "construction_observations": {
+    "triangle_count": 10824,
+    "non_manifold_edges": 0,
+    "bounds_mm": [36.7211, 38.0, 18.0],
+    "volume_mm3": 16649.93,
+    "scallops": {
+      "count": 6,
+      "radius_mm": 8,
+      "center_radius_mm": 24.75
+    },
+    "nominal_minimum_grip_diameter_mm": 33.5,
+    "hub_mm": 12,
+    "spherical_cap_dots": {
+      "count": 12,
+      "dimensions_mm": [1.2, 0.35]
+    },
+    "socket": {
+      "type": "rear-open D socket",
+      "radius_mm": 3.2,
+      "clipped_at_x_mm": -2.4,
+      "depth_mm": 10,
+      "minimum_roof_mm": 6
+    }
+  },
+  "unresolved_physical_limits": [
+    "Rounds and circular features are tessellated approximations.",
+    "Fit remains unverified and requires later review.",
+    "Torque strength remains unverified and requires later review.",
+    "PETG shrinkage remains unverified and requires later review.",
+    "Support need remains unverified and requires later review.",
+    "Print outcome remains unverified and requires later review.",
+    "Hub-root blend remains unverified and requires later review.",
+    "Slicer/package/profile compliance remains unverified and requires later review."
+  ]
+}

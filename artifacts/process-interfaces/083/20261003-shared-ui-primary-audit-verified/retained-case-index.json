@@ -1,0 +1,1453 @@
+{
+  "frontend": [
+    {
+      "module": "apps/web/src/services/process-client.spec.ts",
+      "cases": [
+        {
+          "name": "public process contract guards submits only the declared response and scopes the retained acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"workspace_id\":\"foreign\"}",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"checkpoint_id\":\"other\"}",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"subject_digest\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"request_id\":\"different-request\"}",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards retains uncertainty when the response acknowledgement changes its subject: {\"value\":{\"selection\":\"a\"}}",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards does not automatically replay a response after a lost acknowledgement",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects invalid response IDs, subject and nonfinite values before transport",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards requires a discriminator in owning tagged input unions",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards uses the owning shared shapes and optional defaults",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: NaN",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: Infinity",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: undefined",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: Sat Oct 03 2026 10:40:32 GMT-0400 (Eastern Daylight Time)",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: () => 1",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: { value: undefined }",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects non-JSON values: \ud800",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects cycles, excessive depth, oversized inline values and accessors",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects incompatible closed/bounded contracts",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects incompatible closed/bounded contracts",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects incompatible closed/bounded contracts",
+          "status": "passed"
+        },
+        {
+          "name": "public process contract guards rejects incompatible closed/bounded contracts",
+          "status": "passed"
+        },
+        {
+          "name": "native process client fixes host scope, uses host fetch, and reads without starting work",
+          "status": "passed"
+        },
+        {
+          "name": "native process client copies host scope so later caller mutation cannot redirect it",
+          "status": "passed"
+        },
+        {
+          "name": "native process client serializes only allowed fields, not caller actor/workspace authority",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects injected binding fields before any mutation",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects wrong reply scope: workspace",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects wrong reply scope: source_path",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects wrong reply scope: source_digest",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects an attach response for another run",
+          "status": "passed"
+        },
+        {
+          "name": "native process client requires the exact input scope before start",
+          "status": "passed"
+        },
+        {
+          "name": "native process client starts explicitly with a caller-retained stable request and input digest",
+          "status": "passed"
+        },
+        {
+          "name": "native process client does not accept a mismatched start receipt: request_id",
+          "status": "passed"
+        },
+        {
+          "name": "native process client does not accept a mismatched start receipt: input_snapshot_id",
+          "status": "passed"
+        },
+        {
+          "name": "native process client does not accept a mismatched start receipt: input_digest",
+          "status": "passed"
+        },
+        {
+          "name": "native process client reports a lost start acknowledgement and never retries automatically",
+          "status": "passed"
+        },
+        {
+          "name": "native process client preserves a structured backend reason and recovery instruction",
+          "status": "passed"
+        },
+        {
+          "name": "native process client does not render arbitrary raw HTTP failures as user messages",
+          "status": "passed"
+        },
+        {
+          "name": "native process client cancellation is explicit and represents a request, not confirmed stop",
+          "status": "passed"
+        },
+        {
+          "name": "native process client pre-aborted submission never reaches the transport",
+          "status": "passed"
+        },
+        {
+          "name": "native process client a disconnected cancellation cannot be reported as a confirmed stop",
+          "status": "passed"
+        },
+        {
+          "name": "native process client checks readiness against the exact prepared input digest",
+          "status": "passed"
+        },
+        {
+          "name": "native process client passes only a validated exact navigation intent to the native host",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects invalid action subjects and missing representation ownership without calls",
+          "status": "passed"
+        },
+        {
+          "name": "native process client acknowledges an exact authorized action without treating it as provider acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "native process client records an exact review request and verifies its retained decision",
+          "status": "passed"
+        },
+        {
+          "name": "native process client does not retry a lost review acknowledgement or submit invalid changes",
+          "status": "passed"
+        },
+        {
+          "name": "native process client rejects navigation replies that change the requested source or subject",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads reads passive toolpaths with the same source identity and an exact optional plate",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects an unsupported derived format envelope: { 'content-type': 'application/json', 'x-wright-view-format': 'wright.gcode.toolpaths.v1' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects an unsupported derived format envelope: { 'content-type': 'application/vnd.wright.toolpaths+json', 'x-wright-view-format': '' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects an unsupported derived format envelope: { 'content-type': 'application/vnd.wright.toolpaths+json', 'x-wright-view-format': 'wright.gcode.toolpaths.v2' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads uploads only the declared input and host source fields without execution",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unsupported input names before a request: ../one.txt",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unsupported input names before a request: .hidden",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unsupported input names before a request: bad\nname.txt",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unsupported input names before a request: bad%name.txt",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects empty or oversized inputs and another source's upload receipt",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads reads through the exact run and preparation owner without a generic file route",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'x-wright-artifact-sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'x-content-type-options': '' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': '104857601' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': '3' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': '5' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads rejects unverified, excessive or incomplete representations: { 'content-length': 'invalid' }",
+          "status": "passed"
+        },
+        {
+          "name": "scoped input upload and representation reads keeps HTML inert and preserves abort and owning errors",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation parses chunk boundaries and CRLF, then reads the terminal snapshot without mutations",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation reconnects using the last recorded cursor and reconciles without restarting",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation recovers a rejected cursor through a full snapshot and a fresh read attachment",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation bounds repeated connection failures",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation rejects wrong run events and oversized frames without mutation",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation closing an event observer releases it without cancelling the run",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation an abort releases a pending reader without sending cancellation",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation a server scope-reconciliation event stops reattachment and preserves the reason",
+          "status": "passed"
+        },
+        {
+          "name": "recorded event attachment and reconciliation does not accept a partial final SSE frame after disconnection",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "module": "apps/web/src/services/process-presentation-host.spec.ts",
+      "cases": [
+        {
+          "name": "native exact process frame connection accepts only exact origin, window, nonce, presentation and generation",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection start signals carry request locators, never browser-provided run authority",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection preview readiness cannot request start attachment",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection navigation is closed and cannot select an unbound run",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection sends bounded allowlisted theme values and stops hello attempts when disposed",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection sends the selected light browser-control scheme",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection sends the selected dark browser-control scheme",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection does not send the unsupported normal scheme",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection does not send the unsupported light dark scheme",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection updates a ready frame's browser-control scheme without a process action",
+          "status": "passed"
+        },
+        {
+          "name": "native exact process frame connection reconnects each loaded document and rejects the previous document nonce without replaying start signals",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "module": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+      "cases": [
+        {
+          "name": "public kit presentation and authority uses an explicit theme without private shell state",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority shows readable correction and keeps raw identifiers in details",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority requires both backend permission and an explicit handler for actions",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority shows missing readiness and declared later dependency distinctions",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority displays only observed progress and does not refresh stale measurements",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority does not fabricate percentage or a confirmed stop for cancellation requests",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority retains terminal historical progress without advertising a remaining time",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority expires observations while the view is quiet, without changing the observed timestamp",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority keeps failing exact assessments visible with navigation to their owner",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority shows declared review evidence without enabling an invented approval",
+          "status": "passed"
+        },
+        {
+          "name": "public kit presentation and authority shows a retained test review without inventing dispatch authority",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls edits a prompt as a typed binding without executing the process",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls preserves explicit false and clears numeric values without inventing defaults",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls renders configured option identities and their actual capability provenance",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls does not guess missing provider option lists or unsupported schemas",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls renders a bounded structured field with declared units",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls shows a selected image while the host stores an exact file reference",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls shows a prepared file reference with an omitted default discriminator",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls preserves an explicit prepared zero with an omitted default discriminator",
+          "status": "passed"
+        },
+        {
+          "name": "schema and provider-backed input controls shows an explicit default file before preparation without uploading it",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data accepts actual finite layer paths only for their matching package",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data keeps legacy absent classification evidence unknown",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data retains finite passive reader provenance without promoting acceptance",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data rejects invalid path coordinate NaN",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data rejects invalid path coordinate Infinity",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data rejects invalid path coordinate 10",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data rejects invalid path coordinate undefined",
+          "status": "passed"
+        },
+        {
+          "name": "bounded neutral toolpath data rejects malformed, empty, duplicate and excessive layer documents",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views keeps the recorded evidence identity distinct from its reported package",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (0)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (1)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (2)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (3)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (4)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (5)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (6)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (7)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects inconsistent nominal scope evidence (8)",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views shows recorded neutral paths and their excluded machine scope without requesting another read",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views supports bounded recorded layer data beyond the ordinary text preview limit",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views retains the ordinary JSON text bound and refuses incomplete recorded provenance",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views requires the exact recorded file identity and reconciles a changed representation",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views reveals all true layers and the exact source evidence from a passive read",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views keeps numeric view axes as explicit choices over the exact table",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views refuses missing exact package identity and preserves download fallback",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views aborts a passive read on close and ignores late results",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views does not restart a pending passive read because a host callback identity changes",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views presents actionable findings without treating absent findings as approval",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views shows supplied scalar samples with actual ranges and explicit units",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views parses quoted CSV fields and Windows line endings as actual table data",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views paginates data instead of silently claiming that the first rows are the whole result",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views plots finite supplied data and labels the range and units",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views does not render HTML or SVG representations as executable content",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views shows exact assessment-sized JSON as inert text without the smaller prose limit",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects oversized application/json before reading bytes",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views rejects oversized text/plain before reading bytes",
+          "status": "passed"
+        },
+        {
+          "name": "bounded representation views releases thumbnails and never reuses a bitmap for a different blob",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "module": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+      "cases": [
+        {
+          "name": "native process interface view lifetime page departure closes only the exact working presentation once",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime page departure closes only the exact preview presentation once",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime does not revoke a view retained in the browser's back-forward cache",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime releases a late opening reply after departure without mounting it or duplicating cleanup",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime reports departure cleanup failure without cancelling or restarting the run",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime opens one issued view across StrictMode and closing does not submit or cancel work",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime closes a late open reply after the tab has closed",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime preview opens only its verified job revision and retains exact attached run context",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime a preview job for another revision cannot be opened",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime incompatible bindings retain the common view without opening an app",
+          "status": "passed"
+        },
+        {
+          "name": "native process interface view lifetime changing run context replaces presentation only, with no new model or process request",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "module": "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx",
+      "cases": [
+        {
+          "name": "trusted process tab host binds the common view to the host session and saved source without a mount action",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host memoizes the client across equivalent restored metadata and run attachment",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host rebinds the client when the host session or source revision changes",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host routes exact attachment and explicit preparation through the native host",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host opens the workflow through the current workspace callback",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host provides scoped uploads and representations while undeclared navigation stays unavailable",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host uses the declared input identifier for uploads through the stable scoped client",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host routes authorized navigation through the current host without replacing the client",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host opening authoring controls does not open a preview or invoke generation",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host switching to the common view keeps the same source and run in the existing tab",
+          "status": "passed"
+        },
+        {
+          "name": "trusted process tab host restores preview controls with the locator's job and UI identity",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "backend": [
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_upload_prepare_and_read_exact_bytes_without_execution",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_passive_preview_keeps_original_download_and_exact_run_authority[workflow test\\n  name: \"Test\"\\n  purpose: \"Prepared input fixture\"\\n  discipline: \"engineering\"\\n  reviewed_ai_suggestions: false\\nend\\ninput brief\\n  name: \"Brief\"\\n  purpose: \"Prepared input\"\\n  group: null\\n  provided_by: \"engineer\"\\n  step_type: \"work\"\\n  tool: null\\n  reusable_step: null\\n  instructions: \"Use exact input\"\\n  inputs: []\\n  outputs: [{\"key\": \"brief_out\", \"name\": \"brief_out\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\\n  settings: {\"input_text\": \"Prepared passive view\"}\\nend\\ntask first\\n  name: \"First\"\\n  purpose: \"Use exact input\"\\n  group: null\\n  step_type: \"work\"\\n  performed_by: \"ai_assisted\"\\n  inputs: [{\"key\": \"first_in\", \"name\": \"first_in\", \"kind\": \"engineering_document\", \"item\": null, \"required\": true, \"quantity\": \"one\", \"description\": \"Document\"}]\\n  outputs: [{\"key\": \"first_out\", \"name\": \"first_out\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\\n  prompt: \"Prepare a result\"\\n  tool: null\\n  reusable_step: null\\n  settings: {\"output_format\": \"text\", \"save_output\": true, \"output_filename\": \"first.txt\"}\\nend\\nconnection supplied\\n  type: \"item\"\\n  from: \"brief.brief_out\"\\n  to: \"first.first_in\"\\n  label: \"Input\"\\n  when: null\\nend\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_uploaded_html_is_inert_download_even_with_caller_mime",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_upload_rejects_caller_authority_without_echo_or_publication[workspace_id]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_upload_rejects_caller_authority_without_echo_or_publication[principal_id]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_upload_rejects_caller_authority_without_echo_or_publication[capabilities]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_duplicate_input_field_rejects_before_publication",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_upload_scope_and_size_are_checked_before_saving",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_representation_needs_exact_preparation_and_immutable_bytes",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_auth_and_origin_cover_upload_and_download",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_artifact_routes_deny_viewer_before_resolving_workspace",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_bounded_request_replay_retains_the_actual_connection_lifetime",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "apps.api.tests.test_process_interface_artifacts",
+      "name": "test_native_navigation_resolves_source_and_rejects_foreign_intents",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_public_client_contract_resources_are_current",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_future_schema_features_require_a_validator_extension[schema0]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_future_schema_features_require_a_validator_extension[schema1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_future_schema_features_require_a_validator_extension[schema2]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_future_schema_features_require_a_validator_extension[schema3]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_future_schema_features_require_a_validator_extension[schema4]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_only_local_owning_references_can_generate",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.core.tests.test_process_client_contracts",
+      "name": "test_api_union_bindings_keep_the_required_discriminator",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_omitted_canonical_result_is_reported_as_unavailable_not_unrelated",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_upload_is_scoped_immutable_and_does_not_prepare_or_execute",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_more_than_four_mib_can_be_uploaded_prepared_and_read",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_invalid_uploads_never_publish[../outside.txt-data]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_invalid_uploads_never_publish[one.txt-]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_invalid_uploads_never_publish[.hidden-data]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_invalid_uploads_never_publish[bad\\nname.txt-data]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_invalid_uploads_never_publish[one.abcdefghijklmnop-data]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_invalid_uploads_never_publish[binary.txt-\\x00\\xff]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_configured_upload_bound_is_enforced_before_write",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_upload_capability_and_declared_file_input_are_required",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_changed_source_rejects_upload_before_file_publication",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_unprepared_or_unrelated_files_do_not_gain_read_authority",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_changed_input_bytes_are_reported_as_stale",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_read_requires_results_capability_and_host_workspace_scope",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_actual_recorded_result_read_does_not_execute_again",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_file_read_bound_and_traversal_are_enforced_by_the_file_owner",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_passive_preview_uses_exact_recorded_result_and_never_replays_work",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_passive_parse_and_serialization_use_the_owned_bounded_worker",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_artifact_access",
+      "name": "test_passive_deadline_failure_preserves_exact_download",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_preparation_and_recorded_run_use_same_snapshot_identity",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[awaiting_approval-waiting_human]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[pending_review-waiting_human]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[awaiting_external_outcome-waiting_external]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[external_action_outcome_unknown-reconciliation_required]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[interrupted-reconciliation_required]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[unknown-reconciliation_required]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[cancellation_requested-cancellation_requested]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[cancelled-cancelled]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[completed-completed]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_run_states_have_distinct_honest_meanings[failed-failed]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_unknown_external_outcome_disables_repeat_action_with_reason",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_history_remains_visible_but_changed_source_does_not_grant_mutation",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_scope_cannot_widen_owner_permitted_actions",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_blocking_owner_evidence_reasons_are_preserved_without_ai_override",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_foreign_run_or_result_is_rejected_instead_of_silently_rebound",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_output_link_retains_exact_port_and_hashed_representation",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_unhashed_or_unknown_representation_is_not_claimed_as_verified_preview",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_observation_preserves_unavailable_metrics_and_freshness",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_declared_interaction_and_navigation_keep_exact_subject",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_attached_run_does_not_inherit_another_preparation_or_legacy_unknown_inputs",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_assessment_reference_uses_actual_082_currentness_and_exact_subject[False-current]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_assessment_reference_uses_actual_082_currentness_and_exact_subject[True-stale]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interaction_projection",
+      "name": "test_projected_assessment_cannot_approve_an_action_without_owner_permission",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_source_read_uses_existing_owner_and_accepted_digest",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_scope_mismatch_rejects_before_reading_any_source",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_changed_source_requires_repreparation_not_silent_rebinding",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_unknown_source_contract_is_explicitly_unsupported",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_scope_has_closed_capabilities_and_no_empty_principal",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_diagnostics_are_redacted_and_bounded",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_limits_are_owned_by_wright_and_reject_invalid_bounds",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+      "name": "test_service_repositories_are_lazy_and_share_existing_database",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_explicit_nominal_section_excludes_unverified_machine_setup",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_does_not_hide_unsupported_body_or_guess_modal_state[G90\\nG21\\nM83\\nG1 X0 Y0 Z0.2\\n; CHANGE_LAYER\\n; Z_HEIGHT: 0.2\\n; FEATURE: Inner wall\\nG999 X1\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_does_not_hide_unsupported_body_or_guess_modal_state[M83\\nG1 X0 Y0 Z0.2\\n; CHANGE_LAYER\\n; Z_HEIGHT: 0.2\\n; FEATURE: Inner wall\\nG1 X10 Y0 E1\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_does_not_hide_unsupported_body_or_guess_modal_state[G90\\nG21\\nG1 X0 Y0 Z0.2\\n; CHANGE_LAYER\\n; Z_HEIGHT: 0.2\\n; FEATURE: Inner wall\\nG1 X10 Y0 E1\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_requires_exact_ordered_unique_comment_markers[section0]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_requires_exact_ordered_unique_comment_markers[section1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_requires_exact_ordered_unique_comment_markers[section2]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_nominal_section_requires_exact_ordered_unique_comment_markers[section3]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_long_inert_metadata_comments_do_not_become_motion",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_commands_comments_and_feature_labels_have_separate_bounds[command]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_commands_comments_and_feature_labels_have_separate_bounds[comment]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_commands_comments_and_feature_labels_have_separate_bounds[feature]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_feature_evidence_count_has_a_separate_bound",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_actual_planar_coordinates_layers_and_unknown_features",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_missing_feature_comments_do_not_infer_model_or_support",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_absolute_extrusion_retraction_reset_and_tool_state",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_relative_axes_and_inch_units",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_planar_arcs_have_actual_endpoints_and_bounded_chord_error[G3 X10 Y10 I0 J10 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_planar_arcs_have_actual_endpoints_and_bounded_chord_error[G2 X10 Y-10 I0 J-10 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_planar_arcs_have_actual_endpoints_and_bounded_chord_error[G3 X10 Y10 R10 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_planar_arcs_have_actual_endpoints_and_bounded_chord_error[G3 X10 Y10 R-10 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_full_circle_and_nonextruding_helical_travel",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_cura_negative_layer_indices_are_retained_and_not_used_as_fake_z",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G1 Xnan E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G1 X1 X2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G1 X2 A1 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G54\\nG1 X2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G2 X10 Y10 R1 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G2 X10 Y10 I0 J2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G3 I0 J10 P2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G3 I0 J10 Z0.4 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G18\\nG2 I0 J10 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[M200 D1\\nG1 X2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G1 X2 Z0.4 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G28\\nG1 X2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[G1 X1000001 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_unsupported_semantics_fail_whole_view_instead_of_silently_dropping_paths[UNKNOWN_MACRO\\nG1 X2 E1]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_missing_layer_comments_and_wrong_digest_are_explicit",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_segment_layer_and_source_limits",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_exact_single_plate_package_and_entry_provenance",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_multiple_plates_require_exact_selection",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_archive_paths_are_never_extracted_or_followed[../model.gcode]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_archive_paths_are_never_extracted_or_followed[/model.gcode]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_archive_paths_are_never_extracted_or_followed[C:/model.gcode]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_archive_paths_are_never_extracted_or_followed[a\\\\model.gcode]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_duplicate_corrupt_and_oversized_archives_are_refused",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_preserves_actual_samples_and_declared_columns",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_missing_ambiguous_or_nonfinite_fields_are_explicit[x_m,y_m,z_m,temperature_c\\n0,0,0,nan\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_missing_ambiguous_or_nonfinite_fields_are_explicit[x_m,y_m,z_m,temperature_c\\n0,0,0,inf\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_missing_ambiguous_or_nonfinite_fields_are_explicit[x_m,y_m,z_m,temperature_c\\n0,0,0\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_missing_ambiguous_or_nonfinite_fields_are_explicit[x_m,y_m,z_m,temperature_c,temperature_c\\n0,0,0,20,20\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_missing_ambiguous_or_nonfinite_fields_are_explicit[x_m,y_m,z_m,other\\n0,0,0,20\\n]",
+      "passed": true
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "module": "packages.workspace_service.tests.test_process_representations",
+      "name": "test_scalar_csv_missing_ambiguous_or_nonfinite_fields_are_explicit[x_m,y_m,z_m,temperature_c\\n]",
+      "passed": true
+    }
+  ],
+  "superseded_tests": [
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "packages/core/tests/test_process_interface_contracts.py"
+  ],
+  "scope": "Only exact unchanged test/owner source is retained; changed tests use current 93 backend or prior-turn current 160 frontend checks."
+}

@@ -1,0 +1,35 @@
+{
+  "console": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "mutations": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+      "method": "POST"
+    },
+    {
+      "path": "/__wright/bootstrap",
+      "method": "POST"
+    }
+  ]
+}

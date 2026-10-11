@@ -1,0 +1,60 @@
+
+Running 33 tests using 1 worker
+
+(node:72864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/33] [chromium] › tests\ui-integration\process-common-view.spec.ts:39:5 › shows an unattended-input diagnostic without inventing a form and reopens the same failed run
+[2/33] [chromium] › tests\ui-integration\process-common-view.spec.ts:103:5 › uses the normal workspace to prepare, follow and inspect an exact run while retaining source edits
+[3/33] [chromium] › tests\ui-integration\process-common-view.spec.ts:234:5 › reconciles a lost start acknowledgement after reload using the original request identity
+[4/33] [chromium] › tests\ui-integration\process-declared-interactions.spec.ts:21:5 › preserves declared input schemas through workspace source editing, saving and reopening
+[5/33] [chromium] › tests\ui-integration\process-declared-interactions.spec.ts:101:7 › declared response resumes the saved workspace run after closing and reopening its tab
+[6/33] [chromium] › tests\ui-integration\process-declared-interactions.spec.ts:101:7 › declared response resumes the saved workspace run after explicit lost-ack reconciliation
+[7/33] [chromium] › tests\ui-integration\process-input-inspector.spec.ts:18:5 › edits input and human declarations through the workspace inspector and preserves undo, save and reopen
+[8/33] [chromium] › tests\ui-integration\process-input-inspector.spec.ts:122:5 › creates a saveable draft user step without inventing a question or response
+[9/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (none lost acknowledgement)
+[10/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (review lost acknowledgement)
+[11/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (action lost acknowledgement)
+[12/33] [chromium] › tests\ui-integration\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (unknown lost acknowledgement)
+[13/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (accepted)
+[14/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (lost)
+[15/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (schema)
+[16/33] [chromium] › tests\ui-integration\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (stale)
+[17/33] [chromium] › tests\ui-integration\process-validation.spec.ts:123:5 › authors a validator and shows correction diagnostics with assessment links from Workflows
+[18/33] [chromium] › tests\ui-integration\process-validation.spec.ts:280:5 › shows the exact human requirements review from the workspace Workflows control
+[19/33] [chromium] › tests\ui-integration\workflow-recovery-accessibility.spec.ts:22:5 › supports representative authoring and component inspection with keyboard actions and ordered focus
+  1) [chromium] › tests\ui-integration\workflow-recovery-accessibility.spec.ts:22:5 › supports representative authoring and component inspection with keyboard actions and ordered focus 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 3
+    Received:   -1
+
+      49 |     orderOf("workflow-recovery-view-split"),
+      50 |   );
+    > 51 |   expect(orderOf("workflow-recovery-ai-request")).toBeGreaterThan(
+         |                                                   ^
+      52 |     orderOf("workflow-recovery-validate"),
+      53 |   );
+      54 |   await expect(
+        at D:\repos\wright\tests\ui-integration\workflow-recovery-accessibility.spec.ts:51:51
+
+    Error Context: .local-run\process-interfaces-083\t053-mocked-browser-001\browser-results\workflow-recovery-accessib-b54b4-d-actions-and-ordered-focus-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    .local-run\process-interfaces-083\t053-mocked-browser-001\browser-results\workflow-recovery-accessib-b54b4-d-actions-and-ordered-focus-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace .local-run\process-interfaces-083\t053-mocked-browser-001\browser-results\workflow-recovery-accessib-b54b4-d-actions-and-ordered-focus-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+Testing stopped early after 1 maximum allowed failures.
+
+  1 failed
+    [chromium] › tests\ui-integration\workflow-recovery-accessibility.spec.ts:22:5 › supports representative authoring and component inspection with keyboard actions and ordered focus 
+  14 did not run
+  18 passed (2.0m)
+  1 error was not a part of any test, see above for details

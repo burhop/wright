@@ -2,25 +2,119 @@
 
 import asyncio
 import json
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import PurePosixPath
 from uuid import uuid4
 import socket
 import hashlib
 import logging
+import re
 from dataclasses import asdict
 
 import anyio
 
 _FINAL_CHECKPOINT_SECONDS = 5
+_MAX_RUN_DIRECTORY_ENTRIES = 10_000
+_MAX_RUN_READ_FILES = 100
+# Extended tool runs retain actual model requests as well as engineering events.
+# Their read/continuation budget must accommodate those records (a qualified
+# supplier research stage alone produced 26 MiB), without treating prompt-file
+# limits as run limits. Keep a hard bound; never recover a partial JSON record.
+_MAX_RUN_RECORD_BYTES = 64 * 1024 * 1024
+# The interaction owner pages a compact result inventory separately from progress.
+# Native responses remain only in the recorder, under its existing read bound.
+_MAX_RESULT_INVENTORY_BYTES = 2 * 1024 * 1024
+_MAX_RESULT_INVENTORY_ITEMS = 4096
 _logger = logging.getLogger(__name__)
 
 
-def _execution_snapshot(record, state):
+def _recorded_result_rows(record):
+    """Use current checkpoint facts when a later segment has no final result.
+
+    A declared wait leaves the previous segment's result in the record. Running
+    or failed continuation facts must not be replaced by that earlier result.
+    An explicitly empty current map also preserves rework invalidation.
+    """
+    result = record.get("result") or {}
+    if record.get("status") != "completed" and "partial_results" in record:
+        return list(record["partial_results"].values())
+    if isinstance(result.get("results"), list):
+        return result["results"]
+    return list(record.get("partial_results", {}).values())
+
+
+def _previous_result_rows(record):
+    """Read invalidated file evidence from durable events without reviving outputs.
+
+    No run is rewritten. Value and live-application locators can now identify a
+    later attempt, so only byte-pinned workspace representations are retained.
+    The presentation ID identifies this exact historical occurrence; the original
+    result identity remains available for its owning validation assessment.
+    """
+    current, attempts, previous = {}, {}, []
+    for offset, event in enumerate(record.get("events", [])):
+        if event.get("kind") == "result_ready":
+            row = event.get("engineering_result")
+            if isinstance(row, dict) and isinstance(row.get("id"), str):
+                if row.get("provenance", {}).get("task_id") != event.get("task_id"):
+                    raise WorkflowRunReadError(
+                        "invalid", "Recorded result and event identities disagree"
+                    )
+                current[row["id"]] = row
+        elif event.get("kind") == "design_revision":
+            invalidated = set(event.get("invalidated_task_ids", []))
+            for key, row in list(current.items()):
+                task = row.get("provenance", {}).get("task_id")
+                if task not in invalidated:
+                    continue
+                current.pop(key)
+                representations = [
+                    rep
+                    for rep in row.get("representations", [])
+                    if rep.get("kind") == "workspace_file"
+                    and isinstance(rep.get("sha256"), str)
+                    and re.fullmatch(r"[0-9a-f]{64}", rep["sha256"])
+                ]
+                if not representations:
+                    continue
+                identity = hashlib.sha256(
+                    json.dumps(
+                        [record.get("run_id"), offset, row],
+                        sort_keys=True,
+                        separators=(",", ":"),
+                        allow_nan=False,
+                    ).encode()
+                ).hexdigest()
+                previous.append(
+                    {
+                        "producer_attempt": str(attempts.get(task, 0) + 1),
+                        "original_result_id": key,
+                        "result": {
+                            **row,
+                            "id": "history-" + identity,
+                            "representations": representations,
+                            "exports": [],
+                            "artifact_role": "diagnostic",
+                        },
+                    }
+                )
+                if len(previous) > _MAX_RESULT_INVENTORY_ITEMS:
+                    raise WorkflowRunReadError(
+                        "result_inventory_limit",
+                        "The previous result inventory exceeds its supported bound",
+                    )
+            for task in invalidated:
+                attempts[task] = attempts.get(task, 0) + 1
+    return previous
+
+
+def _execution_snapshot(record, state, *, complete_results=False):
     """Fold durable events, never infer execution from graph position or elapsed time.
 
-    Polling exposes artifact metadata, not model responses or native tool payloads.
-    Detailed immutable evidence remains available at the existing run-log path.
+    Polling exposes artifact metadata and bounded reported failure diagnostics,
+    not successful model responses or native tool payloads. Detailed immutable
+    evidence remains available at the existing run-log path.
     """
     truncated = False
 
@@ -116,6 +210,8 @@ def _execution_snapshot(record, state):
     outputs = {}
     tools = tool_ends = model_calls = revisions = 0
     progress = None
+    operations = {}
+    operations_truncated = False
     events = record.get("events", [])
     output_fields = (
         "task_id",
@@ -137,6 +233,16 @@ def _execution_snapshot(record, state):
         "status",
         "tool",
         "revision",
+        "assessment_id",
+        "assessment_digest",
+        "assessment_path",
+        "release_eligible",
+        "target_step_id",
+        "feedback_digest",
+        "remaining_revisions",
+        "complete_result_ref",
+        "code",
+        "correction",
     )
 
     def invalidate(ids):
@@ -152,6 +258,48 @@ def _execution_snapshot(record, state):
     for event in events:
         kind = event.get("kind")
         task_id = event.get("task_id")
+        if kind == "operation_progress":
+            item = fields(
+                event,
+                (
+                    "task_id",
+                    "operation_id",
+                    "provider_binding",
+                    "provider_schema_digest",
+                    "state",
+                    "message",
+                    "observed_at",
+                    "stale_after",
+                    "at",
+                    "observation_source",
+                    "progress_percent",
+                    "estimated_remaining_seconds",
+                ),
+            )
+            # Provider results and tool arguments stay in the existing exact
+            # run log. Only explicit compact observation metadata is projected.
+            item["metrics"] = (
+                fields(event.get("metrics"), tuple(event.get("metrics", {}))[:16])
+                if isinstance(event.get("metrics"), dict)
+                else {}
+            )
+            limits = event.get("limitations", ())
+            item["limitations"] = (
+                [s for s in limits[:16] if isinstance(s, str) and 0 < len(s) <= 4096]
+                if isinstance(limits, (list, tuple))
+                else []
+            )
+            key = (
+                item.get("provider_binding"),
+                item.get("task_id"),
+                item.get("operation_id"),
+            )
+            operations.pop(key, None)
+            operations[key] = item
+            if len(operations) > 256:
+                operations.pop(next(iter(operations)))
+                truncated = True
+                operations_truncated = True
         if not isinstance(task_id, str) or not task_id or len(task_id) > 4096:
             task_id = None
         if kind == "step_started" and task_id:
@@ -205,34 +353,56 @@ def _execution_snapshot(record, state):
             "tool_started",
             "tool_completed",
             "design_check",
+            "validation_feedback_delivered",
+            "validation_exhausted",
             "design_revision",
             "review_requested",
             "approval_requested",
+            "input_requested",
+            "step_diagnostic",
             "approval_decided",
             "external_action_authorized",
             "external_action_reconciled",
         }:
             progress = fields(event, event_fields)
+            if kind == "step_diagnostic":
+                # Explain the recorded failure without treating model prose as
+                # a requirement, a permitted action or a new interaction.
+                progress.update(fields(event, ("diagnostic",)))
 
     result = record.get("result") or {}
-    if isinstance(result.get("results"), list):
+    if "partial_results" in record or isinstance(result.get("results"), list):
         current_results = {
             r["id"]: r
-            for r in result["results"]
+            for r in _recorded_result_rows(record)
             if isinstance(r, dict) and isinstance(r.get("id"), str)
         }
-    elif not events:
-        current_results = record.get("partial_results", {})
-    if isinstance(result.get("outputs"), list):
+    if isinstance(result.get("outputs"), list) and (
+        record.get("status") == "completed" or not events
+    ):
         outputs = {
             o["output_path"]: fields(o, output_fields)
             for o in result["outputs"]
             if isinstance(o, dict) and isinstance(o.get("output_path"), str)
         }
+    event_metadata_truncated = truncated
+    truncated = False
     compact_results = [
         a for r in current_results.values() if isinstance(r, dict) if (a := artifact(r))
     ]
-    run_id = result.get("run_id")
+    if complete_results and (
+        truncated
+        or len(compact_results) != len(current_results)
+        or len(compact_results) > _MAX_RESULT_INVENTORY_ITEMS
+        or len(json.dumps(compact_results, ensure_ascii=True).encode())
+        > _MAX_RESULT_INVENTORY_BYTES
+    ):
+        raise WorkflowRunReadError(
+            "result_inventory_limit",
+            "The recorded result inventory exceeds the supported metadata bounds",
+        )
+    truncated |= event_metadata_truncated
+    run_id = record.get("run_id") or result.get("run_id")
     if not isinstance(run_id, str):
         ids = {r.get("provenance", {}).get("run_id") for r in compact_results}
         ids.discard(None)
@@ -250,9 +420,16 @@ def _execution_snapshot(record, state):
         "revision_count": revisions,
         "outputs": list(outputs.values()),
         "last_progress": progress,
+        "operations": list(operations.values()),
+        "operations_truncated": operations_truncated,
         "truncated": truncated,
     }
-    # Bound the complete artifact/event projection, even for unusually wide graphs.
+    # Legacy progress reads retain the original combined 64 KiB envelope. The
+    # interaction owner needs every current result before its existing paging;
+    # shrinking that inventory would misreport later files as not produced.
+    inventory = compact_results if complete_results else None
+    if complete_results:
+        compact_results = []
     while (
         len(json.dumps([snapshot, compact_results], ensure_ascii=True).encode())
         > 64 * 1024
@@ -264,10 +441,13 @@ def _execution_snapshot(record, state):
             snapshot["outputs"].pop()
         elif snapshot["completed_task_ids"]:
             snapshot["completed_task_ids"].pop()
+        elif snapshot["operations"]:
+            snapshot["operations"].pop(0)
+            snapshot["operations_truncated"] = True
         else:
             snapshot["last_progress"] = None
             break
-    return snapshot, compact_results, run_id
+    return snapshot, inventory if complete_results else compact_results, run_id
 
 
 async def record_workflow_run(
@@ -282,10 +462,16 @@ async def record_workflow_run(
     execution_context=None,
     run_id=None,
     required_step_ids=None,
+    run_log_path=None,
+    cancellation_status=None,
 ):
     from .workflow_resource_lease import ApplicationLease
 
-    identity = "workflow-run:" + uuid4().hex
+    identity = (
+        f"workflow-run:{workspace_id}:{run_id}"
+        if run_log_path is not None
+        else "workflow-run:" + uuid4().hex
+    )
     async with ApplicationLease(identity):
         return await _record_run(
             service=service,
@@ -299,11 +485,20 @@ async def record_workflow_run(
             execution_context=execution_context,
             run_id=run_id,
             required_step_ids=required_step_ids,
+            run_log_path=run_log_path,
+            cancellation_status=cancellation_status,
         )
 
 
 async def record_workflow_resume(
-    *, service, workspace_dir, workspace_id, checkpoint, execute, on_event=None
+    *,
+    service,
+    workspace_dir,
+    workspace_id,
+    checkpoint,
+    execute,
+    on_event=None,
+    cancellation_status=None,
 ):
     """Continue one recorded run once; completed segment retries are read-only."""
     from .workflow_resource_lease import ApplicationLease
@@ -311,11 +506,15 @@ async def record_workflow_resume(
 
     relative = checkpoint.continuation.get("run_log_path")
     if not isinstance(relative, str) or not relative.startswith("runs/"):
-        raise ValueError("Approval continuation has no run-log path")
+        raise ValueError("Workflow continuation has no run-log path")
+    if checkpoint.workspace_id != workspace_id:
+        raise ValueError("Continuation does not belong to this workspace")
     identity = f"workflow-resume:{workspace_id}:{checkpoint.run_id}"
     async with ApplicationLease(identity):
-        raw = await service.files.read_reference(workspace_dir, relative)
-        if len(raw) > 16 * 1024 * 1024:
+        raw = await service.files.read_bytes(
+            workspace_dir, relative, maximum_bytes=_MAX_RUN_RECORD_BYTES
+        )
+        if len(raw) > _MAX_RUN_RECORD_BYTES:
             raise ValueError("Workflow run log exceeds the recovery limit")
         record = json.loads(raw)
         result = record.get("result") or {}
@@ -339,15 +538,34 @@ async def record_workflow_resume(
                 "Inspect persisted tool evidence and reconcile before creating another continuation.",
             )
         if (
-            checkpoint.state != "consumed"
-            or (checkpoint.external_action or {}).get("outcome") != "dispatched"
+            checkpoint.checkpoint_kind not in {"approval", "input"}
+            or checkpoint.state != "consumed"
+            or (
+                checkpoint.checkpoint_kind == "approval"
+                and (checkpoint.external_action or {}).get("outcome") != "dispatched"
+            )
         ):
             raise _error(
                 "WORKFLOW_CONTINUATION_NOT_AUTHORIZED",
-                "The checkpoint does not have a completed approved action.",
+                "The checkpoint does not have completed continuation authority.",
                 "Resolve the exact checkpoint before continuing.",
             )
-        current = result.get("approval") or record.get("approval") or {}
+        reference = (
+            "input_checkpoint" if checkpoint.checkpoint_kind == "input" else "approval"
+        )
+        if checkpoint.checkpoint_kind == "input":
+            owner = service.process_interfaces.human_inputs
+            retained = owner.get(
+                checkpoint.checkpoint_id,
+                workspace_id=workspace_id,
+                run_id=checkpoint.run_id,
+            )
+            if retained != checkpoint:
+                raise ValueError(
+                    "Input continuation differs from its retained checkpoint"
+                )
+            owner.response(retained)
+        current = result.get(reference) or record.get(reference) or {}
         if current.get("checkpoint_id") != checkpoint.checkpoint_id:
             raise ValueError("This run is waiting at another checkpoint")
         claims[checkpoint.checkpoint_id] = {
@@ -368,6 +586,7 @@ async def record_workflow_resume(
             resume_record=record,
             resume_filename=relative,
             resume_checkpoint_id=checkpoint.checkpoint_id,
+            cancellation_status=cancellation_status,
         )
 
 
@@ -387,12 +606,27 @@ async def _record_run(
     resume_checkpoint_id=None,
     run_id=None,
     required_step_ids=None,
+    run_log_path=None,
+    cancellation_status=None,
 ):
     started = datetime.now(timezone.utc)
     slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
     filename = (
         f"runs/{slug}/{started.strftime('%Y%m%dT%H%M%SZ')}-{uuid4().hex[:12]}.json"
     )
+    if run_log_path is not None:
+        from .workspace_path import WorkspacePath
+
+        if (
+            resume_record is not None
+            or not run_id
+            or run_log_path != f"runs/{slug}/{run_id}.json"
+        ):
+            raise ValueError("A retained run-log locator must match its exact new run")
+        target = WorkspacePath(workspace_dir).resolve(run_log_path)
+        if target.exists():
+            raise ValueError("A retained run-log identity cannot be executed again")
+        filename = run_log_path
     record = {
         "workflow_path": source_path,
         "source_digest": source_digest,
@@ -424,20 +658,27 @@ async def _record_run(
         json.dumps(record, ensure_ascii=False, indent=2),
         "overwrite" if resume_record is not None else "indexed",
     )
+    if run_log_path is not None and filename != run_log_path:
+        raise ValueError("A new run-log locator collided with existing evidence")
+
+    checkpoint_lock = asyncio.Lock()
 
     async def checkpoint():
-        await service.files.write_generated(
-            workspace_dir,
-            filename,
-            json.dumps(record, ensure_ascii=False, indent=2),
-            "overwrite",
-        )
+        async with checkpoint_lock:
+            await service.files.write_generated(
+                workspace_dir,
+                filename,
+                json.dumps(record, ensure_ascii=False, indent=2),
+                "overwrite",
+            )
 
     async def emit(event):
-        record["events"].append(dict(event))
+        # A producer can enrich a nested invocation after receiving a response;
+        # preserve the earlier submission as its own immutable snapshot.
+        record["events"].append(deepcopy(event))
         if event.get("kind") == "result_ready":
             result = event["engineering_result"]
-            record.setdefault("partial_results", {})[result["id"]] = result
+            record.setdefault("partial_results", {})[result["id"]] = deepcopy(result)
         if event.get("kind") == "design_revision":
             invalidated = set(event.get("invalidated_task_ids", []))
             record["partial_results"] = {
@@ -447,7 +688,7 @@ async def _record_run(
             }
         await checkpoint()
         if on_event:
-            await on_event(event)
+            await on_event(deepcopy(event))
 
     try:
         await emit(
@@ -467,9 +708,52 @@ async def _record_run(
             record["run_id"] = result["run_id"]
         review_request = result.pop("_review_request", None)
         approval_request = result.pop("_approval_request", None)
-        if review_request and approval_request:
-            raise ValueError("A run cannot request two approval mechanisms at once")
-        if approval_request:
+        input_request = result.pop("_input_request", None)
+        if (
+            sum(
+                item is not None
+                for item in (review_request, approval_request, input_request)
+            )
+            > 1
+        ):
+            raise ValueError("A run cannot request two checkpoint mechanisms at once")
+        record.pop("input_checkpoint", None)
+        if input_request:
+            if not workspace_id:
+                raise ValueError("Declared input requires a workspace identity")
+            continuation = {
+                **input_request["continuation"],
+                "run_log_path": filename,
+                "run_id": result["run_id"],
+                "workflow_path": source_path,
+                "source_digest": source_digest,
+                "step_title": input_request["step_title"],
+            }
+            checkpoint_record = service.process_interfaces.human_inputs.request(
+                workspace_id=workspace_id,
+                workflow_id=source_path,
+                run_id=result["run_id"],
+                step_id=input_request["step_id"],
+                subject=input_request["subject"],
+                continuation=continuation,
+            )
+            checkpoint_data = asdict(checkpoint_record)
+            result.update(status="waiting_human", input_checkpoint=checkpoint_data)
+            record.update(
+                status="waiting_human", result=result, input_checkpoint=checkpoint_data
+            )
+            await emit(
+                {
+                    "kind": "input_requested",
+                    "at": datetime.now(timezone.utc).isoformat(),
+                    "task_id": input_request["step_id"],
+                    "task_title": input_request["step_title"],
+                    "message": input_request["instructions"],
+                    "checkpoint_id": checkpoint_record.checkpoint_id,
+                    "subject_digest": checkpoint_record.subject_digest,
+                }
+            )
+        elif approval_request:
             if not workspace_id:
                 raise ValueError(
                     "External-action approval requires a workspace identity"
@@ -562,8 +846,18 @@ async def _record_run(
                 finished_at=datetime.now(timezone.utc).isoformat(),
             )
     except asyncio.CancelledError:
+        state = (
+            cancellation_status() if cancellation_status is not None else "cancelled"
+        )
+        if state not in {"cancelled", "interrupted", "reconciliation_required"}:
+            state = "interrupted"
         record.update(
-            status="cancelled", error="Cancelled; completed tool operations remain."
+            status=state,
+            error="Cancelled; completed tool operations remain."
+            if state == "cancelled"
+            else "Cancellation outcome unconfirmed; reconcile the identified provider operation."
+            if state == "reconciliation_required"
+            else "Runtime interrupted; completed tool operations remain.",
         )
         raise
     except Exception as error:
@@ -571,13 +865,26 @@ async def _record_run(
             status="failed",
             error=str(error),
             code=getattr(error, "code", "EXECUTION_FAILED"),
+            correction=getattr(error, "correction", ""),
         )
         raise
     finally:
-        if resume_checkpoint_id and record["status"] in {"failed", "cancelled"}:
-            record["resume_segments"][resume_checkpoint_id]["state"] = "outcome_unknown"
+        if resume_checkpoint_id:
+            claim = record["resume_segments"][resume_checkpoint_id]
+            if claim["state"] == "executing":
+                # Shutdown and unconfirmed cancellation also leave an unfinished
+                # claim. Persist uncertainty rather than a departed live owner;
+                # no unfinished segment may be replayed on service recreation.
+                claim.update(
+                    state="outcome_unknown",
+                    finished_at=datetime.now(timezone.utc).isoformat(),
+                )
         record["execution_ended_at"] = datetime.now(timezone.utc).isoformat()
-        if record["status"] not in {"pending_review", "awaiting_approval"}:
+        if record["status"] not in {
+            "pending_review",
+            "awaiting_approval",
+            "waiting_human",
+        }:
             record["completed_at"] = record["execution_ended_at"]
         # Indexed publication never replaces another run. Logs survive reloads and
         # remain accessible through the existing workspace file browser/viewer.
@@ -601,8 +908,80 @@ async def _record_run(
     return {**result, "run_log_path": filename}
 
 
+async def record_workflow_artifact_review_decision(
+    *, service, workspace_dir, workspace_id, review
+):
+    """Project a terminal artifact owner's actual decision, without executing work.
+
+    The existing review repository owns the immutable decision. A repeated request
+    can repair a lost projection write; it cannot revise the decision or rerun tools.
+    """
+    from .workflow_resource_lease import ApplicationLease
+
+    relative = review.get("run_log_path")
+    if not isinstance(relative, str) or not relative.startswith("runs/"):
+        raise ValueError("Review has no safe recorded run path")
+    if review.get("state") not in {"approved", "changes_requested"}:
+        raise ValueError("Review has no terminal decision")
+    async with ApplicationLease(
+        f"workflow-artifact-review:{workspace_id}:{review['run_id']}"
+    ):
+        raw = await service.files.read_bytes(
+            workspace_dir, relative, maximum_bytes=_MAX_RUN_RECORD_BYTES
+        )
+        if len(raw) > _MAX_RUN_RECORD_BYTES:
+            raise ValueError("Review run exceeds the recovery limit")
+        record = json.loads(raw)
+        result = record.get("result") if isinstance(record, dict) else None
+        reference = (result or {}).get("review") or {}
+        if (
+            not isinstance(result, dict)
+            or result.get("run_id") != review["run_id"]
+            or record.get("workflow_path") != review["workflow_path"]
+            or record.get("source_digest") != review["source_digest"]
+            or reference.get("review_id") != review["review_id"]
+            or reference.get("package_digest") != review["package_digest"]
+        ):
+            raise ValueError("The review decision does not match this recorded run")
+        if (
+            reference.get("request_id") == review.get("request_id")
+            and reference.get("state") == review["state"]
+        ):
+            return
+        if record.get("status") != "pending_review":
+            raise ValueError("The recorded run is not awaiting this terminal review")
+        now = datetime.now(timezone.utc).isoformat()
+        state = "completed" if review["state"] == "approved" else "changes_requested"
+        result.update(status=state, review=review)
+        record.update(status=state, review=review, completed_at=now)
+        record.setdefault("events", []).append(
+            {
+                "kind": "review_decided",
+                "at": now,
+                "task_id": review["task_id"],
+                "task_title": review["task_title"],
+                "checkpoint_id": review["review_id"],
+                "subject_digest": review["package_digest"],
+                "request_id": review.get("request_id"),
+                "actor": review.get("actor"),
+                **(
+                    {"integration_test": review["integration_test"]}
+                    if "integration_test" in review
+                    else {}
+                ),
+                "message": f"Review is {review['state'].replace('_', ' ')}.",
+            }
+        )
+        await service.files.write_generated(
+            workspace_dir,
+            relative,
+            json.dumps(record, ensure_ascii=False, indent=2),
+            "overwrite",
+        )
+
+
 async def record_workflow_approval_transition(
-    *, service, workspace_dir, checkpoint, kind: str
+    *, service, workspace_dir, checkpoint, kind: str, operation_event=None
 ):
     """Project the durable checkpoint state into its immutable run evidence.
 
@@ -615,13 +994,17 @@ async def record_workflow_approval_transition(
         "approval_decided",
         "external_action_authorized",
         "external_action_reconciled",
+        "operation_progress",
+        "cancellation_requested",
     }:
         raise ValueError("Unknown workflow approval transition")
     relative = checkpoint.continuation.get("run_log_path")
     if not isinstance(relative, str) or not relative.startswith("runs/"):
         raise ValueError("Approval continuation has no safe run-log path")
-    raw = await service.files.read_reference(workspace_dir, relative)
-    if len(raw) > 16 * 1024 * 1024:
+    raw = await service.files.read_bytes(
+        workspace_dir, relative, maximum_bytes=_MAX_RUN_RECORD_BYTES
+    )
+    if len(raw) > _MAX_RUN_RECORD_BYTES:
         raise ValueError("Workflow run log exceeds the recovery limit")
     record = json.loads(raw)
     result = record.get("result") if isinstance(record, dict) else None
@@ -632,6 +1015,23 @@ async def record_workflow_approval_transition(
         or record.get("workflow_path") != checkpoint.workflow_id
     ):
         raise ValueError("Approval continuation does not match its run log")
+
+    decision_receipt = checkpoint.continuation.get("decision_receipt")
+    if kind == "approval_decided" and decision_receipt is not None:
+        prior = record.get("approval") or {}
+        if (
+            prior.get("checkpoint_id") == checkpoint.checkpoint_id
+            and prior.get("state") == checkpoint.state
+            and (prior.get("continuation") or {}).get("decision_receipt")
+            == decision_receipt
+            and any(
+                event.get("kind") == kind
+                and event.get("checkpoint_id") == checkpoint.checkpoint_id
+                and event.get("request_id") == decision_receipt["request_id"]
+                for event in record.get("events", [])
+            )
+        ):
+            return
 
     approval = asdict(checkpoint)
     result["approval"] = approval
@@ -653,6 +1053,15 @@ async def record_workflow_approval_transition(
             ),
             "outcome_unknown": "external_action_outcome_unknown",
         }.get(outcome, "awaiting_external_outcome")
+        if checkpoint.action_kind == "mcp-operation" and outcome == "dispatched":
+            evidence = external_action.get("evidence", {})
+            if not evidence.get("delivery_completed"):
+                state = {
+                    "failed": "failed",
+                    "cancelled": "cancelled",
+                    "unknown": "external_action_outcome_unknown",
+                    "input_required": "external_action_outcome_unknown",
+                }.get(evidence.get("observed_outcome"), "awaiting_external_outcome")
     else:
         state = "awaiting_approval"
     result["status"] = state
@@ -669,13 +1078,46 @@ async def record_workflow_approval_transition(
         ),
         "checkpoint_id": checkpoint.checkpoint_id,
         "subject_digest": checkpoint.subject_digest,
+        **(
+            {
+                "actor": checkpoint.actor,
+                "integration_test": (
+                    checkpoint.continuation.get("decision_attribution") or {}
+                ).get("integration_test", False),
+            }
+            if kind == "approval_decided"
+            else {}
+        ),
+        **(
+            {"request_id": decision_receipt["request_id"]}
+            if kind == "approval_decided" and decision_receipt is not None
+            else {}
+        ),
     }
+    if kind in {"operation_progress", "cancellation_requested"}:
+        if (
+            not isinstance(operation_event, dict)
+            or operation_event.get("task_id") != checkpoint.step_id
+        ):
+            raise ValueError("Operation observation belongs to another approval step")
+        if (
+            kind == "cancellation_requested"
+            and operation_event.get("run_id") != checkpoint.run_id
+        ):
+            raise ValueError("Cancellation belongs to another approved run")
+        event = {
+            **operation_event,
+            **event,
+            "message": operation_event.get("message", event["message"]),
+        }
     record.setdefault("events", []).append(event)
     if state in {
         "completed",
         "changes_requested",
         "external_action_not_dispatched",
         "external_action_outcome_unknown",
+        "failed",
+        "cancelled",
     }:
         record["completed_at"] = now
     await service.files.write_generated(
@@ -686,10 +1128,293 @@ async def record_workflow_approval_transition(
     )
 
 
+class WorkflowRunReadError(ValueError):
+    """An attachment cannot establish its exact recorded identity or state."""
+
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+
+
+def _observed_run_state(record):
+    """The recorder's ownership probe is shared by history and exact attachment."""
+    from .workflow_resource_lease import lease_is_active
+
+    state = record.get("status", "unknown")
+    if state != "running":
+        return state
+    owner = record.get("owner")
+    if not isinstance(owner, dict):
+        return "unknown"
+    try:
+        active = (
+            lease_is_active(owner["lease"])
+            if owner.get("host") == socket.gethostname()
+            and isinstance(owner.get("lease"), str)
+            else None
+        )
+    except OSError:
+        active = None
+    if active is True:
+        return (
+            "cancellation_requested"
+            if any(
+                event.get("kind") == "cancellation_requested"
+                for event in record.get("events", [])
+            )
+            else "running"
+        )
+    return "interrupted" if active is False else "unknown"
+
+
+def _run_candidates(folder):
+    candidates = []
+    exhausted = False
+    if not folder.is_dir():
+        return candidates, exhausted
+    for index, entry in enumerate(folder.iterdir()):
+        if index >= _MAX_RUN_DIRECTORY_ENTRIES:
+            exhausted = True
+            break
+        if entry.suffix == ".json":
+            candidates.append(entry.name)
+    candidates.sort(reverse=True)
+    exhausted |= len(candidates) > _MAX_RUN_READ_FILES
+    return candidates[:_MAX_RUN_READ_FILES], exhausted
+
+
+def _reject_nonfinite(value):
+    raise ValueError("A run record contains a non-finite number")
+
+
+def _read_run_record(paths, relative, source_path):
+    path = paths.resolve(relative, must_exist=True)
+    with path.open("rb") as stream:
+        data = stream.read(_MAX_RUN_RECORD_BYTES + 1)
+    if len(data) > _MAX_RUN_RECORD_BYTES:
+        raise ValueError("A run record exceeds the read bound")
+    record = json.loads(data, parse_constant=_reject_nonfinite)
+    if not isinstance(record, dict) or record.get("workflow_path") != source_path:
+        raise ValueError("A run record belongs to another source")
+    events = record.get("events", [])
+    if not isinstance(events, list) or any(not isinstance(e, dict) for e in events):
+        raise ValueError("Run events must be recorded objects")
+    if record.get("status", "unknown") not in {
+        "running",
+        "completed",
+        "pending_review",
+        "awaiting_approval",
+        "awaiting_external_outcome",
+        "continuation_ready",
+        "changes_requested",
+        "external_action_not_dispatched",
+        "external_action_outcome_unknown",
+        "failed",
+        "cancelled",
+        "interrupted",
+        "unknown",
+        "waiting_human",
+        "waiting_external",
+        "cancellation_requested",
+        "reconciliation_required",
+    }:
+        raise ValueError("A run has an unsupported recorded state")
+    for key in ("started_at", "completed_at", "execution_ended_at", "source_digest"):
+        value = record.get(key)
+        if value is not None and (not isinstance(value, str) or len(value) > 128):
+            raise ValueError("A run has invalid identity or timestamp metadata")
+    if record.get("error") is not None and not isinstance(record["error"], str):
+        raise ValueError("A run error must be text")
+    result = record.get("result")
+    if result is not None and not isinstance(result, dict):
+        raise ValueError("A run result must be a recorded object")
+    result = result or {}
+    if not isinstance(record.get("partial_results", {}), dict):
+        raise ValueError("Partial run results must be recorded objects")
+    if result.get("results") is not None and not isinstance(result["results"], list):
+        raise ValueError("Run results must be a recorded list")
+    identities = [record.get("run_id"), result.get("run_id")]
+    identities = [identity for identity in identities if identity is not None]
+    if any(
+        not isinstance(identity, str) or not identity or len(identity) > 4096
+        for identity in identities
+    ):
+        raise ValueError("A run identity is invalid")
+    if len(set(identities)) > 1:
+        raise ValueError("Recorded run identities disagree")
+    return record
+
+
+def _run_summary(
+    record, relative, *, current_digest=None, compact=False, complete_results=False
+):
+    state = _observed_run_state(record)
+    events = record.get("events", [])
+    result = record.get("result") or {}
+    summary = {
+        "run_id": record.get("run_id") or result.get("run_id"),
+        "path": relative,
+        "status": state,
+        "started_at": record.get("started_at"),
+        "completed_at": record.get("completed_at"),
+        "source_digest": record.get("source_digest"),
+        "error": record.get("error"),
+        "code": record.get("code"),
+        "correction": record.get("correction"),
+        "results": _recorded_result_rows(record),
+        "last_event": events[-1] if events else None,
+        "approval": result.get("approval") or record.get("approval"),
+        "verification": result.get("verification"),
+        "capture_rights": result.get("capture_rights"),
+    }
+    if compact:
+        snapshot, artifacts, run_id = _execution_snapshot(
+            record, state, complete_results=complete_results
+        )
+        summary.update(
+            execution=snapshot,
+            results=artifacts,
+            run_id=run_id,
+            execution_ended_at=record.get("execution_ended_at"),
+            source_matches_current=record.get("source_digest") == current_digest,
+            last_event=snapshot["last_progress"],
+        )
+        if isinstance(summary.get("error"), str):
+            summary["error"] = summary["error"][:4096]
+        for key in ("code", "correction"):
+            if isinstance(summary.get(key), str):
+                summary[key] = summary[key][: 160 if key == "code" else 4096]
+    if complete_results:
+        previous = _previous_result_rows(record)
+        inventory = [summary["results"], previous]
+        if (
+            len(summary["results"]) + len(previous) > _MAX_RESULT_INVENTORY_ITEMS
+            or len(json.dumps(inventory, ensure_ascii=True).encode())
+            > _MAX_RESULT_INVENTORY_BYTES
+        ):
+            raise WorkflowRunReadError(
+                "result_inventory_limit",
+                "The recorded result inventory exceeds its supported metadata bounds",
+            )
+        summary["previous_results"] = previous
+    return summary
+
+
+def read_workflow_run(
+    workspace_dir, source_path, run_id, *, run_log_path=None, complete_results=False
+):
+    """Attach to exact recorder facts without acquiring a lease or replaying work.
+
+    A server-retained locator can avoid bounded legacy history scanning. A locator
+    never overrides the record's source/run identity. Approval/review payloads are
+    references only; their owning services recheck current evidence and permission.
+
+    The interaction owner requests the complete bounded result inventory for its
+    existing pagination. Exceeding that inventory bound is explicit, never a
+    partial list that could be mistaken for all the run's engineering outputs.
+    """
+    from .workspace_path import WorkspacePath
+
+    if not isinstance(run_id, str) or not run_id or len(run_id) > 4096:
+        raise WorkflowRunReadError("invalid", "Choose an exact recorded run")
+    try:
+        paths = WorkspacePath(workspace_dir)
+        source_file = paths.resolve(source_path, must_exist=True)
+        with source_file.open("rb") as stream:
+            current_digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        slug = PurePosixPath(source_path).name.removesuffix(".workflow.wflow")
+        folder_relative = f"runs/{slug}"
+        folder = paths.resolve(folder_relative)
+        if run_log_path is not None:
+            parts = paths._validate_relative(run_log_path)
+            normalized = "/".join(parts)
+            if PurePosixPath(
+                normalized
+            ).parent.as_posix() != folder_relative or not normalized.endswith(".json"):
+                raise ValueError(
+                    "A run locator must belong to the exact source's recorder folder"
+                )
+            candidates, exhausted = [PurePosixPath(normalized).name], False
+        else:
+            candidates, exhausted = _run_candidates(folder)
+    except (OSError, ValueError, TypeError) as error:
+        raise WorkflowRunReadError(
+            "unavailable", "The recorded run location is unavailable"
+        ) from error
+
+    matches = []
+    for name in candidates:
+        relative = f"{folder_relative}/{name}"
+        try:
+            record = _read_run_record(paths, relative, source_path)
+            recorded_id = record.get("run_id") or (record.get("result") or {}).get(
+                "run_id"
+            )
+            if recorded_id is not None and recorded_id != run_id:
+                continue
+            summary = _run_summary(
+                record,
+                relative,
+                current_digest=current_digest,
+                compact=True,
+                complete_results=complete_results,
+            )
+        except WorkflowRunReadError:
+            raise
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+            if run_log_path is not None:
+                raise WorkflowRunReadError(
+                    "invalid", "The exact recorded run could not be verified"
+                ) from error
+            continue
+        if summary["run_id"] != run_id:
+            continue
+        # Do not let a mixed legacy result set authorize navigation into another
+        # run just because the top-level identity happened to match.
+        if any(
+            item.get("provenance", {}).get("run_id") != run_id
+            for item in summary["results"]
+            + [row["result"] for row in summary.get("previous_results", [])]
+        ):
+            raise WorkflowRunReadError(
+                "invalid", "Recorded result and run identities disagree"
+            )
+        summary.pop("verification", None)
+        summary.pop("capture_rights", None)
+        for key, identity, digest in (
+            ("approval", "checkpoint_id", "subject_digest"),
+            ("input_checkpoint", "checkpoint_id", "subject_digest"),
+            ("review", "review_id", "package_digest"),
+        ):
+            reference = (record.get("result") or {}).get(key) or record.get(key)
+            summary[key] = (
+                {
+                    field: reference[field]
+                    for field in (identity, digest)
+                    if isinstance(reference.get(field), str)
+                }
+                if isinstance(reference, dict)
+                else None
+            )
+        matches.append(summary)
+    if len(matches) > 1:
+        raise WorkflowRunReadError(
+            "ambiguous", "More than one record claims this run identity"
+        )
+    if matches:
+        return matches[0]
+    if exhausted:
+        raise WorkflowRunReadError(
+            "read_limit", "The bounded history scan needs a retained run locator"
+        )
+    raise WorkflowRunReadError(
+        "not_found", "This run is not recorded for the selected process"
+    )
+
+
 def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=False):
     """Bounded, read-only history. Never resubmit or mutate a recovered operation."""
     from .workspace_path import WorkspacePath
-    from .workflow_resource_lease import lease_is_active
 
     paths = WorkspacePath(workspace_dir)
     source_file = paths.resolve(source_path, must_exist=True)
@@ -702,132 +1427,47 @@ def recent_workflow_runs(workspace_dir, source_path, *, limit=10, latest_only=Fa
     if not folder.is_dir():
         return []
     # Bound directory work as well as JSON reads. Report only this exact source.
-    candidates = []
-    for index, entry in enumerate(folder.iterdir()):
-        if index >= 10000:
-            break
-        if entry.suffix == ".json":
-            candidates.append(entry.name)
+    candidates, _ = _run_candidates(folder)
+    timestamp_names = all(
+        re.fullmatch(r"\d{8}T\d{6}Z-[a-zA-Z0-9]+\.json", name) for name in candidates
+    )
     results = []
     latest_group = None
-    for name in sorted(candidates, reverse=True)[:100]:
+    for name in candidates:
         # Same-second run names have random suffixes. Read that small timestamp
         # group before selecting by actual start time, rather than UUID ordering.
-        if latest_only and results and name.split("-", 1)[0] != latest_group:
+        if (
+            latest_only
+            and timestamp_names
+            and results
+            and name.split("-", 1)[0] != latest_group
+        ):
             break
         relative = f"runs/{slug}/{name}"
         try:
-            path = paths.resolve(relative, must_exist=True)
-            with path.open("rb") as stream:
-                data = stream.read(16 * 1024 * 1024 + 1)
-            if len(data) > 16 * 1024 * 1024:
-                continue
-            record = json.loads(data)
-            if not isinstance(record, dict):
-                continue
-            if record.get("workflow_path") != source_path:
-                continue
-            events = record.get("events", [])
-            if not isinstance(events, list) or any(
-                not isinstance(e, dict) for e in events
-            ):
-                continue
-            state = record.get("status", "unknown")
-            if not isinstance(state, str) or state not in {
-                "running",
-                "completed",
-                "pending_review",
-                "awaiting_approval",
-                "awaiting_external_outcome",
-                "continuation_ready",
-                "changes_requested",
-                "external_action_not_dispatched",
-                "external_action_outcome_unknown",
-                "failed",
-                "cancelled",
-                "interrupted",
-                "unknown",
-            }:
-                continue
-            if any(
-                record.get(key) is not None
-                and (not isinstance(record[key], str) or len(record[key]) > 128)
-                for key in (
-                    "started_at",
-                    "completed_at",
-                    "execution_ended_at",
-                    "source_digest",
-                )
-            ):
-                continue
-            if record.get("error") is not None and not isinstance(record["error"], str):
-                continue
-            if state == "running":
-                owner = record.get("owner", {})
-                try:
-                    active = (
-                        lease_is_active(owner["lease"])
-                        if owner.get("host") == socket.gethostname()
-                        and isinstance(owner.get("lease"), str)
-                        else None
-                    )
-                except OSError:
-                    active = (
-                        None  # An unreadable ownership probe cannot prove interruption.
-                    )
-                state = (
-                    "running"
-                    if active is True
-                    else "interrupted"
-                    if active is False
-                    else "unknown"
-                )
-            result = record.get("result") or {}
-            if not isinstance(result, dict) or not isinstance(
-                record.get("partial_results", {}), dict
-            ):
-                continue
-            if result.get("results") is not None and not isinstance(
-                result["results"], list
-            ):
-                continue
-            summary = {
-                "path": relative,
-                "status": state,
-                "started_at": record.get("started_at"),
-                "completed_at": record.get("completed_at"),
-                "source_digest": record.get("source_digest"),
-                "error": record.get("error"),
-                "results": result.get("results")
-                or list(record.get("partial_results", {}).values()),
-                "last_event": events[-1] if events else None,
-                "approval": result.get("approval") or record.get("approval"),
-                "verification": result.get("verification"),
-                "capture_rights": result.get("capture_rights"),
-            }
+            record = _read_run_record(paths, relative, source_path)
+            summary = _run_summary(
+                record, relative, current_digest=current_digest, compact=latest_only
+            )
             if latest_only:
-                snapshot, artifacts, run_id = _execution_snapshot(record, state)
-                summary.update(
-                    execution=snapshot,
-                    results=artifacts,
-                    run_id=run_id,
-                    execution_ended_at=record.get("execution_ended_at"),
-                    source_matches_current=record.get("source_digest")
-                    == current_digest,
-                    last_event=snapshot["last_progress"],
-                )
-                if isinstance(summary.get("error"), str):
-                    summary["error"] = summary["error"][:4096]
                 latest_group = name.split("-", 1)[0]
             results.append(summary)
         except (OSError, ValueError, TypeError, KeyError, AttributeError):
             continue
-        if not latest_only and len(results) >= min(20, max(1, limit)):
-            break
-    return (
-        sorted(
-            results, key=lambda r: (r.get("started_at") or "", r["path"]), reverse=True
-        )[:1]
-        if latest_only
-        else results
-    )
+
+    def started_key(summary):
+        try:
+            started = datetime.fromisoformat(
+                str(summary.get("started_at")).replace("Z", "+00:00")
+            )
+            if started.tzinfo is None:
+                started = started.replace(tzinfo=timezone.utc)
+            timestamp = started.timestamp()
+        except (ValueError, OverflowError, OSError):
+            timestamp = float("-inf")
+        return timestamp, summary["path"]
+
+    # Retained UUID locators have no chronological filename component. Sort
+    # recorder facts before limiting either history or latest-run observation.
+    results.sort(key=started_key, reverse=True)
+    return results[: 1 if latest_only else min(20, max(1, limit))]

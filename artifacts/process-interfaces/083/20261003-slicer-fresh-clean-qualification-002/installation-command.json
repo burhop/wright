@@ -1,0 +1,16 @@
+{
+  "command": [
+    "docker",
+    "exec",
+    "--user",
+    "root",
+    "-e",
+    "UV_CACHE_DIR=/selected/uv-cache",
+    "-e",
+    "UV_PYTHON_INSTALL_DIR=/selected/python",
+    "18e8bd1ce18bc876b8588ade85148023a5b9e08ace702d9c09650af92d37fd32",
+    "sh",
+    "-c",
+    "set -eu\napt-get update\napt-get install -y --no-install-recommends libgtk-3-0 libgl1 libegl1 libglu1-mesa libxss1 libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libwebkit2gtk-4.1-0 libsecret-1-0 xvfb xauth\nmkdir -p /selected/provider-source\ntar -xf /tmp/selected-upstream.tar -C /selected/provider-source\ncd /selected\nchmod +x /tmp/selected.AppImage\n/tmp/selected.AppImage --appimage-extract\nuv venv --python 3.12 /selected/venv\nuv pip install --python /selected/venv/bin/python /selected/provider-source mcp==1.28.1\nchmod -R a+rX /selected\n"
+  ]
+}

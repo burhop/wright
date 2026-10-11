@@ -1,0 +1,74 @@
+[
+  {
+    "name": "heat-spreader-sizing-01",
+    "title": "Heat Spreader Sizing 01 Fields",
+    "profile_ref": {
+      "id": "heat-spreader-sizing-01-fields",
+      "version": "1",
+      "sha256": "28c7cbd9811fe2423715b7c485195a5cafd53cbc7118a66492fa0995036bdc82"
+    },
+    "baseline_ref": {
+      "id": "heat-spreader-sizing-01-basis",
+      "version": "1",
+      "sha256": "3f6464140ae741a0ef9ecd8dabcde8bcbbe3cc1f9755955d7ec12b1cac89e564"
+    },
+    "roles": [
+      "baseline_coarse",
+      "baseline_fine",
+      "decision",
+      "revision_coarse",
+      "revision_fine"
+    ],
+    "limitations": [
+      "The source is a synthetic constant-property one-dimensional conduction case; passing does not establish physical thermal qualification.",
+      "Uniform end loading yields a linear field, so refinement agreement is a data-lineage check rather than independent validation of model physics."
+    ],
+    "excluded_scope": [
+      "Convection, radiation, interfaces, fasteners, local chip footprint, temperature-dependent properties and transient behavior are outside the source model.",
+      "STEP geometry topology, manufacturing details and material procurement are not acceptance checks in this profile."
+    ]
+  },
+  {
+    "name": "parametric-drill-jig-01",
+    "title": "Parametric Drill Jig 01 Seat Geometry",
+    "profile_ref": {
+      "id": "parametric-drill-jig-01-seat-geometry",
+      "version": "1",
+      "sha256": "5488f377adfa5eaea61ce4b8e299654bb74709ed313b67e8f04494bd2e4a3884"
+    },
+    "baseline_ref": {
+      "id": "parametric-drill-jig-01-seat-basis",
+      "version": "1",
+      "sha256": "5fb63ff5fca47d189665efe2d22424743205a0c12812f193cd79b49fe4ebf2d8"
+    },
+    "roles": ["jig_step"],
+    "limitations": [
+      "The bounded STEP reader qualifies circular body-seat axes and diameters only; it does not establish full topology correspondence.",
+      "Synthetic bushing data are prototype inputs rather than supplier-certified dimensions."
+    ],
+    "excluded_scope": [
+      "Flange-pocket applicability and bushing body-length stackup remain unresolved and are not acceptance checks.",
+      "Clamp access, datum-fence engagement, markings, DXF/STL correspondence and drilling-depth control are outside this bounded profile.",
+      "Manufacturing process capability, physical fit, retention, wear, strength and machining safety are not assessed."
+    ]
+  },
+  {
+    "name": "structured-demo",
+    "title": "Structured Demo",
+    "profile_ref": {
+      "id": "structured-demo",
+      "version": "2",
+      "sha256": "d8f95a1b3511a30e97d410e51397fd410340a684a48704ca51a59f4e6efc534c"
+    },
+    "baseline_ref": {
+      "id": "structured-demo",
+      "version": "1",
+      "sha256": "709c8ed3b175034b161e062c1b2fae85d25061e170b2efaa94c2947d0cad3b04"
+    },
+    "roles": ["result"],
+    "limitations": [],
+    "excluded_scope": [
+      "Geometry, manufacture and physical fit are not assessed."
+    ]
+  }
+]

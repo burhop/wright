@@ -94,7 +94,10 @@ fresh vulnerability database, OS/Python/Node coverage checks and unchanged
 `docker/release-policy.json` evaluator. Dependency compatibility (`pip check`)
 and Wright's own dependency audit do not cover the installed Hermes/OS image
 inventory: PR #121 exposed this gap when Tornado 6.5.6 passed smoke but failed
-the fixable High policy. Tornado 6.5.8 is the bounded upstream security fix.
+the fixable High policy. The current image pins Tornado 6.5.9 and the other
+reviewed security updates in `docker/Dockerfile`; it does not run an unrestricted
+OS package upgrade. The exact-image smoke also checks raw Hermes dependency
+metadata and exercises JWT signing/verification with invalid-token rejection.
 Missing candidate images, source mismatch, unavailable databases, malformed
 reports and policy violations fail. Every reported vulnerability must have a
 valid identity, installed version and exact known severity. A missing fixed
@@ -116,6 +119,14 @@ The full gate builds the frontend once with the developer's installed lockfile
 dependencies, then reuses that fresh output for native packaging. It does not
 run `npm ci` against the shared `node_modules`, so an active Wright UI cannot
 lock a native Node binding that the merge gate tries to replace.
+Docker, the native builder and this reused frontend build enable the canonical
+workflow editor, composer, process definition view and workspace surfaces. Verify
+the actual packaged workspace entry as well as the flag contracts; a source UI
+with manually enabled flags is insufficient proof of the distributed UI.
+The source archive selects explicit source roots so npm's local package links
+cannot hide the real process-client/UI-kit directories. Archive validation checks
+every declared wheel `force-include` input, and the clean-install gate rebuilds
+the wheel from the source archive. A directly built wheel alone is insufficient.
 Before starting its long checks, the full gate verifies that both configured
 browser-test ports can actually be bound. A conflict fails immediately with
 the environment-variable override instead of surfacing after the test matrix.

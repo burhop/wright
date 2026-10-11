@@ -1,0 +1,11 @@
+{
+  "original_inventory_sha256": "afdaa71a41fe3c587c244a7abe368b5de682bb9127f3cb2f12f34c7ce95df05f",
+  "original_files_including_inventory": 89,
+  "files": {
+    "partial-result-verification.json": {
+      "bytes": 24740,
+      "sha256": "9a00ff039b899b0324ed7c4989c52cb60188d76a74cff6281d5129e4f28b87d6"
+    }
+  },
+  "scope": "Additive audit; original published inventory and artifacts preserved"
+}

@@ -1,0 +1,41 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    "inventory.json": {
+      "bytes": 1183,
+      "sha256": "bca4fe2933e561a8d5c0ca02bb2e1a6542d7445315880b6eb4bdb4daf13db3ab"
+    },
+    "primary-review.json": {
+      "bytes": 88059,
+      "sha256": "506a1a80f9312253dc516637ab14d0a2c50df6d565ad7ec465f4cdf878c1c72b"
+    },
+    "README.md": {
+      "bytes": 840,
+      "sha256": "7b11116fc7b09e0bbc6458bcd2fe3b9c12e4dc471a88bd9e3c316d6f094fad42"
+    },
+    "restoration-cases.json": {
+      "bytes": 29182,
+      "sha256": "1e0c55160fc9bbb8d6fc1c1c8f21ae8cc36f7ffadc9c557caa70546cb5dd56fe"
+    },
+    "restoration-results.json": {
+      "bytes": 726,
+      "sha256": "4c39b98c115b677c56488a9c2f9e0849084859df8f2163874fb2852b50058244"
+    },
+    "retained-evidence-parity.json": {
+      "bytes": 2330,
+      "sha256": "5b1177d5944b41b905422eeaf3486c7a9cf775f24543f0fce8fd58d995af2ebd"
+    },
+    "semantic-ledger.json": {
+      "bytes": 398867,
+      "sha256": "1cf634dbeb6d842b5f68fc1fede3837656fa1735c97fd123081e916eebe34fb0"
+    },
+    "source-currentness.json": {
+      "bytes": 1283,
+      "sha256": "3dd5145c23a27ec85530739b8d51d3aa6c5e365738664d6b75749585436f5403"
+    }
+  },
+  "original_inventory_preserved": true
+}

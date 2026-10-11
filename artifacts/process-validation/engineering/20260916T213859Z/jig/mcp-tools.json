@@ -1,0 +1,48 @@
+[
+  {
+    "name": "process-validation-engineering__create_jig_step",
+    "server_id": "process-validation-engineering",
+    "tool_name": "create_jig_step",
+    "title": "create jig step",
+    "description": "Create a new 200x60x12 mm plate STEP with 10.2 mm seats at y=30 mm.\n\n    This isolated demonstration operation accepts only finite H1/H2 x locations\n    within the plate and writes one exact workspace file. It has no application,\n    device, network, supplier, or campaign effects.\n    ",
+    "input_schema": {
+      "properties": {
+        "h1_x_mm": {
+          "title": "H1 X Mm",
+          "type": "number"
+        },
+        "h2_x_mm": {
+          "title": "H2 X Mm",
+          "type": "number"
+        },
+        "output_path": {
+          "default": "jig.step",
+          "title": "Output Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "h1_x_mm",
+        "h2_x_mm"
+      ],
+      "title": "create_jig_stepArguments",
+      "type": "object"
+    },
+    "output_schema": null,
+    "schema_digest": "0ff9d52091c703c8ab596d800ee017f2d3fb942569e904ecff060755c76f1633"
+  },
+  {
+    "name": "process-validation-engineering__stage_heat_outputs",
+    "server_id": "process-validation-engineering",
+    "tool_name": "stage_heat_outputs",
+    "title": "stage heat outputs",
+    "description": "Copy five hash-pinned retained heat outputs into the isolated process.",
+    "input_schema": {
+      "properties": {},
+      "title": "stage_heat_outputsArguments",
+      "type": "object"
+    },
+    "output_schema": null,
+    "schema_digest": "e8d75321d5c1cc226273c3d9fb8d365a77cbb43f70a4aba050a3077216004922"
+  }
+]

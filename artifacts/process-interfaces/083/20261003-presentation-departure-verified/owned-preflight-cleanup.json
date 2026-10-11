@@ -1,0 +1,54 @@
+{
+  "closed": [
+    {
+      "presentation_id": "dd91018e-4c7f-43e0-bc30-8550c7b34c16",
+      "surface_id": "539d0cc5-16ae-4d33-a0ae-cc470682ccb8",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "d1a2262d-5705-42ea-aec0-1b6f4cb96f25",
+      "surface_id": "5bd8c56d-7c0d-4e0c-84fe-0b3d5bf91e7e",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "503b5a6a-5138-480f-9199-bc7543af8507",
+      "surface_id": "ed70ab24-cc15-4f04-8ded-1663590b4781",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "f8ce7cde-a21d-40d4-895d-628a136053a3",
+      "surface_id": "95617a07-d87b-4c18-b494-7a0f666480da",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "43c97cc8-b2f7-40e8-ab89-9091c91fdac8",
+      "surface_id": "1f07de44-0b62-49e0-86fb-db2f53e5200b",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "08bc4f58-2713-484b-af18-1527381bf74c",
+      "surface_id": "1c25e9d4-5650-48fd-87fa-c93f30f01d7c",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "af7a2afa-ee16-46bc-96bf-4526fa2fd762",
+      "surface_id": "0931f7ce-c00d-4b05-8d0d-dba1b157c4b9",
+      "previous_state": "active",
+      "status": 204
+    },
+    {
+      "presentation_id": "14d31934-bc01-4b36-90f9-0d344e889402",
+      "surface_id": "83a6cf04-0bf3-40e8-b25e-29af91fa39c1",
+      "previous_state": "active",
+      "status": 204
+    }
+  ],
+  "baseline_files_unchanged": true,
+  "other_ui_presentations_touched": false
+}

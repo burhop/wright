@@ -1,5 +1,12 @@
 # Rivet MCP gateway
 
+**Historical compatibility documentation.** The current Wright workspace uses
+its canonical workflow editor and working views. Rivet is not the workspace's
+new-workflow entry or an automatically installed workspace server. These pages
+retain legacy contracts and evidence; remaining compatibility code is migration
+debt. Use the [current workflow guide](../workflows/process-working-interfaces.md)
+for ordinary authoring and execution.
+
 Rivet workflows can use the MCP capabilities enabled in their Wright workspace. Rivet does not start, connect to, or configure child MCP servers itself. Wright gives each exact saved run a short-lived private provider, resolves every node to an exact workspace binding, and sends the call through the same Gateway used by chat and agent clients.
 
 ## Execution path

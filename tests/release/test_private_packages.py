@@ -1,4 +1,5 @@
 from pathlib import Path
+import configparser
 import tomllib
 
 
@@ -16,10 +17,21 @@ def test_wright_engineering_is_the_only_publishable_distribution() -> None:
     assert runtime
     assert not any(dependency.startswith("wright-") for dependency in runtime)
 
+    # External providers retain their own publication policy. Their submodule
+    # checkout may be present locally and absent in an ordinary CI checkout.
+    submodules = configparser.ConfigParser()
+    submodules.read(ROOT / ".gitmodules", encoding="utf-8")
+    external_roots = {
+        ROOT / submodules[section]["path"] for section in submodules.sections()
+    }
     internal = [
         ROOT / "apps/api/pyproject.toml",
         ROOT / "hermes-plugin-wright/pyproject.toml",
-        *sorted((ROOT / "packages").glob("*/pyproject.toml")),
+        *sorted(
+            path
+            for path in (ROOT / "packages").glob("*/pyproject.toml")
+            if path.parent not in external_roots
+        ),
     ]
     for path in internal:
         project = tomllib.loads(path.read_text(encoding="utf-8"))["project"]

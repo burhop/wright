@@ -4,6 +4,12 @@ This is the input corpus for the current feature-081 Spec Kit testing cycle:
 three realistic fictional briefs for each of the ten existing templates, thirty
 dataset/template pairs in total. These are engineering jobs, not usability tasks.
 
+Start with the [engineering example guide](ENGINEERING-GUIDE.md) for a plain-language
+explanation of all thirty jobs: why someone would do them, how they work, what
+useful result to review, and where Wright helps. The guide aligns the presentation
+of the existing examples; it does not replace their input packs or change saved
+runs. Missing requirements and limits remain explicit.
+
 Each scenario contains a person and their working role, a copy/paste prompt,
 company goals and manufacturing capabilities, internal requirements, useful
 engineering tables or reference documents, and an original sketch/concept.

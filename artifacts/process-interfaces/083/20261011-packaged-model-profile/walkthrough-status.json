@@ -1,0 +1,852 @@
+{
+  "title": "Build and reopen a workflow in the packaged Wright UI",
+  "summary": "The exact packaged Docker UI exposes the current editor through Workflows. A fresh blank process accepts an input, saves and reopens without execution. The actual configured model is displayed with its selection limitation. Model inference and engineering capabilities are outside this proof.",
+  "overall": "pass",
+  "updated": "2026-10-11T02:08:07.007Z",
+  "manualSteps": [
+    {
+      "label": "Open a blank workflow",
+      "instruction": "Open Packaged UI verification and click Workflows."
+    },
+    {
+      "label": "Add an input block",
+      "instruction": "Click Inputs, then Text input."
+    },
+    {
+      "label": "Save the draft",
+      "instruction": "Click Save."
+    },
+    {
+      "label": "Reopen the saved workflow",
+      "instruction": "Refresh the workspace tab."
+    },
+    {
+      "label": "Inspect the configured model",
+      "instruction": "Open the Agent pane if needed and inspect Model."
+    }
+  ],
+  "steps": [
+    {
+      "id": "01-entry",
+      "state": "pass",
+      "label": "Open a blank workflow",
+      "summary": "Open a blank workflow",
+      "purpose": "The ordinary workspace control opens the current editor with no existing blocks.",
+      "action": "Open Packaged UI verification and click Workflows.",
+      "controls": [
+        {
+          "role": "button",
+          "name": "Back to Dashboard"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Files"
+        },
+        {
+          "role": "button",
+          "name": "Workflows"
+        },
+        {
+          "role": "button",
+          "name": "MCP Tools"
+        },
+        {
+          "role": "button",
+          "name": "Git Version Control"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Settings"
+        },
+        {
+          "role": "button",
+          "name": "Docs & Tutorials"
+        },
+        {
+          "role": "button",
+          "name": "Close untitled-workflow-0182a1ff-e5e.workflow.wflow"
+        },
+        {
+          "role": "button",
+          "name": "Maximize active tab"
+        },
+        {
+          "role": "button",
+          "name": "Open Agent Console"
+        },
+        {
+          "role": "button",
+          "name": "Export / import workflow"
+        },
+        {
+          "role": "button",
+          "name": "Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically."
+        },
+        {
+          "role": "input",
+          "name": "Workflow name"
+        },
+        {
+          "role": "button",
+          "name": "Diagram"
+        },
+        {
+          "role": "button",
+          "name": "Source"
+        },
+        {
+          "role": "button",
+          "name": "Side by side"
+        },
+        {
+          "role": "button",
+          "name": "Instructions"
+        },
+        {
+          "role": "button",
+          "name": "Undo"
+        },
+        {
+          "role": "button",
+          "name": "Redo"
+        },
+        {
+          "role": "button",
+          "name": "Save"
+        },
+        {
+          "role": "button",
+          "name": "✓ Check"
+        },
+        {
+          "role": "button",
+          "name": "Run the saved workspace workflow"
+        },
+        {
+          "role": "button",
+          "name": "Input"
+        },
+        {
+          "role": "button",
+          "name": "AI prompt"
+        },
+        {
+          "role": "button",
+          "name": "MCP servers"
+        },
+        {
+          "role": "button",
+          "name": "Review"
+        },
+        {
+          "role": "button",
+          "name": "Inputs · 0/0 configured ⌄"
+        },
+        {
+          "role": "button",
+          "name": "↗ Results · 0/0 available ⌄"
+        },
+        {
+          "role": "button",
+          "name": "Focus path"
+        },
+        {
+          "role": "button",
+          "name": "✦ Example suggestion"
+        },
+        {
+          "role": "button",
+          "name": "Hide minimap"
+        },
+        {
+          "role": "button",
+          "name": "Zoom in"
+        },
+        {
+          "role": "button",
+          "name": "Zoom out"
+        },
+        {
+          "role": "button",
+          "name": "Fit workflow to view"
+        },
+        {
+          "role": "button",
+          "name": "▷ Run detailsNot started⌃"
+        }
+      ],
+      "expected": "The ordinary workspace control opens the current editor with no existing blocks.",
+      "actual": "Expected state verified.",
+      "raw": "screenshots/raw/01-entry-after.png",
+      "annotated": "screenshots/annotated/01-entry-after.png"
+    },
+    {
+      "id": "02-input",
+      "state": "pass",
+      "label": "Add an input block",
+      "summary": "Add an input block",
+      "purpose": "One editable text input appears in the flowchart and inspector.",
+      "action": "Click Inputs, then Text input.",
+      "controls": [
+        {
+          "role": "button",
+          "name": "Back to Dashboard"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Files"
+        },
+        {
+          "role": "button",
+          "name": "Workflows"
+        },
+        {
+          "role": "button",
+          "name": "MCP Tools"
+        },
+        {
+          "role": "button",
+          "name": "Git Version Control"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Settings"
+        },
+        {
+          "role": "button",
+          "name": "Docs & Tutorials"
+        },
+        {
+          "role": "button",
+          "name": "Close untitled-workflow-0182a1ff-e5e.workflow.wflow"
+        },
+        {
+          "role": "button",
+          "name": "Maximize active tab"
+        },
+        {
+          "role": "button",
+          "name": "Open Agent Console"
+        },
+        {
+          "role": "button",
+          "name": "Export / import workflow"
+        },
+        {
+          "role": "button",
+          "name": "Save your changes before opening the working view"
+        },
+        {
+          "role": "input",
+          "name": "Workflow name"
+        },
+        {
+          "role": "button",
+          "name": "Diagram"
+        },
+        {
+          "role": "button",
+          "name": "Source"
+        },
+        {
+          "role": "button",
+          "name": "Side by side"
+        },
+        {
+          "role": "button",
+          "name": "Instructions"
+        },
+        {
+          "role": "button",
+          "name": "Undo"
+        },
+        {
+          "role": "button",
+          "name": "Redo"
+        },
+        {
+          "role": "button",
+          "name": "Save"
+        },
+        {
+          "role": "button",
+          "name": "✓ Check"
+        },
+        {
+          "role": "button",
+          "name": "Run the saved workspace workflow"
+        },
+        {
+          "role": "button",
+          "name": "Input"
+        },
+        {
+          "role": "button",
+          "name": "AI prompt"
+        },
+        {
+          "role": "button",
+          "name": "MCP servers"
+        },
+        {
+          "role": "button",
+          "name": "Review"
+        },
+        {
+          "role": "button",
+          "name": "Inputs · 0/1 configured ⌄"
+        },
+        {
+          "role": "button",
+          "name": "↗ Results · 0/0 available ⌄"
+        },
+        {
+          "role": "button",
+          "name": "Focus path"
+        },
+        {
+          "role": "button",
+          "name": "✦ Example suggestion"
+        },
+        {
+          "role": "button",
+          "name": "Hide minimap"
+        },
+        {
+          "role": "button",
+          "name": "Zoom in"
+        },
+        {
+          "role": "button",
+          "name": "Zoom out"
+        },
+        {
+          "role": "button",
+          "name": "Fit workflow to view"
+        },
+        {
+          "role": "button",
+          "name": "Collapse Inspector"
+        },
+        {
+          "role": "input",
+          "name": "Block name"
+        },
+        {
+          "role": "textarea",
+          "name": ""
+        },
+        {
+          "role": "button",
+          "name": "▷ Run detailsNot started⌃"
+        }
+      ],
+      "expected": "One editable text input appears in the flowchart and inspector.",
+      "actual": "Expected state verified.",
+      "raw": "screenshots/raw/02-input-after.png",
+      "annotated": "screenshots/annotated/02-input-after.png"
+    },
+    {
+      "id": "03-save",
+      "state": "pass",
+      "label": "Save the draft",
+      "summary": "Save the draft",
+      "purpose": "The workflow is saved through Wright with captured instructions; no execution is started.",
+      "action": "Click Save.",
+      "controls": [
+        {
+          "role": "button",
+          "name": "Back to Dashboard"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Files"
+        },
+        {
+          "role": "button",
+          "name": "Workflows"
+        },
+        {
+          "role": "button",
+          "name": "MCP Tools"
+        },
+        {
+          "role": "button",
+          "name": "Git Version Control"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Settings"
+        },
+        {
+          "role": "button",
+          "name": "Docs & Tutorials"
+        },
+        {
+          "role": "button",
+          "name": "Close untitled-workflow-0182a1ff-e5e.workflow.wflow"
+        },
+        {
+          "role": "button",
+          "name": "Maximize active tab"
+        },
+        {
+          "role": "button",
+          "name": "Open Agent Console"
+        },
+        {
+          "role": "button",
+          "name": "Export / import workflow"
+        },
+        {
+          "role": "button",
+          "name": "Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically."
+        },
+        {
+          "role": "input",
+          "name": "Workflow name"
+        },
+        {
+          "role": "button",
+          "name": "Diagram"
+        },
+        {
+          "role": "button",
+          "name": "Source"
+        },
+        {
+          "role": "button",
+          "name": "Side by side"
+        },
+        {
+          "role": "button",
+          "name": "Instructions"
+        },
+        {
+          "role": "button",
+          "name": "Undo"
+        },
+        {
+          "role": "button",
+          "name": "Redo"
+        },
+        {
+          "role": "button",
+          "name": "Save"
+        },
+        {
+          "role": "button",
+          "name": "✓ Check"
+        },
+        {
+          "role": "button",
+          "name": "Run the saved workspace workflow"
+        },
+        {
+          "role": "button",
+          "name": "Input"
+        },
+        {
+          "role": "button",
+          "name": "AI prompt"
+        },
+        {
+          "role": "button",
+          "name": "MCP servers"
+        },
+        {
+          "role": "button",
+          "name": "Review"
+        },
+        {
+          "role": "button",
+          "name": "Inputs · 0/1 configured ⌄"
+        },
+        {
+          "role": "button",
+          "name": "↗ Results · 0/0 available ⌄"
+        },
+        {
+          "role": "button",
+          "name": "Focus path"
+        },
+        {
+          "role": "button",
+          "name": "✦ Example suggestion"
+        },
+        {
+          "role": "button",
+          "name": "Hide minimap"
+        },
+        {
+          "role": "button",
+          "name": "Zoom in"
+        },
+        {
+          "role": "button",
+          "name": "Zoom out"
+        },
+        {
+          "role": "button",
+          "name": "Fit workflow to view"
+        },
+        {
+          "role": "button",
+          "name": "Collapse Inspector"
+        },
+        {
+          "role": "input",
+          "name": "Block name"
+        },
+        {
+          "role": "textarea",
+          "name": ""
+        },
+        {
+          "role": "button",
+          "name": "▷ Run detailsNot started⌃"
+        }
+      ],
+      "expected": "The workflow is saved through Wright with captured instructions; no execution is started.",
+      "actual": "Expected state verified.",
+      "raw": "screenshots/raw/03-save-after.png",
+      "annotated": "screenshots/annotated/03-save-after.png"
+    },
+    {
+      "id": "04-reopen",
+      "state": "pass",
+      "label": "Reopen the saved workflow",
+      "summary": "Reopen the saved workflow",
+      "purpose": "The same saved workflow and its input block are restored without running it.",
+      "action": "Refresh the workspace tab.",
+      "controls": [
+        {
+          "role": "button",
+          "name": "Back to Dashboard"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Files"
+        },
+        {
+          "role": "button",
+          "name": "Workflows"
+        },
+        {
+          "role": "button",
+          "name": "MCP Tools"
+        },
+        {
+          "role": "button",
+          "name": "Git Version Control"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Settings"
+        },
+        {
+          "role": "button",
+          "name": "Docs & Tutorials"
+        },
+        {
+          "role": "button",
+          "name": "Close untitled-workflow-0182a1ff-e5e.workflow.wflow"
+        },
+        {
+          "role": "button",
+          "name": "Maximize active tab"
+        },
+        {
+          "role": "button",
+          "name": "Open Agent Console"
+        },
+        {
+          "role": "button",
+          "name": "Export / import workflow"
+        },
+        {
+          "role": "button",
+          "name": "Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically."
+        },
+        {
+          "role": "input",
+          "name": "Workflow name"
+        },
+        {
+          "role": "button",
+          "name": "Diagram"
+        },
+        {
+          "role": "button",
+          "name": "Source"
+        },
+        {
+          "role": "button",
+          "name": "Side by side"
+        },
+        {
+          "role": "button",
+          "name": "Instructions"
+        },
+        {
+          "role": "button",
+          "name": "Undo"
+        },
+        {
+          "role": "button",
+          "name": "Redo"
+        },
+        {
+          "role": "button",
+          "name": "Save"
+        },
+        {
+          "role": "button",
+          "name": "✓ Check"
+        },
+        {
+          "role": "button",
+          "name": "Run the saved workspace workflow"
+        },
+        {
+          "role": "button",
+          "name": "Input"
+        },
+        {
+          "role": "button",
+          "name": "AI prompt"
+        },
+        {
+          "role": "button",
+          "name": "MCP servers"
+        },
+        {
+          "role": "button",
+          "name": "Review"
+        },
+        {
+          "role": "button",
+          "name": "Inputs · 0/1 configured ⌄"
+        },
+        {
+          "role": "button",
+          "name": "↗ Results · 0/0 available ⌄"
+        },
+        {
+          "role": "button",
+          "name": "Focus path"
+        },
+        {
+          "role": "button",
+          "name": "✦ Example suggestion"
+        },
+        {
+          "role": "button",
+          "name": "Hide minimap"
+        },
+        {
+          "role": "button",
+          "name": "Zoom in"
+        },
+        {
+          "role": "button",
+          "name": "Zoom out"
+        },
+        {
+          "role": "button",
+          "name": "Fit workflow to view"
+        },
+        {
+          "role": "button",
+          "name": "▷ Run detailsNot started⌃"
+        }
+      ],
+      "expected": "The same saved workflow and its input block are restored without running it.",
+      "actual": "Expected state verified.",
+      "raw": "screenshots/raw/04-reopen-after.png",
+      "annotated": "screenshots/annotated/04-reopen-after.png"
+    },
+    {
+      "id": "05-model",
+      "state": "pass",
+      "label": "Inspect the configured model",
+      "summary": "Inspect the configured model",
+      "purpose": "The observed configured model is shown; remote switching is disabled and Model Setup is explained.",
+      "action": "Open the Agent pane if needed and inspect Model.",
+      "controls": [
+        {
+          "role": "button",
+          "name": "Back to Dashboard"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Files"
+        },
+        {
+          "role": "button",
+          "name": "Workflows"
+        },
+        {
+          "role": "button",
+          "name": "MCP Tools"
+        },
+        {
+          "role": "button",
+          "name": "Git Version Control"
+        },
+        {
+          "role": "button",
+          "name": "Workspace Settings"
+        },
+        {
+          "role": "button",
+          "name": "Docs & Tutorials"
+        },
+        {
+          "role": "button",
+          "name": "Close untitled-workflow-0182a1ff-e5e.workflow.wflow"
+        },
+        {
+          "role": "button",
+          "name": "Maximize active tab"
+        },
+        {
+          "role": "button",
+          "name": "Export / import workflow"
+        },
+        {
+          "role": "button",
+          "name": "Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically."
+        },
+        {
+          "role": "input",
+          "name": "Workflow name"
+        },
+        {
+          "role": "button",
+          "name": "Diagram"
+        },
+        {
+          "role": "button",
+          "name": "Source"
+        },
+        {
+          "role": "button",
+          "name": "Side by side"
+        },
+        {
+          "role": "button",
+          "name": "Instructions"
+        },
+        {
+          "role": "button",
+          "name": "Undo"
+        },
+        {
+          "role": "button",
+          "name": "Redo"
+        },
+        {
+          "role": "button",
+          "name": "Save"
+        },
+        {
+          "role": "button",
+          "name": "✓ Check"
+        },
+        {
+          "role": "button",
+          "name": "Run the saved workspace workflow"
+        },
+        {
+          "role": "button",
+          "name": "Input"
+        },
+        {
+          "role": "button",
+          "name": "AI prompt"
+        },
+        {
+          "role": "button",
+          "name": "MCP servers"
+        },
+        {
+          "role": "button",
+          "name": "Review"
+        },
+        {
+          "role": "button",
+          "name": "Inputs · 0/1 configured ⌄"
+        },
+        {
+          "role": "button",
+          "name": "↗ Results · 0/0 available ⌄"
+        },
+        {
+          "role": "button",
+          "name": "Focus path"
+        },
+        {
+          "role": "button",
+          "name": "✦ Example suggestion"
+        },
+        {
+          "role": "button",
+          "name": "Hide minimap"
+        },
+        {
+          "role": "button",
+          "name": "Zoom in"
+        },
+        {
+          "role": "button",
+          "name": "Zoom out"
+        },
+        {
+          "role": "button",
+          "name": "Fit workflow to view"
+        },
+        {
+          "role": "button",
+          "name": "▷ Run detailsNot started⌃"
+        },
+        {
+          "role": "button",
+          "name": "Collapse Agent Console"
+        },
+        {
+          "role": "select",
+          "name": "Using the configured model. Change it in Model Setup before starting a new run."
+        },
+        {
+          "role": "select",
+          "name": "Select Session Context"
+        },
+        {
+          "role": "button",
+          "name": "Create New Session"
+        },
+        {
+          "role": "textarea",
+          "name": ""
+        },
+        {
+          "role": "button",
+          "name": "Add context"
+        },
+        {
+          "role": "button",
+          "name": "MCP configuration is active and healthy."
+        },
+        {
+          "role": "button",
+          "name": "Send prompt"
+        }
+      ],
+      "expected": "The observed configured model is shown; remote switching is disabled and Model Setup is explained.",
+      "actual": "Expected state verified.",
+      "raw": "screenshots/raw/05-model-after.png",
+      "annotated": "screenshots/annotated/05-model-after.png"
+    }
+  ]
+}

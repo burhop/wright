@@ -1,0 +1,64 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-ee4c80bbdfad4b2d9468b37a4dbc0451",
+    "revision_id": "revision-35cac9bd65794c36a408135a71ac0a65",
+    "parent_revision": "revision-7c446bc5e93e441e8bf651db6d33b83a",
+    "title": "Focus-wheel digital preparation",
+    "process": {
+      "workspace_id": "083-printed-repeat-015",
+      "source_path": "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow",
+      "source_digest": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [],
+    "capabilities": [
+      "process.read",
+      "process.inputs",
+      "process.start",
+      "process.respond",
+      "process.review",
+      "process.action",
+      "process.cancel",
+      "process.results",
+      "process.navigate"
+    ],
+    "navigation": [],
+    "viewers": []
+  },
+  "source_digest": "2ef7f61b02b58271b698603b51fda39c2db975dccbb29cea9498f4868de95ffb",
+  "build": {
+    "build_id": "build-ac4c16636b634f87b4e740b96478e8fd",
+    "source_digest": "2ef7f61b02b58271b698603b51fda39c2db975dccbb29cea9498f4868de95ffb",
+    "manifest_digest": "2d5c7c53cb6b0a72dce17e0fc42ad2864865374aaef3c27e94cb82adf026e211",
+    "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+    "bundle_digest": "2754916e3ce4ab4d2d6b0d3b4c5a9483515498cc94b27e290ad2512bc5d89174",
+    "state": "built",
+    "created_at": "2026-10-03T06:47:04.466106+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 1065521
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+    "capability_scope": []
+  },
+  "generation_request_digest": "43f7a17771cc390374040f9f3a8e4426a4b0dff3bcb672d7abb991e0db614038",
+  "created_at": "2026-10-03T06:47:04.466106+00:00",
+  "previewed_at": "2026-10-03T06:47:10.116186+00:00"
+}

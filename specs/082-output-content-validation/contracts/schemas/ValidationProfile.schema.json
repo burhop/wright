@@ -1,0 +1,413 @@
+{
+  "$defs": {
+    "Baseline": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/Requirement"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Requirements",
+          "type": "array"
+        },
+        "unresolved_decisions": {
+          "default": [],
+          "items": {
+            "maxLength": 8192,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Unresolved Decisions",
+          "type": "array"
+        },
+        "amendments": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "title": "Amendments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "requirements"
+      ],
+      "title": "Baseline",
+      "type": "object"
+    },
+    "CheckDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "default": "1",
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "requirement_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "subject_role": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Subject Role",
+          "type": "string"
+        },
+        "reader": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Reader",
+          "type": "string"
+        },
+        "selector": {
+          "default": "",
+          "maxLength": 2048,
+          "title": "Selector",
+          "type": "string"
+        },
+        "constraint": {
+          "$ref": "#/$defs/Constraint"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "frame": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frame"
+        },
+        "evidence_method": {
+          "default": "structured_value",
+          "enum": [
+            "structured_value",
+            "independent_measurement",
+            "native_inspection",
+            "producer_claim",
+            "human_review"
+          ],
+          "title": "Evidence Method",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "applicability_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "requirement_ids",
+        "subject_role",
+        "reader",
+        "constraint"
+      ],
+      "title": "CheckDefinition",
+      "type": "object"
+    },
+    "Constraint": {
+      "additionalProperties": false,
+      "properties": {
+        "operator": {
+          "enum": [
+            "exists",
+            "type",
+            "equals",
+            "within",
+            "range",
+            "review"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "tolerance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tolerance"
+        },
+        "minimum": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum"
+        },
+        "maximum": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum"
+        },
+        "inclusive": {
+          "default": true,
+          "title": "Inclusive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "operator"
+      ],
+      "title": "Constraint",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "content",
+            "design"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "mandatory": {
+          "default": true,
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "review_required": {
+          "default": false,
+          "title": "Review Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "scope",
+        "sources"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "SourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ref": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Artifact Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "locator": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Locator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_ref",
+        "sha256",
+        "locator"
+      ],
+      "title": "SourceReference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "wright.process-validation/1",
+      "default": "wright.process-validation/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    },
+    "baseline": {
+      "$ref": "#/$defs/Baseline"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/CheckDefinition"
+      },
+      "maxItems": 2000,
+      "minItems": 1,
+      "title": "Checks",
+      "type": "array"
+    },
+    "excluded_scope": {
+      "default": [],
+      "items": {
+        "maxLength": 8192,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Excluded Scope",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "maxLength": 8192,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "supported_kinds": {
+      "default": [
+        "value",
+        "file"
+      ],
+      "items": {
+        "enum": [
+          "value",
+          "file",
+          "provider"
+        ],
+        "type": "string"
+      },
+      "title": "Supported Kinds",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "baseline",
+    "checks"
+  ],
+  "title": "ValidationProfile",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:wright:process-validation:1:ValidationProfile"
+}

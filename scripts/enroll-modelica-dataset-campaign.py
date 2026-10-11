@@ -19,8 +19,20 @@ def main():
     parser.add_argument("--workspace-root", required=True)
     parser.add_argument("--database", required=True)
     parser.add_argument("--server-id", required=True)
+    parser.add_argument("--agentcad-server-id", default="agentcad")
+    parser.add_argument("--workspace-file-server-id", default="wright-workspace-files")
+    parser.add_argument("--oasis-server-id", required=True)
+    parser.add_argument(
+        "--initialize-agentcad",
+        action="store_true",
+        help="Initialize a fresh isolated AgentCAD project for each staged case",
+    )
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--attempt", default="attempt-001")
+    parser.add_argument(
+        "--scenario",
+        choices=[f"water-heater-sizing-{index:02d}" for index in range(1, 4)],
+    )
     parser.add_argument("--campaign-state", default="artifacts/engineering-workflow-datasets/status.json")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--session", default="wright-local-e3dc0ef1-06da-45dd-83b9-290347814f8a")
@@ -31,12 +43,22 @@ def main():
     root.mkdir(parents=True, exist_ok=True)
     template = request(args.api, "GET", "/api/workspace/workflow-source-templates/water-heater-sizing")["template"]
     catalog = request(args.api, "GET", "/api/workspace/workflow-sources/tools?session_id=" + args.session)
-    catalog["tools"] = [tool for tool in catalog["tools"] if tool["server_id"] == args.server_id]
+    selected_servers = {
+        args.server_id,
+        args.agentcad_server_id,
+        args.workspace_file_server_id,
+        args.oasis_server_id,
+    }
+    catalog["tools"] = [
+        tool for tool in catalog["tools"] if tool["server_id"] in selected_servers
+    ]
     tool_path = root / ("modelica-tool-catalog-" + args.attempt + ".json")
     tool_path.write_text(json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
     cases = []
     for index in range(1, 4):
         identity = f"water-heater-sizing-{index:02d}"
+        if args.scenario and identity != args.scenario:
+            continue
         directory = root / identity / args.attempt
         directory.mkdir(parents=True, exist_ok=True)
         execution = directory / "execution.json"
@@ -58,7 +80,33 @@ def main():
         draft_root = directory / "prepared"
         prepared = draft_root / identity / args.attempt / "staging-manifest.json"
         if not prepared.exists():
-            subprocess.run([sys.executable, "scripts/prepare-modelica-dataset-campaign.py", "--workspace-root", args.workspace_root, "--draft-root", str(draft_root), "--server-id", args.server_id, "--scenario", identity, "--instance-source", str(original), "--tool-catalog", str(tool_path), "--attempt", args.attempt], check=True, timeout=120)
+            command = [
+                sys.executable,
+                "scripts/prepare-modelica-dataset-campaign.py",
+                "--workspace-root",
+                args.workspace_root,
+                "--draft-root",
+                str(draft_root),
+                "--server-id",
+                args.server_id,
+                "--agentcad-server-id",
+                args.agentcad_server_id,
+                "--workspace-file-server-id",
+                args.workspace_file_server_id,
+                "--oasis-server-id",
+                args.oasis_server_id,
+                "--scenario",
+                identity,
+                "--instance-source",
+                str(original),
+                "--tool-catalog",
+                str(tool_path),
+                "--attempt",
+                args.attempt,
+            ]
+            if args.initialize_agentcad:
+                command.append("--initialize-agentcad")
+            subprocess.run(command, check=True, timeout=360)
         subprocess.run([sys.executable, "scripts/enroll_engineering_dataset_case.py", "--prepared", str(prepared), "--campaign-state", args.campaign_state, "--database", args.database, "--session", args.session, "--source-path", path, "--output", str(execution), "--api", args.api], check=True, timeout=180)
         cases.append(json.loads(execution.read_text(encoding="utf-8")))
     combined = root / ("modelica-" + args.attempt + ".json")

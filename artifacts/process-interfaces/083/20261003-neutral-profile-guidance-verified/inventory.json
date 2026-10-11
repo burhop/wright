@@ -1,0 +1,37 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "affected-001.xml": {
+      "bytes": 1097,
+      "sha256": "892cbc95509a926793573316e318d6a8db017406e3f2c6c3909a9d77d0464aed"
+    },
+    "checked-scope.json": {
+      "bytes": 5957,
+      "sha256": "395ec1115c975461ef18bfd1ef52e19d2849fc10bd3d7418a04983cdd56f4dd3"
+    },
+    "green-001.xml": {
+      "bytes": 232,
+      "sha256": "df3b9769bcda35abad7f4e244cc0ceba4363e1c5930406a9f3b51c0ab169fc2b"
+    },
+    "green-002.xml": {
+      "bytes": 21206,
+      "sha256": "bc7bbc24fa4bec37032c9d4df90c660182e0accc65dee727cf14efa449dbe081"
+    },
+    "README.md": {
+      "bytes": 1703,
+      "sha256": "3f027b2de46bbe1fb37784217b99d369a57a6a1c208e3ba27548818db5c4c66a"
+    },
+    "red-001.xml": {
+      "bytes": 4817,
+      "sha256": "122ed30a88c379cfbf42d9318aaf215e8eff09b5d6b0109b898cfe101570ecb5"
+    },
+    "ruff.txt": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    }
+  },
+  "credential_value_scan": "passed"
+}

@@ -24,6 +24,8 @@ from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
 from api.routers.vault import router as vault_router
 from api.routers.workspace import router as workspace_router
+from api.routers.process_interfaces import router as process_interfaces_router
+from api.routers.workflow_bundles import router as workflow_bundles_router
 from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
@@ -148,12 +150,78 @@ class WorkflowSourceBodyLimitMiddleware:
 
         async def replay_receive():
             nonlocal delivered
-            if disconnected or delivered:
+            if disconnected:
                 return {"type": "http.disconnect"}
+            if delivered:
+                # Body completion is not a disconnect. Streaming replies still
+                # need the transport's real connection lifetime after replay.
+                return await receive()
             delivered = True
             return {"type": "http.request", "body": bytes(body), "more_body": False}
 
         await self._app(scope, replay_receive, send)
+
+
+class ProcessInterfaceBodyLimitMiddleware(WorkflowSourceBodyLimitMiddleware):
+    """Reuse bounded request collection for the process-interface namespace."""
+
+    @staticmethod
+    def _targets(scope: Scope) -> bool:
+        return (
+            scope.get("type") == "http"
+            and str(scope.get("path", "")).startswith(
+                "/api/workspace/process-interfaces/"
+            )
+            and scope.get("method") in {"POST", "PUT"}
+        )
+
+    async def _reject(self, scope: Scope, receive: Receive, send: Send) -> None:
+        state = scope.get("state")
+        trace_id = (
+            str(state.get("trace_id", "unknown"))
+            if isinstance(state, dict)
+            else "unknown"
+        )
+        response = JSONResponse(
+            status_code=413,
+            content=ErrorResponse(
+                error_code="process_interface_request_too_large",
+                message="Process interface request exceeds the transport limit",
+                trace_id=trace_id,
+            ).model_dump(),
+            headers={"Cache-Control": "no-store", "X-Trace-Id": trace_id},
+        )
+        await response(scope, receive, send)
+
+
+class WorkflowBundleBodyLimitMiddleware(WorkflowSourceBodyLimitMiddleware):
+    @staticmethod
+    def _targets(scope: Scope) -> bool:
+        return (
+            scope.get("type") == "http"
+            and str(scope.get("path", "")).startswith(
+                "/api/workspace/workflow-bundles/"
+            )
+            and scope.get("method") == "POST"
+        )
+
+    async def _reject(self, scope: Scope, receive: Receive, send: Send) -> None:
+        state = scope.get("state")
+        trace_id = (
+            str(state.get("trace_id", "unknown"))
+            if isinstance(state, dict)
+            else "unknown"
+        )
+        response = JSONResponse(
+            status_code=413,
+            content=ErrorResponse(
+                error_code="workflow_bundle_request_too_large",
+                message="Workflow bundle request exceeds the transport limit",
+                trace_id=trace_id,
+            ).model_dump(),
+            headers={"Cache-Control": "no-store", "X-Trace-Id": trace_id},
+        )
+        await response(scope, receive, send)
 
 
 @asynccontextmanager
@@ -252,13 +320,9 @@ async def lifespan(app: FastAPI):
                         app.state.surface_application.runtime_registry.manager_for
                     ),
                 )
-                for name in (
-                    "surface_http_proxy",
-                    "surface_sse_proxy",
-                    "surface_websocket_proxy",
-                    "surface_route_authority",
-                ):
-                    setattr(preview_app.state, name, getattr(app.state, name))
+                from api.preview_runtime import bind_preview_runtime
+
+                bind_preview_runtime(app, preview_app)
         logger.info("api_startup_stage", stage="surfaces_ready")
         async with app.state.mcp_transport.run():
             logger.info("api_startup_stage", stage="serving")
@@ -296,6 +360,8 @@ app.add_middleware(
     WorkflowSourceBodyLimitMiddleware,
     max_body_bytes=_WORKFLOW_SOURCE_TRANSPORT_MAX_BYTES,
 )
+app.add_middleware(ProcessInterfaceBodyLimitMiddleware, max_body_bytes=67_108_864)
+app.add_middleware(WorkflowBundleBodyLimitMiddleware, max_body_bytes=21_000_000)
 
 # Allow only explicitly configured frontend origins.
 app.add_middleware(
@@ -332,7 +398,13 @@ def _get_trace_id(request: Request) -> str:
 
 def _error_response_headers(request: Request, trace_id: str) -> dict[str, str]:
     headers = {"X-Trace-Id": trace_id}
-    if request.url.path.rstrip("/") in {
+    if request.url.path.startswith(
+        (
+            "/api/workspace/process-interfaces/",
+            "/api/workspace/workflow-bundles/",
+            "/api/workspace/workflow-sources/",
+        )
+    ) or request.url.path.rstrip("/") in {
         "/api/workspace/workflow-sources",
         "/api/workspace/workflow-sources/input-files",
     }:
@@ -342,6 +414,8 @@ def _error_response_headers(request: Request, trace_id: str) -> dict[str, str]:
 
 def _serializable_validation_errors(
     exc: RequestValidationError,
+    *,
+    process_inputs: bool = False,
 ) -> list[dict[str, object]]:
     """Return bounded, JSON-safe validation details without echoing request data."""
 
@@ -353,16 +427,54 @@ def _serializable_validation_errors(
 
     serialized: list[dict[str, object]] = []
     errors = exc.errors()
+    process_fields = {
+        "body",
+        "query",
+        "path",
+        "header",
+        "session_id",
+        "expected_storage_digest",
+        "bindings",
+        "input_snapshot_id",
+        "run_id",
+        "page",
+        "value",
+        "file",
+        "option",
+        "input_id",
+        "kind",
+        "reference",
+        "artifact_ref",
+        "sha256",
+        "media_type",
+        "result_id",
+        "representation_id",
+        "provenance",
+        "option_id",
+        "capability",
+        "binding_id",
+        "schema_digest",
+        "resource_digest",
+        "observed_at",
+        "stale_after",
+    }
     for error in errors[:error_limit]:
         location = error.get("loc")
         location_parts = location if isinstance(location, (tuple, list)) else ()
         item: dict[str, object] = {
             "type": bounded_text(error.get("type", "validation_error"), 128),
-            "loc": [bounded_text(part, 128) for part in location_parts[:16]],
-            "msg": bounded_text(error.get("msg", "Invalid request"), 256),
+            "loc": [
+                bounded_text(part, 128)
+                if not process_inputs or type(part) is int or part in process_fields
+                else "[field]"
+                for part in location_parts[:16]
+            ],
+            "msg": "Invalid declared request field"
+            if process_inputs
+            else bounded_text(error.get("msg", "Invalid request"), 256),
         }
         context = error.get("ctx")
-        if isinstance(context, dict):
+        if isinstance(context, dict) and not process_inputs:
             item["ctx"] = {
                 bounded_text(key, 64): bounded_text(value, 256)
                 for key, value in list(context.items())[:8]
@@ -423,9 +535,18 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     trace_id = _get_trace_id(request)
+    private_workflow_request = request.url.path.rstrip(
+        "/"
+    ) == "/api/workspace/workflow-sources" or request.url.path.startswith(
+        (
+            "/api/workspace/workflow-sources/",
+            "/api/workspace/process-interfaces/",
+            "/api/workspace/workflow-bundles/",
+        )
+    )
     validation_errors = (
-        _serializable_validation_errors(exc)
-        if request.url.path.rstrip("/") == "/api/workspace/workflow-sources"
+        _serializable_validation_errors(exc, process_inputs=True)
+        if private_workflow_request
         else exc.errors()
     )
     return JSONResponse(
@@ -442,6 +563,16 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 # Mount the routers
 app.include_router(workspace_router, prefix="/api/workspace", tags=["Workspace"])
+app.include_router(
+    process_interfaces_router,
+    prefix="/api/workspace/process-interfaces",
+    tags=["Process Interfaces"],
+)
+app.include_router(
+    workflow_bundles_router,
+    prefix="/api/workspace/workflow-bundles",
+    tags=["Workflow Bundles"],
+)
 app.include_router(
     support_diagnostics_router,
     prefix="/api/workspace/support-diagnostics",
@@ -657,7 +788,9 @@ async def check_inference_health():
         app.state.agent_engine, "check_llm_backend_health", None
     )
     if callable(llm_health_checker):
-        res = await llm_health_checker()
+        from api.agent_model_health import reconcile_agent_model_configuration
+
+        res = await reconcile_agent_model_configuration(await llm_health_checker())
         return HealthResponse(
             state=res["state"],
             latencyMs=res.get("latencyMs", 0.0),

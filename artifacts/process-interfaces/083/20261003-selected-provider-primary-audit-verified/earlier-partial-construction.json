@@ -1,0 +1,70 @@
+{
+  "scope": "Original failed runs remain failed; no substitute source gate.",
+  "runs": [
+    {
+      "run_id": "86289015177e4d55ab93460101ec1d43",
+      "source_digest": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82",
+      "run_record_sha256": "0857ccb415a0d6939dd92bd6b5f3be2778515575264256c6716b5753fab88f65",
+      "exact_frozen_files": 22,
+      "state": "failed",
+      "code": "MODEL_UNAVAILABLE",
+      "original_prompt_present_in_basis_after_newline_normalization": true,
+      "original_image_attached_to_construction": true,
+      "original_prompt_verbatim_in_construction": false,
+      "original_prompt_normalized_in_construction": false,
+      "native_argument_keys": [
+        "code",
+        "user_prompt"
+      ],
+      "native_user_prompt": "Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions.",
+      "source_stl": {
+        "sha256": "5c23442f3eeb52ebdc4315335a41cf0861a86fc52b3acfa75e7dd542332f033c",
+        "bytes": 541284,
+        "triangles": 10824,
+        "dimensions_model_units": [
+          36.721065521240234,
+          38.0,
+          18.0
+        ],
+        "signed_volume": 16649.92556664619
+      },
+      "actual_source_gate_executed": false,
+      "whole_pipeline_proved_by_this_run": false
+    },
+    {
+      "run_id": "0a81a465287248d5a2a79a17519f7c74",
+      "source_digest": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82",
+      "run_record_sha256": "3c5cfd913b59e65c196f8fdd6a09d29977e3e1b67d218e5439e05e2c7bd0fe36",
+      "exact_frozen_files": 22,
+      "state": "failed",
+      "code": "MODEL_UNAVAILABLE",
+      "original_prompt_present_in_basis_after_newline_normalization": true,
+      "original_image_attached_to_construction": true,
+      "original_prompt_verbatim_in_construction": false,
+      "original_prompt_normalized_in_construction": false,
+      "native_argument_keys": [
+        "code",
+        "user_prompt"
+      ],
+      "native_user_prompt": "Use the existing Blender execute_blender_code tool to construct the reviewed focus wheel from the actual supplied image and dimensions.",
+      "source_stl": {
+        "sha256": "5a4dfb70c59b810ec5fd59c433aca0ef40771e556cfc6511a65013f6a37a7372",
+        "bytes": 541284,
+        "triangles": 10824,
+        "dimensions_model_units": [
+          36.721065521240234,
+          38.0,
+          18.0
+        ],
+        "signed_volume": 16649.92556664619
+      },
+      "actual_source_gate_executed": false,
+      "whole_pipeline_proved_by_this_run": false
+    }
+  ],
+  "pending": [
+    "JOB-A-stage1",
+    "FR-016",
+    "T047"
+  ]
+}

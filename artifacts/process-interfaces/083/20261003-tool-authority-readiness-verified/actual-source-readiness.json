@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "scope": "Actual accepted source and actual production gateway metadata; normal readiness only on a shadow database; no run start/resume or native operation",
+  "readiness": {
+    "state": "blocked",
+    "assessment_id": "readiness-8fc4f475dfb84343a0d03a0d9cbdcbb6",
+    "process": {
+      "workspace_id": "workspace-083-external-slice-007",
+      "source_path": "workflows/external-slice-qualification.workflow.wflow",
+      "source_digest": "6dfec6c42d12f137648bea70a37ecbc80f2150c6ac3ba8f8a8918f53a549ecb6",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "input_digest": "07d1831b385876137f2c9b0c4bbff0a23afaee8e7189b3626abd71c5076af83b",
+    "assessed_at": "2026-10-03T09:42:11.135875+00:00",
+    "expires_at": null,
+    "dependencies": [
+      {
+        "binding_id": "campaign_machine_profile_json_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_process_profile_json_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_filament_profile_json_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_passive_representations_py_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_inspect_manufacturing_package_py_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "invoke_external_slice_inspect_actual_package.selected_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_geometry",
+        "producer_port": "source_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "retain_slice_response_inspect_actual_package.retain_slice_response_inspect_actual_package_actual_response",
+        "classification": "upstream_produced",
+        "producer_step": "invoke_external_slice_inspect_actual_package",
+        "producer_port": "invoke_external_slice_inspect_actual_package_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_actual_package.inspect_actual_package_actual_package",
+        "classification": "upstream_produced",
+        "producer_step": "invoke_external_slice_inspect_actual_package",
+        "producer_port": "external_slice_package",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_actual_package.inspect_actual_package_actual_response",
+        "classification": "upstream_produced",
+        "producer_step": "retain_slice_response_inspect_actual_package",
+        "producer_port": "provider_response",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_actual_package.inspect_actual_package_actual_source",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_geometry",
+        "producer_port": "source_mesh",
+        "interaction_step": null,
+        "reasons": []
+      }
+    ],
+    "reasons": [
+      {
+        "code": "CAPABILITY_UNAVAILABLE",
+        "message": "Retain the actual external provider response: the selected tool needs workspace authorization before this process can run.",
+        "correction": "Configure the required reviewed operation or choose an authorized provider before starting.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      }
+    ]
+  },
+  "additional_tool_call_events": 0,
+  "integration_authority_used": false,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "basis_run_id": "315d74b4187a45aba31c50416e7e7c60",
+  "all_basis_workspace_files_unchanged": 32,
+  "owned_runtime_and_gateway_closed": true
+}

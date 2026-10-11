@@ -1,0 +1,21 @@
+{
+  "status": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-report-002.workflow.wflow",
+      "source_digest": "69a7065c7e9cb1e859a0fd162d872710c9bd854a40b406b4e0cd148289c1c5cc",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "083-retained-wheel-report-start-002",
+    "payload_digest": "de8c116fc831391978f884bf401b946ad305dc0af0db6b11d68be71e1bd044c9",
+    "input_snapshot_id": "inputs-bf5c297f1126425cb91c16bc124ffbda",
+    "input_digest": "63700375ac868cedf758c162d8738a901b737ee73bec69b013a6c837aedb8655",
+    "run_id": "97f4c017f8a04d7eab8011e4ad6c5298",
+    "run_log_path": "runs/printed-replacement-part-retained-report-002/97f4c017f8a04d7eab8011e4ad6c5298.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-02T14:23:08.802986+00:00"
+  }
+}

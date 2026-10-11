@@ -1,0 +1,148 @@
+{
+  "session_id": "083-printed-prompt-session-055",
+  "path": "workflows/printed-replacement-part-prompt-default-055.workflow.wflow",
+  "expected_storage_digest": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8",
+  "workspace_id": "083-fresh-prompt-055",
+  "input_snapshot_id": "inputs-3dd0cc80d73847a3a54c643703d593f2",
+  "expected_input_digest": "7d5c0f7bf17a7e736b56ce0d376e5868a439a66c89cf8fcb1c1fd06096acd9d2",
+  "integration_policy_digest": "a29da86e55ce5118a0ec6dabe49b1559cb7ec3eb2628735b063c62c0ed4191dc",
+  "preparation": {
+    "schema_version": 1,
+    "feature": "083-process-working-interfaces",
+    "status": "prepared_not_executed",
+    "template_id": "printed-replacement-part",
+    "attempt": "prompt-default-055",
+    "source_path": "process-proofs/printed-replacement-part/prompt-default-055/prepared.workflow.wflow",
+    "accepted_source_path": "workflows/printed-replacement-part-prompt-default-055.workflow.wflow",
+    "source_acceptance_required": true,
+    "source_sha256": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8",
+    "template_source_sha256": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+    "input_files": [
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/concept.png",
+        "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861",
+        "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.png"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/concept.svg",
+        "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c",
+        "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.svg"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/context.md",
+        "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+        "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/prompt.txt",
+        "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+        "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/scenario.json",
+        "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2",
+        "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/scenario.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/user-profile.md",
+        "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f",
+        "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/user-profile.md"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/requirements.md",
+        "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7",
+        "original": null
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/geometry-capability-guidance.md",
+        "sha256": "4455c9b6756e3caeb72578be578998e6eb354601c7ae155f4d3351b3b96f2aa6",
+        "original": null
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/machine-profile.json",
+        "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-fresh-prompt-055\\provider-profiles\\machine-profile.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/process-profile.json",
+        "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+        "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-fresh-prompt-055\\provider-profiles\\process-profile.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/filament-profile.json",
+        "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-fresh-prompt-055\\provider-profiles\\filament-profile.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/configured-geometry-basis.json",
+        "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e",
+        "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-fresh-prompt-055\\configured-geometry-basis.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/construction-provider-arguments.json",
+        "sha256": "63af34a7e68fbcb969f11774a5d4e12330a9dc5472f44b5ca55f7f9008b3561e",
+        "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-fresh-prompt-055\\construction-provider-arguments.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/repair-provider-arguments.json",
+        "sha256": "1d1f961fd8837e65fc8d54b7148d8897ad47efa9c84927c245a1d2814425c9f1",
+        "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-fresh-prompt-055\\repair-provider-arguments.json"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/slice-call.json",
+        "sha256": "861fa2849b16c374ab15511b31503ed584bbadd3800eb400b49ccc1c59559f17",
+        "original": null
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/passive-representations.py",
+        "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+        "original": "packages/workspace_service/src/workspace_service/process_interfaces/representations.py"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/inspect_manufacturing_package.py",
+        "sha256": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568",
+        "original": "scripts/engineering/inspect_manufacturing_package.py"
+      },
+      {
+        "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/inspection-call.json",
+        "sha256": "da7e78a8fe5bef43f65866ce9669820be69a8b9367b7b5697e5b28aca30088ff",
+        "original": null
+      }
+    ],
+    "output_root": "process-proofs/printed-replacement-part/prompt-default-055/outputs",
+    "run_path_template": "wright.run-path/1",
+    "output_template": "process-proofs/printed-replacement-part/prompt-default-055/outputs/{{wright.run_id}}",
+    "tool_allowlist": [
+      {
+        "server_id": "proof-083-blender-prompt-055",
+        "name": "proof-083-blender-prompt-055__execute_blender_code",
+        "schema_digest": "2d2c71a6d7d4e096476d0bb4fe046c08070b537502f63ba1d28ea53ae16c964a"
+      },
+      {
+        "server_id": "wright-workspace-files",
+        "name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12"
+      },
+      {
+        "server_id": "wright-workspace-files",
+        "name": "wright-workspace-files__inspect_file",
+        "schema_digest": "b0c9ce7a52c766833056df2615e0a29e4d11641d639b91174da51c8ac9cc330a"
+      },
+      {
+        "server_id": "proof-083-slicer-prompt-055",
+        "name": "proof-083-slicer-prompt-055__slice_model_file",
+        "schema_digest": "4826b49815622348bbca2b9ffa440eafc5d679305d514983bde4e74ed8998a5a"
+      },
+      {
+        "server_id": "proof-083-inspection-prompt-055",
+        "name": "proof-083-inspection-prompt-055__run_simulation",
+        "schema_digest": "5feb16154984b7bd6a3037cd041558bea44eb05a3de4917bca6dfa33dd235d3b"
+      }
+    ],
+    "step_count": 11,
+    "physical_dispatch": false,
+    "approval_policy_not_enrolled": true,
+    "engineering_acceptance": false
+  },
+  "status": "prepared_not_started"
+}

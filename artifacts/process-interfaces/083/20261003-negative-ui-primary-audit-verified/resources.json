@@ -1,0 +1,20 @@
+{
+  "temporary_sessions": {
+    "1080": "stopped/interrupted after source restoration",
+    "60821": "stopped normally, exit 0"
+  },
+  "retained_owned_hosts": [
+    {
+      "session_id": 90330,
+      "url": "http://wright.localhost:63271",
+      "scope": "Earlier thermal package proof; not the corrected build"
+    },
+    {
+      "session_id": 46681,
+      "url": "http://wright.localhost:50062",
+      "scope": "Earlier printed package proof; not the corrected build"
+    }
+  ],
+  "provider_containers_started": 0,
+  "private_traces": "Retained privately, contain local authorization headers"
+}

@@ -1,0 +1,233 @@
+{
+  "review": "Primary behavior/assertion review, not file-count signoff.",
+  "obligations": [
+    {
+      "id": "FR-001",
+      "behaviors": [
+        "The current common view composes the public client/kit on the accepted source and durable run; it has no graph executor or independent provider-status authority.",
+        "Workspace tabs restore exact process/run/UI/job context and close only their presentation/observer; required incompatible bindings retain common-view fallback.",
+        "Retained normal installed editor checks preserve direct inputs, Diagram/Source, Undo/Redo, typed keyboard/pointer connections and mismatch rejection, pan/zoom, invalid drafts, CAS conflicts and saved layout."
+      ]
+    },
+    {
+      "id": "FR-002",
+      "behaviors": [
+        "Core strict/frozen versioned shapes include accepted ProcessRef, immutable inputs, context/cursor, exact outputs/assessments, declared checkpoints, observations, actions and navigation.",
+        "Generated public schemas/types match core; unknown executable/remote/schema semantics and excessive values remain rejected, not weakened.",
+        "The existing projection folds owner facts/currentness/checkpoints and only narrows permission. Native/presentation routes retain server-derived authority; there is no second runtime or persisted browser status model."
+      ]
+    },
+    {
+      "id": "FR-008",
+      "behaviors": [
+        "The public kit uses Wright tokens, explicit theme/focus/labels, real schemas and provider-option provenance without importing private app components.",
+        "Progress shows owner-supplied states/activity, refuses absent/stale percentages and remaining time, and preserves original observation timestamps; terminal historical progress remains labelled.",
+        "Actual native workspace/200% zoom reports and saved-interface theme/iframe records establish their bounded rendered, keyboard and scoped automated accessibility behavior.",
+        "Passive STL/toolpath/numerical viewers bind exact recorded artifact/result/run identities and retain scoped download fallback; unsupported formats or absent assessment never imply verification."
+      ]
+    },
+    {
+      "id": "FR-019",
+      "behaviors": [
+        "Progress shows owner-supplied states/activity, refuses absent/stale percentages and remaining time, and preserves original observation timestamps; terminal historical progress remains labelled.",
+        "Fresh controlled browser navigation enters through Workflows and Use saved process, binds a decoded 96x96 PNG, blocks preparation during its held transfer, preserves its exact digest, then observes the single returned run and reopens without replay.",
+        "The existing native authoring status owner exposes its exact retained correlation identity only after exact job/process/role authorization; the current collapsed details shows it and the retained request.",
+        "Older records explicitly disclose unavailable identity; malformed records receive the existing compatibility error with no private prompt/credential projection. Current 49 backend and 160 frontend checks cover this bounded correction.",
+        "This authoring correlation is not a new per-run tracing service. Current common browser/image/progress proof and readable on-demand diagnostics are combined with freshness and failure/recovery assertions."
+      ]
+    },
+    {
+      "id": "US1-AC3",
+      "behaviors": [
+        "Fresh controlled browser navigation enters through Workflows and Use saved process, binds a decoded 96x96 PNG, blocks preparation during its held transfer, preserves its exact digest, then observes the single returned run and reopens without replay.",
+        "The served run tab retains the returned exact run ID, current step/activity and owner-supplied progress/provider details. The selected actual image decodes before its exact scoped reference is frozen."
+      ]
+    },
+    {
+      "id": "US1-AC5",
+      "behaviors": [
+        "Passive STL/toolpath/numerical viewers bind exact recorded artifact/result/run identities and retain scoped download fallback; unsupported formats or absent assessment never imply verification.",
+        "Nominal G-code parsing retains actual layers, bounded arcs, parser/section provenance and explicit excluded machine setup/shutdown; unknown labels remain unclassified.",
+        "Retained actual printed and thermal browser reports show real 90-layer toolpath/geometry and 765-sample field data, exact held assessments and producer navigation; they are separate from controlled tests and imply no physical acceptance."
+      ]
+    },
+    {
+      "id": "US3-AC3",
+      "behaviors": [
+        "The origin/window/nonce/generation-bound process host passes only scoped messages and theme/navigation; frames receive no native bearer credential or generic invokeTool.",
+        "Actual model-authored built interfaces preview/save/focus-update and reuse on distinct runs; retained installed previews have backend-enforced read-only scope and no execution or model/compiler launch on mount.",
+        "The public kit uses Wright tokens, explicit theme/focus/labels, real schemas and provider-option provenance without importing private app components."
+      ]
+    },
+    {
+      "id": "EDGE-01",
+      "behaviors": [
+        "An invalid unsaved source draft stays separate from the last accepted process/run. The retained installed editor and controlled normal-workspace journey preserve the draft while exact result/producer links inspect accepted evidence; no draft is submitted as execution authority."
+      ]
+    },
+    {
+      "id": "EDGE-08",
+      "behaviors": [
+        "Generated public schemas/types match core; unknown executable/remote/schema semantics and excessive values remain rejected, not weakened.",
+        "The existing projection folds owner facts/currentness/checkpoints and only narrows permission. Native/presentation routes retain server-derived authority; there is no second runtime or persisted browser status model.",
+        "Passive STL/toolpath/numerical viewers bind exact recorded artifact/result/run identities and retain scoped download fallback; unsupported formats or absent assessment never imply verification.",
+        "Nominal G-code parsing retains actual layers, bounded arcs, parser/section provenance and explicit excluded machine setup/shutdown; unknown labels remain unclassified.",
+        "Missing configured tools report readiness/capability reasons before dispatch; optional unsupported viewing retains disclosed exact inspection/download fallback without bypassing mandatory checks."
+      ]
+    },
+    {
+      "id": "NEG-14",
+      "behaviors": [
+        "The origin/window/nonce/generation-bound process host passes only scoped messages and theme/navigation; frames receive no native bearer credential or generic invokeTool.",
+        "Current API surface authority tests exercise cross-workspace/run/UI/role, exact presentation grants, revocation, old source queries, scoped representation membership and read-only mutations; denied requests do not expose bootstrap credentials or broaden tool authority."
+      ]
+    },
+    {
+      "id": "T005",
+      "behaviors": [
+        "Core strict/frozen versioned shapes include accepted ProcessRef, immutable inputs, context/cursor, exact outputs/assessments, declared checkpoints, observations, actions and navigation.",
+        "Generated public schemas/types match core; unknown executable/remote/schema semantics and excessive values remain rejected, not weakened."
+      ]
+    },
+    {
+      "id": "T017",
+      "behaviors": [
+        "Generated public schemas/types match core; unknown executable/remote/schema semantics and excessive values remain rejected, not weakened.",
+        "The public typed client injects native transport, fixes accepted source/session, validates exact replies, reconciles bounded SSE/cursors and unknown acknowledgements, and separates mutation from passive reads/observer close. Existing npm workspace links/lock/package versions remain the packaging mechanism."
+      ]
+    },
+    {
+      "id": "T018",
+      "behaviors": [
+        "The public kit uses Wright tokens, explicit theme/focus/labels, real schemas and provider-option provenance without importing private app components.",
+        "Progress shows owner-supplied states/activity, refuses absent/stale percentages and remaining time, and preserves original observation timestamps; terminal historical progress remains labelled.",
+        "Actual native workspace/200% zoom reports and saved-interface theme/iframe records establish their bounded rendered, keyboard and scoped automated accessibility behavior.",
+        "Fresh controlled browser navigation enters through Workflows and Use saved process, binds a decoded 96x96 PNG, blocks preparation during its held transfer, preserves its exact digest, then observes the single returned run and reopens without replay."
+      ]
+    },
+    {
+      "id": "T019",
+      "behaviors": [
+        "The current common view composes the public client/kit on the accepted source and durable run; it has no graph executor or independent provider-status authority.",
+        "Fresh controlled browser navigation enters through Workflows and Use saved process, binds a decoded 96x96 PNG, blocks preparation during its held transfer, preserves its exact digest, then observes the single returned run and reopens without replay.",
+        "Current component checks retain required reasons, structured inputs, exact evidence/producer navigation, late-reply containment, lost-request reconciliation and optional read-only fallback.",
+        "Passive STL/toolpath/numerical viewers bind exact recorded artifact/result/run identities and retain scoped download fallback; unsupported formats or absent assessment never imply verification."
+      ]
+    },
+    {
+      "id": "T020",
+      "behaviors": [
+        "Workspace tabs restore exact process/run/UI/job context and close only their presentation/observer; required incompatible bindings retain common-view fallback.",
+        "Fresh controlled browser navigation enters through Workflows and Use saved process, binds a decoded 96x96 PNG, blocks preparation during its held transfer, preserves its exact digest, then observes the single returned run and reopens without replay.",
+        "Current ProcessWorkspaceTab/ProcessInterfaceView and retained editor/tab tests pin restoration/deep-link identity and preserve unsaved workflow/file state. Late or StrictMode opens dispose only exact presentations."
+      ]
+    },
+    {
+      "id": "T021",
+      "behaviors": [
+        "The current common view composes the public client/kit on the accepted source and durable run; it has no graph executor or independent provider-status authority.",
+        "Fresh controlled browser navigation enters through Workflows and Use saved process, binds a decoded 96x96 PNG, blocks preparation during its held transfer, preserves its exact digest, then observes the single returned run and reopens without replay.",
+        "Current component checks retain required reasons, structured inputs, exact evidence/producer navigation, late-reply containment, lost-request reconciliation and optional read-only fallback.",
+        "The current affected browser module passes all four cases; the fresh nine-step thumbnail continuation strengthens its served image proof. Controlled HTTP scope, retained failures and actual existing engineering views remain distinct."
+      ]
+    },
+    {
+      "id": "T037",
+      "behaviors": [
+        "The origin/window/nonce/generation-bound process host passes only scoped messages and theme/navigation; frames receive no native bearer credential or generic invokeTool.",
+        "Actual native workspace/200% zoom reports and saved-interface theme/iframe records establish their bounded rendered, keyboard and scoped automated accessibility behavior.",
+        "Current source parity and retained host/client tests preserve nonce/window/origin constraints, bounded theme updates, exact navigation, frame reconnection and packaged runtime scope."
+      ]
+    },
+    {
+      "id": "T039",
+      "behaviors": [
+        "Workspace tabs restore exact process/run/UI/job context and close only their presentation/observer; required incompatible bindings retain common-view fallback.",
+        "Older records explicitly disclose unavailable identity; malformed records receive the existing compatibility error with no private prompt/credential projection. Current 49 backend and 160 frontend checks cover this bounded correction.",
+        "The native panel uses explicit Create/Update/preview/save and compatibility/common fallback controls in existing tabs; current tests show all nine backend authoring states without mount-time generation or replay."
+      ]
+    },
+    {
+      "id": "T040",
+      "behaviors": [
+        "Generated public schemas/types match core; unknown executable/remote/schema semantics and excessive values remain rejected, not weakened.",
+        "The origin/window/nonce/generation-bound process host passes only scoped messages and theme/navigation; frames receive no native bearer credential or generic invokeTool.",
+        "Current affected 93-case backend selection includes 43 API presentation/surface authority cases with exact native roles/bindings and malformed/foreign/revoked scopes. Qualified owner authoring/build checks reject source/import/script/workspace escape."
+      ]
+    },
+    {
+      "id": "T041",
+      "behaviors": [
+        "Actual model-authored built interfaces preview/save/focus-update and reuse on distinct runs; retained installed previews have backend-enforced read-only scope and no execution or model/compiler launch on mount.",
+        "Older records explicitly disclose unavailable identity; malformed records receive the existing compatibility error with no private prompt/credential projection. Current 49 backend and 160 frontend checks cover this bounded correction.",
+        "Current panel/client checks preserve generation/loading/error/recovery and exact preview/save/update/rollback; retained actual configured-model traces and both focus-updated/reused saved interfaces establish the separate live scope."
+      ]
+    },
+    {
+      "id": "T044",
+      "behaviors": [
+        "Passive STL/toolpath/numerical viewers bind exact recorded artifact/result/run identities and retain scoped download fallback; unsupported formats or absent assessment never imply verification.",
+        "Nominal G-code parsing retains actual layers, bounded arcs, parser/section provenance and explicit excluded machine setup/shutdown; unknown labels remain unclassified.",
+        "Retained actual printed and thermal browser reports show real 90-layer toolpath/geometry and 765-sample field data, exact held assessments and producer navigation; they are separate from controlled tests and imply no physical acceptance."
+      ]
+    },
+    {
+      "id": "T052",
+      "behaviors": [
+        "The retained installed006 report set has 48 primary named checks from normal workspace entry: editor pointer/keyboard/pan/invalid draft/CAS/layout, both actual common/saved/read-only views and exact engineering navigation at compact/native200% viewport.",
+        "Its original wheel/build identities and screenshot limits remain explicit. The fresh controlled current-frontend thumbnail/progress journey complements them; it does not relabel the older wheel as containing the later authoring trace correction."
+      ]
+    }
+  ],
+  "inspected_implementation": [
+    "apps/api/tests/test_process_interface_artifacts.py",
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx",
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.tsx",
+    "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx",
+    "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.tsx",
+    "apps/web/src/services/process-client.spec.ts",
+    "apps/web/src/services/process-client.ts",
+    "apps/web/src/services/process-presentation-host.spec.ts",
+    "apps/web/src/services/process-presentation-host.ts",
+    "packages/core/src/core/process_interactions.py",
+    "packages/core/src/core/process_interfaces.py",
+    "packages/core/tests/test_process_client_contracts.py",
+    "packages/core/tests/test_process_interface_contracts.py",
+    "packages/process_client/src/client.ts",
+    "packages/process_client/src/contracts.generated.ts",
+    "packages/process_client/src/presentation.ts",
+    "packages/process_client/src/schemas.generated.ts",
+    "packages/process_client/src/sse.ts",
+    "packages/process_client/src/validation.ts",
+    "packages/ui_kit/src/geometry.tsx",
+    "packages/ui_kit/src/inputs.tsx",
+    "packages/ui_kit/src/patterns.tsx",
+    "packages/ui_kit/src/representations.tsx",
+    "packages/ui_kit/src/result-representation.tsx",
+    "packages/ui_kit/src/styles.css",
+    "packages/ui_kit/src/tokens.css",
+    "packages/ui_kit/src/toolpaths.ts",
+    "packages/workspace_service/src/workspace_service/process_interfaces/projection.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/representations.py",
+    "packages/workspace_service/tests/test_process_artifact_access.py",
+    "packages/workspace_service/tests/test_process_interaction_projection.py",
+    "packages/workspace_service/tests/test_process_interface_service_boundaries.py",
+    "packages/workspace_service/tests/test_process_representations.py"
+  ],
+  "inspected_current_assertions": [
+    "Current contract bounds/identity/authority",
+    "API native process grants and exact presentation subjects",
+    "Fresh component upload/progress/staleness/assessment/navigation and retained client cursor/scope errors",
+    "Fresh normal-workspace bitmap/readiness/run/reopen screenshots and HTTP fixture assertions",
+    "Actual retained installed editor/theme/geometry/toolpath/thermal/held-review reports"
+  ],
+  "limits": [
+    "Current tests and controlled HTTP browser checks are separate from retained actual engineering/model/installed proofs.",
+    "Only unchanged source/test modules reuse prior cases; changed test modules use current 93 backend or recorded 160 frontend results.",
+    "No new physical, supplier, model/MCP engineering or protected-review effects. Later authoring trace code is not relabelled into old installed builds."
+  ]
+}

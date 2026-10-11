@@ -1,0 +1,306 @@
+{
+  "status": "failed",
+  "scope": "Independent native source/repair and exact-byte inspection before actual slicing through accepted source/durable runtime; small digital qualification only",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "ai_generation": false,
+  "workspace": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-mesh-runtime-002",
+  "mesh_declaration": {
+    "binding_sha256": "308824820d02f351c543d185214e2a8791290136b9023d9674e7cfc24f121843",
+    "selected_tool": {
+      "server_id": "qualification-083-runtime-geometry",
+      "tool_name": "execute_blender_code",
+      "name": "qualification-083-runtime-geometry__execute_blender_code",
+      "schema_digest": "d5e85605269a7c9110763c72f9fbc14073cc79b256676626ceea9c77545a0068"
+    },
+    "arguments_sha256": "1168840ae2d0795ec5834da23f793d179e4ccc4a89b45e51ece53accb1a33d4e",
+    "arguments_source": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-mesh-runtime-002\\supplied-native-arguments.json",
+    "arguments_staged": "qualification/inputs/mesh-provider-arguments.json",
+    "policy_sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+    "inspection_source_sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+    "feature_reference": "inspect_repaired_mesh_qualified_repair.mesh_evidence",
+    "vendor_implementation": "independent_provider",
+    "engineering_acceptance": false
+  },
+  "declaration": {
+    "binding_sha256": "65b5f3a5214e5f2074e4d67e6b483effa47e8afdf0e1adb6c9cc28f3b865d35c",
+    "selected_tools": {
+      "slicer": {
+        "server_id": "qualification-083-runtime-slicer",
+        "tool_name": "slice_model_file",
+        "name": "qualification-083-runtime-slicer__slice_model_file",
+        "schema_digest": "49c3a11a8ce42c3bd0e6b0288034b88432a27da35f100ffe741bc174a6616f66"
+      },
+      "files": {
+        "server_id": "wright-workspace-files",
+        "tool_name": "write_text_document",
+        "name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12"
+      },
+      "inspection": {
+        "server_id": "qualification-083-runtime-inspection",
+        "tool_name": "run_simulation",
+        "name": "qualification-083-runtime-inspection__run_simulation",
+        "schema_digest": "1e8b87f6d5566dbd2fb67b90558054a3d7c27ce80448b83cd8a0b774d0e33eac"
+      }
+    },
+    "package_reference": "invoke_external_slice_inspect_actual_package.external_slice_package",
+    "profile_sha256": {
+      "machine": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "process": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "filament": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "vendor_implementation": "independent_provider",
+    "inspection": "passive_actual_package",
+    "engineering_acceptance": false
+  },
+  "integration_policy_digest": "6900b746dd0422ffd2aa8a57c2711afdcb08fc79c1063c23c4b61438f274c68e",
+  "integration_test": true,
+  "actor": "integration_test:083-external-mesh-runtime-002",
+  "synthetic_review_decisions": 0,
+  "process": {
+    "workspace_id": "workspace-083-external-mesh-002",
+    "source_path": "workflows/external-mesh-qualification.workflow.wflow",
+    "source_digest": "5212b9a1b951a9ae25a80192c633f4abbdfcb5f8fad5dfb977ed754f4c830a4b",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "readiness": {
+    "state": "blocked",
+    "assessment_id": "readiness-b711b04b7ad74215b5702e7747877aed",
+    "process": {
+      "workspace_id": "workspace-083-external-mesh-002",
+      "source_path": "workflows/external-mesh-qualification.workflow.wflow",
+      "source_digest": "5212b9a1b951a9ae25a80192c633f4abbdfcb5f8fad5dfb977ed754f4c830a4b",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "input_digest": "75e3921519808905728c7848ddbc4b8a1035b86116a6a612866c08a21891284c",
+    "assessed_at": "2026-10-03T10:30:47.422091+00:00",
+    "expires_at": null,
+    "dependencies": [
+      {
+        "binding_id": "campaign_mesh_provider_arguments_json_qualified_repair",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_mesh_inspection_policy_json_qualified_repair",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_inspect_repaired_mesh_py_qualified_repair",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_machine_profile_json_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_process_profile_json_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_filament_profile_json_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_passive_representations_py_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "campaign_inspect_manufacturing_package_py_inspect_actual_package",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "qualified_repair.qualified_repair_actual_source",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_geometry",
+        "producer_port": "source_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_source",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_geometry",
+        "producer_port": "source_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_repaired",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_repair",
+        "producer_port": "repaired_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_repaired_mesh_qualified_repair.inspect_repaired_mesh_qualified_repair_preview",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_repair",
+        "producer_port": "geometry_preview",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "invoke_external_slice_inspect_actual_package.selected_geometry",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_repair",
+        "producer_port": "repaired_mesh",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "retain_slice_response_inspect_actual_package.retain_slice_response_inspect_actual_package_actual_response",
+        "classification": "upstream_produced",
+        "producer_step": "invoke_external_slice_inspect_actual_package",
+        "producer_port": "invoke_external_slice_inspect_actual_package_result",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_actual_package.inspect_actual_package_actual_package",
+        "classification": "upstream_produced",
+        "producer_step": "invoke_external_slice_inspect_actual_package",
+        "producer_port": "external_slice_package",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_actual_package.inspect_actual_package_actual_response",
+        "classification": "upstream_produced",
+        "producer_step": "retain_slice_response_inspect_actual_package",
+        "producer_port": "provider_response",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "inspect_actual_package.inspect_actual_package_actual_source",
+        "classification": "upstream_produced",
+        "producer_step": "qualified_repair",
+        "producer_port": "repaired_mesh",
+        "interaction_step": null,
+        "reasons": []
+      }
+    ],
+    "reasons": [
+      {
+        "code": "CAPABILITY_UNAVAILABLE",
+        "message": "Retain the actual external provider response: the selected tool needs workspace authorization before this process can run.",
+        "correction": "Configure the required reviewed operation or choose an authorized provider before starting.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      }
+    ]
+  },
+  "staged_inputs": [
+    {
+      "path": "qualification/inputs/mesh-provider-arguments.json",
+      "sha256": "1168840ae2d0795ec5834da23f793d179e4ccc4a89b45e51ece53accb1a33d4e",
+      "size_bytes": 1607,
+      "kind": "pinned_external_operation_arguments"
+    },
+    {
+      "path": "qualification/inputs/mesh-inspection-policy.json",
+      "sha256": "2bdcef42320ffaab840d1aa50711cf02bf80ea8fa22113cee05036f7ac92639a",
+      "size_bytes": 282,
+      "kind": "original_geometry_policy"
+    },
+    {
+      "path": "qualification/inputs/inspect_repaired_mesh.py",
+      "sha256": "88262deb2db2fa1a60de0f90cd208c93ae889df35f86095427f904d1b45e329c",
+      "size_bytes": 14071,
+      "kind": "passive_exact_mesh_inspection"
+    },
+    {
+      "path": "qualification/inputs/machine-profile.json",
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "size_bytes": 20560,
+      "role": "external_slice_inspection_input"
+    },
+    {
+      "path": "qualification/inputs/process-profile.json",
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "size_bytes": 8180,
+      "role": "external_slice_inspection_input"
+    },
+    {
+      "path": "qualification/inputs/filament-profile.json",
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "size_bytes": 7954,
+      "role": "external_slice_inspection_input"
+    },
+    {
+      "path": "qualification/inputs/passive-representations.py",
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+      "size_bytes": 25554,
+      "role": "external_slice_inspection_input"
+    },
+    {
+      "path": "qualification/inputs/inspect_manufacturing_package.py",
+      "sha256": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568",
+      "size_bytes": 8561,
+      "role": "external_slice_inspection_input"
+    }
+  ],
+  "steps": [
+    "qualified_geometry",
+    "qualified_repair",
+    "inspect_repaired_mesh_qualified_repair",
+    "invoke_external_slice_inspect_actual_package",
+    "retain_slice_response_inspect_actual_package",
+    "inspect_actual_package"
+  ],
+  "shape": null,
+  "error_type": "AssertionError",
+  "diagnostic": "",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-mesh-runtime-002.py\", line 310, in owned_run\n    await main()\n  File \"D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-mesh-runtime-002.py\", line 265, in main\n    assert readiness.state == 'ready'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "durable_runtime_owner_closed": true,
+  "gateway_closed": true,
+  "cleanup": [
+    {
+      "container_id": "f0348d1de65302e5d06f85c2ad4d3fd895b1f6850a1e2840062a37d6bfe1e9f4",
+      "running": false
+    },
+    {
+      "container_id": "30882bd97d60f5d6139c93ac7d2f4b7319d6d1410d1e68655c2701fad777316a",
+      "running": false
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "status": "passed_actual_gateway_native_correspondence",
+  "started_at": "2026-09-22T21:30:41.014749+00:00",
+  "image": "sha256:5203521497814b23db6eab50ebd2a5cef208ee0bf164bbdf4164eb3268f72cd9",
+  "scope": "Actual KiCad create/connect/save/native-export through Wright plus independent pin/net/splice correspondence. No total voltage-drop qualification, resistance assumptions, human approval or canonical campaign credit.",
+  "source_inputs": {
+    "pin_schedule": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\generated\\pin-schedule.csv",
+      "sha256": "a24fafac243492a2dffe6cc867d6298a294c51e2e99955b141e20c15aba15335"
+    },
+    "netlist": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\verified\\independent-netlist.csv",
+      "sha256": "4e256022add4b8f89934e34afa74c692b739641bb6c18b5590eef906973c439a"
+    },
+    "original_schematic": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\interconnect-qualification\\harness.kicad_sch",
+      "sha256": "665e59cc33eb81edd3c67bacd70b2867c559b6bad9e1ae8f7cbaf599291714f4"
+    }
+  },
+  "profile_ref": {
+    "id": "sensor-fan-harness-01-full",
+    "version": "2",
+    "sha256": "0d25644d3770b289a24e42bcd241836d3808c88f752a435063e1fce58a2c9149"
+  },
+  "calls": [
+    {
+      "index": 0,
+      "operation": "create",
+      "is_error": false
+    },
+    {
+      "index": 1,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 2,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 3,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 4,
+      "operation": "add_component",
+      "is_error": false
+    },
+    {
+      "index": 5,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 6,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 7,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 8,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 9,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 10,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 11,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 12,
+      "operation": "connect_pins_with_labels",
+      "is_error": false
+    },
+    {
+      "index": 13,
+      "operation": "check_pin_collisions",
+      "is_error": false
+    },
+    {
+      "index": 14,
+      "operation": "validate",
+      "is_error": false
+    },
+    {
+      "index": 15,
+      "operation": "save",
+      "is_error": false
+    }
+  ],
+  "campaign_dispatches": 0,
+  "solid_edge_operations": 0,
+  "measurement": {
+    "id": "m-b2d9ff420c3671f7a3f2fbeb57da7fad04fa2d82af34619e91eb319d61751ba3",
+    "subject_id": "net_correspondence",
+    "subject_sha256": "319748afbf67b01871e05421342075f6b10aedac64d2148940bd21c9a845dd10",
+    "selector": "harness/kicad-correspondence",
+    "value": true,
+    "unit": null,
+    "frame": null,
+    "uncertainty": 0.0,
+    "reader": {
+      "id": "harness",
+      "version": "1",
+      "config_digest": "023bb5560b5666c6a479ec2638c4b59c598ec0a667b7defc93fa7e036f17bb63",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded harness reader v1",
+      "formats": [
+        "csv",
+        "json"
+      ]
+    },
+    "evidence_refs": [
+      "subject:net_correspondence@319748afbf67b01871e05421342075f6b10aedac64d2148940bd21c9a845dd10#kicad_correspondence"
+    ]
+  },
+  "files": {
+    "kicad_schematic": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\harness-native-correspondence-positive\\harness.kicad_sch",
+      "sha256": "4bc7c3997642caf6829849db3f51ff0578f18d462ed74a5f06dea48bc471c789"
+    },
+    "pin_schedule": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\generated\\pin-schedule.csv",
+      "sha256": "a24fafac243492a2dffe6cc867d6298a294c51e2e99955b141e20c15aba15335"
+    },
+    "netlist": {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\sensor-fan-harness-01\\attempt-907\\artifacts\\verified\\independent-netlist.csv",
+      "sha256": "4e256022add4b8f89934e34afa74c692b739641bb6c18b5590eef906973c439a"
+    },
+    "kicad_native_netlist": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\harness-native-correspondence-positive\\check\\netlist.xml",
+      "sha256": "d6487d72a6bb2d70c287b06a71eb4f0119f87dd3aeb784d8eb642e01448c4020"
+    },
+    "kicad_erc": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\harness-native-correspondence-positive\\check\\erc.json",
+      "sha256": "3d00eba0299fc339460215b15dffc6fb856342f2dbdd73ba87f985794dbdb9dc"
+    },
+    "kicad_native_inspection": {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\harness-native-correspondence-positive\\check\\inspection.json",
+      "sha256": "654fe09abed38a8b776f18bac7999fda0d01f9bb5a414717b5f41d88798e4d7c"
+    }
+  },
+  "erc_error_count": 0,
+  "erc_warning_count": 4,
+  "erc_violations": [
+    {
+      "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+      "items": [
+        {
+          "description": "Symbol B1 [Conn_01x01]",
+          "pos": {
+            "x": 0.5969,
+            "y": 0.4953
+          },
+          "uuid": "7e04eff1-9e41-4e91-a1da-6def9a519791"
+        }
+      ],
+      "severity": "warning",
+      "type": "lib_symbol_issues"
+    },
+    {
+      "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+      "items": [
+        {
+          "description": "Symbol JS [Conn_01x03]",
+          "pos": {
+            "x": 0.5969,
+            "y": 1.1938
+          },
+          "uuid": "a7beb47c-d013-4f42-9188-ba849dc22d01"
+        }
+      ],
+      "severity": "warning",
+      "type": "lib_symbol_issues"
+    },
+    {
+      "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+      "items": [
+        {
+          "description": "Symbol J0 [Conn_01x06]",
+          "pos": {
+            "x": 1.2446,
+            "y": 0.4953
+          },
+          "uuid": "4f06610f-6364-4872-b08e-c9ea3f2f2f9b"
+        }
+      ],
+      "severity": "warning",
+      "type": "lib_symbol_issues"
+    },
+    {
+      "description": "The current configuration does not include the symbol library 'Connector_Generic'",
+      "items": [
+        {
+          "description": "Symbol JF [Conn_01x04]",
+          "pos": {
+            "x": 1.905,
+            "y": 0.4953
+          },
+          "uuid": "607a3352-1655-46c2-bcb3-48cd10861131"
+        }
+      ],
+      "severity": "warning",
+      "type": "lib_symbol_issues"
+    }
+  ],
+  "original_files_unchanged": true,
+  "campaign_credit": false,
+  "assumptions_applied": false,
+  "human_approval": false,
+  "finished_at": "2026-09-22T21:30:59.709729+00:00"
+}

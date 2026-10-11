@@ -1,0 +1,13 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+________ test_missing_input_reason_targets_exact_accepted_block[False] ________
+packages\workspace_service\tests\test_process_input_readiness.py:185: in test_missing_input_reason_targets_exact_accepted_block
+    assert missing.navigation is not None
+E   AssertionError: assert None is not None
+E    +  where None = Reason(code='INPUT_REQUIRED', message='Brief: an input is required before the process starts.', correction='Supply this value or file in the preparation view.', binding_id='brief', step_id=None, navigation=None, technical_details_ref=None).navigation
+________ test_missing_input_reason_targets_exact_accepted_block[True] _________
+packages\workspace_service\tests\test_process_input_readiness.py:185: in test_missing_input_reason_targets_exact_accepted_block
+    assert missing.navigation is not None
+E   AssertionError: assert None is not None
+E    +  where None = Reason(code='INPUT_REQUIRED', message='Brief: the default file is unavailable.', correction='Select an existing input file before starting.', binding_id='brief', step_id=None, navigation=None, technical_details_ref=None).navigation
+2 failed, 22 deselected in 0.38s

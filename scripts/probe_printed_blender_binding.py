@@ -1,4 +1,4 @@
-"""Prove the guarded owned-Blender to fixed-Bambu printing seam.
+"""Probe guarded owned-Blender geometry and an independent offline slicer.
 
 This is a diagnostic only. It creates a generic disposable mesh, never uses a
 dataset recipe, never dispatches a workflow, and never contacts a printer.
@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import hashlib
+import importlib.util
 import json
 import socket
 import struct
@@ -30,6 +31,110 @@ from tool_registry.runners.stdio import StdioRunner
 
 ROOT = Path(__file__).resolve().parents[1]
 BLENDER_SERVER_REVISION = "5f8ddaf6e987c4aa0c3467fcc548838b28f64477"
+
+
+def external_slice_definition(path):
+    """Resolve explicit qualification inputs before creating any native owner."""
+    raw = Path(path).read_bytes()
+    if len(raw) > 65536:
+        raise ValueError("Diagnostic provider definition exceeds its bound")
+    value = json.loads(raw)
+    if value.get("schema_version") != 1 or value.get("offline_only") is not True:
+        raise ValueError("Select an explicit independently configured offline diagnostic provider")
+    command = value.get("command")
+    if not isinstance(command, list) or not command or any(not isinstance(item, str) or not item for item in command):
+        raise ValueError("Declare the independent provider's installed command as an argument array")
+    if any("engineering_dataset_slice" in item or "engineering_jig_slice_mcp" in item for item in command):
+        raise ValueError("Embedded slicing implementations are retired")
+    for field in ("tool", "input_schema_sha256", "success_field", "success_contract", "gcode_entry"):
+        if not isinstance(value.get(field), str) or not value[field].strip():
+            raise ValueError("Declare the qualified diagnostic provider's " + field)
+    for field in ("arguments", "expected_response_fields"):
+        arguments = value.get(field)
+        if not isinstance(arguments, dict) or "{source}" not in arguments.values() or "{package}" not in arguments.values():
+            raise ValueError("Bind the actual diagnostic geometry and package paths")
+        if any(isinstance(item, str) and item not in {"{source}", "{package}"}
+               and ("{source}" in item or "{package}" in item) for item in arguments.values()):
+            raise ValueError("Use complete diagnostic path placeholders")
+    if not isinstance(value.get("env", {}), dict) or any(not isinstance(key, str) or not isinstance(item, str)
+                                                        for key, item in value.get("env", {}).items()):
+        raise ValueError("Diagnostic provider environment must contain explicit string values")
+    profiles = value.get("profiles")
+    if not isinstance(profiles, dict) or set(profiles) != {"machine", "process", "filament"}:
+        raise ValueError("Pin the three actual configured diagnostic profiles")
+    retained = {}
+    for role, reference in profiles.items():
+        source = Path(reference["path"])
+        if not source.is_file() or not 0 < source.stat().st_size <= 1024 * 1024:
+            raise ValueError("Diagnostic profile must be a bounded regular file")
+        data = source.read_bytes()
+        if hashlib.sha256(data).hexdigest() != reference["sha256"]:
+            raise ValueError("Diagnostic configured profile changed: " + role)
+        if not isinstance(json.loads(data), dict):
+            raise ValueError("Diagnostic profile must be a JSON object")
+        retained[role] = data
+    return value, retained, hashlib.sha256(raw).hexdigest()
+
+
+async def external_slice_probe(definition, workspace, runner_factory=StdioRunner):
+    """One tool call; passive readback never retries an uncertain slice."""
+    value, profiles, definition_digest = definition
+    source = workspace / "diagnostic/artifacts/repaired_mesh.stl"
+    package = workspace / "diagnostic/artifacts/slice_package.gcode.3mf"
+    response_path = workspace / "diagnostic/artifacts/slice-provider-response.json"
+    attempt_path = workspace / "diagnostic/artifacts/external-slice-attempt.json"
+    if not source.is_file() or not 0 < source.stat().st_size <= 32 * 1024 * 1024:
+        raise ValueError("The bounded actual diagnostic geometry is required")
+    if any(path.exists() for path in (package, response_path, attempt_path)):
+        raise ValueError("Preserve the existing diagnostic slice attempt; do not replay")
+    substitutions = {"{source}": str(source), "{package}": str(package)}
+
+    def arguments(field):
+        return {key: substitutions.get(item, item) if isinstance(item, str) else item
+                for key, item in value[field].items()}
+
+    runner = runner_factory(value["command"], env=value.get("env"), cwd=value.get("cwd"), operation_timeout=600)
+    attempt = {"definition_sha256": definition_digest, "source_sha256": sha(source),
+               "state": "not_called", "engineering_acceptance": False}
+    with attempt_path.open("x", encoding="utf-8") as stream:
+        json.dump(attempt, stream)
+    try:
+        await runner.start()
+        selected = [tool for tool in await runner.list_tools() if tool["name"] == value["tool"]]
+        if len(selected) != 1 or hashlib.sha256(json.dumps(selected[0]["inputSchema"], sort_keys=True, separators=(",", ":")).encode()).hexdigest() != value["input_schema_sha256"]:
+            raise ValueError("Diagnostic provider schema is missing, ambiguous or changed")
+        attempt["state"] = "outcome_unknown"
+        write_json(attempt_path, attempt)
+        sliced = await runner.call_tool(value["tool"], arguments("arguments"))
+        attempt["state"] = "response_received"
+        write_json(attempt_path, attempt)
+    finally:
+        await runner.stop()
+    with response_path.open("x", encoding="utf-8") as stream:
+        json.dump(sliced, stream, ensure_ascii=False)
+    input_paths = {}
+    for role, data in profiles.items():
+        relative = "diagnostic/inputs/" + role + "-profile.json"
+        with (workspace / relative).open("xb") as stream:
+            stream.write(data)
+        input_paths[role] = relative
+    config = {"workspace_root": str(workspace), "source_mesh": "diagnostic/artifacts/repaired_mesh.stl",
+              "slice_package": "diagnostic/artifacts/slice_package.gcode.3mf",
+              "provider_response": "diagnostic/artifacts/slice-provider-response.json",
+              "output_root": "diagnostic/artifacts", "profiles": input_paths,
+              "gcode_entry": value["gcode_entry"], "success_field": value["success_field"],
+              "success_contract": value["success_contract"], "expected_response_fields": arguments("expected_response_fields"),
+              "operation_label": "independent_offline_slice_diagnostic", "legacy_previews": True,
+              "nominal_layer_section": value.get("nominal_layer_section")}
+    spec = importlib.util.spec_from_file_location("diagnostic_package_inspection", ROOT / "scripts/engineering/inspect_manufacturing_package.py")
+    inspector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(inspector)
+    from workspace_service.process_interfaces.representations import read_3mf_toolpaths
+
+    observed = inspector.run(config, read_3mf_toolpaths)
+    return {"definition_sha256": definition_digest, "inspection": observed,
+            "package_sha256": sha(package), "response_sha256": sha(response_path),
+            "engineering_acceptance": False, "protocol_scope": "direct MCP diagnostic; not fresh production-gateway qualification"}
 
 
 def sha(path: Path) -> str:
@@ -106,6 +211,7 @@ def guarded_mesh_code(source_stl: Path, repaired_stl: Path) -> str:
 
 
 async def run(args) -> dict:
+    external_definition = external_slice_definition(args.slicer_provider)
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     workspace = output / "workspace"
@@ -113,9 +219,6 @@ async def run(args) -> dict:
     artifacts = workspace / "diagnostic" / "artifacts"
     inputs.mkdir(parents=True)
     artifacts.mkdir()
-    operation_source = ROOT / "scripts" / "engineering_dataset_slice.py"
-    staged_operation = inputs / "slice-operation.py"
-    staged_operation.write_bytes(operation_source.read_bytes())
     port = free_loopback_port()
     blender_source = args.blender_server_source.resolve()
     addon_source = args.addon_source.resolve()
@@ -142,9 +245,7 @@ async def run(args) -> dict:
             "blender_mcp_revision": revision,
             "addon_sha256": sha(addon_source),
             "safe_mode_sha256": sha(safe_mode_source),
-            "slicer_executable_sha256": sha(args.slicer.resolve()),
-            "slice_operation_sha256": sha(operation_source),
-            "slice_wrapper_sha256": sha(ROOT / "scripts" / "engineering_dataset_slice_mcp.py"),
+            "external_slicer_definition_sha256": external_definition[2],
         },
         "repairs": [],
     }
@@ -268,56 +369,7 @@ async def run(args) -> dict:
             "lineage_sha256": sha(artifacts / "blender-call-lineage.json"),
         }
 
-        configuration = {
-            "slicer": str(args.slicer.resolve()),
-            "profiles_root": str(args.profiles_root.resolve()),
-            "machine": "machine/Bambu Lab P1S 0.4 nozzle.json",
-            "filament": "filament/Bambu PETG HF @BBL P1S 0.4 nozzle.json",
-            "process": {
-                "base": "process/0.20mm Standard @BBL X1C.json",
-                "layer_height": "0.20",
-                "wall_loops": "4",
-                "sparse_infill_density": "35%",
-                "enable_support": "1",
-            },
-            "workspace_root": str(workspace),
-            "output_root": "diagnostic/artifacts",
-            "source": "diagnostic/artifacts/repaired_mesh.stl",
-        }
-        configuration_path = inputs / "slice-operation.json"
-        write_json(configuration_path, configuration)
-        slicer_runner = StdioRunner(
-            [sys.executable, str(ROOT / "scripts" / "engineering_dataset_slice_mcp.py")],
-            env={"WRIGHT_PRINT_WORKSPACE": str(workspace)},
-            cwd=str(ROOT),
-            operation_timeout=600,
-        )
-        await slicer_runner.start()
-        try:
-            slicer_tools = await slicer_runner.list_tools()
-            slicer_tool = next(tool for tool in slicer_tools if tool["name"] == "slice_model_file")
-            result["pins"]["slice_model_file_input_schema_sha256"] = hashlib.sha256(
-                json.dumps(slicer_tool["inputSchema"], sort_keys=True, separators=(",", ":")).encode()
-            ).hexdigest()
-            sliced = await slicer_runner.call_tool(
-                "slice_model_file",
-                {
-                    "configuration_document": "diagnostic/inputs/slice-operation.json",
-                    "operation_source_document": "diagnostic/inputs/slice-operation.py",
-                },
-            )
-        finally:
-            await slicer_runner.stop()
-        if sliced.get("isError"):
-            raise RuntimeError(f"Fixed Bambu slicer tool failed: {response_text(sliced)}")
-        evidence = json.loads((artifacts / "slice-evidence.json").read_text(encoding="utf-8"))
-        result["external_bambu_slice"] = {
-            "tool_response": response_text(sliced),
-            "evidence": evidence,
-            "package_sha256": sha(artifacts / "slice_package.gcode.3mf"),
-            "preview_sha256": sha(artifacts / "slice-preview.png"),
-            "support_preview_sha256": sha(artifacts / "support-preview.svg"),
-        }
+        result["external_slice"] = await external_slice_probe(external_definition, workspace)
     except Exception as error:
         result["error"] = f"{type(error).__name__}: {error}"
         if session is not None and lifecycle is not None and active_operation is not None:
@@ -351,8 +403,8 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--blender-server-source", required=True, type=Path)
     parser.add_argument("--addon-source", required=True, type=Path)
-    parser.add_argument("--slicer", required=True, type=Path)
-    parser.add_argument("--profiles-root", required=True, type=Path)
+    parser.add_argument("--slicer-provider", required=True, type=Path,
+                        help="Explicit independently installed offline MCP command, schema, arguments and pinned configured profiles")
     args = parser.parse_args()
     result = asyncio.run(run(args))
     print(

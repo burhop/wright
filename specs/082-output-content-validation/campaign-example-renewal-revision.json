@@ -1,0 +1,1037 @@
+{
+  "schema": "wright.campaign-example-renewal-revision/1",
+  "revision_id": "campaign-example-renewal-r1-2026-09-21",
+  "decision_id": "campaign-example-renewal-r1-approved-2026-09-22",
+  "decision_sha256": "1fc68ff91175228bc706320277438117db132ffe2b5fa0eb21027bc581b3c5ff",
+  "lineup_sha256": "9a7992ac2ec340b7e8fb511b16b87d1effd341dc5e768cd81834065e891ef199",
+  "engineering_inputs_sha256": "4695823e0fb488fa0d5a309288505e56dffaaf13c0a59bb8b22775409dc23840",
+  "status": "prospective_prepared_not_dispatched",
+  "history_policy": {
+    "prior_attempts_mutated": false,
+    "prior_approvals_reused": false,
+    "retry_budgets_reset": false,
+    "campaign_credit_carried_forward": false
+  },
+  "cases": [
+    {
+      "scenario_id": "heat-spreader-sizing-01",
+      "family": "heat-spreader-sizing",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/scenario.json",
+        "scenario_manifest_sha256": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8",
+        "semantic_manifest_sha256": "2f917e31d3585fa6ccf53d04fcf0f75f331629093b426371e4c6f279fcf291c9",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "fdd7e07356e9e233622d215f254c14bffb4a3ba2547e50d8f3a5c054e0bfedaf",
+        "profile_resource": "heat-spreader-sizing-01-full",
+        "profile_ref": {
+          "id": "heat-spreader-sizing-01-full",
+          "version": "1",
+          "sha256": "da8e16b33bd69313b020c0aabc21ce6e0e6fb21bd465941b92ad224a86756252"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-01-basis",
+          "version": "1",
+          "sha256": "648762c15d9461eedc7067bc51272e7fcc5e75e1a785efdfaa47efc123dd4e20"
+        },
+        "expected_output_roles": [
+          "plate_geometry",
+          "temperature_field",
+          "heat_balance",
+          "sizing_decision",
+          "geometry_analysis_correspondence"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "heat-spreader-sizing-02",
+      "family": "heat-spreader-sizing",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/02-camera-cold-wall-link/scenario.json",
+        "scenario_manifest_sha256": "e2224633b40de53468bfd7997f58b3cc98106529601305c1c91e5c9467f6655b",
+        "semantic_manifest_sha256": "283ec0205b249855316d9ec337982a847bc60cd589a084743e4e58f759b0ae13",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "130662324a93a5091d7b7c50c28f6446c20ed219da5ac4eda059b5ceefe14796",
+        "profile_resource": "heat-spreader-sizing-02-full",
+        "profile_ref": {
+          "id": "heat-spreader-sizing-02-full",
+          "version": "1",
+          "sha256": "dec64d294490d091abcdf1052ce8affb8d17c038ea907e584787cd517c93a4e6"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-02-basis",
+          "version": "1",
+          "sha256": "e8f86603db3713c227be1f311485f150e2cf1fbe4aae35998678429c7822c139"
+        },
+        "expected_output_roles": [
+          "plate_geometry",
+          "temperature_field",
+          "heat_balance",
+          "sizing_decision",
+          "geometry_analysis_correspondence"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "heat-spreader-sizing-03",
+      "family": "heat-spreader-sizing",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/03-calibration-lamp-copper-link/scenario.json",
+        "scenario_manifest_sha256": "53ab559d3276265e6ee1060a58f6af4e3b44db8ce61dad2231ee96a26d232ffe",
+        "semantic_manifest_sha256": "ae987d3e9886e278e16ca27e9c911623589fb7decc4272a807fe991267630b12",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "4f45ba3947cfdcc43ba5b26aa23698664bbcbcf88f18c6bbc4a3798898f94665",
+        "profile_resource": "heat-spreader-sizing-03-full",
+        "profile_ref": {
+          "id": "heat-spreader-sizing-03-full",
+          "version": "1",
+          "sha256": "c23b8537593e1200d1e0a01361d164cf7aec0db6c29ad56b1387fee277098ba7"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-03-basis",
+          "version": "1",
+          "sha256": "c30c4e62e2048071105e830ad347b6d5a9341ce6e4d1b94ad31a50651a4949b7"
+        },
+        "expected_output_roles": [
+          "plate_geometry",
+          "temperature_field",
+          "heat_balance",
+          "sizing_decision",
+          "geometry_analysis_correspondence"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-01",
+      "family": "lightweight-equipment-bracket",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/01-conveyor-vision-mount/scenario.json",
+        "scenario_manifest_sha256": "735133bfe5de35febbf84fd4e794418ec21fa4c5d852b88386a0f2ea107c7c15",
+        "semantic_manifest_sha256": "130b874a617b9d944eb1cee9ccd90dccc5f602c00c3b5dd7b9d28a9e3b8d56ef",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "ee85b28a4d45a6c3b0eeeaf1b5563cf7dc62dcf02b4ec2e9c82057a7313c4022",
+        "profile_resource": "lightweight-equipment-bracket-01",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-01-full",
+          "version": "1",
+          "sha256": "0c2f24e8d8523a45e7c27bb00755b5cc0a2449dd738a1f7c3dea8856bf033a8f"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-01-basis",
+          "version": "1",
+          "sha256": "7f005f16e9831b90df52e57fbb30a8704f2cc390b2120870b29636a74aa5fbfa"
+        },
+        "expected_output_roles": [
+          "baseline_cad",
+          "revised_cad",
+          "solver_deck",
+          "displacement_and_stress_fields",
+          "mass_comparison",
+          "analysis_report"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-02",
+      "family": "lightweight-equipment-bracket",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/02-pump-instrument-outrigger/scenario.json",
+        "scenario_manifest_sha256": "33d45156645efbea01ae4fd09f22417b61bd14b9e80390859ef6e7b3c4659e47",
+        "semantic_manifest_sha256": "a1c9a8dcf39869c618da75e1b7861705e078d7862c7ef4f42e315e999e2b25c5",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "6e72ebc8930439b5bee970cd9fc5cc0be01fd907cb9680955eab342a2c17cac9",
+        "profile_resource": "lightweight-equipment-bracket-02",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-02-full",
+          "version": "1",
+          "sha256": "af5bcb43353c44cba7c2f321e6d900bfcfe57aad3473fffca6de1f1fa3afca00"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-02-basis",
+          "version": "1",
+          "sha256": "b3afd5c748c5c2b4f2530dde6606abd4fc0fc7174a6c7f0c8548a97db3e62e9b"
+        },
+        "expected_output_roles": [
+          "baseline_cad",
+          "revised_cad",
+          "solver_deck",
+          "displacement_and_stress_fields",
+          "mass_comparison",
+          "analysis_report"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-03",
+      "family": "lightweight-equipment-bracket",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/03-dock-sensor-yoke/scenario.json",
+        "scenario_manifest_sha256": "0a48320dc27f865584d539385995d221bcad32ca0e2e37460511d2f2aa94d1a7",
+        "semantic_manifest_sha256": "0ae7f94e4b59fbfa458f269ead7cd04b7366381229aaf0a9ba0b82cdb64dedac",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "8a2384b39c6195eee331aec0a2e4e361f0b98ce376a1177a34dbc2814ab66972",
+        "profile_resource": "lightweight-equipment-bracket-03",
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-03-full",
+          "version": "1",
+          "sha256": "a90c518ab4f74166733b3d99a5c541a4464f1d0249fe3bdc6c35cb5c737e90d5"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-03-basis",
+          "version": "1",
+          "sha256": "b0ea52ecc61dd3dfb2d6cb9292e41173c117274e9ecc30c613ca6bb042320ac5"
+        },
+        "expected_output_roles": [
+          "baseline_cad",
+          "revised_cad",
+          "solver_deck",
+          "displacement_and_stress_fields",
+          "mass_comparison",
+          "analysis_report"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "parametric-drill-jig-01",
+      "family": "parametric-drill-jig",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/01-furniture-rail-insert-jig/scenario.json",
+        "scenario_manifest_sha256": "0d6faaeb6b4b33eb715c9a47183b3b4a034b31fc06ff2aa275f62d074c0ca1c0",
+        "semantic_manifest_sha256": "2ad8c7cd30553f34439ce7a1c287f22a92483f5fec753d4dccf069bed1bb1589",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "2bfe0140d9df38fe35b957a1fdfac635aec47ba8458f535f360878d419ce5ac7",
+        "profile_resource": "parametric-drill-jig-01-full",
+        "profile_ref": {
+          "id": "parametric-drill-jig-01-full",
+          "version": "1",
+          "sha256": "2563e2ae025694cdb029bad8dc67250107f3772351048de7d78150f656a34bb8"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-01-basis",
+          "version": "1",
+          "sha256": "3c360740760a99eb71b63690b3a6a3bf69814e74d26ea1aa90c84a595c544a67"
+        },
+        "expected_output_roles": [
+          "jig_model",
+          "hole_location_drawing",
+          "dimension_report",
+          "additive_manufacturing_package"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "parametric-drill-jig-02",
+      "family": "parametric-drill-jig",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/scenario.json",
+        "scenario_manifest_sha256": "22248a341687933b5badfbd202f2830db2c6c1bc29e85eef9f33876cd64ac2e8",
+        "semantic_manifest_sha256": "dc14071dd9daa0347c441e1932ba9582ed66a04c8106b609924008e8f1726c11",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "c67dd6fb3f9c1cd805a07748a41aad18e9f88f5b4c64f626c5b375b0b7190e1b",
+        "profile_resource": "parametric-drill-jig-02",
+        "profile_ref": {
+          "id": "parametric-drill-jig-02-full",
+          "version": "1",
+          "sha256": "95ce88043e9fa2c690d888135e648e921214d7928a5a11bc721a47107a0e2350"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-02-basis",
+          "version": "1",
+          "sha256": "895744b1726ba48ef18b9582151d5cde4402afd0b2378957de3d7c884a67c14e"
+        },
+        "expected_output_roles": [
+          "jig_model",
+          "hole_location_drawing",
+          "dimension_report",
+          "additive_manufacturing_package"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "parametric-drill-jig-03",
+      "family": "parametric-drill-jig",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/03-indexable-circular-fixture-jig/scenario.json",
+        "scenario_manifest_sha256": "86eb944b9c6fbacb7f4ae1403db080e229baac0c098be7f09ab554080a18522b",
+        "semantic_manifest_sha256": "8c07800a8d206e2ed99e0f6250701a45be1ed596fdfc0f7f38bb8f7ca6505d5b",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "12d5e7727579c42ad5b97d10f0b459c5677580ac2ae5aeeb6936b0a9a6e28ea9",
+        "profile_resource": "parametric-drill-jig-03",
+        "profile_ref": {
+          "id": "parametric-drill-jig-03-full",
+          "version": "1",
+          "sha256": "e135566d247a456f3d3df312ca9fcd5ae9c5e64b367bd7ab32651ea5fb556903"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-03-basis",
+          "version": "1",
+          "sha256": "b6d98dc15c5823c3356a4ecbd13bee82851d1d092b6b80a3b7fd456c3cf7318b"
+        },
+        "expected_output_roles": [
+          "jig_model",
+          "hole_location_drawing",
+          "dimension_report",
+          "additive_manufacturing_package"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "printed-replacement-part-01",
+      "family": "printed-replacement-part",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/scenario.json",
+        "scenario_manifest_sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2",
+        "semantic_manifest_sha256": "565c8dd164a74f6b87bd98f34fb56b04cb5311e131708722d0646cfaf3086f15",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "b7a253cfd9f9068c266fe8c41d3136b20036146c4e8cf0d02453ec67c5a0ede0",
+        "profile_resource": "printed-replacement-part-01",
+        "profile_ref": {
+          "id": "printed-replacement-part-01-full",
+          "version": "1",
+          "sha256": "d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-01-basis",
+          "version": "1",
+          "sha256": "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"
+        },
+        "expected_output_roles": [
+          "source_mesh",
+          "repaired_mesh",
+          "slice_package",
+          "printer_transfer_receipt"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "printed-replacement-part-02",
+      "family": "printed-replacement-part",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/scenario.json",
+        "scenario_manifest_sha256": "4d0ec7d6c8cff674507cb5a5f418bacee3c5eef2f27002370fe3d9e60f44e6a5",
+        "semantic_manifest_sha256": "3bff0e0f20ce22de74930779e459e6b02e19dd44919563568b59e30f98d1acaf",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "86ccddb9f772d686c63b5d511de1be0b3d22c468594fd4a47f1b80dc457d37ae",
+        "profile_resource": "printed-replacement-part-02",
+        "profile_ref": {
+          "id": "printed-replacement-part-02-full",
+          "version": "1",
+          "sha256": "aa6e94d24ecf62de164767d63f7bbd5db59bfc5de1a90d3f1084496dfee64d59"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-02-basis",
+          "version": "1",
+          "sha256": "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"
+        },
+        "expected_output_roles": [
+          "source_mesh",
+          "repaired_mesh",
+          "slice_package",
+          "printer_transfer_receipt"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "printed-replacement-part-03",
+      "family": "printed-replacement-part",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/scenario.json",
+        "scenario_manifest_sha256": "5fd29ff1e6d43e71d3f0b177cf31cf420518e546f9a29b6276659984da3895f4",
+        "semantic_manifest_sha256": "40104ce0106b3fc71f26aba1220524c155191a71a6477f18eb27ae919262583f",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "da80a48b86072500bbd51aa4ffa0f5256676f91818495c60f23142bb9ffaaa0c",
+        "profile_resource": "printed-replacement-part-03",
+        "profile_ref": {
+          "id": "printed-replacement-part-03-full",
+          "version": "1",
+          "sha256": "881423783fbb3588df6717f4f2eb9f7d1d30305c8849f2fa6bdfa015399f5ce3"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-03-basis",
+          "version": "1",
+          "sha256": "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"
+        },
+        "expected_output_roles": [
+          "source_mesh",
+          "repaired_mesh",
+          "slice_package",
+          "printer_transfer_receipt"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "raspberry-pi-enclosure-01",
+      "family": "raspberry-pi-enclosure",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/scenario.json",
+        "scenario_manifest_sha256": "981156df9bfb6a44817b798323d6606093c43b80a0a6ec053849b343ec1caf79",
+        "semantic_manifest_sha256": "f23bdec9c269933f73d92829ef74e4e2a7993d4175d87186ee5a7b1e5d7db327",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "673a78d585695dac2ed03536179cfe703be0357028b47663f47d18c0dcbfb5dc",
+        "profile_resource": "raspberry-pi-enclosure-01",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-01-full",
+          "version": "1",
+          "sha256": "1840e74a6f5f1235bf8a1cf35eed08fe77d84e7dc149db1945cc5d019ed17924"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-01-basis",
+          "version": "1",
+          "sha256": "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"
+        },
+        "expected_output_roles": [
+          "sourced_design_document",
+          "enclosure_cad",
+          "fluid_domain",
+          "cfd_comparison"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "raspberry-pi-enclosure-02",
+      "family": "raspberry-pi-enclosure",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/scenario.json",
+        "scenario_manifest_sha256": "48fcff88d6d853bcb2ae200882db674ce01aaf3979e59b89529a25ebf5d221f2",
+        "semantic_manifest_sha256": "e07582e6835cc707e9bcb061e6bd14b09b7f5f948a9787792b6b331508e1eb8f",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "a073638af002d5095ef9ab2dfb01675c1c88cd7c129eebeaae8fbdaf72831e35",
+        "profile_resource": "raspberry-pi-enclosure-02",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-02-full",
+          "version": "1",
+          "sha256": "8c6ecf39eeb3f893d499dccfcd16741fc99e3883e0eb93a5cd278fe2392e361a"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-02-basis",
+          "version": "1",
+          "sha256": "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"
+        },
+        "expected_output_roles": [
+          "sourced_design_document",
+          "enclosure_cad",
+          "fluid_domain",
+          "cfd_comparison"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "raspberry-pi-enclosure-03",
+      "family": "raspberry-pi-enclosure",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/03-edge-vision-instrument/scenario.json",
+        "scenario_manifest_sha256": "008664293bd0bdfc226a4aa24b24070f6882f0e4a049dd81c7f9d152b9492e18",
+        "semantic_manifest_sha256": "228b71a28bdcd4e9a42a26a79500c872cb7adfa8fc6a50a2f8ec3937a2971570",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "bba64cd1d19d16881bd8e4ddff5781dfe8dddb9fdb21bd114c6db108e65a24cb",
+        "profile_resource": "raspberry-pi-enclosure-03",
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-03-full",
+          "version": "1",
+          "sha256": "fca3e7bb12904189c8321901fd58cd033c0527d6394900c19f2adb18115112cd"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-03-basis",
+          "version": "1",
+          "sha256": "6c795f2d61468598868c30f50a680742290649fbcf093de7360e721312397297"
+        },
+        "expected_output_roles": [
+          "sourced_design_document",
+          "enclosure_cad",
+          "fluid_domain",
+          "cfd_comparison"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-01",
+      "family": "robot-tracking-diagnosis",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam/scenario.json",
+        "scenario_manifest_sha256": "e9984e1231caf54dd26de9258b7cbb011f0a7ddd4152eefc4fec7079bfff0e94",
+        "semantic_manifest_sha256": "9a84cf43fcfb8425e287dce79f71c72494b884fd154b1a63506a56ead75304e2",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "4133dab631f79a7c5791632c2dd3aa9a6e0b99f54f0761ce41cbde33e117f6e8",
+        "profile_resource": "robot-tracking-diagnosis-01",
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-01-full",
+          "version": "1",
+          "sha256": "a46d4b244494a2f25b5baa5858f19c665301b5ea4aa0914f74180c80d6ba33fd"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-01-basis",
+          "version": "1",
+          "sha256": "2b35e75c35ca1b5f6b77962d422e58f19840597a814125fa945f09e0ad61be91"
+        },
+        "expected_output_roles": [
+          "aligned_timeline",
+          "trajectory_overlay",
+          "tracking_metrics",
+          "evidence_diagnosis",
+          "corrective_hardware_cad",
+          "corrective_hardware_fea",
+          "commissioning_package"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-02",
+      "family": "robot-tracking-diagnosis",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/02-corner-time-alignment/scenario.json",
+        "scenario_manifest_sha256": "2c7662d7ea99f020a9d8181dbb22d9bebee2a5fc161f3a381b80d2a83948e901",
+        "semantic_manifest_sha256": "e258e68038bfac502e6c4abb24e18b6bb46e9e3807e3ad12b2bf9c5ad6a20565",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "f594031ab87ee6a9d849b37a60f6324397a4c2c18c4606b18e9d9c9784144538",
+        "profile_resource": "robot-tracking-diagnosis-02",
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-02-full",
+          "version": "1",
+          "sha256": "10bd909a84e6d2815e752863cf47b684a7a298a4ccc391be0740c8255741c7d5"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-02-basis",
+          "version": "1",
+          "sha256": "5dfce036c856742d45304ba7574919b0bd8b1cdad6c46044e9b492f7dbc36ecc"
+        },
+        "expected_output_roles": [
+          "aligned_timeline",
+          "trajectory_overlay",
+          "tracking_metrics",
+          "evidence_diagnosis",
+          "corrective_hardware_cad",
+          "corrective_hardware_fea",
+          "commissioning_package"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-03",
+      "family": "robot-tracking-diagnosis",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/scenario.json",
+        "scenario_manifest_sha256": "6dd179b77b8454391b7d180ed8bf7ecba5f97a4d032b7885ae11308d96d7462e",
+        "semantic_manifest_sha256": "b425af7760f7185b99017be2cb7d2b6596e844608e85fdc4df4be7e62dc02c4a",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "c44e39b6614ac70149778b312b3ff2d573d04d260e55324895330b2a7848c3d9",
+        "profile_resource": "robot-tracking-diagnosis-03",
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-03-full",
+          "version": "1",
+          "sha256": "83b48192aa2abd72d94ef18ab23df19671ab9eccefaa936cb14ecbe4118558ec"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-03-basis",
+          "version": "1",
+          "sha256": "dbfe7ca5291922c53e8d939311cc8de0f637f78c1c8520a152f48c8ef52b4e7d"
+        },
+        "expected_output_roles": [
+          "aligned_timeline",
+          "trajectory_overlay",
+          "tracking_metrics",
+          "evidence_diagnosis",
+          "corrective_hardware_cad",
+          "corrective_hardware_fea",
+          "commissioning_package"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sensor-fan-harness-01",
+      "family": "sensor-fan-harness",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/01-desktop-incubator/scenario.json",
+        "scenario_manifest_sha256": "578a06017a82b6c13579dfcf7cadab153d78e9a85e088593e6411793200a5678",
+        "semantic_manifest_sha256": "e4ddd0ae6b661c1b05136c625be6f230c6b712cf06569b602ff993e987abb4ca",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "9006c7346b8b73d71b689f688ea85c97bbd2e1fb601f5de9097d3dc001877cb9",
+        "profile_resource": "sensor-fan-harness-01",
+        "profile_ref": {
+          "id": "sensor-fan-harness-01-full",
+          "version": "2",
+          "sha256": "0d25644d3770b289a24e42bcd241836d3808c88f752a435063e1fce58a2c9149"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-01-basis",
+          "version": "1",
+          "sha256": "0a90382e419db11f20b5c8d71a2840fa3cee3f9d726d8d5d191298c7d27f4b1b"
+        },
+        "expected_output_roles": [
+          "harness_plan",
+          "pin_schedule",
+          "wire_cut_list",
+          "bill_of_materials",
+          "assembly_instructions",
+          "voltage_drop_report",
+          "independent_interconnect_check"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sensor-fan-harness-02",
+      "family": "sensor-fan-harness",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/scenario.json",
+        "scenario_manifest_sha256": "2b2da84918df722205fc6b1661ae77ea0c10713d215b5123e453742d3ea13dd4",
+        "semantic_manifest_sha256": "6c74c5665a31e3933abbe9c85e09b33009e068737b00b4de7cf69c9b0593747a",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "a770a798ccfe7953dc4731eec668c78012af53e23ae067b9b588bccd0200a343",
+        "profile_resource": "sensor-fan-harness-02",
+        "profile_ref": {
+          "id": "sensor-fan-harness-02-full",
+          "version": "2",
+          "sha256": "18f19982e186926fceb25053736fb33e64d966dee3f76bec5aa5db66562b4638"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-02-basis",
+          "version": "1",
+          "sha256": "e2c7a00f6d0f3e6fcf30f642e1f1912f17de5fe71094fa18ac41cc815111b8d6"
+        },
+        "expected_output_roles": [
+          "harness_plan",
+          "pin_schedule",
+          "wire_cut_list",
+          "bill_of_materials",
+          "assembly_instructions",
+          "voltage_drop_report",
+          "independent_interconnect_check"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sensor-fan-harness-03",
+      "family": "sensor-fan-harness",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/03-dual-zone-air-sampler/scenario.json",
+        "scenario_manifest_sha256": "8ef631f198186768211900c39ddbef823f34c34f38ba2d8c339df2f301db7495",
+        "semantic_manifest_sha256": "13959b3197398c429ab09cdc15df8a34f10ff14bceb65d648233c286bcf70159",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "468a9660330a65327a04ec399fdd6484bdadc234c4cd82adb87549181e865918",
+        "profile_resource": "sensor-fan-harness-03",
+        "profile_ref": {
+          "id": "sensor-fan-harness-03-full",
+          "version": "2",
+          "sha256": "1d2479bb3acbd5b09823e0719d54cfefa3c92274dd72f80dac35e39b4bdfafa1"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-03-basis",
+          "version": "1",
+          "sha256": "15ae0bc6732aeab953b73b20b6b56d4f088e985fd7159676145cdb0065d4a3a2"
+        },
+        "expected_output_roles": [
+          "harness_plan",
+          "pin_schedule",
+          "wire_cut_list",
+          "bill_of_materials",
+          "assembly_instructions",
+          "voltage_drop_report",
+          "independent_interconnect_check"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-01",
+      "family": "sensor-interface-pcb",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/scenario.json",
+        "scenario_manifest_sha256": "7e6ca1ae045e61813357037a28652a633cf19a99a572e42e05ab8de71b3dc61b",
+        "semantic_manifest_sha256": "c798596b62fd07d612ab5800a38c5df1c77ace6d98eb0a3123f35729bcc08691",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "fb221dddb023cee53b567564071702fdc5973cf348118b91b478e0b853b7a409",
+        "profile_resource": "sensor-interface-pcb-01",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-01-full",
+          "version": "1",
+          "sha256": "7feca0634fbfa9b1e80f7b9f3b100d656c4ae06d67c97e565ee1d0a4c1a6f192"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-01-basis",
+          "version": "1",
+          "sha256": "31b433c19c4ce8d394a7e43bf40ee0dcd893f26a5e72e7a9df7b61a4372fd8f8"
+        },
+        "expected_output_roles": [
+          "editable_schematic",
+          "editable_board",
+          "bill_of_materials",
+          "fabrication_copper",
+          "fabrication_outline",
+          "drill_file",
+          "electrical_rule_report",
+          "design_rule_report"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-02",
+      "family": "sensor-interface-pcb",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/scenario.json",
+        "scenario_manifest_sha256": "114acb14a26acfcc1c22b2a83d7694daa38314e9c728482acb6306d54d423cee",
+        "semantic_manifest_sha256": "3cc2ccf7dee16b4ada169adc7386b8f2a92ba62549ac337b3efc2c38661b1c52",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "d071596dae032997d5296a9da89f66a611b33e3cee57bef4a127012a417bb0fe",
+        "profile_resource": "sensor-interface-pcb-02",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-02-full",
+          "version": "1",
+          "sha256": "fc53c00f53c6e67b4ec0d896311c769859e29291ffafb09bcb33c4bacd3e10d5"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-02-basis",
+          "version": "1",
+          "sha256": "80c90a52422a8b25fccc23d4b430ce3543b8ebf63b92c989fa1a0591d4aea75d"
+        },
+        "expected_output_roles": [
+          "editable_schematic",
+          "editable_board",
+          "bill_of_materials",
+          "fabrication_copper",
+          "fabrication_outline",
+          "drill_file",
+          "electrical_rule_report",
+          "design_rule_report"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-03",
+      "family": "sensor-interface-pcb",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/scenario.json",
+        "scenario_manifest_sha256": "71cf89052a11dcf367c15de87102345cec8c8e939ec26e6bb1707012149b6509",
+        "semantic_manifest_sha256": "fd2f5a99386cbc8224139ad0797593c646210ecbcfda12eeeae090f937ab9f52",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "b0ef2d3d3e551a600dd62bb377e3ea88f8bd80e0964bb97f0ad374e868b1a215",
+        "profile_resource": "sensor-interface-pcb-03",
+        "profile_ref": {
+          "id": "sensor-interface-pcb-03-full",
+          "version": "1",
+          "sha256": "fecdbda349e2d1c8ba476cb89bf8db0f7b6ff5cc1584af015797c6b5e017c037"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-03-basis",
+          "version": "1",
+          "sha256": "3073a159f73f58b8661f9aca13e40d8acca067636a0c05529854683c0239159b"
+        },
+        "expected_output_roles": [
+          "editable_schematic",
+          "editable_board",
+          "bill_of_materials",
+          "fabrication_copper",
+          "fabrication_outline",
+          "drill_file",
+          "electrical_rule_report",
+          "design_rule_report"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-01",
+      "family": "sheet-metal-supplier-handoff",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/scenario.json",
+        "scenario_manifest_sha256": "09883fe369edf3b6f838856acfa8ad226e2f354ed46b1bf4d8bc3fa4e7a0eecc",
+        "semantic_manifest_sha256": "44b3b4657a19993e0693ed1c5bc5d7e982899d02e6fa93a9fea02bf4662f5b54",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "d739f049c61301d938fc177ce5670ab6e0bf200efd7aaf084da49b2de4204fdc",
+        "profile_resource": "sheet-metal-supplier-handoff-01",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-01-full",
+          "version": "1",
+          "sha256": "44ff3131eaa32b44a0a097be3ccecc826bd0c5cc336b701de1fa5d85592c59e9"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-01-basis",
+          "version": "1",
+          "sha256": "2e5196ddb55f07c75639de648520cee58e239789778ed344951175243c61a42d"
+        },
+        "expected_output_roles": [
+          "native_sheet_metal",
+          "folded_neutral_model",
+          "developed_flat_pattern",
+          "supplier_preview",
+          "independent_flat_pattern_review"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-02",
+      "family": "sheet-metal-supplier-handoff",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/scenario.json",
+        "scenario_manifest_sha256": "f5551c17e8f5f8423f6f771687d3118f47bff1331a485c1ceb31d1021ddd1ac2",
+        "semantic_manifest_sha256": "c0875d457f1928fa3c2ec0b578992c8b6ac7b18eb878de62551caf824071ab82",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "95043353a4f9a90972594d9f1b3b0e9cccf48c833196836006d11d6180c72712",
+        "profile_resource": "sheet-metal-supplier-handoff-02",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-02-full",
+          "version": "1",
+          "sha256": "bf2744717cad61c440a6e38a0a4fef3025a586b4268a7074f169f5fa0fb92269"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-02-basis",
+          "version": "1",
+          "sha256": "5b8fd20be00fb9f2d5e41223f45ef9669f2c7e785456c02a249af54c4d6fb53b"
+        },
+        "expected_output_roles": [
+          "native_sheet_metal",
+          "folded_neutral_model",
+          "developed_flat_pattern",
+          "supplier_preview",
+          "independent_flat_pattern_review"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-03",
+      "family": "sheet-metal-supplier-handoff",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/scenario.json",
+        "scenario_manifest_sha256": "de40b08d4ef47c2301db33dc6efe470135365d6117beb3c913f03b4e8cade2f8",
+        "semantic_manifest_sha256": "4aed3857fe8763516643047047fb3f8e593dad0e2dd482f7463d14ef40622f70",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "47e33305893fdd43e4de43b8954a747ada1fb63df923b5bb3d42d2d8befa51e0",
+        "profile_resource": "sheet-metal-supplier-handoff-03",
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-03-full",
+          "version": "1",
+          "sha256": "9c95cb1d67a78922e479c835bc2d5aa9b83c48014ab268535980386ff10db927"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-03-basis",
+          "version": "1",
+          "sha256": "8b3cb122f5d030d1b66f34022100222532b33c8d42f1f9d5bf727b927362080d"
+        },
+        "expected_output_roles": [
+          "base_native_sheet_metal",
+          "lid_native_sheet_metal",
+          "base_folded_model",
+          "lid_folded_model",
+          "base_flat_pattern",
+          "lid_flat_pattern",
+          "supplier_preview",
+          "independent_flat_pattern_review"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "water-heater-sizing-01",
+      "family": "water-heater-sizing",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/scenario.json",
+        "scenario_manifest_sha256": "b6b2403ad8efd59d7bd03382af2866fb45c461c08d552022890ada23319f2df6",
+        "semantic_manifest_sha256": "05b310606b7d3c0c053d275411c5b9b1843296ed8365a09c885b07d9854d571e",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "024491cd2b1d7bd49fd20a84e5090dfcf2fbc2fe431fcbefa9f1456aef157cc7",
+        "profile_resource": "water-heater-sizing-01",
+        "profile_ref": {
+          "id": "water-heater-sizing-01-full",
+          "version": "2",
+          "sha256": "bb5f22e55ccfe857ff60a612a950d80486a9f2cdbb3514854ef9986fc49b4bbd"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-01-basis",
+          "version": "1",
+          "sha256": "b5f8d63ee4f36b3ee3c32ac9f74fc7a0d769fa21ebc62592232d3494b09016d0"
+        },
+        "expected_output_roles": [
+          "temperature_time_series",
+          "power_comparison",
+          "energy_summary",
+          "temperature_plot",
+          "selection_report",
+          "kit_run_parameters",
+          "thermal_package_cad",
+          "thermal_package_field",
+          "thermal_package_verification"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "water-heater-sizing-02",
+      "family": "water-heater-sizing",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/02-mobile-field-brewer/scenario.json",
+        "scenario_manifest_sha256": "0c54b65730d4185122ce3c25a4ee730fe773290716df4ea21bf61e35a003228a",
+        "semantic_manifest_sha256": "7c70c523ca64fe6ed6b5f35678bdf9109b8064bc037bfcf24b33734be1aca756",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "8f1f2f3d4afda48ed1dfd14817c488bda60541f0e47a460d702bd79b9dcf278c",
+        "profile_resource": "water-heater-sizing-02",
+        "profile_ref": {
+          "id": "water-heater-sizing-02-full",
+          "version": "2",
+          "sha256": "45a9591cf084719ec081e3b0f30caa9f4caadfc336d6724bf1d67bba6f32f7c3"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-02-basis",
+          "version": "1",
+          "sha256": "258b0675125c6fe50fb0943110e1d9e50b0eab1b5410718baa8e4492ff64fb51"
+        },
+        "expected_output_roles": [
+          "temperature_time_series",
+          "power_comparison",
+          "energy_summary",
+          "temperature_plot",
+          "selection_report",
+          "kit_run_parameters",
+          "thermal_package_cad",
+          "thermal_package_field",
+          "thermal_package_verification"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    },
+    {
+      "scenario_id": "water-heater-sizing-03",
+      "family": "water-heater-sizing",
+      "historical_identity": {
+        "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/03-pilot-batch-dispensing/scenario.json",
+        "scenario_manifest_sha256": "9e3ccfa728ba776b04f687b66aa9309fd82b3d634e75154c0bcc31c2ff9fa47e",
+        "semantic_manifest_sha256": "e34b643dccd9cde0beca72cb584460a4224de3d74f556a459128961cd4523537",
+        "preservation": "unchanged_history; prospective attempts only"
+      },
+      "prospective_identity": {
+        "campaign_revision_id": "campaign-example-renewal-r1-2026-09-21",
+        "contract_sha256": "1f2212ff557a661466cd38747bf81270a21d8cc36558b8c031bf704a5cc02769",
+        "profile_resource": "water-heater-sizing-03",
+        "profile_ref": {
+          "id": "water-heater-sizing-03-full",
+          "version": "2",
+          "sha256": "9b5d98220c2e2aafb8a1a43865cca2926e19b8897d0e5253a3e69aebf260c988"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-03-basis",
+          "version": "1",
+          "sha256": "ebe3698bbd89b09479ed3a38c87a9fd4c5a1a136881d32e6be0899b6c33b9af1"
+        },
+        "expected_output_roles": [
+          "temperature_time_series",
+          "power_comparison",
+          "energy_summary",
+          "temperature_plot",
+          "selection_report",
+          "kit_run_parameters",
+          "thermal_package_cad",
+          "thermal_package_field",
+          "thermal_package_verification"
+        ]
+      },
+      "mapping": "same engineering subject; revised prospective process"
+    }
+  ]
+}

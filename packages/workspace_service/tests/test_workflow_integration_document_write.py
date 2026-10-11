@@ -129,7 +129,7 @@ def case(tmp_path):
         approval_mode="auto",
     )
 
-    async def bind(**changes):
+    async def bind(*, frozen_route=None, **changes):
         identity = policies.enroll(**{**grant, **changes})
         context = await policies.authorize(
             identity,
@@ -141,11 +141,23 @@ def case(tmp_path):
             tool_runtime=runtime,
             files=service.files,
         )
+        bound_plan = plan
+        if frozen_route is not None:
+            from workspace_service.workflow_model_routing import (
+                freeze_workflow_model_routing,
+            )
+            from packages.workspace_service.tests.test_workflow_model_routing import (
+                owner,
+            )
+
+            bound_plan, context = await freeze_workflow_model_routing(
+                owner(frozen_route), plan, context
+            )
         bind_integration_document_writes(
             service=service,
             runtime=runtime,
             context=context,
-            plan=plan,
+            plan=bound_plan,
             workspace_dir=str(root),
             workspace_id="w1",
             run_id="run-1",
@@ -175,6 +187,24 @@ def case(tmp_path):
         tool=tool,
         artifacts=artifacts,
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mode", ["auto", "manual", "absent"])
+async def test_readiness_uses_only_authenticated_automatic_document_authority(
+    case, mode
+):
+    if mode != "absent":
+        await case.bind(approval_mode=mode)
+    if mode == "auto":
+        case.runtime.preflight_authority(case.step)
+    else:
+        with pytest.raises(WorkflowSourceExecutionError) as denied:
+            case.runtime.preflight_authority(case.step)
+        assert denied.value.code == "WORKFLOW_TOOL_APPROVAL_REQUIRED"
+    assert case.gateway.calls == []
+    assert case.events == []
+    assert not (case.root / "outputs/run/jig.py").exists()
 
 
 @pytest.mark.asyncio
@@ -307,3 +337,42 @@ def test_new_scoped_source_authority_changes_pinned_tool_revision(case):
         },
     )
     assert schema_digest(old) != schema_digest(case.tool)
+
+
+@pytest.mark.asyncio
+async def test_resumed_frozen_route_preserves_exact_document_write_authority(case):
+    from packages.workspace_service.tests.test_workflow_model_routing import route
+
+    await case.bind(frozen_route=route())
+    value, _ = await case.runtime.call(case.step, case.arguments, on_event=case.emit)
+    authority = case.runtime._integration_document_write_authority
+    assert authority.context["model_routing"]["text"] == route()
+    assert authority.plan.steps[0].model_resolution == route()
+    assert value["sha256"] == sha(case.arguments["content"].encode())
+    assert case.gateway.calls[0]["workspace_approvals"] == {"workspace_write_approval"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("change", ["routing", "plan", "revoked", "extra_context"])
+async def test_frozen_routing_never_bypasses_exact_document_authority(case, change):
+    from packages.workspace_service.tests.test_workflow_model_routing import route
+
+    identity = await case.bind(frozen_route=route())
+    authority = case.runtime._integration_document_write_authority
+    if change == "routing":
+        authority.context["model_routing"]["text"] = route("changed")
+    elif change == "plan":
+        authority.plan = replace(
+            authority.plan,
+            steps=(
+                replace(authority.plan.steps[0], model_resolution=route("changed")),
+            ),
+        )
+    elif change == "revoked":
+        case.policies.revoke(identity)
+    else:
+        authority.context["unexpected_grant"] = True
+    with pytest.raises(WorkflowSourceExecutionError):
+        await case.runtime.call(case.step, case.arguments, on_event=case.emit)
+    assert not (case.root / "outputs/run/jig.py").exists()
+    assert case.gateway.calls == []

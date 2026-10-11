@@ -1,0 +1,331 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "ProducerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "step_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Step Id",
+          "type": "string"
+        },
+        "attempt": {
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "output_port": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Output Port",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "step_id",
+        "attempt",
+        "output_port"
+      ],
+      "title": "ProducerIdentity",
+      "type": "object"
+    },
+    "ResourceBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_bytes": {
+          "default": 16777216,
+          "exclusiveMinimum": 0,
+          "maximum": 268435456,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_entities": {
+          "default": 100000,
+          "exclusiveMinimum": 0,
+          "maximum": 2000000,
+          "title": "Max Entities",
+          "type": "integer"
+        },
+        "timeout_seconds": {
+          "default": 120,
+          "exclusiveMinimum": 0,
+          "maximum": 3600,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        },
+        "memory_limit_mb": {
+          "default": 512,
+          "maximum": 4096,
+          "minimum": 32,
+          "title": "Memory Limit Mb",
+          "type": "integer"
+        }
+      },
+      "title": "ResourceBudget",
+      "type": "object"
+    },
+    "SubjectBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "result_id": {
+          "maxLength": 482,
+          "minLength": 1,
+          "title": "Result Id",
+          "type": "string"
+        },
+        "producer": {
+          "$ref": "#/$defs/ProducerIdentity"
+        },
+        "kind": {
+          "enum": [
+            "value",
+            "file",
+            "provider"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "locator": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locator"
+        },
+        "format": {
+          "default": "json",
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Format",
+          "type": "string"
+        },
+        "provider_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Id"
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Id"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "input_digests": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Input Digests",
+          "type": "array"
+        },
+        "encoding": {
+          "default": "wright-json-v1",
+          "enum": [
+            "wright-json-v1",
+            "raw-bytes"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "result_id",
+        "producer",
+        "kind",
+        "sha256"
+      ],
+      "title": "SubjectBinding",
+      "type": "object"
+    },
+    "VersionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "sha256"
+      ],
+      "title": "VersionReference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "wright.process-validation/1",
+      "default": "wright.process-validation/1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "trace_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "invocation_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Invocation Id",
+      "type": "string"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Id"
+    },
+    "check_step_id": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Check Step Id"
+    },
+    "subjects": {
+      "items": {
+        "$ref": "#/$defs/SubjectBinding"
+      },
+      "maxItems": 100,
+      "title": "Subjects",
+      "type": "array"
+    },
+    "profile_ref": {
+      "$ref": "#/$defs/VersionReference"
+    },
+    "baseline_ref": {
+      "$ref": "#/$defs/VersionReference"
+    },
+    "idempotency_key": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "budget": {
+      "$ref": "#/$defs/ResourceBudget"
+    }
+  },
+  "required": [
+    "trace_id",
+    "workspace_id",
+    "invocation_id",
+    "subjects",
+    "profile_ref",
+    "baseline_ref",
+    "idempotency_key"
+  ],
+  "title": "ValidationRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:wright:process-validation:1:ValidationRequest"
+}

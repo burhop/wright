@@ -1,0 +1,2311 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "faa96dda863ee7af751471c107ce9a8c2f890b00f8b1f5cd40c6cdee16619a99",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:26.135805+00:00",
+    "selected_assessment_id": "assessment-bef694be749740339c80446a6404dfaa",
+    "selected_attempt_id": "09929bc7641449c1ab3d7d1973cc7896",
+    "selected_subject_ids": [
+      "board",
+      "schematic",
+      "bom",
+      "fabrication",
+      "erc",
+      "drc",
+      "basis"
+    ],
+    "latest_attempt_id": "09929bc7641449c1ab3d7d1973cc7896",
+    "latest_assessment_id": "assessment-bef694be749740339c80446a6404dfaa",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "PCB01-CONNECTIVITY",
+      "PCB01-PARTS",
+      "PCB01-CONNECTORS",
+      "PCB01-BOARD",
+      "PCB01-RULES",
+      "PCB01-PLACEMENT",
+      "PCB01-CHECKS",
+      "PCB01-CORRESPONDENCE",
+      "PCB01-DELIVERABLES",
+      "PCB01-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "kicad",
+      "version": "1",
+      "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded KiCad and fabrication reader v1",
+      "formats": [
+        "kicad_pcb",
+        "csv",
+        "json",
+        "zip"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "PCB01-CONNECTIVITY",
+      "requirement_text": "The native schematic and PCB implement every supplied netlist connection exactly: R1 10 kΩ 3V3-to-SENSE, R2 1 kΩ SENSE-to-ADC_OUT, C1 100 nF ADC_OUT-to-GND and C2 100 nF 3V3-to-GND on one shared GND.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/netlist.csv",
+          "sha256": "cbf2b471a66c15e69430ff218e1f24a3ffb490b3f47aa1aaf474ce8aefcf54cb",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Business and circuit"
+        }
+      ],
+      "check_id": "native-netlist",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/netlist",
+      "expected": {
+        "operator": "equals",
+        "expected": 13,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        13
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#netlist"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-CONNECTORS",
+      "requirement_text": "J1 center is (7,15) mm with component-side top-to-bottom order 3V3/ADC_OUT/GND; J2 center is (33,15) mm with SENSE/GND, and pin 1 plus 3V3/NTC labels are clear.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Placement"
+        }
+      ],
+      "check_id": "native-netlist",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/netlist",
+      "expected": {
+        "operator": "equals",
+        "expected": 13,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        13
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#netlist"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-PARTS",
+      "requirement_text": "J1/J2 use the declared vertical THT header footprints and pin counts, R1/R2/C1/C2 use declared 0603 values/ratings, and exact purchasable connector records remain required before release.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/component-library.csv",
+          "sha256": "6701991ca327b617af4b29882f5274596f67c5681856373ad1f34738db1dcc19",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "native-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/components",
+      "expected": {
+        "operator": "equals",
+        "expected": 6,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        6
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#components"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-PARTS",
+      "requirement_text": "J1/J2 use the declared vertical THT header footprints and pin counts, R1/R2/C1/C2 use declared 0603 values/ratings, and exact purchasable connector records remain required before release.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/component-library.csv",
+          "sha256": "6701991ca327b617af4b29882f5274596f67c5681856373ad1f34738db1dcc19",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "bom-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/bom",
+      "expected": {
+        "operator": "equals",
+        "expected": 6,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        6
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf#bom"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-CORRESPONDENCE",
+      "requirement_text": "Gerber copper/outline, drill and BOM exports correspond exactly to the same native schematic/board revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "bom-components",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/bom",
+      "expected": {
+        "operator": "equals",
+        "expected": 6,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        6
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf#bom"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-CONNECTORS",
+      "requirement_text": "J1 center is (7,15) mm with component-side top-to-bottom order 3V3/ADC_OUT/GND; J2 center is (33,15) mm with SENSE/GND, and pin 1 plus 3V3/NTC labels are clear.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Placement"
+        }
+      ],
+      "check_id": "required-placement",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/placement",
+      "expected": {
+        "operator": "equals",
+        "expected": 2,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        2
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#placement"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-BOARD",
+      "requirement_text": "The PCB is a 40 by 30 mm, 1.6 mm two-layer board with 35 µm copper and four Ø2.5 mm NPTH holes at (3,3),(37,3),(3,27),(37,27).",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "board-outline-holes",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/board_geometry",
+      "expected": {
+        "operator": "equals",
+        "expected": 1,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": "board_coordinates",
+      "observed": [
+        1
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        "board_coordinates"
+      ],
+      "evidence_refs": [
+        "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#board_geometry"
+      ],
+      "subject_id": "board",
+      "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "board"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-CHECKS",
+      "requirement_text": "Native ERC and DRC complete with zero unreviewed errors and preserve any reviewed warning disposition.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+          "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+          "locator": "rule-check request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "erc-errors",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/report",
+      "expected": {
+        "operator": "equals",
+        "expected": 0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:erc@dfc60762ba923024d7d68997ae68ce1da35a18886f3800832e0dd6159982fbb2#report"
+      ],
+      "subject_id": "erc",
+      "subject_sha256": "dfc60762ba923024d7d68997ae68ce1da35a18886f3800832e0dd6159982fbb2",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "erc"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-CHECKS",
+      "requirement_text": "Native ERC and DRC complete with zero unreviewed errors and preserve any reviewed warning disposition.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+          "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+          "locator": "rule-check request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "drc-errors",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/report",
+      "expected": {
+        "operator": "equals",
+        "expected": 0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:drc@eeeb0ed26aa72bb64d2cfbdca0efde10052c63a352762e3fb4e9d6e33747cd95#report"
+      ],
+      "subject_id": "drc",
+      "subject_sha256": "eeeb0ed26aa72bb64d2cfbdca0efde10052c63a352762e3fb4e9d6e33747cd95",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "drc"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-DELIVERABLES",
+      "requirement_text": "The output set contains editable .kicad_sch/.kicad_pcb, bom.csv, complete Gerber copper/outline layers, .drl, ERC and DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+          "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "fabrication-members",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/fabrication_bundle",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:fabrication@1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850#fabrication_bundle"
+      ],
+      "subject_id": "fabrication",
+      "subject_sha256": "1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fabrication"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-CORRESPONDENCE",
+      "requirement_text": "Gerber copper/outline, drill and BOM exports correspond exactly to the same native schematic/board revision.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "fabrication-members",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "kicad",
+      "evidence_method": "independent_measurement",
+      "selector": "pcb/fabrication_bundle",
+      "expected": {
+        "operator": "equals",
+        "expected": 5,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        5
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:fabrication@1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850#fabrication_bundle"
+      ],
+      "subject_id": "fabrication",
+      "subject_sha256": "1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "fabrication"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-DELIVERABLES",
+      "requirement_text": "The output set contains editable .kicad_sch/.kicad_pcb, bom.csv, complete Gerber copper/outline layers, .drl, ERC and DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+          "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "deliverable-schematic",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 19120,
+          "present": true,
+          "sha256": "c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:schematic@c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469#"
+      ],
+      "subject_id": "schematic",
+      "subject_sha256": "c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "schematic"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-DELIVERABLES",
+      "requirement_text": "The output set contains editable .kicad_sch/.kicad_pcb, bom.csv, complete Gerber copper/outline layers, .drl, ERC and DRC reports.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+          "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Deliverables"
+        }
+      ],
+      "check_id": "deliverable-basis",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 15876,
+          "present": true,
+          "sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:basis@98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e#"
+      ],
+      "subject_id": "basis",
+      "subject_sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "PCB01-RULES",
+      "requirement_text": "Copper remains 1.0 mm from mounting-hole edges; minimum track/clearance is 0.25/0.25 mm, minimum via drill 0.30 mm, all components are front-side and references remain readable.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Board and shop requirements"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-a78a1edc08f5405c9450a34768d987cf"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PCB01-PLACEMENT",
+      "requirement_text": "C1 is placed near the J1 analog-signal pin without changing approved connectivity or connector geometry.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Placement"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-a78a1edc08f5405c9450a34768d987cf"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "PCB01-ACTION-SCOPE",
+      "requirement_text": "The result is a low-voltage prototype design and does not claim electrical qualification, supplier capability, production release or authorization to order boards.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+          "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+          "locator": "Board and shop requirements; Deliverables"
+        }
+      ],
+      "check_id": "engineering-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e",
+      "producer": {
+        "run_id": "retained-successor-sensor-interface-pcb-01",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-a78a1edc08f5405c9450a34768d987cf"
+      ],
+      "action": "request_review"
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-bef694be749740339c80446a6404dfaa",
+    "attempt_id": "09929bc7641449c1ab3d7d1973cc7896",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "sensor-interface-pcb-01",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "board",
+          "role": "board",
+          "result_id": "retained-successor:sensor-interface-pcb-01:board",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "board"
+          },
+          "kind": "file",
+          "sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+          "value": null,
+          "locator": "design.kicad_pcb",
+          "format": "kicad_pcb",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "schematic",
+          "role": "schematic",
+          "result_id": "retained-successor:sensor-interface-pcb-01:schematic",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "schematic"
+          },
+          "kind": "file",
+          "sha256": "c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469",
+          "value": null,
+          "locator": "design.kicad_sch",
+          "format": "kicad_sch",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "bom",
+          "role": "bom",
+          "result_id": "retained-successor:sensor-interface-pcb-01:bom",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "bom"
+          },
+          "kind": "file",
+          "sha256": "48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf",
+          "value": null,
+          "locator": "design_bom.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "fabrication",
+          "role": "fabrication",
+          "result_id": "retained-successor:sensor-interface-pcb-01:fabrication",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "fabrication"
+          },
+          "kind": "file",
+          "sha256": "1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850",
+          "value": null,
+          "locator": "design-gerbers.zip",
+          "format": "zip",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "erc",
+          "role": "erc",
+          "result_id": "retained-successor:sensor-interface-pcb-01:erc",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "erc"
+          },
+          "kind": "file",
+          "sha256": "dfc60762ba923024d7d68997ae68ce1da35a18886f3800832e0dd6159982fbb2",
+          "value": null,
+          "locator": "erc.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "drc",
+          "role": "drc",
+          "result_id": "retained-successor:sensor-interface-pcb-01:drc",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "drc"
+          },
+          "kind": "file",
+          "sha256": "eeeb0ed26aa72bb64d2cfbdca0efde10052c63a352762e3fb4e9d6e33747cd95",
+          "value": null,
+          "locator": "drc.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "basis",
+          "role": "basis",
+          "result_id": "retained-successor:sensor-interface-pcb-01:basis",
+          "producer": {
+            "run_id": "retained-successor-sensor-interface-pcb-01",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "basis"
+          },
+          "kind": "file",
+          "sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e",
+          "value": null,
+          "locator": "electrical-basis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "sensor-interface-pcb-01-full",
+        "version": "1",
+        "sha256": "7feca0634fbfa9b1e80f7b9f3b100d656c4ae06d67c97e565ee1d0a4c1a6f192"
+      },
+      "baseline_ref": {
+        "id": "sensor-interface-pcb-01-basis",
+        "version": "1",
+        "sha256": "31b433c19c4ce8d394a7e43bf40ee0dcd893f26a5e72e7a9df7b61a4372fd8f8"
+      },
+      "idempotency_key": "sensor-interface-pcb-01",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "sensor-interface-pcb-01-full",
+      "version": "1",
+      "baseline": {
+        "id": "sensor-interface-pcb-01-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "PCB01-CONNECTIVITY",
+            "text": "The native schematic and PCB implement every supplied netlist connection exactly: R1 10 kΩ 3V3-to-SENSE, R2 1 kΩ SENSE-to-ADC_OUT, C1 100 nF ADC_OUT-to-GND and C2 100 nF 3V3-to-GND on one shared GND.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/netlist.csv",
+                "sha256": "cbf2b471a66c15e69430ff218e1f24a3ffb490b3f47aa1aaf474ce8aefcf54cb",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Business and circuit"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-PARTS",
+            "text": "J1/J2 use the declared vertical THT header footprints and pin counts, R1/R2/C1/C2 use declared 0603 values/ratings, and exact purchasable connector records remain required before release.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/component-library.csv",
+                "sha256": "6701991ca327b617af4b29882f5274596f67c5681856373ad1f34738db1dcc19",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Board and shop requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-CONNECTORS",
+            "text": "J1 center is (7,15) mm with component-side top-to-bottom order 3V3/ADC_OUT/GND; J2 center is (33,15) mm with SENSE/GND, and pin 1 plus 3V3/NTC labels are clear.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Placement"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-BOARD",
+            "text": "The PCB is a 40 by 30 mm, 1.6 mm two-layer board with 35 µm copper and four Ø2.5 mm NPTH holes at (3,3),(37,3),(3,27),(37,27).",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Board and shop requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-RULES",
+            "text": "Copper remains 1.0 mm from mounting-hole edges; minimum track/clearance is 0.25/0.25 mm, minimum via drill 0.30 mm, all components are front-side and references remain readable.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Board and shop requirements"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PCB01-PLACEMENT",
+            "text": "C1 is placed near the J1 analog-signal pin without changing approved connectivity or connector geometry.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Placement"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "PCB01-CHECKS",
+            "text": "Native ERC and DRC complete with zero unreviewed errors and preserve any reviewed warning disposition.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+                "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+                "locator": "rule-check request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-CORRESPONDENCE",
+            "text": "Gerber copper/outline, drill and BOM exports correspond exactly to the same native schematic/board revision.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-DELIVERABLES",
+            "text": "The output set contains editable .kicad_sch/.kicad_pcb, bom.csv, complete Gerber copper/outline layers, .drl, ERC and DRC reports.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/prompt.txt",
+                "sha256": "77ef1e714147b1120c6a6793b424b128695609b0c47fe18dec8b1e2f88c107ae",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "PCB01-ACTION-SCOPE",
+            "text": "The result is a low-voltage prototype design and does not claim electrical qualification, supplier capability, production release or authorization to order boards.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+                "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+                "locator": "Board and shop requirements; Deliverables"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "native-netlist",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-CONNECTIVITY",
+            "PCB01-CONNECTORS"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/netlist",
+          "constraint": {
+            "operator": "equals",
+            "expected": 13,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_connections": [
+              {
+                "net": "3V3",
+                "pin": "1",
+                "reference": "J1"
+              },
+              {
+                "net": "ADC_OUT",
+                "pin": "2",
+                "reference": "J1"
+              },
+              {
+                "net": "GND",
+                "pin": "3",
+                "reference": "J1"
+              },
+              {
+                "net": "SENSE",
+                "pin": "1",
+                "reference": "J2"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "J2"
+              },
+              {
+                "net": "3V3",
+                "pin": "1",
+                "reference": "R1"
+              },
+              {
+                "net": "SENSE",
+                "pin": "2",
+                "reference": "R1"
+              },
+              {
+                "net": "SENSE",
+                "pin": "1",
+                "reference": "R2"
+              },
+              {
+                "net": "ADC_OUT",
+                "pin": "2",
+                "reference": "R2"
+              },
+              {
+                "net": "ADC_OUT",
+                "pin": "1",
+                "reference": "C1"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C1"
+              },
+              {
+                "net": "3V3",
+                "pin": "1",
+                "reference": "C2"
+              },
+              {
+                "net": "GND",
+                "pin": "2",
+                "reference": "C2"
+              }
+            ],
+            "operation": "netlist"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "native-components",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-PARTS"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/components",
+          "constraint": {
+            "operator": "equals",
+            "expected": 6,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_components": {
+              "C1": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "C2": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "J1": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "controller_header"
+              },
+              "J2": {
+                "footprint_contains": "PinHeader_1x02_P2.54mm_Vertical",
+                "value": "thermistor_header"
+              },
+              "R1": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "10k_1_percent"
+              },
+              "R2": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              }
+            },
+            "operation": "components"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "bom-components",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-PARTS",
+            "PCB01-CORRESPONDENCE"
+          ],
+          "subject_role": "bom",
+          "reader": "kicad",
+          "selector": "pcb/bom",
+          "constraint": {
+            "operator": "equals",
+            "expected": 6,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_components": {
+              "C1": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "C2": {
+                "footprint_contains": "C_0603_1608Metric",
+                "value": "100nF"
+              },
+              "J1": {
+                "footprint_contains": "PinHeader_1x03_P2.54mm_Vertical",
+                "value": "controller_header"
+              },
+              "J2": {
+                "footprint_contains": "PinHeader_1x02_P2.54mm_Vertical",
+                "value": "thermistor_header"
+              },
+              "R1": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "10k_1_percent"
+              },
+              "R2": {
+                "footprint_contains": "R_0603_1608Metric",
+                "value": "1k_1_percent"
+              }
+            },
+            "operation": "bom"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "required-placement",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-CONNECTORS"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/placement",
+          "constraint": {
+            "operator": "equals",
+            "expected": 2,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": "board_coordinates",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_placements": {
+              "J1": {
+                "point": "pad_centroid",
+                "xy_mm": [
+                  7,
+                  15
+                ]
+              },
+              "J2": {
+                "point": "pad_centroid",
+                "xy_mm": [
+                  33,
+                  15
+                ]
+              }
+            },
+            "operation": "placement",
+            "tolerance_mm": 0.02
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "board-outline-holes",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-BOARD"
+          ],
+          "subject_role": "board",
+          "reader": "kicad",
+          "selector": "pcb/board_geometry",
+          "constraint": {
+            "operator": "equals",
+            "expected": 1,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": "board_coordinates",
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "holes": {
+              "H1": [
+                3,
+                3
+              ],
+              "H2": [
+                37,
+                3
+              ],
+              "H3": [
+                3,
+                27
+              ],
+              "H4": [
+                37,
+                27
+              ]
+            },
+            "operation": "board_geometry",
+            "size_mm": [
+              40,
+              30
+            ],
+            "tolerance_mm": 0.02
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "erc-errors",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-CHECKS"
+          ],
+          "subject_role": "erc",
+          "reader": "kicad",
+          "selector": "pcb/report",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "report"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "drc-errors",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-CHECKS"
+          ],
+          "subject_role": "drc",
+          "reader": "kicad",
+          "selector": "pcb/report",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "report"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "fabrication-members",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-DELIVERABLES",
+            "PCB01-CORRESPONDENCE"
+          ],
+          "subject_role": "fabrication",
+          "reader": "kicad",
+          "selector": "pcb/fabrication_bundle",
+          "constraint": {
+            "operator": "equals",
+            "expected": 5,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "fabrication_bundle",
+            "required_members": [
+              "design-F_Cu.gtl",
+              "design-B_Cu.gbl",
+              "design-Edge_Cuts.gm1",
+              "design.drl",
+              "design-job.gbrjob"
+            ]
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-schematic",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-DELIVERABLES"
+          ],
+          "subject_role": "schematic",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-basis",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-DELIVERABLES"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "engineering-review",
+          "version": "1",
+          "requirement_ids": [
+            "PCB01-RULES",
+            "PCB01-PLACEMENT",
+            "PCB01-ACTION-SCOPE"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Warning disposition, production-source compatibility, full native-to-fabrication correspondence, physical performance and release authorization require authenticated engineering review."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:26.061859+00:00",
+    "measurements": [
+      {
+        "id": "m-aca7579398fe216b0c0f9dba0c34139405ed0ffb7dda862bdb98bd71c8dede31",
+        "subject_id": "board",
+        "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+        "selector": "pcb/netlist",
+        "value": 13,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#netlist"
+        ]
+      },
+      {
+        "id": "m-bcbb906fbce949309b697b3e1ac6e050114bd16d52a59c1f5a8a59c67ceb6342",
+        "subject_id": "board",
+        "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+        "selector": "pcb/components",
+        "value": 6,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#components"
+        ]
+      },
+      {
+        "id": "m-f85d8d3557bab0b647a11305e9e2dba22da046087a8805993699a2c7b19ea501",
+        "subject_id": "bom",
+        "subject_sha256": "48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf",
+        "selector": "pcb/bom",
+        "value": 6,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:bom@48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf#bom"
+        ]
+      },
+      {
+        "id": "m-c4c294ee3d4249297bac8c9493a7d7aa36317bd2e62c8132ddf39fc683c35b44",
+        "subject_id": "board",
+        "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+        "selector": "pcb/placement",
+        "value": 2,
+        "unit": "1",
+        "frame": "board_coordinates",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#placement"
+        ]
+      },
+      {
+        "id": "m-ce5c80fda66ef4a6696c9e46301aa5119a630b5fbec46797b4c5377ff2b0ea7a",
+        "subject_id": "board",
+        "subject_sha256": "a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72",
+        "selector": "pcb/board_geometry",
+        "value": 1,
+        "unit": "1",
+        "frame": "board_coordinates",
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#board_geometry"
+        ]
+      },
+      {
+        "id": "m-134990e5dc12bbdbf708469c0898e0a4606b1c9f4cf1b5cff84af4ef37044d50",
+        "subject_id": "erc",
+        "subject_sha256": "dfc60762ba923024d7d68997ae68ce1da35a18886f3800832e0dd6159982fbb2",
+        "selector": "pcb/report",
+        "value": 0,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:erc@dfc60762ba923024d7d68997ae68ce1da35a18886f3800832e0dd6159982fbb2#report"
+        ]
+      },
+      {
+        "id": "m-5fd04d310ec8fcd42b765be742c4d0c47a36484e5ee4cca13a8bda870528fcea",
+        "subject_id": "drc",
+        "subject_sha256": "eeeb0ed26aa72bb64d2cfbdca0efde10052c63a352762e3fb4e9d6e33747cd95",
+        "selector": "pcb/report",
+        "value": 0,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:drc@eeeb0ed26aa72bb64d2cfbdca0efde10052c63a352762e3fb4e9d6e33747cd95#report"
+        ]
+      },
+      {
+        "id": "m-acfc35872dfee023ad410052dae321e26ff857e270e0eea5fcdb5fc20a5e53db",
+        "subject_id": "fabrication",
+        "subject_sha256": "1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850",
+        "selector": "pcb/fabrication_bundle",
+        "value": 5,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "kicad",
+          "version": "1",
+          "config_digest": "26b9c6f720bc9482537ab20875c9cb9829c40731fa4a0acf539c96d7132c36b4",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded KiCad and fabrication reader v1",
+          "formats": [
+            "kicad_pcb",
+            "csv",
+            "json",
+            "zip"
+          ]
+        },
+        "evidence_refs": [
+          "subject:fabrication@1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850#fabrication_bundle"
+        ]
+      },
+      {
+        "id": "m-d405e77cd10c24fdf775efcf48246cb17da6e5c6397d4952cf5a69643f3cc0bd",
+        "subject_id": "schematic",
+        "subject_sha256": "c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469",
+        "selector": "",
+        "value": {
+          "bytes": 19120,
+          "present": true,
+          "sha256": "c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:schematic@c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469#"
+        ]
+      },
+      {
+        "id": "m-ed9a7c2d228e5810b15e06d08aa9cbf7c517879c8feb3757e2889160573eb88c",
+        "subject_id": "basis",
+        "subject_sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e",
+        "selector": "",
+        "value": {
+          "bytes": 15876,
+          "present": true,
+          "sha256": "98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:basis@98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "native-netlist",
+        "requirement_ids": [
+          "PCB01-CONNECTIVITY",
+          "PCB01-CONNECTORS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-aca7579398fe216b0c0f9dba0c34139405ed0ffb7dda862bdb98bd71c8dede31"
+        ],
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#netlist"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "native-components",
+        "requirement_ids": [
+          "PCB01-PARTS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-bcbb906fbce949309b697b3e1ac6e050114bd16d52a59c1f5a8a59c67ceb6342"
+        ],
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#components"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "bom-components",
+        "requirement_ids": [
+          "PCB01-PARTS",
+          "PCB01-CORRESPONDENCE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f85d8d3557bab0b647a11305e9e2dba22da046087a8805993699a2c7b19ea501"
+        ],
+        "evidence_refs": [
+          "subject:bom@48e04b5b88d4f1b1011b1d48a7320874a8136a1b8e3b4ab684f9ae33d11901bf#bom"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "required-placement",
+        "requirement_ids": [
+          "PCB01-CONNECTORS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-c4c294ee3d4249297bac8c9493a7d7aa36317bd2e62c8132ddf39fc683c35b44"
+        ],
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#placement"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "board-outline-holes",
+        "requirement_ids": [
+          "PCB01-BOARD"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-ce5c80fda66ef4a6696c9e46301aa5119a630b5fbec46797b4c5377ff2b0ea7a"
+        ],
+        "evidence_refs": [
+          "subject:board@a2e3d159bbaa31fdf4c0a4cc1af1b6a4f80215d00aa1b8910aa4515d1d378f72#board_geometry"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "erc-errors",
+        "requirement_ids": [
+          "PCB01-CHECKS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-134990e5dc12bbdbf708469c0898e0a4606b1c9f4cf1b5cff84af4ef37044d50"
+        ],
+        "evidence_refs": [
+          "subject:erc@dfc60762ba923024d7d68997ae68ce1da35a18886f3800832e0dd6159982fbb2#report"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "drc-errors",
+        "requirement_ids": [
+          "PCB01-CHECKS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-5fd04d310ec8fcd42b765be742c4d0c47a36484e5ee4cca13a8bda870528fcea"
+        ],
+        "evidence_refs": [
+          "subject:drc@eeeb0ed26aa72bb64d2cfbdca0efde10052c63a352762e3fb4e9d6e33747cd95#report"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "fabrication-members",
+        "requirement_ids": [
+          "PCB01-DELIVERABLES",
+          "PCB01-CORRESPONDENCE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-acfc35872dfee023ad410052dae321e26ff857e270e0eea5fcdb5fc20a5e53db"
+        ],
+        "evidence_refs": [
+          "subject:fabrication@1620d7ba03433692ccb61067ef45ade24cde0991679a540b5f6d85a852b2f850#fabrication_bundle"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-schematic",
+        "requirement_ids": [
+          "PCB01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d405e77cd10c24fdf775efcf48246cb17da6e5c6397d4952cf5a69643f3cc0bd"
+        ],
+        "evidence_refs": [
+          "subject:schematic@c9ce66dc0dff3c0d99ce5d168bbb879c14693d568dfc1d6efc7abbf704a7f469#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-basis",
+        "requirement_ids": [
+          "PCB01-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-ed9a7c2d228e5810b15e06d08aa9cbf7c517879c8feb3757e2889160573eb88c"
+        ],
+        "evidence_refs": [
+          "subject:basis@98a92916973b0c7d9bbfec4672c64c38e1d5431eea0def93b2643eb1c1630a4e#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PCB01-RULES",
+          "PCB01-PLACEMENT",
+          "PCB01-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-a78a1edc08f5405c9450a34768d987cf"
+        ],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-a78a1edc08f5405c9450a34768d987cf",
+        "code": "review.required",
+        "check_id": "engineering-review",
+        "requirement_ids": [
+          "PCB01-RULES",
+          "PCB01-PLACEMENT",
+          "PCB01-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "basis",
+        "owner": {
+          "run_id": "retained-successor-sensor-interface-pcb-01",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "basis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+            "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+            "locator": "Board and shop requirements"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+            "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+            "locator": "Placement"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/context.md",
+            "sha256": "ae42f4384a49e3d06ae885bc5a2ce7eb5d006f5dc4f139cb0bbf240e9d3925c3",
+            "locator": "Board and shop requirements; Deliverables"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "native-netlist",
+            "native-components",
+            "bom-components",
+            "required-placement",
+            "board-outline-holes",
+            "erc-errors",
+            "drc-errors",
+            "fabrication-members",
+            "deliverable-schematic",
+            "deliverable-basis",
+            "engineering-review"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": null,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 1,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 10
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

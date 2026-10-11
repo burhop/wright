@@ -1,0 +1,10 @@
+{
+  "phase": "audit_preflight",
+  "status": "failed",
+  "product_defect": false,
+  "assumption": "Compared actual_gate_count_per_run to 18, confusing one source validation gate with its eighteen original checks",
+  "correction": "Assert one actual gate per run and retain the independently verified complete 18-check profile",
+  "engineering_calls": 0,
+  "review_responses": 0,
+  "audit_output_created": false
+}

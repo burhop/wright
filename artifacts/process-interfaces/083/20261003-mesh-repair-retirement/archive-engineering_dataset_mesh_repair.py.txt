@@ -1,0 +1,510 @@
+"""Fixed Blender mesh-repair operation for the printed-part campaign.
+
+The model creates the source geometry.  This operation performs the repeatable
+manufacturing cleanup, measurement, bed placement, STL export, and preview in
+the lifecycle-owned Blender process.  Paths come only from a staged,
+same-attempt configuration validated by the MCP wrapper.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+from pathlib import Path
+import struct
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _clip_x(points, boundary, keep_above):
+    """Clip a triangle polygon; extrema include edge/plane intersections."""
+    result = []
+    for a, b in zip(points, points[1:] + points[:1]):
+        inside_a = a[0] >= boundary if keep_above else a[0] <= boundary
+        inside_b = b[0] >= boundary if keep_above else b[0] <= boundary
+        if inside_a:
+            result.append(a)
+        if inside_a != inside_b:
+            fraction = (boundary - a[0]) / (b[0] - a[0])
+            result.append(tuple(a[i] + fraction * (b[i] - a[i]) for i in range(3)))
+    return result
+
+
+def measure_handle_features(path: Path) -> dict:
+    """Read actual STL bytes in the supplied mounting frame, independently of CAD claims.
+
+    Circle sections are measurements for human review, not new acceptance
+    tolerances. The clearance minimum is exact for the linear triangle surface.
+    """
+    data = path.read_bytes()
+    if len(data) < 84:
+        raise ValueError("Handle measurement needs a binary STL")
+    count = struct.unpack_from("<I", data, 80)[0]
+    if not 0 < count <= 80000 or len(data) != 84 + 50 * count:
+        raise ValueError("Handle measurement requires a bounded binary STL")
+    triangles = []
+    for offset in range(84, len(data), 50):
+        values = struct.unpack_from("<12fH", data, offset)
+        points = [tuple(values[i:i + 3]) for i in (3, 6, 9)]
+        if not all(math.isfinite(v) for p in points for v in p):
+            raise ValueError("Handle mesh contains nonfinite coordinates")
+        a, b, c = points
+        u = [b[i] - a[i] for i in range(3)]
+        v = [c[i] - a[i] for i in range(3)]
+        cross = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
+        if all(value == 0 for value in cross):
+            raise ValueError("Final handle STL contains a zero-area triangle")
+        triangles.append(points)
+    bounds = [[min(p[i] for t in triangles for p in t) for i in range(3)],
+              [max(p[i] for t in triangles for p in t) for i in range(3)]]
+    minimum = None
+    for triangle in triangles:
+        polygon = _clip_x(_clip_x(triangle, 15.5, True), 80.5, False)
+        for point in polygon:
+            if minimum is None or point[2] < minimum[2]:
+                minimum = point
+    if minimum is None:
+        raise ValueError("Handle has no surface in the required central span")
+
+    sections = []
+    # Three planes through the straight part of each 5 mm mounting pad.
+    # Segment distances also expose the inscribed (faceted) bore clearance.
+    for z in (1.5, 2.5, 3.5):
+        holes = []
+        for nominal_x in (0.0, 96.0):
+            segments = []
+            for triangle in triangles:
+                hits = []
+                for a, b in zip(triangle, triangle[1:] + triangle[:1]):
+                    if (a[2] <= z < b[2]) or (b[2] <= z < a[2]):
+                        fraction = (z - a[2]) / (b[2] - a[2])
+                        hits.append(tuple(a[i] + fraction * (b[i] - a[i]) for i in (0, 1)))
+                if len(hits) == 2 and all(math.hypot(p[0] - nominal_x, p[1]) < 4.0 for p in hits):
+                    segments.append(hits)
+            if not segments:
+                raise ValueError(f"No bore section found at X={nominal_x}, Z={z}")
+            points = [p for segment in segments for p in segment]
+            # The midpoint of opposite extrema does not assume that voxelized
+            # holes remain circular. Report anisotropy and radius range explicitly.
+            low = [min(p[i] for p in points) for i in (0, 1)]
+            high = [max(p[i] for p in points) for i in (0, 1)]
+            center = [(a + b) / 2 for a, b in zip(low, high)]
+            distances = []
+            for a, b in segments:
+                dx, dy = b[0] - a[0], b[1] - a[1]
+                length2 = dx * dx + dy * dy
+                fraction = 0 if length2 == 0 else max(0, min(1, ((center[0] - a[0]) * dx + (center[1] - a[1]) * dy) / length2))
+                distances.append(math.hypot(a[0] + fraction * dx - center[0], a[1] + fraction * dy - center[1]))
+            holes.append({'center_xy_mm': center, 'diameter_xy_mm': [high[i] - low[i] for i in (0, 1)],
+                          'minimum_centered_clearance_diameter_mm': 2 * min(distances),
+                          'maximum_centered_diameter_mm': 2 * max(math.dist(p, center) for p in points),
+                          'section_segments': len(segments)})
+        sections.append({'z_mm': z, 'holes': holes,
+                         'center_spacing_mm': math.dist(holes[0]['center_xy_mm'], holes[1]['center_xy_mm'])})
+
+    orientations = []
+    for name, axis, sign in (('pads_down', 2, 1), ('side', 1, -1)):
+        bed = min(sign * p[axis] for t in triangles for p in t)
+        contact_area = overhang_area = 0.0
+        for triangle in triangles:
+            a, b, c = triangle
+            u = [b[i] - a[i] for i in range(3)]
+            v = [c[i] - a[i] for i in range(3)]
+            cross = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
+            length = math.sqrt(sum(value * value for value in cross))
+            if length == 0:
+                continue
+            at_bed = all(abs(sign * p[axis] - bed) <= 1e-6 for p in triangle)
+            if at_bed:
+                contact_area += length / 2
+            elif sign * cross[axis] / length < -math.sqrt(0.5):
+                overhang_area += length / 2
+        orientations.append({'orientation': name, 'build_height_mm': bounds[1][axis] - bounds[0][axis],
+                             'flat_bed_contact_area_mm2': contact_area,
+                             'downward_surface_area_beyond_45_degrees_mm2': overhang_area})
+    return {'source_sha256': hashlib.sha256(data).hexdigest(), 'triangles': count,
+            'method': 'Actual binary-STL triangles: exact X-slab clipping, bore plane sections, and oriented surface areas.',
+            'bounds_mm': bounds, 'central_span_x_mm': [15.5, 80.5],
+            'minimum_clearance_mm': minimum[2], 'minimum_at_mm': minimum,
+            'required_clearance_mm': 25.0, 'clearance_pass': minimum[2] >= 25.0,
+            'bore_sections': sections, 'orientation_comparison': orientations,
+            'orientation_selection': 'pads_down',
+            'orientation_reason': 'Pads-down keeps both mounting faces on the bed and bolt bores vertical; supports may contact the rear/underside of the raised bow. Side orientation makes the bores horizontal and places the grip flank/edges at support or bed contact. Inspect the actual selected slice support preview before acceptance.',
+            'limitations': 'The 45-degree surface-area measure is a geometric comparison indicator, not a slicer support prediction or acceptance threshold. Bore sections do not replace full engineering review. No physical fit, strength or printing claim.'}
+
+
+def blender_code(configuration: dict) -> str:
+    source = str(Path(configuration["source"]).resolve())
+    repaired = str(Path(configuration["repaired"]).resolve())
+    preview = str(Path(configuration["preview"]).resolve())
+    triangle_limit = int(configuration.get("triangle_limit", 80_000))
+    merge_tolerance = float(configuration.get("merge_tolerance_mm", 0.001))
+    degenerate_tolerance = float(
+        configuration.get("degenerate_tolerance_mm", 0.000001)
+    )
+    force_voxel_remesh = configuration.get("force_voxel_remesh", False) is True
+    planar_cleanup = configuration.get("planar_cleanup", False) is True
+    ensure_printable_base = configuration.get("ensure_printable_base", False) is True
+    allow_polygon_reduction = configuration.get("allow_polygon_reduction", False) is True
+    envelope_margin = float(configuration.get("envelope_margin_mm", 0.0))
+    if not 0.0 <= envelope_margin <= 0.005:
+        raise ValueError("Envelope margin must be between 0 and 0.005 mm")
+    object_name = str(configuration["object_name"])
+    return f'''import bpy, bmesh, json, math, mathutils
+
+source = {source!r}
+repaired = {repaired!r}
+preview = {preview!r}
+triangle_limit = {triangle_limit!r}
+merge_tolerance = {merge_tolerance!r}
+degenerate_tolerance = {degenerate_tolerance!r}
+force_voxel_remesh = {force_voxel_remesh!r}
+planar_cleanup = {planar_cleanup!r}
+ensure_printable_base = {ensure_printable_base!r}
+allow_polygon_reduction = {allow_polygon_reduction!r}
+envelope_margin = {envelope_margin!r}
+object_name = {object_name!r}
+
+before_objects = set(bpy.context.scene.objects)
+result = bpy.ops.wm.stl_import(filepath=source, global_scale=1.0)
+if result != {{'FINISHED'}}:
+    raise RuntimeError('STL import failed: ' + str(result))
+owned = [item for item in bpy.context.scene.objects if item not in before_objects and item.type == 'MESH']
+if len(owned) == 0:
+    raise RuntimeError('STL import created no mesh object')
+bpy.ops.object.select_all(action='DESELECT')
+for item in owned:
+    item.select_set(True)
+bpy.context.view_layer.objects.active = owned[0]
+if len(owned) > 1:
+    bpy.ops.object.join()
+obj = bpy.context.view_layer.objects.active
+obj.name = object_name
+bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+
+def metrics(item):
+    bm = bmesh.new()
+    bm.from_mesh(item.data)
+    bm.normal_update()
+    vertices = len(bm.verts)
+    edges = len(bm.edges)
+    faces = len(bm.faces)
+    triangles = sum(max(0, len(face.verts) - 2) for face in bm.faces)
+    boundary = sum(1 for edge in bm.edges if edge.is_boundary)
+    nonmanifold = sum(1 for edge in bm.edges if not edge.is_manifold)
+    degenerate = sum(1 for face in bm.faces if face.calc_area() <= 0.0000000001)
+    remaining = set(bm.verts)
+    components = 0
+    while len(remaining) > 0:
+        components += 1
+        seed = remaining.pop()
+        stack = [seed]
+        while len(stack) > 0:
+            vertex = stack.pop()
+            for edge in vertex.link_edges:
+                neighbor = edge.other_vert(vertex)
+                if neighbor in remaining:
+                    remaining.remove(neighbor)
+                    stack.append(neighbor)
+    volume = float(bm.calc_volume(signed=True))
+    bm.free()
+    return {{'vertices':vertices,'edges':edges,'faces':faces,'triangles':triangles,'boundary_edges':boundary,'nonmanifold_edges':nonmanifold,'degenerate_faces':degenerate,'connected_components':components,'signed_volume_mm3':round(volume,6)}}
+
+def dimensions(item):
+    bpy.context.view_layer.update()
+    return [round(float(value),6) for value in item.dimensions]
+
+before_dimensions = dimensions(obj)
+before_metrics = metrics(obj)
+bm = bmesh.new()
+bm.from_mesh(obj.data)
+bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=merge_tolerance)
+bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=degenerate_tolerance)
+planar_faces_before = len(bm.faces)
+if planar_cleanup:
+    # Remove redundant coplanar triangulation without moving dimensioned vertices.
+    # A byte-distinct repair must not require lossy voxelization of a valid solid.
+    bmesh.ops.dissolve_limit(bm, angle_limit=0.000001, verts=list(bm.verts), edges=list(bm.edges), use_dissolve_boundaries=False)
+planar_faces_after = len(bm.faces)
+bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+bm.normal_update()
+if bm.calc_volume(signed=True) < 0:
+    bmesh.ops.reverse_faces(bm, faces=list(bm.faces))
+    bm.normal_update()
+bm.to_mesh(obj.data)
+bm.free()
+obj.data.update()
+
+clean_metrics = metrics(obj)
+voxel_remesh_used = False
+voxel_size_mm = None
+voxel_iterations = 0
+discarded_components = 0
+
+def keep_largest_component(item):
+    bm = bmesh.new()
+    bm.from_mesh(item.data)
+    remaining = set(bm.verts)
+    components = []
+    while len(remaining) > 0:
+        seed = remaining.pop()
+        component = {{seed}}
+        stack = [seed]
+        while len(stack) > 0:
+            vertex = stack.pop()
+            for edge in vertex.link_edges:
+                neighbor = edge.other_vert(vertex)
+                if neighbor in remaining:
+                    remaining.remove(neighbor)
+                    component.add(neighbor)
+                    stack.append(neighbor)
+        components.append(component)
+    removed = max(0, len(components) - 1)
+    if removed > 0:
+        largest = max(components, key=len)
+        discard = [vertex for component in components if component is not largest for vertex in component]
+        bmesh.ops.delete(bm, geom=discard, context='VERTS')
+        bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+        bm.normal_update()
+        if bm.calc_volume(signed=True) < 0:
+            bmesh.ops.reverse_faces(bm, faces=list(bm.faces))
+            bm.normal_update()
+        bm.to_mesh(item.data)
+        item.data.update()
+    bm.free()
+    return removed
+
+if force_voxel_remesh or clean_metrics['boundary_edges'] != 0 or clean_metrics['nonmanifold_edges'] != 0 or clean_metrics['connected_components'] != 1:
+    voxel_size_mm = max(0.08, min(0.30, min(before_dimensions) / 100.0))
+    while True:
+        obj.data.remesh_voxel_size = voxel_size_mm
+        obj.data.remesh_voxel_adaptivity = 0.0
+        obj.data.use_remesh_preserve_volume = True
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
+        bpy.ops.object.voxel_remesh()
+        voxel_iterations += 1
+        discarded_components += keep_largest_component(obj)
+        clean_metrics = metrics(obj)
+        topology_ok = clean_metrics['boundary_edges'] == 0 and clean_metrics['nonmanifold_edges'] == 0 and clean_metrics['connected_components'] == 1
+        if topology_ok and clean_metrics['triangles'] <= triangle_limit:
+            break
+        if voxel_iterations >= 6:
+            raise RuntimeError('Bounded voxel repair did not converge: ' + json.dumps(clean_metrics))
+        triangle_factor = math.sqrt(max(1.0, clean_metrics['triangles'] / max(1.0, triangle_limit - 500.0)))
+        voxel_size_mm *= max(1.15, min(2.0, triangle_factor * 1.05))
+    remeshed_dimensions = dimensions(obj)
+    for axis in range(3):
+        target_dimension = before_dimensions[axis] - envelope_margin
+        if remeshed_dimensions[axis] <= 0 or target_dimension <= 0:
+            raise RuntimeError('Voxel remesh produced a zero dimension')
+        obj.scale[axis] *= target_dimension / remeshed_dimensions[axis]
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    obj.data.update()
+    clean_metrics = metrics(obj)
+    voxel_remesh_used = True
+decimation_used = False
+triangles_before_decimation = clean_metrics['triangles']
+polygon_reduction_ratio = None
+dimension_change_mm = None
+volume_change_percent = None
+decimation_cleanup_tolerance_mm = None
+if allow_polygon_reduction and clean_metrics['triangles'] > triangle_limit:
+    initial_dimensions = dimensions(obj)
+    initial_volume = clean_metrics['signed_volume_mm3']
+    for attempt in range(3):
+        current = metrics(obj)
+        if current['triangles'] <= triangle_limit:
+            break
+        target = max(1000, triangle_limit - 1000)
+        modifier = obj.modifiers.new('wright_bounded_polygon_reduction', 'DECIMATE')
+        modifier.decimate_type = 'COLLAPSE'
+        modifier.ratio = min(0.98, target / current['triangles'] * (0.9 ** attempt))
+        modifier.use_collapse_triangulate = True
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
+        bpy.ops.object.modifier_apply(modifier=modifier.name)
+        obj.data.update()
+        decimation_used = True
+    reduced = metrics(obj)
+    if reduced['degenerate_faces']:
+        # Collapse can leave collinear zero-area triangles even when its output
+        # remains watertight. Clean only within a sub-micron geometry budget,
+        # then apply the same topology, dimension, and volume checks below.
+        for tolerance in (degenerate_tolerance, 0.00001, 0.0001):
+            bm = bmesh.new()
+            bm.from_mesh(obj.data)
+            bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=tolerance)
+            bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=tolerance)
+            bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+            bm.to_mesh(obj.data)
+            bm.free()
+            obj.data.update()
+            decimation_cleanup_tolerance_mm = tolerance
+            reduced = metrics(obj)
+            if not reduced['degenerate_faces']:
+                break
+    reduced_dimensions = dimensions(obj)
+    polygon_reduction_ratio = round(reduced['triangles'] / triangles_before_decimation, 6)
+    dimension_change_mm = [round(abs(a-b), 6) for a,b in zip(initial_dimensions, reduced_dimensions)]
+    volume_change_percent = round(100 * abs(reduced['signed_volume_mm3'] - initial_volume) / initial_volume, 6)
+    if reduced['triangles'] > triangle_limit or reduced['boundary_edges'] or reduced['nonmanifold_edges'] or reduced['degenerate_faces'] or reduced['connected_components'] != 1 or reduced['signed_volume_mm3'] <= 0:
+        raise RuntimeError('Bounded polygon reduction did not retain one closed solid: ' + json.dumps(reduced))
+    if any(delta > max(0.15, size * 0.005) for delta,size in zip(dimension_change_mm, initial_dimensions)) or volume_change_percent > 1.0:
+        raise RuntimeError('Polygon reduction changed the model beyond the demo geometry budget: ' + json.dumps({{'dimension_change_mm':dimension_change_mm,'volume_change_percent':volume_change_percent}}))
+
+# Inspect the triangles that will actually be exported. Planar n-gons can
+# tessellate into collinear triangles even when the polygon itself has area.
+if planar_cleanup:
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method='BEAUTY', ngon_method='EAR_CLIP')
+    bmesh.ops.dissolve_degenerate(bm, dist=degenerate_tolerance, edges=list(bm.edges))
+    bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method='BEAUTY', ngon_method='EAR_CLIP')
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    bm.to_mesh(obj.data)
+    bm.free()
+    obj.data.update()
+
+post_metrics = metrics(obj)
+if post_metrics['boundary_edges'] != 0 or post_metrics['nonmanifold_edges'] != 0:
+    raise RuntimeError('Repair did not retain closed manifold topology: ' + json.dumps(post_metrics))
+if post_metrics['degenerate_faces'] != 0 or post_metrics['connected_components'] != 1:
+    raise RuntimeError('Repair did not produce one nondegenerate component: ' + json.dumps(post_metrics))
+if post_metrics['signed_volume_mm3'] <= 0 or post_metrics['triangles'] > triangle_limit:
+    raise RuntimeError('Repair did not satisfy normals or triangle limit: ' + json.dumps(post_metrics))
+
+# A rounded decorative shape can be manifold yet touch the plate at one point.
+# This optional, demo-only manufacturing step creates a measured planar foot.
+base_trim_mm = 0.0
+base_contact_mm2 = 0.0
+if ensure_printable_base:
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    low = min(vertex.co.z for vertex in bm.verts)
+    high = max(vertex.co.z for vertex in bm.verts)
+    xy_span = (max(vertex.co.x for vertex in bm.verts) - min(vertex.co.x for vertex in bm.verts)) * (max(vertex.co.y for vertex in bm.verts) - min(vertex.co.y for vertex in bm.verts))
+    required_contact = max(25.0, xy_span * 0.05)
+    def bed_contact(mesh, level):
+        return sum(face.calc_area() for face in mesh.faces if all(abs(vertex.co.z - level) <= 0.02 for vertex in face.verts))
+    base_contact_mm2 = bed_contact(bm, low)
+    if base_contact_mm2 < required_contact:
+        height = high - low
+        for fraction in (0.04, 0.08, 0.12):
+            plane = low + height * fraction
+            bmesh.ops.bisect_plane(bm, geom=list(bm.verts) + list(bm.edges) + list(bm.faces), dist=0.000001, plane_co=(0, 0, plane), plane_no=(0, 0, 1), clear_inner=True, clear_outer=False)
+            boundary = [edge for edge in bm.edges if edge.is_boundary and all(abs(vertex.co.z - plane) <= 0.02 for vertex in edge.verts)]
+            if not boundary:
+                raise RuntimeError('Could not create a flat print base from the rounded underside')
+            bmesh.ops.holes_fill(bm, edges=boundary, sides=0)
+            bmesh.ops.dissolve_limit(bm, angle_limit=0.000001, verts=list(bm.verts), edges=list(bm.edges), use_dissolve_boundaries=False)
+            bmesh.ops.triangulate(bm, faces=list(bm.faces), quad_method='BEAUTY', ngon_method='EAR_CLIP')
+            bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=degenerate_tolerance)
+            bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+            base_trim_mm = plane - low
+            base_contact_mm2 = bed_contact(bm, plane)
+            if base_contact_mm2 >= required_contact:
+                break
+        if base_contact_mm2 < required_contact:
+            raise RuntimeError('The part has too little flat bed contact after bounded base correction')
+        bm.to_mesh(obj.data)
+        obj.data.update()
+    bm.free()
+    corrected_metrics = metrics(obj)
+    if corrected_metrics['boundary_edges'] or corrected_metrics['nonmanifold_edges'] or corrected_metrics['degenerate_faces'] or corrected_metrics['connected_components'] != 1 or corrected_metrics['signed_volume_mm3'] <= 0 or corrected_metrics['triangles'] > triangle_limit:
+        raise RuntimeError('Flat-base correction did not retain a single closed printable solid: ' + json.dumps(corrected_metrics))
+
+# Preserve the model-authored axes and translate its lowest point onto the bed.
+world_coordinates = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
+minimum_z = min(point.z for point in world_coordinates)
+obj.location.z -= minimum_z
+bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+bpy.context.view_layer.update()
+final_dimensions = dimensions(obj)
+final_metrics = metrics(obj)
+if not all(value <= 256.000001 for value in final_dimensions):
+    raise RuntimeError('Part does not fit the P1S 256 mm build cube: ' + str(final_dimensions))
+if final_metrics['boundary_edges'] != 0 or final_metrics['nonmanifold_edges'] != 0 or final_metrics['connected_components'] != 1:
+    raise RuntimeError('Bed placement changed retained topology: ' + json.dumps(final_metrics))
+
+bpy.ops.object.select_all(action='DESELECT')
+obj.select_set(True)
+bpy.context.view_layer.objects.active = obj
+export_result = bpy.ops.wm.stl_export(filepath=repaired, export_selected_objects=True, ascii_format=False, apply_modifiers=True, global_scale=1.0)
+if export_result != {{'FINISHED'}}:
+    raise RuntimeError('Repaired STL export failed: ' + str(export_result))
+
+scene = bpy.context.scene
+# Show only this repaired object among mesh objects in the diagnostic render;
+# restore visibility afterwards so the authored design remains intact.
+previous_visibility = [(item, item.hide_render) for item in scene.objects if item.type == 'MESH']
+for item, was_hidden in previous_visibility:
+    item.hide_render = item != obj
+scene.unit_settings.system = 'METRIC'
+scene.unit_settings.length_unit = 'MILLIMETERS'
+scene.unit_settings.scale_length = 0.001
+scene.render.engine = 'BLENDER_WORKBENCH'
+scene.render.resolution_x = 900
+scene.render.resolution_y = 700
+scene.render.resolution_percentage = 100
+scene.render.image_settings.file_format = 'PNG'
+scene.render.filepath = preview
+scene.render.film_transparent = False
+scene.display.shading.light = 'STUDIO'
+scene.display.shading.color_type = 'MATERIAL'
+scene.display.shading.show_shadows = True
+scene.display.shading.show_cavity = True
+material = bpy.data.materials.new(object_name + '_preview_material')
+material.diffuse_color = (0.12,0.32,0.55,1.0)
+obj.data.materials.clear()
+obj.data.materials.append(material)
+points = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
+center = mathutils.Vector(((min(point.x for point in points)+max(point.x for point in points))/2.0,(min(point.y for point in points)+max(point.y for point in points))/2.0,(min(point.z for point in points)+max(point.z for point in points))/2.0))
+span = max(final_dimensions)
+camera_data = bpy.data.cameras.new(object_name + '_camera_data')
+camera = bpy.data.objects.new(object_name + '_camera', camera_data)
+scene.collection.objects.link(camera)
+camera.location = center + mathutils.Vector((1.45*span,-1.65*span,1.25*span))
+camera.rotation_euler = (center-camera.location).to_track_quat('-Z','Y').to_euler()
+camera.data.type = 'ORTHO'
+camera.data.ortho_scale = span*1.55
+scene.camera = camera
+render_result = bpy.ops.render.render(write_still=True)
+for item, was_hidden in previous_visibility:
+    item.hide_render = was_hidden
+if render_result != {{'FINISHED'}}:
+    raise RuntimeError('Preview render failed: ' + str(render_result))
+
+report = {{'operation':'fixed_native_blender_mesh_repair','source_preserved':source,'artifacts':[repaired,preview],'before':{{'dimensions_mm':before_dimensions,'mesh':before_metrics}},'after':{{'dimensions_mm':final_dimensions,'mesh':final_metrics}},'repair':{{'merge_tolerance_mm':merge_tolerance,'degenerate_tolerance_mm':degenerate_tolerance,'force_voxel_remesh':force_voxel_remesh,'envelope_margin_mm':envelope_margin,'voxel_remesh_used':voxel_remesh_used,'voxel_size_mm':voxel_size_mm,'voxel_iterations':voxel_iterations,'discarded_components':discarded_components,'decimation_used':decimation_used,'triangle_limit':triangle_limit}},'orientation':{{'action':'preserved_model_axes_and_translated_minimum_z_to_build_plate','supports':'assigned by the pinned slicer operation'}},'checks':{{'closed_manifold':True,'outward_normals':final_metrics['signed_volume_mm3']>0,'single_component':True,'within_triangle_limit':True,'fits_p1s_256mm_cube':True}},'content_validated':False}}
+report['repair']['planar_cleanup'] = {{'enabled':planar_cleanup,'faces_before':planar_faces_before,'faces_after':planar_faces_after,'angle_limit_radians':0.000001}}
+report['repair']['printable_base'] = {{'enabled':ensure_printable_base,'trimmed_mm':round(base_trim_mm,3),'contact_area_mm2':round(base_contact_mm2,3)}}
+report['repair']['polygon_reduction'] = {{'enabled':allow_polygon_reduction,'used':decimation_used,'triangles_before':triangles_before_decimation,'triangles_after':post_metrics['triangles'],'ratio':polygon_reduction_ratio,'dimension_change_mm':dimension_change_mm,'volume_change_percent':volume_change_percent,'degenerate_cleanup_tolerance_mm':decimation_cleanup_tolerance_mm}}
+print(json.dumps(report,separators=(',',':')))
+'''
+
+
+def run(configuration_path: Path, *, blender_connection, validate_code) -> dict:
+    configuration = json.loads(configuration_path.read_text(encoding="utf-8"))
+    code = blender_code(configuration)
+    validate_code(code)
+    result = blender_connection.send_command("execute_code", {"code": code})
+    raw = str(result.get("result", "")).strip()
+    if not raw:
+        raise RuntimeError("Blender repair returned no operation report")
+    report = json.loads(raw.splitlines()[-1])
+    output_files = [Path(configuration["repaired"]), Path(configuration["preview"])]
+    for path in output_files:
+        if not path.is_file() or path.stat().st_size <= 0:
+            raise RuntimeError(f"Blender repair did not create a nonempty output: {path}")
+    report["produced_files"] = [
+        {"path": str(path), "size_bytes": path.stat().st_size, "sha256": _sha256(path)}
+        for path in output_files
+    ]
+    if configuration.get("measure_handle_features", False) is True:
+        report["final_feature_measurements"] = measure_handle_features(Path(configuration["repaired"]))
+        if not report["final_feature_measurements"]["clearance_pass"]:
+            raise ValueError("Final handle fails the unchanged 25 mm clearance: " + json.dumps(report["final_feature_measurements"]))
+    return report

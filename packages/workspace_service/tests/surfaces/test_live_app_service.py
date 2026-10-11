@@ -279,6 +279,34 @@ async def test_failed_start_projects_safe_retryable_diagnostic(tmp_path: Path) -
     }
 
 
+@pytest.mark.parametrize(
+    "code", ["SURFACE_LIMIT_OWNED_APPS", "SURFACE_MANIFEST_NOT_FOUND"]
+)
+async def test_start_refused_before_runtime_settles_durable_intent(
+    tmp_path: Path, code: str
+) -> None:
+    control, surfaces, manager = _service(tmp_path)
+    manager.start_error = LiveAppManagerError(
+        code, "private host details", retryable=False
+    )
+    with pytest.raises(LiveAppControlError) as error:
+        await control.start(
+            actor=_actor(),
+            surface_id=SurfaceId("surface-app"),
+            idempotency_key="refused-start-0001",
+        )
+    assert error.value.code == code
+    current = await surfaces.get(actor=_actor(), surface_id=SurfaceId("surface-app"))
+    assert current.lifecycle is SurfaceLifecycle.FAILED
+    assert current.instance is None
+    assert current.diagnostic_summary == {
+        "code": code,
+        "message": "Managed application startup was refused before launch.",
+        "retryable": False,
+    }
+    assert manager.compensations == []
+
+
 async def test_ready_runtime_is_compensated_when_descriptor_commit_fails(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

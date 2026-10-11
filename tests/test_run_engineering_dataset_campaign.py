@@ -191,6 +191,49 @@ def test_retry_episode_recomputes_bounded_fix_evidence(tmp_path, case):
         runner_module.RetryEpisodeLedger(ledger_path).authorize(configured)
 
 
+def test_human_extension_preserves_exhausted_episode_and_allows_only_one_more(tmp_path, case):
+    ledger = runner_module.RetryEpisodeLedger(tmp_path / "episodes.json")
+    fix = tmp_path / "fix.txt"
+    fix.write_text("measured material correction")
+    proof = {"id": "measured-fix", "path": fix.name,
+             "sha256": hashlib.sha256(fix.read_bytes()).hexdigest()}
+
+    def attempt(number):
+        return {**case, "attempt_id": f"attempt-{number}", "retry_episode": {
+            "episode_id": "review", "failure_key": "rounding", "boundary": "review",
+            "max_corrections": 2, "baseline_attempt_ids": ["baseline"],
+            "correction": {"id": f"fix-{number}", "evidence": [proof]}}}
+
+    for number in (1, 2):
+        ledger.authorize(attempt(number))
+        ledger.record_outcome(attempt(number), "changes_requested")
+    before = ledger._load()["episodes"]["review"]
+    with pytest.raises(ValueError, match="correction limit"):
+        ledger.authorize(attempt(3))
+    decision = tmp_path / "decision.json"
+    document = {
+        "actor": "local_workspace_user", "state": "changes_requested",
+        "automatic_approval": False, "user_instruction": "approved",
+        "retry_budget_authorization": {"episode_id": "review", "from_max_corrections": 2,
+            "to_max_corrections": 3, "additional_corrections": 1, "preserve_history": True}}
+    decision.write_text(json.dumps(document))
+    evidence = {"path": decision.name, "sha256": hashlib.sha256(decision.read_bytes()).hexdigest()}
+    ledger.record_human_budget_extension("review", evidence)
+    with pytest.raises(ValueError, match="already recorded"):
+        ledger.record_human_budget_extension("review", evidence)
+    restarted = runner_module.RetryEpisodeLedger(ledger.path)
+    restarted.authorize(attempt(3))
+    after = restarted._load()["episodes"]["review"]
+    assert after["attempts"][:2] == before["attempts"]
+    assert after["baseline_attempt_ids"] == before["baseline_attempt_ids"]
+    assert after["max_corrections"] == 2
+    with pytest.raises(ValueError, match="correction limit"):
+        restarted.authorize(attempt(4))
+    decision.write_text("changed decision")
+    with pytest.raises(ValueError, match="extension evidence"):
+        restarted.authorize(attempt(3))
+
+
 def test_disk_probe_error_blocks_only_new_start(case,tmp_path,make_runner,monkeypatch):
     def unavailable(path):
         raise OSError("volume unavailable")
@@ -329,6 +372,96 @@ def test_external_api_and_duplicate_process_lock_are_rejected(tmp_path):
                 pass
 
 
+def test_transport_preserves_bounded_structured_http_error(monkeypatch):
+    class ResponseError(__import__("urllib.error").error.HTTPError):
+        def read(self, _limit=-1):
+            return json.dumps(
+                {
+                    "detail": {
+                        "code": "workflow_not_ready",
+                        "message": "A required input is unavailable.",
+                        "correction": "Bind the missing input.",
+                        "ignored": {"internal": True},
+                    }
+                }
+            ).encode()
+
+    def reject(*_args, **_kwargs):
+        raise ResponseError("http://127.0.0.1:8000/test", 422, "bad", {}, None)
+
+    monkeypatch.setattr(runner_module.urllib.request, "urlopen", reject)
+    result = runner_module.HttpTransport("http://127.0.0.1:8000").request("/test")
+    assert result == {
+        "ok": False,
+        "http_status": 422,
+        "error_type": "HTTPError",
+        "error_detail": {
+            "code": "workflow_not_ready",
+            "message": "A required input is unavailable.",
+            "correction": "Bind the missing input.",
+        },
+    }
+
+
+def test_transport_preserves_safe_request_validation_errors(monkeypatch):
+    class ResponseError(__import__("urllib.error").error.HTTPError):
+        def read(self, _limit=-1):
+            return json.dumps(
+                {
+                    "detail": [
+                        {
+                            "loc": ["body", "path"],
+                            "msg": "Field required",
+                            "type": "missing",
+                            "input": "not retained",
+                        }
+                    ]
+                }
+            ).encode()
+
+    monkeypatch.setattr(
+        runner_module.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            ResponseError("http://127.0.0.1:8000/test", 422, "bad", {}, None)
+        ),
+    )
+    result = runner_module.HttpTransport("http://127.0.0.1:8000").request("/test")
+    assert result["error_detail"] == {
+        "validation_errors": [
+            {"loc": ["body", "path"], "msg": "Field required", "type": "missing"}
+        ]
+    }
+
+
+def test_transport_preserves_normalized_api_error(monkeypatch):
+    class ResponseError(__import__("urllib.error").error.HTTPError):
+        def read(self, _limit=-1):
+            return json.dumps(
+                {
+                    "error_code": "workflow_not_ready",
+                    "message": "The pinned validation profile changed.",
+                    "trace_id": "trace-1",
+                    "details": {"correction": "Restart the owned profile registry."},
+                }
+            ).encode()
+
+    monkeypatch.setattr(
+        runner_module.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            ResponseError("http://127.0.0.1:8000/test", 422, "bad", {}, None)
+        ),
+    )
+    result = runner_module.HttpTransport("http://127.0.0.1:8000").request("/test")
+    assert result["error_detail"] == {
+        "error_code": "workflow_not_ready",
+        "message": "The pinned validation profile changed.",
+        "trace_id": "trace-1",
+        "correction": "Restart the owned profile registry.",
+    }
+
+
 def test_transient_windows_reader_blocks_only_publication_retry(tmp_path,monkeypatch):
     path=tmp_path/"state.json"
     original=Path.replace
@@ -379,6 +512,90 @@ def test_manual_preference_or_manual_enrollment_never_auto_approves(case,tmp_pat
     assert runner.run([case])[0]["phase"] == "awaiting_manual_approval"
     state=json.loads((tmp_path/"state"/case["scenario_id"]/(case["attempt_id"]+".json")).read_text())
     assert state["operations"] == {}
+
+
+def test_validation_review_never_uses_automatic_integration_actor(case,tmp_path,make_runner):
+    preference=tmp_path/"status.json"
+    runner_module.atomic_json(preference,{"approval_mode":"auto"})
+    _,record=persisted(case)
+    checkpoint={
+        **record["approval"],
+        "subject":{
+            "settings":{
+                "validation_review":{
+                    "profile_ref":{"id":"profile","version":"1","sha256":"f"*64},
+                    "requirement_ids":["REQ-1"],
+                }
+            }
+        },
+    }
+    class ReadOnlyTransport:
+        def request(self,path,body=None,**kwargs):
+            assert body is None
+            return {"ok":True,"data":checkpoint}
+    runner=make_runner(ReadOnlyTransport(),campaign_status=preference,case_timeout=.04)
+    assert runner.run([case])[0]["phase"] == "awaiting_manual_approval"
+    state=json.loads((tmp_path/"state"/case["scenario_id"]/(case["attempt_id"]+".json")).read_text())
+    assert state["operations"] == {}
+    assert state["campaign_approval_mode"] == "auto"
+    assert state["enrolled_approval_mode"] == "auto"
+    assert state["manual_approval_reason"] == "validation_review_requires_human"
+    events=(tmp_path/"state/events.ndjson").read_text()
+    assert '"reason_code": "validation_review_requires_human"' in events
+
+
+def test_human_approved_validation_review_is_resumed_only_by_runner(case,tmp_path,make_runner):
+    persisted(case)
+    checkpoint={
+        "checkpoint_id":"checkpoint-1",
+        "subject_digest":"e"*64,
+        "run_id":"run-1",
+        "state":"approved",
+        "actor":"local_workspace_user",
+        "subject":{
+            "settings":{
+                "validation_review":{
+                    "profile_ref":{"id":"profile","version":"1","sha256":"f"*64},
+                    "requirement_ids":["REQ-1"],
+                }
+            }
+        },
+    }
+    state_path=tmp_path/"state"/case["scenario_id"]/(case["attempt_id"]+".json")
+    runner_module.atomic_json(state_path,{
+        "schema_version":1,
+        "case_digest":runner_module.fingerprint(case),
+        "phase":"awaiting_manual_approval",
+        "operations":{"start":{"state":"response_received"}},
+        "pending_checkpoint_id":"checkpoint-1",
+        "manual_approval_reason":"validation_review_requires_human",
+    })
+    class HumanApprovedTransport:
+        def __init__(self):
+            self.posts=[]
+        def request(self,path,body=None,**kwargs):
+            if body is None:
+                assert "/approvals/checkpoint-1" in path
+                return {"ok":True,"data":checkpoint}
+            state=json.loads(state_path.read_text())
+            assert state["operations"][state["active_operation"]]["state"] == "intent_persisted"
+            assert path.endswith("/resume")
+            self.posts.append((path,body))
+            persisted(case,status="completed",checkpoint_state="consumed")
+            return {"ok":True,"data":{}}
+    transport=HumanApprovedTransport()
+
+    result=make_runner(transport).run([case])
+
+    assert result[0]["phase"] == "completed"
+    assert len(transport.posts) == 1
+    path,body=transport.posts[0]
+    assert path.endswith("/resume") and not path.endswith("/run")
+    assert body["checkpoint_id"] == "checkpoint-1"
+    assert body["subject_digest"] == "e"*64
+    final_state=json.loads(state_path.read_text())
+    assert set(final_state["operations"]) == {"start","resume:checkpoint-1"}
+    assert final_state["operations"]["resume:checkpoint-1"]["state"] == "response_received"
 
 
 def test_pause_sentinel_is_checked_between_cases_without_interrupting_current(case,tmp_path,make_runner):

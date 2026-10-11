@@ -1,0 +1,570 @@
+{
+  "job_id": "job-5f7dca9233024b5c8b5080f0ef7fdff3",
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa",
+    "capability_scope": []
+  },
+  "generation_requested_in_this_browser": false,
+  "ui_id": "ui-eff1d6941f434c3691c79716da3a82fd",
+  "revision_id": "revision-c27524b10e1b435f86cff705f8224a15",
+  "build": {
+    "build_id": "build-e67e79f06df64e1b9c8f77465e3eaad1",
+    "source_digest": "b5320247e51cb673fd4b3058ca0e3043d7abe5c7deba7b9e4b4c73af2812b9bf",
+    "manifest_digest": "e324600861160aa1fe1fe8c1fece1f53c76eded213c32e943ab8c8acc3c08543",
+    "toolchain_digest": "7594b9f1bac00ea56ae436fe2f169ab903801954981388af4baec505f91765dc",
+    "bundle_digest": "79a40e568581b5c7d53bd48cab521eae18fdc8e41b1bcb5360025fb2f276cd14",
+    "state": "built",
+    "created_at": "2026-10-01T23:19:07.886138+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 345925
+  },
+  "previewed_at": "2026-10-01T23:19:13.565702+00:00",
+  "workspace_chrome_controlled": true,
+  "accepted_source": {
+    "session_id": "session-recovery",
+    "path": "workflows/mounting-bracket.workflow.wflow",
+    "expected_storage_digest": "5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f"
+  },
+  "native_process_authoring": true,
+  "actual_configured_model": true,
+  "actual_compiler": true,
+  "actual_managed_worker": true,
+  "actual_browser_bootstrap_and_bridge": true,
+  "saved_interface_reused_without_generation": true,
+  "process_execution": false,
+  "focused_update_job_id": "job-b4eba82ef64845578235f73b4e6c160e",
+  "updated_revision_id": "revision-be39192b3db048fd981cc10f39f0db2c",
+  "updated_build": {
+    "build_id": "build-47f81d5623034ba0b45ca099539aa16c",
+    "source_digest": "adced63bf14603c6932c0791794c00c2697e65988a8d859bd8f56cd90aaac21c",
+    "manifest_digest": "0e1219499317f5aec8821cd5d1f77ef7d2cf41704c887fe652e512e973047177",
+    "toolchain_digest": "7594b9f1bac00ea56ae436fe2f169ab903801954981388af4baec505f91765dc",
+    "bundle_digest": "9f58e94c3d440daa1493c48ed78a7d31e25d71c37798ea3c066b78109a3db42f",
+    "state": "built",
+    "created_at": "2026-10-01T23:39:27.731627+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 346436
+  },
+  "rollback_revision_id": "revision-c27524b10e1b435f86cff705f8224a15",
+  "frame_reload_without_generation": true,
+  "theme_observed_in_frame_before_and_after_reload": true,
+  "live_mcp": false,
+  "engineering_verification": false,
+  "physical_effect": false,
+  "user_acceptance": false,
+  "requests": [
+    {
+      "path": "/api/workspace/process-interfaces/interaction",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-5f7dca9233024b5c8b5080f0ef7fdff3",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-5f7dca9233024b5c8b5080f0ef7fdff3",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-capabilities",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-5f7dca9233024b5c8b5080f0ef7fdff3/preview",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/__wright/bootstrap",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/__wright/bootstrap",
+      "status": 204
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/style.css",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/wright-runtime.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/__wright/process/context",
+      "status": 200
+    },
+    {
+      "path": "/app.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/__wright/process/interaction",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-abbc7438-3482-4970-9ad9-08c6d0c136a1.localhost%3A8000/__wright/process/loaded",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/revisions",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/activate",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/revisions",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-5f7dca9233024b5c8b5080f0ef7fdff3",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-capabilities",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/revisions",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/compatibility",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/compatibility",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/present",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/__wright/bootstrap",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/__wright/bootstrap",
+      "status": 204
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/style.css",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/wright-runtime.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/__wright/process/context",
+      "status": 200
+    },
+    {
+      "path": "/app.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/__wright/process/interaction",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/presentations/start-receipt",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/style.css",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/wright-runtime.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/__wright/process/context",
+      "status": 200
+    },
+    {
+      "path": "/app.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-dc0096b4-0a50-4e3d-a519-a2e10cecc5e3.localhost%3A8000/__wright/process/interaction",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/presentations/start-receipt",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs",
+      "status": 202
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e/preview",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/__wright/bootstrap",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/__wright/bootstrap",
+      "status": 204
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/style.css",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/wright-runtime.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/__wright/process/context",
+      "status": 200
+    },
+    {
+      "path": "/app.js",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/__wright/process/interaction",
+      "status": 200
+    },
+    {
+      "path": "/__wright-surface/s-ec00ca3f-5b59-4763-87de-2b6d5abdd3c5.localhost%3A8000/__wright/process/loaded",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/revisions/revision-be39192b3db048fd981cc10f39f0db2c/save",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-b4eba82ef64845578235f73b4e6c160e",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/revisions",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/authoring-capabilities",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/revisions",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/process-interfaces/uis/ui-eff1d6941f434c3691c79716da3a82fd/activate",
+      "status": 200
+    }
+  ],
+  "errors": []
+}

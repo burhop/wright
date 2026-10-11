@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "node",
+    "D:/repos/wright/node_modules/vitest/vitest.mjs",
+    "run",
+    "src/components/common/ProcessUIKit.spec.tsx",
+    "src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "src/services/process-client.spec.ts",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile=D:/repos/wright/.local-run/process-interfaces-083/t056-readiness-frontend-002.json"
+  ],
+  "cwd": "D:/repos/wright/apps/web",
+  "source_sha256": {
+    "apps/web/src/components/common/ProcessUIKit.spec.tsx": "1c30cf49ff180ac9ff7eabd128b94ec9b06cf7c7d6460cbaa4bc4933e381a212",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx": "3061333061b89cc9a737705fc2c87175279392363eb4a6228609db8780367583",
+    "apps/web/src/services/process-client.spec.ts": "6897c9367acb8cb2ff1c3053f0f424275d8ae538ee6dd7289093eeb692b293b3",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx": "df6d648572918f3dd607b1771d38286e099e7b86a45d223d34e1d91c87580aa9",
+    "packages/ui_kit/src/patterns.tsx": "805adb0858a2194e0fc1ce0267646954b43282afad0f4451c5a472fe8f73c2b9"
+  },
+  "scope": "Component/client tests with controlled interaction responses, not served-browser acceptance."
+}

@@ -13,7 +13,7 @@ from workspace_service.workflow_integration_policy import LOCAL_REVIEW_BINDING, 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT/"packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/raspberry-pi-enclosure.workflow.wflow"
 BINDING = ROOT/"tests/datasets/engineering-workflows/bindings/raspberry-pi-enclosure-fixed.json"
-spec = importlib.util.spec_from_file_location("pi_fixed_draft_helpers", ROOT/"scripts/prepare-printed-dataset-campaign.py")
+spec = importlib.util.spec_from_file_location("pi_fixed_draft_helpers", ROOT/"scripts/engineering_campaign_binding_helpers.py")
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)
 
@@ -107,10 +107,10 @@ def prepare(args, directory, available):
     helpers.add_reference(sections, cad, preparation, "actual_cad_contracts")
     helpers.add_reference(sections, references["compiler_source"], preparation, "fixed_compiler_source")
     foam_case = "/workspace/campaign/"+identity+"/"+args.attempt+"/pi-cfd"
-    solved = bind(stages["cfd_compare"], f"Call only actual Foam-Agent run with request={{'case_dir':{foam_case!r},'timeout':540}}. It runs the fixed parent Allrun for both actual CAD-derived alternatives, using actual OpenFOAM CHT and tabulated fan pressure where selected. No model-dependent Foam tools are authorized. Treat nonempty errors or missing computed fields as failure, even if upstream reports success. A completed matching child may return its recorded result; an unresolved mutation must not be replayed. Report actual logs and explicit transient/convergence limitations; do not fabricate comparison values.", "cfd-run-report.json", "foam-agent-csml-rpi")
+    solved = bind(stages["cfd_compare"], f"Call only actual Foam-Agent run with request={{'case_dir':{foam_case!r},'timeout':540}}. It runs the fixed parent Allrun for both actual CAD-derived alternatives, using actual OpenFOAM CHT and tabulated fan pressure where selected. No model-dependent Foam tools are authorized. Treat nonempty errors or missing computed fields as failure, even if upstream reports success. A completed matching child may return its recorded result; an unresolved mutation must not be replayed. Report actual logs and measured convergence/heat-balance failures; do not fabricate comparison values.", "cfd-run-report.json", "foam-agent-csml-rpi")
     helpers.add_reference(sections, prepared, stages["cfd_compare"], "actual_mesh_preparation")
     collection = new("collect_cfd_results", "Collect actual same-run fields and two-variant comparison")
-    bind(collection, f"After actual Foam-Agent run, call collect_pi_cfd_comparison once with operation_source_document={inputs+'/pi_cfd_operations.py'!r}, output_directory={output!r}. It requires completed matching solver records and actual nonempty computed fields; no input copies or design-target values may substitute. Summarize the real region temperatures, pressure/flow observations and unresolved physical/convergence assumptions against the original requirements. Preserve both variants and explain that content validity remains unmeasured.", "cfd-handoff.md", "wright-campaign-pi-cfd", ("cfd-comparison.json", "cfd-fields.zip"))
+    bind(collection, f"After actual Foam-Agent run, call collect_pi_cfd_comparison once with operation_source_document={inputs+'/pi_cfd_operations.py'!r}, output_directory={output!r}. It requires completed matching solver records, actual nonempty computed fields, measured convergence windows and per-face external energy evidence; no input copies or design-target values may substitute. Summarize the real temperatures, pressure/flow, convergence and heat-balance results against the original requirements. Preserve failures and both variants; the following validator independently recomputes content validity.", "cfd-handoff.md", "wright-campaign-pi-cfd", ("cfd-comparison.json", "cfd-fields.zip"))
     helpers.add_reference(sections, solved, collection, "actual_solver_run")
     chain = [stages["source_dimensions"], stages["design_basis"], review, author, stages["agentcad_enclosure"], preparation, stages["cfd_compare"], collection]
     existing = {(edge["fields"]["from"], edge["fields"]["to"]) for edge in edges}

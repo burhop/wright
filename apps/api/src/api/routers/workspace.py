@@ -7,7 +7,6 @@ All handlers are decorated with @traced for OTel span creation.
 """
 
 import asyncio
-import anyio
 import hashlib
 import json
 import time
@@ -27,12 +26,11 @@ from fastapi import (
     File,
 )
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
-from typing import Optional
+from typing import Literal, Optional
 
 from agent_adapters import BaseAgentEngine
 from agent_adapters.report_generation import (
     generate_workflow_response,
-    response_instructions,
     decide_workflow_tool_action,
 )
 from agent_adapters.hermes_gateway import hermes_config_paths
@@ -113,9 +111,11 @@ from api.schemas.workspace import (
     WorkflowResponse,
     WorkflowDocumentResponse,
     WorkflowSourceCreateRequest,
+    WorkflowSourceCopyRequest,
     WorkflowSourceRunRequest,
     WorkflowSourceRunResponse,
     WorkflowArtifactReviewDecisionRequest,
+    ProcessValidationReviewRequest,
     WorkflowSourceUpdateRequest,
     WorkflowSourceResponse,
     EngineeringWorkflowTemplateListResponse,
@@ -195,7 +195,6 @@ from workspace_service.workflow_sources import (
 )
 from workspace_service.workflow_source_execution import (
     WorkflowSourceExecutionError,
-    execute_prompt_workflow,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
@@ -643,6 +642,43 @@ def _workflow_source_scope(
     except OSError as error:
         raise _workflow_source_unavailable(error) from error
     return _WorkflowSourceScope(workspace_id, workspace_dir)
+
+
+def _require_process_validation_role(request: Request) -> None:
+    settings = request.app.state.security_settings
+    if not settings.enforced:
+        return
+    if getattr(request.state, "principal_role", None) not in {"engineer", "admin"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Engineer or administrator role required",
+        )
+
+
+def _process_validation_application(session_id: str, service: WorkspaceService):
+    from workspace_service.process_validation.application import ValidationApplication
+
+    scope = _workflow_source_scope(session_id, service)
+    return ValidationApplication(DATABASE_PATH, scope.workspace_id, scope.workspace_dir)
+
+
+def _process_validation_error(error: Exception) -> HTTPException:
+    from data_vault.process_validation_repository import ValidationConflict
+
+    if isinstance(error, KeyError):
+        return HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "validation_assessment_unavailable",
+                "message": "Validation assessment was not found in this workspace",
+            },
+        )
+    return HTTPException(
+        status_code=status.HTTP_409_CONFLICT
+        if isinstance(error, ValidationConflict)
+        else status.HTTP_422_UNPROCESSABLE_ENTITY,
+        detail={"code": "validation_operation_rejected", "message": str(error)},
+    )
 
 
 def _scenario_entry_response(entry) -> EngineeringScenarioCatalogEntryResponse:
@@ -1093,6 +1129,41 @@ async def create_workflow_source_endpoint(
         raise _workflow_source_unavailable(error) from error
 
 
+@router.post(
+    "/workflow-sources/copy",
+    response_model=WorkflowSourceResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflow_sources.copy")
+async def copy_workflow_source_endpoint(
+    body: WorkflowSourceCopyRequest,
+    response: Response,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(body.session_id, service)
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        document = await service.workflow_sources.copy(
+            scope.workspace_dir,
+            body.source_path,
+            body.destination_path,
+            body.expected_storage_digest,
+        )
+        return _workflow_source_response(scope.workspace_id, document)
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "workflow_source_not_found",
+                "message": "Workflow source not found",
+            },
+        ) from error
+    except WorkflowSourceStorageError as error:
+        raise _workflow_source_http_error(error) from error
+    except OSError as error:
+        raise _workflow_source_unavailable(error) from error
+
+
 @router.put("/workflow-sources", response_model=WorkflowSourceResponse)
 @traced("workspace.workflow_sources.update")
 async def update_workflow_source_endpoint(
@@ -1154,6 +1225,24 @@ async def list_workflow_source_tools(
         await runtime.close()
 
 
+@router.get("/workflow-sources/instruction-defaults")
+async def workflow_instruction_defaults(
+    session_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    scope = _workflow_source_scope(session_id, service)
+    try:
+        return await service.executor.run(
+            "workspace.workflow_sources.instruction_defaults",
+            lambda: service.workflow_instruction_defaults(scope.workspace_dir),
+            timeout_seconds=30.0,
+        )
+    except ValueError as error:
+        raise HTTPException(
+            422, detail={"code": "workflow_instructions_invalid", "message": str(error)}
+        ) from error
+
+
 @router.post("/workflow-sources/images", status_code=201)
 async def upload_workflow_image(
     session_id: str,
@@ -1171,6 +1260,26 @@ async def upload_workflow_image(
         raise HTTPException(status_code=422, detail=str(error)) from error
     finally:
         await file.close()
+
+
+@router.api_route(
+    "/print-demo/{retired_operation:path}",
+    methods=["GET", "POST"],
+    include_in_schema=False,
+)
+async def retired_demo_operation(retired_operation: str):
+    """Old operational URLs never contact a provider or replay an action."""
+    return JSONResponse(
+        status_code=410,
+        content={
+            "code": "PROTOTYPE_RETIRED",
+            "detail": (
+                "This prototype operation has been retired. Open the saved "
+                "workflow in Wright and use its working view. Existing saved "
+                "results remain available through workflow history."
+            ),
+        },
+    )
 
 
 @router.get("/workflow-sources/cad")
@@ -1258,6 +1367,105 @@ async def workflow_application_options(
         ) from error
     finally:
         await runtime.close()
+
+
+@router.get(
+    "/process-validations/{assessment_id}",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.get")
+def process_validation_result(
+    assessment_id: str,
+    session_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        return _process_validation_application(session_id, service).get_result(
+            assessment_id
+        )
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
+
+
+@router.get(
+    "/process-validations/{assessment_id}/findings",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.findings")
+def process_validation_findings(
+    assessment_id: str,
+    session_id: str,
+    cursor: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=20),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        return _process_validation_application(session_id, service).list_findings(
+            assessment_id, cursor=cursor, limit=limit
+        )
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
+
+
+@router.get(
+    "/process-validations/{assessment_id}/export",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.export")
+def process_validation_export(
+    assessment_id: str,
+    session_id: str,
+    format: Literal["json", "markdown", "csv"] = "json",
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        exported = _process_validation_application(session_id, service).export_result(
+            assessment_id, format
+        )
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
+    return Response(
+        content=exported.content,
+        media_type=exported.media_type,
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": f'attachment; filename="{exported.filename}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.post(
+    "/process-validations/{assessment_id}/reviews",
+    dependencies=[Depends(_require_process_validation_role)],
+)
+@traced("workspace.process_validation.review")
+def process_validation_review(
+    assessment_id: str,
+    body: ProcessValidationReviewRequest,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    application = _process_validation_application(body.session_id, service)
+    principal = str(getattr(request.state, "principal_id", "local-user"))
+    authority = (
+        "control-plane:" + str(getattr(request.state, "trace_id", "local-session"))
+        if request.app.state.security_settings.enforced
+        else "local-control-plane"
+    )
+    try:
+        revised = application.record_review(
+            assessment_id,
+            requirement_id=body.requirement_id,
+            actor_id=principal,
+            authority_ref=authority,
+            decision=body.decision,
+            rationale=body.rationale,
+            evidence_refs=tuple(body.evidence_refs),
+        )
+        return application.get_result(revised.id)
+    except (KeyError, ValueError, OSError) as error:
+        raise _process_validation_error(error) from error
 
 
 @router.get(
@@ -1381,156 +1589,174 @@ async def workflow_artifact_review_decision(
         ) from error
 
 
-@router.post("/workflow-sources/run", response_model=WorkflowSourceRunResponse)
+@router.post(
+    "/workflow-sources/run",
+    response_model=WorkflowSourceRunResponse,
+    dependencies=[Depends(_require_process_validation_role)],
+)
 @traced("workspace.workflow_sources.run")
 async def run_workflow_source_endpoint(
     body: WorkflowSourceRunRequest,
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    """Execute the saved workspace source; optionally stream actual step events."""
-    scope = _workflow_source_scope(body.session_id, service)
+    """Compatibility view over the same durable backend-owned source run."""
+    from uuid import uuid4
+    from core.process_interactions import ProcessRef
+    from core.redaction import redact_text
+    from workspace_service.process_interfaces.service import ProcessScope
+    from workspace_service.process_interfaces.errors import ProcessInterfaceError
+
+    bound = _workflow_source_scope(body.session_id, service)
+    scope = ProcessScope(
+        getattr(getattr(request, "state", None), "principal_id", None)
+        or "local-control-plane",
+        bound.workspace_id,
+        frozenset({"process.read", "process.inputs", "process.start"}),
+    )
+    application = service.process_interfaces
 
     def detail(error):
+        if isinstance(error, ProcessInterfaceError):
+            cause = error.__cause__
+            source_code = error.diagnostic.get("source_code")
+            if isinstance(cause, WorkflowSourceExecutionError):
+                return detail(cause)
+            code = source_code or {
+                "SOURCE_CHANGED": "WORKFLOW_SOURCE_CONFLICT",
+            }.get(error.reason.code, error.reason.code)
+            return {
+                "code": code.lower(),
+                "message": error.reason.message,
+                "correction": error.reason.correction,
+            }
         if isinstance(error, WorkflowSourceExecutionError):
             return {
                 "code": error.code.lower(),
-                "message": str(error),
-                "correction": error.correction,
+                "message": redact_text(str(error))[:8192],
+                "correction": redact_text(error.correction)[:8192],
             }
         return {
             "code": "workflow_output_unavailable",
-            "message": "The workflow output could not be saved.",
-            "correction": "Check the workspace file path and permissions, then run again.",
+            "message": "The recorded workflow output is unavailable.",
+            "correction": "Inspect the saved run and workspace path before another attempt.",
         }
 
-    runtime = None
     try:
-        from workspace_service.workflow_run_preparation import (
-            prepare_authorized_workflow_run,
-        )
-
-        prepared = await prepare_authorized_workflow_run(
-            service=service,
-            workspace_dir=scope.workspace_dir,
-            workspace_id=scope.workspace_id,
-            session_id=body.session_id,
+        process = ProcessRef(
+            workspace_id=bound.workspace_id,
             source_path=body.path,
             source_digest=body.expected_storage_digest,
-            gateway=lambda: request.app.state.gateway_service,
+        )
+        server = (
+            request.scope.get("app")
+            if isinstance(request, Request)
+            else getattr(request, "app", None)
+        )
+        receipt = await application.runs.start_legacy(
+            scope,
+            process,
+            body.request_id or uuid4().hex,
+            response_generator=generate_workflow_response,
+            action_generator=decide_workflow_tool_action,
+            gateway=getattr(getattr(server, "state", None), "gateway_service", None),
+            session_id=body.session_id,
             integration_policy_digest=body.integration_policy_digest,
         )
-        plan, values, runtime = prepared.plan, prepared.values, prepared.runtime
 
-        async def run(on_event=None):
-            from workspace_service.workflow_run_record import record_workflow_run
-
-            async def execute(emit):
-                return await execute_prompt_workflow(
-                    service=service,
-                    workspace_dir=scope.workspace_dir,
-                    plan=plan,
-                    input_values=values,
-                    response_generator=generate_workflow_response,
-                    on_event=emit,
-                    tool_runtime=runtime,
-                    action_generator=decide_workflow_tool_action,
-                    execution_context=prepared.execution_context,
-                    run_id=prepared.run_id,
+        async def result():
+            recorded = await application.runs.wait(scope, process, receipt.run_id)
+            if recorded["status"] not in {
+                "completed",
+                "pending_review",
+                "awaiting_approval",
+                "waiting_human",
+            }:
+                raise WorkflowSourceExecutionError(
+                    recorded.get("code", "OUTCOME_UNKNOWN"),
+                    recorded.get(
+                        "error", "The run needs reconciliation before another attempt."
+                    ),
+                    recorded.get(
+                        "correction",
+                        "Open the exact saved run and inspect its actual outcome.",
+                    ),
                 )
-
-            result = await record_workflow_run(
-                service=service,
-                workspace_dir=scope.workspace_dir,
-                workspace_id=scope.workspace_id,
-                source_path=body.path,
-                source_digest=body.expected_storage_digest,
-                execute=execute,
-                on_event=on_event,
-                execution_context=prepared.execution_context,
-                run_id=prepared.run_id,
-                required_step_ids=[step.id for step in plan.steps],
-            )
-            for step in result["steps"]:
-                if step.get("execution_kind") == "ai":
-                    step["format_instructions"] = response_instructions(
-                        step["output_format"]
-                    )
             return {
-                "workspace_id": scope.workspace_id,
+                "workspace_id": bound.workspace_id,
                 "workflow_path": body.path,
-                **result,
+                **recorded,
             }
 
         if "application/x-ndjson" in request.headers.get("accept", ""):
 
             async def events():
-                queue = asyncio.Queue()
-
-                async def emit(event):
-                    if (
-                        event["kind"] == "step_started"
-                        and event.get("execution_kind") == "ai"
-                    ):
-                        event["format_instructions"] = response_instructions(
-                            event["output_format"]
-                        )
-                    await queue.put(event)
-
-                async def produce():
-                    try:
-                        result = await run(emit)
-                        await queue.put(
-                            {
-                                "kind": result.get("status", "completed"),
-                                "result": result,
-                            }
-                        )
-                    except (WorkflowSourceExecutionError, OSError, ValueError) as error:
-                        await queue.put({"kind": "failed", **detail(error)})
-                    finally:
-                        if runtime is not None:
-                            await runtime.close()
-                        await queue.put(None)
-
-                task = asyncio.create_task(produce())
+                cursor = None
                 try:
-                    while (event := await queue.get()) is not None:
-                        yield json.dumps(event) + "\n"
-                finally:
-                    task.cancel()
-                    # Cancel execution first. A disconnected StreamingResponse is
-                    # already in a cancelled scope; unshielded gather would send
-                    # a second Task.cancel into the producer's final checkpoint.
-                    # Only drain cleanup, bounded beyond its five-second write.
-                    with anyio.move_on_after(6.0, shield=True):
-                        await asyncio.gather(task, return_exceptions=True)
+                    while True:
+                        page = await application.runs.legacy_events(
+                            scope,
+                            process,
+                            receipt.run_id,
+                            cursor=cursor,
+                        )
+                        for event in page["events"]:
+                            yield json.dumps(event, ensure_ascii=False) + "\n"
+                        cursor = page["cursor"]
+                        if page["has_more"]:
+                            continue
+                        if not page["following"]:
+                            value = await result()
+                            yield (
+                                json.dumps(
+                                    {"kind": value["status"], "result": value},
+                                    ensure_ascii=False,
+                                )
+                                + "\n"
+                            )
+                            return
+                        await asyncio.sleep(0.1)
+                except (
+                    ProcessInterfaceError,
+                    WorkflowSourceExecutionError,
+                    OSError,
+                    ValueError,
+                ) as error:
+                    yield json.dumps({"kind": "failed", **detail(error)}) + "\n"
+                # This request retains no executor/producer task. ASGI cancels
+                # only this recorded-event observer when its browser disconnects.
 
             return StreamingResponse(
                 events(),
                 media_type="application/x-ndjson",
-                headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+                headers={
+                    "Cache-Control": "no-store",
+                    "X-Accel-Buffering": "no",
+                    "X-Wright-Run-Id": receipt.run_id,
+                },
             )
-        try:
-            return WorkflowSourceRunResponse(**await run())
-        finally:
-            if runtime is not None:
-                await runtime.close()
-    except WorkflowSourceExecutionError as error:
-        if runtime is not None:
-            await runtime.close()
+        return WorkflowSourceRunResponse(**await result())
+    except (ProcessInterfaceError, WorkflowSourceExecutionError) as error:
+        info = detail(error)
         status_code = (
             409
-            if error.code
-            in {"WORKFLOW_SOURCE_CONFLICT", "WORKFLOW_TEMPLATE_SETUP_REQUIRED"}
+            if info["code"]
+            in {
+                "workflow_source_conflict",
+                "workflow_template_setup_required",
+                "request_conflict",
+                "subject_stale",
+                "option_stale",
+            }
+            else 403
+            if info["code"] in {"scope_denied", "action_not_permitted"}
             else 503
-            if error.code == "MODEL_UNAVAILABLE"
+            if info["code"]
+            in {"model_unavailable", "capability_unavailable", "outcome_unknown"}
             else 422
         )
-        raise HTTPException(status_code=status_code, detail=detail(error)) from error
+        raise HTTPException(status_code=status_code, detail=info) from error
     except (OSError, ValueError) as error:
-        if runtime is not None:
-            await runtime.close()
         raise HTTPException(status_code=422, detail=detail(error)) from error
 
 
@@ -1658,6 +1884,21 @@ def _scoped_workflow_checkpoint(
     )
 
 
+def _canonical_approval_continuation(checkpoint) -> bool:
+    state = checkpoint.continuation
+    version = state.get("schema_version")
+    if (
+        type(version) is int
+        and version == 3
+        and state.get("checkpoint_kind") != "approval"
+    ):
+        raise WorkflowExternalActionError(
+            "approval_continuation_invalid",
+            "This checkpoint is not a canonical approval continuation.",
+        )
+    return type(version) is int and version in {2, 3}
+
+
 async def _project_workflow_checkpoint(
     service: WorkspaceService, checkpoint, kind: str
 ):
@@ -1758,7 +1999,7 @@ async def decide_workflow_approval_checkpoint_endpoint(
         current = _scoped_workflow_checkpoint(
             service, run_id, checkpoint_id, body.session_id
         )
-        if current.continuation.get("schema_version") == 2:
+        if _canonical_approval_continuation(current):
             from workspace_service.workflow_approval_execution import (
                 decide_workflow_approval,
             )
@@ -1771,7 +2012,7 @@ async def decide_workflow_approval_checkpoint_endpoint(
                 checkpoint=current,
                 subject_digest=body.subject_digest,
                 decision=body.decision,
-                reason=body.reason,
+                reason=body.reason if body.reason is not None else "",
                 auto=body.auto,
                 gateway=request.app.state.gateway_service,
                 session_id=body.session_id,
@@ -1808,6 +2049,7 @@ async def decide_workflow_approval_checkpoint_endpoint(
 @router.post(
     "/workflow-runs/{run_id}/resume",
     response_model=WorkflowApprovalCheckpointResponse,
+    dependencies=[Depends(_require_process_validation_role)],
 )
 @traced("workspace.workflow_approval.resume")
 async def resume_workflow_approval_checkpoint_endpoint(
@@ -1816,23 +2058,36 @@ async def resume_workflow_approval_checkpoint_endpoint(
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    from core.process_interactions import ProcessRef
+    from workspace_service.process_interfaces.service import ProcessScope
+    from workspace_service.process_interfaces.errors import ProcessInterfaceError
+
     try:
         current = _scoped_workflow_checkpoint(
             service, run_id, body.checkpoint_id, body.session_id
         )
-        if current.continuation.get("schema_version") == 2:
-            from workspace_service.workflow_approval_execution import (
-                resume_workflow_approval,
-            )
-
+        if _canonical_approval_continuation(current):
             scope = _workflow_source_scope(body.session_id, service)
-            checkpoint, result = await resume_workflow_approval(
-                service=service,
+            process = ProcessRef(
                 workspace_id=scope.workspace_id,
-                workspace_dir=scope.workspace_dir,
-                checkpoint=current,
-                subject_digest=body.subject_digest,
-                request_id=body.request_id,
+                source_path=current.workflow_id,
+                source_digest=current.subject["definition_digest"],
+            )
+            invocation = ProcessScope(
+                getattr(getattr(request, "state", None), "principal_id", None)
+                or "local-control-plane",
+                scope.workspace_id,
+                frozenset({"process.read", "process.action"}),
+            )
+            (
+                checkpoint,
+                result,
+            ) = await service.process_interfaces.runs.resume_legacy_approval(
+                invocation,
+                process,
+                current,
+                body.request_id,
+                expected_subject_digest=body.subject_digest,
                 gateway=request.app.state.gateway_service,
                 session_id=body.session_id,
                 response_generator=generate_workflow_response,
@@ -1858,6 +2113,15 @@ async def resume_workflow_approval_checkpoint_endpoint(
         await _project_workflow_checkpoint(
             service, checkpoint, "external_action_authorized"
         )
+    except ProcessInterfaceError as error:
+        raise HTTPException(
+            status_code=403 if error.reason.code == "SCOPE_DENIED" else 409,
+            detail={
+                "code": error.reason.code.lower(),
+                "message": error.reason.message,
+                "correction": error.reason.correction,
+            },
+        ) from error
     except WorkflowExternalActionError as error:
         raise _workflow_external_action_http_error(error) from error
     except WorkflowSourceExecutionError as error:
@@ -3549,6 +3813,18 @@ async def run_file_endpoint(
 # ── Git Operations ───────────────────────────────────────────────────────
 
 
+@router.post("/git/init", response_model=GitPushPullResponse)
+@traced("workspace.git.initialize")
+async def git_initialize_endpoint(
+    body: GitPushPullRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
+    await service.git.initialize(workspace_dir)
+    return GitPushPullResponse(success=True, message="Workspace repository is ready")
+
+
 @router.get("/git/status", response_model=GitStatusResponse)
 @traced("workspace.git.status")
 async def git_status_endpoint(
@@ -3570,6 +3846,7 @@ async def git_status_endpoint(
         branch_name=result["branch_name"],
         is_clean=result["is_clean"],
         changes=changes,
+        is_repository=result.get("is_repository", True),
     )
 
 

@@ -1,0 +1,18 @@
+{
+  "process": {
+    "workspace_id": "083-printed-repeat-015",
+    "source_path": "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow",
+    "source_digest": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "target": {
+    "kind": "block",
+    "block_id": "create_mesh_repeatable_default_015",
+    "run_id": "86289015177e4d55ab93460101ec1d43",
+    "result_id": "86289015177e4d55ab93460101ec1d43:create_mesh_repeatable_default_015:source_mesh",
+    "assessment_id": null,
+    "artifact_ref": null
+  },
+  "representation": null
+}

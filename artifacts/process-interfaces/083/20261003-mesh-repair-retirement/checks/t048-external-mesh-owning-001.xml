@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="10" time="2.770" timestamp="2026-10-03T06:17:03.802743-04:00" hostname="Work17"><testcase classname="tests.test_printed_dataset_bindings" name="test_original_full_graph_and_human_inputs_remain_bound[1-False]" time="0.078"><failure message="workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.">tests\test_printed_dataset_bindings.py:100: in test_original_full_graph_and_human_inputs_remain_bound
+    result = prepare.prepare(args, folder, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\prepare-printed-dataset-campaign.py:383: in prepare
+    compiled = compile_prompt_workflow(result)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:1007: in compile_prompt_workflow
+    raise _invalid(
+E   workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.</failure></testcase><testcase classname="tests.test_printed_dataset_bindings" name="test_original_full_graph_and_human_inputs_remain_bound[2-False]" time="0.067"><failure message="workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.">tests\test_printed_dataset_bindings.py:100: in test_original_full_graph_and_human_inputs_remain_bound
+    result = prepare.prepare(args, folder, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\prepare-printed-dataset-campaign.py:383: in prepare
+    compiled = compile_prompt_workflow(result)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:1007: in compile_prompt_workflow
+    raise _invalid(
+E   workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.</failure></testcase><testcase classname="tests.test_printed_dataset_bindings" name="test_original_full_graph_and_human_inputs_remain_bound[2-True]" time="0.079"><failure message="workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.">tests\test_printed_dataset_bindings.py:100: in test_original_full_graph_and_human_inputs_remain_bound
+    result = prepare.prepare(args, folder, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\prepare-printed-dataset-campaign.py:383: in prepare
+    compiled = compile_prompt_workflow(result)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:1007: in compile_prompt_workflow
+    raise _invalid(
+E   workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.</failure></testcase><testcase classname="tests.test_printed_dataset_bindings" name="test_original_full_graph_and_human_inputs_remain_bound[3-False]" time="0.072"><failure message="workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.">tests\test_printed_dataset_bindings.py:100: in test_original_full_graph_and_human_inputs_remain_bound
+    result = prepare.prepare(args, folder, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\prepare-printed-dataset-campaign.py:383: in prepare
+    compiled = compile_prompt_workflow(result)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_source_execution.py:1007: in compile_prompt_workflow
+    raise _invalid(
+E   workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Repair, measure, and orient mesh: a connected input is not assigned to a tool argument.</failure></testcase><testcase classname="tests.test_printed_dataset_bindings" name="test_preparation_rejects_escape_and_different_staged_input" time="0.005" /><testcase classname="tests.test_printed_dataset_bindings" name="test_diagnostic_mesh_code_clears_exact_pinned_guard" time="0.007" /><testcase classname="tests.test_printed_handle_measurements" name="test_exact_triangle_clipping_and_independent_bore_sections[24.8-False]" time="0.025" /><testcase classname="tests.test_printed_handle_measurements" name="test_exact_triangle_clipping_and_independent_bore_sections[25.0-True]" time="0.055" /><testcase classname="tests.test_printed_handle_measurements" name="test_rejects_truncated_mesh" time="0.005" /><testcase classname="tests.test_printed_handle_measurements" name="test_rejects_collinear_export_triangle" time="0.035" /></testsuite></testsuites>

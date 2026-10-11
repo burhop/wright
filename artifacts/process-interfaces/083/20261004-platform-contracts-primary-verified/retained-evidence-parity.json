@@ -1,0 +1,54 @@
+{
+  "20261003-readiness-primary-audit-verified": {
+    "inventory_sha256": "27507c71f23b432bac23a8fce271d1c388763a968fe6a998ef7a1a7e72bd1a75",
+    "unchanged_files": 31
+  },
+  "20261003-lifecycle-primary-audit-verified": {
+    "inventory_sha256": "0d6b16337989922c15f887e18ffc59ed0cd2ab73cda371279054f15ec4f9b5f2",
+    "unchanged_files": 12
+  },
+  "20261003-authority-primary-audit-verified": {
+    "inventory_sha256": "9344f3ae0fd5145cf237109c77b4c6d15bd313ee96acd57811eb5d363d59191b",
+    "unchanged_files": 20
+  },
+  "20261003-authoring-resource-primary-audit-verified": {
+    "inventory_sha256": "274b3087460ed5062374c765bbb0f0f4c1a07bde2ab888dc706191fd4ac71b5e",
+    "unchanged_files": 9
+  },
+  "20261003-shared-ui-primary-audit-verified": {
+    "inventory_sha256": "e60c35a369d6af99ad421bef5f4e573006001fd400527cad808ecdadb771f744",
+    "unchanged_files": 12
+  },
+  "20261003-named-runtime-checks-primary-verified": {
+    "inventory_sha256": "e511ce587795f56d9c5637070209f1bc7c8eb9481da7f2dc8fdc37e093d94d6d",
+    "unchanged_files": 13
+  },
+  "20261003-current-regression-verified": {
+    "inventory_sha256": "72bd3202d7ef77e85b6f5878c95294ecf85d3437faf2a948d8aad6a17ac61e88",
+    "unchanged_files": 445
+  },
+  "20261004-current-native-trace-reuse-verified": {
+    "inventory_sha256": "9112fb6dfb3267f3b19d134ff4339848dd4aa179eaa7aec8a89c6131f3a71b1f",
+    "unchanged_files": 17
+  },
+  "20261004-current-docker-resource-verified": {
+    "inventory_sha256": "f431ae3f531d7ecf56c30e53d18f2c3c704b9a39c83df0eabab3b6c5cc5379d5",
+    "unchanged_files": 24
+  },
+  "20261003-configured-preparation-and-saved-reuse-verified": {
+    "inventory_sha256": "5a24c7592b8f07a627b541d3b1b39d19114eccd59f213f3ce6e2008cd7de3f6f",
+    "unchanged_files": 282
+  },
+  "20261003-heat-repeat-and-saved-ui-verified": {
+    "inventory_sha256": "85fae47b4ac309055fefc65743f97eeb03c1ec33fd452c628cea1982409e21ea",
+    "unchanged_files": 268
+  },
+  "20261004-original-input-and-common-run-verified": {
+    "inventory_sha256": "052c745f0fbde2e150b326f300039d3ec0a34b764712a30c5adf705aded7c889",
+    "unchanged_files": 108
+  },
+  "20261004-original-input-ui-reuse-verified": {
+    "inventory_sha256": "b64e362e1f2bb0a4a73d3173658a5ae5f7f00e4b7bb3021d4ef8be0e783619d7",
+    "unchanged_files": 70
+  }
+}

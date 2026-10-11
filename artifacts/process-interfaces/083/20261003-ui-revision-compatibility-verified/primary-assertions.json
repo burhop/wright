@@ -1,0 +1,70 @@
+{
+  "new_primary_cases": [
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+      "case": "test_compatible_source_revision_reuses_exact_saved_build_and_current_grants",
+      "assertions": [
+        "actual source CAS changes digest",
+        "matching required input binding",
+        "exact saved build unchanged",
+        "current native grants and bridge context",
+        "activation without model/compiler",
+        "strict origin draft loader",
+        "foreign family denied",
+        "old process source remains stale",
+        "no engineering output"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+      "case": "test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source",
+      "assertions": [
+        "required schema change incompatible",
+        "no runtime launch on denied opening",
+        "existing update path reads prior source/manifest",
+        "current schema repair",
+        "current preview/save with parent provenance",
+        "incompatible rollback denied",
+        "active updated revision retained"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+      "case": "test_unsaved_draft_cannot_transfer_to_changed_source",
+      "assertions": [
+        "unsaved preview-ready draft cannot cross source revision",
+        "no runtime launch or engineering output"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_ui_surface_authority.py",
+      "case": "test_saved_origin_bundle_uses_current_grant_context_without_transferring_old_scope",
+      "assertions": [
+        "actual source create/CAS and saved revision",
+        "current grant-derived context and interaction",
+        "old query rejected 403",
+        "read-only loaded handshake retains origin preview record",
+        "immutable revision unchanged"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_build.py",
+      "case": "test_revision_compatibility_is_opt_in_and_never_crosses_process_family",
+      "assertions": [
+        "generation equality stays strict",
+        "explicit same-family reuse only",
+        "different path/workspace denied"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_build.py",
+      "case": "test_revision_compatibility_preserves_optional_absence_and_required_schema_checks",
+      "assertions": [
+        "optional fallback retained",
+        "required schema mismatch denied"
+      ]
+    }
+  ],
+  "semantic_rows_newly_closed": [],
+  "full_installed_browser_obligation_pending": true
+}

@@ -211,7 +211,51 @@ describe("canonical prompt and instructions compatibility", () => {
     );
   });
 
+  it("preserves runtime output port maps through wire round trips and prompt edits", () => {
+    const settings = {
+      authoring_template: "mcp-task",
+      expected_files: "analysis/timeline.csv\nanalysis/plot.svg",
+      expected_file_ports: {
+        timeline: "analysis/timeline.csv",
+        plot: "analysis/plot.svg",
+      },
+    };
+    const parsed = parseRecoveryAuthoringSource(
+      source("ai_assisted", both, JSON.stringify(settings)),
+      initialWorkflow,
+    );
+    expect(parsed.diagnostics).toEqual([]);
+    const reopened = fromCanonicalWire(
+      JSON.parse(JSON.stringify(toCanonicalWire(parsed.workflow!))),
+    );
+    const block = reopened.blocks.find(
+      (entry) => entry.id === "block.field-compatibility",
+    )!;
+    block.instructions = "Calculate from the same-run bag";
+    expect(
+      Object.values(block.configuration).every((value) =>
+        ["string", "number", "boolean"].includes(typeof value),
+      ),
+    ).toBe(true);
+    const text = formatRecoveryAuthoringSource(reopened).text.split(
+      "task field_compatibility",
+    )[1]!;
+    expect(text).not.toContain("__wright_");
+    expect(JSON.parse(text.match(/ {2}settings: (.+)/)![1]!)).toEqual(settings);
+    const roundTrip = validateRecoveryAuthoringRoundTrip(reopened);
+    expect(roundTrip.diagnostics).toEqual([]);
+    expect(toCanonicalWire(roundTrip.workflow!)).toEqual(
+      toCanonicalWire(reopened),
+    );
+  });
+
   it.each([
+    { expected_file_ports: null },
+    { expected_file_ports: [] },
+    { expected_file_ports: { timeline: 42 } },
+    { expected_file_ports: { timeline: { path: "timeline.csv" } } },
+    { expected_file_ports: { "": "timeline.csv" } },
+    { expected_file_ports: { timeline: "" } },
     { authoring_template: "external-action-approval", approval_binding: [] },
     { authoring_template: "external-action-approval", approval_action: null },
     { authoring_template: "external-action-approval", unknown_object: {} },

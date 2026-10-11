@@ -1,0 +1,20 @@
+{
+  "actual_job": {
+    "job_id": "job-971c977de22741b1a49cf21451b232b8",
+    "request_id": "interface-e3b47bd3-c3ea-4b12-bd1f-872ad83e09f7",
+    "state": "saved",
+    "revision_id": "revision-d38d8f51a4674fe7816f9b00ca43ad73",
+    "trace_id": "e62aeef9dcf74040ba3a862404f77726",
+    "process": {
+      "semantic_digest": null,
+      "source_contract": "canonical-source",
+      "source_digest": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7",
+      "source_path": "workflows/printed-replacement-part-configured-default-016.workflow.wflow",
+      "workspace_id": "083-printed-repeat-015"
+    }
+  },
+  "read_only": true,
+  "details_collapsed_by_default": true,
+  "expanded_text": "Creation details\n\nModel: gpt-5.6-sol · adapter: hermes\n\nJob job-971c977de22741b1a49cf21451b232b8 · revision revision-d38d8f51a4674fe7816f9b00ca43ad73\n\nRequest: interface-e3b47bd3-c3ea-4b12-bd1f-872ad83e09f7\n\nTrace: e62aeef9dcf74040ba3a862404f77726",
+  "authoringOrExecutionPosts": []
+}

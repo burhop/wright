@@ -1,0 +1,7 @@
+{
+  "prior": "t053-current-package-008/packaging",
+  "correction": "trusted geometry aliases resolve outside checkout; normal allowed OS temp workspace",
+  "scratch": "D:\\TEMP\\wright-083-t053-package-009",
+  "same_nine_modules": true,
+  "generated_import_allowlist_unchanged": true
+}

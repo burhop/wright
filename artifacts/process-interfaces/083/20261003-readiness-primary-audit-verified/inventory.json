@@ -1,0 +1,128 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 195,
+      "sha256": "39041f1dc650d956866bb157513cf63d6010e43f0632e08c49f44bca2aff695e"
+    },
+    "checked-scope.json": {
+      "bytes": 4731,
+      "sha256": "fb28f7cc0c7521d8c2ef67c2699be7c8fb1f70d826294c3fefc38a2127dc9196"
+    },
+    "primary-assertions.json": {
+      "bytes": 7353,
+      "sha256": "f2f7c45bd5b9692ac9ff11075bb2c734049eaaac4210751559c86e7e9c80a002"
+    },
+    "README.md": {
+      "bytes": 2315,
+      "sha256": "dec695d28d831c7974b00c22f53f4a91100ebaa3e2001a0f0c7ee748641fc643"
+    },
+    "semantic-ledger.json": {
+      "bytes": 108367,
+      "sha256": "7e0da49802cf0258ff8fde0032185f282a0440c1a34609190434d74b62e543b2"
+    },
+    "detached-wheel/build.log": {
+      "bytes": 126,
+      "sha256": "f139a8f42e3d1cf00c612ab0028132a9af7186b2f53c2eb7090b58b7d2cf7315"
+    },
+    "detached-wheel/detached-proof.py": {
+      "bytes": 4449,
+      "sha256": "85c5caa02991ba999ddb3ef2c671a86c7a4e911f72d5281573693b388dc34659"
+    },
+    "detached-wheel/detached-result.json": {
+      "bytes": 34577,
+      "sha256": "56e0cc68ed3e666a793979613dd868a32b26258a6f0ece1e18dd4ac404963bc6"
+    },
+    "detached-wheel/detached.log": {
+      "bytes": 75,
+      "sha256": "4ffcaa245f35b81597bfc8c1aec6fc2968ada9d0c7d33dcdd0785c9ed483adeb"
+    },
+    "detached-wheel/missing-later-choice.workflow.wflow": {
+      "bytes": 2188,
+      "sha256": "77b99d506ab2255b8e979c1c560f58b993770aae606d27f6bdc30d6c59e184ed"
+    },
+    "detached-wheel/result.json": {
+      "bytes": 838,
+      "sha256": "2cd62cf106cc8b37145e9aed390bf262f5bc221d51030908bef83b149372156e"
+    },
+    "frontend/case-index.json": {
+      "bytes": 38959,
+      "sha256": "8127dded5ab342ccf8486cb33d5d9d919b95ce53807733b1dd7ea5b66684038c"
+    },
+    "frontend/command.json": {
+      "bytes": 1216,
+      "sha256": "fc280695c48ceb0a2356bdea67feea708ba2212d268e3273dd6401ebc9cfbf8f"
+    },
+    "frontend/output.log": {
+      "bytes": 915,
+      "sha256": "98942b0bcd863da54a758b252171d2b364b1339a3c53e93d09fce4f020f03cde"
+    },
+    "frontend/results.json": {
+      "bytes": 63075,
+      "sha256": "4a0604a39b4a30b099b8b3e2741c91b0e7304438dd6a51aa4297bd68b465d70f"
+    },
+    "frontend/static-checks.json": {
+      "bytes": 845,
+      "sha256": "a25120fc046b14aa91fda9a17ed145ad6b969c2e089c3107623159f70fef7178"
+    },
+    "frontend/typescript.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "regression/case-index.json": {
+      "bytes": 43920,
+      "sha256": "8c4ae6feb229704555d906a2093be2e70321f0412169d07dec613e0ffd5d46e0"
+    },
+    "regression/command.json": {
+      "bytes": 4562,
+      "sha256": "4b8009be7a0fa297c6b620295d405b97fa91382d364b618d1f3d128052d46e6a"
+    },
+    "regression/output.log": {
+      "bytes": 265,
+      "sha256": "e05aa2f3498b86cbe28138468ed2844d50a315371dfcb1ccb892b7bafaf55588"
+    },
+    "regression/result.json": {
+      "bytes": 322,
+      "sha256": "f623436800d8fe33f162f8b996aac83568f7a3a456cd3ab6eeff44ea9d7bb1b4"
+    },
+    "regression/results.xml": {
+      "bytes": 39646,
+      "sha256": "c677e77a3bdabd9b604e461397bca29d5c4bb862754025723843a3a0557b07e3"
+    },
+    "regression/ruff.log": {
+      "bytes": 20,
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "retained-attempts/first-wheel-build.log": {
+      "bytes": 126,
+      "sha256": "f139a8f42e3d1cf00c612ab0028132a9af7186b2f53c2eb7090b58b7d2cf7315"
+    },
+    "retained-attempts/frontend-first.json": {
+      "bytes": 77842,
+      "sha256": "6aa31e68fdd24949d930a0b9df7df63e14da167e6623f4eb36bda78146829b5b"
+    },
+    "retained-attempts/frontend-first.log": {
+      "bytes": 915,
+      "sha256": "0d7affcb95c594b5d27c57742871bb993b74b6d1741aaa12d7dbc31f142849fe"
+    },
+    "retained-attempts/scope.json": {
+      "bytes": 1238,
+      "sha256": "053cdd339ccb7d92c96a3a2f0f987f340c13178d06fc8ccb03fd9da949cb9e72"
+    },
+    "retained-attempts/t056-option-types-failure-002.log": {
+      "bytes": 1886,
+      "sha256": "25318bb7fa897564abfc3102c35f2c2256107391c457ab6da3f4492baa98d001"
+    },
+    "retained-attempts/t056-option-types-failure-002.xml": {
+      "bytes": 3050,
+      "sha256": "7c99cbf464359d6754c32991f4d5ec8529216395b94e7bf16e5cd823c7e02781"
+    },
+    "retained-attempts/t056-readiness-link-failure-001.log": {
+      "bytes": 1319,
+      "sha256": "6e237646a61b7d8904f95ed7213273bf4004e7da7fcfa1737628c0bac9324c6b"
+    },
+    "retained-attempts/t056-readiness-link-failure-001.xml": {
+      "bytes": 2215,
+      "sha256": "59ae2552c8c1eaacf3348d451c9ac716370f052282a91b4a2ff90cee29b6f00c"
+    }
+  }
+}

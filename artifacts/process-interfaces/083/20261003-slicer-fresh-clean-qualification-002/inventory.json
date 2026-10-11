@@ -1,0 +1,84 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "actual-input/tiny.stl": {
+      "bytes": 684,
+      "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    },
+    "actual-output/sliced.gcode.3mf": {
+      "bytes": 30054,
+      "sha256": "b4aa238f0d44fc71f169b321e7a5ce00ee30df31ec23d874657430e6b96091f6"
+    },
+    "actual-settings.json": {
+      "bytes": 485,
+      "sha256": "72120ddd841d080d487d62501fa83f8628a2bc377a8489fa391b2ef8743548f2"
+    },
+    "checked-scope.json": {
+      "bytes": 6420,
+      "sha256": "23c76c5b87a74c52efe3323df3534b734a8b2324eb0f3e95c8e51e89b8f89877"
+    },
+    "configured-provider-presets/filament-profile.json": {
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "configured-provider-presets/machine-profile.json": {
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "configured-provider-presets/process-profile.json": {
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "first-attempt/qualification.json": {
+      "bytes": 1258,
+      "sha256": "a3e486d9c175945484abe42e865d0998e09015b277297319aafd771bb5d2d67f"
+    },
+    "first-attempt/release.json": {
+      "bytes": 484,
+      "sha256": "742e4489bce0a4e0210c83e21919062121b47e839cdd4b7f673feb07bc22536f"
+    },
+    "gateway/gateway-tools.json": {
+      "bytes": 16031,
+      "sha256": "610ed550e7f24a81a55aaccb51aa7905d84172835a7960883edac9d4ec558b16"
+    },
+    "gateway/qualification.json": {
+      "bytes": 6425,
+      "sha256": "3a77ff1a4b216a35556a39d4f96125466a7e997939a1c1eddd5fd3d0e2c087ac"
+    },
+    "gateway/result.json": {
+      "bytes": 754,
+      "sha256": "4f8b904d93754b8af3daaf242317786e451400fc9f9e4ea75ff631da004d1ba8"
+    },
+    "gateway-definition.json": {
+      "bytes": 1561,
+      "sha256": "59f428b96690a3ab571af645df863eb5fac8adb8c269bce5442786b7d529449b"
+    },
+    "installation-command.json": {
+      "bytes": 848,
+      "sha256": "b1e751853a22588a5ddb0ca2aacfe7e4c8a36b260d373939bdb2a6f08cb3fc45"
+    },
+    "installation.log": {
+      "bytes": 88847,
+      "sha256": "6a5952c86a8a67e414c032194d383f89b732eb2c461a32940b203200f3bce3ad"
+    },
+    "qualification.json": {
+      "bytes": 10604,
+      "sha256": "0146bcf575459e548c6f85a538baf0b4c9eff8a4c90319825e4786436587c3aa"
+    },
+    "README.md": {
+      "bytes": 2620,
+      "sha256": "581d73976689e19da8548d207dd386747e851bf26feceba0a90c6126a79f2f8f"
+    },
+    "release.json": {
+      "bytes": 484,
+      "sha256": "742e4489bce0a4e0210c83e21919062121b47e839cdd4b7f673feb07bc22536f"
+    },
+    "tools.json": {
+      "bytes": 7227,
+      "sha256": "6577bdd0684a84ab33613005f327b99c33db246e000aa416a36a6ea8dbe97dab"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+[
+  {
+    "path": "/api/workspace/process-interfaces/authoring-jobs/job-1e03b43bc5664e6fa1d9fbea3a264299/preview",
+    "method": "POST",
+    "elapsed_ms": 4951
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "GET",
+    "elapsed_ms": 379
+  },
+  {
+    "path": "/__wright/bootstrap",
+    "method": "POST",
+    "elapsed_ms": 28,
+    "failure": "net::ERR_ABORTED"
+  },
+  {
+    "path": "/__wright/process/context",
+    "method": "GET",
+    "elapsed_ms": 270
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 1008
+  },
+  {
+    "path": "/__wright/process/runs/63b639c7a8f446cd90a9285921ab9072",
+    "method": "GET",
+    "elapsed_ms": 1302
+  }
+]

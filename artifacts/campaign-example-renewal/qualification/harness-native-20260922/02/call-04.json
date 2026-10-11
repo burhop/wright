@@ -1,0 +1,19 @@
+{
+  "arguments": {
+    "operation": "add_component",
+    "lib_id": "Connector_Generic:Conn_01x03",
+    "position": [
+      60,
+      120
+    ],
+    "reference": "JB",
+    "value": "JB interconnect representation"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"reference\":\"JB\",\"lib_id\":\"Connector_Generic:Conn_01x03\",\"value\":\"JB interconnect representation\",\"position\":[59.69,119.38]}"
+    }
+  ]
+}

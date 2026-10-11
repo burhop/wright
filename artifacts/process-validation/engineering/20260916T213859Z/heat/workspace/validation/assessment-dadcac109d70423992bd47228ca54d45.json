@@ -1,0 +1,1487 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "assessment-dadcac109d70423992bd47228ca54d45",
+  "attempt_id": "46ef3e60525c4501bbfb7613f45d2351",
+  "request": {
+    "schema_version": "wright.process-validation/1",
+    "trace_id": "engineering-heat-20260916T214041Z",
+    "workspace_id": "process-validation-engineering-heat",
+    "invocation_id": "inspect:1",
+    "run_id": "engineering-heat-20260916T214041Z",
+    "check_step_id": "inspect",
+    "subjects": [
+      {
+        "id": "output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115",
+        "role": "baseline_coarse",
+        "result_id": "engineering-heat-20260916T214041Z:produce:baseline_coarse",
+        "producer": {
+          "run_id": "engineering-heat-20260916T214041Z",
+          "step_id": "produce",
+          "attempt": 1,
+          "output_port": "baseline_coarse"
+        },
+        "kind": "file",
+        "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+        "value": null,
+        "locator": "baseline-coarse.csv",
+        "format": "csv",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+        "role": "baseline_fine",
+        "result_id": "engineering-heat-20260916T214041Z:produce:baseline_fine",
+        "producer": {
+          "run_id": "engineering-heat-20260916T214041Z",
+          "step_id": "produce",
+          "attempt": 1,
+          "output_port": "baseline_fine"
+        },
+        "kind": "file",
+        "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+        "value": null,
+        "locator": "baseline-fine.csv",
+        "format": "csv",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a",
+        "role": "revision_coarse",
+        "result_id": "engineering-heat-20260916T214041Z:produce:revision_coarse",
+        "producer": {
+          "run_id": "engineering-heat-20260916T214041Z",
+          "step_id": "produce",
+          "attempt": 1,
+          "output_port": "revision_coarse"
+        },
+        "kind": "file",
+        "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+        "value": null,
+        "locator": "revision-coarse.csv",
+        "format": "csv",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+        "role": "revision_fine",
+        "result_id": "engineering-heat-20260916T214041Z:produce:revision_fine",
+        "producer": {
+          "run_id": "engineering-heat-20260916T214041Z",
+          "step_id": "produce",
+          "attempt": 1,
+          "output_port": "revision_fine"
+        },
+        "kind": "file",
+        "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+        "value": null,
+        "locator": "revision-fine.csv",
+        "format": "csv",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      },
+      {
+        "id": "output-5fc24bed46074517d2e166941d108991daf8fac600dfe7922318abaf4eb172f9",
+        "role": "decision",
+        "result_id": "engineering-heat-20260916T214041Z:produce:decision",
+        "producer": {
+          "run_id": "engineering-heat-20260916T214041Z",
+          "step_id": "produce",
+          "attempt": 1,
+          "output_port": "decision"
+        },
+        "kind": "file",
+        "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+        "value": null,
+        "locator": "sizing-decision.json",
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      }
+    ],
+    "profile_ref": {
+      "id": "heat-spreader-sizing-01-fields",
+      "version": "1",
+      "sha256": "28c7cbd9811fe2423715b7c485195a5cafd53cbc7118a66492fa0995036bdc82"
+    },
+    "baseline_ref": {
+      "id": "heat-spreader-sizing-01-basis",
+      "version": "1",
+      "sha256": "3f6464140ae741a0ef9ecd8dabcde8bcbbe3cc1f9755955d7ec12b1cac89e564"
+    },
+    "idempotency_key": "revision:0",
+    "budget": {
+      "max_bytes": 16777216,
+      "max_entities": 100000,
+      "timeout_seconds": 120,
+      "memory_limit_mb": 512
+    }
+  },
+  "profile": {
+    "schema_version": "wright.process-validation/1",
+    "id": "heat-spreader-sizing-01-fields",
+    "version": "1",
+    "baseline": {
+      "id": "heat-spreader-sizing-01-basis",
+      "version": "1",
+      "requirements": [
+        {
+          "id": "HEAT-FIELDS",
+          "text": "Both 40 mm and 60 mm candidates retain actual coarse and refined numerical temperature fields with the declared dimensions.",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+              "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+              "locator": "rows:baseline_40,revision_60"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Geometry and boundary definitions"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "HEAT-ANALYTICAL",
+          "text": "Each field's numerical temperature rise agrees within 2% of Q*L/(k*W*t) using 4 W, 100 mm, 2 mm, k=200 W/(m K), and a 25 C cold face.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+              "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+              "locator": "rows:baseline_40,revision_60"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Geometry and boundary definitions"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "HEAT-BALANCE",
+          "text": "Each refined field implies heat removal within 1% of the 4 W source under the declared one-dimensional model.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+              "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+              "locator": "rows:baseline_40,revision_60"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Geometry and boundary definitions"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "HEAT-REFINEMENT",
+          "text": "Coarse-to-refined hot-end temperature-rise sensitivity is at most 2% for each candidate.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Reporting policy"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "HEAT-BASELINE-OUTCOME",
+          "text": "The 40 mm candidate exceeds the 45 C limit in the declared model, so it is not selected.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+              "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+              "locator": "rows:baseline_40,revision_60"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Geometry and boundary definitions"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "HEAT-REVISION-OUTCOME",
+          "text": "The 60 mm candidate is at or below the inclusive 45 C limit in the declared model.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+              "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+              "locator": "rows:baseline_40,revision_60"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Geometry and boundary definitions"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "HEAT-SELECTION",
+          "text": "The sizing decision selects the narrowest bound candidate at or below 45 C: revision_60.",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+              "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+              "locator": "Engineering objective and shop capability"
+            },
+            {
+              "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+              "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+              "locator": "width_mm,limit_c"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        }
+      ],
+      "unresolved_decisions": [],
+      "amendments": []
+    },
+    "checks": [
+      {
+        "id": "baseline_coarse-field",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-FIELDS"
+        ],
+        "subject_role": "baseline_coarse",
+        "reader": "thermal-field",
+        "selector": "field/node_count",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": 2.0,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "field_nodes",
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "baseline_coarse-analytical",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-ANALYTICAL"
+        ],
+        "subject_role": "baseline_coarse",
+        "reader": "thermal-field",
+        "selector": "field/analytical_relative_rise_error",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.02,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "analytical_relative_error",
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "baseline_fine-field",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-FIELDS"
+        ],
+        "subject_role": "baseline_fine",
+        "reader": "thermal-field",
+        "selector": "field/node_count",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": 2.0,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "field_nodes",
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "baseline_fine-analytical",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-ANALYTICAL"
+        ],
+        "subject_role": "baseline_fine",
+        "reader": "thermal-field",
+        "selector": "field/analytical_relative_rise_error",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.02,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "analytical_relative_error",
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "baseline-fine-balance",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-BALANCE"
+        ],
+        "subject_role": "baseline_fine",
+        "reader": "thermal-field",
+        "selector": "field/relative_heat_imbalance",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.01,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "heat_balance_relative",
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "baseline-refinement",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-REFINEMENT"
+        ],
+        "subject_role": "baseline_fine",
+        "reader": "thermal-field",
+        "selector": "field/refinement_relative_sensitivity",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.02,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "coarse_role": "baseline_coarse",
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "refinement_relative",
+          "related_roles": [
+            "baseline_coarse"
+          ],
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "baseline-maximum",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-BASELINE-OUTCOME"
+        ],
+        "subject_role": "baseline_fine",
+        "reader": "thermal-field",
+        "selector": "field/maximum_temperature_c",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": 45.0,
+          "maximum": null,
+          "inclusive": false
+        },
+        "unit": "degC",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            40.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "maximum_temperature",
+          "thickness_mm": 2.0,
+          "width_mm": 40.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision_coarse-field",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-FIELDS"
+        ],
+        "subject_role": "revision_coarse",
+        "reader": "thermal-field",
+        "selector": "field/node_count",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": 2.0,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "field_nodes",
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision_coarse-analytical",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-ANALYTICAL"
+        ],
+        "subject_role": "revision_coarse",
+        "reader": "thermal-field",
+        "selector": "field/analytical_relative_rise_error",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.02,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "analytical_relative_error",
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision_fine-field",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-FIELDS"
+        ],
+        "subject_role": "revision_fine",
+        "reader": "thermal-field",
+        "selector": "field/node_count",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": 2.0,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "field_nodes",
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision_fine-analytical",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-ANALYTICAL"
+        ],
+        "subject_role": "revision_fine",
+        "reader": "thermal-field",
+        "selector": "field/analytical_relative_rise_error",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.02,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "analytical_relative_error",
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision-fine-balance",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-BALANCE"
+        ],
+        "subject_role": "revision_fine",
+        "reader": "thermal-field",
+        "selector": "field/relative_heat_imbalance",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.01,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "heat_balance_relative",
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision-refinement",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-REFINEMENT"
+        ],
+        "subject_role": "revision_fine",
+        "reader": "thermal-field",
+        "selector": "field/refinement_relative_sensitivity",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.02,
+          "inclusive": true
+        },
+        "unit": "1",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "coarse_role": "revision_coarse",
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "refinement_relative",
+          "related_roles": [
+            "revision_coarse"
+          ],
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "revision-maximum",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-REVISION-OUTCOME"
+        ],
+        "subject_role": "revision_fine",
+        "reader": "thermal-field",
+        "selector": "field/maximum_temperature_c",
+        "constraint": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 45.0,
+          "inclusive": true
+        },
+        "unit": "degC",
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cold_temperature_c": 25.0,
+          "conductivity_w_mk": 200.0,
+          "dimensions_mm": [
+            100.0,
+            60.0,
+            2.0
+          ],
+          "heat_input_w": 4.0,
+          "length_mm": 100.0,
+          "operation": "maximum_temperature",
+          "thickness_mm": 2.0,
+          "width_mm": 60.0
+        },
+        "applicability_reason": null
+      },
+      {
+        "id": "candidate-selection",
+        "version": "1",
+        "requirement_ids": [
+          "HEAT-SELECTION"
+        ],
+        "subject_role": "decision",
+        "reader": "thermal-field",
+        "selector": "decision/selected_case_id",
+        "constraint": {
+          "operator": "equals",
+          "expected": "revision_60",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "independent_measurement",
+        "parameters": {
+          "cases": [
+            {
+              "dimensions_mm": [
+                100.0,
+                40.0,
+                2.0
+              ],
+              "id": "baseline_40",
+              "role": "baseline_fine",
+              "width_mm": 40.0
+            },
+            {
+              "dimensions_mm": [
+                100.0,
+                60.0,
+                2.0
+              ],
+              "id": "revision_60",
+              "role": "revision_fine",
+              "width_mm": 60.0
+            }
+          ],
+          "operation": "selection",
+          "related_roles": [
+            "baseline_fine",
+            "revision_fine"
+          ],
+          "temperature_limit_c": 45.0
+        },
+        "applicability_reason": null
+      }
+    ],
+    "excluded_scope": [
+      "Convection, radiation, interfaces, fasteners, local chip footprint, temperature-dependent properties and transient behavior are outside the source model.",
+      "STEP geometry topology, manufacturing details and material procurement are not acceptance checks in this profile."
+    ],
+    "limitations": [
+      "The source is a synthetic constant-property one-dimensional conduction case; passing does not establish physical thermal qualification.",
+      "Uniform end loading yields a linear field, so refinement agreement is a data-lineage check rather than independent validation of model physics."
+    ],
+    "supported_kinds": [
+      "file"
+    ]
+  },
+  "created_at": "2026-09-16T21:40:50.864675+00:00",
+  "measurements": [
+    {
+      "id": "m-5280bbbe32816f018eb49b3b9a1c8b5ba65cb219e2282491f46bbb5709320ede",
+      "subject_id": "output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115",
+      "subject_sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+      "selector": "field/node_count",
+      "value": 135,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field/node_count"
+      ]
+    },
+    {
+      "id": "m-7b5fba2d4a0e9fa70615b16badcd8d5f098dca275a8383a61715953a9cc3196f",
+      "subject_id": "output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115",
+      "subject_sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+      "selector": "field/analytical_relative_rise_error",
+      "value": 6.252776074688882e-14,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field/analytical_relative_rise_error"
+      ]
+    },
+    {
+      "id": "m-d9e0d5ee596032b068c288f5608cc7ac0dd93365f9fd8989974674b6a41b1e66",
+      "subject_id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+      "subject_sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "selector": "field/node_count",
+      "value": 765,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/node_count"
+      ]
+    },
+    {
+      "id": "m-3af08e2ef85018825d1bf8b9b37c49ff6d4f0da5ddea21d5edb716e3e8664a37",
+      "subject_id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+      "subject_sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "selector": "field/analytical_relative_rise_error",
+      "value": 3.5339553505764344e-12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/analytical_relative_rise_error"
+      ]
+    },
+    {
+      "id": "m-6864c8ef92e2991192af90b1cb1daf5e37ef5ea014533550d9bec5fd00a2b14e",
+      "subject_id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+      "subject_sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "selector": "field/relative_heat_imbalance",
+      "value": 3.5339509096843358e-12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/relative_heat_imbalance"
+      ]
+    },
+    {
+      "id": "m-6639806d3a8880778f81bda50b42a0f4effd51171021e2a1fc5d863796f71791",
+      "subject_id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+      "subject_sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "selector": "field/refinement_relative_sensitivity",
+      "value": 3.4714275898418134e-12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/refinement_relative_sensitivity",
+        "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field"
+      ]
+    },
+    {
+      "id": "m-461aa6e5fc35ab8b24d4ccade22e8a91f64e789eaa9ce5d110a1a6e1e9dd2f9f",
+      "subject_id": "output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14",
+      "subject_sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "selector": "field/maximum_temperature_c",
+      "value": 49.99999999991165,
+      "unit": "degC",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/maximum_temperature_c"
+      ]
+    },
+    {
+      "id": "m-120313cd04a36dea40cc89ab30ea301b98e3bcee32bbc6f064c62fb2b37117a3",
+      "subject_id": "output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a",
+      "subject_sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+      "selector": "field/node_count",
+      "value": 135,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field/node_count"
+      ]
+    },
+    {
+      "id": "m-389182911cdb3f105b4cb9558df68b2cf36cce27b08f207986f551eccd3576b6",
+      "subject_id": "output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a",
+      "subject_sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+      "selector": "field/analytical_relative_rise_error",
+      "value": 1.3557155398302708e-13,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field/analytical_relative_rise_error"
+      ]
+    },
+    {
+      "id": "m-04c77a818d581b1cb93c748924fb9f7010ff658f954eab644f892166a429916f",
+      "subject_id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+      "subject_sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "selector": "field/node_count",
+      "value": 765,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/node_count"
+      ]
+    },
+    {
+      "id": "m-b8c5ab86f0518f0074a39b08c00e577d5839f828e96250e91ea601f3eb4f6dc8",
+      "subject_id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+      "subject_sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "selector": "field/analytical_relative_rise_error",
+      "value": 5.026379312766947e-12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/analytical_relative_rise_error"
+      ]
+    },
+    {
+      "id": "m-c327ad1b946021b50c51061c8ee2c75dd64fa86dae66db8ffd73f71986d3ab6a",
+      "subject_id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+      "subject_sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "selector": "field/relative_heat_imbalance",
+      "value": 5.026090654780546e-12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/relative_heat_imbalance"
+      ]
+    },
+    {
+      "id": "m-243e1c5eec62ff75698529a200a8285232a9ee3c4edb8c0b22aa1d82062caeb7",
+      "subject_id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+      "subject_sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "selector": "field/refinement_relative_sensitivity",
+      "value": 4.890807758808503e-12,
+      "unit": "1",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/refinement_relative_sensitivity",
+        "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field"
+      ]
+    },
+    {
+      "id": "m-f311dc0003487bddecfed4e07f64ab0965151cdac12c9dd1d9a3585757bf9422",
+      "subject_id": "output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e",
+      "subject_sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "selector": "field/maximum_temperature_c",
+      "value": 41.6666666665829,
+      "unit": "degC",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/maximum_temperature_c"
+      ]
+    },
+    {
+      "id": "m-367458419b531cd7ca9a5113b7254e9b2a9198d516db13bb640c512a238dd754",
+      "subject_id": "output-5fc24bed46074517d2e166941d108991daf8fac600dfe7922318abaf4eb172f9",
+      "subject_sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+      "selector": "decision/selected_case_id",
+      "value": "revision_60",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "thermal-field",
+        "version": "1",
+        "config_digest": "5eac0ba0a71a996e2b8c5c03b5880ba5e38785075ea4a4c5955adbba426d2706",
+        "method": "independent_measurement",
+        "tool_identity": "wright bounded thermal field reader v1",
+        "formats": [
+          "csv",
+          "json"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-5fc24bed46074517d2e166941d108991daf8fac600dfe7922318abaf4eb172f9@6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a#decision/selected_case_id",
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field",
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "baseline_coarse-field",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-5280bbbe32816f018eb49b3b9a1c8b5ba65cb219e2282491f46bbb5709320ede"
+      ],
+      "evidence_refs": [
+        "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field/node_count"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "baseline_coarse-analytical",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-7b5fba2d4a0e9fa70615b16badcd8d5f098dca275a8383a61715953a9cc3196f"
+      ],
+      "evidence_refs": [
+        "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field/analytical_relative_rise_error"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "baseline_fine-field",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-d9e0d5ee596032b068c288f5608cc7ac0dd93365f9fd8989974674b6a41b1e66"
+      ],
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/node_count"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "baseline_fine-analytical",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-3af08e2ef85018825d1bf8b9b37c49ff6d4f0da5ddea21d5edb716e3e8664a37"
+      ],
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/analytical_relative_rise_error"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "baseline-fine-balance",
+      "requirement_ids": [
+        "HEAT-BALANCE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-6864c8ef92e2991192af90b1cb1daf5e37ef5ea014533550d9bec5fd00a2b14e"
+      ],
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/relative_heat_imbalance"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "baseline-refinement",
+      "requirement_ids": [
+        "HEAT-REFINEMENT"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-6639806d3a8880778f81bda50b42a0f4effd51171021e2a1fc5d863796f71791"
+      ],
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/refinement_relative_sensitivity",
+        "subject:output-68ede39e74f042489bbbe9a4a69f44b7aaaf566e9607b617f0bb7bb4301ba115@dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b#field"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "baseline-maximum",
+      "requirement_ids": [
+        "HEAT-BASELINE-OUTCOME"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-461aa6e5fc35ab8b24d4ccade22e8a91f64e789eaa9ce5d110a1a6e1e9dd2f9f"
+      ],
+      "evidence_refs": [
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field/maximum_temperature_c"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision_coarse-field",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-120313cd04a36dea40cc89ab30ea301b98e3bcee32bbc6f064c62fb2b37117a3"
+      ],
+      "evidence_refs": [
+        "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field/node_count"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision_coarse-analytical",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-389182911cdb3f105b4cb9558df68b2cf36cce27b08f207986f551eccd3576b6"
+      ],
+      "evidence_refs": [
+        "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field/analytical_relative_rise_error"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision_fine-field",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-04c77a818d581b1cb93c748924fb9f7010ff658f954eab644f892166a429916f"
+      ],
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/node_count"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision_fine-analytical",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-b8c5ab86f0518f0074a39b08c00e577d5839f828e96250e91ea601f3eb4f6dc8"
+      ],
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/analytical_relative_rise_error"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision-fine-balance",
+      "requirement_ids": [
+        "HEAT-BALANCE"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-c327ad1b946021b50c51061c8ee2c75dd64fa86dae66db8ffd73f71986d3ab6a"
+      ],
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/relative_heat_imbalance"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision-refinement",
+      "requirement_ids": [
+        "HEAT-REFINEMENT"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-243e1c5eec62ff75698529a200a8285232a9ee3c4edb8c0b22aa1d82062caeb7"
+      ],
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/refinement_relative_sensitivity",
+        "subject:output-3939668576ef3aedb77b5a4b049523adce5ab66e9e8293359607da296636865a@21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12#field"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "revision-maximum",
+      "requirement_ids": [
+        "HEAT-REVISION-OUTCOME"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-f311dc0003487bddecfed4e07f64ab0965151cdac12c9dd1d9a3585757bf9422"
+      ],
+      "evidence_refs": [
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field/maximum_temperature_c"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "candidate-selection",
+      "requirement_ids": [
+        "HEAT-SELECTION"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-367458419b531cd7ca9a5113b7254e9b2a9198d516db13bb640c512a238dd754"
+      ],
+      "evidence_refs": [
+        "subject:output-5fc24bed46074517d2e166941d108991daf8fac600dfe7922318abaf4eb172f9@6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a#decision/selected_case_id",
+        "subject:output-58b08b69ad27b60c1c55441270379af04304e939296d67fc3c292e4da2426a14@46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0#field",
+        "subject:output-175cb921f23a5bccb5be1db81323176c9dbb6e479af279e7f38d0651e510715e@db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73#field"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "content_verified": true,
+    "requirements_compliant": true,
+    "evaluation_complete": true,
+    "release_eligible": true,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 0,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 15
+    }
+  },
+  "subject_current": true,
+  "review_ids": [],
+  "supersedes": null
+}

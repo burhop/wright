@@ -1,0 +1,44 @@
+[
+  {
+    "fixture": "008",
+    "session_id": 66553,
+    "state": "stopped",
+    "exit_code": 0
+  },
+  {
+    "fixture": "009",
+    "session_id": 58428,
+    "state": "stopped",
+    "exit_code": 0
+  },
+  {
+    "fixture": "010",
+    "session_id": 29230,
+    "state": "stopped",
+    "exit_code": 0
+  },
+  {
+    "fixture": "011",
+    "session_id": 43213,
+    "state": "stopped",
+    "exit_code": 0
+  },
+  {
+    "fixture": "012",
+    "session_id": 61128,
+    "state": "running",
+    "health": 200,
+    "frontend_url": "http://wright.localhost:52195",
+    "installed_build": "005",
+    "scope": "Isolated saved-view proof; compiler/model deliberately unavailable, provider autostart disabled"
+  },
+  {
+    "fixture": "013",
+    "session_id": 34960,
+    "state": "running",
+    "health": 200,
+    "frontend_url": "http://wright.localhost:54524",
+    "installed_build": "005",
+    "scope": "Isolated saved-view proof; compiler/model deliberately unavailable, provider autostart disabled"
+  }
+]

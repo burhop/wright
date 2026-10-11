@@ -1,0 +1,66 @@
+{
+  "status": "partial_creation_response_defect",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "version": "0.6.0",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "selected_image": "sha256:0d17b039d282ebe83c7b51de8cad2cacb432da02a7de26ba4224adf9267bbf5f",
+  "fresh_selected_install": true,
+  "protocol_tools": 11,
+  "direct_gateway_schemas_equal": true,
+  "creation_calls": 1,
+  "creation_response_status": "error",
+  "native_status": "success",
+  "step_sha256": "c68308d39103532dfbf14e6ecc98de1b819a5a881c3e5f14c3ad72875abdd250",
+  "creation_retried": false,
+  "readback_calls": 1,
+  "readback_status": "success",
+  "measured_dimensions_mm": {
+    "x": 2.0,
+    "y": 3.0,
+    "z": 4.0
+  },
+  "measured_volume_mm3": 24.0,
+  "cleanup_revalidated": [
+    {
+      "container_id": "b67161dd2b3bde3c7c2c4515a6bbb622bdce11281ce21fcaa5313c4dce7cf48a",
+      "running": false,
+      "network_mode": "bridge",
+      "mount_destinations": []
+    },
+    {
+      "container_id": "991f992262d4e1b7f0e8ea86bd8f0299cee59064d431431c16a1f8975ccf7aa9",
+      "running": false,
+      "network_mode": "none",
+      "mount_destinations": [
+        "/workspace"
+      ]
+    }
+  ],
+  "original_source_hashes": {
+    "qualification.json": "41850488299d32444d1387ff7f3907df424f02eb2c3c24350d9401388114816a",
+    "installation.log": "7e5f4df31b109c3b391c53446c36a1f25e5e965434229984179bd0ee0f754afe",
+    "installation-command.json": "13dedaf4be9f168a01bcefd13d29243f9fd7819e2e5cd3c591bd9cbc297d5ba7",
+    "initialization.json": "bcecbbabcbc947eab225e65f3e5966f2e94c92e2ff80b790a7466f402fadb39b",
+    "tools.json": "4c2ca28fd5c6dff0544953c21bbf99a8b26601f3de225d29f78b4da984f7caea",
+    "creation-definition.json": "9cbafeb1c48431df2628d24f31ef347442ae340ccff72026d9f3e9c0e0f6ea36",
+    "readback-definition.json": "6f90a9597b1854e3f246846f034a62971e2a049dbf247890c333567840cfc525",
+    "gateway-create/qualification.json": "ae84d25db6335d880f4e4be061274d08f00f7122044fa4b3006a7ae2eb742b78",
+    "gateway-create/result.json": "4e1086952cbd8b6dc54218c8ae78934a469c12960df13833c874ee19d9947cf7",
+    "gateway-create/gateway-tools.json": "17778d7dd04d686e4c9e13a0563b39fe84e86da23588f2b3e6224da09dae3c51",
+    "gateway-measure/qualification.json": "fd1ee7f248fd9700a253d5edd1160538de6d2bd2c96da41e89ed7b69996cc2f5",
+    "gateway-measure/result.json": "a7db7b9063874d2aaed4b820d94c8f15beb1a84de84aa800b3d3a1e13cbf905b",
+    "gateway-measure/gateway-tools.json": "33946277d794f0676119055ce41fc1471a0c55d5273738bfbb4c7bafd34f7c76",
+    "actual-native/tiny.py": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47",
+    "actual-native/output.step": "c68308d39103532dfbf14e6ecc98de1b819a5a881c3e5f14c3ad72875abdd250",
+    "actual-native/meta.json": "245e9e53ac8c3841611f05a29fa35cff2ca81611b5166e191e15237c77b5d110",
+    "actual-native/script.py": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47"
+  },
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "gateway_host": "Current Windows source api.gateway_stdio; selected provider/backend runs in fresh Linux container",
+  "limits": [
+    "Creation receipt remains erroneous despite completed native artifact; no success response was fabricated.",
+    "Only tiny geometry/readback is exercised; this is not the Heat assignment or human engineering acceptance.",
+    "T043 remains open for selected creation-binding/provider qualification; provider-specific fix belongs upstream."
+  ]
+}

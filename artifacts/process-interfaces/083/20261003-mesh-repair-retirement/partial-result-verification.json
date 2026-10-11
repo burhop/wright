@@ -1,0 +1,458 @@
+{
+  "status": "passed",
+  "scope": "Terminal durable partial-result workspace representations, including the failed negative run; no process or provider replay",
+  "attempts": [
+    {
+      "attempt": "003",
+      "run_id": "eea433bfee574b4d8cc31601ef9211d3",
+      "status": "completed",
+      "verified_workspace_representations": [
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:qualified_geometry:source_mesh",
+          "location": "qualification/artifacts/source_mesh.stl",
+          "bytes": 684,
+          "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:qualified_repair:repaired_mesh",
+          "location": "qualification/artifacts/repaired_mesh.stl",
+          "bytes": 684,
+          "sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:qualified_repair:geometry_preview",
+          "location": "qualification/artifacts/mesh-preview.png",
+          "bytes": 51845,
+          "sha256": "96e4e5ca17e14d645b7a4dc4e90ecb03ab295b7330282d72b01cda90c993053c"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+          "location": "qualification/artifacts/mesh-inspection-evidence.json",
+          "bytes": 2474,
+          "sha256": "8664f5ea21071fcf0e19e55a8194bc7958c7b39a1d5dafbcbcea3b7dd98d4ade"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:invoke_external_slice_inspect_actual_package:external_slice_package",
+          "location": "qualification/artifacts/slice_package.gcode.3mf",
+          "bytes": 42007,
+          "sha256": "67e11804c39acb6ccd5e237a51d71cb14cdf3388672436a160151412b73eb319"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:retain_slice_response_inspect_actual_package:provider_response",
+          "location": "qualification/artifacts/slice-provider-response.json",
+          "bytes": 1826,
+          "sha256": "ca82e8c26433c901dfb4d0d9923a6b18ef86a4ac3769f75523b621cd3e1b8020"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:slice_evidence",
+          "location": "qualification/artifacts/slice-evidence.json",
+          "bytes": 1096,
+          "sha256": "ed1daf05fb09aacef3d79ced21f48c16cbbc0ed7f9c60e73358b71f91965138f"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:support_preview",
+          "location": "qualification/artifacts/support-preview.svg",
+          "bytes": 1774,
+          "sha256": "1bf1744088c6edf81b80e0f617f10773e6ca4313e53ae3edaf4f07ec5c48c748"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:machine_profile",
+          "location": "qualification/artifacts/machine-profile.json",
+          "bytes": 20560,
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:process_profile",
+          "location": "qualification/artifacts/process-profile.json",
+          "bytes": 8180,
+          "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:filament_profile",
+          "location": "qualification/artifacts/filament-profile.json",
+          "bytes": 7954,
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:toolpath_preview",
+          "location": "qualification/artifacts/support-preview.json",
+          "bytes": 37479,
+          "sha256": "bdd7bc6ceafde998793ad17890818f7b7b0c4dc96caf6cf431cac5561d4daf30"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:toolpath_summary",
+          "location": "qualification/artifacts/toolpath-summary.json",
+          "bytes": 1519,
+          "sha256": "4789924472a27c1ac9690dd263e6402cc4e18fb79f97846df9c9826f5f2b2ed7"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:slice_preview",
+          "location": "qualification/artifacts/slice-preview.png",
+          "bytes": 3878,
+          "sha256": "44d6169df3da45aa96546b8f91fc5d0d86352de3a1329b52e3f5e08362b097ac"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:qualified_geometry:geometry_result",
+          "location": "qualification/artifacts/geometry-response.json",
+          "bytes": 110,
+          "sha256": "78508eca3ce9630ca539b57c1c7074ef4def05f01c0221b8fc62a2330b9635bd"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:qualified_repair:qualified_repair_result",
+          "location": "qualification/artifacts/repair-model-report.json",
+          "bytes": 145,
+          "sha256": "c7826e8234c80e1b1d04a9f45749e048e028378e9bdbdbcaf0918f0cb43893eb"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_repaired_mesh_qualified_repair:inspect_repaired_mesh_qualified_repair_result",
+          "location": "qualification/artifacts/mesh-inspection-provider-result.json",
+          "bytes": 2852,
+          "sha256": "e320a4cadea2f0b3593990f7cd8351e0c81f67b4d25508915448ffad66292d56"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:invoke_external_slice_inspect_actual_package:invoke_external_slice_inspect_actual_package_result",
+          "location": "qualification/artifacts/slicer-execution.json",
+          "bytes": 1826,
+          "sha256": "ca82e8c26433c901dfb4d0d9923a6b18ef86a4ac3769f75523b621cd3e1b8020"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:retain_slice_response_inspect_actual_package:retain_slice_response_inspect_actual_package_result",
+          "location": "qualification/artifacts/response-retention-receipt.json",
+          "bytes": 269,
+          "sha256": "5a68c748be52b8a9fb0c0d84384d88410a8a99fda464731a2b7b27de3cb6c5a2"
+        },
+        {
+          "result_identity": "eea433bfee574b4d8cc31601ef9211d3:inspect_actual_package:inspect_actual_package_result",
+          "location": "qualification/artifacts/package-inspection-result.json",
+          "bytes": 1488,
+          "sha256": "a5489fa5c3b3dd1bfb456bc3e4838b9193813b5884a877b91d216aaee528195c"
+        }
+      ]
+    },
+    {
+      "attempt": "004",
+      "run_id": "e7efda28c9d141b590852c40f5ad9cd6",
+      "status": "completed",
+      "verified_workspace_representations": [
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:qualified_geometry:source_mesh",
+          "location": "qualification/artifacts/source_mesh.stl",
+          "bytes": 684,
+          "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:qualified_repair:repaired_mesh",
+          "location": "qualification/artifacts/repaired_mesh.stl",
+          "bytes": 1284,
+          "sha256": "ad296788e5c3f7f33745e2d6518534a4dd0ed55f0e7c6a31992130745d75c43e"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:qualified_repair:geometry_preview",
+          "location": "qualification/artifacts/mesh-preview.png",
+          "bytes": 51845,
+          "sha256": "cab9d94faa35508ba16259419b2bd48db8ebe7d550d38a2d664d1fdba2084bec"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+          "location": "qualification/artifacts/mesh-inspection-evidence.json",
+          "bytes": 2477,
+          "sha256": "a942dcdfff640f2e0c6193bc329cb84137fc0cf0baf307c3f306272f5fc95a2a"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:invoke_external_slice_inspect_actual_package:external_slice_package",
+          "location": "qualification/artifacts/slice_package.gcode.3mf",
+          "bytes": 45338,
+          "sha256": "2aa2f372b8328b58deacc7872e2d70305266148c81873ce8e7e66b5400a38b6a"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:retain_slice_response_inspect_actual_package:provider_response",
+          "location": "qualification/artifacts/slice-provider-response.json",
+          "bytes": 1826,
+          "sha256": "dd83d16035a6d499a9d1fe13fb980a7124c266bede73a79c9269ad8d4fdb7ddc"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:slice_evidence",
+          "location": "qualification/artifacts/slice-evidence.json",
+          "bytes": 1096,
+          "sha256": "c344346bb0d6839d94bc9f02e61cc47074e94e9f33fa1074bad7bcbbacd4cb8e"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:support_preview",
+          "location": "qualification/artifacts/support-preview.svg",
+          "bytes": 3279,
+          "sha256": "cfa81d65058e07c257ddfcac51648d55522c0fb9dcc84ddc7e3fc379c7d19aa5"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:machine_profile",
+          "location": "qualification/artifacts/machine-profile.json",
+          "bytes": 20560,
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:process_profile",
+          "location": "qualification/artifacts/process-profile.json",
+          "bytes": 8180,
+          "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:filament_profile",
+          "location": "qualification/artifacts/filament-profile.json",
+          "bytes": 7954,
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:toolpath_preview",
+          "location": "qualification/artifacts/support-preview.json",
+          "bytes": 70667,
+          "sha256": "a75db194129ccab9c33aef142ed5777a1139c5ac8bd336949acdc7ea122927fe"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:toolpath_summary",
+          "location": "qualification/artifacts/toolpath-summary.json",
+          "bytes": 1506,
+          "sha256": "a16978345ba55d68a8c437a3ee22044e11e63e5730cf5b058381745b5d1c9877"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:slice_preview",
+          "location": "qualification/artifacts/slice-preview.png",
+          "bytes": 4234,
+          "sha256": "042da7a7c9146f72b25cfce3b099768b3ab60da8e94d36d34d37e6b5b956b0a8"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:qualified_geometry:geometry_result",
+          "location": "qualification/artifacts/geometry-response.json",
+          "bytes": 110,
+          "sha256": "78508eca3ce9630ca539b57c1c7074ef4def05f01c0221b8fc62a2330b9635bd"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:qualified_repair:qualified_repair_result",
+          "location": "qualification/artifacts/repair-model-report.json",
+          "bytes": 145,
+          "sha256": "c7826e8234c80e1b1d04a9f45749e048e028378e9bdbdbcaf0918f0cb43893eb"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_repaired_mesh_qualified_repair:inspect_repaired_mesh_qualified_repair_result",
+          "location": "qualification/artifacts/mesh-inspection-provider-result.json",
+          "bytes": 1135,
+          "sha256": "11c1667cff37ca4872640ebabcba24a3a048f128e881470191628b3bd379d2fd"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:invoke_external_slice_inspect_actual_package:invoke_external_slice_inspect_actual_package_result",
+          "location": "qualification/artifacts/slicer-execution.json",
+          "bytes": 1826,
+          "sha256": "dd83d16035a6d499a9d1fe13fb980a7124c266bede73a79c9269ad8d4fdb7ddc"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:retain_slice_response_inspect_actual_package:retain_slice_response_inspect_actual_package_result",
+          "location": "qualification/artifacts/response-retention-receipt.json",
+          "bytes": 269,
+          "sha256": "38b4bceb909144f2bec2095ed447747bce811ab2b264386d7f091c48d00fbaa2"
+        },
+        {
+          "result_identity": "e7efda28c9d141b590852c40f5ad9cd6:inspect_actual_package:inspect_actual_package_result",
+          "location": "qualification/artifacts/package-inspection-result.json",
+          "bytes": 1488,
+          "sha256": "d72d446132542d0699795b61a5129bf2aa363a244bdf8acc5b5a9c465d2d9843"
+        }
+      ]
+    },
+    {
+      "attempt": "005",
+      "run_id": "a7894cc4c9474cf997658d2959bf262b",
+      "status": "failed",
+      "verified_workspace_representations": [
+        {
+          "result_identity": "a7894cc4c9474cf997658d2959bf262b:qualified_geometry:source_mesh",
+          "location": "qualification/artifacts/source_mesh.stl",
+          "bytes": 684,
+          "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+          "published_exact_copy": "negative-artifacts/source_mesh.stl"
+        },
+        {
+          "result_identity": "a7894cc4c9474cf997658d2959bf262b:qualified_repair:repaired_mesh",
+          "location": "qualification/artifacts/repaired_mesh.stl",
+          "bytes": 1284,
+          "sha256": "ad296788e5c3f7f33745e2d6518534a4dd0ed55f0e7c6a31992130745d75c43e",
+          "published_exact_copy": "negative-artifacts/repaired_mesh.stl"
+        },
+        {
+          "result_identity": "a7894cc4c9474cf997658d2959bf262b:qualified_repair:geometry_preview",
+          "location": "qualification/artifacts/mesh-preview.png",
+          "bytes": 51845,
+          "sha256": "7279fe2b296f0b6fba33e52ed2b66dce9bc91322aef42979b4c045f23799a588",
+          "published_exact_copy": "negative-artifacts/mesh-preview.png"
+        },
+        {
+          "result_identity": "a7894cc4c9474cf997658d2959bf262b:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+          "location": "qualification/artifacts/mesh-inspection-evidence.json",
+          "bytes": 2477,
+          "sha256": "cdcdb94ce79aab12eac88b49edd749aacb631a1c589f0c35e1bff83c0248fe7a",
+          "published_exact_copy": "negative-artifacts/mesh-inspection-evidence.json"
+        },
+        {
+          "result_identity": "a7894cc4c9474cf997658d2959bf262b:validate_repaired_mesh_qualified_repair:diagnostic:validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+          "location": "validation/assessment-ffcec5ce32da443ca799a773fd5c9062.json",
+          "bytes": 50877,
+          "sha256": "f559d8a9d876c99753ae5a21bc9cb52ae74e4c05ccde45d0ebdcd2827ef9f583",
+          "published_exact_copy": "negative-artifacts/assessment-ffcec5ce32da443ca799a773fd5c9062.json"
+        }
+      ]
+    },
+    {
+      "attempt": "006",
+      "run_id": "a249652e3969432d99e8ece79b0b2550",
+      "status": "completed",
+      "verified_workspace_representations": [
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:qualified_geometry:source_mesh",
+          "location": "qualification/artifacts/source_mesh.stl",
+          "bytes": 684,
+          "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+          "published_exact_copy": "positive-artifacts/source_mesh.stl"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:qualified_repair:repaired_mesh",
+          "location": "qualification/artifacts/repaired_mesh.stl",
+          "bytes": 684,
+          "sha256": "86743ee998790d86ed687cd51fd7dab20d443462b791fd69728f7b714e5ca867",
+          "published_exact_copy": "positive-artifacts/repaired_mesh.stl"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:qualified_repair:geometry_preview",
+          "location": "qualification/artifacts/mesh-preview.png",
+          "bytes": 51845,
+          "sha256": "948f920dc7af54e2b266c44351f0bf3c90df9b15171f6b64aaf1ec437be5ce9e",
+          "published_exact_copy": "positive-artifacts/mesh-preview.png"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_repaired_mesh_qualified_repair:mesh_evidence",
+          "location": "qualification/artifacts/mesh-inspection-evidence.json",
+          "bytes": 2474,
+          "sha256": "8d002d547cbdb0657f158aa895922a819fff1c967d0311f807ba51de4543b48f",
+          "published_exact_copy": "positive-artifacts/mesh-inspection-evidence.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:validate_repaired_mesh_qualified_repair:diagnostic:validation/assessment-671b6f0e9cca4e08808b1b9f78003ddd.json",
+          "location": "validation/assessment-671b6f0e9cca4e08808b1b9f78003ddd.json",
+          "bytes": 45039,
+          "sha256": "e17766011e8d3f6c53260329176532b29bf7d11e660717dba97b56f580b1733e",
+          "published_exact_copy": "positive-artifacts/assessment-671b6f0e9cca4e08808b1b9f78003ddd.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:invoke_external_slice_inspect_actual_package:external_slice_package",
+          "location": "qualification/artifacts/slice_package.gcode.3mf",
+          "bytes": 41980,
+          "sha256": "05d7b9ccbdcaf5eb13decd2de35ffdcb7c3e07da75370c33da02eeaaaab8c10a",
+          "published_exact_copy": "positive-artifacts/slice_package.gcode.3mf"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:retain_slice_response_inspect_actual_package:provider_response",
+          "location": "qualification/artifacts/slice-provider-response.json",
+          "bytes": 1826,
+          "sha256": "497b98396c6b6e2fe2318aca1bd46cbfdb73d4ccf728a64b0d79f03a274fe81e",
+          "published_exact_copy": "positive-artifacts/slice-provider-response.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:slice_evidence",
+          "location": "qualification/artifacts/slice-evidence.json",
+          "bytes": 1096,
+          "sha256": "1b9e3d9be02fc77b98c5caafca36a806defcea06ba146b2bf96609859ca5bbc8",
+          "published_exact_copy": "positive-artifacts/slice-evidence.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:support_preview",
+          "location": "qualification/artifacts/support-preview.svg",
+          "bytes": 1774,
+          "sha256": "1bf1744088c6edf81b80e0f617f10773e6ca4313e53ae3edaf4f07ec5c48c748",
+          "published_exact_copy": "positive-artifacts/support-preview.svg"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:machine_profile",
+          "location": "qualification/artifacts/machine-profile.json",
+          "bytes": 20560,
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+          "published_exact_copy": "positive-artifacts/machine-profile.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:process_profile",
+          "location": "qualification/artifacts/process-profile.json",
+          "bytes": 8180,
+          "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+          "published_exact_copy": "positive-artifacts/process-profile.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:filament_profile",
+          "location": "qualification/artifacts/filament-profile.json",
+          "bytes": 7954,
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+          "published_exact_copy": "positive-artifacts/filament-profile.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:toolpath_preview",
+          "location": "qualification/artifacts/support-preview.json",
+          "bytes": 37479,
+          "sha256": "1faa1aa489ca399cccaf89cbf1e466fd3a950887572f126e81ddd1c72dd450af",
+          "published_exact_copy": "positive-artifacts/support-preview.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:toolpath_summary",
+          "location": "qualification/artifacts/toolpath-summary.json",
+          "bytes": 1519,
+          "sha256": "fd8adfc37be021d804f89f6efc07235c376de2b886be90a75b987b4d4e7a0b05",
+          "published_exact_copy": "positive-artifacts/toolpath-summary.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:slice_preview",
+          "location": "qualification/artifacts/slice-preview.png",
+          "bytes": 3878,
+          "sha256": "44d6169df3da45aa96546b8f91fc5d0d86352de3a1329b52e3f5e08362b097ac",
+          "published_exact_copy": "positive-artifacts/slice-preview.png"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:qualified_geometry:geometry_result",
+          "location": "qualification/artifacts/geometry-response.json",
+          "bytes": 110,
+          "sha256": "78508eca3ce9630ca539b57c1c7074ef4def05f01c0221b8fc62a2330b9635bd",
+          "published_exact_copy": "positive-artifacts/geometry-response.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:qualified_repair:qualified_repair_result",
+          "location": "qualification/artifacts/repair-model-report.json",
+          "bytes": 145,
+          "sha256": "c7826e8234c80e1b1d04a9f45749e048e028378e9bdbdbcaf0918f0cb43893eb",
+          "published_exact_copy": "positive-artifacts/repair-model-report.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_repaired_mesh_qualified_repair:inspect_repaired_mesh_qualified_repair_result",
+          "location": "qualification/artifacts/mesh-inspection-provider-result.json",
+          "bytes": 2852,
+          "sha256": "1e594d00dfedf5e0304822617200a560b6298a25e3ad78519ed543231d87e3b0",
+          "published_exact_copy": "positive-artifacts/mesh-inspection-provider-result.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:invoke_external_slice_inspect_actual_package:invoke_external_slice_inspect_actual_package_result",
+          "location": "qualification/artifacts/slicer-execution.json",
+          "bytes": 1826,
+          "sha256": "497b98396c6b6e2fe2318aca1bd46cbfdb73d4ccf728a64b0d79f03a274fe81e",
+          "published_exact_copy": "positive-artifacts/slicer-execution.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:retain_slice_response_inspect_actual_package:retain_slice_response_inspect_actual_package_result",
+          "location": "qualification/artifacts/response-retention-receipt.json",
+          "bytes": 269,
+          "sha256": "3c6ee58ffccddcb8762d9377cdc1e03198af40282402635b749b8b7e3a255a1f",
+          "published_exact_copy": "positive-artifacts/response-retention-receipt.json"
+        },
+        {
+          "result_identity": "a249652e3969432d99e8ece79b0b2550:inspect_actual_package:inspect_actual_package_result",
+          "location": "qualification/artifacts/package-inspection-result.json",
+          "bytes": 1488,
+          "sha256": "a2b3fa96314296f6990570f092a182f6764d08a26f031ce4c98c68b1a2caca81",
+          "published_exact_copy": "positive-artifacts/package-inspection-result.json"
+        }
+      ]
+    }
+  ],
+  "original_inventory_unchanged": true,
+  "physical_or_human_acceptance": false
+}

@@ -1,0 +1,432 @@
+{
+  "stats": {
+    "startTime": "2026-10-03T14:52:28.006Z",
+    "duration": 117395.338,
+    "expected": 18,
+    "skipped": 14,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "file": "process-common-view.spec.ts",
+      "line": 39,
+      "title": "shows an unattended-input diagnostic without inventing a form and reopens the same failed run",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 6141,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-common-view.spec.ts",
+      "line": 103,
+      "title": "uses the normal workspace to prepare, follow and inspect an exact run while retaining source edits",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 8336,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-common-view.spec.ts",
+      "line": 234,
+      "title": "reconciles a lost start acknowledgement after reload using the original request identity",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 4588,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-declared-interactions.spec.ts",
+      "line": 21,
+      "title": "preserves declared input schemas through workspace source editing, saving and reopening",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 5063,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-declared-interactions.spec.ts",
+      "line": 101,
+      "title": "declared response resumes the saved workspace run after closing and reopening its tab",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 5856,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-declared-interactions.spec.ts",
+      "line": 101,
+      "title": "declared response resumes the saved workspace run after explicit lost-ack reconciliation",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 5220,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-input-inspector.spec.ts",
+      "line": 18,
+      "title": "edits input and human declarations through the workspace inspector and preserves undo, save and reopen",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 6312,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-input-inspector.spec.ts",
+      "line": 122,
+      "title": "creates a saveable draft user step without inventing a question or response",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 5270,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-review-actions.spec.ts",
+      "line": 25,
+      "title": "reviews then explicitly submits an exact action in the normal workspace (none lost acknowledgement)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 5297,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-review-actions.spec.ts",
+      "line": 25,
+      "title": "reviews then explicitly submits an exact action in the normal workspace (review lost acknowledgement)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 7740,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-review-actions.spec.ts",
+      "line": 25,
+      "title": "reviews then explicitly submits an exact action in the normal workspace (action lost acknowledgement)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 6900,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-review-actions.spec.ts",
+      "line": 25,
+      "title": "reviews then explicitly submits an exact action in the normal workspace (unknown lost acknowledgement)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 4845,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-two-input-recovery.spec.ts",
+      "line": 24,
+      "title": "two declared inputs preserve one workspace run (accepted)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 8653,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-two-input-recovery.spec.ts",
+      "line": 24,
+      "title": "two declared inputs preserve one workspace run (lost)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 9809,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-two-input-recovery.spec.ts",
+      "line": 24,
+      "title": "two declared inputs preserve one workspace run (schema)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 8325,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-two-input-recovery.spec.ts",
+      "line": 24,
+      "title": "two declared inputs preserve one workspace run (stale)",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 4690,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-validation.spec.ts",
+      "line": 123,
+      "title": "authors a validator and shows correction diagnostics with assessment links from Workflows",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 2992,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "process-validation.spec.ts",
+      "line": 280,
+      "title": "shows the exact human requirements review from the workspace Workflows control",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "duration": 2541,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "file": "workflow-recovery-accessibility.spec.ts",
+      "line": 22,
+      "title": "supports representative authoring and component inspection with keyboard actions and ordered focus",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "unexpected",
+      "attempts": [
+        {
+          "status": "failed",
+          "duration": 2794,
+          "errors": [
+            {
+              "location": {
+                "file": "D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery-accessibility.spec.ts",
+                "column": 51,
+                "line": 51
+              },
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m3\u001b[39m\nReceived:   \u001b[31m-1\u001b[39m\n\n  49 |     orderOf(\"workflow-recovery-view-split\"),\n  50 |   );\n> 51 |   expect(orderOf(\"workflow-recovery-ai-request\")).toBeGreaterThan(\n     |                                                   ^\n  52 |     orderOf(\"workflow-recovery-validate\"),\n  53 |   );\n  54 |   await expect(\n    at D:\\repos\\wright\\tests\\ui-integration\\workflow-recovery-accessibility.spec.ts:51:51"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "workflow-recovery-accessibility.spec.ts",
+      "line": 119,
+      "title": "keeps the complete screen-reader contract available at a two-times page scale",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 52,
+      "title": "automatically creates the default workflow when Workflows is opened",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 77,
+      "title": "loads and saves the workspace workflow with its current CAS identity",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 103,
+      "title": "binds decision and revision edges to explicit typed routing handles",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 162,
+      "title": "keeps the engineer's local edit visible when a CAS save conflicts",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 191,
+      "title": "persists authored input text and a scoped workspace file reference across reopen",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 266,
+      "title": "keeps the canvas-first editor bounded with an optional inspector at 1070 by 791",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 345,
+      "title": "expands a reusable component without adding search clutter to a small graph",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 391,
+      "title": "keeps overlapping edge labels behind blocks without losing keyboard edge selection",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 416,
+      "title": "keeps one accepted definition across canvas, source, and AI review",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 566,
+      "title": "uses real typed handles and preserves source across a layout save",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 725,
+      "title": "promotes valid source and reviewed AI commands while production execution remains fail-closed",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 785,
+      "title": "keeps paired diagram and source edits inside the local one-second feedback bound",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    },
+    {
+      "file": "workflow-recovery.spec.ts",
+      "line": 826,
+      "title": "keeps production readiness accessible, reduced-motion legible, and mobile-contained",
+      "project": "chromium",
+      "expected_status": "passed",
+      "outcome": "skipped",
+      "attempts": []
+    }
+  ]
+}

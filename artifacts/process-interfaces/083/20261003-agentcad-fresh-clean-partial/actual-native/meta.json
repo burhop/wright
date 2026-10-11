@@ -1,0 +1,194 @@
+{
+  "command": "run",
+  "status": "success",
+  "core": {
+    "status": "success",
+    "committed_at": "2026-10-03T08:07:13.639835+00:00"
+  },
+  "version": 1,
+  "label": "clean-probe",
+  "runtime": "build123d",
+  "output_type": "single_part",
+  "created": "2026-10-03T08:07:13.639835+00:00",
+  "script": "v1_clean-probe/script.py",
+  "outputs": {
+    "step": "v1_clean-probe/output.step",
+    "script": "v1_clean-probe/script.py"
+  },
+  "metrics": {
+    "bounding_box": {
+      "x": [
+        -1.0,
+        1.0
+      ],
+      "y": [
+        -1.5,
+        1.5
+      ],
+      "z": [
+        -2.0,
+        2.0
+      ]
+    },
+    "dimensions": {
+      "x": 2.0,
+      "y": 3.0,
+      "z": 4.0
+    },
+    "volume": 24.0,
+    "surface_area": 52.0,
+    "center_of_mass": {
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "face_count": 6,
+    "edge_count": 12,
+    "is_valid": true,
+    "reliable": true
+  },
+  "validation": {
+    "profile": "deliverable",
+    "is_valid": true,
+    "first_failure": null,
+    "undetermined_layer": null,
+    "layers": {
+      "file_parse": {
+        "status": "pass",
+        "duration_ms": 0
+      },
+      "kernel_load": {
+        "status": "pass",
+        "duration_ms": 0
+      },
+      "brep_check": {
+        "status": "pass",
+        "errors": [],
+        "duration_ms": 1
+      },
+      "shell_closure": {
+        "status": "pass",
+        "closed_shell_count": 1,
+        "open_shell_count": 0,
+        "loose_face_count": 0,
+        "loose_face_ids": [],
+        "free_edge_count": 0,
+        "free_edge_ids": [],
+        "free_edges": [],
+        "duration_ms": 0
+      },
+      "mesh_manifold": {
+        "deflection_mm": 0.005385,
+        "triangle_count": 12,
+        "vertex_count": 8,
+        "status": "pass",
+        "ladder_divisor": 1,
+        "requested_deflection_mm": 0.005385,
+        "worker": "in_process",
+        "duration_ms": 2
+      },
+      "structure": {
+        "status": "pass",
+        "solid_count": 1,
+        "shell_count": 1,
+        "face_count": 6,
+        "edge_count": 12,
+        "faces_outside_solids": 0,
+        "duration_ms": 0
+      },
+      "advisory": {
+        "status": "pass",
+        "min_face_area_mm2": 6.0,
+        "max_tolerance_mm": 0.0,
+        "flags": [],
+        "duration_ms": 0
+      }
+    },
+    "message": "The shape passed every deliverable validation layer."
+  },
+  "validation_profile": "deliverable",
+  "artifacts": {
+    "mesh_exports": {
+      "status": "skipped",
+      "message": "No optional mesh exports requested."
+    },
+    "renders": {
+      "status": "skipped",
+      "message": "No explicit renders requested."
+    },
+    "preview": {
+      "status": "skipped",
+      "message": "Preview disabled with --no-preview."
+    },
+    "parts_preview": {
+      "status": "skipped",
+      "message": "No per-part preview work requested."
+    },
+    "viewer_glb": {
+      "status": "skipped",
+      "message": "Viewer artifacts disabled on the core-only fast path."
+    },
+    "diff": {
+      "status": "skipped",
+      "message": "Automatic comparison disabled with --no-diff."
+    },
+    "viewer": {
+      "status": "skipped",
+      "message": "Viewer artifacts disabled on the core-only fast path."
+    },
+    "browser": {
+      "status": "skipped",
+      "message": "Browser launch disabled with --no-view."
+    }
+  },
+  "completed_phases": [
+    "validation",
+    "script_exec",
+    "metrics",
+    "export_step"
+  ],
+  "phase_timings": {
+    "validation_ms": 950,
+    "script_exec_ms": 12,
+    "metrics_ms": 4,
+    "export_step_ms": 21
+  },
+  "parts": [
+    {
+      "id": "part_0",
+      "id_source": "generated",
+      "part_of": null,
+      "metrics": {
+        "bounding_box": {
+          "x": [
+            -1.0,
+            1.0
+          ],
+          "y": [
+            -1.5,
+            1.5
+          ],
+          "z": [
+            -2.0,
+            2.0
+          ]
+        },
+        "dimensions": {
+          "x": 2.0,
+          "y": 3.0,
+          "z": 4.0
+        },
+        "volume": 24.0,
+        "surface_area": 52.0,
+        "center_of_mass": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "face_count": 6,
+        "edge_count": 12,
+        "is_valid": true
+      }
+    }
+  ]
+}

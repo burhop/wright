@@ -1,0 +1,23 @@
+{
+  "test_setup": "The first pytest invocation cannot create D:/TEMP/pytest-of-markb: 2 pass, 53 setup errors. Fresh controlled repository temp/cache passes 68.",
+  "common_preparation": [
+    {
+      "helper": "t056-common-digital-prepare-080.py",
+      "outcome": "compiler rejects an unconnected descriptive prompt input before acceptance/execution"
+    },
+    {
+      "helper": "t056-common-digital-prepare-081.py",
+      "outcome": "compiler rejects an unmapped descriptive native-tool input"
+    },
+    {
+      "helper": "t056-common-digital-prepare-082.py",
+      "outcome": "compiler rejects an upstream file connection lacking its declared dependency setting"
+    },
+    {
+      "helper": "t056-common-digital-prepare-083.py",
+      "outcome": "source compiles and saves; a harness assumes PromptStep is a dict and fails before acceptance. 084 accepts the same valid proposal after inspecting the actual dataclass; no new staging or replay."
+    }
+  ],
+  "freeze": "088 wrongly counts all report-inspection calls as construction calls; 090 checks the exact construction task and preserves three actual AI-native tool calls, only one at construction.",
+  "raw_failures": "Original tool outputs retained in the Codex transcript; these summaries do not pretend to be captured raw logs."
+}

@@ -1,0 +1,896 @@
+{
+  "source_commit": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+  "scope": "T049 current shared-code/provider survey and retained two-process comparison",
+  "feature_shared_python": [
+    {
+      "path": "apps/api/src/api/routers/process_interfaces.py",
+      "sha256": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37"
+    },
+    {
+      "path": "packages/agent_adapters/src/agent_adapters/base.py",
+      "sha256": "8362f014e7aad8808ac60d0fa2d072b6c3327e97a76f06652111a58a26c13870"
+    },
+    {
+      "path": "packages/agent_adapters/src/agent_adapters/hermes.py",
+      "sha256": "bdc6eb8764e5dd61fa616f17590eae584620b29336b56f5ad9433b9421032042"
+    },
+    {
+      "path": "packages/core/src/core/process_interactions.py",
+      "sha256": "609750acee7acb117c9864d179b1fd6b205f5881382f22e89e46a1d3bdbdd831"
+    },
+    {
+      "path": "packages/core/src/core/process_interfaces.py",
+      "sha256": "b74fe4c44ebd7beff6fdb1e89189ae668feeac5188c6862af49e482ba12bbbd0"
+    },
+    {
+      "path": "packages/data_vault/src/data_vault/process_input_repository.py",
+      "sha256": "c4a71836c5de22c5419cbfafe9f15ff2bc3b80a7a485db236c290546d5bb2a72"
+    },
+    {
+      "path": "packages/data_vault/src/data_vault/process_interface_repository.py",
+      "sha256": "ea7c769799abc0b2dd674b9348c15a6782435242edaaca43b5482a510d3d1bfd"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/__init__.py",
+      "sha256": "228622f1fbcc74398d10d8fa582a26f5c414b6004299e3d0595d452a2a9fc3a7"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py",
+      "sha256": "3c46c7b95f3c5ed43cfbc41e0ffa3453d1e79a6b1df57dd1b306bb7f5a22917d"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py",
+      "sha256": "9219f86d18f066a77b533a9275f54e1e370d0aa86a74d5bb2d2d164af86ef087"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/build.py",
+      "sha256": "f26447349ebcd6b37a9186673c8a2524a2af5038ada83c63927d6d9cc5ccc29e"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py",
+      "sha256": "82174096a37e9e138599307f73ce5c53ef9dccec947a05c5af02cea5cd0fcb62"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py",
+      "sha256": "4a6bd6a616536a17566ba74e685450f99d39405c7a4999d61845cd956223db2a"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/errors.py",
+      "sha256": "ab694ff7d8d0a7be433b03ef98497d2b94bf58347b2b4e1eec76a97b5788d073"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py",
+      "sha256": "208320dc9e9bec2a3973e8ac2cda344c73c4cadb0107bdd84ad2888396b528fa"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/interactions.py",
+      "sha256": "30419e26f900337df8a6193818f7eb1af532117220a2ca3e6da47ef85e239d2b"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/legacy_results.py",
+      "sha256": "171e399e4878e6f45146168ac7136317f19dab460ace59e7c396d62d975ba58d"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/limits.py",
+      "sha256": "d1bdf9a0a2cbf339699e2c2b1a4644d59657140766746af616f4bea613c54916"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/navigation.py",
+      "sha256": "8335239dd161c0528fd787dcb23643dd1686e7680f0ac2779148c9bfaeb68120"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/options.py",
+      "sha256": "f1ab1a2b80e787b3cf5bc0abc6a5b43e1aeb73416f39d761f450bb28c7fc68f8"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/owners.py",
+      "sha256": "18c3e857dca549e2739cf6017c349a3312fe9dffd8efd01d9193fd1e32b534a3"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py",
+      "sha256": "2c701d3710e90e48c893cf1b08cca73a883c380f1cbebcd518ebc66f59ed4381"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/projection.py",
+      "sha256": "3acd0410f123f66367b2eaba2e05cfc7f2a71b7699e541d81cecde1a40e60c4b"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/readiness.py",
+      "sha256": "d0746df74f4f072acb2753fb3d3d47d8998264c2e18b5d1deb5e97822906225e"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/representations.py",
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/resources/__init__.py",
+      "sha256": "f160cda97b2d0d841a8cd98fd49775c8c4e88ffad2c0041d62d3ee12229368a0"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/runs.py",
+      "sha256": "3c71ed98e00624079b5f4a040b165f3110ca5bdd9b1f9c408fdfc3278b035d33"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/service.py",
+      "sha256": "025c6fdf339d23bb4a4ac7b97e3d3757bb728a5d528c6df4aca334028bd6585d"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py",
+      "sha256": "9943a01928009484e7900d19893d5c0288406b08e834894bb0d928adab40b738"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_interfaces/toolchain.py",
+      "sha256": "67e1e8926f0030be644c8b8241f549b27988035216b909233e7efe2da461fa60"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py",
+      "sha256": "1203cd84d62bc50c24f5067134c73aad4e89f71238dbcdb28b28e4a454a98f1e"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/workflow_async_operations.py",
+      "sha256": "17bdcd6a7910e893f97ccd76cfa43d9593be68f38d8cf1c7ad6a731f69bb797c"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+      "sha256": "e5c68454deadc6707e92c08704319dc996cd53509c1e54540bbd993efaf1e8be"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+      "sha256": "477c5b0b7335cf2cdca7bddec8cd990e67d0242008caa3bbfde0268fd855a7bc"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/workflow_run_preparation.py",
+      "sha256": "9d0d02613c9a721461b72edd45e83384835b03968d426e65ccab9da1e090ea26"
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
+      "sha256": "0e29734066a3bdf0dc7652d2aeb7b17eaf6d56aa438430f54236f532ddd03c7c"
+    }
+  ],
+  "public_client_kit_views": [
+    {
+      "path": "packages/process_client/src/client.ts",
+      "sha256": "eda1a10d00dd9c1db39bf75f083a013c6aca507412e548b1b6cd28d5f1207c5c"
+    },
+    {
+      "path": "packages/process_client/src/contracts.generated.ts",
+      "sha256": "823ddb839496f1672bbdebf9601cda05bf7576cf6f3dc8738fe02d08eda8d021"
+    },
+    {
+      "path": "packages/process_client/src/errors.ts",
+      "sha256": "e85ba2e50e7a2b9d6323ae441410682ee3674cbc227254c1946410bc9b85e553"
+    },
+    {
+      "path": "packages/process_client/src/index.ts",
+      "sha256": "86176c6b4ae5646d64dfb099d9a958218a5d57c5db1adbe218c8f82b4a9b2882"
+    },
+    {
+      "path": "packages/process_client/src/presentation.ts",
+      "sha256": "6e236bcfd02d5c7bec0406ae7b30c949442e0efaf2f48db1d1123f6a4353d16b"
+    },
+    {
+      "path": "packages/process_client/src/schemas.generated.ts",
+      "sha256": "cf542237942d98c56d6e01c4eb5876b19c4558d608e29b7aa3eb1253496cec2a"
+    },
+    {
+      "path": "packages/process_client/src/sse.ts",
+      "sha256": "c5dd4c60d8b0e6c7fc049ef3b55c7673cb92e2cfc1db8c1756c2beca351f1482"
+    },
+    {
+      "path": "packages/process_client/src/validation.ts",
+      "sha256": "522b3d6349e003e4de1bf3f15aa5703a501b4272e1b4c891321565c5a56c2877"
+    },
+    {
+      "path": "packages/ui_kit/src/geometry.tsx",
+      "sha256": "c6cd10de12fb9721b84b15dc06dab3fd3392d821aa242c4a8413d057afe57ef7"
+    },
+    {
+      "path": "packages/ui_kit/src/index.ts",
+      "sha256": "a217909d076b528d39deb15df186d764ded31d65a1a46e4d75b43921ad98bf50"
+    },
+    {
+      "path": "packages/ui_kit/src/inputs.tsx",
+      "sha256": "2b3c0da072037b9d5f24e702e02b2cd83c50b6dda6bd67d0a81849ea31ca9fad"
+    },
+    {
+      "path": "packages/ui_kit/src/patterns.tsx",
+      "sha256": "805adb0858a2194e0fc1ce0267646954b43282afad0f4451c5a472fe8f73c2b9"
+    },
+    {
+      "path": "packages/ui_kit/src/representations.tsx",
+      "sha256": "90969e1db0afc8d7904bced3e1a174939e6e9058465980f8c535b002c8d7056a"
+    },
+    {
+      "path": "packages/ui_kit/src/result-representation.tsx",
+      "sha256": "67ee22799b76f8e2f4a661dc7e6d3adf8eae535654086428b67ec81e57f95dfc"
+    },
+    {
+      "path": "packages/ui_kit/src/styles.d.ts",
+      "sha256": "35d26ea66c86da9701e4f4b467913481ffeae910761cea34c775c5dacb7f8eaa"
+    },
+    {
+      "path": "packages/ui_kit/src/toolpaths.ts",
+      "sha256": "1cca5244f9d4eabf538fd0172d0525468f8f43478bc8846b878b4235809011db"
+    },
+    {
+      "path": "packages/ui_kit/src/working-controls.tsx",
+      "sha256": "1e012d4a5dc2a34c63a215d5e65e9adae1497f1387dfa3202b613de03ea7ae1d"
+    },
+    {
+      "path": "apps/web/src/components/process-interfaces/CommonProcessView.tsx",
+      "sha256": "df6d648572918f3dd607b1771d38286e099e7b86a45d223d34e1d91c87580aa9"
+    },
+    {
+      "path": "apps/web/src/components/process-interfaces/HistoricalResultView.tsx",
+      "sha256": "8f9d8316b8c42102579ef5f62e1c00bf56452a79f42a2e147ed653771283487a"
+    },
+    {
+      "path": "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx",
+      "sha256": "5210a48494a71d934cc459c0de7e6b320356dd4a653a6b802d3efe6ea1b3abe1"
+    },
+    {
+      "path": "apps/web/src/components/process-interfaces/ProcessInterfaceView.tsx",
+      "sha256": "81872ebf4dbbe59ea8d6a5a23875e30cc144309a6336f6177ca21613c2b1d033"
+    },
+    {
+      "path": "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.tsx",
+      "sha256": "157e57d90ab90dca666f29fb205d196ba96c7abedcc75c45ead96c424a12f985"
+    }
+  ],
+  "selected_provider_survey": {
+    "tracked_python_files": 447,
+    "residuals": [
+      {
+        "path": "packages/tool_registry/src/tool_registry/canonical_catalog.py",
+        "findings": [
+          {
+            "line": 30,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "be425616189ca41969d81e0e173a9ae378157513e1ee7aadf00fc41f4cd604b4"
+          },
+          {
+            "line": 30,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "d09457ee7302e1467b844128463135d9e4aad68ad34b8a132b34d7cfe56911d0"
+          }
+        ],
+        "sha256": "594d8a40e4235f5c62741fa6b97fd2fdaaca58b6e8ab03ca020732504aa02ea5",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/tool_registry/src/tool_registry/lifecycle_adapters.py",
+        "findings": [
+          {
+            "line": 253,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a80e4ba8e6d04259aafa4166f6bc6b1875ffd8396a632997a03e6dabfae12ad"
+          }
+        ],
+        "sha256": "633f9753bbf64509efeb77e767b6b7f437b1f5b89b58327ca8d03dee601027ff",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/tool_registry/src/tool_registry/manager.py",
+        "findings": [
+          {
+            "line": 238,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a80e4ba8e6d04259aafa4166f6bc6b1875ffd8396a632997a03e6dabfae12ad"
+          }
+        ],
+        "sha256": "4b4ac4938eedc6d70753863dec7e65e9e71ab96540965701f175690e53aa51ba",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/tool_registry/src/tool_registry/mcp_validation.py",
+        "findings": [
+          {
+            "line": 61,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a80e4ba8e6d04259aafa4166f6bc6b1875ffd8396a632997a03e6dabfae12ad"
+          },
+          {
+            "line": 61,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a80e4ba8e6d04259aafa4166f6bc6b1875ffd8396a632997a03e6dabfae12ad"
+          }
+        ],
+        "sha256": "95bafe3a72902036d55e63ae4cea301a25aa5958be15b3d1b13eb34e38ca3b5b",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/tool_registry/src/tool_registry/native_application_blender.py",
+        "findings": [
+          {
+            "line": 1,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "84b93c02ab5af3ef176f01c5b9f3769846d9d582bdfb7313280167486fcf3e71"
+          },
+          {
+            "line": 325,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "6fd0297b1c1da0d74a3d2d20a3fa63e8647d5172d04f55e0df6c25ff315a80de"
+          },
+          {
+            "line": 340,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "ceb1b8bc616b4d48752c1fe36ae7345db17e7c62a591896eabb95ed547601982"
+          },
+          {
+            "line": 443,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a80e4ba8e6d04259aafa4166f6bc6b1875ffd8396a632997a03e6dabfae12ad"
+          },
+          {
+            "line": 79,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "fa8f60ccf20db3cf3deb56dda0b5b9c78bc7a65eddab4da3aec3edc90b41fa55"
+          },
+          {
+            "line": 143,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a504f0d5475972219c32c8c6548fc37d12bda9d7db4f65d0e0c237becac16a2"
+          },
+          {
+            "line": 151,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5d689519ebecae7b9c4a0ad0800035753dd5bf83d9811f19b62c304c5904e748"
+          },
+          {
+            "line": 158,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "cb0e3084aff4cd15273b0284c5d4271e8df521ab8e68dbe6763537949d5cf7d4"
+          },
+          {
+            "line": 161,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "4ed900be9ca9e25ce2adc9f9e35920ebc35ae794106fc42fb921d1fd5eb85031"
+          },
+          {
+            "line": 180,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "21263981ae01336e86a165f0c83fc92186d08ccfc020e4f010c44d5a3c416983"
+          },
+          {
+            "line": 217,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "ae2fbfb9bdd00cc2a7b222a87ca3da3cab276251dc38e87e975ef44a9a8560d9"
+          },
+          {
+            "line": 222,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "34954455b949be60b2421b6b645cf190e91de6a82dc6645112244248a42384eb"
+          },
+          {
+            "line": 236,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "14bc2c8e18efba42a7541fd6bcb971a4c4c8a88fccd5ee958bfd1c664e6c9aca"
+          },
+          {
+            "line": 242,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "ae8c012f092e5fe63a0f970bfc0e020bb2bc823e3099607c835e664a667e8be5"
+          },
+          {
+            "line": 260,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "3c9a1af3da5ad84af80b1098aeef765a83e40912097a78135f49cf7e1712036e"
+          },
+          {
+            "line": 284,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "bd905f57438512b257adf026a5b8271594a179cf7dafe8512b6955187e8a9293"
+          },
+          {
+            "line": 296,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "7383a4729e17a7436baf209fa8a58eb8617c3fc49df45683111936ddc7867127"
+          },
+          {
+            "line": 311,
+            "selected_provider_words": [
+              "blender_mcp"
+            ],
+            "literal_sha256": "58a0fd5b047f924e31b1e62147f64592134a91a46ea96a6997b6af5253ce27ca"
+          },
+          {
+            "line": 315,
+            "selected_provider_words": [
+              "blender_mcp"
+            ],
+            "literal_sha256": "6714ec37f3e3bb09baadc3049585aee284ef81ed18d6fbdf67da837dfa05fae9"
+          },
+          {
+            "line": 417,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "620f32c146bc174f6e8be78ebc62b9ba82f7caabf948548dc98ea047800d7aa6"
+          },
+          {
+            "line": 442,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "f14e3e51289a2b000895acc09804f2cbf22dc266c393287d2b5d3f40de76efae"
+          },
+          {
+            "line": 85,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "bb7b409ac511d22bf02f6fa51e24f049b4687db382a5092a0d9179d889c38938"
+          },
+          {
+            "line": 109,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "f95e51ddd33680d52a1dc75614297a7c189cc972dc133659ad8a85c2867f31ad"
+          },
+          {
+            "line": 301,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "80fd5cf204fc4e91e6b41e4e326c1d9be0e31bbc8983a5a14ba8d00bb6c2a5c4"
+          },
+          {
+            "line": 304,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "967a86eae3c3ab8cca27818d80047a9fcd8723fed82fdec4427769ff6a117b7a"
+          },
+          {
+            "line": 308,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "ce546701cf4a4980e82ab3b45ec1a8fec8d365189d662cb3636e5d6e9b8699d7"
+          },
+          {
+            "line": 335,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "5a80e4ba8e6d04259aafa4166f6bc6b1875ffd8396a632997a03e6dabfae12ad"
+          },
+          {
+            "line": 335,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "a9d035e8d5712927da29df14214f2ef7401eafd5de0cf6b14fcc671d7872ecc1"
+          },
+          {
+            "line": 394,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "a89de16381d2bbcdb7ed128fdd0c3c3cf8c0689b85ae14fbfca068790047c048"
+          },
+          {
+            "line": 435,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "b91d7bcd1e6c04ef486ecb35456f276f9a51a741c00821fabad79bfc49692de3"
+          },
+          {
+            "line": 102,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "7209000a97ffeeacfd916d35b54fc91b0daa156e3bbb37b9681df1567b633238"
+          }
+        ],
+        "sha256": "904cd3d7af94e5635046a28dff11fe122fa6acd8ba899ef3ae4cbb0471a897a5",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/tool_registry/src/tool_registry/native_application_blender_host.py",
+        "findings": [
+          {
+            "line": 1,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "cc8cf1e2b1aab8c49198758aaf7a184b701cc0c9013395319f6a09874a34c09a"
+          },
+          {
+            "line": 67,
+            "selected_provider_words": [
+              "blender_mcp"
+            ],
+            "literal_sha256": "58a0fd5b047f924e31b1e62147f64592134a91a46ea96a6997b6af5253ce27ca"
+          },
+          {
+            "line": 236,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "fa8f60ccf20db3cf3deb56dda0b5b9c78bc7a65eddab4da3aec3edc90b41fa55"
+          },
+          {
+            "line": 31,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "bb836f9cbc51eeac24c663fac4d2fa88f047fa614b273feb00a913ee44a9bb60"
+          },
+          {
+            "line": 36,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "b7096afb250e23859aebe74c9f4e4d73ed4e58dca6ea2cd336056444f7593f4b"
+          },
+          {
+            "line": 39,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "745d1512fcaee3420c12f38ec75f124678298dcc8c9ca2f56e59242324a584a8"
+          },
+          {
+            "line": 45,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "99a9addf26173bfd1c78b324cb98b56b45871ac2581f3a8221a7e5d9291907bc"
+          },
+          {
+            "line": 53,
+            "selected_provider_words": [
+              "blender_mcp"
+            ],
+            "literal_sha256": "6714ec37f3e3bb09baadc3049585aee284ef81ed18d6fbdf67da837dfa05fae9"
+          },
+          {
+            "line": 54,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "e02d4132354fe3a0e3a90031f4c2a1dfedf49d8cbbd1945517a2c27a19a15632"
+          },
+          {
+            "line": 62,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "309a47e2c8502d2fd73143f6a39ec63fb32d0643b0b9931a9078dfa96a58b833"
+          },
+          {
+            "line": 71,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "49103815955cb47bf5dfe607f18bdb91453aa4df03ceb1dfcdbef0d515ca055a"
+          },
+          {
+            "line": 74,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "0811c8a6cccdb5f6273343663c0fc4213fd38b605510bfd3eb222d1ec2ddc04a"
+          },
+          {
+            "line": 109,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "79f179863c8b25564e994af225512bc5ba5154c2a862bf23757a5909e2559ce7"
+          },
+          {
+            "line": 143,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "0406e492f70adc0f305e7ab99ca78336d064fb1bc5acee7dba7d9fb2fbac8a7c"
+          },
+          {
+            "line": 150,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "da352544495da659d201afa20c0f197745011d7e7d5cb1e9e9dc4d70c3def302"
+          },
+          {
+            "line": 80,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "f29172a75a5cd51ba31fd729149657890a439e2de8a5e3f2e2d6fc4ee681500c"
+          },
+          {
+            "line": 176,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "d0d5362b74b33fbda9fb3178d61d3509d011d5bfb0eb8984e79212081e0a3d5e"
+          },
+          {
+            "line": 194,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "e2d33403ea18c3aa2b676d669dd5ca2f16f95c939404eea998764501853f0e58"
+          },
+          {
+            "line": 197,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "66268e3ff91cef4c269cad3df4c15f95023c5a82aea001d137077df9c8d46d29"
+          },
+          {
+            "line": 209,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "723519a45783b0dfa891bfbe1eb8dffac3ff7bc5fd033f4a677f64a3dd5514ac"
+          },
+          {
+            "line": 223,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "a93044a69efce4d84bc7cbb4871cbb705da536cbc90b452f2be0b16870ad5b73"
+          },
+          {
+            "line": 226,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "abe0a8ed50c5bd18aa3b2120f8ad4fabeb3b2f253a75c044dc550e39b145792b"
+          },
+          {
+            "line": 233,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "e941f2aa3dfa89032facf3986a5cc217100f4e3ba9c123573eb94f2a4a755dfd"
+          }
+        ],
+        "sha256": "4c4e20b65d0a4c0c049d11b9c21b0b4672afdd2dba6a990b25e9fe6e3c1496b7",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py",
+        "findings": [
+          {
+            "line": 739,
+            "selected_provider_words": [
+              "blender"
+            ],
+            "literal_sha256": "9f783295debe4c1c63bbf3f4c1adaf4139e355ca0034a8d94e1151979f8be3c1"
+          }
+        ],
+        "sha256": "477c5b0b7335cf2cdca7bddec8cd990e67d0242008caa3bbfde0268fd855a7bc",
+        "matches_pre083_source_normalized": false,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      },
+      {
+        "path": "packages/workspace_service/src/workspace_service/workflow_mcp_source_contracts.py",
+        "findings": [
+          {
+            "line": 13,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "5703287af4c1396e985365e39a3ddfdc6662409d9a9e6657e8f824d744e5546a"
+          },
+          {
+            "line": 44,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "dfa43bcc7a3d5344668a89e5bcc2bbf1bafe8d370bf8a9fe97640480bce1c976"
+          },
+          {
+            "line": 46,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "81135674acd0aa954671e6bcd7619ac733bbdf17adb84276598ccf47d863fb9a"
+          },
+          {
+            "line": 50,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "a1076194d63da088c11a2321e2a6e960cfcdbf8cd25cda0f57855c89e2443e3b"
+          },
+          {
+            "line": 67,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "ce848dfd3fc82e1c66ceb64f3fd99e6addff6c6f88c542fe69e7fdd7fb3e95c4"
+          },
+          {
+            "line": 76,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "b9f472dd8220ee9c7519f976ebd1ce5da8eb98f30c52a1e12154cef54c1cb7ec"
+          },
+          {
+            "line": 82,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "798dd7796fa22a0f685f99bf0a763e463b96f25b5b12659b80f1a20bf7d890c1"
+          },
+          {
+            "line": 88,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "faa94636b810af26a18862a45295e5eacaa78065c099da666b4734b02e40aed2"
+          },
+          {
+            "line": 128,
+            "selected_provider_words": [
+              "agentcad"
+            ],
+            "literal_sha256": "b5d1173759ac12a1b2251cc863b51f60a434898c889fcd22fb52eb6f75ab53b1"
+          }
+        ],
+        "sha256": "bec159a154df7613154ea1d4a4631057354655562cae2100b8c324e4b3a4cf5b",
+        "matches_pre083_source_normalized": true,
+        "pre083_source_commit": "679447bb3ad62b670b49b27a278ff14406647809"
+      }
+    ]
+  },
+  "original_six_profiles": [
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json",
+      "sha256": "3950b7e088a9eb9c3f3b51971db8b4a1813feece448f1c7517a7fa98f7d51d7a",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-lineage",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json",
+      "sha256": "60e164adeb1f41686ead462bd803ff7b194b679afab8a07f9210e17d0a482f3c",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-lineage",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-03.json",
+      "sha256": "0564c7f15f4365b3dd8311b6a537985100fd1d08641b22343159c8344320e1ad",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-lineage",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-01.json",
+      "sha256": "085e1e1ce9aa6452bb3be95b037f533f7729e635c7302b4c8f58a257d3ad6d00",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": []
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-02.json",
+      "sha256": "b1472174693e2bc4eb101552de33ff57cd597707628b286bff7d539d49ce32db",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-binding",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-03.json",
+      "sha256": "b13a39d51833469e73167098b6c78b3fd81868efb65d49c26ca836b1d59ad518",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-binding",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    }
+  ],
+  "new_reader_identity": {
+    "id": "printing",
+    "version": "3",
+    "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+    "method": "independent_measurement",
+    "tool_identity": "wright bounded mesh/print artifact reader v3",
+    "formats": [
+      "stl",
+      "json",
+      "3mf"
+    ]
+  },
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "retained_actual_engineering_ui_proofs": [
+    {
+      "root": "20261003-configured-preparation-and-saved-reuse-verified",
+      "files": 282,
+      "inventory_sha256": "5a24c7592b8f07a627b541d3b1b39d19114eccd59f213f3ce6e2008cd7de3f6f"
+    },
+    {
+      "root": "20261003-heat-repeat-and-saved-ui-verified",
+      "files": 268,
+      "inventory_sha256": "85fae47b4ac309055fefc65743f97eeb03c1ec33fd452c628cea1982409e21ea"
+    }
+  ],
+  "fresh_provider_model_process_execution": false,
+  "review_responses": 0,
+  "physical_effects": false
+}

@@ -1,0 +1,440 @@
+{
+  "manual_owner_and_body_review": true,
+  "inspected_functions": [
+    {
+      "file": "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "function": "test_run_projection_obeys_scope_and_stale_owner_evidence",
+      "line": 85,
+      "end_line": 103,
+      "function_sha256": "146b9454ce8368600b87c703472fe505e0e0c7573a0d327d234f6ffe9da44038",
+      "passed_cases": [
+        "test_run_projection_obeys_scope_and_stale_owner_evidence"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "function": "test_terminal_review_projection_rechecks_actual_files",
+      "line": 124,
+      "end_line": 138,
+      "function_sha256": "97eb06f0f240de39c38e7cc58556bf5c064e46c90af4102668c2a87134a0a0a6",
+      "passed_cases": [
+        "test_terminal_review_projection_rechecks_actual_files"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "function": "test_run_projection_reads_real_082_assessment_and_supersession",
+      "line": 174,
+      "end_line": 221,
+      "function_sha256": "ea5abb5a998caa487a2be1758124bf3916b215d375414d1af5a36588dfe6180e",
+      "passed_cases": [
+        "test_run_projection_reads_real_082_assessment_and_supersession"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_interaction_owners.py",
+      "function": "test_changed_source_keeps_original_run_and_blocks_mutations",
+      "line": 225,
+      "end_line": 234,
+      "function_sha256": "cd78f57418490f68aee1732198d05bb4edff80c8a9894ea9ebb93247cb1e793c",
+      "passed_cases": [
+        "test_changed_source_keeps_original_run_and_blocks_mutations"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_review_decisions.py",
+      "function": "test_invalid_or_changed_review_does_not_record_decision",
+      "line": 231,
+      "end_line": 271,
+      "function_sha256": "02ab67210e35e0680f5d3d964b1a50a4d9628a9480b62368a344a4661c9a4c36",
+      "passed_cases": [
+        "test_invalid_or_changed_review_does_not_record_decision[artifact-False]",
+        "test_invalid_or_changed_review_does_not_record_decision[artifact-True]",
+        "test_invalid_or_changed_review_does_not_record_decision[source-False]",
+        "test_invalid_or_changed_review_does_not_record_decision[source-True]",
+        "test_invalid_or_changed_review_does_not_record_decision[subject-False]",
+        "test_invalid_or_changed_review_does_not_record_decision[subject-True]",
+        "test_invalid_or_changed_review_does_not_record_decision[scope-False]",
+        "test_invalid_or_changed_review_does_not_record_decision[scope-True]",
+        "test_invalid_or_changed_review_does_not_record_decision[blank_reason-False]",
+        "test_invalid_or_changed_review_does_not_record_decision[blank_reason-True]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_review_decisions.py",
+      "function": "test_review_request_identity_cannot_be_replaced",
+      "line": 204,
+      "end_line": 223,
+      "function_sha256": "81cb7683bdba961a87f96fdf5eff46691ebdab18c6a185fce0f4f015b97a31c0",
+      "passed_cases": [
+        "test_review_request_identity_cannot_be_replaced[actor-False]",
+        "test_review_request_identity_cannot_be_replaced[actor-True]",
+        "test_review_request_identity_cannot_be_replaced[request_id-False]",
+        "test_review_request_identity_cannot_be_replaced[request_id-True]",
+        "test_review_request_identity_cannot_be_replaced[decision-False]",
+        "test_review_request_identity_cannot_be_replaced[decision-True]",
+        "test_review_request_identity_cannot_be_replaced[reason-False]",
+        "test_review_request_identity_cannot_be_replaced[reason-True]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_review_decisions.py",
+      "function": "test_review_is_scoped_durable_and_does_not_dispatch",
+      "line": 151,
+      "end_line": 198,
+      "function_sha256": "d880dc01f1725ae5c759d1f5114df4266d30f6342c2daec238f9c4926c0f127f",
+      "passed_cases": [
+        "test_review_is_scoped_durable_and_does_not_dispatch[False]",
+        "test_review_is_scoped_durable_and_does_not_dispatch[True]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_action_supervision.py",
+      "function": "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests",
+      "line": 182,
+      "end_line": 220,
+      "function_sha256": "664d46eb36909b4f82f91ec211c4f0dc64955849f07b5dfbde6f570b092aeb0f",
+      "passed_cases": [
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[approval-False]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[approval-True]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[artifact-False]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[artifact-True]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[source-False]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[source-True]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[scope-False]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[scope-True]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[subject-False]",
+        "test_action_preflight_rejects_unapproved_changed_or_unscoped_requests[subject-True]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_process_validation.py",
+      "function": "test_canonical_gate_inspects_producer_output_and_publishes_evidence_before_holding",
+      "line": 228,
+      "end_line": 297,
+      "function_sha256": "796f3b348b85681ea0dd28b0cc492b47f1a792cd7f9725cceda79bf754522458",
+      "passed_cases": [
+        "test_canonical_gate_inspects_producer_output_and_publishes_evidence_before_holding[100-True]",
+        "test_canonical_gate_inspects_producer_output_and_publishes_evidence_before_holding[98-False]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_process_validation.py",
+      "function": "test_unavailable_reader_persists_blocked_assessment_and_holds_consumer",
+      "line": 344,
+      "end_line": 386,
+      "function_sha256": "61b5989ee166115e9cd66a243314d0705e1cb4ef07e91e892dd35bfad1ebf789",
+      "passed_cases": [
+        "test_unavailable_reader_persists_blocked_assessment_and_holds_consumer"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_process_validation.py",
+      "function": "test_no_available_subject_still_produces_a_blocked_assessment",
+      "line": 389,
+      "end_line": 406,
+      "function_sha256": "171e19d4385dcd9d19c6af02814b667fe4104d703cf0c7726fe3b9e84daeae75",
+      "passed_cases": [
+        "test_no_available_subject_still_produces_a_blocked_assessment"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+      "function": "test_structured_producer_receives_typed_feedback_and_releases_new_revision",
+      "line": 133,
+      "end_line": 171,
+      "function_sha256": "07dfd60d24422603e9b9b63f8bceb6377c4a4abf7ee6ec2b450f6ef1891e6e99",
+      "passed_cases": [
+        "test_structured_producer_receives_typed_feedback_and_releases_new_revision"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+      "function": "test_identical_output_and_defect_stop_without_spending_another_revision",
+      "line": 174,
+      "end_line": 196,
+      "function_sha256": "93f81553e8540a4ed1b30e0d3abe389728ecc2a04b932ac68a76478e213b2ef1",
+      "passed_cases": [
+        "test_identical_output_and_defect_stop_without_spending_another_revision"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+      "function": "test_revision_budget_is_persisted_and_exhaustion_holds_consumer",
+      "line": 199,
+      "end_line": 216,
+      "function_sha256": "c46bfe7a929f439e37673426ca12aeee1b2c9ac496712d8af38d59b9d079b6c9",
+      "passed_cases": [
+        "test_revision_budget_is_persisted_and_exhaustion_holds_consumer"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+      "function": "test_preparation_recomputes_exact_expanded_review_settings",
+      "line": 24,
+      "end_line": 108,
+      "function_sha256": "469036a4097165ccb2810b9d3a6f5923d29d2af5ca1bff41663732af74954b31",
+      "passed_cases": [
+        "test_preparation_recomputes_exact_expanded_review_settings[None]",
+        "test_preparation_recomputes_exact_expanded_review_settings[text]",
+        "test_preparation_recomputes_exact_expanded_review_settings[sources]",
+        "test_preparation_recomputes_exact_expanded_review_settings[missing]",
+        "test_preparation_recomputes_exact_expanded_review_settings[profile]",
+        "test_preparation_recomputes_exact_expanded_review_settings[input]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_approval_execution.py",
+      "function": "test_changed_supplied_handoff_artifact_never_dispatches",
+      "line": 386,
+      "end_line": 407,
+      "function_sha256": "fdd9d6227756d2f6ed01a4f5c608fdc69135b1bd569923f94215f71136bf8ef0",
+      "passed_cases": [
+        "test_changed_supplied_handoff_artifact_never_dispatches[before_decision]",
+        "test_changed_supplied_handoff_artifact_never_dispatches[after_decision]"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_approval_resume.py",
+      "function": "test_changed_subject_becomes_stale_and_wrong_workspace_cannot_decide",
+      "line": 126,
+      "end_line": 155,
+      "function_sha256": "835c4200a06fdbc768fdc2aa448ef4140649f10172828aca1ec51552f9b34c25",
+      "passed_cases": [
+        "test_changed_subject_becomes_stale_and_wrong_workspace_cannot_decide"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_workflow_approval_resume.py",
+      "function": "test_expired_checkpoint_cannot_be_approved_after_restart",
+      "line": 188,
+      "end_line": 213,
+      "function_sha256": "3be1d34558aa74b68af21d0e0d51ea6d0ef260194dec07196b36be1cf6f46be4",
+      "passed_cases": [
+        "test_expired_checkpoint_cannot_be_approved_after_restart"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_changed_provider_resource_or_expired_choice_cannot_pass",
+      "line": 352,
+      "end_line": 374,
+      "function_sha256": "287330e5062373600b667542ec3031aaa50c2794b21670f95c77cde238ecf29e",
+      "passed_cases": [
+        "test_changed_provider_resource_or_expired_choice_cannot_pass"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_missing_option_capability_is_explicit",
+      "line": 447,
+      "end_line": 450,
+      "function_sha256": "5a34005ee101d3d03b6a83443c99b08153e683ab8da7279b27665c44ba8bb2da",
+      "passed_cases": [
+        "test_missing_option_capability_is_explicit"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_optional_absent_input_is_omitted_without_inventing_a_value",
+      "line": 454,
+      "end_line": 463,
+      "function_sha256": "462432276fabfad0c353614f290d36e6fd386f0b0dfd23e0cfac3df6709c6967",
+      "passed_cases": [
+        "test_optional_absent_input_is_omitted_without_inventing_a_value"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_required_consumer_cannot_be_weakened_by_optional_input_label",
+      "line": 467,
+      "end_line": 474,
+      "function_sha256": "820da9906e7032e2fc9de223321624113c7479a9a366aca5d30308669b1fe6c6",
+      "passed_cases": [
+        "test_required_consumer_cannot_be_weakened_by_optional_input_label"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_input_readiness.py",
+      "function": "test_file_reference_is_hashed_and_reread_without_path_as_contents",
+      "line": 478,
+      "end_line": 495,
+      "function_sha256": "9a61a0c8a924f7c3dad6bd53c00368bbc98514b6a9b191ab71f5a10a9dea5acd",
+      "passed_cases": [
+        "test_file_reference_is_hashed_and_reread_without_path_as_contents"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_build.py",
+      "function": "test_exact_catalog_binding_and_optional_absence",
+      "line": 123,
+      "end_line": 166,
+      "function_sha256": "901843b52bda15ff8f44416ff6315a2a94d917ada032ed0aa9e49df39ca148e2",
+      "passed_cases": [
+        "test_exact_catalog_binding_and_optional_absence"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_ui_build.py",
+      "function": "test_wrong_process_or_versions_rejected",
+      "line": 169,
+      "end_line": 175,
+      "function_sha256": "d1f58f330efa8da622625b60d549118d7bca1d963af5a4ba734ba0abd996b287",
+      "passed_cases": [
+        "test_wrong_process_or_versions_rejected"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_operation_observations.py",
+      "function": "test_stale_active_observation_requires_reconciliation_and_disables_submission",
+      "line": 88,
+      "end_line": 96,
+      "function_sha256": "f982f0995b90d9a548d01b6b16f35e5a664e048c7132f5623ce869b968dbfa43",
+      "passed_cases": [
+        "test_stale_active_observation_requires_reconciliation_and_disables_submission"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_approval_inspection.py",
+      "function": "test_inspection_checks_current_subject_without_deciding_or_dispatching",
+      "line": 11,
+      "end_line": 33,
+      "function_sha256": "496143183dc1d9fdff69450d3a1818dd03e577e081e2fde221ac7a147a3a7f5c",
+      "passed_cases": [
+        "test_inspection_checks_current_subject_without_deciding_or_dispatching"
+      ]
+    },
+    {
+      "file": "packages/workspace_service/tests/test_process_approval_inspection.py",
+      "function": "test_approval_does_not_imply_dispatcher_capability",
+      "line": 87,
+      "end_line": 97,
+      "function_sha256": "2c90542613772e2f7afdd5de07de873595a5075a2f4591ccdc1188557038c90e",
+      "passed_cases": [
+        "test_approval_does_not_imply_dispatcher_capability"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_interface_actions.py",
+      "function": "test_action_route_derives_identity_and_continues_the_same_run",
+      "line": 67,
+      "end_line": 90,
+      "function_sha256": "6af4fa0901e8a2d7c245611b6ed4a57b64bd5ac26c5cec5fe77898713ac3693d",
+      "passed_cases": [
+        "test_action_route_derives_identity_and_continues_the_same_run[local-review]",
+        "test_action_route_derives_identity_and_continues_the_same_run[digital-operation]"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_interface_actions.py",
+      "function": "test_action_route_rejects_client_supplied_authority",
+      "line": 105,
+      "end_line": 111,
+      "function_sha256": "a0839ff5c40864204d64d0140a3b674e0fc5735100fe914e8b661e10f3694649",
+      "passed_cases": [
+        "test_action_route_rejects_client_supplied_authority[local-review-principal_id]",
+        "test_action_route_rejects_client_supplied_authority[local-review-actor]",
+        "test_action_route_rejects_client_supplied_authority[local-review-run_id]",
+        "test_action_route_rejects_client_supplied_authority[local-review-destination]",
+        "test_action_route_rejects_client_supplied_authority[local-review-settings]",
+        "test_action_route_rejects_client_supplied_authority[local-review-auto]",
+        "test_action_route_rejects_client_supplied_authority[local-review-integration_test]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-principal_id]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-actor]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-run_id]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-destination]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-settings]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-auto]",
+        "test_action_route_rejects_client_supplied_authority[digital-operation-integration_test]"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_interface_reviews.py",
+      "function": "test_review_route_derives_actor_and_run_and_duplicate_is_read_only",
+      "line": 76,
+      "end_line": 92,
+      "function_sha256": "3c3d44f4c64cf25e644670e2833449f26227354b2efe0ef90da58796fade558b",
+      "passed_cases": [
+        "test_review_route_derives_actor_and_run_and_duplicate_is_read_only[action-review]",
+        "test_review_route_derives_actor_and_run_and_duplicate_is_read_only[artifact-review]"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_interface_reviews.py",
+      "function": "test_changed_review_request_conflicts_and_invalid_reason_is_rejected",
+      "line": 105,
+      "end_line": 112,
+      "function_sha256": "025f5c7b0776d56af04c5a87f247a0b9cf4f0415ef51d51850a257d263ef2ff8",
+      "passed_cases": [
+        "test_changed_review_request_conflicts_and_invalid_reason_is_rejected[action-review]",
+        "test_changed_review_request_conflicts_and_invalid_reason_is_rejected[artifact-review]"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_ui_surface_authority.py",
+      "function": "test_working_presentation_uses_native_input_owner_and_exact_selectors",
+      "line": 403,
+      "end_line": 433,
+      "function_sha256": "6519d5076d5966ef5070c5a161a258677d8534e2bc1e83cc288452d986bf033d",
+      "passed_cases": [
+        "test_working_presentation_uses_native_input_owner_and_exact_selectors[False]"
+      ]
+    },
+    {
+      "file": "apps/api/tests/test_process_ui_surface_authority.py",
+      "function": "test_run_binding_is_enforced_by_common_receipt_snapshot_and_artifact_owners",
+      "line": 480,
+      "end_line": 495,
+      "function_sha256": "2b3ea3d27f521a454263cf6536703507219c9ef510bad6c36fb7ab788ab7e541",
+      "passed_cases": [
+        "test_run_binding_is_enforced_by_common_receipt_snapshot_and_artifact_owners"
+      ]
+    }
+  ],
+  "inspected_owners": [
+    "packages/workspace_service/tests/test_process_interaction_owners.py",
+    "packages/workspace_service/tests/test_process_review_decisions.py",
+    "packages/workspace_service/tests/test_process_action_supervision.py",
+    "packages/workspace_service/tests/test_process_preparation_service.py",
+    "packages/workspace_service/tests/test_process_input_readiness.py",
+    "packages/workspace_service/tests/test_workflow_approval_review_settings.py",
+    "packages/workspace_service/tests/test_workflow_approval_execution.py",
+    "packages/workspace_service/tests/test_workflow_approval_resume.py",
+    "packages/workspace_service/tests/test_workflow_process_validation.py",
+    "packages/workspace_service/tests/test_workflow_process_validation_rework.py",
+    "packages/workspace_service/tests/test_process_validation_subjects.py",
+    "packages/workspace_service/tests/test_process_validation_coverage.py",
+    "packages/workspace_service/tests/test_process_validation_security.py",
+    "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/owners.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/decisions.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/projection.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/runs.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/inputs.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/options.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/compatibility.py",
+    "packages/workspace_service/src/workspace_service/workflow_approval_execution.py",
+    "packages/workspace_service/src/workspace_service/workflow_external_actions.py",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py",
+    "packages/workspace_service/src/workspace_service/process_validation/service.py",
+    "packages/workspace_service/src/workspace_service/process_validation/subjects.py",
+    "packages/workspace_service/src/workspace_service/process_validation/application.py",
+    "packages/workspace_service/tests/test_process_approval_inspection.py",
+    "packages/workspace_service/tests/test_process_artifact_access.py",
+    "packages/workspace_service/tests/test_process_ui_build.py",
+    "packages/workspace_service/tests/test_process_operation_observations.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/build.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py",
+    "packages/workspace_service/src/workspace_service/process_interfaces/representations.py",
+    "apps/api/tests/test_process_ui_surface_authority.py",
+    "apps/api/tests/test_process_interface_actions.py",
+    "apps/api/tests/test_process_interface_reviews.py",
+    "apps/api/src/api/routers/process_surface.py",
+    "apps/api/src/api/routers/process_interfaces.py",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py"
+  ],
+  "partial_SC005": "Common and tailored transports reuse exact native authority and manifests reject incompatible bindings. A fresh combined two-view stale/missing/incompatible negative journey still awaits its dedicated UI/hosting review; SC-005 remains unproved here.",
+  "no_automatic_semantic_signoff_from_function_names": true
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "integration_test": true,
+  "simulated_handoff": true,
+  "run_id": "b513166fb7014f23a7187a34be6e7710",
+  "step_id": "authorize_transfer_retained_handoff_002",
+  "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+  "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+  "action_id": "wheel-retained-handoff-continuation-002",
+  "campaign_id": "083-private-digital-wheel-retained-handoff-002",
+  "dataset_id": "printed-replacement-part-01",
+  "integration_policy_digest": "0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+  "destination": {
+    "id": "test://083-private-digital-wheel-retained-handoff-002/printer/printed-replacement-part-01",
+    "kind": "integration_test"
+  },
+  "action_kind": "printer_transfer",
+  "artifact_digests": [
+    "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+    "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+    "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+    "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+    "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+  ],
+  "network_dispatch": false
+}

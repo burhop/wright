@@ -1,0 +1,7 @@
+{
+  "before_navigation": true,
+  "product_or_database_change": false,
+  "first_helper_sha256": "fba30764ad4f6912d968eb961fbf3d5a9b69d46bfed0f5cbb880376ae6b69bc2",
+  "correction": "Replace the malformed generated artifact-root string with an exact fresh literal path. The first source is preserved.",
+  "continuation_helper_sha256": "06167da0f1c76db3e2696cc327c82a9706493c63b692bf4809ab41ae0241a05e"
+}

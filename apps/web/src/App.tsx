@@ -1,8 +1,10 @@
 import { lazy, Suspense, useEffect } from "react";
 import {
-  BrowserRouter,
-  HashRouter,
-  Routes,
+  createBrowserRouter,
+  createHashRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Outlet,
   Route,
   Navigate,
 } from "react-router-dom";
@@ -31,78 +33,84 @@ import {
 } from "./services/surfaces/feature-flags";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 import { initializeSavedTheme } from "./services/ui-preferences";
+import { WorkspaceNavigationGuard } from "./components/chat/WorkspaceNavigationGuard";
 
 const NativeProcessPage = lazy(
   () => import("./components/pages/NativeProcessPage"),
 );
 
-function App() {
-  useDesktopIntegration();
-
-  useEffect(() => initializeSavedTheme(), []);
-
-  const Router =
-    hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
-  const processDefinitionEnabled = processDefinitionViewEnabled();
-
+function AppContent() {
   const content = (
     <ViewerPanelProvider>
       <ToolsProvider>
         <AuthGate>
           <AppShell>
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route
-                path="/workspace/:workspaceId"
-                element={<WorkspacePage />}
-              />
-              <Route path="/tool-registry" element={<ToolRegistryPage />} />
-              <Route path="/file-vault" element={<FileVaultPage />} />
-              <Route path="/logs" element={<LogsPage />} />
-              <Route path="/setup/model" element={<ModelSetupPage />} />
-              <Route
-                path="/engineering-models"
-                element={<EngineeringModelLibraryPage />}
-              />
-              <Route path="/program-status" element={<ProgramStatusPage />} />
-              <Route
-                path="/native-processes"
-                element={
-                  <Suspense
-                    fallback={<p role="status">Loading native processes…</p>}
-                  >
-                    <NativeProcessPage />
-                  </Suspense>
-                }
-              />
-              {processDefinitionEnabled && (
-                <Route
-                  path="/processes/product-definition-v1"
-                  element={<ProcessDefinitionPage />}
-                />
-              )}
-              <Route path="/settings" element={<SettingsPage />} />
-              {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
-              <Route path="/agent-chat" element={<Navigate to="/" replace />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
+            <WorkspaceNavigationGuard />
+            <Outlet />
           </AppShell>
         </AuthGate>
       </ToolsProvider>
     </ViewerPanelProvider>
   );
-
   return (
-    <Router>
-      <ChatProvider>
-        {workspaceSurfacesEnabled() ? (
-          <SurfaceStateProvider>{content}</SurfaceStateProvider>
-        ) : (
-          content
-        )}
-      </ChatProvider>
-    </Router>
+    <ChatProvider>
+      {workspaceSurfacesEnabled() ? (
+        <SurfaceStateProvider>{content}</SurfaceStateProvider>
+      ) : (
+        content
+      )}
+    </ChatProvider>
   );
+}
+
+// Created once by the entry point, outside React rendering and StrictMode.
+// The data router supplies navigation blocking for links and browser history.
+export function createAppRouter() {
+  const createRouter =
+    hostAdapter.getRouterType() === "hash"
+      ? createHashRouter
+      : createBrowserRouter;
+  return createRouter(
+    createRoutesFromElements(
+      <Route element={<AppContent />}>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
+        <Route path="/tool-registry" element={<ToolRegistryPage />} />
+        <Route path="/file-vault" element={<FileVaultPage />} />
+        <Route path="/logs" element={<LogsPage />} />
+        <Route path="/setup/model" element={<ModelSetupPage />} />
+        <Route
+          path="/engineering-models"
+          element={<EngineeringModelLibraryPage />}
+        />
+        <Route path="/program-status" element={<ProgramStatusPage />} />
+        <Route
+          path="/native-processes"
+          element={
+            <Suspense fallback={<p role="status">Loading native processes…</p>}>
+              <NativeProcessPage />
+            </Suspense>
+          }
+        />
+        {processDefinitionViewEnabled() && (
+          <Route
+            path="/processes/product-definition-v1"
+            element={<ProcessDefinitionPage />}
+          />
+        )}
+        <Route path="/settings" element={<SettingsPage />} />
+        {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
+        <Route path="/agent-chat" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>,
+    ),
+  );
+}
+
+function App({ router }: { router: ReturnType<typeof createAppRouter> }) {
+  useDesktopIntegration();
+  useEffect(() => initializeSavedTheme(), []);
+  return <RouterProvider router={router} />;
 }
 
 export default App;

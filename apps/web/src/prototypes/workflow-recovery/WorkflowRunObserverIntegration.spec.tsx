@@ -108,6 +108,152 @@ const focus = () =>
     window.dispatchEvent(new Event("focus"));
   });
 
+it.each([false, true])(
+  "opens a saved run from history even when source cannot be drawn: %s",
+  async (invalid) => {
+    vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+      snapshot("waiting_human"),
+    ]);
+    const open = vi.fn(),
+      run = vi.fn();
+    render(
+      <WorkflowRecoveryConcept
+        {...props}
+        workflowSource={invalid ? "invalid source" : source}
+        onRun={run}
+        onOpenRunWorkingView={open}
+      />,
+    );
+    if (!invalid)
+      fireEvent.click(
+        screen.getByTestId("workflow-recovery-run-details-toggle"),
+      );
+    fireEvent.click(screen.getByText("Previous runs"));
+    fireEvent.click(await screen.findByText(/Waiting for your input ·/));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open run in working view" }),
+    );
+    expect(open).toHaveBeenCalledExactlyOnceWith("recorded-run", digest);
+    expect(run).not.toHaveBeenCalled();
+    if (invalid)
+      expect(screen.getByText("Workflow file needs correction.")).toBeVisible();
+  },
+);
+
+it("shows a declared input wait and opens its exact run without starting another process", async () => {
+  let current = snapshot("waiting_human");
+  current.execution!.last_progress = {
+    kind: "input_requested",
+    task_id: "choice",
+    task_title: "Choose interval",
+    message: "Choose the analysis interval.",
+  };
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockImplementation(
+    async () => [current],
+  );
+  const onRun = vi.fn(),
+    onOpenRunWorkingView = vi.fn();
+  render(
+    <WorkflowRecoveryConcept
+      {...props}
+      onRun={onRun}
+      onOpenRunWorkingView={onOpenRunWorkingView}
+    />,
+  );
+  const wait = await screen.findByTestId("workflow-run-input-wait");
+  expect(wait).toHaveTextContent("Waiting for your input");
+  expect(wait).toHaveTextContent("Choose the analysis interval.");
+  expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+  expect(screen.queryByTestId("workflow-run-failure-banner")).toBeNull();
+  fireEvent.click(screen.getByTestId("workflow-run-answer-input"));
+  expect(onOpenRunWorkingView).toHaveBeenCalledExactlyOnceWith(
+    "recorded-run",
+    digest,
+  );
+  expect(onRun).not.toHaveBeenCalled();
+  current = snapshot("completed");
+  await focus();
+  await waitFor(() =>
+    expect(screen.queryByTestId("workflow-run-input-wait")).toBeNull(),
+  );
+  expect(onRun).not.toHaveBeenCalled();
+});
+
+it("keeps saved results accessible when the diagram source is invalid, without restoring editing authority", async () => {
+  const current = snapshot("completed");
+  current.execution!.outputs = [
+    {
+      task_id: "document_2",
+      task_title: "Slicing the final part",
+      output_path: "campaign/part/artifacts/slice.gcode.3mf",
+      output_bytes: 123,
+      output_format: "3mf",
+    },
+  ];
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+    current,
+  ]);
+  const onRun = vi.fn(),
+    onSave = vi.fn(),
+    onOpenFile = vi.fn();
+  render(
+    <WorkflowRecoveryConcept
+      {...props}
+      workflowSource="workflow malformed\nend\n"
+      onRun={onRun}
+      onSave={onSave}
+      onOpenFile={onOpenFile}
+    />,
+  );
+  expect(screen.getByRole("alert")).toHaveTextContent(
+    "Workflow file needs correction",
+  );
+  fireEvent.click(await screen.findByTestId("workflow-results-toggle"));
+  fireEvent.click(
+    screen.getByRole("button", { name: /Slicing the final part/ }),
+  );
+  fireEvent.click(screen.getByTestId("workflow-result-open"));
+  expect(onOpenFile).toHaveBeenCalledWith(
+    "campaign/part/artifacts/slice.gcode.3mf",
+  );
+  expect(screen.queryByTestId("workflow-recovery-canvas")).toBeNull();
+  expect(screen.queryByTestId("workflow-recovery-run-start")).toBeNull();
+  expect(onSave).not.toHaveBeenCalled();
+  expect(onRun).not.toHaveBeenCalled();
+});
+
+it("does not carry invalid-source result links into another workflow while its status is loading", async () => {
+  const current = snapshot("completed");
+  current.execution!.outputs = [
+    {
+      task_id: "document_2",
+      task_title: "Old result",
+      output_path: "old/result.md",
+      output_bytes: 1,
+      output_format: "md",
+    },
+  ];
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockImplementation(
+    async (_session, path) =>
+      path === props.workflowFilePath ? [current] : new Promise(() => {}),
+  );
+  const invalid = {
+    ...props,
+    workflowSource: "workflow malformed\nend\n",
+    onOpenFile: vi.fn(),
+  };
+  const view = render(<WorkflowRecoveryConcept {...invalid} />);
+  await screen.findByTestId("workflow-result-open");
+  view.rerender(
+    <WorkflowRecoveryConcept
+      {...invalid}
+      workflowFilePath="workflows/another.wflow"
+    />,
+  );
+  expect(screen.queryByTestId("workflow-result-open")).toBeNull();
+  expect(screen.getByRole("status")).toHaveTextContent("Loading saved run");
+});
+
 it("recovers an external run into the existing graph and viewer links without POST or inert Cancel", async () => {
   let current = snapshot();
   const get = vi
@@ -134,6 +280,10 @@ it("recovers an external run into the existing graph and viewer links without PO
   expect(screen.getByTestId("workflow-run-observed-metrics")).toHaveTextContent(
     "2 model calls",
   );
+  expect(
+    screen.getByTestId("workflow-recovery-native-run-log"),
+  ).not.toHaveAttribute("open");
+  fireEvent.click(screen.getByText("Technical log and telemetry"));
   fireEvent.click(screen.getByTestId("workflow-recovery-open-run-record"));
   expect(onOpenFile).toHaveBeenCalledWith(current.path);
   current = {
@@ -260,6 +410,46 @@ it("does not assign an active badge to a different saved source", async () => {
     document.querySelector('[data-active="true"][data-run-state="running"]'),
   ).toBeNull();
   expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+});
+
+it("restores validator hold diagnostics and opens the exact saved assessment", async () => {
+  const onOpenFile = vi.fn();
+  const held = snapshot();
+  held.execution = {
+    ...held.execution!,
+    last_progress: {
+      kind: "design_check",
+      at: "2026-09-08T10:00:03Z",
+      task_id: "document_2",
+      task_title: "Validate structured output",
+      status: "revise",
+      assessment_id: "assessment-held",
+      assessment_path: "validation/assessment-held.json",
+      complete_result_ref:
+        "wright://workspace/workspace/validation/assessment-held",
+    },
+  };
+  vi.spyOn(workspaceService, "getWorkspaceWorkflowRuns").mockResolvedValue([
+    held,
+  ]);
+  render(
+    <WorkflowRecoveryConcept
+      {...props}
+      onRun={vi.fn()}
+      onOpenFile={onOpenFile}
+    />,
+  );
+  await waitFor(() =>
+    expect(
+      screen.getByTestId("workflow-recovery-run-details-toggle"),
+    ).toHaveTextContent("Output held for correction"),
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-run-details-toggle"));
+  expect(screen.getByTestId("workflow-native-run-summary")).toHaveTextContent(
+    "The result did not pass its checks",
+  );
+  fireEvent.click(screen.getByTestId("workflow-open-check-report"));
+  expect(onOpenFile).toHaveBeenCalledWith("validation/assessment-held.json");
 });
 
 it("keeps the owned POST and richer result ahead of older observed history", async () => {

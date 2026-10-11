@@ -1,0 +1,22 @@
+{
+  "scope": "Retained first browser stop; source/backend unchanged by the collector correction.",
+  "first_helper_sha256": "5d4bf13fd3aa49b9278d1d3104bd45ebf60614ed02c86d8d6e071d6f4df8c96b",
+  "private_trace_sha256": "3dd2591e4fa3162d3d1ffa2c00b44bdf5a167b5c1e2e6b0744d0f974875f54eb",
+  "actual_trace_responses": [
+    {
+      "endpoint": "/api/workspace/process-interfaces/runs/b12008ec35a14bc39b3d63ff6a8f3f18",
+      "http": 200,
+      "state": "waiting_human",
+      "outputs": 1,
+      "inputs": 0,
+      "run_id": "b12008ec35a14bc39b3d63ff6a8f3f18",
+      "source_digest": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8"
+    }
+  ],
+  "first_failure": "The collector watches only /interaction; the common view actually reads /runs/{run_id}. Its in-memory collected snapshot is undefined although the UI and backend response show the declared waiting state.",
+  "correction": "Collect both owning read endpoints and wait for the actual run response in a new continuation report.",
+  "early_description_limit": "S05 proves the common preparation view and controls mount. It does not prove that configured/default original inputs are exposed as interactive fields; the actual run snapshot has no user inputs on this page.",
+  "first_report_unchanged": true,
+  "review_or_process_replayed": false,
+  "physical_dispatch": false
+}

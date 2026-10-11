@@ -1,0 +1,467 @@
+[
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_process_paths_are_confined[../other.wflow]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_process_paths_are_confined[/tmp/p.wflow]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_process_paths_are_confined[C:/p.wflow]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_process_paths_are_confined[a\\\\b]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_process_paths_are_confined[a//b]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_process_rejects_client_supplied_authority",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_snapshot_round_trip_and_digest_are_stable",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_snapshot_changed_value_cannot_keep_digest",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_snapshot_rejects_duplicate_input_identity",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_inline_values_are_finite_and_bounded[nan]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_inline_values_are_finite_and_bounded[infinite]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_inline_values_are_finite_and_bounded[oversized]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_unsupported_or_external_schema_is_rejected[schema0]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_unsupported_or_external_schema_is_rejected[schema1]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_unsupported_or_external_schema_is_rejected[schema2]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_unsupported_or_external_schema_is_rejected[schema3]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_unsupported_or_external_schema_is_rejected[schema4]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_unsupported_or_external_schema_is_rejected[schema5]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_local_schema_and_declared_response_are_validated",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_waiting_input_requires_declared_schema",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_disabled_action_has_readable_reason_and_enabled_action_exact_subject",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_missing_progress_is_null_not_fabricated_zero",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_progress_is_bounded[-1]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_progress_is_bounded[101]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_progress_is_bounded[inf]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_navigation_is_an_identity_not_executable_url",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_first_coding_role_inherits_default_and_has_no_tools",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_binding_optional_absence_needs_a_fallback",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_manifest_cannot_request_generic_tool_or_admin_scope",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_envelope_rejects_arbitrary_build_or_backend[package.json]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_envelope_rejects_arbitrary_build_or_backend[server.py]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_envelope_rejects_arbitrary_build_or_backend[../App.tsx]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_envelope_rejects_arbitrary_build_or_backend[vite.config.ts]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_envelope_rejects_arbitrary_build_or_backend[App.tsx/evil]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_envelope_requires_fixed_entry",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_local_assets_are_typed_bounded_and_confined",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_source_text_limit_accepts_boundary_and_rejects_next_byte",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_raster_asset_limit_accepts_boundary_and_rejects_next_byte",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_aggregate_assets_limit_cannot_be_bypassed_with_smaller_files",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_total_source_asset_count_limit_includes_fixed_source_files",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_navigation_requires_exact_destination[block]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_navigation_requires_exact_destination[run]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_navigation_requires_exact_destination[result]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_navigation_requires_exact_destination[assessment]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_navigation_requires_exact_destination[evidence]",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_packaged_schemas_match_domain_contracts",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_input_definition_checks_supplied_value_against_declared_schema",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_dependency_classifications_require_declared_producer_or_correction",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_snapshot_projection_does_not_accept_another_input_assessment",
+    "passed": true
+  },
+  {
+    "module": "packages.core.tests.test_process_interface_contracts",
+    "name": "test_local_schema_expansion_is_bounded_even_without_recursion",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_context_and_snapshot_use_exact_owner_without_native_token",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_saved_origin_bundle_uses_current_grant_context_without_transferring_old_scope",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_preview_loaded_record_is_derived_from_exact_route_and_verified_bundle",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_malformed_duplicate_large_or_extra_json_does_not_reach_input_owner[False]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[source_id-vendor.server.resource]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[source_version-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[presentation_id-other-presentation]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[generation-2]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[instance_id-other-instance]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[principal_id-other-user]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[workspace_id-other-workspace]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_identity_drift_denies_context[http_declared-False]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_stopped_revoked_or_replaced_presentation_denies_reads[authority]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_stopped_revoked_or_replaced_presentation_denies_reads[target]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_revoked_process_read_grant_denies_context",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_passive_toolpath_preview_keeps_exact_managed_results_grant",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[inputs-body0]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[runs-body1]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[runs/other-run/cancel-body2]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[actions/continue-other-body3]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[interactions/other/response-body4]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_readonly_preview_rejects_every_mutation_before_owner[interactions/other/decision-body5]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_working_presentation_uses_native_input_owner_and_exact_selectors[False]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_post_requires_exact_origin_even_with_cookie[None-False]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_post_requires_exact_origin_even_with_cookie[https://wright.example.test-False]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_post_requires_exact_origin_even_with_cookie[null-False]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_foreign_run_and_ambiguous_selectors_are_rejected",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_no_generic_tool_or_authoring_authority_or_native_cookie_equivalence",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_run_binding_is_enforced_by_common_receipt_snapshot_and_artifact_owners",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_live_stream_grants_are_revalidated_without_rereading_static_bundle",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_expired_and_changed_stream_context_are_rejected",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_bound_receipt_must_match_exact_source_digest",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_corrupted_built_asset_never_receives_bridge_authority",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target0]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target1]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target2]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target3]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[None-target4]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target0]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target1]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target2]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target3]",
+    "passed": true
+  },
+  {
+    "module": "apps.api.tests.test_process_ui_surface_authority",
+    "name": "test_presentation_navigation_supplies_only_its_authorized_run[run-one-target4]",
+    "passed": true
+  }
+]

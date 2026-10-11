@@ -1,0 +1,37 @@
+{
+  "exit_code": 0,
+  "modules": [
+    "tests/test_process_platform_generality.py",
+    "tests/test_process_prototype_migration.py",
+    "tests/external/process_validation/test_printing.py",
+    "tests/external/process_validation/test_printed_profiles.py",
+    "tests/external/process_validation/test_jig_profiles.py",
+    "packages/workspace_service/tests/test_process_validation.py",
+    "packages/workspace_service/tests/test_process_validation_subjects.py",
+    "packages/workspace_service/tests/test_process_interface_service_boundaries.py",
+    "packages/workspace_service/tests/test_process_interaction_projection.py",
+    "packages/workspace_service/tests/test_process_interaction_owners.py",
+    "packages/workspace_service/tests/test_process_input_readiness.py",
+    "packages/workspace_service/tests/test_process_input_supervision.py",
+    "packages/workspace_service/tests/test_process_operation_observations.py",
+    "packages/workspace_service/tests/test_process_operation_cancel.py",
+    "packages/workspace_service/tests/test_process_action_supervision.py",
+    "packages/workspace_service/tests/test_process_interface_continuation.py",
+    "packages/workspace_service/tests/test_process_ui_authoring.py",
+    "packages/workspace_service/tests/test_process_ui_presentations.py",
+    "packages/workspace_service/tests/test_workflow_external_action_execution.py",
+    "packages/workspace_service/tests/test_workflow_async_operations.py",
+    "packages/workspace_service/tests/test_workflow_mcp_source_contracts.py",
+    "apps/api/tests/test_process_interface_actions.py",
+    "apps/api/tests/test_process_interface_run_lifecycle.py"
+  ],
+  "counts": {
+    "tests": 360,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 360
+  },
+  "fresh_provider_model_execution": false,
+  "physical_effects": false
+}

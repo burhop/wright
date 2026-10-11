@@ -1,0 +1,132 @@
+{
+  "run_id": "b12008ec35a14bc39b3d63ff6a8f3f18",
+  "status": "failed",
+  "source_digest": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8",
+  "files": [
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/concept.png",
+      "bytes": 67577,
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/concept.svg",
+      "bytes": 2295,
+      "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/configured-geometry-basis.json",
+      "bytes": 3882,
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/construction-provider-arguments.json",
+      "bytes": 5274,
+      "sha256": "63af34a7e68fbcb969f11774a5d4e12330a9dc5472f44b5ca55f7f9008b3561e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/context.md",
+      "bytes": 2236,
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/filament-profile.json",
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/geometry-capability-guidance.md",
+      "bytes": 1833,
+      "sha256": "4455c9b6756e3caeb72578be578998e6eb354601c7ae155f4d3351b3b96f2aa6"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/inspect_manufacturing_package.py",
+      "bytes": 8561,
+      "sha256": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/inspection-call.json",
+      "bytes": 3087,
+      "sha256": "da7e78a8fe5bef43f65866ce9669820be69a8b9367b7b5697e5b28aca30088ff"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/machine-profile.json",
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/passive-representations.py",
+      "bytes": 25554,
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/process-profile.json",
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/prompt.txt",
+      "bytes": 697,
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/repair-provider-arguments.json",
+      "bytes": 13781,
+      "sha256": "1d1f961fd8837e65fc8d54b7148d8897ad47efa9c84927c245a1d2814425c9f1"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/requirements.md",
+      "bytes": 1759,
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/scenario.json",
+      "bytes": 1662,
+      "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/slice-call.json",
+      "bytes": 560,
+      "sha256": "861fa2849b16c374ab15511b31503ed584bbadd3800eb400b49ccc1c59559f17"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/inputs/user-profile.md",
+      "bytes": 584,
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/outputs/b12008ec35a14bc39b3d63ff6a8f3f18/geometry-basis.json",
+      "bytes": 3695,
+      "sha256": "8874900868d0c816836443b48d5b6c471b31affd114a33b45f3ebfad59bf7965"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/outputs/b12008ec35a14bc39b3d63ff6a8f3f18/source_mesh.stl",
+      "bytes": 541284,
+      "sha256": "98baf2d160e7b153aafa22d4c972498c80939a7533bc12b903990a1aac3e0bd0"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/preparation.json",
+      "bytes": 7591,
+      "sha256": "e8d1f3b4393d87ecd5fc91408f81c2130998b9a63d1de7d09c1a6495e1bba5aa"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/prompt-default-055/prepared.workflow.wflow",
+      "bytes": 81640,
+      "sha256": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8"
+    },
+    {
+      "path": "workflows/printed-replacement-part-prompt-default-055.workflow.wflow",
+      "bytes": 81640,
+      "sha256": "17afd12596d230d549d0ff38d16834f994a07c41092576d3231f5e17597fb6f8"
+    },
+    {
+      "path": "runs/printed-replacement-part-prompt-default-055/b12008ec35a14bc39b3d63ff6a8f3f18.json",
+      "bytes": 1463774,
+      "sha256": "a6944558a24e3bb6ee130431e8b1fe15edbd1b106293c9972e7b292edc4584ca"
+    }
+  ],
+  "actual_original_prompt_byte_identity": true,
+  "repair_invoked": false,
+  "slicing_or_gate_executed": false,
+  "scope": "Failed full process with a completed actual original-input construction stage; never relabel as a complete chain.",
+  "physical_dispatch": false
+}

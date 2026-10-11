@@ -1,0 +1,38 @@
+[
+  {
+    "report": "retained-launch-restriction",
+    "exit_code": 1,
+    "output": "ERROR: report.html has no recognizable full-size image interaction\n",
+    "scope": "Pre-navigation infrastructure stop: no browser page or screenshot exists. Missing image interaction remains explicitly unavailable, not fabricated."
+  },
+  {
+    "report": "retained-evidence-proxy-failure",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n",
+    "scope": "Recorded report structure validated; behavior scope remains its own status and claim audit."
+  },
+  {
+    "report": "preview-save-capacity-stop",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n",
+    "scope": "Recorded report structure validated; behavior scope remains its own status and claim audit."
+  },
+  {
+    "report": "retained-preview-only-reload",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n",
+    "scope": "Recorded report structure validated; behavior scope remains its own status and claim audit."
+  },
+  {
+    "report": "retained-hidden-preview-assertion",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n",
+    "scope": "Recorded report structure validated; behavior scope remains its own status and claim audit."
+  },
+  {
+    "report": "workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid.\n",
+    "scope": "Recorded report structure validated; behavior scope remains its own status and claim audit."
+  }
+]

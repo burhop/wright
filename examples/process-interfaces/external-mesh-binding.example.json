@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "scenario_id": "printed-replacement-part-01",
+  "workspace_root": "C:\\your-workspaces\\fresh-digital-proof",
+  "output_root": "campaign/printed-replacement-part-01/fresh-attempt/artifacts",
+  "provider": {
+    "server": "YOUR-INDEPENDENT-GEOMETRY-PROVIDER",
+    "tool": "YOUR-QUALIFIED-NATIVE-OPERATION",
+    "schema_digest": "REPLACE-WITH-ACTUAL-GATEWAY-SCHEMA-DIGEST"
+  },
+  "arguments": {
+    "path": "C:\\your-configuration\\qualified-operation-arguments.json",
+    "sha256": "REPLACE-WITH-EXACT-ARGUMENT-FILE-SHA256"
+  },
+  "machine_profile_sha256": "REPLACE-WITH-EXACT-SELECTED-MACHINE-PROFILE-SHA256",
+  "policy": {
+    "build_volume_mm": [256.0, 256.0, 256.0],
+    "build_volume_tolerance_mm": 0.000001,
+    "triangle_limit": 80000,
+    "merge_tolerance_mm": 0.001,
+    "degenerate_tolerance_mm": 0.000001,
+    "force_voxel_remesh": false,
+    "envelope_margin_mm": 0.0,
+    "planar_cleanup": false
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-22T23:37:55.285Z",
+  "url": "http://127.0.0.1:8771/?view=recovery",
+  "row": "⌄\nReplace a repair-cart drawer handle that clears gloved fingers\nprinted-replacement-part-02\n\t3D printed replacement\tintermediate\t\nblocked\nAutomated validation · Passed\n4",
+  "detail": "EXECUTION OBSERVATIONS\n\nReadiness: P001 Printed 02 correction 2: grip correction qualified for canonical correction 2 · Accepted attempts: 4 · Runner: unknown\n\nLast successful stage: authorize_transfer_ted7067edcc8338cdef2982b0\n\nCurrent / failed stage: review_printed_outputs_printed_replacement_part_02_attempt_018\n\nRun duration: Unknown · Native: Unknown · Model: Unknown · Tokens: Unknown\n\nQueue age: Unknown · Last fix age: Unknown · Accepted attempts since fix: Unknown\n\nNext action: P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet.\n\nRecorded stage durations",
+  "counts": {
+    "datasets_created": 30,
+    "combinations_run": 30,
+    "processes_with_outputs": 24,
+    "valid_data": 18
+  },
+  "current": [
+    "2",
+    "0",
+    "0"
+  ],
+  "reports": [
+    {
+      "text": "Validation findings",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-canonical018-review/printed-replacement-part-02/report.md"
+    },
+    {
+      "text": "Validation JSON",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-canonical018-review/printed-replacement-part-02/report.json"
+    },
+    {
+      "text": "Requirements matrix",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-canonical018-review/printed-replacement-part-02/rtm.csv"
+    }
+  ],
+  "errors": [],
+  "scope": "Read-only actual browser verification; no approval/run controls used."
+}

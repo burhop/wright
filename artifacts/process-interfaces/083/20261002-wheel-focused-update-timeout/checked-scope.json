@@ -1,0 +1,23 @@
+{
+  "job_id": "job-97f5219a3d74414685cc3f30347a8345",
+  "ui_id": "ui-1e7b6edb71e74b19a754b7fd2b88633a",
+  "revision_id": "revision-415f9e4911f0447199dd6fbd4bbc46c0",
+  "model": "gpt-5.6-sol",
+  "actual_focused_update_saved": true,
+  "preview_grouped_results": {
+    "geometry": 4,
+    "slicing": 2,
+    "inspection": 5
+  },
+  "saved_working_reload_verified": false,
+  "failure_code": "SURFACE_READINESS_TIMEOUT",
+  "earlier_connection_only_open_claim_weaker_than_working_presentation": true,
+  "second_run_id": "00201b136bff4e4e91f097891d96e8e2",
+  "second_run_state": "awaiting_approval",
+  "review_unanswered": true,
+  "second_run_native_repair_or_slice_started": false,
+  "second_run_reuse_verified": false,
+  "physical_dispatch": false,
+  "human_acceptance": false,
+  "full_feature_complete": false
+}

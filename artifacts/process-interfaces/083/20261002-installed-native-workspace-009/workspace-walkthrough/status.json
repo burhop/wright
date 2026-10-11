@@ -1,0 +1,181 @@
+{
+  "title": "Installed Wright: common and saved process interfaces",
+  "summary": "Genuine local wheel installation, cached dependencies, copied isolated engineering workspace; no model/compiler or engineering dispatch.",
+  "overall": "pass",
+  "updated": "2026-10-02T20:52:13.276Z",
+  "manualSteps": [
+    {
+      "label": "Open installed Wright",
+      "instruction": "Open the installed native Wright home page, then the isolated proof workspace."
+    },
+    {
+      "label": "Open process",
+      "instruction": "Click Workflows, Workflow files, Open workflow, then choose the saved wheel workflow."
+    },
+    {
+      "label": "Use working view",
+      "instruction": "Click Use saved process and open the second recorded run link."
+    },
+    {
+      "label": "Reuse interface",
+      "instruction": "Click Create or choose interface, choose the saved focus-wheel interface and current revision, then Open saved interface."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working tab and inspect the same waiting review. Leave the review unanswered."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "label": "Installed workspace loads",
+      "action": "Open native home and proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Native session bootstrap and workspace entry.",
+      "actual": "Installed frontend loads with native HttpOnly session and Workflows control.",
+      "state": "pass",
+      "purpose": "Installed workspace loads",
+      "summary": "Installed frontend loads with native HttpOnly session and Workflows control.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "label": "Established editor entry",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflow files"
+      ],
+      "expected": "Existing editor in workspace.",
+      "actual": "Workflow file menu and editor open within the installed workspace.",
+      "state": "pass",
+      "purpose": "Established editor entry",
+      "summary": "Workflow file menu and editor open within the installed workspace.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "label": "Saved engineering workflow",
+      "action": "Click Workflow files, then Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow"
+      ],
+      "expected": "Exact accepted wheel source offered.",
+      "actual": "Accepted wheel workflow appears in the installed file chooser.",
+      "state": "pass",
+      "purpose": "Saved engineering workflow",
+      "summary": "Accepted wheel workflow appears in the installed file chooser.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "label": "Authoring and working views share source",
+      "action": "Choose the accepted wheel source.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Same accepted source in diagram and working view.",
+      "actual": "The original review/repair/slice source is open with Use saved process enabled.",
+      "state": "pass",
+      "purpose": "Authoring and working views share source",
+      "summary": "The original review/repair/slice source is open with Use saved process enabled.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "label": "Installed common working view",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "Common view opens as a workspace tab.",
+      "actual": "Installed shared common view opens without starting another run.",
+      "state": "pass",
+      "purpose": "Installed common working view",
+      "summary": "Installed shared common view opens without starting another run.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "label": "Exact existing run remains waiting",
+      "action": "Open recorded second-run link.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "Existing second run remains at its declared review.",
+      "actual": "Common view shows the same second run and pending geometry-basis review.",
+      "state": "pass",
+      "purpose": "Exact existing run remains waiting",
+      "summary": "Common view shows the same second run and pending geometry-basis review.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "label": "Saved UI independent of authoring compiler",
+      "action": "Click Create or choose interface.",
+      "controls": [
+        "Saved interface"
+      ],
+      "expected": "Unavailable compiler explained; saved interfaces offered.",
+      "actual": "Compiler unavailable is explicit and the saved interface chooser remains usable.",
+      "state": "pass",
+      "purpose": "Saved UI independent of authoring compiler",
+      "summary": "Compiler unavailable is explicit and the saved interface chooser remains usable.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "label": "Existing built revision selected",
+      "action": "Choose saved focus-wheel interface and current revision.",
+      "controls": [
+        "Open saved interface"
+      ],
+      "expected": "Previously generated immutable revision selectable.",
+      "actual": "Exact original saved UI/revision selected without generating or compiling.",
+      "state": "pass",
+      "purpose": "Existing built revision selected",
+      "summary": "Exact original saved UI/revision selected without generating or compiling.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "label": "Installed saved interface mounts",
+      "action": "Click Open saved interface.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "Saved React UI connected to the exact run through the installed bridge.",
+      "actual": "Saved UI renders in its workspace tab with the second run’s single result and waiting review.",
+      "state": "pass",
+      "purpose": "Installed saved interface mounts",
+      "summary": "Saved UI renders in its workspace tab with the second run’s single result and waiting review.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "label": "Installed reopening reconciles",
+      "action": "Reload the saved interface tab.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "Same run, saved revision and waiting review after reload.",
+      "actual": "Installed tab restores the same waiting run and saved compiled interface.",
+      "state": "pass",
+      "purpose": "Installed reopening reconciles",
+      "summary": "Installed tab restores the same waiting run and saved compiled interface.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    }
+  ]
+}

@@ -1,0 +1,452 @@
+{
+  "workflow_title": "Heat field output validation",
+  "task_id": "consume",
+  "task_title": "Release validated thermal disposition",
+  "output_path": "heat-release-note.txt",
+  "output_bytes": 193,
+  "output_format": "text",
+  "sha256": "663ed12d9b29e6c23712bd60488cfc8a5e793d2f74278959c5e3d147a2cb39cd",
+  "outputs": [
+    {
+      "task_id": "produce",
+      "task_title": "Stage retained heat analysis outputs",
+      "output_path": "baseline-coarse.csv",
+      "output_bytes": 13526,
+      "output_format": "csv",
+      "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+      "output_port": "baseline_coarse"
+    },
+    {
+      "task_id": "produce",
+      "task_title": "Stage retained heat analysis outputs",
+      "output_path": "baseline-fine.csv",
+      "output_bytes": 76526,
+      "output_format": "csv",
+      "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+      "output_port": "baseline_fine"
+    },
+    {
+      "task_id": "produce",
+      "task_title": "Stage retained heat analysis outputs",
+      "output_path": "revision-coarse.csv",
+      "output_bytes": 13526,
+      "output_format": "csv",
+      "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+      "output_port": "revision_coarse"
+    },
+    {
+      "task_id": "produce",
+      "task_title": "Stage retained heat analysis outputs",
+      "output_path": "revision-fine.csv",
+      "output_bytes": 76526,
+      "output_format": "csv",
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+      "output_port": "revision_fine"
+    },
+    {
+      "task_id": "produce",
+      "task_title": "Stage retained heat analysis outputs",
+      "output_path": "sizing-decision.json",
+      "output_bytes": 5943,
+      "output_format": "json",
+      "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+      "output_port": "decision"
+    },
+    {
+      "task_id": "inspect",
+      "task_title": "Validate thermal sizing evidence",
+      "output_path": "validation/assessment-dadcac109d70423992bd47228ca54d45.json",
+      "output_bytes": 52717,
+      "output_format": "json",
+      "sha256": "dce3a6ab56af3747a77d0abde85686404f6b668d6f10f45682f85ab3af6649fd",
+      "artifact_role": "verification",
+      "artifact_title": "Validate thermal sizing evidence — validation evidence"
+    },
+    {
+      "task_id": "consume",
+      "task_title": "Release validated thermal disposition",
+      "output_path": "heat-release-note.txt",
+      "output_bytes": 193,
+      "output_format": "text",
+      "sha256": "663ed12d9b29e6c23712bd60488cfc8a5e793d2f74278959c5e3d147a2cb39cd"
+    }
+  ],
+  "steps": [
+    {
+      "execution_kind": "mcp",
+      "tool": "process-validation-engineering__stage_heat_outputs",
+      "arguments": {},
+      "prompt": "",
+      "response": "{\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{\\n  \\\"operation\\\": \\\"stage_heat_outputs\\\",\\n  \\\"outputs\\\": [\\n    {\\n      \\\"path\\\": \\\"baseline-coarse.csv\\\",\\n      \\\"bytes\\\": 13526,\\n      \\\"sha256\\\": \\\"dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b\\\"\\n    },\\n    {\\n      \\\"path\\\": \\\"baseline-fine.csv\\\",\\n      \\\"bytes\\\": 76526,\\n      \\\"sha256\\\": \\\"46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0\\\"\\n    },\\n    {\\n      \\\"path\\\": \\\"revision-coarse.csv\\\",\\n      \\\"bytes\\\": 13526,\\n      \\\"sha256\\\": \\\"21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12\\\"\\n    },\\n    {\\n      \\\"path\\\": \\\"revision-fine.csv\\\",\\n      \\\"bytes\\\": 76526,\\n      \\\"sha256\\\": \\\"db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73\\\"\\n    },\\n    {\\n      \\\"path\\\": \\\"sizing-decision.json\\\",\\n      \\\"bytes\\\": 5943,\\n      \\\"sha256\\\": \\\"6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a\\\"\\n    }\\n  ]\\n}\"\n    }\n  ]\n}",
+      "produced_files": [
+        {
+          "output_path": "baseline-coarse.csv",
+          "output_bytes": 13526,
+          "output_format": "csv",
+          "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+          "output_port": "baseline_coarse"
+        },
+        {
+          "output_path": "baseline-fine.csv",
+          "output_bytes": 76526,
+          "output_format": "csv",
+          "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+          "output_port": "baseline_fine"
+        },
+        {
+          "output_path": "revision-coarse.csv",
+          "output_bytes": 13526,
+          "output_format": "csv",
+          "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+          "output_port": "revision_coarse"
+        },
+        {
+          "output_path": "revision-fine.csv",
+          "output_bytes": 76526,
+          "output_format": "csv",
+          "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+          "output_port": "revision_fine"
+        },
+        {
+          "output_path": "sizing-decision.json",
+          "output_bytes": 5943,
+          "output_format": "json",
+          "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+          "output_port": "decision"
+        }
+      ],
+      "task_id": "produce",
+      "task_title": "Stage retained heat analysis outputs",
+      "output_format": "json",
+      "output_path": null,
+      "output_bytes": 0,
+      "producer_attempt": 1
+    },
+    {
+      "execution_kind": "validator",
+      "prompt": "",
+      "response": "{\"assessment_digest\":\"100e3ee29b093c96f2fa1a49111ace5cff516a9e0e84e54d4f366269b79d3f03\",\"assessment_id\":\"assessment-dadcac109d70423992bd47228ca54d45\",\"assessment_path\":\"validation/assessment-dadcac109d70423992bd47228ca54d45.json\",\"attempt_id\":\"46ef3e60525c4501bbfb7613f45d2351\",\"corrections\":[],\"finding_count\":0,\"is_current\":true,\"release_eligible\":true,\"schema_version\":\"wright.process-validation/1\",\"summary\":{\"content_verified\":true,\"counts\":{\"blocked\":0,\"error\":0,\"fail\":0,\"inconclusive\":0,\"not_applicable\":0,\"pass\":15},\"evaluation_complete\":true,\"physical_validation\":\"not_assessed\",\"release_eligible\":true,\"requirements_compliant\":true},\"verdict\":\"pass\",\"workspace_id\":\"process-validation-engineering-heat\"}",
+      "validation": {
+        "schema_version": "wright.process-validation/1",
+        "assessment_id": "assessment-dadcac109d70423992bd47228ca54d45",
+        "assessment_digest": "100e3ee29b093c96f2fa1a49111ace5cff516a9e0e84e54d4f366269b79d3f03",
+        "attempt_id": "46ef3e60525c4501bbfb7613f45d2351",
+        "workspace_id": "process-validation-engineering-heat",
+        "is_current": true,
+        "release_eligible": true,
+        "summary": {
+          "content_verified": true,
+          "requirements_compliant": true,
+          "evaluation_complete": true,
+          "release_eligible": true,
+          "physical_validation": "not_assessed",
+          "counts": {
+            "blocked": 0,
+            "error": 0,
+            "fail": 0,
+            "inconclusive": 0,
+            "not_applicable": 0,
+            "pass": 15
+          }
+        },
+        "finding_count": 0,
+        "verdict": "pass",
+        "assessment_path": "validation/assessment-dadcac109d70423992bd47228ca54d45.json",
+        "corrections": []
+      },
+      "produced_files": [
+        {
+          "task_id": "inspect",
+          "task_title": "Validate thermal sizing evidence",
+          "output_path": "validation/assessment-dadcac109d70423992bd47228ca54d45.json",
+          "output_bytes": 52717,
+          "output_format": "json",
+          "sha256": "dce3a6ab56af3747a77d0abde85686404f6b668d6f10f45682f85ab3af6649fd",
+          "artifact_role": "verification",
+          "artifact_title": "Validate thermal sizing evidence — validation evidence"
+        }
+      ],
+      "task_id": "inspect",
+      "task_title": "Validate thermal sizing evidence",
+      "output_format": "json",
+      "output_path": null,
+      "output_bytes": 0,
+      "producer_attempt": 1
+    },
+    {
+      "execution_kind": "ai",
+      "prompt": "State in one sentence that the current heat analysis outputs passed the pinned simplified-conduction validation profile and that revision_60 is the selected candidate. Do not claim physical thermal qualification.\n\nReference document — Validated sizing decision (sizing-decision.json):\n{\n  \"operation\": \"3D P1 tetrahedral scikit-fem conduction\",\n  \"cases\": [\n    {\n      \"case_id\": \"baseline_40\",\n      \"geometry\": {\n        \"path\": \"/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step\",\n        \"sha256\": \"df6a60815339a5644312ca2b6c6db25ed56cb42d5b486e901e324757c8ebbcea\"\n      },\n      \"input\": {\n        \"case_id\": \"baseline_40\",\n        \"length_mm\": \"100\",\n        \"width_mm\": \"40\",\n        \"thickness_mm\": \"2\",\n        \"conductivity_w_mk\": \"200\",\n        \"density_kg_m3\": \"2700\",\n        \"heat_input_w\": \"4\",\n        \"cold_face_temperature_c\": \"25\",\n        \"limit_c\": \"45\"\n      },\n      \"mesh_levels\": [\n        {\n          \"mesh\": \"coarse\",\n          \"divisions\": [\n            8,\n            4,\n            2\n          ],\n          \"nodes\": 135,\n          \"elements\": 384,\n          \"maximum_temperature_c\": 49.99999999999844,\n          \"minimum_temperature_c\": 25.0,\n          \"heat_input_w\": 4.0,\n          \"heat_removed_w\": 3.9999999999983977,\n          \"relative_heat_imbalance\": 4.005684672847565e-13,\n          \"analytical_hot_end_c\": 50.0,\n          \"relative_analytical_rise_error\": 6.252776074688882e-14,\n          \"cold_boundary\": \"Dirichlet\",\n          \"interface_coefficient_w_m2k\": null,\n          \"field\": {\n            \"path\": \"/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-coarse-temperature.vtu\",\n            \"sha256\": \"c02be52b9e78e6a06234e3f560984934f546da0754c9bb28a15d1c353b6fd2e6\",\n            \"bytes\": 4383\n          }\n        },\n        {\n          \"mesh\": \"fine\",\n          \"divisions\": [\n            16,\n            8,\n            4\n          ],\n          \"nodes\": 765,\n          \"elements\": 3072,\n          \"maximum_temperature_c\": 49.99999999991165,\n          \"minimum_temperature_c\": 25.0,\n          \"heat_input_w\": 3.999999999999999,\n          \"heat_removed_w\": 3.9999999999732925,\n          \"relative_heat_imbalance\": 6.676659225490766e-12,\n          \"analytical_hot_end_c\": 50.0,\n          \"relative_analytical_rise_error\": 3.5339553505764344e-12,\n          \"cold_boundary\": \"Dirichlet\",\n          \"interface_coefficient_w_m2k\": null,\n          \"field\": {\n            \"path\": \"/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-fine-temperature.vtu\",\n            \"sha256\": \"a65a7e08a01f96e86a9ed1274ee396e510d832bcddb79cf84b9ebc186c670797\",\n            \"bytes\": 29200\n          }\n        }\n      ],\n      \"relative_mesh_sensitivity\": 3.4714275898418134e-12,\n      \"mass_kg\": 0.021599999999999998,\n      \"maximum_temperature_c\": 49.99999999991165,\n      \"within_declared_limit\": false,\n      \"original_workflow_checks\": {\n        \"analytical_2_percent\": true,\n        \"mesh_2_percent\": true,\n        \"heat_balance_1_percent\": true\n      }\n    },\n    {\n      \"case_id\": \"revision_60\",\n      \"geometry\": {\n        \"path\": \"/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/revision_60.step\",\n        \"sha256\": \"c3918f8011a7b7143b321b15ddae8c91832c2ee41c4e4b64b7c4f3a98832566c\"\n      },\n      \"input\": {\n        \"case_id\": \"revision_60\",\n        \"length_mm\": \"100\",\n        \"width_mm\": \"60\",\n        \"thickness_mm\": \"2\",\n        \"conductivity_w_mk\": \"200\",\n        \"density_kg_m3\": \"2700\",\n        \"heat_input_w\": \"4\",\n        \"cold_face_temperature_c\": \"25\",\n        \"limit_c\": \"45\"\n      },\n      \"mesh_levels\": [\n        {\n          \"mesh\": \"coarse\",\n          \"divisions\": [\n            8,\n            4,\n            2\n          ],\n          \"nodes\": 135,\n          \"elements\": 384,\n          \"maximum_temperature_c\": 41.66666666666441,\n          \"minimum_temperature_c\": 25.0,\n          \"heat_input_w\": 4.0,\n          \"heat_removed_w\": 3.999999999999411,\n          \"relative_heat_imbalance\": 1.4721557306529576e-13,\n          \"analytical_hot_end_c\": 41.66666666666667,\n          \"relative_analytical_rise_error\": 1.3557155398302708e-13,\n          \"cold_boundary\": \"Dirichlet\",\n          \"interface_coefficient_w_m2k\": null,\n          \"field\": {\n            \"path\": \"/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-coarse-temperature.vtu\",\n            \"sha256\": \"c127479729f46f66ca5b1f9ace7412535f4e86ab01fb024f42281258524d6fea\",\n            \"bytes\": 4427\n          }\n        },\n        {\n          \"mesh\": \"fine\",\n          \"divisions\": [\n            16,\n            8,\n            4\n          ],\n          \"nodes\": 765,\n          \"elements\": 3072,\n          \"maximum_temperature_c\": 41.6666666665829,\n          \"minimum_temperature_c\": 25.0,\n          \"heat_input_w\": 4.0,\n          \"heat_removed_w\": 3.9999999999753264,\n          \"relative_heat_imbalance\": 6.16839912481737e-12,\n          \"analytical_hot_end_c\": 41.66666666666667,\n          \"relative_analytical_rise_error\": 5.026379312766947e-12,\n          \"cold_boundary\": \"Dirichlet\",\n          \"interface_coefficient_w_m2k\": null,\n          \"field\": {\n            \"path\": \"/campaign-workspace/campaign/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-fine-temperature.vtu\",\n            \"sha256\": \"4674660d7ccf117959521c2ab5fc59e61dc4f8edfecbc1b326247ca144813d07\",\n            \"bytes\": 29260\n          }\n        }\n      ],\n      \"relative_mesh_sensitivity\": 4.890807758808503e-12,\n      \"mass_kg\": 0.0324,\n      \"maximum_temperature_c\": 41.6666666665829,\n      \"within_declared_limit\": true,\n      \"original_workflow_checks\": {\n        \"analytical_2_percent\": true,\n        \"mesh_2_percent\": true,\n        \"heat_balance_1_percent\": true\n      }\n    }\n  ],\n  \"selected_case_id\": \"revision_60\",\n  \"status\": \"candidate_selected\",\n  \"limitations\": [\n    \"Synthetic constant-property conduction model only; no physical qualification.\",\n    \"Uniform end loading gives a linear field exactly representable by P1 elements; mesh stability does not independently validate the physics.\",\n    \"Campaign correctness-validation count remains zero.\"\n  ]\n}\n",
+      "response": "The current heat-analysis outputs passed the pinned simplified-conduction validation profile, and revision_60 is the selected candidate; this does not constitute physical thermal qualification.",
+      "references": [
+        {
+          "path": "sizing-decision.json",
+          "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+          "kind": "text"
+        }
+      ],
+      "task_id": "consume",
+      "task_title": "Release validated thermal disposition",
+      "output_format": "text",
+      "output_path": "heat-release-note.txt",
+      "output_bytes": 193,
+      "producer_attempt": 1,
+      "saved_response": {
+        "task_id": "consume",
+        "task_title": "Release validated thermal disposition",
+        "output_path": "heat-release-note.txt",
+        "output_bytes": 193,
+        "output_format": "text",
+        "sha256": "663ed12d9b29e6c23712bd60488cfc8a5e793d2f74278959c5e3d147a2cb39cd"
+      }
+    }
+  ],
+  "run_id": "engineering-heat-20260916T214041Z",
+  "results": [
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:produce:baseline_coarse",
+      "kind": "file",
+      "name": "baseline-coarse.csv",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "baseline-coarse.csv",
+          "format": "csv",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+          "size_bytes": 13526
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "produce",
+        "output_port": "baseline_coarse",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:produce:baseline_fine",
+      "kind": "file",
+      "name": "baseline-fine.csv",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "baseline-fine.csv",
+          "format": "csv",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+          "size_bytes": 76526
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "produce",
+        "output_port": "baseline_fine",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:produce:revision_coarse",
+      "kind": "file",
+      "name": "revision-coarse.csv",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "revision-coarse.csv",
+          "format": "csv",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+          "size_bytes": 13526
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "produce",
+        "output_port": "revision_coarse",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:produce:revision_fine",
+      "kind": "file",
+      "name": "revision-fine.csv",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "revision-fine.csv",
+          "format": "csv",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+          "size_bytes": 76526
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "produce",
+        "output_port": "revision_fine",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:produce:decision",
+      "kind": "file",
+      "name": "sizing-decision.json",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "sizing-decision.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a",
+          "size_bytes": 5943
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "produce",
+        "output_port": "decision",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:produce:baseline_coarse",
+      "kind": "structured",
+      "name": "Stage retained heat analysis outputs",
+      "representations": [
+        {
+          "kind": "value",
+          "location": "steps/produce/response",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "run",
+          "sha256": null,
+          "size_bytes": null
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "produce",
+        "output_port": "baseline_coarse",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:inspect:assessment",
+      "kind": "structured",
+      "name": "Validate thermal sizing evidence",
+      "representations": [
+        {
+          "kind": "value",
+          "location": "steps/inspect/response",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "run",
+          "sha256": null,
+          "size_bytes": null
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "inspect",
+        "output_port": "assessment",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "verification"
+    },
+    {
+      "schema_version": 1,
+      "id": "engineering-heat-20260916T214041Z:consume:release_note",
+      "kind": "text",
+      "name": "Release validated thermal disposition",
+      "representations": [
+        {
+          "kind": "value",
+          "location": "steps/consume/response",
+          "format": "text",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "run",
+          "sha256": null,
+          "size_bytes": null
+        },
+        {
+          "kind": "workspace_file",
+          "location": "heat-release-note.txt",
+          "format": "text",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "663ed12d9b29e6c23712bd60488cfc8a5e793d2f74278959c5e3d147a2cb39cd",
+          "size_bytes": 193
+        }
+      ],
+      "provenance": {
+        "run_id": "engineering-heat-20260916T214041Z",
+        "task_id": "consume",
+        "output_port": "release_note",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    }
+  ],
+  "revision_attempts": [],
+  "status": "completed",
+  "run_log_path": "runs/heat-validation/20260916T214050Z-bc54d4d37243.json"
+}

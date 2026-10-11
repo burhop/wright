@@ -1,14 +1,10 @@
-import { cadModelTypes } from "./mcp-server-blocks";
+import { cadModelTypes, mcpServerChoices } from "./mcp-server-blocks";
 import { useEffect, useState } from "react";
 import type { RecoveryBlock, RecoveryWorkflow } from "./model";
 import { CadTaskOptions } from "./CadTaskOptions";
 import { ApplicationTaskOptions } from "./ApplicationTaskOptions";
 import type { RecoveryCommand } from "./command-system";
-import {
-  listWorkflowMcpTools,
-  workflowMcpServerName,
-  type WorkflowMcpTool,
-} from "./mcp-settings";
+import { listWorkflowMcpTools, type WorkflowMcpTool } from "./mcp-settings";
 
 export function McpTaskOptions({
   block,
@@ -26,15 +22,22 @@ export function McpTaskOptions({
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
   const [loading, setLoading] = useState(Boolean(sessionId));
   const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
     let active = true;
+    setTools([]);
+    setError("");
+    setLoading(Boolean(sessionId));
     if (sessionId)
       void listWorkflowMcpTools(sessionId)
         .then((value) => {
           if (active) setTools(value);
         })
         .catch(() => {
-          if (active) setError("Could not load servers. Check Tool Registry.");
+          if (active)
+            setError(
+              "Could not load workspace MCP servers. Retry or check MCP Tools.",
+            );
         })
         .finally(() => {
           if (active) setLoading(false);
@@ -42,14 +45,14 @@ export function McpTaskOptions({
     return () => {
       active = false;
     };
-  }, [sessionId]);
+  }, [sessionId, retry]);
   const config = (key: string, value: string | number) =>
     onApply([
       { kind: "set_block_configuration", blockId: block.id, key, value },
     ]);
-  const servers = [...new Set(tools.map((tool) => tool.server_id))];
+  const servers = mcpServerChoices(tools);
   const names = Object.fromEntries(
-    tools.map((tool) => [tool.server_id, workflowMcpServerName(tool)]),
+    servers.map((server) => [server.id, server.name]),
   );
   const current = String(block.configuration.mcp_server ?? "");
   const revision = workflow.relationships.find(
@@ -81,10 +84,26 @@ export function McpTaskOptions({
           value={current}
           disabled={readOnly || loading}
           data-testid="workflow-recovery-task-server"
-          onChange={(e) => config("mcp_server", e.target.value)}
+          onChange={(e) => {
+            const server = servers.find((item) => item.id === e.target.value);
+            onApply([
+              {
+                kind: "set_block_configuration",
+                blockId: block.id,
+                key: "mcp_server",
+                value: server?.id ?? "",
+              },
+              {
+                kind: "set_block_configuration",
+                blockId: block.id,
+                key: "mcp_server_name",
+                value: server?.name ?? "",
+              },
+            ]);
+          }}
         >
-          <option value="">Choose a workspace server</option>
-          {current && !servers.includes(current) && (
+          <option value="">Choose server later</option>
+          {current && !servers.some((server) => server.id === current) && (
             <option value={current}>
               {names[current] ??
                 String(
@@ -94,33 +113,53 @@ export function McpTaskOptions({
             </option>
           )}
           {servers.map((server) => (
-            <option key={server} value={server}>
-              {names[server] ?? "MCP server"}
+            <option key={server.id} value={server.id}>
+              {server.name}
             </option>
           ))}
         </select>
         <small>
-          The AI chooses operations from this server to complete your task.
+          Servers enabled for this workspace are listed here. The AI chooses
+          their operations to carry out your instructions. Select a server
+          before running.
         </small>
       </label>
       {error && <p role="alert">{error}</p>}
-      <CadTaskOptions
-        modelTypes={cadModelTypes(
-          tools.filter((tool) => tool.server_id === current),
-        )}
-        block={block}
-        workflow={workflow}
-        sessionId={sessionId}
-        readOnly={readOnly}
-        onApply={onApply}
-      />
-      <ApplicationTaskOptions
-        block={block}
-        workflow={workflow}
-        sessionId={sessionId}
-        readOnly={readOnly}
-        onApply={onApply}
-      />
+      <button
+        type="button"
+        className="recovery-button recovery-button--secondary"
+        disabled={readOnly || loading || !sessionId}
+        onClick={() => setRetry((value) => value + 1)}
+      >
+        Refresh servers
+      </button>
+      {!loading && !error && sessionId && !servers.length && (
+        <p>
+          No MCP servers are available to this workspace. Enable a server in MCP
+          Tools; your task can remain unbound while you edit.
+        </p>
+      )}
+      {!block.configuration.image_output && (
+        <>
+          <CadTaskOptions
+            modelTypes={cadModelTypes(
+              tools.filter((tool) => tool.server_id === current),
+            )}
+            block={block}
+            workflow={workflow}
+            sessionId={sessionId}
+            readOnly={readOnly}
+            onApply={onApply}
+          />
+          <ApplicationTaskOptions
+            block={block}
+            workflow={workflow}
+            sessionId={sessionId}
+            readOnly={readOnly}
+            onApply={onApply}
+          />
+        </>
+      )}
       {block.configuration.cad && (
         <section aria-label="Design check behavior">
           <label>
@@ -242,7 +281,7 @@ export function McpTaskOptions({
       </label>
       <details>
         <summary>Additional guidance and limits</summary>
-        {!block.configuration.cad && (
+        {!block.configuration.cad && !block.configuration.image_output && (
           <label>
             Files the tools must produce
             <textarea

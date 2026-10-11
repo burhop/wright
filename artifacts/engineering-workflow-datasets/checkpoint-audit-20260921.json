@@ -1,0 +1,1886 @@
+{
+  "schema_version": "wright.engineering-campaign-completion/1",
+  "generated_at": "2026-09-21T16:35:51.761123+00:00",
+  "campaign_id": "081-engineering-datasets-v1",
+  "target": 30,
+  "status": "incomplete",
+  "metrics": {
+    "datasets_created": 30,
+    "combinations_run": 30,
+    "processes_with_outputs": 24,
+    "valid_data": 0
+  },
+  "current_metrics": {
+    "combinations_run": 1,
+    "processes_with_outputs": 0,
+    "valid_data": 0
+  },
+  "validation_coverage": {
+    "qualified": 30,
+    "full_scope": 30,
+    "unsupported": 0
+  },
+  "reconciliation": {
+    "state": "current",
+    "integrity_mode": "incremental",
+    "last_completed_at": "2026-09-21T16:35:48.735+00:00",
+    "duration_ms": 807,
+    "error": null
+  },
+  "summary": {
+    "rows": 30,
+    "passed": 0,
+    "incomplete": 30,
+    "global_blockers": [
+      "historical_metrics_not_complete",
+      "current_metrics_not_complete",
+      "campaign_full_audit_not_current"
+    ]
+  },
+  "rows": [
+    {
+      "scenario_id": "heat-spreader-sizing-01",
+      "dataset_digest": "106f13aef9058ea410da045455eeffafefec3c8ba2449002ebb8800a56d542e5",
+      "template_digest": "37c00b2bf32ffa73142a73d796d7d0ba875b962766f66a50073b0c35c77c658c",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "heat-spreader-sizing-01-full",
+          "version": "1",
+          "sha256": "3528aa7740b1ab0b7f0ab98ee02904aa37195e11eb8e600d6123ea1371cce1f5"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-01-basis",
+          "version": "1",
+          "sha256": "648762c15d9461eedc7067bc51272e7fcc5e75e1a785efdfaa47efc123dd4e20"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "HEAT01-ANALYTICAL",
+        "HEAT01-BALANCE",
+        "HEAT01-BOUNDARIES",
+        "HEAT01-CLAIM-SCOPE",
+        "HEAT01-DELIVERABLES",
+        "HEAT01-FIELDS",
+        "HEAT01-GEOMETRY",
+        "HEAT01-MATERIAL",
+        "HEAT01-OUTCOME-40",
+        "HEAT01-OUTCOME-60",
+        "HEAT01-REFINEMENT",
+        "HEAT01-SELECTION"
+      ],
+      "required_subject_roles": [
+        "baseline_40_coarse",
+        "baseline_40_fine",
+        "baseline_40_geometry",
+        "basis",
+        "decision",
+        "revision_60_coarse",
+        "revision_60_fine",
+        "revision_60_geometry"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "heat-spreader-sizing-02",
+      "dataset_digest": "e682e39ee29a09d5c275d56b205dd8e63506391010efab24ad0e3a773d57d125",
+      "template_digest": "37c00b2bf32ffa73142a73d796d7d0ba875b962766f66a50073b0c35c77c658c",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "heat-spreader-sizing-02-full",
+          "version": "1",
+          "sha256": "8c4b48a93163b03936315af2060f47ab154553264ecaeeac2d998db6abc57851"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-02-basis",
+          "version": "1",
+          "sha256": "e8f86603db3713c227be1f311485f150e2cf1fbe4aae35998678429c7822c139"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "HEAT02-ANALYTICAL",
+        "HEAT02-BALANCE",
+        "HEAT02-BOUNDARIES",
+        "HEAT02-CLAIM-SCOPE",
+        "HEAT02-DELIVERABLES",
+        "HEAT02-FIELDS",
+        "HEAT02-GEOMETRY",
+        "HEAT02-MATERIAL",
+        "HEAT02-OUTCOMES",
+        "HEAT02-REFINEMENT",
+        "HEAT02-SELECTION"
+      ],
+      "required_subject_roles": [
+        "basis",
+        "decision",
+        "middle_45_coarse",
+        "middle_45_fine",
+        "middle_45_geometry",
+        "narrow_30_coarse",
+        "narrow_30_fine",
+        "narrow_30_geometry",
+        "wide_60_coarse",
+        "wide_60_fine",
+        "wide_60_geometry"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "heat-spreader-sizing-03",
+      "dataset_digest": "7fb4f63a5028a6040823ca2d9b301174b793e257efd214a5d7c20b32bab774eb",
+      "template_digest": "37c00b2bf32ffa73142a73d796d7d0ba875b962766f66a50073b0c35c77c658c",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "heat-spreader-sizing-03-full",
+          "version": "1",
+          "sha256": "99bd9a4b009cee5540eb88d0ea6f2c91dba76857fc1a37b3b44a9f8ed14ee9a5"
+        },
+        "baseline_ref": {
+          "id": "heat-spreader-sizing-03-basis",
+          "version": "1",
+          "sha256": "c30c4e62e2048071105e830ad347b6d5a9341ce6e4d1b94ad31a50651a4949b7"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "HEAT03-ANALYTICAL",
+        "HEAT03-BALANCE",
+        "HEAT03-BOUNDARIES",
+        "HEAT03-CLAIM-SCOPE",
+        "HEAT03-CONTACT",
+        "HEAT03-DELIVERABLES",
+        "HEAT03-FIELDS",
+        "HEAT03-GEOMETRY",
+        "HEAT03-MATERIAL",
+        "HEAT03-OUTCOMES",
+        "HEAT03-REFINEMENT",
+        "HEAT03-REVIEW",
+        "HEAT03-SELECTION",
+        "HEAT03-UNSUPPORTED-DISPOSITION"
+      ],
+      "required_subject_roles": [
+        "basis",
+        "copper_100_coarse",
+        "copper_100_fine",
+        "copper_100_geometry",
+        "copper_60_coarse",
+        "copper_60_fine",
+        "copper_60_geometry",
+        "copper_80_coarse",
+        "copper_80_fine",
+        "copper_80_geometry",
+        "decision"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-01",
+      "dataset_digest": "e47f30234b2221ee4e0ce6af08f6e32488953a1e9fd2f5cfc9ccf2472f364f7d",
+      "template_digest": "57b740d13651fd0a1eafaf8d165c908204c58831170a533844edc443d6f30265",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-01-full",
+          "version": "1",
+          "sha256": "0c2f24e8d8523a45e7c27bb00755b5cc0a2449dd738a1f7c3dea8856bf033a8f"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-01-basis",
+          "version": "1",
+          "sha256": "7f005f16e9831b90df52e57fbb30a8704f2cc390b2120870b29636a74aa5fbfa"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "BRACKET01-CLAIM-SCOPE",
+        "BRACKET01-DELIVERABLES",
+        "BRACKET01-GEOMETRY",
+        "BRACKET01-LOAD",
+        "BRACKET01-MANUFACTURING",
+        "BRACKET01-MASS",
+        "BRACKET01-MATERIAL",
+        "BRACKET01-REACTIONS",
+        "BRACKET01-REFINEMENT",
+        "BRACKET01-RESPONSES"
+      ],
+      "required_subject_roles": [
+        "analysis_report",
+        "baseline_coarse_displacement",
+        "baseline_coarse_reaction",
+        "baseline_coarse_receipt",
+        "baseline_coarse_stress",
+        "baseline_fine_displacement",
+        "baseline_fine_reaction",
+        "baseline_fine_receipt",
+        "baseline_fine_stress",
+        "baseline_step",
+        "fea_requests",
+        "mass_comparison",
+        "mechanical_basis",
+        "revised_coarse_displacement",
+        "revised_coarse_reaction",
+        "revised_coarse_receipt",
+        "revised_coarse_stress",
+        "revised_fine_displacement",
+        "revised_fine_reaction",
+        "revised_fine_receipt",
+        "revised_fine_stress",
+        "revised_step"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-02",
+      "dataset_digest": "e79672a0a2402e30d935b9e576f658c4fa54073871da6443dd67c6ef06749331",
+      "template_digest": "57b740d13651fd0a1eafaf8d165c908204c58831170a533844edc443d6f30265",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-02-full",
+          "version": "1",
+          "sha256": "af5bcb43353c44cba7c2f321e6d900bfcfe57aad3473fffca6de1f1fa3afca00"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-02-basis",
+          "version": "1",
+          "sha256": "b3afd5c748c5c2b4f2530dde6606abd4fc0fc7174a6c7f0c8548a97db3e62e9b"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "BRACKET02-CLAIM-SCOPE",
+        "BRACKET02-DELIVERABLES",
+        "BRACKET02-GEOMETRY",
+        "BRACKET02-LOAD",
+        "BRACKET02-MANUFACTURING",
+        "BRACKET02-MASS",
+        "BRACKET02-MATERIAL",
+        "BRACKET02-REACTIONS",
+        "BRACKET02-REFINEMENT",
+        "BRACKET02-RESPONSES"
+      ],
+      "required_subject_roles": [
+        "analysis_report",
+        "baseline_coarse_displacement",
+        "baseline_coarse_reaction",
+        "baseline_coarse_receipt",
+        "baseline_coarse_stress",
+        "baseline_fine_displacement",
+        "baseline_fine_reaction",
+        "baseline_fine_receipt",
+        "baseline_fine_stress",
+        "baseline_step",
+        "fea_requests",
+        "mass_comparison",
+        "mechanical_basis",
+        "revised_coarse_displacement",
+        "revised_coarse_reaction",
+        "revised_coarse_receipt",
+        "revised_coarse_stress",
+        "revised_fine_displacement",
+        "revised_fine_reaction",
+        "revised_fine_receipt",
+        "revised_fine_stress",
+        "revised_step"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "lightweight-equipment-bracket-03",
+      "dataset_digest": "47d51301e00cece40022354589105a9df252e236508a50e7e061c12e49f5f93e",
+      "template_digest": "57b740d13651fd0a1eafaf8d165c908204c58831170a533844edc443d6f30265",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "lightweight-equipment-bracket-03-full",
+          "version": "1",
+          "sha256": "a90c518ab4f74166733b3d99a5c541a4464f1d0249fe3bdc6c35cb5c737e90d5"
+        },
+        "baseline_ref": {
+          "id": "lightweight-equipment-bracket-03-basis",
+          "version": "1",
+          "sha256": "b0ea52ecc61dd3dfb2d6cb9292e41173c117274e9ecc30c613ca6bb042320ac5"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "BRACKET03-CLAIM-SCOPE",
+        "BRACKET03-DELIVERABLES",
+        "BRACKET03-GEOMETRY",
+        "BRACKET03-LOAD",
+        "BRACKET03-MANUFACTURING",
+        "BRACKET03-MASS",
+        "BRACKET03-MATERIAL",
+        "BRACKET03-REACTIONS",
+        "BRACKET03-REFINEMENT",
+        "BRACKET03-RESPONSES"
+      ],
+      "required_subject_roles": [
+        "analysis_report",
+        "baseline_coarse_displacement",
+        "baseline_coarse_reaction",
+        "baseline_coarse_receipt",
+        "baseline_coarse_stress",
+        "baseline_fine_displacement",
+        "baseline_fine_reaction",
+        "baseline_fine_receipt",
+        "baseline_fine_stress",
+        "baseline_step",
+        "fea_requests",
+        "mass_comparison",
+        "mechanical_basis",
+        "revised_coarse_displacement",
+        "revised_coarse_reaction",
+        "revised_coarse_receipt",
+        "revised_coarse_stress",
+        "revised_fine_displacement",
+        "revised_fine_reaction",
+        "revised_fine_receipt",
+        "revised_fine_stress",
+        "revised_step"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "parametric-drill-jig-01",
+      "dataset_digest": "817c64a2cd0bde06abc7fdd491ca6bd5822bd3602c9ab78c2e22672100dcd439",
+      "template_digest": "7b7fb0d263267450c84b0a936c9b124a3c1e50a1add5cc3954ea8c8376307271",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "parametric-drill-jig-01-full",
+          "version": "1",
+          "sha256": "0d1cbca11861a0fe8b18f47887568b1420a72b553baf413180c70892d5647724"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-01-basis",
+          "version": "1",
+          "sha256": "71f0fad592432ba092f5f2a170012875417044daeeb6306faa9f93446f21f3a4"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "JIG01-BODY-SEATS",
+        "JIG01-CLAIM-SCOPE",
+        "JIG01-DATUMS",
+        "JIG01-DELIVERABLES",
+        "JIG01-DRILL-INTENT",
+        "JIG01-FLANGE-SEATS",
+        "JIG01-H1-X",
+        "JIG01-H1-Y",
+        "JIG01-H2-X",
+        "JIG01-H2-Y",
+        "JIG01-KEEPOUTS",
+        "JIG01-MARKING",
+        "JIG01-STACKUP"
+      ],
+      "required_subject_roles": [
+        "dxf",
+        "jig_step",
+        "report"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "parametric-drill-jig-02",
+      "dataset_digest": "57a4699aa6aa2aa7cf218e07e124c26c73b012887d0efc4a8ecc6b005b9a0f8c",
+      "template_digest": "7b7fb0d263267450c84b0a936c9b124a3c1e50a1add5cc3954ea8c8376307271",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "parametric-drill-jig-02-full",
+          "version": "1",
+          "sha256": "fd39181e0c3a7d5262b27b17ff837f4cbd86fab7d67a524f101d9cd259bec754"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-02-basis",
+          "version": "1",
+          "sha256": "01ab65b9f751d126beb09c310e17339bd32fbae19581f86b27313b4e443df4b0"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "JIG02-ACCESS",
+        "JIG02-CHIP-WINDOW",
+        "JIG02-CLAIM-SCOPE",
+        "JIG02-CLAMPS",
+        "JIG02-DATUMS",
+        "JIG02-DELIVERABLES",
+        "JIG02-DRILL-INTENT",
+        "JIG02-H1",
+        "JIG02-H2",
+        "JIG02-H3",
+        "JIG02-H4",
+        "JIG02-KEY",
+        "JIG02-MARKING",
+        "JIG02-MATERIAL",
+        "JIG02-SEATS",
+        "JIG02-STACKUP"
+      ],
+      "required_subject_roles": [
+        "dxf",
+        "jig_step",
+        "report"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "parametric-drill-jig-03",
+      "dataset_digest": "e66cf65384c606be47faba98a1b3ef364fd4878b0cebc5239cd6e9ba571ebe91",
+      "template_digest": "7b7fb0d263267450c84b0a936c9b124a3c1e50a1add5cc3954ea8c8376307271",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "parametric-drill-jig-03-full",
+          "version": "1",
+          "sha256": "381bdca15a9d7e6345290436d1cb9d92dd7f086c47feed64373faeb528c48052"
+        },
+        "baseline_ref": {
+          "id": "parametric-drill-jig-03-basis",
+          "version": "1",
+          "sha256": "6c26d73189485eaba89e07ab551c83afa40fae40fda86b43ec8a36ac891f38cc"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "JIG03-CENTER-OPENING",
+        "JIG03-CLAIM-SCOPE",
+        "JIG03-COLLAR",
+        "JIG03-DELIVERABLES",
+        "JIG03-H1",
+        "JIG03-H2",
+        "JIG03-H3",
+        "JIG03-H4",
+        "JIG03-H5",
+        "JIG03-H6",
+        "JIG03-KEEPOUTS",
+        "JIG03-KEY",
+        "JIG03-MARKING",
+        "JIG03-SEATS",
+        "JIG03-STACKUP",
+        "JIG03-WALL"
+      ],
+      "required_subject_roles": [
+        "dxf",
+        "jig_step",
+        "report"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "printed-replacement-part-01",
+      "dataset_digest": "dbbae5aed75aafbd759f54adaa2af8f1d02a038335233a62a2bcd256f151b3f5",
+      "template_digest": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "printed-replacement-part-01-full",
+          "version": "1",
+          "sha256": "d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-01-basis",
+          "version": "1",
+          "sha256": "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PRINT01-ACTION-SCOPE",
+        "PRINT01-DELIVERABLES",
+        "PRINT01-ENVELOPE",
+        "PRINT01-GRIP",
+        "PRINT01-MESH-LINEAGE",
+        "PRINT01-ORIENTATION",
+        "PRINT01-SLICE",
+        "PRINT01-SOCKET",
+        "PRINT01-SOCKET-WALL",
+        "PRINT01-TOLERANCE"
+      ],
+      "required_subject_roles": [
+        "filament_profile",
+        "machine_profile",
+        "process_profile",
+        "repaired_mesh",
+        "slice_evidence",
+        "slice_package",
+        "source_report",
+        "support_preview",
+        "transfer_receipt"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "printed-replacement-part-02",
+      "dataset_digest": "e78fd941b58704a9d0ca370a524b1130f25bbc9d5235efd88af473bc989097ec",
+      "template_digest": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "printed-replacement-part-02-full",
+          "version": "1",
+          "sha256": "aa6e94d24ecf62de164767d63f7bbd5db59bfc5de1a90d3f1084496dfee64d59"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-02-basis",
+          "version": "1",
+          "sha256": "770e77fb66a49218b75f92d031efc44ac5f5a48b629e4c135a823d87d894eb52"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PRINT02-ACTION-SCOPE",
+        "PRINT02-DELIVERABLES",
+        "PRINT02-ENVELOPE",
+        "PRINT02-FINGER-CLEARANCE",
+        "PRINT02-GRIP",
+        "PRINT02-LABEL-KEEPOUT",
+        "PRINT02-MESH-LINEAGE",
+        "PRINT02-MOUNTING",
+        "PRINT02-ORIENTATION",
+        "PRINT02-SLICE"
+      ],
+      "required_subject_roles": [
+        "filament_profile",
+        "machine_profile",
+        "process_profile",
+        "repaired_mesh",
+        "slice_evidence",
+        "slice_package",
+        "source_report",
+        "support_preview",
+        "transfer_receipt"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "printed-replacement-part-03",
+      "dataset_digest": "f3038616564ecb55d919ec50f3f69d6e4aec4c11958e00e7d26b756296a06c61",
+      "template_digest": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "printed-replacement-part-03-full",
+          "version": "1",
+          "sha256": "881423783fbb3588df6717f4f2eb9f7d1d30305c8849f2fa6bdfa015399f5ce3"
+        },
+        "baseline_ref": {
+          "id": "printed-replacement-part-03-basis",
+          "version": "1",
+          "sha256": "1886624547ee2afd8c852a7cd057371f623f0cab31023fac91180c2d1a232b40"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PRINT03-ACTION-SCOPE",
+        "PRINT03-BODY",
+        "PRINT03-CABLE-KEEPOUT",
+        "PRINT03-COUNTERBORES",
+        "PRINT03-DELIVERABLES",
+        "PRINT03-HANDEDNESS",
+        "PRINT03-HOLES",
+        "PRINT03-MESH-LINEAGE",
+        "PRINT03-PAD-RECESS",
+        "PRINT03-SLICE",
+        "PRINT03-SUPPORT"
+      ],
+      "required_subject_roles": [
+        "filament_profile",
+        "machine_profile",
+        "process_profile",
+        "repaired_mesh",
+        "slice_evidence",
+        "slice_package",
+        "source_report",
+        "support_preview",
+        "transfer_receipt"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "raspberry-pi-enclosure-01",
+      "dataset_digest": "e7b953d533da45cbf890e4e174030295a10bb78593d107717e322ed85bfb191e",
+      "template_digest": "4650bb9129470f17a270fed53a546fa1a19843176ef9d81b0316135254e82690",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-01-full",
+          "version": "1",
+          "sha256": "1840e74a6f5f1235bf8a1cf35eed08fe77d84e7dc149db1945cc5d019ed17924"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-01-basis",
+          "version": "1",
+          "sha256": "5c43d1f40a00764f55c12b4e31b58fdf2f12c5d21e21ec4775be69031f67a07c"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PI01-CFD",
+        "PI01-DELIVERABLES",
+        "PI01-ENCLOSURE",
+        "PI01-SCOPE",
+        "PI01-SOURCE",
+        "PI01-THERMAL",
+        "PI01-VENT-A",
+        "PI01-VENT-B"
+      ],
+      "required_subject_roles": [
+        "board_a",
+        "board_b",
+        "cad_source",
+        "comparison",
+        "contract_a",
+        "contract_b",
+        "design_basis",
+        "enclosure_a",
+        "enclosure_b",
+        "field_archive",
+        "fluid_domain_a",
+        "fluid_domain_b",
+        "manufacturer_research",
+        "source_primary_a",
+        "source_primary_b"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "raspberry-pi-enclosure-02",
+      "dataset_digest": "8a6a272a62b5616f7f8aab077ed6e05e46545022dab9f56d6e86693b5f62720f",
+      "template_digest": "4650bb9129470f17a270fed53a546fa1a19843176ef9d81b0316135254e82690",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-02-full",
+          "version": "1",
+          "sha256": "8c6ecf39eeb3f893d499dccfcd16741fc99e3883e0eb93a5cd278fe2392e361a"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-02-basis",
+          "version": "1",
+          "sha256": "5947b499daff950b17b32fe8a2fb6c80b2c41e10e05567444ade1aa65a62f979"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PI02-CFD",
+        "PI02-DELIVERABLES",
+        "PI02-ENCLOSURE",
+        "PI02-LOADS",
+        "PI02-SCOPE",
+        "PI02-SCREEN",
+        "PI02-SOURCE",
+        "PI02-VARIANTS"
+      ],
+      "required_subject_roles": [
+        "board_a",
+        "board_b",
+        "cad_source",
+        "comparison",
+        "contract_a",
+        "contract_b",
+        "design_basis",
+        "enclosure_a",
+        "enclosure_b",
+        "field_archive",
+        "fluid_domain_a",
+        "fluid_domain_b",
+        "manufacturer_research",
+        "source_primary_a",
+        "source_primary_b",
+        "source_secondary_a",
+        "source_secondary_b"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "raspberry-pi-enclosure-03",
+      "dataset_digest": "bca609b57527230b4b5b7f4026b3c2b207059626584e70ca388c0be4b612ebdf",
+      "template_digest": "4650bb9129470f17a270fed53a546fa1a19843176ef9d81b0316135254e82690",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "raspberry-pi-enclosure-03-full",
+          "version": "1",
+          "sha256": "fca3e7bb12904189c8321901fd58cd033c0527d6394900c19f2adb18115112cd"
+        },
+        "baseline_ref": {
+          "id": "raspberry-pi-enclosure-03-basis",
+          "version": "1",
+          "sha256": "6c795f2d61468598868c30f50a680742290649fbcf093de7360e721312397297"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PI03-CFD",
+        "PI03-DELIVERABLES",
+        "PI03-ENCLOSURE",
+        "PI03-FAN",
+        "PI03-LOADS",
+        "PI03-SCOPE",
+        "PI03-SOURCE",
+        "PI03-VARIANTS"
+      ],
+      "required_subject_roles": [
+        "board_a",
+        "board_b",
+        "cad_source",
+        "comparison",
+        "contract_a",
+        "contract_b",
+        "design_basis",
+        "enclosure_a",
+        "enclosure_b",
+        "field_archive",
+        "fluid_domain_a",
+        "fluid_domain_b",
+        "manufacturer_research",
+        "source_primary_a",
+        "source_primary_b",
+        "source_secondary_a",
+        "source_secondary_b"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-01",
+      "dataset_digest": "34b55d65b2e4cb9b9aba3658c0d55bfc1ddb639fe0df8852871b84a562ad7e0d",
+      "template_digest": "092afc61bb4ab7a4ac8d8dba53370e14f82f91ddddaae0c69fed913b89bd5f9b",
+      "attempt_id": "attempt-008",
+      "run_id": "bf32d836e9dd4250bd34594748ceda87",
+      "runtime_status": "awaiting_approval",
+      "profile": {
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-01-full",
+          "version": "1",
+          "sha256": "0e6216a75e586a9966cd961cceb8068e9563dd0c7263c7a31425078080911da0"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-01-basis",
+          "version": "1",
+          "sha256": "a1b6db09fddaaf3f80acfa2914daf3e0850160f9b09693879024425fe9020e26"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "ROBOT01-ACTION-SCOPE",
+        "ROBOT01-ALIGNMENT",
+        "ROBOT01-DELIVERABLES",
+        "ROBOT01-DIAGNOSIS",
+        "ROBOT01-EVENT",
+        "ROBOT01-INPUT-LINEAGE",
+        "ROBOT01-METRICS",
+        "ROBOT01-PLOTS"
+      ],
+      "required_subject_roles": [
+        "conversion_manifest",
+        "diagnosis",
+        "metrics",
+        "plot",
+        "timeline"
+      ],
+      "produced_file_count": 10,
+      "assessment_ids": [],
+      "ran_current_process": true,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": true,
+      "status": "incomplete",
+      "blockers": [
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "current_full_scope_assessment_not_passing"
+      ]
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-02",
+      "dataset_digest": "f9b981477b410961c131ce7abec46dd691b934218eb4089962d05b3b7f131816",
+      "template_digest": "092afc61bb4ab7a4ac8d8dba53370e14f82f91ddddaae0c69fed913b89bd5f9b",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-02-full",
+          "version": "1",
+          "sha256": "6787b9682d664e90fd73bece5dcddf31079f23e69bd88cdadcdfe5881643474e"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-02-basis",
+          "version": "1",
+          "sha256": "4caf51cc91a953004bce257b90216e83d50b7836a3b83196fbaf5a0a3842a9b1"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "ROBOT02-ACTION-SCOPE",
+        "ROBOT02-DELIVERABLES",
+        "ROBOT02-DIAGNOSIS",
+        "ROBOT02-EVENT",
+        "ROBOT02-INPUT-LINEAGE",
+        "ROBOT02-METRICS",
+        "ROBOT02-PLOTS",
+        "ROBOT02-SPATIAL-ALIGNMENT",
+        "ROBOT02-TIME-ALIGNMENT"
+      ],
+      "required_subject_roles": [
+        "conversion_manifest",
+        "diagnosis",
+        "metrics",
+        "plot",
+        "timeline"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "robot-tracking-diagnosis-03",
+      "dataset_digest": "20998ed36dd6146ee5f2f5c0c962af2edbb746f1bd89674354c1542ca03c56e0",
+      "template_digest": "092afc61bb4ab7a4ac8d8dba53370e14f82f91ddddaae0c69fed913b89bd5f9b",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "robot-tracking-diagnosis-03-full",
+          "version": "1",
+          "sha256": "11f5ca4b297e60132c541f55bce8720ee987e61924ed340dbff058eb814375cf"
+        },
+        "baseline_ref": {
+          "id": "robot-tracking-diagnosis-03-basis",
+          "version": "1",
+          "sha256": "c08adf5cd747d36651e57e565fb5a63b4c989b7f25041321eec44ccbaee257ce"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "ROBOT03-ACTION-SCOPE",
+        "ROBOT03-DELIVERABLES",
+        "ROBOT03-DIAGNOSIS",
+        "ROBOT03-EVENT",
+        "ROBOT03-INPUT-LINEAGE",
+        "ROBOT03-METRICS",
+        "ROBOT03-OCCLUSION",
+        "ROBOT03-PLOTS",
+        "ROBOT03-SAMPLE-SCOPE"
+      ],
+      "required_subject_roles": [
+        "conversion_manifest",
+        "diagnosis",
+        "metrics",
+        "plot",
+        "timeline"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sensor-fan-harness-01",
+      "dataset_digest": "554f308eae79b333847fa95871714618f34958af96169e72986d210147f8a7d8",
+      "template_digest": "cecc682a5ab1c4a78d9f1b68c5fd735f635bc2baac0ab94fd6cf249f8cea86b5",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sensor-fan-harness-01-full",
+          "version": "1",
+          "sha256": "97a33702f0b514d708acc230b9050b4fe008e26b07cfd971bcce319a3c4fa361"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-01-basis",
+          "version": "1",
+          "sha256": "0a17c7a175b00f57d758068762bc76bf294dfe19028b400bedaf893a24c68eb1"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "HARNESS01-ACTION-SCOPE",
+        "HARNESS01-CONNECTORS",
+        "HARNESS01-CURRENTS",
+        "HARNESS01-CUT-LENGTHS",
+        "HARNESS01-DELIVERABLES",
+        "HARNESS01-DROP",
+        "HARNESS01-INTERFACES",
+        "HARNESS01-PACKAGING",
+        "HARNESS01-TOPOLOGY",
+        "HARNESS01-VIEWS"
+      ],
+      "required_subject_roles": [
+        "assembly",
+        "basis",
+        "bom",
+        "cut_list",
+        "handoff",
+        "netlist",
+        "pin_schedule",
+        "plan",
+        "voltage_drop"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sensor-fan-harness-02",
+      "dataset_digest": "4a3a34e25dd25e71f0e234360878e995d52b67e16823bc05a51cf7b5a7ccd9c5",
+      "template_digest": "cecc682a5ab1c4a78d9f1b68c5fd735f635bc2baac0ab94fd6cf249f8cea86b5",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sensor-fan-harness-02-full",
+          "version": "1",
+          "sha256": "c69a16f21c8186de0c9d5d2ae00f1a2b8ef7e8624584be7e61372874eebbd547"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-02-basis",
+          "version": "1",
+          "sha256": "f2d5bbbddc28104471bd5ee9da4434fe18288e082f3f3ed145c0549cef091c6c"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "HARNESS02-ACTION-SCOPE",
+        "HARNESS02-CONNECTORS",
+        "HARNESS02-CURRENTS",
+        "HARNESS02-CUT-LENGTHS",
+        "HARNESS02-DELIVERABLES",
+        "HARNESS02-DROP",
+        "HARNESS02-SERVICE",
+        "HARNESS02-SIGNALS",
+        "HARNESS02-TOPOLOGY",
+        "HARNESS02-VIEWS"
+      ],
+      "required_subject_roles": [
+        "assembly",
+        "basis",
+        "bom",
+        "cut_list",
+        "handoff",
+        "netlist",
+        "pin_schedule",
+        "plan",
+        "voltage_drop"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sensor-fan-harness-03",
+      "dataset_digest": "50b0ba0d484faa41a667cc415628fc905a5d36015d5f8cc1ad67fe6de4605ed2",
+      "template_digest": "cecc682a5ab1c4a78d9f1b68c5fd735f635bc2baac0ab94fd6cf249f8cea86b5",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sensor-fan-harness-03-full",
+          "version": "1",
+          "sha256": "f7ecf7d518f54d2269dd9cdbe550c69601d2c310d80911f3af7a8785ab5bb88e"
+        },
+        "baseline_ref": {
+          "id": "sensor-fan-harness-03-basis",
+          "version": "1",
+          "sha256": "fa7d92b76771ed1305ef37510c65b4756a16ae6541291d9bdd67aaeb1eec7d87"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "HARNESS03-ACTION-SCOPE",
+        "HARNESS03-CONNECTORS",
+        "HARNESS03-CURRENTS",
+        "HARNESS03-CUT-LENGTHS",
+        "HARNESS03-DELIVERABLES",
+        "HARNESS03-DROP",
+        "HARNESS03-RESERVE",
+        "HARNESS03-SERVICE",
+        "HARNESS03-SHIELDS",
+        "HARNESS03-SPLICES",
+        "HARNESS03-TEST-INSTRUCTIONS",
+        "HARNESS03-TOPOLOGY"
+      ],
+      "required_subject_roles": [
+        "assembly",
+        "basis",
+        "bom",
+        "cut_list",
+        "handoff",
+        "netlist",
+        "pin_schedule",
+        "plan",
+        "shield",
+        "voltage_drop"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-01",
+      "dataset_digest": "ef035d0f58e145e53f40968f961c72430b7c85c5876d720bc43cb39ece96e2f8",
+      "template_digest": "964532c5cc4465778c523336f1b839590e6c270e81ae55263b8ffdeb819f3c76",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sensor-interface-pcb-01-full",
+          "version": "1",
+          "sha256": "7feca0634fbfa9b1e80f7b9f3b100d656c4ae06d67c97e565ee1d0a4c1a6f192"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-01-basis",
+          "version": "1",
+          "sha256": "31b433c19c4ce8d394a7e43bf40ee0dcd893f26a5e72e7a9df7b61a4372fd8f8"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PCB01-ACTION-SCOPE",
+        "PCB01-BOARD",
+        "PCB01-CHECKS",
+        "PCB01-CONNECTIVITY",
+        "PCB01-CONNECTORS",
+        "PCB01-CORRESPONDENCE",
+        "PCB01-DELIVERABLES",
+        "PCB01-PARTS",
+        "PCB01-PLACEMENT",
+        "PCB01-RULES"
+      ],
+      "required_subject_roles": [
+        "basis",
+        "board",
+        "bom",
+        "drc",
+        "erc",
+        "fabrication",
+        "schematic"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-02",
+      "dataset_digest": "278ed315d33f2824d184fc76de31932de8e9255f490a4a86454c3ce87115ef72",
+      "template_digest": "964532c5cc4465778c523336f1b839590e6c270e81ae55263b8ffdeb819f3c76",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sensor-interface-pcb-02-full",
+          "version": "1",
+          "sha256": "fc53c00f53c6e67b4ec0d896311c769859e29291ffafb09bcb33c4bacd3e10d5"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-02-basis",
+          "version": "1",
+          "sha256": "80c90a52422a8b25fccc23d4b430ce3543b8ebf63b92c989fa1a0591d4aea75d"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PCB02-ACTION-SCOPE",
+        "PCB02-BOARD-RULES",
+        "PCB02-CHECKS",
+        "PCB02-CONNECTIVITY",
+        "PCB02-CONNECTORS",
+        "PCB02-CORRESPONDENCE",
+        "PCB02-DELIVERABLES",
+        "PCB02-PARTS",
+        "PCB02-QUALIFIED-PLACEMENT",
+        "PCB02-TEST-PADS"
+      ],
+      "required_subject_roles": [
+        "basis",
+        "board",
+        "bom",
+        "drc",
+        "erc",
+        "fabrication",
+        "schematic"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sensor-interface-pcb-03",
+      "dataset_digest": "550fe520d8d60f4487febecbdf7bf25a62eb0ec151c69e6fd978ca043778046a",
+      "template_digest": "964532c5cc4465778c523336f1b839590e6c270e81ae55263b8ffdeb819f3c76",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sensor-interface-pcb-03-full",
+          "version": "1",
+          "sha256": "fecdbda349e2d1c8ba476cb89bf8db0f7b6ff5cc1584af015797c6b5e017c037"
+        },
+        "baseline_ref": {
+          "id": "sensor-interface-pcb-03-basis",
+          "version": "1",
+          "sha256": "3073a159f73f58b8661f9aca13e40d8acca067636a0c05529854683c0239159b"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "PCB03-ACTION-SCOPE",
+        "PCB03-BOARD-RULES",
+        "PCB03-CHECKS",
+        "PCB03-COMPATIBILITY",
+        "PCB03-CONNECTIVITY",
+        "PCB03-CORRESPONDENCE",
+        "PCB03-DELIVERABLES",
+        "PCB03-PARTS",
+        "PCB03-PLACEMENT",
+        "PCB03-POWER-ROUTING"
+      ],
+      "required_subject_roles": [
+        "basis",
+        "board",
+        "bom",
+        "drc",
+        "erc",
+        "fabrication",
+        "schematic"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-01",
+      "dataset_digest": "33d0e09a773f7941fe83c1daafd34524c82e87d5b0254825b25d8b0ae62e0bb8",
+      "template_digest": "1a377a06f78e5d89fb59ceaa112a22208c9f5a7ef80af94d18899f61892ae2cb",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-01-full",
+          "version": "1",
+          "sha256": "68383082bc607ccbe1c34bd2ac99bce51656620391cda4cedc06eb0c9a3a89d2"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-01-basis",
+          "version": "1",
+          "sha256": "efdfe67c2abba893af484c8412163b863fb39b20aef3d2c5be58b17b6e81643a"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "SHEET01-CORRESPONDENCE",
+        "SHEET01-FEATURES",
+        "SHEET01-FORMING",
+        "SHEET01-GEOMETRY",
+        "SHEET01-HANDOFF",
+        "SHEET01-MATERIAL",
+        "SHEET01-NATIVE",
+        "SHEET01-SCOPE"
+      ],
+      "required_subject_roles": [
+        "cart_receipt",
+        "engineering_handoff",
+        "final_manifest",
+        "installed_materials",
+        "manufacturing_intent",
+        "preview_receipt",
+        "supplier_evidence",
+        "wall_dock_check",
+        "wall_dock_dxf",
+        "wall_dock_native",
+        "wall_dock_screenshot",
+        "wall_dock_step"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-02",
+      "dataset_digest": "494c0f708f5008014aaa51310a82a697e50d3ae214f7ba0019fd4feed649e4bf",
+      "template_digest": "1a377a06f78e5d89fb59ceaa112a22208c9f5a7ef80af94d18899f61892ae2cb",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-02-full",
+          "version": "1",
+          "sha256": "e7ddabb706322ddc35a14bc84ebd83533f9a2a23d4a1a0a5be52050c009ca991"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-02-basis",
+          "version": "1",
+          "sha256": "ef692463cafec8fee996bcd53ec00d0556b1d9d1e77f745316536f0fa7676818"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "SHEET02-CORRESPONDENCE",
+        "SHEET02-FORMING",
+        "SHEET02-GEOMETRY",
+        "SHEET02-HANDOFF",
+        "SHEET02-MATERIAL",
+        "SHEET02-NATIVE",
+        "SHEET02-SCOPE",
+        "SHEET02-SERVICE",
+        "SHEET02-SLOTS"
+      ],
+      "required_subject_roles": [
+        "cable_trough_check",
+        "cable_trough_dxf",
+        "cable_trough_native",
+        "cable_trough_screenshot",
+        "cable_trough_step",
+        "cart_receipt",
+        "engineering_handoff",
+        "final_manifest",
+        "installed_materials",
+        "manufacturing_intent",
+        "preview_receipt",
+        "supplier_evidence"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "sheet-metal-supplier-handoff-03",
+      "dataset_digest": "478f00b16a7732d6bfbc11ee6ff11366e38d75c3a0baf103499f7a19980d5fa7",
+      "template_digest": "1a377a06f78e5d89fb59ceaa112a22208c9f5a7ef80af94d18899f61892ae2cb",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "sheet-metal-supplier-handoff-03-full",
+          "version": "1",
+          "sha256": "6cd2d25ff58fbc103f6816a0ff78cbba17dcf70c61ffc305aee80aa2168407ba"
+        },
+        "baseline_ref": {
+          "id": "sheet-metal-supplier-handoff-03-basis",
+          "version": "1",
+          "sha256": "0b12b72d01a9e54b720b54d5a35f94f9b014eef2a532e16f307352a24175784f"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "SHEET03-CORRESPONDENCE",
+        "SHEET03-CUTOUTS",
+        "SHEET03-FORMING",
+        "SHEET03-HANDOFF",
+        "SHEET03-KEEPOUT",
+        "SHEET03-MATERIAL",
+        "SHEET03-NATIVE",
+        "SHEET03-PARTS",
+        "SHEET03-SCOPE",
+        "SHEET03-VENTS"
+      ],
+      "required_subject_roles": [
+        "base_tray_check",
+        "base_tray_dxf",
+        "base_tray_native",
+        "base_tray_screenshot",
+        "base_tray_step",
+        "cart_receipt",
+        "engineering_handoff",
+        "final_manifest",
+        "installed_materials",
+        "manufacturing_intent",
+        "preview_receipt",
+        "removable_lid_check",
+        "removable_lid_dxf",
+        "removable_lid_native",
+        "removable_lid_screenshot",
+        "removable_lid_step",
+        "supplier_evidence"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "water-heater-sizing-01",
+      "dataset_digest": "ca4513d6d358bd1747756bed6d3d3b7156ed6fd27912e55a8a677f873f4a6204",
+      "template_digest": "8f0a67913e4db9ff100e44b793573f36a8eac14b1d30d04598a47e4e4658a3c6",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "water-heater-sizing-01-full",
+          "version": "1",
+          "sha256": "d04f0c7cf7a074ee2f5e26141c6673e2a3304ea8c8cc37b03bad1ecc2857d2c1"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-01-basis",
+          "version": "1",
+          "sha256": "83dc0e6d9877a46c9b0c5ba0c84941ffcfff06fa32eadfab4cccf3248bd8bde5"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "WATER01-CANDIDATES",
+        "WATER01-CLAIM-SCOPE",
+        "WATER01-CONTROL",
+        "WATER01-DELIVERABLES",
+        "WATER01-ENERGY",
+        "WATER01-HORIZON",
+        "WATER01-MODEL",
+        "WATER01-PHYSICS",
+        "WATER01-REFINEMENT",
+        "WATER01-SELECTION",
+        "WATER01-TARGET"
+      ],
+      "required_subject_roles": [
+        "comparison",
+        "curve",
+        "energy",
+        "parameters",
+        "report",
+        "timeline"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "water-heater-sizing-02",
+      "dataset_digest": "14993e9cd66ecba2e5ffbc40613565f21fa5205d40198926e57a56777f3f4c00",
+      "template_digest": "8f0a67913e4db9ff100e44b793573f36a8eac14b1d30d04598a47e4e4658a3c6",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "water-heater-sizing-02-full",
+          "version": "1",
+          "sha256": "5ef2ef688dd957f0e0294ea36ef5926ab8f948bdb2f9ef6089b1e2f8e0a29f54"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-02-basis",
+          "version": "1",
+          "sha256": "4f3aaa8fac7278c69de7fbca166477a151cfd07869d9c37db493c337c8f99f34"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "WATER02-BATTERY-ENERGY",
+        "WATER02-CANDIDATES",
+        "WATER02-CLAIM-SCOPE",
+        "WATER02-CONTROL",
+        "WATER02-DELIVERABLES",
+        "WATER02-HORIZON",
+        "WATER02-MODEL",
+        "WATER02-PHYSICS",
+        "WATER02-REFINEMENT",
+        "WATER02-SELECTION",
+        "WATER02-TARGET"
+      ],
+      "required_subject_roles": [
+        "comparison",
+        "curve",
+        "energy",
+        "parameters",
+        "report",
+        "timeline"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    },
+    {
+      "scenario_id": "water-heater-sizing-03",
+      "dataset_digest": "872238daa8ff2f8f0054e466bb889994e3ce99d60c0e62818628e6f6dbcd0f8c",
+      "template_digest": "8f0a67913e4db9ff100e44b793573f36a8eac14b1d30d04598a47e4e4658a3c6",
+      "attempt_id": null,
+      "run_id": null,
+      "runtime_status": "not_run",
+      "profile": {
+        "profile_ref": {
+          "id": "water-heater-sizing-03-full",
+          "version": "1",
+          "sha256": "df62db9766be2c52fb616f620b3917a2087f31c996570030a3496bf0d66e7d28"
+        },
+        "baseline_ref": {
+          "id": "water-heater-sizing-03-basis",
+          "version": "1",
+          "sha256": "c8303d44b3d63733d64cd03270f3b3cd4f1786edf5b187d824227dd476ca863c"
+        }
+      },
+      "mandatory_requirement_ids": [
+        "WATER03-CLAIM-SCOPE",
+        "WATER03-CONTROL",
+        "WATER03-DELIVERABLES",
+        "WATER03-ENERGY",
+        "WATER03-GRID",
+        "WATER03-HORIZON",
+        "WATER03-MODEL",
+        "WATER03-PHYSICS",
+        "WATER03-REFINEMENT",
+        "WATER03-SELECTION",
+        "WATER03-TARGET"
+      ],
+      "required_subject_roles": [
+        "comparison",
+        "curve",
+        "energy",
+        "parameters",
+        "report",
+        "timeline"
+      ],
+      "produced_file_count": 0,
+      "assessment_ids": [],
+      "ran_current_process": false,
+      "complete_current_outputs": false,
+      "full_scope_requirements_pass": false,
+      "full_byte_audit": false,
+      "status": "incomplete",
+      "blockers": [
+        "no_current_attempt",
+        "attempt_not_current",
+        "current_process_not_run",
+        "current_outputs_incomplete",
+        "required_process_steps_incomplete",
+        "produced_file_identity_incomplete",
+        "current_full_scope_assessment_not_passing",
+        "current_output_bytes_not_full_audited"
+      ]
+    }
+  ]
+}

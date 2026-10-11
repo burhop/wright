@@ -1,0 +1,54 @@
+{
+  "scope": "Primary review of both complete selected digital engineering/UI demonstration obligations, with original first-stage inputs and new-source saved UI reuse/navigation. Human acceptance and physical execution remain separate.",
+  "obligations": {
+    "FR-016": {
+      "primary_behaviors": [
+        "The corrected fresh printed source records the original image/prompt/context/profile at the actual Blender MCP AI-task boundary and preserves original prompt bytes in its native code call; configured independent repair consumes the uniquely owned source STL with unchanged pinned dimensions/repair policy.",
+        "Two distinct runs actually execute repair, independent offline slicing, passive package/profile/toolpath inspection, report and original full source gate. Each has 20 exact results, 17 digital passes and one mandatory authenticated human-review hold. The failed original AI repair and uncertain first continuations remain preserved; no uncertain action is replayed.",
+        "Wright actually generates, previews, saves and focus-updates the new-source UI with the inherited default model. The same built updated revision is reused on both runs without authoring/build/execution replay. The common and saved views agree on result identities; declared host navigation opens exact geometry, all 90 nominal toolpath layers, exact held assessments and producing blocks.",
+        "The separately retained Heat job uses actual AgentCAD candidate STEP exports/readback and OASiS coarse/fine conduction fields, retains original 2% analytical/refinement, 1% heat-balance and 45 C limits, and has 25 passing checks plus mandatory human hold with critic approval false. Its actual default-model generation/update/reuse, candidate comparison, field views, exact assessment/block navigation and distinct run identities remain unchanged.",
+        "Both connected engineering jobs preserve substantive independent tool handoffs and original requirements. The current first-stage task/native image boundary, original failed attempts, supported geometry/nominal-path/rectangular-solver limits, exact test-only review authority and full-source builtin-write public-readiness seam remain explicit. Digital verification does not imply human acceptance or physical release."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/preservation.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/second-run/frozen.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/browser-report-index.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/first-retention.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/second-retention.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/first-assessment-display.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/second-assessment-display.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-stage-handoff.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/authoring-continuation.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    },
+    "T047": {
+      "primary_behaviors": [
+        "The corrected fresh printed source records the original image/prompt/context/profile at the actual Blender MCP AI-task boundary and preserves original prompt bytes in its native code call; configured independent repair consumes the uniquely owned source STL with unchanged pinned dimensions/repair policy.",
+        "Two distinct runs actually execute repair, independent offline slicing, passive package/profile/toolpath inspection, report and original full source gate. Each has 20 exact results, 17 digital passes and one mandatory authenticated human-review hold. The failed original AI repair and uncertain first continuations remain preserved; no uncertain action is replayed.",
+        "Wright actually generates, previews, saves and focus-updates the new-source UI with the inherited default model. The same built updated revision is reused on both runs without authoring/build/execution replay. The common and saved views agree on result identities; declared host navigation opens exact geometry, all 90 nominal toolpath layers, exact held assessments and producing blocks.",
+        "The separately retained Heat job uses actual AgentCAD candidate STEP exports/readback and OASiS coarse/fine conduction fields, retains original 2% analytical/refinement, 1% heat-balance and 45 C limits, and has 25 passing checks plus mandatory human hold with critic approval false. Its actual default-model generation/update/reuse, candidate comparison, field views, exact assessment/block navigation and distinct run identities remain unchanged.",
+        "Both connected engineering jobs preserve substantive independent tool handoffs and original requirements. The current first-stage task/native image boundary, original failed attempts, supported geometry/nominal-path/rectangular-solver limits, exact test-only review authority and full-source builtin-write public-readiness seam remain explicit. Digital verification does not imply human acceptance or physical release."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/preservation.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/second-run/frozen.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/browser-report-index.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/first-retention.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/second-retention.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/first-assessment-display.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/navigation/second-assessment-display.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-stage-handoff.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/authoring-continuation.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    }
+  },
+  "retained_engineering_ui_files_unchanged": 550,
+  "full_feature_signoff": false,
+  "physical_or_human_acceptance": false
+}

@@ -1,0 +1,791 @@
+{
+  "scope": "Whole remaining shared platform contract/task/workspace review, reusing exact original proof scope with current restoration negatives. Documentation/final completion remains separately pending.",
+  "dispositions": {
+    "CONTRACT-process-interaction-01": {
+      "primary_behaviors": [
+        "Core strict/frozen snapshot identities and generated schemas cover context, typed inputs/defaults/provider choices, readiness, exact EngineeringResult/assessment references, declared interactions, observations/freshness, bounded diagnostics and navigation. Unsupported schemas/options or missing required evidence remain blocked.",
+        "Existing owners recheck source/file/082 review currentness. The projection only narrows owner permission; supplied/explicit-default/upstream-produced/declared-human/unresolved classifications and waiting/external/uncertain/cancelled distinctions are preserved. Readable reasons carry exact block/evidence correction targets."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json"
+      ]
+    },
+    "T008": {
+      "primary_behaviors": [
+        "Core strict/frozen snapshot identities and generated schemas cover context, typed inputs/defaults/provider choices, readiness, exact EngineeringResult/assessment references, declared interactions, observations/freshness, bounded diagnostics and navigation. Unsupported schemas/options or missing required evidence remain blocked.",
+        "Existing owners recheck source/file/082 review currentness. The projection only narrows owner permission; supplied/explicit-default/upstream-produced/declared-human/unresolved classifications and waiting/external/uncertain/cancelled distinctions are preserved. Readable reasons carry exact block/evidence correction targets."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json"
+      ]
+    },
+    "T009": {
+      "primary_behaviors": [
+        "Core strict/frozen snapshot identities and generated schemas cover context, typed inputs/defaults/provider choices, readiness, exact EngineeringResult/assessment references, declared interactions, observations/freshness, bounded diagnostics and navigation. Unsupported schemas/options or missing required evidence remain blocked.",
+        "Existing owners recheck source/file/082 review currentness. The projection only narrows owner permission; supplied/explicit-default/upstream-produced/declared-human/unresolved classifications and waiting/external/uncertain/cancelled distinctions are preserved. Readable reasons carry exact block/evidence correction targets."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json"
+      ]
+    },
+    "CONTRACT-process-interaction-02": {
+      "primary_behaviors": [
+        "Native and presentation public clients implement the documented bounded operation envelopes over existing readiness/run/input/review/action/result/surface owners. Routes retain the authenticated workspace mount and derive actor/run/scope rather than trusting caller overrides.",
+        "Exact review retries reconcile retained decisions/projections without dispatch; approval consumption is a separate operation. Snapshot/follow/navigation/representation reads do not execute. Managed navigation fills only an omitted authorized run; explicit foreign selectors are rejected.",
+        "Exact assessment files can have separate result identities. Actual printed/thermal navigation checks and negative artifact/authority fixtures preserve identity and hash-checked reads. Derived nominal toolpaths retain original-artifact and G-code-entry provenance, excluded startup/shutdown and unsupported-download fallback.",
+        "Generated apps have no generic invokeTool, executor, shell, destination override or automatic-approval API. Presentation authority/grants stay server-derived and separate from native credentials/provider panels."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "CONTRACT-process-interaction-03": {
+      "primary_behaviors": [
+        "Native and presentation public clients implement the documented bounded operation envelopes over existing readiness/run/input/review/action/result/surface owners. Routes retain the authenticated workspace mount and derive actor/run/scope rather than trusting caller overrides.",
+        "Exact review retries reconcile retained decisions/projections without dispatch; approval consumption is a separate operation. Snapshot/follow/navigation/representation reads do not execute. Managed navigation fills only an omitted authorized run; explicit foreign selectors are rejected.",
+        "Exact assessment files can have separate result identities. Actual printed/thermal navigation checks and negative artifact/authority fixtures preserve identity and hash-checked reads. Derived nominal toolpaths retain original-artifact and G-code-entry provenance, excluded startup/shutdown and unsupported-download fallback.",
+        "Generated apps have no generic invokeTool, executor, shell, destination override or automatic-approval API. Presentation authority/grants stay server-derived and separate from native credentials/provider panels."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "T010": {
+      "primary_behaviors": [
+        "Native and presentation public clients implement the documented bounded operation envelopes over existing readiness/run/input/review/action/result/surface owners. Routes retain the authenticated workspace mount and derive actor/run/scope rather than trusting caller overrides.",
+        "Exact review retries reconcile retained decisions/projections without dispatch; approval consumption is a separate operation. Snapshot/follow/navigation/representation reads do not execute. Managed navigation fills only an omitted authorized run; explicit foreign selectors are rejected.",
+        "Exact assessment files can have separate result identities. Actual printed/thermal navigation checks and negative artifact/authority fixtures preserve identity and hash-checked reads. Derived nominal toolpaths retain original-artifact and G-code-entry provenance, excluded startup/shutdown and unsupported-download fallback.",
+        "Generated apps have no generic invokeTool, executor, shell, destination override or automatic-approval API. Presentation authority/grants stay server-derived and separate from native credentials/provider panels."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "CONTRACT-process-interaction-04": {
+      "primary_behaviors": [
+        "Existing request/source/input/subject identities are checked before effects; identical requests reconcile recorded outcomes, changed payloads conflict, and cursor/UI state is never action authority. Current tests cover stale source/result/option, absent evidence, cross-process/workspace/run/UI, revoked presentation and unauthorized mutations.",
+        "Strict schema and value/page/upload/read bounds, redacted bounded diagnostics, owning-step corrections and the closed Reason taxonomy are enforced in the shared service/client contracts. Unknown external outcomes disable replay. Service imports/ownership and lazy repositories retain package boundaries without transport imports."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T007": {
+      "primary_behaviors": [
+        "Existing request/source/input/subject identities are checked before effects; identical requests reconcile recorded outcomes, changed payloads conflict, and cursor/UI state is never action authority. Current tests cover stale source/result/option, absent evidence, cross-process/workspace/run/UI, revoked presentation and unauthorized mutations.",
+        "Strict schema and value/page/upload/read bounds, redacted bounded diagnostics, owning-step corrections and the closed Reason taxonomy are enforced in the shared service/client contracts. Unknown external outcomes disable replay. Service imports/ownership and lazy repositories retain package boundaries without transport imports."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T006": {
+      "primary_behaviors": [
+        "Additive migrations22/23 preserve the actual v2 checkpoint, original run bytes and earlier migration ledger; no process_runs executor table is introduced. Inputs/responses/starts/revisions/jobs use scoped immutable identities and atomic conflict/CAS/concurrency checks in the existing database.",
+        "Old 083 databases keep their22 ledger when23 authoring provenance is added. Saved raw evidence cannot be deleted; repairs are bounded and terminal jobs cannot restart. The exact migration module is in the retained passing91-module selection and the installed compatibility/lifecycle proof covers schema23."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md"
+      ]
+    },
+    "CONTRACT-runtime-and-source-01": {
+      "primary_behaviors": [
+        "Immutable overlays preserve accepted source/default inference without inventing values. Supported graph readiness classifies every later required binding, checks explicit defaults, producer/consumer types, declared human response, file bytes and option revisions before allocation/model work.",
+        "Prepared scope, source/file/schema/configured provider changes are rejected with exact owning reasons. Required consumers cannot be weakened by an optional label. Preparation/execution/continuation use the same conversion and frozen snapshot identity; UI labels/units do not rewrite tool arguments."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "T011": {
+      "primary_behaviors": [
+        "Immutable overlays preserve accepted source/default inference without inventing values. Supported graph readiness classifies every later required binding, checks explicit defaults, producer/consumer types, declared human response, file bytes and option revisions before allocation/model work.",
+        "Prepared scope, source/file/schema/configured provider changes are rejected with exact owning reasons. Required consumers cannot be weakened by an optional label. Preparation/execution/continuation use the same conversion and frozen snapshot identity; UI labels/units do not rewrite tool arguments."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "T012": {
+      "primary_behaviors": [
+        "Immutable overlays preserve accepted source/default inference without inventing values. Supported graph readiness classifies every later required binding, checks explicit defaults, producer/consumer types, declared human response, file bytes and option revisions before allocation/model work.",
+        "Prepared scope, source/file/schema/configured provider changes are rejected with exact owning reasons. Required consumers cannot be weakened by an optional label. Preparation/execution/continuation use the same conversion and frozen snapshot identity; UI labels/units do not rewrite tool arguments."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-02": {
+      "primary_behaviors": [
+        "Only explicitly declared standalone wright.run_id directory tokens in allowed task/text/output/dependency fields resolve. Authority/profile/native/schema dictionaries and opaque binary/template misuse are rejected. Original raw reference hash and separately resolved-content hash remain distinct and bounded.",
+        "Readiness does not reserve directories. The existing source executor reserves declared namespaces exclusively; continuation uses the original retained directory/run. Two real digital runs of each engineering source keep distinct files/assessments. Approval receipt output is written by the existing dispatcher, not the model-response writer; legacy literal paths remain unchanged.",
+        "Run/validator idempotency, stale template/input and existing-target guards retain revision/replay protection. This path binding is not a filesystem sandbox or general expression language. Run-path and approval-receipt modules are in current retained backend coverage."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-03": {
+      "primary_behaviors": [
+        "Version1 human-input declarations round-trip through source storage/compiler with one typed response port, explicit supported connected evidence/order dependencies and no hidden tool/default/checkpoint. Unsupported arrangements are rejected without extending DAG/rework semantics.",
+        "At the declared cursor the existing recorder/v3 continuation retains exact source/input/upstream/schema subject. Valid server-derived responses are atomically persisted and consumed once; two successive barriers survive recreation and preserve the same run and typed output. Invalid/stale/cross-scope/duplicate/changed requests never release later work.",
+        "Input responses do not become approvals or action receipts. Review decision metadata remains in the existing continuation/decision JSON. Original v2 approval tests and actual two-record owner readback retain their own checks/history. Invalid drafts stay separate and layout-only changes do not alter engineering authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-04": {
+      "primary_behaviors": [
+        "Version1 human-input declarations round-trip through source storage/compiler with one typed response port, explicit supported connected evidence/order dependencies and no hidden tool/default/checkpoint. Unsupported arrangements are rejected without extending DAG/rework semantics.",
+        "At the declared cursor the existing recorder/v3 continuation retains exact source/input/upstream/schema subject. Valid server-derived responses are atomically persisted and consumed once; two successive barriers survive recreation and preserve the same run and typed output. Invalid/stale/cross-scope/duplicate/changed requests never release later work.",
+        "Input responses do not become approvals or action receipts. Review decision metadata remains in the existing continuation/decision JSON. Original v2 approval tests and actual two-record owner readback retain their own checks/history. Invalid drafts stay separate and layout-only changes do not alter engineering authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T022": {
+      "primary_behaviors": [
+        "Version1 human-input declarations round-trip through source storage/compiler with one typed response port, explicit supported connected evidence/order dependencies and no hidden tool/default/checkpoint. Unsupported arrangements are rejected without extending DAG/rework semantics.",
+        "At the declared cursor the existing recorder/v3 continuation retains exact source/input/upstream/schema subject. Valid server-derived responses are atomically persisted and consumed once; two successive barriers survive recreation and preserve the same run and typed output. Invalid/stale/cross-scope/duplicate/changed requests never release later work.",
+        "Input responses do not become approvals or action receipts. Review decision metadata remains in the existing continuation/decision JSON. Original v2 approval tests and actual two-record owner readback retain their own checks/history. Invalid drafts stay separate and layout-only changes do not alter engineering authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T023": {
+      "primary_behaviors": [
+        "Version1 human-input declarations round-trip through source storage/compiler with one typed response port, explicit supported connected evidence/order dependencies and no hidden tool/default/checkpoint. Unsupported arrangements are rejected without extending DAG/rework semantics.",
+        "At the declared cursor the existing recorder/v3 continuation retains exact source/input/upstream/schema subject. Valid server-derived responses are atomically persisted and consumed once; two successive barriers survive recreation and preserve the same run and typed output. Invalid/stale/cross-scope/duplicate/changed requests never release later work.",
+        "Input responses do not become approvals or action receipts. Review decision metadata remains in the existing continuation/decision JSON. Original v2 approval tests and actual two-record owner readback retain their own checks/history. Invalid drafts stay separate and layout-only changes do not alter engineering authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T024": {
+      "primary_behaviors": [
+        "Version1 human-input declarations round-trip through source storage/compiler with one typed response port, explicit supported connected evidence/order dependencies and no hidden tool/default/checkpoint. Unsupported arrangements are rejected without extending DAG/rework semantics.",
+        "At the declared cursor the existing recorder/v3 continuation retains exact source/input/upstream/schema subject. Valid server-derived responses are atomically persisted and consumed once; two successive barriers survive recreation and preserve the same run and typed output. Invalid/stale/cross-scope/duplicate/changed requests never release later work.",
+        "Input responses do not become approvals or action receipts. Review decision metadata remains in the existing continuation/decision JSON. Original v2 approval tests and actual two-record owner readback retain their own checks/history. Invalid drafts stay separate and layout-only changes do not alter engineering authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-readiness-primary-audit-verified/regression/case-index.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-05": {
+      "primary_behaviors": [
+        "One bounded local backend supervisor persists start/request/principal/receipt before existing source execution and records original owner events. Native SSE and legacy NDJSON disconnect only their observer; exact lost/concurrent starts and terminal recreation cannot allocate/replay another run.",
+        "Source/review/action continuation consumes existing claims before effects. Unfinished consumed/started segments become unknown or require reconciliation; backend reopening is in-process owner/state evidence, not an arbitrary crash/distributed execution guarantee. Cancellation request and observed actual outcome remain separate.",
+        "Multihour qualified external observation uses existing async identities and finite complete/call budgets separate from bounded model decisions. Missing metrics remain null/stale with original timestamps; polling does not replenish AI time or imply physical stop.",
+        "Closed unattended completed/blocked/error outcomes are checked before output/downstream publication. Undeclared questions and invalid envelopes emit exact owning-block diagnostics with no new form/default/retry. Legitimate document questions are not classified with prose heuristics; existing082 repair limits remain intact."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T013": {
+      "primary_behaviors": [
+        "One bounded local backend supervisor persists start/request/principal/receipt before existing source execution and records original owner events. Native SSE and legacy NDJSON disconnect only their observer; exact lost/concurrent starts and terminal recreation cannot allocate/replay another run.",
+        "Source/review/action continuation consumes existing claims before effects. Unfinished consumed/started segments become unknown or require reconciliation; backend reopening is in-process owner/state evidence, not an arbitrary crash/distributed execution guarantee. Cancellation request and observed actual outcome remain separate.",
+        "Multihour qualified external observation uses existing async identities and finite complete/call budgets separate from bounded model decisions. Missing metrics remain null/stale with original timestamps; polling does not replenish AI time or imply physical stop.",
+        "Closed unattended completed/blocked/error outcomes are checked before output/downstream publication. Undeclared questions and invalid envelopes emit exact owning-block diagnostics with no new form/default/retry. Legitimate document questions are not classified with prose heuristics; existing082 repair limits remain intact."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T014": {
+      "primary_behaviors": [
+        "One bounded local backend supervisor persists start/request/principal/receipt before existing source execution and records original owner events. Native SSE and legacy NDJSON disconnect only their observer; exact lost/concurrent starts and terminal recreation cannot allocate/replay another run.",
+        "Source/review/action continuation consumes existing claims before effects. Unfinished consumed/started segments become unknown or require reconciliation; backend reopening is in-process owner/state evidence, not an arbitrary crash/distributed execution guarantee. Cancellation request and observed actual outcome remain separate.",
+        "Multihour qualified external observation uses existing async identities and finite complete/call budgets separate from bounded model decisions. Missing metrics remain null/stale with original timestamps; polling does not replenish AI time or imply physical stop.",
+        "Closed unattended completed/blocked/error outcomes are checked before output/downstream publication. Undeclared questions and invalid envelopes emit exact owning-block diagnostics with no new form/default/retry. Legitimate document questions are not classified with prose heuristics; existing082 repair limits remain intact."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T015": {
+      "primary_behaviors": [
+        "One bounded local backend supervisor persists start/request/principal/receipt before existing source execution and records original owner events. Native SSE and legacy NDJSON disconnect only their observer; exact lost/concurrent starts and terminal recreation cannot allocate/replay another run.",
+        "Source/review/action continuation consumes existing claims before effects. Unfinished consumed/started segments become unknown or require reconciliation; backend reopening is in-process owner/state evidence, not an arbitrary crash/distributed execution guarantee. Cancellation request and observed actual outcome remain separate.",
+        "Multihour qualified external observation uses existing async identities and finite complete/call budgets separate from bounded model decisions. Missing metrics remain null/stale with original timestamps; polling does not replenish AI time or imply physical stop.",
+        "Closed unattended completed/blocked/error outcomes are checked before output/downstream publication. Undeclared questions and invalid envelopes emit exact owning-block diagnostics with no new form/default/retry. Legitimate document questions are not classified with prose heuristics; existing082 repair limits remain intact."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T016": {
+      "primary_behaviors": [
+        "One bounded local backend supervisor persists start/request/principal/receipt before existing source execution and records original owner events. Native SSE and legacy NDJSON disconnect only their observer; exact lost/concurrent starts and terminal recreation cannot allocate/replay another run.",
+        "Source/review/action continuation consumes existing claims before effects. Unfinished consumed/started segments become unknown or require reconciliation; backend reopening is in-process owner/state evidence, not an arbitrary crash/distributed execution guarantee. Cancellation request and observed actual outcome remain separate.",
+        "Multihour qualified external observation uses existing async identities and finite complete/call budgets separate from bounded model decisions. Missing metrics remain null/stale with original timestamps; polling does not replenish AI time or imply physical stop.",
+        "Closed unattended completed/blocked/error outcomes are checked before output/downstream publication. Undeclared questions and invalid envelopes emit exact owning-block diagnostics with no new form/default/retry. Legitimate document questions are not classified with prose heuristics; existing082 repair limits remain intact."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T025": {
+      "primary_behaviors": [
+        "One bounded local backend supervisor persists start/request/principal/receipt before existing source execution and records original owner events. Native SSE and legacy NDJSON disconnect only their observer; exact lost/concurrent starts and terminal recreation cannot allocate/replay another run.",
+        "Source/review/action continuation consumes existing claims before effects. Unfinished consumed/started segments become unknown or require reconciliation; backend reopening is in-process owner/state evidence, not an arbitrary crash/distributed execution guarantee. Cancellation request and observed actual outcome remain separate.",
+        "Multihour qualified external observation uses existing async identities and finite complete/call budgets separate from bounded model decisions. Missing metrics remain null/stale with original timestamps; polling does not replenish AI time or imply physical stop.",
+        "Closed unattended completed/blocked/error outcomes are checked before output/downstream publication. Undeclared questions and invalid envelopes emit exact owning-block diagnostics with no new form/default/retry. Legitimate document questions are not classified with prose heuristics; existing082 repair limits remain intact."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-06": {
+      "primary_behaviors": [
+        "The existing approved-action dispatcher/gateway accepts only exact qualified mcp-operation metadata and schema/argument/file/destination/settings/profile identities. Missing qualification, changed/revoked authority, malformed response and unapproved scope fail before effects.",
+        "Explicit receipt/observe modes preserve submission, delivery, provider reference, start/completion and cancellation/unknown facts. Bounded observation metadata is checked at readiness/consumption; consumed unknown actions never resubmit. Existing local-review/test-handoff aliases/history and independently authorized nonphysical test effects retain distinct authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "T026": {
+      "primary_behaviors": [
+        "The existing approved-action dispatcher/gateway accepts only exact qualified mcp-operation metadata and schema/argument/file/destination/settings/profile identities. Missing qualification, changed/revoked authority, malformed response and unapproved scope fail before effects.",
+        "Explicit receipt/observe modes preserve submission, delivery, provider reference, start/completion and cancellation/unknown facts. Bounded observation metadata is checked at readiness/consumption; consumed unknown actions never resubmit. Existing local-review/test-handoff aliases/history and independently authorized nonphysical test effects retain distinct authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-07": {
+      "primary_behaviors": [
+        "All17 named runtime checks are disposed against35 exact inspected bodies/81 cases plus preserved v2 owner records. Their scope is controlled model/provider/transport fixtures, supplemented by separate actual digital engineering runs, not physical or arbitrary-crash support.",
+        "Explicit MCP file dependencies pin producer/prepared path/byte-count/hash before exact or AI-tool consumption. Binary inputs remain locator metadata, plain AI file imports fail, and old errors without exact consumer events link to the run. Original image/prompt/configured-repair handoff is separately verified.",
+        "Supplied-artifact approvals require exact boolean include_supplied_files and explicitly connected WorkflowReferences, preserve frozen scope/bytes and reject changes before or after decision. They grant no new effect authority and never classify uploads as produced engineering outputs. The simulator is explicitly enrolled and nonnetworked."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json"
+      ]
+    },
+    "CONTRACT-runtime-and-source-08": {
+      "primary_behaviors": [
+        "All17 named runtime checks are disposed against35 exact inspected bodies/81 cases plus preserved v2 owner records. Their scope is controlled model/provider/transport fixtures, supplemented by separate actual digital engineering runs, not physical or arbitrary-crash support.",
+        "Explicit MCP file dependencies pin producer/prepared path/byte-count/hash before exact or AI-tool consumption. Binary inputs remain locator metadata, plain AI file imports fail, and old errors without exact consumer events link to the run. Original image/prompt/configured-repair handoff is separately verified.",
+        "Supplied-artifact approvals require exact boolean include_supplied_files and explicitly connected WorkflowReferences, preserve frozen scope/bytes and reject changes before or after decision. They grant no new effect authority and never classify uploads as produced engineering outputs. The simulator is explicitly enrolled and nonnetworked."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json"
+      ]
+    },
+    "T027": {
+      "primary_behaviors": [
+        "Shared forms/inspector/source edits retain exact declared checkpoint/schema/subject. Controlled browser fixtures cover two-input close/reopen/lost accepted acknowledgement, explicit same-request reconciliation, schema rejection, stale evidence, retained answers and unknown action refresh with no duplicate effect.",
+        "Separate real SQLite/source/API tests verify same-run consume/races/currentness/undeclared-question policies, and retained actual model/MCP jobs prove distinct engineering chains. Mocked served journeys are not relabelled live engineering or human review."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "specs/083-process-working-interfaces/evidence/interactions.md"
+      ]
+    },
+    "T028": {
+      "primary_behaviors": [
+        "Shared forms/inspector/source edits retain exact declared checkpoint/schema/subject. Controlled browser fixtures cover two-input close/reopen/lost accepted acknowledgement, explicit same-request reconciliation, schema rejection, stale evidence, retained answers and unknown action refresh with no duplicate effect.",
+        "Separate real SQLite/source/API tests verify same-run consume/races/currentness/undeclared-question policies, and retained actual model/MCP jobs prove distinct engineering chains. Mocked served journeys are not relabelled live engineering or human review."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "specs/083-process-working-interfaces/evidence/interactions.md"
+      ]
+    },
+    "CONTRACT-ui-authoring-and-hosting-01": {
+      "primary_behaviors": [
+        "The qualified coding role separates adapter/model/profile/versioned effective instructions and bounded repairs; inherits the actual default without global model/tool changes. Unsupported adapters remain unavailable rather than using broad chat. Actual default-model generation/update records resolved no-tools provenance and immutable parent/child assets.",
+        "Fixed frontend source/binding envelopes reject scripts/backends/URLs/arbitrary commands/imports, numeric size/path bounds and credential/run/path authority. Required selector/schema compatibility and optional fallback are checked against current server catalogs; compatible same-source-family revisions reuse immutable assets with current grants, without transferring old run/review authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md"
+      ]
+    },
+    "CONTRACT-ui-authoring-and-hosting-02": {
+      "primary_behaviors": [
+        "The qualified coding role separates adapter/model/profile/versioned effective instructions and bounded repairs; inherits the actual default without global model/tool changes. Unsupported adapters remain unavailable rather than using broad chat. Actual default-model generation/update records resolved no-tools provenance and immutable parent/child assets.",
+        "Fixed frontend source/binding envelopes reject scripts/backends/URLs/arbitrary commands/imports, numeric size/path bounds and credential/run/path authority. Required selector/schema compatibility and optional fallback are checked against current server catalogs; compatible same-source-family revisions reuse immutable assets with current grants, without transferring old run/review authority."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md"
+      ]
+    },
+    "CONTRACT-ui-authoring-and-hosting-03": {
+      "primary_behaviors": [
+        "Public client/kit styles/resources use the fixed trusted builder with pinned dependencies and bounded diagnostics/timeouts, not generated package scripts. Detached native compilation qualifies trusted geometry dependencies while forbidding direct generated imports.",
+        "Jobs/revisions/source/dist/build reports/hashes are durable scoped records. Actual-model create/preview/load/save/update/reuse and unavailable/cancel/reload/rollback fixtures exercise the documented routes. Opening the saved built interfaces on current native/Linux hosts needs no model/compiler/download or checkout.",
+        "Exact runtime-diagnostic scope delegates to existing surface/log owners with bounded no-store reads and no start/health probe. Missing log buffer and reconciled absent instance remain explicit null/unavailable states, not invented original logs or new health evidence."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json"
+      ]
+    },
+    "CONTRACT-ui-authoring-and-hosting-04": {
+      "primary_behaviors": [
+        "Public client/kit styles/resources use the fixed trusted builder with pinned dependencies and bounded diagnostics/timeouts, not generated package scripts. Detached native compilation qualifies trusted geometry dependencies while forbidding direct generated imports.",
+        "Jobs/revisions/source/dist/build reports/hashes are durable scoped records. Actual-model create/preview/load/save/update/reuse and unavailable/cancel/reload/rollback fixtures exercise the documented routes. Opening the saved built interfaces on current native/Linux hosts needs no model/compiler/download or checkout.",
+        "Exact runtime-diagnostic scope delegates to existing surface/log owners with bounded no-store reads and no start/health probe. Missing log buffer and reconciled absent instance remain explicit null/unavailable states, not invented original logs or new health evidence."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-case-index.json",
+        "artifacts/process-interfaces/083/20261003-authoring-trace-diagnostics-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json"
+      ]
+    },
+    "CONTRACT-ui-authoring-and-hosting-06": {
+      "primary_behaviors": [
+        "Typed common/working/preview locators use the existing WorkspacePanel/document tabs and explicit panel presentation. Exact origin/window/nonce/generation handshake carries theme/navigation and authorized context, never credentials. Close disposes presentation/observer only; reopen reconciles durable run/revision without start/build/authoring.",
+        "Normal-workspace installed editor009 and prior verified native authoring reports preserve Diagram/Source/input inspector, drag, keyboard/pointer typed connections/mismatch, pan/zoom, invalid drafts, Undo/Redo, save/layout/reopen and real CAS conflicts. The latest product source has no changes since the verified installed checkpoint.",
+        "Current compact correction and actual200% page-scale reports verify reachable common/saved/preview controls and declared narrow-content scrolling. Theme/keyboard/scoped WCAG and image/progress/error/reconnect/navigation checks retain exact tested bounds. Actual geometry/90-layer toolpaths/thermal fields/held assessments link to their producer and evidence.",
+        "Missing/incompatible UI keeps common fallback and a focused-update path. Unsupported representations retain safe inspection/download; generated layouts are not universally certified. All first failures and installed build/host/flags/screenshots remain separately retained."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "WORKSPACE-01": {
+      "primary_behaviors": [
+        "Typed common/working/preview locators use the existing WorkspacePanel/document tabs and explicit panel presentation. Exact origin/window/nonce/generation handshake carries theme/navigation and authorized context, never credentials. Close disposes presentation/observer only; reopen reconciles durable run/revision without start/build/authoring.",
+        "Normal-workspace installed editor009 and prior verified native authoring reports preserve Diagram/Source/input inspector, drag, keyboard/pointer typed connections/mismatch, pan/zoom, invalid drafts, Undo/Redo, save/layout/reopen and real CAS conflicts. The latest product source has no changes since the verified installed checkpoint.",
+        "Current compact correction and actual200% page-scale reports verify reachable common/saved/preview controls and declared narrow-content scrolling. Theme/keyboard/scoped WCAG and image/progress/error/reconnect/navigation checks retain exact tested bounds. Actual geometry/90-layer toolpaths/thermal fields/held assessments link to their producer and evidence.",
+        "Missing/incompatible UI keeps common fallback and a focused-update path. Unsupported representations retain safe inspection/download; generated layouts are not universally certified. All first failures and installed build/host/flags/screenshots remain separately retained."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md",
+        "artifacts/process-interfaces/083/20261004-original-input-ui-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-engineering-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json"
+      ]
+    },
+    "EDGE-07": {
+      "primary_behaviors": [
+        "Current-workspace locator checks reject restored foreign workspace/authority-bearing metadata. Exact working/preview identity round-trips preserve source/run without transferring scope.",
+        "Fresh controlled rendering checks show a removed saved UI/job produces its owning reason and usable common fallback, with no presentation/authoring/execution. A removed recorded part remains bound to the exact old result/artifact/run; its read error appears with no download, substitute, navigation, start, action or cancellation.",
+        "109 current component/locator cases pass. These are controlled restoration/read-error fixtures, not deletion of retained engineering artifacts or another physical/live provider proof."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/restoration-cases.json",
+        "artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/restoration-results.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json"
+      ]
+    },
+    "T053": {
+      "primary_behaviors": [
+        "The retained91-module backend,53-module frontend,8-spec served browser and9-module package selections cover contracts/storage/API/security/readiness/continuation/082/editor/authoring/hosting/native boundaries. Counts1538/760/33/29 overlap with later focused groups and are not summed.",
+        "Three Windows symlink skips execute on the separately byte-verified Linux snapshot; its Windows-only alias skip is covered on Windows. Native schema23 and detached builder corrections have owning/affected tests. Subsequent trace49 backend/160 frontend, named runtime81, original-input example68 and current restoration109 checks cover actual bounded changes.",
+        "Current product package/frontend files are unchanged since the latest installed checkpoint; its only committed product/test delta is the independently verified example test. Current restoration-only test additions pass and TypeScript passes. Earlier code/build checks keep their original source scope; no release or general provider/graph claim follows."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/checked-scope.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+        "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+        "artifacts/process-interfaces/083/20261004-current-native-trace-reuse-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-current-docker-resource-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-current-installed-workspace-verified/verification.json",
+        "artifacts/process-interfaces/083/20261003-compact-workspace-verified/README.md",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/retained-case-index.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/current-backend-cases.json",
+        "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/browser-reports.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/case-index.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/primary-assertions.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/source-inspection.json",
+        "artifacts/process-interfaces/083/20261003-named-runtime-checks-primary-verified/v2-owner-readback.json",
+        "artifacts/process-interfaces/083/20261004-platform-contracts-primary-verified/restoration-results.json"
+      ]
+    }
+  },
+  "retained_first_failures": true,
+  "new_human_engineering_acceptance": false,
+  "physical_supplier_push_merge_release": false,
+  "full_feature_signoff": false
+}

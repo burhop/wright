@@ -1,0 +1,8 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+  "expected_storage_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+  "request_id": "083-wheel-tailored-ui-001",
+  "title": "Focus-wheel preparation review",
+  "instruction": "Build a compact reusable focus-wheel digital-preparation interface using the provided reference template and public Wright UI kit/client. Limit App.tsx to 100 lines. Preserve the supplied manifest identities. Use WorkingControls for preparation, backend readiness, permitted actions, pending declared reviews, progress and recovery. Show all actual result cards, evidence and supported geometry/toolpath representations using shared components, grouped to explain Blender geometry repair followed by external slicing and retained inspection. Label digital preparation, never imply physical printing or engineering acceptance. Failed runs stay failed; never replace a failure with a local verdict. Do not add custom execution, device controls, fabricated measurements, bespoke parsers, network endpoints or package scripts. Use supplied callbacks for exact evidence/block navigation and current backend snapshot only. Return the required source/manifest JSON."
+}

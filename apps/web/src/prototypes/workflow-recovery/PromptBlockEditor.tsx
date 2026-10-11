@@ -1,6 +1,7 @@
 import { configuredOutputs, outputConsumers } from "./output-contracts";
 import { useState } from "react";
 import { McpTaskOptions } from "./McpTaskOptions";
+import { imageOutput, imageOutputCommands } from "./image-output";
 import type { RecoveryCommand } from "./command-system";
 import {
   findBlock,
@@ -12,6 +13,7 @@ import {
   connectPromptCommands,
   connectReferenceCommands,
   isFinalPrompt,
+  isImageSource,
   promptFilename,
   promptFormat,
   promptSourceCandidates,
@@ -39,12 +41,13 @@ export function PromptBlockEditor({
       ? "connection"
       : "inline";
   const format = promptFormat(block);
+  const image = imageOutput(block);
   const cad = Boolean(
     block.configuration.cad || block.configuration.application_resource,
   );
   const declared = configuredOutputs(block, workflow);
   const ResponseOptions = cad ? "details" : "div";
-  const final = isFinalPrompt(block, workflow) && !cad;
+  const final = isFinalPrompt(block, workflow) && !cad && !image;
   const saving = final || block.configuration.save_output === true;
   const promptPort = workflow.ports.find(
     (port) =>
@@ -55,6 +58,14 @@ export function PromptBlockEditor({
     (edge) => edge.kind === "data" && edge.targetId === promptPort?.id,
   );
   const candidates = promptSourceCandidates(block, workflow);
+  const imageCandidates = promptSourceCandidates(block, workflow, true).filter(
+    (port) => isImageSource(port.id, workflow),
+  );
+  const imageEdge = workflow.relationships.find(
+    (edge) =>
+      block.inputPortIds.includes(edge.targetId) &&
+      isImageSource(edge.sourceId, workflow),
+  );
   const config = (key: string, value: string | boolean) =>
     onApply([
       { kind: "set_block_configuration", blockId: block.id, key, value },
@@ -148,6 +159,43 @@ export function PromptBlockEditor({
           )}
         </label>
       )}
+      <label>
+        Reference image · optional
+        <select
+          data-testid="workflow-recovery-reference-image"
+          value={imageEdge?.sourceId ?? ""}
+          disabled={readOnly}
+          onChange={(event) =>
+            onApply(
+              event.target.value
+                ? connectReferenceCommands(
+                    block,
+                    workflow,
+                    event.target.value,
+                    workflow.ports.find(
+                      (port) =>
+                        port.ownerBlockId === block.id &&
+                        port.name === "Reference image",
+                    )?.id,
+                  )
+                : imageEdge
+                  ? [{ kind: "disconnect", relationshipId: imageEdge.id }]
+                  : [],
+            )
+          }
+        >
+          <option value="">Choose an upstream image</option>
+          {imageCandidates.map((port) => (
+            <option key={port.id} value={port.id}>
+              {findBlock(workflow, port.ownerBlockId)?.title} · {port.name}
+            </option>
+          ))}
+        </select>
+        <small>
+          Connect an image export or uploaded image to the Reference image
+          socket. Keep the task instructions in Prompt.
+        </small>
+      </label>
       {cad && declared.size > 0 && (
         <section
           className="recovery-output-promises"
@@ -187,9 +235,55 @@ export function PromptBlockEditor({
           Response format
           <select
             data-testid="workflow-recovery-response-format"
-            value={format}
+            value={image ? `image-${image.format}` : format}
             disabled={readOnly}
             onChange={(event) => {
+              const imageFormat =
+                event.target.value === "image-png"
+                  ? "png"
+                  : event.target.value === "image-jpeg"
+                    ? "jpeg"
+                    : null;
+              if (imageFormat || image) {
+                try {
+                  const filename =
+                    (image?.path ?? "render.png").replace(/\.[^/.]+$/, "") +
+                    (imageFormat === "jpeg" ? ".jpg" : ".png");
+                  const commands = imageOutputCommands(
+                    block,
+                    workflow,
+                    imageFormat
+                      ? { format: imageFormat, path: filename, port: "" }
+                      : null,
+                  );
+                  if (imageFormat) {
+                    onApply(commands);
+                    setMessage("");
+                    return;
+                  }
+                  onApply([
+                    ...commands,
+                    {
+                      kind: "set_block_configuration",
+                      blockId: block.id,
+                      key: "output_format",
+                      value: event.target.value,
+                    },
+                    {
+                      kind: "set_block_configuration",
+                      blockId: block.id,
+                      key: "output_filename",
+                      value: `response${RESPONSE_FORMATS[event.target.value as ResponseFormat]}`,
+                    },
+                  ]);
+                  setMessage("");
+                } catch (error) {
+                  setMessage(
+                    error instanceof Error ? error.message : String(error),
+                  );
+                }
+                return;
+              }
               const next = event.target.value as ResponseFormat;
               const filename =
                 promptFilename(block).replace(/\.[^/.]+$/, "") +
@@ -214,63 +308,120 @@ export function PromptBlockEditor({
             <option value="markdown">Markdown</option>
             <option value="html">HTML</option>
             <option value="json">JSON</option>
+            {!cad && (
+              <>
+                <option value="image-png">Image (PNG)</option>
+                <option value="image-jpeg">Image (JPEG)</option>
+              </>
+            )}
           </select>
           <small>
-            Wright includes format instructions in the model request.
+            {image
+              ? block.configuration.mcp_server
+                ? "The AI uses the selected MCP server to create the image. Wright verifies the resulting file."
+                : "Wright sends the prompt and reference images to your configured AI connection, then saves and displays the returned image."
+              : "Wright includes format instructions in the model request."}
           </small>
         </label>
-        <section className="recovery-prompt-editor__save">
-          <label className="recovery-prompt-editor__checkbox">
-            <input
-              type="checkbox"
-              data-testid="workflow-recovery-save-response"
-              checked={saving}
-              disabled={readOnly || final}
-              onChange={(event) => config("save_output", event.target.checked)}
-            />
-            Save response to workspace
-          </label>
-          {final && (
-            <small data-testid="workflow-recovery-terminal-save">
-              Saved automatically because this is a final step.
+        {image ? (
+          <section>
+            <label>
+              Image filename
+              <input
+                data-testid="workflow-recovery-image-output-path"
+                value={image.path}
+                readOnly={readOnly}
+                onChange={(event) => {
+                  try {
+                    onApply(
+                      imageOutputCommands(block, workflow, {
+                        ...image,
+                        path: event.target.value,
+                      }),
+                    );
+                    setMessage("");
+                  } catch (error) {
+                    setMessage(
+                      error instanceof Error ? error.message : String(error),
+                    );
+                  }
+                }}
+              />
+            </label>
+            <small>
+              The image is the saved result. Each run creates a new file; the
+              activity summary remains in run details.
             </small>
-          )}
-          {saving && (
-            <>
-              <label>
-                File name or path
-                <input
-                  data-testid="workflow-recovery-output-filename"
-                  value={promptFilename(block)}
-                  readOnly={readOnly}
-                  onChange={(event) =>
-                    config("output_filename", event.target.value)
+            {block.configuration.authoring_template === "mcp-task" &&
+              !block.configuration.mcp_server && (
+                <button
+                  type="button"
+                  className="recovery-button recovery-button--secondary"
+                  onClick={() =>
+                    onApply(imageOutputCommands(block, workflow, image))
                   }
-                  placeholder={`report${RESPONSE_FORMATS[format]}`}
-                />
-              </label>
-              <label>
-                If the file exists
-                <select
-                  data-testid="workflow-recovery-file-policy"
-                  value={String(block.configuration.file_policy ?? "indexed")}
                   disabled={readOnly}
-                  onChange={(event) =>
-                    config("file_policy", event.target.value)
-                  }
                 >
-                  <option value="indexed">Create an indexed file</option>
-                  <option value="overwrite">Overwrite existing file</option>
-                </select>
-              </label>
-              <small>
-                {block.configuration.file_policy === "overwrite"
-                  ? "Replace the file after the response passes validation."
-                  : `${promptFilename(block)} → ${promptFilename(block).replace(/(\.[^/.]+)$/, "-001$1")}`}
+                  Use configured AI for this image
+                </button>
+              )}
+          </section>
+        ) : (
+          <section className="recovery-prompt-editor__save">
+            <label className="recovery-prompt-editor__checkbox">
+              <input
+                type="checkbox"
+                data-testid="workflow-recovery-save-response"
+                checked={saving}
+                disabled={readOnly || final}
+                onChange={(event) =>
+                  config("save_output", event.target.checked)
+                }
+              />
+              Save response to workspace
+            </label>
+            {final && (
+              <small data-testid="workflow-recovery-terminal-save">
+                Saved automatically because this is a final step.
               </small>
-            </>
-          )}
-        </section>
+            )}
+            {saving && (
+              <>
+                <label>
+                  File name or path
+                  <input
+                    data-testid="workflow-recovery-output-filename"
+                    value={promptFilename(block)}
+                    readOnly={readOnly}
+                    onChange={(event) =>
+                      config("output_filename", event.target.value)
+                    }
+                    placeholder={`report${RESPONSE_FORMATS[format]}`}
+                  />
+                </label>
+                <label>
+                  If the file exists
+                  <select
+                    data-testid="workflow-recovery-file-policy"
+                    value={String(block.configuration.file_policy ?? "indexed")}
+                    disabled={readOnly}
+                    onChange={(event) =>
+                      config("file_policy", event.target.value)
+                    }
+                  >
+                    <option value="indexed">Create an indexed file</option>
+                    <option value="overwrite">Overwrite existing file</option>
+                  </select>
+                </label>
+                <small>
+                  {block.configuration.file_policy === "overwrite"
+                    ? "Replace the file after the response passes validation."
+                    : `${promptFilename(block)} → ${promptFilename(block).replace(/(\.[^/.]+)$/, "-001$1")}`}
+                </small>
+              </>
+            )}
+          </section>
+        )}
       </ResponseOptions>
       <details className="recovery-prompt-editor__connections">
         <summary data-testid="workflow-recovery-prompt-connections">

@@ -1,0 +1,63 @@
+{
+  "operation": "actual_local_bambu_slice",
+  "simulation": false,
+  "argv": [
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\bambu-studio.exe",
+    "--slice",
+    "1",
+    "--debug",
+    "1",
+    "--export-3mf",
+    "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\slice_package.gcode.3mf",
+    "--load-settings",
+    "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\machine-profile.json;C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\process-profile.json",
+    "--load-filaments",
+    "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\filament-profile.json",
+    "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-008\\artifacts\\repaired_mesh.stl"
+  ],
+  "exit_code": 0,
+  "source_sha256": "040741557c14d48f4bf577dbf867d2bf8952eb368c59c41f117b38a8188fdddb",
+  "executable_sha256": "76b2193b0f2af958a2799bbbb98ebe5441f640a7cdfee582956d918e8a493d8f",
+  "operation_source_sha256": "cb833cb7465857416030e8fd7e5133919e56d3bd6f32643087f2709db221133c",
+  "configuration_sha256": "c8a2b37eb1b37f0b352a6937fff95d06af532d07c24f26493b08979995590dd1",
+  "package_sha256": "581726a424f1582858c0dc437e7d10c00b3f65351fb2445873ab1606c1d9b461",
+  "profile_dependencies": {
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\fdm_process_common.json": "ff2c0e49a424f70319e52eff6e84c57604b5b86deb883bb4d5614ff448d0c107",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\fdm_process_single_common.json": "b589e22e3a9f3513dd71d0a1061181c6f24a2e330b73b1cf7f63a292d7d6a37b",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\fdm_process_single_0.20.json": "dc32f236bb0ae0d19560954a1beb87701dac4db85877f5f7c92b3a67315431c5",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\0.20mm Standard @BBL X1C.json": "9cfd44e7378d6fed4b3507e6bd01d618662837bf1cce9a1a0bc30f8b89454512",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\fdm_machine_common.json": "aef949f605e74bd7370dab061d9cb9f6b7fde5ae92e7fe3b34d98c0a7746c514",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\fdm_bbl_3dp_001_common.json": "aa5b0148c3131965ab2bb1d377b43301304030c3d87b339897cef98809a9004f",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template machine_start_gcode.json": "ba5fa982179abd2c7c893e643be2fd91377a042368aa609420690f819cd4bbc0",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template machine_end_gcode.json": "71d15baae3109651565caa6a41ab1b546f1f3a579e2b82a3e49139ed0319ebfa",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template time_lapse_gcode.json": "fe558ba9c89711cda6b7179689da9ffe279e87a432bcb947f05e1037652ccdb3",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template change_filament_gcode.json": "d51462ed02f2ef075bc73463aa98a9bcba340331a3c814431e5dc78926926d41",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle template layer_change_gcode.json": "88fd5f1a0d71e737966d8b411c03c8735b6f9b5a762726c017b6fb5b9f66f542",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle.json": "df86ba7669bb9a41f1323fa2f649f8a5bb0127d24d882adb4f4969014fce426d",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\fdm_filament_common.json": "55573eb37c4031a58e939c4a2c281d62e234192509cac525d4f8d911e8a85c09",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\fdm_filament_pet.json": "33ce64c25a626455eecf244ddd2e75022c08f95a074ba0d1690ab63802fab9d7",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\Bambu PETG HF @base.json": "0134a6fec448bdfb8add8a9e8733924527c632ae6f91529af60f7adad988ffca",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\fdm_filament_template_direct_dual.json": "e10a8a2a230c6e5eb8b83ee1ea54c22c1ae58adb7582a5bc4bb481fb29d9c6fa",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\Bambu PETG HF @BBL P1S 0.4 nozzle.json": "36fff6697391b35ee9ca16307c90034260c498816b16a052c35928661eff6ad9"
+  },
+  "package_bytes": 1707865,
+  "extrusion_moves": 52011,
+  "support_moves": 3532,
+  "supports_enabled": true,
+  "machine": {
+    "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\machine\\Bambu Lab P1S 0.4 nozzle.json",
+    "sha256": "df86ba7669bb9a41f1323fa2f649f8a5bb0127d24d882adb4f4969014fce426d"
+  },
+  "filament": {
+    "name": "Bambu PETG HF @BBL P1S 0.4 nozzle",
+    "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\filament\\Bambu PETG HF @BBL P1S 0.4 nozzle.json",
+    "sha256": "36fff6697391b35ee9ca16307c90034260c498816b16a052c35928661eff6ad9"
+  },
+  "process": {
+    "base": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\bambu-studio-2.8.2.61\\resources\\profiles\\BBL\\process\\0.20mm Standard @BBL X1C.json",
+    "base_sha256": "9cfd44e7378d6fed4b3507e6bd01d618662837bf1cce9a1a0bc30f8b89454512",
+    "derived_sha256": "a704666390841fad428254d3f1a2b5aa37b18101b142dee01fb08a0233705993"
+  },
+  "content_validated": false,
+  "printer_connected": false
+}

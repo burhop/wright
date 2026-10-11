@@ -1,0 +1,28 @@
+{
+  "original_files": 155,
+  "original_files_unchanged": true,
+  "copied_baseline_files": 155,
+  "copied_file_deltas": [
+    {
+      "path": ".hermes.md",
+      "before_sha256": "b97824a2e60c3b1833fd4c11c214dced8614ed38d6fb22adf06bb60436e95030",
+      "after_sha256": "de74db76a225957ec4ddc30e734480cda4ada6764e79c1199e9618057dad19b3"
+    },
+    {
+      "path": ".wright/apps/process.ui-0a09766ccdd94bfdb3dab1f5519d1628.revision-d38d8f51a4674fe7816f9b00ca43ad73.surface.json",
+      "before_sha256": "049e7a09a69eaa9d4bbf5d7aae010968f07c33b34528bc92896596a6cc66e4bd",
+      "after_sha256": "29b42310c0a2976015393e69aeec41f27f7042f76e35da4b7a75dc5f3c24f027"
+    }
+  ],
+  "copied_and_original_business_tables_unchanged": true,
+  "business_tables": {
+    "workflow_continuation_checkpoints": "5f07cce68c20e60cd82b43452fbdec14dd387c34ed92105dd3548bee147026f2",
+    "process_uis": "40282e222be216f8cde3f4e603477cc35222a97e83b80f1b822bf68087d029a4",
+    "process_ui_revisions": "183ff322f597dc8efa95d0f801d030466382da82a79a9e14bdb28ea27c0e81e4",
+    "process_ui_authoring_jobs": "ba58796df563ed6279b37e1273814403edabfa03f799e9a74030e98c0109e7d1",
+    "process_ui_authoring_records": "43d74be591ad4a075242ebb69aad8431c13edf5eba488667df7fbc3986d0d54b"
+  },
+  "owned_views_closed": 7,
+  "all_close_statuses_204": true,
+  "physical_or_engineering_run_or_model_generation_or_review_response": false
+}

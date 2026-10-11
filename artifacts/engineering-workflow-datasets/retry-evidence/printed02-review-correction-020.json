@@ -1,0 +1,64 @@
+{
+  "baseline": {
+    "at": "2026-09-22T23:57:17.909582+00:00",
+    "user_instruction": "approved",
+    "approval_context": "Request changes on attempt 019 and allow one additional correction in the same episode",
+    "retry_budget_authorization": {
+      "episode_id": "printed02-final-feature-review",
+      "from_max_corrections": 2,
+      "to_max_corrections": 3,
+      "additional_corrections": 1,
+      "preserve_history": true
+    },
+    "run_id": "4a16015946e94f898727b0a49b256dc1",
+    "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+    "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916",
+    "state": "changes_requested",
+    "actor": "local_workspace_user",
+    "reason": "User replied approved to the exact proposal to record Request changes on attempt 019 and authorize one additional correction in the same episode. Final pad and bore rounds measure 0.9692049 mm against the required 1 mm. The isolated native-qualified correction measures 1.01 mm. Preserve the successful grip, native file, orientation, envelope, clearance and mounting features. Extend printed02-final-feature-review from two to three corrections, retaining baseline 017 and both prior attempts. This is not approval of attempt 019 or any successor; the successor requires its own human review.",
+    "updated_at": 1790121437,
+    "source_sha256": "03c95f921bfc4569d14af5e626f7806df2a7a510eee55d29298dfd6b38eae1a0",
+    "protected_files_unchanged": 23,
+    "automatic_approval": false,
+    "successor_approved": false,
+    "campaign_credit": false,
+    "solid_edge_touched": false
+  },
+  "material_change": "Reuse the audited same-case construction through real MCP authoring: unclamped 1.01 mm pad and bore rounds, preserving already qualified analytic roots, oval shoulders, full recess, native-copy export and exact dimensional inspection.",
+  "qualification": {
+    "path": "D:\\repos\\wright\\artifacts\\engineering-workflow-datasets\\serial-resolution\\p001-grip-repair-qualification-v7.json",
+    "sha256": "7c1ba9dffc4076305178f378ef02f303e4ceb0656c4468d8d802f64e987aa551"
+  },
+  "final_mesh_measurements": {
+    "path": "D:\\repos\\wright\\artifacts\\engineering-workflow-datasets\\serial-resolution\\p001-pad-corrected-grip-measurements.json",
+    "sha256": "c4f5137ed5139cf7407e7db6beea96b64cbd252ad083f0331f79ebe071a8be9d"
+  },
+  "pad_measurements": {
+    "path": "D:\\repos\\wright\\artifacts\\engineering-workflow-datasets\\serial-resolution\\p001-pad-corrected-round-measurements.json",
+    "sha256": "77699c79b73f4d1e293ec5d6846b7df5319296248e7bbd92133a15bb848d4585"
+  },
+  "human_budget_extension": {
+    "evidence": {
+      "path": "serial-resolution/p001-human-decision-019.json",
+      "sha256": "5903cae5c1e0f691ab12e03214c8bf5ad70cd497aa586b3efd1e95bf118f041f"
+    },
+    "authorized_max_corrections": 3,
+    "prior_attempts_sha256": "b603dc28be5509307eb2d600cb3a14e9233eb12aca12d26b4ec2d99f7f238159",
+    "prior_attempt_count": 2,
+    "recorded_at": "2026-09-22T23:59:18.678202+00:00"
+  },
+  "focused_tests": "3 retry-guard regressions passed, including explicit extension, preserved history and rejection of fourth correction; existing qualified geometry and native cleanup evidence reused. Ruff passed.",
+  "implementation": [
+    {
+      "path": "D:\\repos\\wright\\scripts\\prepare-printed-dataset-campaign.py",
+      "sha256": "e1499b15ba14f1d29a1283520c2155088f034b408da45014b13e99ac31e13c29"
+    },
+    {
+      "path": "D:\\repos\\wright\\scripts\\engineering_dataset_mesh_repair.py",
+      "sha256": "6219b51cbec2ff9a955ada3c77035637a0502e41b97a9471b529cf758e418e07"
+    }
+  ],
+  "source_sha256": "71cd02610e007a9bda310aa33e5e981bf59e06fa8c611a4532f3783ddf1d4301",
+  "successor_approved": false,
+  "campaign_credit": false
+}

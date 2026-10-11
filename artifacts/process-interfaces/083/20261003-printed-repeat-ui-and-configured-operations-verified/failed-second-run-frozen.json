@@ -1,0 +1,119 @@
+{
+  "run_id": "0a81a465287248d5a2a79a17519f7c74",
+  "state": "failed",
+  "code": "MODEL_UNAVAILABLE",
+  "source_digest": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82",
+  "files": [
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/concept.png",
+      "size": 67577,
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/concept.svg",
+      "size": 2295,
+      "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/configured-geometry-basis.json",
+      "size": 3882,
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/construction-provider-arguments.json",
+      "size": 5280,
+      "sha256": "6c631d5e0f18a5876fc802ebf5a0ae7d12207a0c1db2668be1bc46f18ecf362d"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/context.md",
+      "size": 2236,
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/filament-profile.json",
+      "size": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/geometry-capability-guidance.md",
+      "size": 1833,
+      "sha256": "71bf5bf22969ff377d0ed7af71c8b9cb72e2801d070df35caa96300d660a0fd3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/inspect_manufacturing_package.py",
+      "size": 6040,
+      "sha256": "9c8612207b0ba82dd2bb337981a0aea33cabdbcc93493ae2c4fe59597f2ae848"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/inspection-call.json",
+      "size": 3139,
+      "sha256": "b01a51772ac2260009df5dc838852592f9ea28c9c9312df7bf393a6234db2574"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/machine-profile.json",
+      "size": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/passive-representations.py",
+      "size": 25554,
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/process-profile.json",
+      "size": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/prompt.txt",
+      "size": 697,
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/repair-provider-arguments.json",
+      "size": 13817,
+      "sha256": "a282cccd6458499172b4f1100a18371115a1926a35718c8accc06d8aa50e4081"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/requirements.md",
+      "size": 1759,
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/scenario.json",
+      "size": 1662,
+      "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/slice-call.json",
+      "size": 572,
+      "sha256": "1dd21e7b90d952abb0405edf91ec3c3bdc986071091792b66ee03d84bbc2b706"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/inputs/user-profile.md",
+      "size": 584,
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/outputs/0a81a465287248d5a2a79a17519f7c74/geometry-basis.json",
+      "size": 3371,
+      "sha256": "74d39bc29bf2b0e2756193734ac37ead1b64821bb87b825edb4457cbedfab8aa"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/repeatable-default-015/outputs/0a81a465287248d5a2a79a17519f7c74/source_mesh.stl",
+      "size": 541284,
+      "sha256": "5a4dfb70c59b810ec5fd59c433aca0ef40771e556cfc6511a65013f6a37a7372"
+    },
+    {
+      "path": "runs/printed-replacement-part-repeatable-default-015/0a81a465287248d5a2a79a17519f7c74.json",
+      "size": 1443216,
+      "sha256": "3c5cfd913b59e65c196f8fdd6a09d29977e3e1b67d218e5439e05e2c7bd0fe36"
+    },
+    {
+      "path": "workflows/printed-replacement-part-repeatable-default-015.workflow.wflow",
+      "size": 79439,
+      "sha256": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82"
+    }
+  ],
+  "scope": "Terminal repair-stage model timeout; no repair, slice, source gate or engineering acceptance proved."
+}

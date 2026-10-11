@@ -1,0 +1,19 @@
+{
+  "arguments": {
+    "operation": "add_component",
+    "lib_id": "Connector_Generic:Conn_01x01",
+    "position": [
+      60,
+      190
+    ],
+    "reference": "S_ZX",
+    "value": "S_ZX interconnect representation"
+  },
+  "is_error": true,
+  "content": [
+    {
+      "type": "text",
+      "text": "Error calling tool 'schematic': Invalid reference format: S_ZX"
+    }
+  ]
+}

@@ -35,10 +35,19 @@ from .config import WorkspaceSurfaceSettings
 
 
 def build_workspace_service(
-    db_path: str, *, notifier: WorkspaceNotifier | None = None
+    db_path: str,
+    *,
+    notifier: WorkspaceNotifier | None = None,
+    workflow_image_capabilities=None,
+    workflow_model_capabilities=None,
 ) -> WorkspaceService:
     """Construct the production local workspace application graph explicitly."""
-    return WorkspaceService(db_path, notifier=notifier)
+    return WorkspaceService(
+        db_path,
+        notifier=notifier,
+        workflow_image_capabilities=workflow_image_capabilities,
+        workflow_model_capabilities=workflow_model_capabilities,
+    )
 
 
 @dataclass(slots=True)

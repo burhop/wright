@@ -1,0 +1,13 @@
+{
+  "prior_failed_consumer_preserved": true,
+  "producer_origin_unchanged": true,
+  "repair_changes": [
+    "fresh owned file paths",
+    "fresh owned object prefix"
+  ],
+  "guard_passed": true,
+  "bounded_toolpath_summary_declared": true,
+  "full_preview_not_truncated": true,
+  "resource_capacity_increased_not_acceptance_thresholds": true,
+  "physical_dispatch": false
+}

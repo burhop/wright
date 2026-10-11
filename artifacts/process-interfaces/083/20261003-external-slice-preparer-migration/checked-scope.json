@@ -1,0 +1,63 @@
+{
+  "status": "fixture_and_declaration_scope_passed",
+  "source_commit_before_changes": "4d5c514c6b987e6087de0e6ffc1d625706308f6c",
+  "active_preparer_callers_migrated": 2,
+  "original_scenarios_structurally_checked": 6,
+  "passed_checks": 141,
+  "native_provider_execution": false,
+  "process_dispatch": false,
+  "vendor_operation_files_retired": false,
+  "T043_T048_T049_complete": false,
+  "source_sha256": {
+    "scripts/engineering_external_slice_binding.py": "94109c4a35d250cc1d3b87baeb6dab96da6dbb1e36c53ed9f08f4f12a00121d0",
+    "scripts/engineering/inspect_manufacturing_package.py": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568",
+    "scripts/prepare-printed-dataset-campaign.py": "5d8e39ad575acb0cdf79912740bd1a3e399b141e50ea77436df6f6d19672a5e3",
+    "scripts/prepare-drill-jig-dataset-campaign.py": "530c36229e943ef98a52e19250fe2e5ae56e0f908659e2dbaeca51d78f4c683f",
+    "tests/fixtures/external_slice_binding.py": "c7d2e532b11d601f1a16ce802d79d0e2390a0a2fb3b88067fd50643d1b5031a6",
+    "tests/test_engineering_external_slice_binding.py": "e69ddc0037330c7c520b403950085db2ef1dcbeb1f58e2e5d9d13ed9c4ede840",
+    "tests/test_printed_dataset_bindings.py": "ebc42194461dd40dfd5179bbd3e439d15bc3446dd829c41511f56e906b6e8a50",
+    "tests/test_drill_jig_source_paths.py": "7e0b6508237b76478c01813c24630f15b0a18cfb1112695c54da1e43afa42ea7",
+    "tests/test_manufacturing_package_inspection.py": "2a0e4b82ebd6e80913c2afdd6675416d27a1e53043b4a99b3b30d68f95a89c8c",
+    "examples/process-interfaces/external-slice-binding.example.json": "c59cb6f7536c329a23759159dba4d532075ffdb55992c60fa4d8535eac5f2b8f",
+    "docs/workflows/external-slicing-bindings.md": "60282bdc435ef16fcb5bbf55a25ac7329ecc6ea89103cf641db8300d6f76be64"
+  },
+  "readiness": [
+    "exact scenario/schema/provider selection before staging or native init",
+    "pinned configured profiles",
+    "original process settings",
+    "explicit host and inspection paths",
+    "actual source/package success correspondence"
+  ],
+  "preserved": [
+    "canonical original stage identities and connections",
+    "original packaged full validation profiles",
+    "original campaign binding JSON",
+    "all six assignments and controlling inputs",
+    "declared human reviews",
+    "protected campaign history"
+  ],
+  "limits": [
+    "Fixtures are not fresh live qualification of the migrated preparers.",
+    "The old diagnostic probe and three embedded slicing files remain migration debt.",
+    "Existing mesh repair wrappers and other active implementation retain their separate retirement obligations.",
+    "Profile copies alone do not prove provider application; external configuration qualification and original package checks remain required.",
+    "Slicer paths resolve on the current host; remapped/remote slicer paths are not qualified.",
+    "SVG is actual selected-layer path visualization; PNG is actual package bytes, not supports geometry or physical verification."
+  ],
+  "first_failures": [
+    "py_compile cache write denied; no source syntax defect was claimed",
+    "invalid hyphenated source declaration",
+    "missing authoring group field",
+    "incorrect input representation kind",
+    "Windows-path assertion assumed POSIX separator",
+    "first affected regression command named a nonexistent test file"
+  ],
+  "commands": [
+    ".venv/Scripts/python.exe -m pytest tests/test_engineering_external_slice_binding.py tests/test_printed_dataset_bindings.py tests/test_drill_jig_source_paths.py tests/test_manufacturing_package_inspection.py tests/test_engineering_campaign_binding_helpers.py tests/test_engineering_dataset_input_bindings.py -q --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t048-external-slice-migration-001/pytest-006 --junitxml=.local-run/process-interfaces-083/t048-external-slice-migration-001/sixth-checks.xml",
+    ".venv/Scripts/python.exe -m pytest tests/external/process_validation/test_printing.py tests/external/process_validation/test_printed_profiles.py tests/test_campaign_example_renewal.py tests/test_campaign_example_renewal_revision.py tests/test_process_interface_examples.py -q --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t048-external-slice-migration-001/pytest-008 --junitxml=.local-run/process-interfaces-083/t048-external-slice-migration-001/affected-082-checks-002.xml",
+    ".venv/Scripts/python.exe -m ruff check --no-cache scripts/engineering_external_slice_binding.py scripts/engineering/inspect_manufacturing_package.py scripts/prepare-printed-dataset-campaign.py scripts/prepare-drill-jig-dataset-campaign.py tests/fixtures/external_slice_binding.py tests/test_engineering_external_slice_binding.py tests/test_printed_dataset_bindings.py tests/test_drill_jig_source_paths.py tests/test_manufacturing_package_inspection.py",
+    ".venv/Scripts/python.exe .local-run/process-interfaces-083/t048-check-preservation-001.py"
+  ],
+  "ruff": "nine owning source/test files passed",
+  "task_ledger": "49 checked / 8 open"
+}

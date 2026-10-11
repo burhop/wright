@@ -1,24 +1,19 @@
 {
   "files": [
     {
-      "path": "assets/index-C42fYR6I.css",
-      "sha256": "4c34bc71396b96597864d02fc8a7115a8fb9318162ec9d12cee9e243ddbda543",
-      "size": 38968
+      "path": "assets/index-BHYKQogG.js",
+      "sha256": "f82f9d3de65b7c0284ddd737a49e6ccdc1ced56d05ea7a1f2d06c62df6dd92e1",
+      "size": 2603447
     },
     {
-      "path": "assets/index-qPXWFVHO.js",
-      "sha256": "31a689c2305f051726836db60a33931dbd8fa3ff6bdfeb720e918d2423d8f7d3",
-      "size": 1732811
+      "path": "assets/index-DKFa6jxr.css",
+      "sha256": "9d5319ff33c660042913d216d419e9a94914130eb811455893d1473dbdb87d59",
+      "size": 166863
     },
     {
-      "path": "assets/NativeProcessPage-abnR3BgO.js",
-      "sha256": "2a02fafb67798ded4915b0a96372c473d5a294d535f1e9697a07883f5b4b5f40",
-      "size": 232576
-    },
-    {
-      "path": "assets/NativeProcessPage-CHP8FWMI.css",
-      "sha256": "307c40cefc87d3ab747deb93fa35c4e7db114ea607da9ee197bbe9c9d408d1ac",
-      "size": 22645
+      "path": "assets/NativeProcessPage-DlbIzMAR.js",
+      "sha256": "eed2622906ccc7a91fb7e27836efa1ce6af18e80e7710a152c9d99c9a1d7d82c",
+      "size": 53813
     },
     {
       "path": "assets/plotly.min-dkCWgMZq.js",
@@ -42,8 +37,23 @@
     },
     {
       "path": "index.html",
-      "sha256": "e7826f730682ddf5661ac77fd4fd55b56c4deff004aad3ed7c4a84ef0e358a2c",
-      "size": 1005
+      "sha256": "a369ba346b7adf35651deb4f7dd1f30390110218407d40bdf759fd7d91ad3abd",
+      "size": 1074
+    },
+    {
+      "path": "recovery-concept/manufacturability-report.html",
+      "sha256": "e7163a8cd8df53123922d8fb783e282b22d0ce9911e229005d3f679148622fcd",
+      "size": 2884
+    },
+    {
+      "path": "recovery-concept/mounting-bracket.step",
+      "sha256": "b253b9e9dcf26ef8c44f932d9198c92dc0831abf80660f0727a7a701bc5afe74",
+      "size": 696
+    },
+    {
+      "path": "recovery-concept/mounting-bracket.svg",
+      "sha256": "1e8600d68d6ced1bb29a0dea46f36582751d0073bcafa251a5e9aa470f83b23e",
+      "size": 1980
     },
     {
       "path": "surface-sandbox/index.html",
@@ -62,8 +72,13 @@
     },
     {
       "path": "third-party-licenses-web.txt",
-      "sha256": "c6eff6707f58a51bbdf973343048304d3c9575b67ccd6028851b751af4a40bb9",
+      "sha256": "dd306720cc20174139305d1b40bb7c54dd14cdc31a29e95689620ab8739f2c90",
       "size": 236029
+    },
+    {
+      "path": "wright-mark.svg",
+      "sha256": "b7ca97182bd7075a225c18310b89166bd179cb3929658cf9b015c63194e48f62",
+      "size": 248
     }
   ],
   "schema_version": 1

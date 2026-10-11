@@ -1,0 +1,145 @@
+{
+  "status": "passed",
+  "fresh_selected_install": true,
+  "installation_attempt": "first-attempt",
+  "corrected_native_attempt": "fresh isolated continuation; selected installation reused",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "selected_image": "sha256:c30619ec27605afb31347ee191a6b43820a58edc3f6b40b030a12e0ea4375c26",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "source_archive_sha256": "7948d59724c2b0b6cd131775099f9fd81c9435cc63b1e00202363ea327d0f62d",
+  "addon_sha256": "e9eae227d94875d6b8ed208f11a9628101ef4f579bfc614ab31af296cb88afce",
+  "native_version": "Blender 4.3.2",
+  "platform": "linux/amd64",
+  "clean_base_preflight": {
+    "provider": false,
+    "host": null,
+    "gateway": true
+  },
+  "protocol_tools": 28,
+  "gateway_schemas_exactly_equal": true,
+  "actual_backend_calls_in_successful_attempt": 1,
+  "first_attempt_backend_calls": 1,
+  "publication_first_failure": "The audit records started and succeeded events for one invocation; the first publisher mistook two lifecycle events for two calls and stopped before writing. Corrected read-only publication repeats no provider call.",
+  "first_failure": "Qualification input used Blender 3.x export_mesh.stl on observed 4.3.2. Native cube creation preceded the failed export. Original response retained; exact old container stopped. A new owned session uses wm.stl_export; no provider workaround or uncertain replay.",
+  "gateway_host": "current Windows source environment",
+  "backend_host": "fresh selected-provider Linux image; network none; one isolated mount; virtual display",
+  "actual_geometry": {
+    "bytes": 684,
+    "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+    "triangles": 12,
+    "dimensions_model_units": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "signed_volume_model_units_cubed": 480.0,
+    "limits": "STL is unitless; this numerical readback proves the explicit qualification geometry only."
+  },
+  "cleanup_revalidated": [
+    {
+      "container_id": "c6be5a1e643d3417221838717555357f18ba90977b1f0d8a0aa65cd9b1a1fff0",
+      "proof": "blender-clean-base-001",
+      "running": false,
+      "network": "bridge",
+      "status": "exited"
+    },
+    {
+      "container_id": "cb502d9ac8aec6d657a7cb5beae1259110c05b9fd92b3224488464ef05dfebbe",
+      "proof": "blender-clean-base-001",
+      "running": false,
+      "network": "none",
+      "status": "exited"
+    },
+    {
+      "container_id": "c17e43b2068e556ec11d7ef6ca109f0d81fb059bef7b84098c0cb8b578f3d782",
+      "proof": "blender-clean-continuation-002",
+      "running": false,
+      "network": "none",
+      "status": "exited"
+    }
+  ],
+  "original_source_hashes": {
+    "first-attempt/qualification.json": {
+      "original_bytes": 3579,
+      "original_sha256": "12e055d01cb928a0966b1299b37a3ab5596499254c149e60c3cf201b481a6624"
+    },
+    "first-attempt/installation-command.json": {
+      "original_bytes": 606,
+      "original_sha256": "7e95c5d99e7f91ecb75a7b02797e08771cf7e1b7941a6e2922056a23d2dd5203"
+    },
+    "first-attempt/installation.log": {
+      "original_bytes": 121097,
+      "original_sha256": "6abe7cc6198ede86078d2bad851bd357f9a5f9839d3221e7c074d1cda1165cc9"
+    },
+    "first-attempt/tools.json": {
+      "original_bytes": 41097,
+      "original_sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89"
+    },
+    "first-attempt/gateway-definition.json": {
+      "original_bytes": 1386,
+      "original_sha256": "2ef76c5a8b3205e8cd1127d04331b98954a77ce4ff84f68d937015cee17621ed"
+    },
+    "first-attempt/gateway/qualification.json": {
+      "original_bytes": 1097,
+      "original_sha256": "762ae3b9f0af271239964fe50adee5c1610563a2913e4f71ff4775d6d7b6ff62"
+    },
+    "first-attempt/gateway/result.json": {
+      "original_bytes": 465,
+      "original_sha256": "5b2df2a0440d44949bda1de8ad472cf1c6571d672da5bc8b3dfb291d26820c65"
+    },
+    "first-attempt/gateway/gateway-tools.json": {
+      "original_bytes": 63665,
+      "original_sha256": "ead282ea94013735b380e50e2204e06031f9138af1e6cc318e806cc0aa54c985"
+    },
+    "qualification.json": {
+      "original_bytes": 1426,
+      "original_sha256": "24a79a84f848804c96cc8c7b3d7e54cb8d43c211dcf7d1d0c91c796e3f49ac2e"
+    },
+    "tools.json": {
+      "original_bytes": 41097,
+      "original_sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89"
+    },
+    "gateway-definition.json": {
+      "original_bytes": 1402,
+      "original_sha256": "6b6aefdb7044ffa2d7deac6ba9c5a2b295c92b4144027c86fe4a852f5924d5a2"
+    },
+    "gateway/qualification.json": {
+      "original_bytes": 14826,
+      "original_sha256": "27d0e7f4faf940f6ac7a8b720ec2be0ba07fbf26dd263acc78f41983eb83e885"
+    },
+    "gateway/result.json": {
+      "original_bytes": 327,
+      "original_sha256": "b4f516c710040cde8c1165aa2d78509d4358b765e62c2f832470180f996a4590"
+    },
+    "gateway/gateway-tools.json": {
+      "original_bytes": 63665,
+      "original_sha256": "de1220f3f91eec06378b2f8ae4d852cddae1d98e572ae6148b5751a657816110"
+    },
+    "selected-host-bootstrap.py": {
+      "original_bytes": 358,
+      "original_sha256": "8007d7f2654ce37c5db7a365ab5bb1ddd4dc233637911073257bbe4c84eb3c60"
+    },
+    "first-attempt/blender.log": {
+      "original_bytes": 1032,
+      "original_sha256": "9f19944ce715fff0ee978919d24b16af81d78de965b96bfbb8def268b21ef5b9"
+    },
+    "blender.log": {
+      "original_bytes": 181,
+      "original_sha256": "5ded95576eec70e7de76fe7ca9381fdbed4d7c2540bba7285f22e866d583272c"
+    },
+    "actual-geometry/tiny.stl": {
+      "original_bytes": 684,
+      "original_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae"
+    }
+  },
+  "limits": [
+    "Only guarded execute_blender_code geometry/export exercised; 28 listed tools do not qualify external services.",
+    "Host bootstrap loads exact pinned independent addon under virtual display; no in-container Wright API gateway qualification.",
+    "Linux Blender 4.3.2 qualification does not replace original Windows 4.5.10 engineering evidence.",
+    "Current UI/installed acceptance, migrated workflow binding and remaining slicer/AgentCAD obligations keep T043/full goal open."
+  ],
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false
+}

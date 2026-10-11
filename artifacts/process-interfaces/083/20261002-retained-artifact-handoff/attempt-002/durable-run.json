@@ -1,0 +1,853 @@
+{
+  "workflow_path": "workflows/printed-replacement-part-retained-handoff-002.workflow.wflow",
+  "source_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+  "owner": {
+    "host": "Work17",
+    "lease": "workflow-resume:083-heat-live-005:b513166fb7014f23a7187a34be6e7710"
+  },
+  "started_at": "2026-10-02T16:36:11.553460+00:00",
+  "status": "completed",
+  "events": [
+    {
+      "kind": "run_started",
+      "run_id": "b513166fb7014f23a7187a34be6e7710",
+      "at": "2026-10-02T16:36:11.553460+00:00",
+      "task_id": "",
+      "task_title": "printed-replacement-part-retained-handoff-002",
+      "run_log_path": "runs/printed-replacement-part-retained-handoff-002/b513166fb7014f23a7187a34be6e7710.json"
+    },
+    {
+      "kind": "approval_requested",
+      "at": "2026-10-02T16:36:11.600099+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "message": "Integration-test simulation only. Bind exact retained package, original PETG profiles and independent report. No printer/supplier operation and no engineering acceptance. Keep original failed producer and report lineage.",
+      "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+      "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+    },
+    {
+      "kind": "approval_decided",
+      "at": "2026-10-02T16:37:39.747056+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "message": "Approval is approved.",
+      "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+      "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+      "request_id": "synthetic-wheel-retained-handoff-review-002"
+    },
+    {
+      "kind": "external_action_authorized",
+      "at": "2026-10-02T16:38:13.656021+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "message": "External action outcome is not_dispatched.",
+      "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+      "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+    },
+    {
+      "kind": "external_action_reconciled",
+      "at": "2026-10-02T16:38:13.757955+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "message": "External action outcome is dispatched.",
+      "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+      "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+    },
+    {
+      "kind": "run_resumed",
+      "run_id": "b513166fb7014f23a7187a34be6e7710",
+      "at": "2026-10-02T16:38:13.795497+00:00",
+      "task_id": "",
+      "task_title": "printed-replacement-part-retained-handoff-002",
+      "run_log_path": "runs/printed-replacement-part-retained-handoff-002/b513166fb7014f23a7187a34be6e7710.json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-02T16:38:13.882144+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "b513166fb7014f23a7187a34be6e7710:authorize_transfer_retained_handoff_002:receipt",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+            "size_bytes": 1287
+          }
+        ],
+        "provenance": {
+          "run_id": "b513166fb7014f23a7187a34be6e7710",
+          "task_id": "authorize_transfer_retained_handoff_002",
+          "output_port": "receipt",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "external_action_receipt"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-02T16:38:13.899463+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+      "response": "Approved",
+      "output_format": "text"
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-02T16:38:13.915306+00:00",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "task_title": "Authorize exact package transfer",
+      "output_bytes": 1287,
+      "output_format": "json",
+      "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+      "output_port": "receipt",
+      "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+      "artifact_role": "external_action_receipt"
+    },
+    {
+      "kind": "run_completed",
+      "at": "2026-10-02T16:38:13.930965+00:00",
+      "run_id": "b513166fb7014f23a7187a34be6e7710",
+      "task_id": "authorize_transfer_retained_handoff_002",
+      "required_steps_completed": [
+        "authorize_transfer_retained_handoff_002"
+      ]
+    }
+  ],
+  "execution_context": {
+    "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+    "allowed_tools": [],
+    "approval_mode": "auto",
+    "campaign_id": "083-private-digital-wheel-retained-handoff-002",
+    "created_at": 1790958959,
+    "dataset_digest": "55e3adfb166af0456ce8d614e36de71554e84420a446b312553b44db64bd3657",
+    "dataset_id": "printed-replacement-part-01",
+    "execution_kind": "integration",
+    "expires_at": 1791045359,
+    "input_files": {
+      "process-proofs/printed-replacement-part/retained-handoff-002/inputs/filament-profile.json": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "process-proofs/printed-replacement-part/retained-handoff-002/inputs/machine-profile.json": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "process-proofs/printed-replacement-part/retained-handoff-002/inputs/process-profile.json": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "process-proofs/printed-replacement-part/retained-handoff-002/inputs/producer-origin.json": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+      "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+      "process-proofs/printed-replacement-part/retained-handoff-002/inputs/source-report.json": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d"
+    },
+    "integration_policy_digest": "0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+    "output_root": "process-proofs/printed-replacement-part/retained-handoff-002/outputs",
+    "schema_version": 1,
+    "source_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+    "source_path": "workflows/printed-replacement-part-retained-handoff-002.workflow.wflow",
+    "test_destinations": [
+      "test://083-private-digital-wheel-retained-handoff-002/printer/printed-replacement-part-01"
+    ],
+    "workspace_id": "083-heat-live-005"
+  },
+  "run_id": "b513166fb7014f23a7187a34be6e7710",
+  "required_step_ids": [
+    "authorize_transfer_retained_handoff_002"
+  ],
+  "result": {
+    "workflow_title": "Retained focus-wheel simulated handoff",
+    "task_id": "authorize_transfer_retained_handoff_002",
+    "task_title": "Authorize exact package transfer",
+    "output_bytes": 1287,
+    "output_format": "json",
+    "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+    "output_port": "receipt",
+    "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+    "artifact_role": "external_action_receipt",
+    "outputs": [
+      {
+        "task_id": "authorize_transfer_retained_handoff_002",
+        "task_title": "Authorize exact package transfer",
+        "output_bytes": 1287,
+        "output_format": "json",
+        "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+        "output_port": "receipt",
+        "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+        "artifact_role": "external_action_receipt"
+      }
+    ],
+    "steps": [
+      {
+        "task_id": "authorize_transfer_retained_handoff_002",
+        "task_title": "Authorize exact package transfer",
+        "execution_kind": "approval",
+        "output_format": "text",
+        "output_path": null,
+        "output_bytes": 0,
+        "response": "Approved",
+        "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+        "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+        "review_authority": {
+          "action_kind": "printer_transfer",
+          "settings": {
+            "material": "PETG",
+            "nozzle_mm": "0.4",
+            "package_path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+            "receipt_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "simulation": true,
+            "include_supplied_files": true
+          },
+          "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+          "reason": "Integration campaign 083-private-digital-wheel-retained-handoff-002 policy 0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+          "subject": {
+            "action": {
+              "kind": "printer_transfer",
+              "mode": "transfer_only",
+              "simulation": true
+            },
+            "artifact_digests": [
+              "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+              "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+              "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+              "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+              "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+              "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+            ],
+            "binding": {
+              "schema": "f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d",
+              "server": "wright",
+              "tool": "test_handoff"
+            },
+            "definition_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+            "destination": {
+              "id": "test://083-private-digital-wheel-retained-handoff-002/printer/printed-replacement-part-01",
+              "kind": "integration_test"
+            },
+            "input_digests": [
+              "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+              "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+              "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+              "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+              "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+              "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+            ],
+            "settings": {
+              "include_supplied_files": true,
+              "material": "PETG",
+              "nozzle_mm": "0.4",
+              "package_path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+              "receipt_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+              "simulation": true
+            }
+          },
+          "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+          "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f"
+        },
+        "external_action": {
+          "action_id": "wheel-retained-handoff-continuation-002",
+          "dispatch_authorized_at": 1790959093,
+          "evidence": {
+            "integration_test": true,
+            "operation": "test_handoff",
+            "produced_files": [
+              {
+                "output_bytes": 1287,
+                "output_format": "json",
+                "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+                "output_port": "receipt",
+                "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d"
+              }
+            ],
+            "simulated_handoff": true
+          },
+          "outcome": "dispatched",
+          "principal_id": "local-control-plane",
+          "reconciled_at": 1790959093,
+          "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+        },
+        "produced_files": [
+          {
+            "output_bytes": 1287,
+            "output_format": "json",
+            "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "output_port": "receipt",
+            "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+            "task_id": "authorize_transfer_retained_handoff_002",
+            "task_title": "Authorize exact package transfer",
+            "artifact_role": "external_action_receipt"
+          }
+        ]
+      }
+    ],
+    "run_id": "b513166fb7014f23a7187a34be6e7710",
+    "results": [
+      {
+        "schema_version": 1,
+        "id": "b513166fb7014f23a7187a34be6e7710:authorize_transfer_retained_handoff_002:receipt",
+        "kind": "file",
+        "name": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+            "size_bytes": 1287
+          }
+        ],
+        "provenance": {
+          "run_id": "b513166fb7014f23a7187a34be6e7710",
+          "task_id": "authorize_transfer_retained_handoff_002",
+          "output_port": "receipt",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "external_action_receipt"
+      }
+    ],
+    "revision_attempts": [],
+    "status": "completed"
+  },
+  "approval": {
+    "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+    "workspace_id": "083-heat-live-005",
+    "workflow_id": "workflows/printed-replacement-part-retained-handoff-002.workflow.wflow",
+    "run_id": "b513166fb7014f23a7187a34be6e7710",
+    "step_id": "authorize_transfer_retained_handoff_002",
+    "action_kind": "printer_transfer",
+    "subject": {
+      "action": {
+        "kind": "printer_transfer",
+        "mode": "transfer_only",
+        "simulation": true
+      },
+      "artifact_digests": [
+        "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+        "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+        "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+        "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+        "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+      ],
+      "binding": {
+        "schema": "f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d",
+        "server": "wright",
+        "tool": "test_handoff"
+      },
+      "definition_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+      "destination": {
+        "id": "test://083-private-digital-wheel-retained-handoff-002/printer/printed-replacement-part-01",
+        "kind": "integration_test"
+      },
+      "input_digests": [
+        "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+        "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+        "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+        "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+        "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+      ],
+      "settings": {
+        "include_supplied_files": true,
+        "material": "PETG",
+        "nozzle_mm": "0.4",
+        "package_path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+        "receipt_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+        "simulation": true
+      }
+    },
+    "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+    "state": "consumed",
+    "continuation": {
+      "artifact_files": [
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/filament-profile.json",
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/machine-profile.json",
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/process-profile.json",
+          "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/producer-origin.json",
+          "sha256": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+          "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/source-report.json",
+          "sha256": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d"
+        }
+      ],
+      "artifacts_by_output": {},
+      "checkpoint_kind": "approval",
+      "completed_step_ids": [],
+      "decision_receipt": {
+        "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+        "decision": "approved",
+        "reason": "Integration campaign 083-private-digital-wheel-retained-handoff-002 policy 0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+        "request_id": "synthetic-wheel-retained-handoff-review-002",
+        "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+      },
+      "definition_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+      "execution_context": {
+        "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+        "allowed_tools": [],
+        "approval_mode": "auto",
+        "campaign_id": "083-private-digital-wheel-retained-handoff-002",
+        "created_at": 1790958959,
+        "dataset_digest": "55e3adfb166af0456ce8d614e36de71554e84420a446b312553b44db64bd3657",
+        "dataset_id": "printed-replacement-part-01",
+        "execution_kind": "integration",
+        "expires_at": 1791045359,
+        "input_files": {
+          "process-proofs/printed-replacement-part/retained-handoff-002/inputs/filament-profile.json": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+          "process-proofs/printed-replacement-part/retained-handoff-002/inputs/machine-profile.json": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+          "process-proofs/printed-replacement-part/retained-handoff-002/inputs/process-profile.json": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+          "process-proofs/printed-replacement-part/retained-handoff-002/inputs/producer-origin.json": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+          "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+          "process-proofs/printed-replacement-part/retained-handoff-002/inputs/source-report.json": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d"
+        },
+        "integration_policy_digest": "0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+        "output_root": "process-proofs/printed-replacement-part/retained-handoff-002/outputs",
+        "schema_version": 1,
+        "source_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+        "source_path": "workflows/printed-replacement-part-retained-handoff-002.workflow.wflow",
+        "test_destinations": [
+          "test://083-private-digital-wheel-retained-handoff-002/printer/printed-replacement-part-01"
+        ],
+        "workspace_id": "083-heat-live-005"
+      },
+      "feedback": {},
+      "input_digest": "4051ed51a4baa4a02ed83d0411c60917492a05fd079d774e1aebb8fd7800a117",
+      "input_files": [
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/filament-profile.json",
+          "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/machine-profile.json",
+          "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/process-profile.json",
+          "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/producer-origin.json",
+          "sha256": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+          "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/source-report.json",
+          "sha256": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d"
+        }
+      ],
+      "input_identities": {
+        "input_filament_profile_json_retained_handoff_002": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+        "input_machine_profile_json_retained_handoff_002": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+        "input_process_profile_json_retained_handoff_002": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+        "input_producer_origin_json_retained_handoff_002": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+        "input_slice_package_gcode_3mf_retained_handoff_002": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+        "input_source_report_json_retained_handoff_002": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d"
+      },
+      "input_snapshot_id": "inputs-9c2e810b359c47258ec4df825cea306b",
+      "next_step_index": 0,
+      "records": [],
+      "response_digest": null,
+      "response_id": null,
+      "responses": {
+        "input_filament_profile_json_retained_handoff_002": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/filament-profile.json",
+            "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+            "size_bytes": 7954,
+            "text": "{\r\n  \"type\": \"filament\",\r\n  \"name\": \"Bambu PETG HF @BBL P1S 0.4 nozzle\",\r\n  \"from\": \"system\",\r\n  \"instantiation\": \"true\",\r\n  \"activate_air_filtration\": [\r\n    \"0\"\r\n  ],\r\n  \"additional_cooling_fan_speed\": [\r\n    \"0\"\r\n  ],\r\n  \"chamber_temperatures\": [\r\n    \"0\"\r\n  ],\r\n  \"circle_compensation_speed\": [\r\n    \"200\"\r\n  ],\r\n  \"close_fan_the_first_x_layers\": [\r\n    \"3\"\r\n  ],\r\n  \"close_additional_fan_first_x_layers\": [\r\n    \"3\"\r\n  ],\r\n  \"complete_print_exhaust_fan_speed\": [\r\n    \"70\"\r\n  ],\r\n  \"cool_plate_temp\": [\r\n    \"0\"\r\n  ],\r\n  \"cool_plate_temp_initial_layer\": [\r\n    \"0\"\r\n  ],\r\n  \"counter_coef_1\": [\r\n    \"0\"\r\n  ],\r\n  \"counter_coef_2\": [\r\n    \"0.008\"\r\n  ],\r\n  \"counter_coef_3\": [\r\n    \"-0.041\"\r\n  ],\r\n  \"counter_limit_max\": [\r\n    \"0.033\"\r\n  ],\r\n  \"counter_limit_min\": [\r\n    \"-0.035\"\r\n  ],\r\n  \"diameter_limit\": [\r\n    \"50\"\r\n  ],\r\n  \"during_print_exhaust_fan_speed\": [\r\n    \"70\"\r\n  ],\r\n  \"eng_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"eng_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"fan_cooling_layer_time\": [\r\n    \"20\"\r\n  ],\r\n  \"fan_max_speed\": [\r\n    \"40\"\r\n  ],\r\n  \"fan_min_speed\": [\r\n    \"20\"\r\n  ],\r\n  \"filament_adaptive_volumetric_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_extruder_compatibility\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_cooling_before_tower\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_preheat_temperature_delta\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"filament_tower_interface_pre_extrusion_dist\": [\r\n    \"10\"\r\n  ],\r\n  \"filament_tower_interface_pre_extrusion_length\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_tower_ironing_area\": [\r\n    \"4\"\r\n  ],\r\n  \"filament_tower_interface_purge_volume\": [\r\n    \"20\"\r\n  ],\r\n  \"filament_tower_interface_print_temp\": [\r\n    \"-1\"\r\n  ],\r\n  \"filament_cost\": [\r\n    \"19.99\"\r\n  ],\r\n  \"filament_density\": [\r\n    \"1.28\"\r\n  ],\r\n  \"filament_deretraction_speed\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_dev_ams_drying_ams_limitations\": [\r\n    \"1\",\r\n    \"0\"\r\n  ],\r\n  \"filament_dev_ams_drying_heat_distortion_temperature\": [\r\n    \"75\"\r\n  ],\r\n  \"filament_dev_ams_drying_temperature\": [\r\n    \"65\",\r\n    \"65\",\r\n    \"55\",\r\n    \"55\"\r\n  ],\r\n  \"filament_dev_ams_drying_time\": [\r\n    \"12\",\r\n    \"12\",\r\n    \"12\",\r\n    \"12\"\r\n  ],\r\n  \"filament_dev_chamber_drying_bed_temperature\": [\r\n    \"80\"\r\n  ],\r\n  \"filament_dev_chamber_drying_time\": [\r\n    \"12.0\"\r\n  ],\r\n  \"filament_dev_drying_cooling_temperature\": [\r\n    \"55\"\r\n  ],\r\n  \"filament_dev_drying_softening_temperature\": [\r\n    \"60\"\r\n  ],\r\n  \"filament_diameter\": [\r\n    \"1.75\"\r\n  ],\r\n  \"filament_extruder_variant\": [\r\n    \"Direct Drive Standard\",\r\n    \"Direct Drive High Flow\"\r\n  ],\r\n  \"filament_flow_ratio\": [\r\n    \"0.95\",\r\n    \"0.952\"\r\n  ],\r\n  \"filament_flush_temp\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_flush_temp_fast\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_flush_volumetric_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_is_support\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_long_retractions_when_cut\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"filament_long_retractions_when_ec\": [\r\n    \"nil\"\r\n  ],\r\n  \"filament_max_volumetric_speed\": [\r\n    \"21\",\r\n    \"29\"\r\n  ],\r\n  \"filament_metal_stickiness\": [\r\n    \"High\"\r\n  ],\r\n  \"filament_minimal_purge_on_wipe_tower\": [\r\n    \"15\"\r\n  ],\r\n  \"filament_pre_cooling_temperature\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_pre_cooling_temperature_nc\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_prime_volume\": [\r\n    \"30\"\r\n  ],\r\n  \"filament_prime_volume_nc\": [\r\n    \"60\"\r\n  ],\r\n  \"filament_printable\": [\r\n    \"3\"\r\n  ],\r\n  \"filament_ramming_travel_time_nc\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_ramming_volumetric_speed\": [\r\n    \"-1\",\r\n    \"-1\"\r\n  ],\r\n  \"filament_ramming_volumetric_speed_nc\": [\r\n    \"-1\",\r\n    \"-1\"\r\n  ],\r\n  \"filament_retract_before_wipe\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retract_restart_extra\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retract_when_changing_layer\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retraction_distances_when_cut\": [\r\n    \"18\",\r\n    \"18\"\r\n  ],\r\n  \"filament_retraction_distances_when_ec\": [\r\n    \"nil\"\r\n  ],\r\n  \"filament_retraction_length\": [\r\n    \"nil\",\r\n    \"0.4\"\r\n  ],\r\n  \"filament_retraction_minimum_travel\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retraction_speed\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_scarf_seam_type\": [\r\n    \"none\"\r\n  ],\r\n  \"filament_settings_id\": [\r\n    \"\"\r\n  ],\r\n  \"filament_shrink\": [\r\n    \"100%\"\r\n  ],\r\n  \"filament_soluble\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_type\": [\r\n    \"PETG\"\r\n  ],\r\n  \"filament_vendor\": [\r\n    \"Bambu Lab\"\r\n  ],\r\n  \"filament_wipe\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_wipe_distance\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_z_hop\": [\r\n    \"nil\",\r\n    \"0.6\"\r\n  ],\r\n  \"filament_z_hop_types\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"full_fan_speed_layer\": [\r\n    \"0\"\r\n  ],\r\n  \"additional_fan_full_speed_layer\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_scarf_height\": [\r\n    \"10%\"\r\n  ],\r\n  \"filament_scarf_gap\": [\r\n    \"0%\"\r\n  ],\r\n  \"filament_scarf_length\": [\r\n    \"10\"\r\n  ],\r\n  \"filament_ramming_travel_time\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_retract_length_nc\": [\r\n    \"14\",\r\n    \"14\"\r\n  ],\r\n  \"filament_enable_overhang_speed\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"filament_overhang_1_4_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_overhang_2_4_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"filament_overhang_3_4_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"filament_overhang_4_4_speed\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"filament_overhang_totally_speed\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"filament_bridge_speed\": [\r\n    \"25\",\r\n    \"25\"\r\n  ],\r\n  \"filament_change_length\": [\r\n    \"12\"\r\n  ],\r\n  \"filament_velocity_adaptation_factor\": [\r\n    \"1\"\r\n  ],\r\n  \"hot_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"hot_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"filament_ingredients_safe\": \"1\",\r\n  \"filament_emission_safe\": \"1\",\r\n  \"filament_contact_safe\": \"1\",\r\n  \"hole_coef_1\": [\r\n    \"0\"\r\n  ],\r\n  \"hole_coef_2\": [\r\n    \"-0.008\"\r\n  ],\r\n  \"hole_coef_3\": [\r\n    \"0.23415\"\r\n  ],\r\n  \"hole_limit_max\": [\r\n    \"0.22\"\r\n  ],\r\n  \"hole_limit_min\": [\r\n    \"0.088\"\r\n  ],\r\n  \"impact_strength_z\": [\r\n    \"10.6\"\r\n  ],\r\n  \"long_retractions_when_ec\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"no_slow_down_for_cooling_on_outwalls\": [\r\n    \"0\"\r\n  ],\r\n  \"nozzle_temperature\": [\r\n    \"245\",\r\n    \"245\"\r\n  ],\r\n  \"nozzle_temperature_initial_layer\": [\r\n    \"230\",\r\n    \"230\"\r\n  ],\r\n  \"nozzle_temperature_range_high\": [\r\n    \"270\"\r\n  ],\r\n  \"nozzle_temperature_range_low\": [\r\n    \"230\"\r\n  ],\r\n  \"overhang_fan_speed\": [\r\n    \"100\"\r\n  ],\r\n  \"overhang_fan_threshold\": [\r\n    \"10%\"\r\n  ],\r\n  \"override_process_overhang_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"reduce_fan_stop_start_freq\": [\r\n    \"1\"\r\n  ],\r\n  \"required_nozzle_HRC\": [\r\n    \"3\"\r\n  ],\r\n  \"retraction_distances_when_ec\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"slow_down_for_layer_cooling\": [\r\n    \"1\"\r\n  ],\r\n  \"cooling_slowdown_logic\": [\r\n    \"uniform_cooling\"\r\n  ],\r\n  \"cooling_perimeter_transition_distance\": [\r\n    \"10\"\r\n  ],\r\n  \"slow_down_layer_time\": [\r\n    \"10\"\r\n  ],\r\n  \"slow_down_min_speed\": [\r\n    \"20\",\r\n    \"20\"\r\n  ],\r\n  \"supertack_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"supertack_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"temperature_vitrification\": [\r\n    \"70\"\r\n  ],\r\n  \"textured_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"textured_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"volumetric_speed_coefficients\": [\r\n    \"0 0 0 0 0 0\",\r\n    \"0 0 0 0 0 0\"\r\n  ],\r\n  \"compatible_printers\": [\r\n    \"Bambu Lab P1S 0.4 nozzle\"\r\n  ],\r\n  \"filament_start_gcode\": [\r\n    \"; filament start gcode\\n{if (bed_temperature[current_extruder] >80)||(bed_temperature_initial_layer[current_extruder] >80)}M106 P3 S255\\n{elsif (bed_temperature[current_extruder] >60)||(bed_temperature_initial_layer[current_extruder] >60)}M106 P3 S180\\n{endif}\\n\\n{if activate_air_filtration[current_extruder] && support_air_filtration}\\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \\n{endif}\"\r\n  ],\r\n  \"filament_end_gcode\": [\r\n    \"; filament end gcode \\n\\n\"\r\n  ],\r\n  \"filament_adhesiveness_category\": [\r\n    \"300\"\r\n  ],\r\n  \"filament_id\": \"GFG02\",\r\n  \"setting_id\": \"GFSG02_36\"\r\n}\r\n"
+          }
+        },
+        "input_filament_profile_json_retained_handoff_002.input_filament_profile_json_retained_handoff_002_out": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/filament-profile.json",
+            "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+            "size_bytes": 7954,
+            "text": "{\r\n  \"type\": \"filament\",\r\n  \"name\": \"Bambu PETG HF @BBL P1S 0.4 nozzle\",\r\n  \"from\": \"system\",\r\n  \"instantiation\": \"true\",\r\n  \"activate_air_filtration\": [\r\n    \"0\"\r\n  ],\r\n  \"additional_cooling_fan_speed\": [\r\n    \"0\"\r\n  ],\r\n  \"chamber_temperatures\": [\r\n    \"0\"\r\n  ],\r\n  \"circle_compensation_speed\": [\r\n    \"200\"\r\n  ],\r\n  \"close_fan_the_first_x_layers\": [\r\n    \"3\"\r\n  ],\r\n  \"close_additional_fan_first_x_layers\": [\r\n    \"3\"\r\n  ],\r\n  \"complete_print_exhaust_fan_speed\": [\r\n    \"70\"\r\n  ],\r\n  \"cool_plate_temp\": [\r\n    \"0\"\r\n  ],\r\n  \"cool_plate_temp_initial_layer\": [\r\n    \"0\"\r\n  ],\r\n  \"counter_coef_1\": [\r\n    \"0\"\r\n  ],\r\n  \"counter_coef_2\": [\r\n    \"0.008\"\r\n  ],\r\n  \"counter_coef_3\": [\r\n    \"-0.041\"\r\n  ],\r\n  \"counter_limit_max\": [\r\n    \"0.033\"\r\n  ],\r\n  \"counter_limit_min\": [\r\n    \"-0.035\"\r\n  ],\r\n  \"diameter_limit\": [\r\n    \"50\"\r\n  ],\r\n  \"during_print_exhaust_fan_speed\": [\r\n    \"70\"\r\n  ],\r\n  \"eng_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"eng_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"fan_cooling_layer_time\": [\r\n    \"20\"\r\n  ],\r\n  \"fan_max_speed\": [\r\n    \"40\"\r\n  ],\r\n  \"fan_min_speed\": [\r\n    \"20\"\r\n  ],\r\n  \"filament_adaptive_volumetric_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_extruder_compatibility\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_cooling_before_tower\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_preheat_temperature_delta\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"filament_tower_interface_pre_extrusion_dist\": [\r\n    \"10\"\r\n  ],\r\n  \"filament_tower_interface_pre_extrusion_length\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_tower_ironing_area\": [\r\n    \"4\"\r\n  ],\r\n  \"filament_tower_interface_purge_volume\": [\r\n    \"20\"\r\n  ],\r\n  \"filament_tower_interface_print_temp\": [\r\n    \"-1\"\r\n  ],\r\n  \"filament_cost\": [\r\n    \"19.99\"\r\n  ],\r\n  \"filament_density\": [\r\n    \"1.28\"\r\n  ],\r\n  \"filament_deretraction_speed\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_dev_ams_drying_ams_limitations\": [\r\n    \"1\",\r\n    \"0\"\r\n  ],\r\n  \"filament_dev_ams_drying_heat_distortion_temperature\": [\r\n    \"75\"\r\n  ],\r\n  \"filament_dev_ams_drying_temperature\": [\r\n    \"65\",\r\n    \"65\",\r\n    \"55\",\r\n    \"55\"\r\n  ],\r\n  \"filament_dev_ams_drying_time\": [\r\n    \"12\",\r\n    \"12\",\r\n    \"12\",\r\n    \"12\"\r\n  ],\r\n  \"filament_dev_chamber_drying_bed_temperature\": [\r\n    \"80\"\r\n  ],\r\n  \"filament_dev_chamber_drying_time\": [\r\n    \"12.0\"\r\n  ],\r\n  \"filament_dev_drying_cooling_temperature\": [\r\n    \"55\"\r\n  ],\r\n  \"filament_dev_drying_softening_temperature\": [\r\n    \"60\"\r\n  ],\r\n  \"filament_diameter\": [\r\n    \"1.75\"\r\n  ],\r\n  \"filament_extruder_variant\": [\r\n    \"Direct Drive Standard\",\r\n    \"Direct Drive High Flow\"\r\n  ],\r\n  \"filament_flow_ratio\": [\r\n    \"0.95\",\r\n    \"0.952\"\r\n  ],\r\n  \"filament_flush_temp\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_flush_temp_fast\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_flush_volumetric_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_is_support\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_long_retractions_when_cut\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"filament_long_retractions_when_ec\": [\r\n    \"nil\"\r\n  ],\r\n  \"filament_max_volumetric_speed\": [\r\n    \"21\",\r\n    \"29\"\r\n  ],\r\n  \"filament_metal_stickiness\": [\r\n    \"High\"\r\n  ],\r\n  \"filament_minimal_purge_on_wipe_tower\": [\r\n    \"15\"\r\n  ],\r\n  \"filament_pre_cooling_temperature\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_pre_cooling_temperature_nc\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_prime_volume\": [\r\n    \"30\"\r\n  ],\r\n  \"filament_prime_volume_nc\": [\r\n    \"60\"\r\n  ],\r\n  \"filament_printable\": [\r\n    \"3\"\r\n  ],\r\n  \"filament_ramming_travel_time_nc\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_ramming_volumetric_speed\": [\r\n    \"-1\",\r\n    \"-1\"\r\n  ],\r\n  \"filament_ramming_volumetric_speed_nc\": [\r\n    \"-1\",\r\n    \"-1\"\r\n  ],\r\n  \"filament_retract_before_wipe\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retract_restart_extra\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retract_when_changing_layer\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retraction_distances_when_cut\": [\r\n    \"18\",\r\n    \"18\"\r\n  ],\r\n  \"filament_retraction_distances_when_ec\": [\r\n    \"nil\"\r\n  ],\r\n  \"filament_retraction_length\": [\r\n    \"nil\",\r\n    \"0.4\"\r\n  ],\r\n  \"filament_retraction_minimum_travel\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_retraction_speed\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_scarf_seam_type\": [\r\n    \"none\"\r\n  ],\r\n  \"filament_settings_id\": [\r\n    \"\"\r\n  ],\r\n  \"filament_shrink\": [\r\n    \"100%\"\r\n  ],\r\n  \"filament_soluble\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_type\": [\r\n    \"PETG\"\r\n  ],\r\n  \"filament_vendor\": [\r\n    \"Bambu Lab\"\r\n  ],\r\n  \"filament_wipe\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_wipe_distance\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"filament_z_hop\": [\r\n    \"nil\",\r\n    \"0.6\"\r\n  ],\r\n  \"filament_z_hop_types\": [\r\n    \"nil\",\r\n    \"nil\"\r\n  ],\r\n  \"full_fan_speed_layer\": [\r\n    \"0\"\r\n  ],\r\n  \"additional_fan_full_speed_layer\": [\r\n    \"0\"\r\n  ],\r\n  \"filament_scarf_height\": [\r\n    \"10%\"\r\n  ],\r\n  \"filament_scarf_gap\": [\r\n    \"0%\"\r\n  ],\r\n  \"filament_scarf_length\": [\r\n    \"10\"\r\n  ],\r\n  \"filament_ramming_travel_time\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_retract_length_nc\": [\r\n    \"14\",\r\n    \"14\"\r\n  ],\r\n  \"filament_enable_overhang_speed\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"filament_overhang_1_4_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"filament_overhang_2_4_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"filament_overhang_3_4_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"filament_overhang_4_4_speed\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"filament_overhang_totally_speed\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"filament_bridge_speed\": [\r\n    \"25\",\r\n    \"25\"\r\n  ],\r\n  \"filament_change_length\": [\r\n    \"12\"\r\n  ],\r\n  \"filament_velocity_adaptation_factor\": [\r\n    \"1\"\r\n  ],\r\n  \"hot_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"hot_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"filament_ingredients_safe\": \"1\",\r\n  \"filament_emission_safe\": \"1\",\r\n  \"filament_contact_safe\": \"1\",\r\n  \"hole_coef_1\": [\r\n    \"0\"\r\n  ],\r\n  \"hole_coef_2\": [\r\n    \"-0.008\"\r\n  ],\r\n  \"hole_coef_3\": [\r\n    \"0.23415\"\r\n  ],\r\n  \"hole_limit_max\": [\r\n    \"0.22\"\r\n  ],\r\n  \"hole_limit_min\": [\r\n    \"0.088\"\r\n  ],\r\n  \"impact_strength_z\": [\r\n    \"10.6\"\r\n  ],\r\n  \"long_retractions_when_ec\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"no_slow_down_for_cooling_on_outwalls\": [\r\n    \"0\"\r\n  ],\r\n  \"nozzle_temperature\": [\r\n    \"245\",\r\n    \"245\"\r\n  ],\r\n  \"nozzle_temperature_initial_layer\": [\r\n    \"230\",\r\n    \"230\"\r\n  ],\r\n  \"nozzle_temperature_range_high\": [\r\n    \"270\"\r\n  ],\r\n  \"nozzle_temperature_range_low\": [\r\n    \"230\"\r\n  ],\r\n  \"overhang_fan_speed\": [\r\n    \"100\"\r\n  ],\r\n  \"overhang_fan_threshold\": [\r\n    \"10%\"\r\n  ],\r\n  \"override_process_overhang_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"reduce_fan_stop_start_freq\": [\r\n    \"1\"\r\n  ],\r\n  \"required_nozzle_HRC\": [\r\n    \"3\"\r\n  ],\r\n  \"retraction_distances_when_ec\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"slow_down_for_layer_cooling\": [\r\n    \"1\"\r\n  ],\r\n  \"cooling_slowdown_logic\": [\r\n    \"uniform_cooling\"\r\n  ],\r\n  \"cooling_perimeter_transition_distance\": [\r\n    \"10\"\r\n  ],\r\n  \"slow_down_layer_time\": [\r\n    \"10\"\r\n  ],\r\n  \"slow_down_min_speed\": [\r\n    \"20\",\r\n    \"20\"\r\n  ],\r\n  \"supertack_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"supertack_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"temperature_vitrification\": [\r\n    \"70\"\r\n  ],\r\n  \"textured_plate_temp\": [\r\n    \"70\"\r\n  ],\r\n  \"textured_plate_temp_initial_layer\": [\r\n    \"70\"\r\n  ],\r\n  \"volumetric_speed_coefficients\": [\r\n    \"0 0 0 0 0 0\",\r\n    \"0 0 0 0 0 0\"\r\n  ],\r\n  \"compatible_printers\": [\r\n    \"Bambu Lab P1S 0.4 nozzle\"\r\n  ],\r\n  \"filament_start_gcode\": [\r\n    \"; filament start gcode\\n{if (bed_temperature[current_extruder] >80)||(bed_temperature_initial_layer[current_extruder] >80)}M106 P3 S255\\n{elsif (bed_temperature[current_extruder] >60)||(bed_temperature_initial_layer[current_extruder] >60)}M106 P3 S180\\n{endif}\\n\\n{if activate_air_filtration[current_extruder] && support_air_filtration}\\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \\n{endif}\"\r\n  ],\r\n  \"filament_end_gcode\": [\r\n    \"; filament end gcode \\n\\n\"\r\n  ],\r\n  \"filament_adhesiveness_category\": [\r\n    \"300\"\r\n  ],\r\n  \"filament_id\": \"GFG02\",\r\n  \"setting_id\": \"GFSG02_36\"\r\n}\r\n"
+          }
+        },
+        "input_machine_profile_json_retained_handoff_002": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/machine-profile.json",
+            "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+            "size_bytes": 20560,
+            "text": "{\r\n  \"type\": \"machine\",\r\n  \"name\": \"Bambu Lab P1S 0.4 nozzle\",\r\n  \"from\": \"system\",\r\n  \"instantiation\": \"true\",\r\n  \"nozzle_diameter\": [\r\n    \"0.4\"\r\n  ],\r\n  \"printer_variant\": \"0.4\",\r\n  \"auxiliary_fan\": \"1\",\r\n  \"best_object_pos\": \"0.5x0.5\",\r\n  \"default_filament_profile\": [\r\n    \"Bambu PETG HF @BBL P1S 0.4 nozzle\"\r\n  ],\r\n  \"default_print_profile\": \"0.20mm Standard @BBL X1C\",\r\n  \"deretraction_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"extruder_clearance_height_to_lid\": \"90\",\r\n  \"extruder_clearance_height_to_rod\": \"34\",\r\n  \"extruder_clearance_max_radius\": \"68\",\r\n  \"extruder_clearance_dist_to_rod\": \"33\",\r\n  \"extruder_colour\": [\r\n    \"#018001\"\r\n  ],\r\n  \"enable_long_retraction_when_cut\": \"2\",\r\n  \"enable_pre_heating\": \"0\",\r\n  \"extruder_height_gap\": \"0\",\r\n  \"extruder_offset\": [\r\n    \"0x2\"\r\n  ],\r\n  \"fan_direction\": \"left\",\r\n  \"gcode_flavor\": \"marlin\",\r\n  \"grab_length\": [\r\n    \"0\"\r\n  ],\r\n  \"group_algo_with_time\": \"0\",\r\n  \"extruder_max_nozzle_count\": [\r\n    \"1\"\r\n  ],\r\n  \"hotend_cooling_rate\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"hotend_heating_rate\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"long_retractions_when_cut\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"machine_load_filament_time\": \"29\",\r\n  \"machine_max_acceleration_e\": [\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\"\r\n  ],\r\n  \"machine_max_acceleration_extruding\": [\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\"\r\n  ],\r\n  \"machine_max_acceleration_retracting\": [\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\"\r\n  ],\r\n  \"machine_max_acceleration_x\": [\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\"\r\n  ],\r\n  \"machine_max_acceleration_y\": [\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\"\r\n  ],\r\n  \"machine_max_acceleration_z\": [\r\n    \"500\",\r\n    \"500\",\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"machine_max_force_Y\": \"0\",\r\n  \"machine_bed_mass_Y\": \"0\",\r\n  \"machine_max_printed_mass\": \"0\",\r\n  \"machine_max_jerk_e\": [\r\n    \"2.5\",\r\n    \"2.5\",\r\n    \"2.5\",\r\n    \"2.5\"\r\n  ],\r\n  \"machine_max_jerk_x\": [\r\n    \"9\",\r\n    \"9\",\r\n    \"9\",\r\n    \"9\"\r\n  ],\r\n  \"machine_max_jerk_y\": [\r\n    \"9\",\r\n    \"9\",\r\n    \"9\",\r\n    \"9\"\r\n  ],\r\n  \"machine_max_jerk_z\": [\r\n    \"3\",\r\n    \"3\",\r\n    \"3\",\r\n    \"3\"\r\n  ],\r\n  \"machine_max_speed_e\": [\r\n    \"30\",\r\n    \"30\",\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"machine_max_speed_x\": [\r\n    \"500\",\r\n    \"500\",\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"machine_max_speed_y\": [\r\n    \"500\",\r\n    \"500\",\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"machine_max_speed_z\": [\r\n    \"20\",\r\n    \"20\",\r\n    \"20\",\r\n    \"20\"\r\n  ],\r\n  \"machine_min_extruding_rate\": [\r\n    \"0\"\r\n  ],\r\n  \"machine_min_travel_rate\": [\r\n    \"0\"\r\n  ],\r\n  \"machine_prepare_compensation_time\": \"260\",\r\n  \"machine_switch_extruder_time\": \"0\",\r\n  \"machine_unload_filament_time\": \"28\",\r\n  \"machine_hotend_change_time\": \"0\",\r\n  \"master_extruder_id\": \"1\",\r\n  \"max_layer_height\": [\r\n    \"0.28\"\r\n  ],\r\n  \"min_layer_height\": [\r\n    \"0.08\"\r\n  ],\r\n  \"nozzle_height\": \"4.2\",\r\n  \"nozzle_flush_dataset\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"print_in_clockwise\": \"0\",\r\n  \"printable_height\": \"250\",\r\n  \"printer_settings_id\": \"\",\r\n  \"printer_structure\": \"corexy\",\r\n  \"printer_technology\": \"FFF\",\r\n  \"retract_before_wipe\": [\r\n    \"0%\",\r\n    \"0%\"\r\n  ],\r\n  \"retract_length_toolchange\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"retract_restart_extra\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"retract_restart_extra_toolchange\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"retract_when_changing_layer\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"retraction_distances_when_cut\": [\r\n    \"18\",\r\n    \"18\"\r\n  ],\r\n  \"retraction_length\": [\r\n    \"0.8\",\r\n    \"0.8\"\r\n  ],\r\n  \"retraction_minimum_travel\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"retraction_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"scan_first_layer\": \"0\",\r\n  \"silent_mode\": \"0\",\r\n  \"single_extruder_multi_material\": \"1\",\r\n  \"support_air_filtration\": \"0\",\r\n  \"support_cooling_filter\": \"0\",\r\n  \"support_fast_purge_mode\": \"0\",\r\n  \"cooling_filter_enabled\": \"0\",\r\n  \"support_chamber_temp_control\": \"0\",\r\n  \"support_object_skip_flush\": \"0\",\r\n  \"wipe\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"wrapping_exclude_area\": [],\r\n  \"z_hop\": [\r\n    \"0.4\",\r\n    \"0.4\"\r\n  ],\r\n  \"upward_compatible_machine\": [\r\n    \"Bambu Lab P1P 0.4 nozzle\",\r\n    \"Bambu Lab X1 0.4 nozzle\",\r\n    \"Bambu Lab X1 Carbon 0.4 nozzle\",\r\n    \"Bambu Lab X1E 0.4 nozzle\",\r\n    \"Bambu Lab A1 0.4 nozzle\",\r\n    \"Bambu Lab H2D 0.4 nozzle\",\r\n    \"Bambu Lab H2D Pro 0.4 nozzle\",\r\n    \"Bambu Lab H2S 0.4 nozzle\",\r\n    \"Bambu Lab P2S 0.4 nozzle\",\r\n    \"Bambu Lab H2C 0.4 nozzle\",\r\n    \"Bambu Lab X2D 0.4 nozzle\",\r\n    \"Bambu Lab A2L 0.4 nozzle\"\r\n  ],\r\n  \"machine_start_gcode\": \";===== machine: P1S-0.4 ========================\\n;===== date: 20251031 =====================\\n;===== turn on the HB fan & MC board fan =================\\nM104 S75 ;set extruder temp to turn on the HB fan and prevent filament oozing from nozzle\\nM710 A1 S255 ;turn on MC fan by default(P1S)\\n;===== reset machine status =================\\nM290 X40 Y40 Z2.6666666\\nG91\\nM17 Z0.4 ; lower the z-motor current\\nG380 S2 Z30 F300 ; G380 is same as G38; lower the hotbed , to prevent the nozzle is below the hotbed\\nG380 S2 Z-25 F300 ;\\nG1 Z5 F300;\\nG90\\nM17 X1.2 Y1.2 Z0.75 ; reset motor current to default\\nM960 S5 P1 ; turn on logo lamp\\nG90\\nM220 S100 ;Reset Feedrate\\nM221 S100 ;Reset Flowrate\\nM73.2   R1.0 ;Reset left time magnitude\\nM1002 set_gcode_claim_speed_level : 5\\nM221 X0 Y0 Z0 ; turn off soft endstop to prevent protential logic problem\\nG29.1 Z{+0.0} ; clear z-trim value first\\nM204 S10000 ; init ACC set to 10m/s^2\\n\\n;===== heatbed preheat ====================\\nM1002 gcode_claim_action:54\\nM140 S[bed_temperature_initial_layer_single] ;set bed temp\\nM190 S[bed_temperature_initial_layer_single] ;wait for bed temp\\n\\n\\n\\n;=============turn on fans to prevent PLA jamming=================\\n{if filament_type[initial_extruder]==\\\"PLA\\\"}\\n    {if (bed_temperature[initial_extruder] >45)||(bed_temperature_initial_layer[initial_extruder] >45)}\\n    M106 P3 S180\\n    {endif};Prevent PLA from jamming\\n{endif}\\nM106 P2 S100 ; turn on big fan ,to cool down toolhead\\n\\n;===== prepare print temperature and material ==========\\nM104 S[nozzle_temperature_initial_layer] ;set extruder temp\\nG91\\nG0 Z10 F1200\\nG90\\nG28 X\\nM975 S1 ; turn on\\nG1 X60 F12000\\nG1 Y245\\nG1 Y265 F3000\\nM620 M\\nM620 S[initial_extruder]A   ; switch material if AMS exist\\n    M109 S[nozzle_temperature_initial_layer]\\n    G1 X120 F12000\\n\\n    G1 X20 Y50 F12000\\n    G1 Y-3\\n    T[initial_extruder]\\n    G1 X54 F12000\\n    G1 Y265\\n    M400\\nM621 S[initial_extruder]A\\nM620.1 E F{flush_volumetric_speeds[initial_no_support_extruder]/2.4053*60} T{flush_temperatures[initial_no_support_extruder]}\\n\\n\\nM412 S1 ; ===turn on filament runout detection===\\n\\nM109 S250 ;set nozzle to common flush temp\\nM106 P1 S0\\nG92 E0\\nG1 E50 F200\\nM400\\nM104 S[nozzle_temperature_initial_layer]\\nG92 E0\\nG1 E50 F200\\nM400\\nM106 P1 S255\\nG92 E0\\nG1 E5 F300\\nM109 S{nozzle_temperature_initial_layer[initial_extruder]-20} ; drop nozzle temp, make filament shink a bit\\nG92 E0\\nG1 E-0.5 F300\\n\\nG1 X70 F9000\\nG1 X76 F15000\\nG1 X65 F15000\\nG1 X76 F15000\\nG1 X65 F15000; shake to put down garbage\\nG1 X80 F6000\\nG1 X95 F15000\\nG1 X80 F15000\\nG1 X165 F15000; wipe and shake\\nM400\\nM106 P1 S0\\n;===== prepare print temperature and material end =====\\n\\n\\n;===== wipe nozzle ===============================\\nM1002 gcode_claim_action : 14\\nM975 S1\\nM106 S255\\nG1 X65 Y230 F18000\\nG1 Y264 F6000\\nM109 S{nozzle_temperature_initial_layer[initial_extruder]-20}\\nG1 X100 F18000 ; first wipe mouth\\n\\nG0 X135 Y253 F20000  ; move to exposed steel surface edge\\nG28 Z P0 T300; home z with low precision,permit 300deg temperature\\nG29.2 S0 ; turn off ABL\\nG0 Z5 F20000\\n\\nG1 X60 Y265\\nG92 E0\\nG1 E-0.5 F300 ; retrack more\\nG1 X100 F5000; second wipe mouth\\nG1 X70 F15000\\nG1 X100 F5000\\nG1 X70 F15000\\nG1 X100 F5000\\nG1 X70 F15000\\nG1 X100 F5000\\nG1 X70 F15000\\nG1 X90 F5000\\nG0 X128 Y261 Z-1.5 F20000  ; move to exposed steel surface and stop the nozzle\\nM104 S140 ; set temp down to heatbed acceptable\\nM106 S255 ; turn on fan (G28 has turn off fan)\\n\\nM221 S; push soft endstop status\\nM221 Z0 ;turn off Z axis endstop\\nG0 Z0.5 F20000\\nG0 X125 Y259.5 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y262.5\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y260.0\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y262.0\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y260.5\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y261.5\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y261.0\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 X128\\nG2 I0.5 J0 F300\\nG2 I0.5 J0 F300\\nG2 I0.5 J0 F300\\nG2 I0.5 J0 F300\\n\\nM109 S140 ; wait nozzle temp down to heatbed acceptable\\nG2 I0.5 J0 F3000\\nG2 I0.5 J0 F3000\\nG2 I0.5 J0 F3000\\nG2 I0.5 J0 F3000\\n\\nM221 R; pop softend status\\nG1 Z10 F1200\\nM400\\nG1 Z10\\nG1 F30000\\nG1 X230 Y15\\nG29.2 S1 ; turn on ABL\\n;G28 ; home again after hard wipe mouth\\nM106 S0 ; turn off fan , too noisy\\n;===== wipe nozzle end ================================\\n\\n\\n;===== bed leveling ==================================\\nM1002 judge_flag g29_before_print_flag\\nM622 J1\\n\\n    M1002 gcode_claim_action : 1\\n    G29 A X{first_layer_print_min[0]} Y{first_layer_print_min[1]} I{first_layer_print_size[0]} J{first_layer_print_size[1]}\\n    M400\\n    M500 ; save cali data\\n\\nM623\\n;===== bed leveling end ================================\\n\\n;===== home after wipe mouth============================\\nM1002 judge_flag g29_before_print_flag\\nM622 J0\\n\\n    M1002 gcode_claim_action : 13\\n    G28\\n\\nM623\\n;===== home after wipe mouth end =======================\\n\\nM975 S1 ; turn on vibration supression\\n\\n\\n;=============turn on fans to prevent PLA jamming=================\\n{if filament_type[initial_extruder]==\\\"PLA\\\"}\\n    {if (bed_temperature[initial_extruder] >45)||(bed_temperature_initial_layer[initial_extruder] >45)}\\n    M106 P3 S180\\n    {endif};Prevent PLA from jamming\\n{endif}\\nM106 P2 S100 ; turn on big fan ,to cool down toolhead\\n\\n\\nM104 S{nozzle_temperature_initial_layer[initial_extruder]} ; set extrude temp earlier, to reduce wait time\\n\\n;===== mech mode fast check============================\\nG1 X128 Y128 Z10 F20000\\nM400 P200\\nM970.3 Q1 A7 B30 C80  H15 K0\\nM974 Q1 S2 P0\\n\\nG1 X128 Y128 Z10 F20000\\nM400 P200\\nM970.3 Q0 A7 B30 C90 Q0 H15 K0\\nM974 Q0 S2 P0\\n\\nM975 S1\\nG1 F30000\\nG1 X230 Y15\\nG28 X ; re-home XY\\n;===== fmech mode fast check============================\\n\\n\\n;===== nozzle load line ===============================\\nM975 S1\\nG90\\nM83\\nT1000\\nG1 X18.0 Y1.0 Z0.8 F18000;Move to start position\\nM109 S{nozzle_temperature_initial_layer[initial_extruder]}\\nG1 Z0.2\\nG0 E2 F300\\nG0 X240 E15 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}\\nG0 Y11 E0.700 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}\\nG0 X239.5\\nG0 E0.2\\nG0 Y1.5 E0.700\\nG0 X18 E15 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}\\nM400\\n\\n;===== for Textured PEI Plate , lower the nozzle as the nozzle was touching topmost of the texture when homing ==\\n;curr_bed_type={curr_bed_type}\\n{if curr_bed_type==\\\"Textured PEI Plate\\\"}\\nG29.1 Z{-0.04} ; for Textured PEI Plate\\n{endif}\\n;========turn off light and wait extrude temperature =============\\nM1002 gcode_claim_action : 0\\nM106 S0 ; turn off fan\\nM106 P2 S0 ; turn off big fan\\nM106 P3 S0 ; turn off chamber fan\\n\\nM975 S1 ; turn on mech mode supression\\n\",\r\n  \"machine_end_gcode\": \";===== date: 20230428 =====================\\nM400 ; wait for buffer to clear\\nG92 E0 ; zero the extruder\\nG1 E-0.8 F1800 ; retract\\nG1 Z{max_layer_z + 0.5} F900 ; lower z a little\\nG1 X65 Y245 F12000 ; move to safe pos \\nG1 Y265 F3000\\n\\nG1 X65 Y245 F12000\\nG1 Y265 F3000\\nM140 S0 ; turn off bed\\nM106 S0 ; turn off fan\\nM106 P2 S0 ; turn off remote part cooling fan\\nM106 P3 S0 ; turn off chamber cooling fan\\n\\nG1 X100 F12000 ; wipe\\n; pull back filament to AMS\\nM620 S255\\nG1 X20 Y50 F12000\\nG1 Y-3\\nT255\\nG1 X65 F12000\\nG1 Y265\\nG1 X100 F12000 ; wipe\\nM621 S255\\nM104 S0 ; turn off hotend\\n\\nM622.1 S1 ; for prev firware, default turned on\\nM1002 judge_flag timelapse_record_flag\\nM622 J1\\n    M400 ; wait all motion done\\n    M991 S0 P-1 ;end smooth timelapse at safe pos\\n    M400 S3 ;wait for last picture to be taken\\nM623; end of \\\"timelapse_record_flag\\\"\\n\\nM400 ; wait all motion done\\nM17 S\\nM17 Z0.4 ; lower z motor current to reduce impact if there is something in the bottom\\n{if (max_layer_z + 100.0) < 250}\\n    G1 Z{max_layer_z + 100.0} F600\\n    G1 Z{max_layer_z +98.0}\\n{else}\\n    G1 Z250 F600\\n    G1 Z248\\n{endif}\\nM400 P100\\nM17 R ; restore z current\\n\\nM220 S100  ; Reset feedrate magnitude\\nM201.2 K1.0 ; Reset acc magnitude\\nM73.2   R1.0 ;Reset left time magnitude\\nM1002 set_gcode_claim_speed_level : 0\\n\\nM17 X0.8 Y0.8 Z0.5 ; lower motor current to 45% power\\n\",\r\n  \"time_lapse_gcode\": \";========Date 20250206========\\n; SKIPPABLE_START\\n; SKIPTYPE: timelapse\\nM622.1 S1 ; for prev firmware, default turned on\\nM1002 judge_flag timelapse_record_flag\\nM622 J1\\n{if timelapse_type == 0} ; timelapse without wipe tower\\nM971 S11 C10 O0\\nM1004 S5 P1  ; external shutter\\n{elsif timelapse_type == 1} ; timelapse with wipe tower\\nG92 E0\\nG1 X65 Y245 F20000 ; move to safe pos\\nG17\\nG2 Z{layer_z} I0.86 J0.86 P1 F20000\\nG1 Y265 F3000\\nM400\\nM1004 S5 P1  ; external shutter\\nM400 P300\\nM971 S11 C11 O0\\nG92 E0\\nG1 X100 F5000\\nG1 Y255 F20000\\n{endif}\\nM623\\n; SKIPPABLE_END\",\r\n  \"wrapping_detection_gcode\": \"\",\r\n  \"change_filament_gcode\": \";=P1S 20251031=\\nM620 S[next_extruder]A\\nM204 S9000\\nG1 Z{max_layer_z + 3.0} F1200\\n\\nG1 X70 F21000\\nG1 Y245\\nG1 Y265 F3000\\nM400\\nM106 P1 S0\\nM106 P2 S0\\n{if old_filament_temp > 142 && next_extruder < 255}\\nM104 S[old_filament_temp]\\n{endif}\\n{if long_retractions_when_cut[previous_extruder]}\\nM620.11 S1 I[previous_extruder] E-{retraction_distances_when_cut[previous_extruder]} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\n{else}\\nM620.11 S0\\n{endif}\\nM400\\nG1 X90 F3000\\nG1 Y255 F4000\\nG1 X100 F5000\\nG1 X120 F15000\\nG1 X20 Y50 F21000\\nG1 Y-3\\n{if toolchange_count == 2}\\n; get travel path for change filament\\nM620.1 X[travel_point_1_x] Y[travel_point_1_y] F21000 P0\\nM620.1 X[travel_point_2_x] Y[travel_point_2_y] F21000 P1\\nM620.1 X[travel_point_3_x] Y[travel_point_3_y] F21000 P2\\n{endif}\\nM620.1 E F{flush_volumetric_speeds[previous_extruder]/2.4053*60} T{flush_temperatures[previous_extruder]}\\nT[next_extruder]\\nM620.1 E F{flush_volumetric_speeds[next_extruder]/2.4053*60} T{flush_temperatures[next_extruder]}\\n\\n{if next_extruder < 255}\\n{if long_retractions_when_cut[previous_extruder]}\\nM620.11 S1 I[previous_extruder] E{retraction_distances_when_cut[previous_extruder]} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\nM628 S1\\nG92 E0\\nG1 E{retraction_distances_when_cut[previous_extruder]} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\nM400\\nM629 S1\\n{else}\\nM620.11 S0\\n{endif}\\nG92 E0\\n{if flush_length_1 > 1}\\nM83\\n; FLUSH_START\\n; always use highest temperature to flush\\nM400\\n{if filament_type[next_extruder] == \\\"PETG\\\"}\\nM109 S260\\n{elsif filament_type[next_extruder] == \\\"PVA\\\"}\\nM109 S210\\n{else}\\nM109 S{flush_temperatures[next_extruder]}\\n{endif}\\n{if flush_length_1 > 23.7}\\nG1 E23.7 F{flush_volumetric_speeds[previous_extruder]/2.4053*60} ; do not need pulsatile flushing for start part\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\n{else}\\nG1 E{flush_length_1} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\n{endif}\\n; FLUSH_END\\nG1 E-[old_retract_length_toolchange] F1800\\nG1 E[old_retract_length_toolchange] F300\\n{endif}\\n\\n{if flush_length_2 > 1}\\n\\nG91\\nG1 X3 F12000; move aside to extrude\\nG90\\nM83\\n\\n; FLUSH_START\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\n; FLUSH_END\\nG1 E-[new_retract_length_toolchange] F1800\\nG1 E[new_retract_length_toolchange] F300\\n{endif}\\n\\n{if flush_length_3 > 1}\\n\\nG91\\nG1 X3 F12000; move aside to extrude\\nG90\\nM83\\n\\n; FLUSH_START\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\n; FLUSH_END\\nG1 E-[new_retract_length_toolchange] F1800\\nG1 E[new_retract_length_toolchange] F300\\n{endif}\\n\\n{if flush_length_4 > 1}\\n\\nG91\\nG1 X3 F12000; move aside to extrude\\nG90\\nM83\\n\\n; FLUSH_START\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\n; FLUSH_END\\n{endif}\\n; FLUSH_START\\nM400\\nM109 S[new_filament_temp]\\nG1 E2 F{flush_volumetric_speeds[next_extruder]/2.4053*60} ;Compensate for filament spillage during waiting temperature\\n; FLUSH_END\\nM400\\nG92 E0\\nG1 E-[new_retract_length_toolchange] F1800\\nM106 P1 S255\\nM400 S3\\n\\nG1 X70 F5000\\nG1 X90 F3000\\nG1 Y255 F4000\\nG1 X105 F5000\\nG1 Y265 F5000\\nG1 X70 F10000\\nG1 X100 F5000\\nG1 X70 F10000\\nG1 X100 F5000\\n\\nG1 X70 F10000\\nG1 X80 F15000\\nG1 X60\\nG1 X80\\nG1 X60\\nG1 X80 ; shake to put down garbage\\nG1 X100 F5000\\nG1 X165 F15000; wipe and shake\\nG1 Y256 ; move Y to aside, prevent collision\\nM400\\nG1 Z{max_layer_z + 3.0} F3000\\n{if layer_z <= (initial_layer_print_height + 0.001)}\\nM204 S[initial_layer_acceleration]\\n{else}\\nM204 S[default_acceleration]\\n{endif}\\n{else}\\nG1 X[x_after_toolchange] Y[y_after_toolchange] Z[z_after_toolchange] F12000\\n{endif}\\nM621 S[next_extruder]A\\n\",\r\n  \"bed_exclude_area\": [\r\n    \"0x0\",\r\n    \"18x0\",\r\n    \"18x28\",\r\n    \"0x28\"\r\n  ],\r\n  \"default_nozzle_volume_type\": [\r\n    \"Standard\"\r\n  ],\r\n  \"extruder_clearance_radius\": \"57\",\r\n  \"extruder_printable_area\": [],\r\n  \"extruder_printable_height\": [],\r\n  \"extruder_type\": [\r\n    \"Direct Drive\"\r\n  ],\r\n  \"extruder_variant_list\": [\r\n    \"Direct Drive Standard,Direct Drive High Flow\"\r\n  ],\r\n  \"head_wrap_detect_zone\": [],\r\n  \"machine_max_acceleration_travel\": [\r\n    \"9000\",\r\n    \"9000\",\r\n    \"9000\",\r\n    \"9000\"\r\n  ],\r\n  \"nozzle_type\": [\r\n    \"stainless_steel\",\r\n    \"stainless_steel\"\r\n  ],\r\n  \"nozzle_volume\": [\r\n    \"107\",\r\n    \"107\"\r\n  ],\r\n  \"physical_extruder_map\": [\r\n    \"0\"\r\n  ],\r\n  \"printable_area\": [\r\n    \"0x0\",\r\n    \"256x0\",\r\n    \"256x256\",\r\n    \"0x256\"\r\n  ],\r\n  \"printer_extruder_id\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"printer_extruder_variant\": [\r\n    \"Direct Drive Standard\",\r\n    \"Direct Drive High Flow\"\r\n  ],\r\n  \"retract_lift_above\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"retract_lift_below\": [\r\n    \"249\",\r\n    \"249\"\r\n  ],\r\n  \"wipe_distance\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"z_hop_types\": [\r\n    \"Auto Lift\",\r\n    \"Auto Lift\"\r\n  ],\r\n  \"layer_change_gcode\": \"; layer num/total_layer_count: {layer_num+1}/[total_layer_count]\\n; update layer progress\\nM73 L{layer_num+1}\\nM991 S0 P{layer_num} ;notify layer change\",\r\n  \"machine_pause_gcode\": \"M400 U1\",\r\n  \"setting_id\": \"GM014\",\r\n  \"printer_model\": \"Bambu Lab P1S\",\r\n  \"farthest_point_timelapse\": \"1\"\r\n}\r\n"
+          }
+        },
+        "input_machine_profile_json_retained_handoff_002.input_machine_profile_json_retained_handoff_002_out": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/machine-profile.json",
+            "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+            "size_bytes": 20560,
+            "text": "{\r\n  \"type\": \"machine\",\r\n  \"name\": \"Bambu Lab P1S 0.4 nozzle\",\r\n  \"from\": \"system\",\r\n  \"instantiation\": \"true\",\r\n  \"nozzle_diameter\": [\r\n    \"0.4\"\r\n  ],\r\n  \"printer_variant\": \"0.4\",\r\n  \"auxiliary_fan\": \"1\",\r\n  \"best_object_pos\": \"0.5x0.5\",\r\n  \"default_filament_profile\": [\r\n    \"Bambu PETG HF @BBL P1S 0.4 nozzle\"\r\n  ],\r\n  \"default_print_profile\": \"0.20mm Standard @BBL X1C\",\r\n  \"deretraction_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"extruder_clearance_height_to_lid\": \"90\",\r\n  \"extruder_clearance_height_to_rod\": \"34\",\r\n  \"extruder_clearance_max_radius\": \"68\",\r\n  \"extruder_clearance_dist_to_rod\": \"33\",\r\n  \"extruder_colour\": [\r\n    \"#018001\"\r\n  ],\r\n  \"enable_long_retraction_when_cut\": \"2\",\r\n  \"enable_pre_heating\": \"0\",\r\n  \"extruder_height_gap\": \"0\",\r\n  \"extruder_offset\": [\r\n    \"0x2\"\r\n  ],\r\n  \"fan_direction\": \"left\",\r\n  \"gcode_flavor\": \"marlin\",\r\n  \"grab_length\": [\r\n    \"0\"\r\n  ],\r\n  \"group_algo_with_time\": \"0\",\r\n  \"extruder_max_nozzle_count\": [\r\n    \"1\"\r\n  ],\r\n  \"hotend_cooling_rate\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"hotend_heating_rate\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"long_retractions_when_cut\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"machine_load_filament_time\": \"29\",\r\n  \"machine_max_acceleration_e\": [\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\"\r\n  ],\r\n  \"machine_max_acceleration_extruding\": [\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\"\r\n  ],\r\n  \"machine_max_acceleration_retracting\": [\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\",\r\n    \"5000\"\r\n  ],\r\n  \"machine_max_acceleration_x\": [\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\"\r\n  ],\r\n  \"machine_max_acceleration_y\": [\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\",\r\n    \"20000\"\r\n  ],\r\n  \"machine_max_acceleration_z\": [\r\n    \"500\",\r\n    \"500\",\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"machine_max_force_Y\": \"0\",\r\n  \"machine_bed_mass_Y\": \"0\",\r\n  \"machine_max_printed_mass\": \"0\",\r\n  \"machine_max_jerk_e\": [\r\n    \"2.5\",\r\n    \"2.5\",\r\n    \"2.5\",\r\n    \"2.5\"\r\n  ],\r\n  \"machine_max_jerk_x\": [\r\n    \"9\",\r\n    \"9\",\r\n    \"9\",\r\n    \"9\"\r\n  ],\r\n  \"machine_max_jerk_y\": [\r\n    \"9\",\r\n    \"9\",\r\n    \"9\",\r\n    \"9\"\r\n  ],\r\n  \"machine_max_jerk_z\": [\r\n    \"3\",\r\n    \"3\",\r\n    \"3\",\r\n    \"3\"\r\n  ],\r\n  \"machine_max_speed_e\": [\r\n    \"30\",\r\n    \"30\",\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"machine_max_speed_x\": [\r\n    \"500\",\r\n    \"500\",\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"machine_max_speed_y\": [\r\n    \"500\",\r\n    \"500\",\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"machine_max_speed_z\": [\r\n    \"20\",\r\n    \"20\",\r\n    \"20\",\r\n    \"20\"\r\n  ],\r\n  \"machine_min_extruding_rate\": [\r\n    \"0\"\r\n  ],\r\n  \"machine_min_travel_rate\": [\r\n    \"0\"\r\n  ],\r\n  \"machine_prepare_compensation_time\": \"260\",\r\n  \"machine_switch_extruder_time\": \"0\",\r\n  \"machine_unload_filament_time\": \"28\",\r\n  \"machine_hotend_change_time\": \"0\",\r\n  \"master_extruder_id\": \"1\",\r\n  \"max_layer_height\": [\r\n    \"0.28\"\r\n  ],\r\n  \"min_layer_height\": [\r\n    \"0.08\"\r\n  ],\r\n  \"nozzle_height\": \"4.2\",\r\n  \"nozzle_flush_dataset\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"print_in_clockwise\": \"0\",\r\n  \"printable_height\": \"250\",\r\n  \"printer_settings_id\": \"\",\r\n  \"printer_structure\": \"corexy\",\r\n  \"printer_technology\": \"FFF\",\r\n  \"retract_before_wipe\": [\r\n    \"0%\",\r\n    \"0%\"\r\n  ],\r\n  \"retract_length_toolchange\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"retract_restart_extra\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"retract_restart_extra_toolchange\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"retract_when_changing_layer\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"retraction_distances_when_cut\": [\r\n    \"18\",\r\n    \"18\"\r\n  ],\r\n  \"retraction_length\": [\r\n    \"0.8\",\r\n    \"0.8\"\r\n  ],\r\n  \"retraction_minimum_travel\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"retraction_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"scan_first_layer\": \"0\",\r\n  \"silent_mode\": \"0\",\r\n  \"single_extruder_multi_material\": \"1\",\r\n  \"support_air_filtration\": \"0\",\r\n  \"support_cooling_filter\": \"0\",\r\n  \"support_fast_purge_mode\": \"0\",\r\n  \"cooling_filter_enabled\": \"0\",\r\n  \"support_chamber_temp_control\": \"0\",\r\n  \"support_object_skip_flush\": \"0\",\r\n  \"wipe\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"wrapping_exclude_area\": [],\r\n  \"z_hop\": [\r\n    \"0.4\",\r\n    \"0.4\"\r\n  ],\r\n  \"upward_compatible_machine\": [\r\n    \"Bambu Lab P1P 0.4 nozzle\",\r\n    \"Bambu Lab X1 0.4 nozzle\",\r\n    \"Bambu Lab X1 Carbon 0.4 nozzle\",\r\n    \"Bambu Lab X1E 0.4 nozzle\",\r\n    \"Bambu Lab A1 0.4 nozzle\",\r\n    \"Bambu Lab H2D 0.4 nozzle\",\r\n    \"Bambu Lab H2D Pro 0.4 nozzle\",\r\n    \"Bambu Lab H2S 0.4 nozzle\",\r\n    \"Bambu Lab P2S 0.4 nozzle\",\r\n    \"Bambu Lab H2C 0.4 nozzle\",\r\n    \"Bambu Lab X2D 0.4 nozzle\",\r\n    \"Bambu Lab A2L 0.4 nozzle\"\r\n  ],\r\n  \"machine_start_gcode\": \";===== machine: P1S-0.4 ========================\\n;===== date: 20251031 =====================\\n;===== turn on the HB fan & MC board fan =================\\nM104 S75 ;set extruder temp to turn on the HB fan and prevent filament oozing from nozzle\\nM710 A1 S255 ;turn on MC fan by default(P1S)\\n;===== reset machine status =================\\nM290 X40 Y40 Z2.6666666\\nG91\\nM17 Z0.4 ; lower the z-motor current\\nG380 S2 Z30 F300 ; G380 is same as G38; lower the hotbed , to prevent the nozzle is below the hotbed\\nG380 S2 Z-25 F300 ;\\nG1 Z5 F300;\\nG90\\nM17 X1.2 Y1.2 Z0.75 ; reset motor current to default\\nM960 S5 P1 ; turn on logo lamp\\nG90\\nM220 S100 ;Reset Feedrate\\nM221 S100 ;Reset Flowrate\\nM73.2   R1.0 ;Reset left time magnitude\\nM1002 set_gcode_claim_speed_level : 5\\nM221 X0 Y0 Z0 ; turn off soft endstop to prevent protential logic problem\\nG29.1 Z{+0.0} ; clear z-trim value first\\nM204 S10000 ; init ACC set to 10m/s^2\\n\\n;===== heatbed preheat ====================\\nM1002 gcode_claim_action:54\\nM140 S[bed_temperature_initial_layer_single] ;set bed temp\\nM190 S[bed_temperature_initial_layer_single] ;wait for bed temp\\n\\n\\n\\n;=============turn on fans to prevent PLA jamming=================\\n{if filament_type[initial_extruder]==\\\"PLA\\\"}\\n    {if (bed_temperature[initial_extruder] >45)||(bed_temperature_initial_layer[initial_extruder] >45)}\\n    M106 P3 S180\\n    {endif};Prevent PLA from jamming\\n{endif}\\nM106 P2 S100 ; turn on big fan ,to cool down toolhead\\n\\n;===== prepare print temperature and material ==========\\nM104 S[nozzle_temperature_initial_layer] ;set extruder temp\\nG91\\nG0 Z10 F1200\\nG90\\nG28 X\\nM975 S1 ; turn on\\nG1 X60 F12000\\nG1 Y245\\nG1 Y265 F3000\\nM620 M\\nM620 S[initial_extruder]A   ; switch material if AMS exist\\n    M109 S[nozzle_temperature_initial_layer]\\n    G1 X120 F12000\\n\\n    G1 X20 Y50 F12000\\n    G1 Y-3\\n    T[initial_extruder]\\n    G1 X54 F12000\\n    G1 Y265\\n    M400\\nM621 S[initial_extruder]A\\nM620.1 E F{flush_volumetric_speeds[initial_no_support_extruder]/2.4053*60} T{flush_temperatures[initial_no_support_extruder]}\\n\\n\\nM412 S1 ; ===turn on filament runout detection===\\n\\nM109 S250 ;set nozzle to common flush temp\\nM106 P1 S0\\nG92 E0\\nG1 E50 F200\\nM400\\nM104 S[nozzle_temperature_initial_layer]\\nG92 E0\\nG1 E50 F200\\nM400\\nM106 P1 S255\\nG92 E0\\nG1 E5 F300\\nM109 S{nozzle_temperature_initial_layer[initial_extruder]-20} ; drop nozzle temp, make filament shink a bit\\nG92 E0\\nG1 E-0.5 F300\\n\\nG1 X70 F9000\\nG1 X76 F15000\\nG1 X65 F15000\\nG1 X76 F15000\\nG1 X65 F15000; shake to put down garbage\\nG1 X80 F6000\\nG1 X95 F15000\\nG1 X80 F15000\\nG1 X165 F15000; wipe and shake\\nM400\\nM106 P1 S0\\n;===== prepare print temperature and material end =====\\n\\n\\n;===== wipe nozzle ===============================\\nM1002 gcode_claim_action : 14\\nM975 S1\\nM106 S255\\nG1 X65 Y230 F18000\\nG1 Y264 F6000\\nM109 S{nozzle_temperature_initial_layer[initial_extruder]-20}\\nG1 X100 F18000 ; first wipe mouth\\n\\nG0 X135 Y253 F20000  ; move to exposed steel surface edge\\nG28 Z P0 T300; home z with low precision,permit 300deg temperature\\nG29.2 S0 ; turn off ABL\\nG0 Z5 F20000\\n\\nG1 X60 Y265\\nG92 E0\\nG1 E-0.5 F300 ; retrack more\\nG1 X100 F5000; second wipe mouth\\nG1 X70 F15000\\nG1 X100 F5000\\nG1 X70 F15000\\nG1 X100 F5000\\nG1 X70 F15000\\nG1 X100 F5000\\nG1 X70 F15000\\nG1 X90 F5000\\nG0 X128 Y261 Z-1.5 F20000  ; move to exposed steel surface and stop the nozzle\\nM104 S140 ; set temp down to heatbed acceptable\\nM106 S255 ; turn on fan (G28 has turn off fan)\\n\\nM221 S; push soft endstop status\\nM221 Z0 ;turn off Z axis endstop\\nG0 Z0.5 F20000\\nG0 X125 Y259.5 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y262.5\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y260.0\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y262.0\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y260.5\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y261.5\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 Z0.5 F20000\\nG0 X125 Y261.0\\nG0 Z-1.01\\nG0 X131 F211\\nG0 X124\\nG0 X128\\nG2 I0.5 J0 F300\\nG2 I0.5 J0 F300\\nG2 I0.5 J0 F300\\nG2 I0.5 J0 F300\\n\\nM109 S140 ; wait nozzle temp down to heatbed acceptable\\nG2 I0.5 J0 F3000\\nG2 I0.5 J0 F3000\\nG2 I0.5 J0 F3000\\nG2 I0.5 J0 F3000\\n\\nM221 R; pop softend status\\nG1 Z10 F1200\\nM400\\nG1 Z10\\nG1 F30000\\nG1 X230 Y15\\nG29.2 S1 ; turn on ABL\\n;G28 ; home again after hard wipe mouth\\nM106 S0 ; turn off fan , too noisy\\n;===== wipe nozzle end ================================\\n\\n\\n;===== bed leveling ==================================\\nM1002 judge_flag g29_before_print_flag\\nM622 J1\\n\\n    M1002 gcode_claim_action : 1\\n    G29 A X{first_layer_print_min[0]} Y{first_layer_print_min[1]} I{first_layer_print_size[0]} J{first_layer_print_size[1]}\\n    M400\\n    M500 ; save cali data\\n\\nM623\\n;===== bed leveling end ================================\\n\\n;===== home after wipe mouth============================\\nM1002 judge_flag g29_before_print_flag\\nM622 J0\\n\\n    M1002 gcode_claim_action : 13\\n    G28\\n\\nM623\\n;===== home after wipe mouth end =======================\\n\\nM975 S1 ; turn on vibration supression\\n\\n\\n;=============turn on fans to prevent PLA jamming=================\\n{if filament_type[initial_extruder]==\\\"PLA\\\"}\\n    {if (bed_temperature[initial_extruder] >45)||(bed_temperature_initial_layer[initial_extruder] >45)}\\n    M106 P3 S180\\n    {endif};Prevent PLA from jamming\\n{endif}\\nM106 P2 S100 ; turn on big fan ,to cool down toolhead\\n\\n\\nM104 S{nozzle_temperature_initial_layer[initial_extruder]} ; set extrude temp earlier, to reduce wait time\\n\\n;===== mech mode fast check============================\\nG1 X128 Y128 Z10 F20000\\nM400 P200\\nM970.3 Q1 A7 B30 C80  H15 K0\\nM974 Q1 S2 P0\\n\\nG1 X128 Y128 Z10 F20000\\nM400 P200\\nM970.3 Q0 A7 B30 C90 Q0 H15 K0\\nM974 Q0 S2 P0\\n\\nM975 S1\\nG1 F30000\\nG1 X230 Y15\\nG28 X ; re-home XY\\n;===== fmech mode fast check============================\\n\\n\\n;===== nozzle load line ===============================\\nM975 S1\\nG90\\nM83\\nT1000\\nG1 X18.0 Y1.0 Z0.8 F18000;Move to start position\\nM109 S{nozzle_temperature_initial_layer[initial_extruder]}\\nG1 Z0.2\\nG0 E2 F300\\nG0 X240 E15 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}\\nG0 Y11 E0.700 F{outer_wall_volumetric_speed/(0.3*0.5)/ 4 * 60}\\nG0 X239.5\\nG0 E0.2\\nG0 Y1.5 E0.700\\nG0 X18 E15 F{outer_wall_volumetric_speed/(0.3*0.5)     * 60}\\nM400\\n\\n;===== for Textured PEI Plate , lower the nozzle as the nozzle was touching topmost of the texture when homing ==\\n;curr_bed_type={curr_bed_type}\\n{if curr_bed_type==\\\"Textured PEI Plate\\\"}\\nG29.1 Z{-0.04} ; for Textured PEI Plate\\n{endif}\\n;========turn off light and wait extrude temperature =============\\nM1002 gcode_claim_action : 0\\nM106 S0 ; turn off fan\\nM106 P2 S0 ; turn off big fan\\nM106 P3 S0 ; turn off chamber fan\\n\\nM975 S1 ; turn on mech mode supression\\n\",\r\n  \"machine_end_gcode\": \";===== date: 20230428 =====================\\nM400 ; wait for buffer to clear\\nG92 E0 ; zero the extruder\\nG1 E-0.8 F1800 ; retract\\nG1 Z{max_layer_z + 0.5} F900 ; lower z a little\\nG1 X65 Y245 F12000 ; move to safe pos \\nG1 Y265 F3000\\n\\nG1 X65 Y245 F12000\\nG1 Y265 F3000\\nM140 S0 ; turn off bed\\nM106 S0 ; turn off fan\\nM106 P2 S0 ; turn off remote part cooling fan\\nM106 P3 S0 ; turn off chamber cooling fan\\n\\nG1 X100 F12000 ; wipe\\n; pull back filament to AMS\\nM620 S255\\nG1 X20 Y50 F12000\\nG1 Y-3\\nT255\\nG1 X65 F12000\\nG1 Y265\\nG1 X100 F12000 ; wipe\\nM621 S255\\nM104 S0 ; turn off hotend\\n\\nM622.1 S1 ; for prev firware, default turned on\\nM1002 judge_flag timelapse_record_flag\\nM622 J1\\n    M400 ; wait all motion done\\n    M991 S0 P-1 ;end smooth timelapse at safe pos\\n    M400 S3 ;wait for last picture to be taken\\nM623; end of \\\"timelapse_record_flag\\\"\\n\\nM400 ; wait all motion done\\nM17 S\\nM17 Z0.4 ; lower z motor current to reduce impact if there is something in the bottom\\n{if (max_layer_z + 100.0) < 250}\\n    G1 Z{max_layer_z + 100.0} F600\\n    G1 Z{max_layer_z +98.0}\\n{else}\\n    G1 Z250 F600\\n    G1 Z248\\n{endif}\\nM400 P100\\nM17 R ; restore z current\\n\\nM220 S100  ; Reset feedrate magnitude\\nM201.2 K1.0 ; Reset acc magnitude\\nM73.2   R1.0 ;Reset left time magnitude\\nM1002 set_gcode_claim_speed_level : 0\\n\\nM17 X0.8 Y0.8 Z0.5 ; lower motor current to 45% power\\n\",\r\n  \"time_lapse_gcode\": \";========Date 20250206========\\n; SKIPPABLE_START\\n; SKIPTYPE: timelapse\\nM622.1 S1 ; for prev firmware, default turned on\\nM1002 judge_flag timelapse_record_flag\\nM622 J1\\n{if timelapse_type == 0} ; timelapse without wipe tower\\nM971 S11 C10 O0\\nM1004 S5 P1  ; external shutter\\n{elsif timelapse_type == 1} ; timelapse with wipe tower\\nG92 E0\\nG1 X65 Y245 F20000 ; move to safe pos\\nG17\\nG2 Z{layer_z} I0.86 J0.86 P1 F20000\\nG1 Y265 F3000\\nM400\\nM1004 S5 P1  ; external shutter\\nM400 P300\\nM971 S11 C11 O0\\nG92 E0\\nG1 X100 F5000\\nG1 Y255 F20000\\n{endif}\\nM623\\n; SKIPPABLE_END\",\r\n  \"wrapping_detection_gcode\": \"\",\r\n  \"change_filament_gcode\": \";=P1S 20251031=\\nM620 S[next_extruder]A\\nM204 S9000\\nG1 Z{max_layer_z + 3.0} F1200\\n\\nG1 X70 F21000\\nG1 Y245\\nG1 Y265 F3000\\nM400\\nM106 P1 S0\\nM106 P2 S0\\n{if old_filament_temp > 142 && next_extruder < 255}\\nM104 S[old_filament_temp]\\n{endif}\\n{if long_retractions_when_cut[previous_extruder]}\\nM620.11 S1 I[previous_extruder] E-{retraction_distances_when_cut[previous_extruder]} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\n{else}\\nM620.11 S0\\n{endif}\\nM400\\nG1 X90 F3000\\nG1 Y255 F4000\\nG1 X100 F5000\\nG1 X120 F15000\\nG1 X20 Y50 F21000\\nG1 Y-3\\n{if toolchange_count == 2}\\n; get travel path for change filament\\nM620.1 X[travel_point_1_x] Y[travel_point_1_y] F21000 P0\\nM620.1 X[travel_point_2_x] Y[travel_point_2_y] F21000 P1\\nM620.1 X[travel_point_3_x] Y[travel_point_3_y] F21000 P2\\n{endif}\\nM620.1 E F{flush_volumetric_speeds[previous_extruder]/2.4053*60} T{flush_temperatures[previous_extruder]}\\nT[next_extruder]\\nM620.1 E F{flush_volumetric_speeds[next_extruder]/2.4053*60} T{flush_temperatures[next_extruder]}\\n\\n{if next_extruder < 255}\\n{if long_retractions_when_cut[previous_extruder]}\\nM620.11 S1 I[previous_extruder] E{retraction_distances_when_cut[previous_extruder]} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\nM628 S1\\nG92 E0\\nG1 E{retraction_distances_when_cut[previous_extruder]} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\nM400\\nM629 S1\\n{else}\\nM620.11 S0\\n{endif}\\nG92 E0\\n{if flush_length_1 > 1}\\nM83\\n; FLUSH_START\\n; always use highest temperature to flush\\nM400\\n{if filament_type[next_extruder] == \\\"PETG\\\"}\\nM109 S260\\n{elsif filament_type[next_extruder] == \\\"PVA\\\"}\\nM109 S210\\n{else}\\nM109 S{flush_temperatures[next_extruder]}\\n{endif}\\n{if flush_length_1 > 23.7}\\nG1 E23.7 F{flush_volumetric_speeds[previous_extruder]/2.4053*60} ; do not need pulsatile flushing for start part\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{(flush_length_1 - 23.7) * 0.02} F50\\nG1 E{(flush_length_1 - 23.7) * 0.23} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\n{else}\\nG1 E{flush_length_1} F{flush_volumetric_speeds[previous_extruder]/2.4053*60}\\n{endif}\\n; FLUSH_END\\nG1 E-[old_retract_length_toolchange] F1800\\nG1 E[old_retract_length_toolchange] F300\\n{endif}\\n\\n{if flush_length_2 > 1}\\n\\nG91\\nG1 X3 F12000; move aside to extrude\\nG90\\nM83\\n\\n; FLUSH_START\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\nG1 E{flush_length_2 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_2 * 0.02} F50\\n; FLUSH_END\\nG1 E-[new_retract_length_toolchange] F1800\\nG1 E[new_retract_length_toolchange] F300\\n{endif}\\n\\n{if flush_length_3 > 1}\\n\\nG91\\nG1 X3 F12000; move aside to extrude\\nG90\\nM83\\n\\n; FLUSH_START\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\nG1 E{flush_length_3 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_3 * 0.02} F50\\n; FLUSH_END\\nG1 E-[new_retract_length_toolchange] F1800\\nG1 E[new_retract_length_toolchange] F300\\n{endif}\\n\\n{if flush_length_4 > 1}\\n\\nG91\\nG1 X3 F12000; move aside to extrude\\nG90\\nM83\\n\\n; FLUSH_START\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\nG1 E{flush_length_4 * 0.18} F{flush_volumetric_speeds[next_extruder]/2.4053*60}\\nG1 E{flush_length_4 * 0.02} F50\\n; FLUSH_END\\n{endif}\\n; FLUSH_START\\nM400\\nM109 S[new_filament_temp]\\nG1 E2 F{flush_volumetric_speeds[next_extruder]/2.4053*60} ;Compensate for filament spillage during waiting temperature\\n; FLUSH_END\\nM400\\nG92 E0\\nG1 E-[new_retract_length_toolchange] F1800\\nM106 P1 S255\\nM400 S3\\n\\nG1 X70 F5000\\nG1 X90 F3000\\nG1 Y255 F4000\\nG1 X105 F5000\\nG1 Y265 F5000\\nG1 X70 F10000\\nG1 X100 F5000\\nG1 X70 F10000\\nG1 X100 F5000\\n\\nG1 X70 F10000\\nG1 X80 F15000\\nG1 X60\\nG1 X80\\nG1 X60\\nG1 X80 ; shake to put down garbage\\nG1 X100 F5000\\nG1 X165 F15000; wipe and shake\\nG1 Y256 ; move Y to aside, prevent collision\\nM400\\nG1 Z{max_layer_z + 3.0} F3000\\n{if layer_z <= (initial_layer_print_height + 0.001)}\\nM204 S[initial_layer_acceleration]\\n{else}\\nM204 S[default_acceleration]\\n{endif}\\n{else}\\nG1 X[x_after_toolchange] Y[y_after_toolchange] Z[z_after_toolchange] F12000\\n{endif}\\nM621 S[next_extruder]A\\n\",\r\n  \"bed_exclude_area\": [\r\n    \"0x0\",\r\n    \"18x0\",\r\n    \"18x28\",\r\n    \"0x28\"\r\n  ],\r\n  \"default_nozzle_volume_type\": [\r\n    \"Standard\"\r\n  ],\r\n  \"extruder_clearance_radius\": \"57\",\r\n  \"extruder_printable_area\": [],\r\n  \"extruder_printable_height\": [],\r\n  \"extruder_type\": [\r\n    \"Direct Drive\"\r\n  ],\r\n  \"extruder_variant_list\": [\r\n    \"Direct Drive Standard,Direct Drive High Flow\"\r\n  ],\r\n  \"head_wrap_detect_zone\": [],\r\n  \"machine_max_acceleration_travel\": [\r\n    \"9000\",\r\n    \"9000\",\r\n    \"9000\",\r\n    \"9000\"\r\n  ],\r\n  \"nozzle_type\": [\r\n    \"stainless_steel\",\r\n    \"stainless_steel\"\r\n  ],\r\n  \"nozzle_volume\": [\r\n    \"107\",\r\n    \"107\"\r\n  ],\r\n  \"physical_extruder_map\": [\r\n    \"0\"\r\n  ],\r\n  \"printable_area\": [\r\n    \"0x0\",\r\n    \"256x0\",\r\n    \"256x256\",\r\n    \"0x256\"\r\n  ],\r\n  \"printer_extruder_id\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"printer_extruder_variant\": [\r\n    \"Direct Drive Standard\",\r\n    \"Direct Drive High Flow\"\r\n  ],\r\n  \"retract_lift_above\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"retract_lift_below\": [\r\n    \"249\",\r\n    \"249\"\r\n  ],\r\n  \"wipe_distance\": [\r\n    \"2\",\r\n    \"2\"\r\n  ],\r\n  \"z_hop_types\": [\r\n    \"Auto Lift\",\r\n    \"Auto Lift\"\r\n  ],\r\n  \"layer_change_gcode\": \"; layer num/total_layer_count: {layer_num+1}/[total_layer_count]\\n; update layer progress\\nM73 L{layer_num+1}\\nM991 S0 P{layer_num} ;notify layer change\",\r\n  \"machine_pause_gcode\": \"M400 U1\",\r\n  \"setting_id\": \"GM014\",\r\n  \"printer_model\": \"Bambu Lab P1S\",\r\n  \"farthest_point_timelapse\": \"1\"\r\n}\r\n"
+          }
+        },
+        "input_process_profile_json_retained_handoff_002": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/process-profile.json",
+            "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+            "size_bytes": 8180,
+            "text": "{\r\n  \"type\": \"process\",\r\n  \"name\": \"0.20mm Standard @BBL X1C\",\r\n  \"from\": \"system\",\r\n  \"instantiation\": \"true\",\r\n  \"adaptive_layer_height\": \"0\",\r\n  \"bottom_shell_layers\": \"3\",\r\n  \"bottom_color_penetration_layers\": \"3\",\r\n  \"bottom_shell_thickness\": \"0\",\r\n  \"bottom_surface_pattern\": \"monotonic\",\r\n  \"bottom_surface_density\": \"100\",\r\n  \"bridge_flow\": \"1\",\r\n  \"bridge_no_support\": \"0\",\r\n  \"bridge_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"brim_object_gap\": \"0.1\",\r\n  \"brim_width\": \"5\",\r\n  \"compatible_printers_condition\": \"\",\r\n  \"circle_compensation_manual_offset\": \"0\",\r\n  \"default_acceleration\": [\r\n    \"10000\",\r\n    \"10000\"\r\n  ],\r\n  \"detect_floating_vertical_shell\": \"1\",\r\n  \"detect_overhang_wall\": \"1\",\r\n  \"detect_thin_wall\": \"0\",\r\n  \"draft_shield\": \"disabled\",\r\n  \"elefant_foot_compensation\": \"0.15\",\r\n  \"enable_arc_fitting\": \"1\",\r\n  \"enable_prime_tower\": \"1\",\r\n  \"enable_support\": \"1\",\r\n  \"enable_circle_compensation\": \"0\",\r\n  \"enable_wrapping_detection\": \"0\",\r\n  \"filename_format\": \"{input_filename_base}_{filament_type[0]}_{print_time}.gcode\",\r\n  \"gap_infill_speed\": [\r\n    \"250\",\r\n    \"250\"\r\n  ],\r\n  \"infill_combination\": \"0\",\r\n  \"infill_direction\": \"45\",\r\n  \"infill_wall_overlap\": \"15%\",\r\n  \"monotonic_travel_into_wall\": \"0.0\",\r\n  \"initial_layer_line_width\": \"0.5\",\r\n  \"initial_layer_print_height\": \"0.2\",\r\n  \"initial_layer_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"inner_wall_line_width\": \"0.45\",\r\n  \"inner_wall_speed\": [\r\n    \"300\",\r\n    \"400\"\r\n  ],\r\n  \"interface_shells\": \"0\",\r\n  \"internal_bridge_support_thickness\": \"0.8\",\r\n  \"internal_solid_infill_line_width\": \"0.42\",\r\n  \"internal_solid_infill_speed\": [\r\n    \"250\",\r\n    \"350\"\r\n  ],\r\n  \"ironing_flow\": \"10%\",\r\n  \"ironing_inset\": \"0.21\",\r\n  \"ironing_spacing\": \"0.15\",\r\n  \"ironing_speed\": \"30\",\r\n  \"ironing_type\": \"no ironing\",\r\n  \"infill_lock_depth\": \"1.0\",\r\n  \"initial_layer_travel_acceleration\": [\r\n    \"6000\",\r\n    \"6000\"\r\n  ],\r\n  \"infill_shift_step\": \"0.4\",\r\n  \"infill_rotate_step\": \"0\",\r\n  \"layer_height\": \"0.20\",\r\n  \"layer_time_smoothing\": \"0\",\r\n  \"layer_time_smoothing_threshold\": \"30\",\r\n  \"line_width\": \"0.42\",\r\n  \"locked_skin_infill_pattern\": \"crosszag\",\r\n  \"locked_skeleton_infill_pattern\": \"zigzag\",\r\n  \"max_bridge_length\": \"0\",\r\n  \"max_travel_detour_distance\": \"0\",\r\n  \"avoid_crossing_wall_includes_support\": \"0\",\r\n  \"minimum_sparse_infill_area\": \"15\",\r\n  \"only_one_wall_top\": \"1\",\r\n  \"outer_wall_line_width\": \"0.42\",\r\n  \"outer_wall_speed\": [\r\n    \"200\",\r\n    \"350\"\r\n  ],\r\n  \"overhang_totally_speed\": [\r\n    \"10\",\r\n    \"30\"\r\n  ],\r\n  \"override_filament_scarf_seam_setting\": \"0\",\r\n  \"pre_start_fan_time\": [\r\n    \"0\"\r\n  ],\r\n  \"prime_tower_width\": \"35\",\r\n  \"print_sequence\": \"by layer\",\r\n  \"print_settings_id\": \"\",\r\n  \"prime_tower_brim_width\": \"3\",\r\n  \"prime_tower_enable_framework\": \"0\",\r\n  \"prime_tower_lift_speed\": \"90\",\r\n  \"prime_tower_lift_height\": \"-1\",\r\n  \"prime_tower_max_speed\": \"90\",\r\n  \"prime_tower_flat_ironing\": \"0\",\r\n  \"raft_layers\": \"0\",\r\n  \"reduce_crossing_wall\": \"0\",\r\n  \"reduce_infill_retraction_mode\": \"Auto\",\r\n  \"resolution\": \"0.012\",\r\n  \"scarf_angle_threshold\": \"155\",\r\n  \"seam_position\": \"aligned\",\r\n  \"seam_placement_away_from_overhangs\": \"0\",\r\n  \"skirt_distance\": \"2\",\r\n  \"skirt_per_object\": \"1\",\r\n  \"skirt_height\": \"1\",\r\n  \"skirt_loops\": \"0\",\r\n  \"smooth_coefficient\": \"150\",\r\n  \"sparse_infill_density\": \"35%\",\r\n  \"fill_multiline\": \"1\",\r\n  \"skeleton_infill_density\": \"15%\",\r\n  \"skin_infill_density\": \"15%\",\r\n  \"sparse_infill_line_width\": \"0.45\",\r\n  \"skin_infill_line_width\": \"0.45\",\r\n  \"skin_infill_depth\": \"2.0\",\r\n  \"skeleton_infill_line_width\": \"0.45\",\r\n  \"sparse_infill_pattern\": \"grid\",\r\n  \"sparse_infill_speed\": [\r\n    \"270\",\r\n    \"370\"\r\n  ],\r\n  \"spiral_mode\": \"0\",\r\n  \"standby_temperature_delta\": \"-5\",\r\n  \"support_base_pattern\": \"default\",\r\n  \"support_base_pattern_spacing\": \"2.5\",\r\n  \"support_bottom_z_distance\": \"0.2\",\r\n  \"support_expansion\": \"0\",\r\n  \"support_filament\": \"0\",\r\n  \"support_interface_bottom_layers\": \"2\",\r\n  \"support_interface_filament\": \"0\",\r\n  \"support_interface_loop_pattern\": \"0\",\r\n  \"support_interface_pattern\": \"auto\",\r\n  \"support_interface_spacing\": \"0.5\",\r\n  \"support_interface_speed\": [\r\n    \"80\",\r\n    \"80\"\r\n  ],\r\n  \"support_interface_top_layers\": \"2\",\r\n  \"support_line_width\": \"0.42\",\r\n  \"support_object_xy_distance\": \"0.35\",\r\n  \"support_on_build_plate_only\": \"0\",\r\n  \"support_speed\": [\r\n    \"150\",\r\n    \"150\"\r\n  ],\r\n  \"support_style\": \"default\",\r\n  \"support_threshold_angle\": \"30\",\r\n  \"support_top_z_distance\": \"0.2\",\r\n  \"support_type\": \"tree(auto)\",\r\n  \"enable_support_ironing\": \"0\",\r\n  \"support_ironing_pattern\": \"zig-zag\",\r\n  \"support_ironing_speed\": \"30\",\r\n  \"support_ironing_flow\": \"10%\",\r\n  \"support_ironing_spacing\": \"0.15\",\r\n  \"support_ironing_inset\": \"0.0\",\r\n  \"support_ironing_direction\": \"0\",\r\n  \"seam_slope_type\": \"none\",\r\n  \"seam_slope_start_height\": \"10%\",\r\n  \"seam_slope_gap\": \"0\",\r\n  \"seam_slope_min_length\": \"10\",\r\n  \"symmetric_infill_y_axis\": \"0\",\r\n  \"sparse_infill_lattice_angle_1\": \"-45\",\r\n  \"sparse_infill_lattice_angle_2\": \"45\",\r\n  \"top_shell_layers\": \"5\",\r\n  \"top_color_penetration_layers\": \"5\",\r\n  \"top_shell_thickness\": \"1.0\",\r\n  \"top_surface_line_width\": \"0.42\",\r\n  \"top_surface_pattern\": \"monotonicline\",\r\n  \"top_surface_density\": \"100\",\r\n  \"top_surface_speed\": [\r\n    \"200\",\r\n    \"300\"\r\n  ],\r\n  \"top_solid_infill_flow_ratio\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"travel_acceleration\": [\r\n    \"10000\",\r\n    \"10000\"\r\n  ],\r\n  \"travel_short_distance_acceleration\": [\r\n    \"250\",\r\n    \"250\"\r\n  ],\r\n  \"travel_speed\": [\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"tree_support_branch_angle\": \"45\",\r\n  \"tree_support_branch_diameter\": \"2\",\r\n  \"tree_support_wall_count\": \"-1\",\r\n  \"wall_generator\": \"classic\",\r\n  \"wall_infill_order\": \"inner wall/outer wall/infill\",\r\n  \"wall_loops\": \"4\",\r\n  \"wipe_tower_no_sparse_layers\": \"0\",\r\n  \"xy_contour_compensation\": \"0\",\r\n  \"xy_hole_compensation\": \"0\",\r\n  \"z_direction_outwall_speed_continuous\": \"0\",\r\n  \"enable_tower_interface_features\": \"0\",\r\n  \"sparse_infill_filament\": \"0\",\r\n  \"wall_filament\": \"0\",\r\n  \"solid_infill_filament\": \"0\",\r\n  \"infill_instead_top_bottom_surfaces\": \"0\",\r\n  \"fuzzy_skin\": \"none\",\r\n  \"fuzzy_skin_thickness\": \"0.3\",\r\n  \"fuzzy_skin_point_distance\": \"0.8\",\r\n  \"fuzzy_skin_first_layer\": \"0\",\r\n  \"fuzzy_skin_noise_type\": \"classic\",\r\n  \"fuzzy_skin_mode\": \"displacement\",\r\n  \"fuzzy_skin_scale\": \"1.0\",\r\n  \"fuzzy_skin_octaves\": \"4\",\r\n  \"fuzzy_skin_persistence\": \"0.5\",\r\n  \"enable_overhang_speed\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"enable_height_slowdown\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"initial_layer_acceleration\": [\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"initial_layer_infill_speed\": [\r\n    \"105\",\r\n    \"105\"\r\n  ],\r\n  \"inner_wall_acceleration\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"outer_wall_acceleration\": [\r\n    \"5000\",\r\n    \"5000\"\r\n  ],\r\n  \"overhang_1_4_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"overhang_2_4_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"overhang_3_4_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"overhang_4_4_speed\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"print_extruder_id\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"print_extruder_variant\": [\r\n    \"Direct Drive Standard\",\r\n    \"Direct Drive High Flow\"\r\n  ],\r\n  \"slowdown_start_height\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"slowdown_start_speed\": [\r\n    \"1000\",\r\n    \"1000\"\r\n  ],\r\n  \"slowdown_start_acc\": [\r\n    \"100000\",\r\n    \"100000\"\r\n  ],\r\n  \"slowdown_end_height\": [\r\n    \"400\",\r\n    \"400\"\r\n  ],\r\n  \"slowdown_end_speed\": [\r\n    \"1000\",\r\n    \"1000\"\r\n  ],\r\n  \"slowdown_end_acc\": [\r\n    \"100000\",\r\n    \"100000\"\r\n  ],\r\n  \"small_perimeter_speed\": [\r\n    \"50%\",\r\n    \"50%\"\r\n  ],\r\n  \"small_perimeter_threshold\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"sparse_infill_acceleration\": [\r\n    \"100%\",\r\n    \"100%\"\r\n  ],\r\n  \"top_surface_acceleration\": [\r\n    \"2000\",\r\n    \"2000\"\r\n  ],\r\n  \"travel_speed_z\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"vertical_shell_speed\": [\r\n    \"80%\",\r\n    \"80%\"\r\n  ],\r\n  \"setting_id\": \"GP004\",\r\n  \"description\": \"It has a general layer height, and results in general layer lines and printing quality. It is suitable for most general printing cases.\",\r\n  \"compatible_printers\": [\r\n    \"Bambu Lab X1 Carbon 0.4 nozzle\",\r\n    \"Bambu Lab X1 0.4 nozzle\",\r\n    \"Bambu Lab P1S 0.4 nozzle\",\r\n    \"Bambu Lab X1E 0.4 nozzle\"\r\n  ],\r\n  \"curr_bed_type\": \"Textured PEI Plate\"\r\n}\r\n"
+          }
+        },
+        "input_process_profile_json_retained_handoff_002.input_process_profile_json_retained_handoff_002_out": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/process-profile.json",
+            "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+            "size_bytes": 8180,
+            "text": "{\r\n  \"type\": \"process\",\r\n  \"name\": \"0.20mm Standard @BBL X1C\",\r\n  \"from\": \"system\",\r\n  \"instantiation\": \"true\",\r\n  \"adaptive_layer_height\": \"0\",\r\n  \"bottom_shell_layers\": \"3\",\r\n  \"bottom_color_penetration_layers\": \"3\",\r\n  \"bottom_shell_thickness\": \"0\",\r\n  \"bottom_surface_pattern\": \"monotonic\",\r\n  \"bottom_surface_density\": \"100\",\r\n  \"bridge_flow\": \"1\",\r\n  \"bridge_no_support\": \"0\",\r\n  \"bridge_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"brim_object_gap\": \"0.1\",\r\n  \"brim_width\": \"5\",\r\n  \"compatible_printers_condition\": \"\",\r\n  \"circle_compensation_manual_offset\": \"0\",\r\n  \"default_acceleration\": [\r\n    \"10000\",\r\n    \"10000\"\r\n  ],\r\n  \"detect_floating_vertical_shell\": \"1\",\r\n  \"detect_overhang_wall\": \"1\",\r\n  \"detect_thin_wall\": \"0\",\r\n  \"draft_shield\": \"disabled\",\r\n  \"elefant_foot_compensation\": \"0.15\",\r\n  \"enable_arc_fitting\": \"1\",\r\n  \"enable_prime_tower\": \"1\",\r\n  \"enable_support\": \"1\",\r\n  \"enable_circle_compensation\": \"0\",\r\n  \"enable_wrapping_detection\": \"0\",\r\n  \"filename_format\": \"{input_filename_base}_{filament_type[0]}_{print_time}.gcode\",\r\n  \"gap_infill_speed\": [\r\n    \"250\",\r\n    \"250\"\r\n  ],\r\n  \"infill_combination\": \"0\",\r\n  \"infill_direction\": \"45\",\r\n  \"infill_wall_overlap\": \"15%\",\r\n  \"monotonic_travel_into_wall\": \"0.0\",\r\n  \"initial_layer_line_width\": \"0.5\",\r\n  \"initial_layer_print_height\": \"0.2\",\r\n  \"initial_layer_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"inner_wall_line_width\": \"0.45\",\r\n  \"inner_wall_speed\": [\r\n    \"300\",\r\n    \"400\"\r\n  ],\r\n  \"interface_shells\": \"0\",\r\n  \"internal_bridge_support_thickness\": \"0.8\",\r\n  \"internal_solid_infill_line_width\": \"0.42\",\r\n  \"internal_solid_infill_speed\": [\r\n    \"250\",\r\n    \"350\"\r\n  ],\r\n  \"ironing_flow\": \"10%\",\r\n  \"ironing_inset\": \"0.21\",\r\n  \"ironing_spacing\": \"0.15\",\r\n  \"ironing_speed\": \"30\",\r\n  \"ironing_type\": \"no ironing\",\r\n  \"infill_lock_depth\": \"1.0\",\r\n  \"initial_layer_travel_acceleration\": [\r\n    \"6000\",\r\n    \"6000\"\r\n  ],\r\n  \"infill_shift_step\": \"0.4\",\r\n  \"infill_rotate_step\": \"0\",\r\n  \"layer_height\": \"0.20\",\r\n  \"layer_time_smoothing\": \"0\",\r\n  \"layer_time_smoothing_threshold\": \"30\",\r\n  \"line_width\": \"0.42\",\r\n  \"locked_skin_infill_pattern\": \"crosszag\",\r\n  \"locked_skeleton_infill_pattern\": \"zigzag\",\r\n  \"max_bridge_length\": \"0\",\r\n  \"max_travel_detour_distance\": \"0\",\r\n  \"avoid_crossing_wall_includes_support\": \"0\",\r\n  \"minimum_sparse_infill_area\": \"15\",\r\n  \"only_one_wall_top\": \"1\",\r\n  \"outer_wall_line_width\": \"0.42\",\r\n  \"outer_wall_speed\": [\r\n    \"200\",\r\n    \"350\"\r\n  ],\r\n  \"overhang_totally_speed\": [\r\n    \"10\",\r\n    \"30\"\r\n  ],\r\n  \"override_filament_scarf_seam_setting\": \"0\",\r\n  \"pre_start_fan_time\": [\r\n    \"0\"\r\n  ],\r\n  \"prime_tower_width\": \"35\",\r\n  \"print_sequence\": \"by layer\",\r\n  \"print_settings_id\": \"\",\r\n  \"prime_tower_brim_width\": \"3\",\r\n  \"prime_tower_enable_framework\": \"0\",\r\n  \"prime_tower_lift_speed\": \"90\",\r\n  \"prime_tower_lift_height\": \"-1\",\r\n  \"prime_tower_max_speed\": \"90\",\r\n  \"prime_tower_flat_ironing\": \"0\",\r\n  \"raft_layers\": \"0\",\r\n  \"reduce_crossing_wall\": \"0\",\r\n  \"reduce_infill_retraction_mode\": \"Auto\",\r\n  \"resolution\": \"0.012\",\r\n  \"scarf_angle_threshold\": \"155\",\r\n  \"seam_position\": \"aligned\",\r\n  \"seam_placement_away_from_overhangs\": \"0\",\r\n  \"skirt_distance\": \"2\",\r\n  \"skirt_per_object\": \"1\",\r\n  \"skirt_height\": \"1\",\r\n  \"skirt_loops\": \"0\",\r\n  \"smooth_coefficient\": \"150\",\r\n  \"sparse_infill_density\": \"35%\",\r\n  \"fill_multiline\": \"1\",\r\n  \"skeleton_infill_density\": \"15%\",\r\n  \"skin_infill_density\": \"15%\",\r\n  \"sparse_infill_line_width\": \"0.45\",\r\n  \"skin_infill_line_width\": \"0.45\",\r\n  \"skin_infill_depth\": \"2.0\",\r\n  \"skeleton_infill_line_width\": \"0.45\",\r\n  \"sparse_infill_pattern\": \"grid\",\r\n  \"sparse_infill_speed\": [\r\n    \"270\",\r\n    \"370\"\r\n  ],\r\n  \"spiral_mode\": \"0\",\r\n  \"standby_temperature_delta\": \"-5\",\r\n  \"support_base_pattern\": \"default\",\r\n  \"support_base_pattern_spacing\": \"2.5\",\r\n  \"support_bottom_z_distance\": \"0.2\",\r\n  \"support_expansion\": \"0\",\r\n  \"support_filament\": \"0\",\r\n  \"support_interface_bottom_layers\": \"2\",\r\n  \"support_interface_filament\": \"0\",\r\n  \"support_interface_loop_pattern\": \"0\",\r\n  \"support_interface_pattern\": \"auto\",\r\n  \"support_interface_spacing\": \"0.5\",\r\n  \"support_interface_speed\": [\r\n    \"80\",\r\n    \"80\"\r\n  ],\r\n  \"support_interface_top_layers\": \"2\",\r\n  \"support_line_width\": \"0.42\",\r\n  \"support_object_xy_distance\": \"0.35\",\r\n  \"support_on_build_plate_only\": \"0\",\r\n  \"support_speed\": [\r\n    \"150\",\r\n    \"150\"\r\n  ],\r\n  \"support_style\": \"default\",\r\n  \"support_threshold_angle\": \"30\",\r\n  \"support_top_z_distance\": \"0.2\",\r\n  \"support_type\": \"tree(auto)\",\r\n  \"enable_support_ironing\": \"0\",\r\n  \"support_ironing_pattern\": \"zig-zag\",\r\n  \"support_ironing_speed\": \"30\",\r\n  \"support_ironing_flow\": \"10%\",\r\n  \"support_ironing_spacing\": \"0.15\",\r\n  \"support_ironing_inset\": \"0.0\",\r\n  \"support_ironing_direction\": \"0\",\r\n  \"seam_slope_type\": \"none\",\r\n  \"seam_slope_start_height\": \"10%\",\r\n  \"seam_slope_gap\": \"0\",\r\n  \"seam_slope_min_length\": \"10\",\r\n  \"symmetric_infill_y_axis\": \"0\",\r\n  \"sparse_infill_lattice_angle_1\": \"-45\",\r\n  \"sparse_infill_lattice_angle_2\": \"45\",\r\n  \"top_shell_layers\": \"5\",\r\n  \"top_color_penetration_layers\": \"5\",\r\n  \"top_shell_thickness\": \"1.0\",\r\n  \"top_surface_line_width\": \"0.42\",\r\n  \"top_surface_pattern\": \"monotonicline\",\r\n  \"top_surface_density\": \"100\",\r\n  \"top_surface_speed\": [\r\n    \"200\",\r\n    \"300\"\r\n  ],\r\n  \"top_solid_infill_flow_ratio\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"travel_acceleration\": [\r\n    \"10000\",\r\n    \"10000\"\r\n  ],\r\n  \"travel_short_distance_acceleration\": [\r\n    \"250\",\r\n    \"250\"\r\n  ],\r\n  \"travel_speed\": [\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"tree_support_branch_angle\": \"45\",\r\n  \"tree_support_branch_diameter\": \"2\",\r\n  \"tree_support_wall_count\": \"-1\",\r\n  \"wall_generator\": \"classic\",\r\n  \"wall_infill_order\": \"inner wall/outer wall/infill\",\r\n  \"wall_loops\": \"4\",\r\n  \"wipe_tower_no_sparse_layers\": \"0\",\r\n  \"xy_contour_compensation\": \"0\",\r\n  \"xy_hole_compensation\": \"0\",\r\n  \"z_direction_outwall_speed_continuous\": \"0\",\r\n  \"enable_tower_interface_features\": \"0\",\r\n  \"sparse_infill_filament\": \"0\",\r\n  \"wall_filament\": \"0\",\r\n  \"solid_infill_filament\": \"0\",\r\n  \"infill_instead_top_bottom_surfaces\": \"0\",\r\n  \"fuzzy_skin\": \"none\",\r\n  \"fuzzy_skin_thickness\": \"0.3\",\r\n  \"fuzzy_skin_point_distance\": \"0.8\",\r\n  \"fuzzy_skin_first_layer\": \"0\",\r\n  \"fuzzy_skin_noise_type\": \"classic\",\r\n  \"fuzzy_skin_mode\": \"displacement\",\r\n  \"fuzzy_skin_scale\": \"1.0\",\r\n  \"fuzzy_skin_octaves\": \"4\",\r\n  \"fuzzy_skin_persistence\": \"0.5\",\r\n  \"enable_overhang_speed\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"enable_height_slowdown\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"initial_layer_acceleration\": [\r\n    \"500\",\r\n    \"500\"\r\n  ],\r\n  \"initial_layer_infill_speed\": [\r\n    \"105\",\r\n    \"105\"\r\n  ],\r\n  \"inner_wall_acceleration\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"outer_wall_acceleration\": [\r\n    \"5000\",\r\n    \"5000\"\r\n  ],\r\n  \"overhang_1_4_speed\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"overhang_2_4_speed\": [\r\n    \"50\",\r\n    \"50\"\r\n  ],\r\n  \"overhang_3_4_speed\": [\r\n    \"30\",\r\n    \"30\"\r\n  ],\r\n  \"overhang_4_4_speed\": [\r\n    \"10\",\r\n    \"10\"\r\n  ],\r\n  \"print_extruder_id\": [\r\n    \"1\",\r\n    \"1\"\r\n  ],\r\n  \"print_extruder_variant\": [\r\n    \"Direct Drive Standard\",\r\n    \"Direct Drive High Flow\"\r\n  ],\r\n  \"slowdown_start_height\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"slowdown_start_speed\": [\r\n    \"1000\",\r\n    \"1000\"\r\n  ],\r\n  \"slowdown_start_acc\": [\r\n    \"100000\",\r\n    \"100000\"\r\n  ],\r\n  \"slowdown_end_height\": [\r\n    \"400\",\r\n    \"400\"\r\n  ],\r\n  \"slowdown_end_speed\": [\r\n    \"1000\",\r\n    \"1000\"\r\n  ],\r\n  \"slowdown_end_acc\": [\r\n    \"100000\",\r\n    \"100000\"\r\n  ],\r\n  \"small_perimeter_speed\": [\r\n    \"50%\",\r\n    \"50%\"\r\n  ],\r\n  \"small_perimeter_threshold\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"sparse_infill_acceleration\": [\r\n    \"100%\",\r\n    \"100%\"\r\n  ],\r\n  \"top_surface_acceleration\": [\r\n    \"2000\",\r\n    \"2000\"\r\n  ],\r\n  \"travel_speed_z\": [\r\n    \"0\",\r\n    \"0\"\r\n  ],\r\n  \"vertical_shell_speed\": [\r\n    \"80%\",\r\n    \"80%\"\r\n  ],\r\n  \"setting_id\": \"GP004\",\r\n  \"description\": \"It has a general layer height, and results in general layer lines and printing quality. It is suitable for most general printing cases.\",\r\n  \"compatible_printers\": [\r\n    \"Bambu Lab X1 Carbon 0.4 nozzle\",\r\n    \"Bambu Lab X1 0.4 nozzle\",\r\n    \"Bambu Lab P1S 0.4 nozzle\",\r\n    \"Bambu Lab X1E 0.4 nozzle\"\r\n  ],\r\n  \"curr_bed_type\": \"Textured PEI Plate\"\r\n}\r\n"
+          }
+        },
+        "input_producer_origin_json_retained_handoff_002": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/producer-origin.json",
+            "sha256": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+            "size_bytes": 668,
+            "text": "{\n  \"retained_native_run_id\": \"a87d84b40a244bcaa035d9ed8308ac5a\",\n  \"retained_native_state\": \"failed\",\n  \"independent_report_run_id\": \"97f4c017f8a04d7eab8011e4ad6c5298\",\n  \"original_records\": [\n    {\n      \"path\": \"runs/printed-replacement-part-retained-consumer-001/a87d84b40a244bcaa035d9ed8308ac5a.json\",\n      \"sha256\": \"565f1adfdc441ec6b3af7285caf8baf2b5bfbeab2ef4c01bb32607d3a1a2cbca\"\n    },\n    {\n      \"path\": \"runs/printed-replacement-part-retained-report-002/97f4c017f8a04d7eab8011e4ad6c5298.json\",\n      \"sha256\": \"45e01c60b6eb2b609611ede0f7eb9a5b09fe5865ec12bc9301759d9e8837debe\"\n    }\n  ],\n  \"engineering_acceptance\": false,\n  \"physical_dispatch\": false\n}\n"
+          }
+        },
+        "input_producer_origin_json_retained_handoff_002.input_producer_origin_json_retained_handoff_002_out": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/producer-origin.json",
+            "sha256": "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+            "size_bytes": 668,
+            "text": "{\n  \"retained_native_run_id\": \"a87d84b40a244bcaa035d9ed8308ac5a\",\n  \"retained_native_state\": \"failed\",\n  \"independent_report_run_id\": \"97f4c017f8a04d7eab8011e4ad6c5298\",\n  \"original_records\": [\n    {\n      \"path\": \"runs/printed-replacement-part-retained-consumer-001/a87d84b40a244bcaa035d9ed8308ac5a.json\",\n      \"sha256\": \"565f1adfdc441ec6b3af7285caf8baf2b5bfbeab2ef4c01bb32607d3a1a2cbca\"\n    },\n    {\n      \"path\": \"runs/printed-replacement-part-retained-report-002/97f4c017f8a04d7eab8011e4ad6c5298.json\",\n      \"sha256\": \"45e01c60b6eb2b609611ede0f7eb9a5b09fe5865ec12bc9301759d9e8837debe\"\n    }\n  ],\n  \"engineering_acceptance\": false,\n  \"physical_dispatch\": false\n}\n"
+          }
+        },
+        "input_slice_package_gcode_3mf_retained_handoff_002": {
+          "type": "reference",
+          "value": {
+            "file_only": true,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+            "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+            "size_bytes": 361113,
+            "text": ""
+          }
+        },
+        "input_slice_package_gcode_3mf_retained_handoff_002.input_slice_package_gcode_3mf_retained_handoff_002_out": {
+          "type": "reference",
+          "value": {
+            "file_only": true,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+            "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+            "size_bytes": 361113,
+            "text": ""
+          }
+        },
+        "input_source_report_json_retained_handoff_002": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/source-report.json",
+            "sha256": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+            "size_bytes": 6843,
+            "text": "{\"geometry_observations\":{\"source\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/source_mesh.stl\",\"sha256\":\"e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18\",\"topology\":{\"vertices\":5414,\"edges\":16236,\"triangles\":10824,\"non_manifold_edges\":0,\"boundary_edges\":0,\"wire_edges\":0,\"degenerate_faces\":0,\"zero_length_edges\":0,\"winding_conflicts\":0},\"signed_volume_mm3\":16649.92557,\"bounds_mm\":{\"min\":[-18.360533,-19.0,0.0],\"max\":[18.360533,19.0,18.0],\"dimensions\":[36.721066,38.0,18.0]}},\"repair\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/repaired_mesh.stl\",\"sha256\":\"1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8\",\"merge_tolerance_mm\":0.001,\"degenerate_edge_tolerance_mm\":0.000001,\"vertices_removed\":8,\"faces_removed\":16,\"normals_recalculated\":true,\"topology\":{\"vertices\":5406,\"edges\":16212,\"triangles\":10808,\"non_manifold_edges\":0,\"boundary_edges\":0,\"wire_edges\":0,\"degenerate_faces\":0,\"zero_length_edges\":0,\"winding_conflicts\":0},\"signed_volume_mm3\":16649.92557,\"bounds_mm\":{\"min\":[-18.360533,-19.0,0.0],\"max\":[18.360533,19.0,18.0],\"dimensions\":[36.721066,38.0,18.0]}},\"mating_feature\":{\"observation\":\"At the source minimum-Z opening plane, 99 sampled boundary vertices had x extent [-2.4,3.2] mm and y extent [-3.199881,3.199881] mm.\",\"measurement_limit\":\"This boundary sample does not establish a 10.0 mm blind depth, derivation from a 6.00 mm round/5.20 mm across-flat shaft, 0.20 mm radial or flat clearances, concentricity, wall-above-socket thickness, or physical fit. No post-orientation mating sample was reported.\"},\"orientation\":{\"transform\":\"180 degrees about X, then translate transformed minimum Z to 0 mm\",\"result\":\"blind D-socket opening faces +Z (socket-up)\",\"consequence\":\"The raised 2 mm front hub is at the build-plate side and can elevate surrounding front-face regions, creating broad underside overhangs requiring generated support.\"},\"requirement_scope\":\"The measured 36.721066 x 38.0 x 18.0 mm bounds are consistent with the stated maximum envelope only. Six equal scallops, minimum 33 mm grip diameter, nominal 1.0 mm exposed-edge rounds, grip-dot catch behavior, socket geometry/depth, at least 3.0 mm socket roof, and absence of set screw/insert/taper/keyway were not established by the reported measurements. Hub-root rounds remain unverified.\"},\"preparation_observations\":{\"profiles\":{\"machine\":\"Bambu Lab P1S 0.4 nozzle (system, frozen artifact)\",\"filament\":\"Bambu PETG HF @BBL P1S 0.4 nozzle (system, PETG)\",\"process\":\"0.20mm Standard @BBL X1C (system; compatible list includes P1S 0.4)\",\"settings\":{\"nozzle_mm\":0.4,\"layer_height_mm\":0.2,\"wall_loops\":4,\"sparse_infill\":\"35% grid\",\"support\":\"enabled, tree(auto), 30 degree threshold\",\"bed\":\"Textured PEI Plate\"}},\"slice_package\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/slice_package.gcode.3mf\",\"sha256\":\"c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3\",\"bytes\":361113,\"source_argument\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/repaired_mesh.stl\",\"native_call_ok\":true},\"nominal_toolpaths\":{\"reader\":\"wright.passive-representations/1\",\"archive_entry\":\"Metadata/plate_1.gcode\",\"source_sha256\":\"4ff390fb983243763aec081bcaa7f6671324dae4b681c46582c8839e25c96512\",\"layer_count\":90,\"segments\":{\"total\":69559,\"model\":46800,\"support\":22388,\"unclassified\":371,\"extruding_arcs\":10862},\"arc_maximum_chord_error_mm\":0.02,\"selected_lines\":[857,44233],\"selected_text_sha256\":\"c510e4768e548f308f4acbebd986563ae670fb2787805817d53beabba145c051\",\"scope\":\"Nominal selected layer section only; 856 startup and 57 shutdown lines were excluded and are unverified. Firmware commands were not executed.\"},\"support_preview\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/support-preview.json\",\"sha256\":\"890ec8d8c551443f87f0e24d123041ec38611fb5d6efd1ee571e172adbef8399\",\"bytes\":4493731},\"note\":\"Successful repair and slice calls are preparation evidence, not engineering acceptance.\"},\"artifact_lineage\":{\"producer\":{\"run_id\":\"a87d84b40a244bcaa035d9ed8308ac5a\",\"status\":\"failed\",\"retained_failure\":\"Report input exceeded its document bound; native repair/slicing/inspection completed.\"},\"identity\":\"Source and repaired meshes are distinct retained files with different digests; the native slicer invocation names the repaired mesh as its input. This supports recorded package-source identity but does not prove approved-geometry equivalence or acceptance.\",\"retained_outputs\":\"Wright independently retained slice-evidence.json, support-preview.json, machine-profile.json, process-profile.json and filament-profile.json, in addition to the meshes, preview, provider response and package listed in actual artifact facts.\",\"provider_metadata\":\"The isolated OASiS wrapper reported completed_unverified, trustworthy_result=false and no files in its own discovery list; that discovery metadata is separate from Wright's actual filesystem retention. The inspection reported passive package inspection and did not execute slicer or machine commands, did not execute the failed producer gate, and must not be described as producing no operation outputs or as validating the producer.\",\"assessment\":{\"id\":\"assessment-160d465039de49739996079a6a53a31d\",\"evaluation_complete\":false,\"release_eligible\":false,\"physical_validation\":\"not_assessed\",\"counts\":{\"pass\":15,\"blocked\":3},\"synthetic_basis_review_not_human_acceptance\":true}},\"outstanding_requirements\":[\"Bind the required source_report output role.\",\"Create and bind the required digest-bound local simulated transfer_receipt; simulated transfer is absent.\",\"Complete the required authenticated human engineering review; provider critic review is also explicitly required and not yet performed.\",\"Verify approved-geometry equivalence and all unmeasured grip, socket, socket-wall and hub-root requirements.\",\"Keep proposed +/-0.25 mm non-mating prototype tolerance separate from D-socket design values and future measured fit values.\",\"Validate mating fit, PETG shrinkage, torque/strength, dimensional accuracy, support effects and physical print outcome before any release decision.\"],\"limitations\":[\"No printer credentials were used, no physical-printer transfer occurred, and no print was started.\",\"No physical fit, strength, torque, shrinkage, dimensional-tolerance, standards-compliance or successful-print claim is supported.\",\"Geometry-only mesh-preview.png is not support/toolpath evidence; support-preview and nominal paths do not establish machine or material success.\",\"The producer remained failed; this independent consumer does not claim that its gate succeeded.\",\"Actual artifact retention and provider critic/discovery metadata are separate observations.\"],\"engineering_acceptance\":false,\"physical_dispatch\":false}"
+          }
+        },
+        "input_source_report_json_retained_handoff_002.input_source_report_json_retained_handoff_002_out": {
+          "type": "reference",
+          "value": {
+            "file_only": false,
+            "image_url": "",
+            "path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/source-report.json",
+            "sha256": "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+            "size_bytes": 6843,
+            "text": "{\"geometry_observations\":{\"source\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/source_mesh.stl\",\"sha256\":\"e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18\",\"topology\":{\"vertices\":5414,\"edges\":16236,\"triangles\":10824,\"non_manifold_edges\":0,\"boundary_edges\":0,\"wire_edges\":0,\"degenerate_faces\":0,\"zero_length_edges\":0,\"winding_conflicts\":0},\"signed_volume_mm3\":16649.92557,\"bounds_mm\":{\"min\":[-18.360533,-19.0,0.0],\"max\":[18.360533,19.0,18.0],\"dimensions\":[36.721066,38.0,18.0]}},\"repair\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/repaired_mesh.stl\",\"sha256\":\"1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8\",\"merge_tolerance_mm\":0.001,\"degenerate_edge_tolerance_mm\":0.000001,\"vertices_removed\":8,\"faces_removed\":16,\"normals_recalculated\":true,\"topology\":{\"vertices\":5406,\"edges\":16212,\"triangles\":10808,\"non_manifold_edges\":0,\"boundary_edges\":0,\"wire_edges\":0,\"degenerate_faces\":0,\"zero_length_edges\":0,\"winding_conflicts\":0},\"signed_volume_mm3\":16649.92557,\"bounds_mm\":{\"min\":[-18.360533,-19.0,0.0],\"max\":[18.360533,19.0,18.0],\"dimensions\":[36.721066,38.0,18.0]}},\"mating_feature\":{\"observation\":\"At the source minimum-Z opening plane, 99 sampled boundary vertices had x extent [-2.4,3.2] mm and y extent [-3.199881,3.199881] mm.\",\"measurement_limit\":\"This boundary sample does not establish a 10.0 mm blind depth, derivation from a 6.00 mm round/5.20 mm across-flat shaft, 0.20 mm radial or flat clearances, concentricity, wall-above-socket thickness, or physical fit. No post-orientation mating sample was reported.\"},\"orientation\":{\"transform\":\"180 degrees about X, then translate transformed minimum Z to 0 mm\",\"result\":\"blind D-socket opening faces +Z (socket-up)\",\"consequence\":\"The raised 2 mm front hub is at the build-plate side and can elevate surrounding front-face regions, creating broad underside overhangs requiring generated support.\"},\"requirement_scope\":\"The measured 36.721066 x 38.0 x 18.0 mm bounds are consistent with the stated maximum envelope only. Six equal scallops, minimum 33 mm grip diameter, nominal 1.0 mm exposed-edge rounds, grip-dot catch behavior, socket geometry/depth, at least 3.0 mm socket roof, and absence of set screw/insert/taper/keyway were not established by the reported measurements. Hub-root rounds remain unverified.\"},\"preparation_observations\":{\"profiles\":{\"machine\":\"Bambu Lab P1S 0.4 nozzle (system, frozen artifact)\",\"filament\":\"Bambu PETG HF @BBL P1S 0.4 nozzle (system, PETG)\",\"process\":\"0.20mm Standard @BBL X1C (system; compatible list includes P1S 0.4)\",\"settings\":{\"nozzle_mm\":0.4,\"layer_height_mm\":0.2,\"wall_loops\":4,\"sparse_infill\":\"35% grid\",\"support\":\"enabled, tree(auto), 30 degree threshold\",\"bed\":\"Textured PEI Plate\"}},\"slice_package\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/slice_package.gcode.3mf\",\"sha256\":\"c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3\",\"bytes\":361113,\"source_argument\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/repaired_mesh.stl\",\"native_call_ok\":true},\"nominal_toolpaths\":{\"reader\":\"wright.passive-representations/1\",\"archive_entry\":\"Metadata/plate_1.gcode\",\"source_sha256\":\"4ff390fb983243763aec081bcaa7f6671324dae4b681c46582c8839e25c96512\",\"layer_count\":90,\"segments\":{\"total\":69559,\"model\":46800,\"support\":22388,\"unclassified\":371,\"extruding_arcs\":10862},\"arc_maximum_chord_error_mm\":0.02,\"selected_lines\":[857,44233],\"selected_text_sha256\":\"c510e4768e548f308f4acbebd986563ae670fb2787805817d53beabba145c051\",\"scope\":\"Nominal selected layer section only; 856 startup and 57 shutdown lines were excluded and are unverified. Firmware commands were not executed.\"},\"support_preview\":{\"path\":\"process-proofs/printed-replacement-part/retained-consumer-001/outputs/support-preview.json\",\"sha256\":\"890ec8d8c551443f87f0e24d123041ec38611fb5d6efd1ee571e172adbef8399\",\"bytes\":4493731},\"note\":\"Successful repair and slice calls are preparation evidence, not engineering acceptance.\"},\"artifact_lineage\":{\"producer\":{\"run_id\":\"a87d84b40a244bcaa035d9ed8308ac5a\",\"status\":\"failed\",\"retained_failure\":\"Report input exceeded its document bound; native repair/slicing/inspection completed.\"},\"identity\":\"Source and repaired meshes are distinct retained files with different digests; the native slicer invocation names the repaired mesh as its input. This supports recorded package-source identity but does not prove approved-geometry equivalence or acceptance.\",\"retained_outputs\":\"Wright independently retained slice-evidence.json, support-preview.json, machine-profile.json, process-profile.json and filament-profile.json, in addition to the meshes, preview, provider response and package listed in actual artifact facts.\",\"provider_metadata\":\"The isolated OASiS wrapper reported completed_unverified, trustworthy_result=false and no files in its own discovery list; that discovery metadata is separate from Wright's actual filesystem retention. The inspection reported passive package inspection and did not execute slicer or machine commands, did not execute the failed producer gate, and must not be described as producing no operation outputs or as validating the producer.\",\"assessment\":{\"id\":\"assessment-160d465039de49739996079a6a53a31d\",\"evaluation_complete\":false,\"release_eligible\":false,\"physical_validation\":\"not_assessed\",\"counts\":{\"pass\":15,\"blocked\":3},\"synthetic_basis_review_not_human_acceptance\":true}},\"outstanding_requirements\":[\"Bind the required source_report output role.\",\"Create and bind the required digest-bound local simulated transfer_receipt; simulated transfer is absent.\",\"Complete the required authenticated human engineering review; provider critic review is also explicitly required and not yet performed.\",\"Verify approved-geometry equivalence and all unmeasured grip, socket, socket-wall and hub-root requirements.\",\"Keep proposed +/-0.25 mm non-mating prototype tolerance separate from D-socket design values and future measured fit values.\",\"Validate mating fit, PETG shrinkage, torque/strength, dimensional accuracy, support effects and physical print outcome before any release decision.\"],\"limitations\":[\"No printer credentials were used, no physical-printer transfer occurred, and no print was started.\",\"No physical fit, strength, torque, shrinkage, dimensional-tolerance, standards-compliance or successful-print claim is supported.\",\"Geometry-only mesh-preview.png is not support/toolpath evidence; support-preview and nominal paths do not establish machine or material success.\",\"The producer remained failed; this independent consumer does not claim that its gate succeeded.\",\"Actual artifact retention and provider critic/discovery metadata are separate observations.\"],\"engineering_acceptance\":false,\"physical_dispatch\":false}"
+          }
+        }
+      },
+      "result_ids": [],
+      "results": [],
+      "revision_attempts": [],
+      "revision_counts": {},
+      "run_id": "b513166fb7014f23a7187a34be6e7710",
+      "run_log_path": "runs/printed-replacement-part-retained-handoff-002/b513166fb7014f23a7187a34be6e7710.json",
+      "schema_version": 3,
+      "source_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+      "step_title": "Authorize exact package transfer",
+      "workflow_path": "workflows/printed-replacement-part-retained-handoff-002.workflow.wflow"
+    },
+    "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+    "reason": "Integration campaign 083-private-digital-wheel-retained-handoff-002 policy 0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+    "created_at": 1790958971,
+    "updated_at": 1790959093,
+    "expires_at": null,
+    "external_action": {
+      "action_id": "wheel-retained-handoff-continuation-002",
+      "dispatch_authorized_at": 1790959093,
+      "evidence": {
+        "integration_test": true,
+        "operation": "test_handoff",
+        "produced_files": [
+          {
+            "output_bytes": 1287,
+            "output_format": "json",
+            "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "output_port": "receipt",
+            "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d"
+          }
+        ],
+        "simulated_handoff": true
+      },
+      "outcome": "dispatched",
+      "principal_id": "local-control-plane",
+      "reconciled_at": 1790959093,
+      "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+    }
+  },
+  "execution_ended_at": "2026-10-02T16:38:13.945322+00:00",
+  "resume_segments": {
+    "checkpoint-a2c74f14e3b229aa570bb14f": {
+      "state": "completed",
+      "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+      "started_at": "2026-10-02T16:38:13.795475+00:00",
+      "result": {
+        "workflow_title": "Retained focus-wheel simulated handoff",
+        "task_id": "authorize_transfer_retained_handoff_002",
+        "task_title": "Authorize exact package transfer",
+        "output_bytes": 1287,
+        "output_format": "json",
+        "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+        "output_port": "receipt",
+        "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+        "artifact_role": "external_action_receipt",
+        "outputs": [
+          {
+            "task_id": "authorize_transfer_retained_handoff_002",
+            "task_title": "Authorize exact package transfer",
+            "output_bytes": 1287,
+            "output_format": "json",
+            "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "output_port": "receipt",
+            "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+            "artifact_role": "external_action_receipt"
+          }
+        ],
+        "steps": [
+          {
+            "task_id": "authorize_transfer_retained_handoff_002",
+            "task_title": "Authorize exact package transfer",
+            "execution_kind": "approval",
+            "output_format": "text",
+            "output_path": null,
+            "output_bytes": 0,
+            "response": "Approved",
+            "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+            "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+            "review_authority": {
+              "action_kind": "printer_transfer",
+              "settings": {
+                "material": "PETG",
+                "nozzle_mm": "0.4",
+                "package_path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+                "receipt_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+                "simulation": true,
+                "include_supplied_files": true
+              },
+              "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+              "reason": "Integration campaign 083-private-digital-wheel-retained-handoff-002 policy 0d0ef95faa4ee3625dd6f023774af69d6921f7f53a592fd06ee15d91dddb0997",
+              "subject": {
+                "action": {
+                  "kind": "printer_transfer",
+                  "mode": "transfer_only",
+                  "simulation": true
+                },
+                "artifact_digests": [
+                  "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+                  "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+                  "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+                  "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+                  "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+                  "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+                ],
+                "binding": {
+                  "schema": "f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d",
+                  "server": "wright",
+                  "tool": "test_handoff"
+                },
+                "definition_digest": "5c848040273fa2dc31e50f1d503cd33bc0aac6fa15ec10dfcb7f851facb6bd08",
+                "destination": {
+                  "id": "test://083-private-digital-wheel-retained-handoff-002/printer/printed-replacement-part-01",
+                  "kind": "integration_test"
+                },
+                "input_digests": [
+                  "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+                  "0cf744dafad68bfff72c0e816326cb92738508d7932624cf12a3dfa215d51155",
+                  "7f686bc360ead05a73f708cd5dc8fedd7b043d873d22beb05b84169b175c565d",
+                  "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+                  "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+                  "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+                ],
+                "settings": {
+                  "include_supplied_files": true,
+                  "material": "PETG",
+                  "nozzle_mm": "0.4",
+                  "package_path": "process-proofs/printed-replacement-part/retained-handoff-002/inputs/slice_package.gcode.3mf",
+                  "receipt_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+                  "simulation": true
+                }
+              },
+              "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+              "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f"
+            },
+            "external_action": {
+              "action_id": "wheel-retained-handoff-continuation-002",
+              "dispatch_authorized_at": 1790959093,
+              "evidence": {
+                "integration_test": true,
+                "operation": "test_handoff",
+                "produced_files": [
+                  {
+                    "output_bytes": 1287,
+                    "output_format": "json",
+                    "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+                    "output_port": "receipt",
+                    "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d"
+                  }
+                ],
+                "simulated_handoff": true
+              },
+              "outcome": "dispatched",
+              "principal_id": "local-control-plane",
+              "reconciled_at": 1790959093,
+              "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230"
+            },
+            "produced_files": [
+              {
+                "output_bytes": 1287,
+                "output_format": "json",
+                "output_path": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+                "output_port": "receipt",
+                "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+                "task_id": "authorize_transfer_retained_handoff_002",
+                "task_title": "Authorize exact package transfer",
+                "artifact_role": "external_action_receipt"
+              }
+            ]
+          }
+        ],
+        "run_id": "b513166fb7014f23a7187a34be6e7710",
+        "results": [
+          {
+            "schema_version": 1,
+            "id": "b513166fb7014f23a7187a34be6e7710:authorize_transfer_retained_handoff_002:receipt",
+            "kind": "file",
+            "name": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+            "representations": [
+              {
+                "kind": "workspace_file",
+                "location": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+                "format": "json",
+                "provider_id": "",
+                "resource_id": "",
+                "revision": null,
+                "durability": "persistent",
+                "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+                "size_bytes": 1287
+              }
+            ],
+            "provenance": {
+              "run_id": "b513166fb7014f23a7187a34be6e7710",
+              "task_id": "authorize_transfer_retained_handoff_002",
+              "output_port": "receipt",
+              "input_revisions": [],
+              "definition_digest": null,
+              "binding_digest": null
+            },
+            "exports": [],
+            "artifact_role": "external_action_receipt"
+          }
+        ],
+        "revision_attempts": [],
+        "status": "completed"
+      },
+      "finished_at": "2026-10-02T16:38:13.945304+00:00"
+    }
+  },
+  "partial_results": {
+    "b513166fb7014f23a7187a34be6e7710:authorize_transfer_retained_handoff_002:receipt": {
+      "schema_version": 1,
+      "id": "b513166fb7014f23a7187a34be6e7710:authorize_transfer_retained_handoff_002:receipt",
+      "kind": "file",
+      "name": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "process-proofs/printed-replacement-part/retained-handoff-002/outputs/simulated-transfer-receipt.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "f234ac89141badc2ca4df0f9998db0e7e8b8c752029eab140f9951f026a68b6d",
+          "size_bytes": 1287
+        }
+      ],
+      "provenance": {
+        "run_id": "b513166fb7014f23a7187a34be6e7710",
+        "task_id": "authorize_transfer_retained_handoff_002",
+        "output_port": "receipt",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "external_action_receipt"
+    }
+  },
+  "completed_at": "2026-10-02T16:38:13.945322+00:00"
+}

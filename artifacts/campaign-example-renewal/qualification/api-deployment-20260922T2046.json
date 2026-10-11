@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "api_deployed_and_inference_verified",
+  "checked_at_utc": "2026-09-22T20:50:00Z",
+  "git_commit": "ab864f9f0074b1eb9d2aecb9237f6cef8a024a19",
+  "previous_api_pid": 41624,
+  "api_pid": 50148,
+  "deployment_receipt": ".local-run/renewal-qualification/source-publication-api-deployment/verification.json",
+  "inference_receipt": ".local-run/renewal-qualification/source-publication-api-deployment/inference.json",
+  "loaded_repairs": [
+    "Python source syntax validation before immutable publication, with bounded correction feedback",
+    "Harness native correspondence reader"
+  ],
+  "code_identity_unchanged_across_restart": true,
+  "all_local_workflow_files_unchanged": true,
+  "input_file_count": 6091,
+  "solid_edge": {
+    "mcp_autostart": "0",
+    "api_owned_solid_edge_children": [],
+    "registry_command_unchanged": true,
+    "server_calls_or_start_stop_requests": 0,
+    "examples_deferred": true
+  },
+  "agentcad": {
+    "catalog_reconciliation_reset_command": true,
+    "previously_qualified_command_restored": true,
+    "bootstrap_sha256": "ad166be75f44977ed862c37c3b831002cf6e2ad3eed0f6d3dcc6409237a9e994",
+    "native_readiness_after_restart": "not_yet_verified"
+  },
+  "inference": {
+    "model": "openai-codex::gpt-5.6-sol",
+    "route": "/api/agent/chat",
+    "status": "ready",
+    "response": "READY",
+    "tool_calls": 0
+  },
+  "preserved_reviews": [
+    {
+      "case": "Printed 01 attempt 901",
+      "run_id": "8877a99cc7054faab6b4d586b05845cb",
+      "checkpoint_id": "checkpoint-e4ec7f837b7f20acbc7f91df",
+      "status": "awaiting_approval",
+      "source_matches_current": true,
+      "actor": null
+    },
+    {
+      "case": "Historical Robot 010",
+      "run_id": "1e10a25958694ce2ab4d9454029b1fcf",
+      "checkpoint_id": "checkpoint-46ef3ff2d5107b0b5f55455e",
+      "status": "awaiting_approval",
+      "source_matches_current": true,
+      "actor": null
+    }
+  ],
+  "workflow_dispatches_in_this_deployment": 0,
+  "new_complete_output_packages": 0,
+  "new_full_scope_passes": 0,
+  "next_case": "Heat 01 attempt 901: staged and preflighted; verify actual providers before dispatch; thermal-basis review remains mandatory."
+}

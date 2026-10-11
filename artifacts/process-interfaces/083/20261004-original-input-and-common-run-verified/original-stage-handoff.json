@@ -1,0 +1,128 @@
+{
+  "run_id": "85d929ee36e64afdaee61a5cdb0fc2a6",
+  "task_id": "create_mesh_mixed_default_071",
+  "execution_kind": "mcp_task",
+  "original_input_references": [
+    {
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.png",
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861",
+      "kind": "image",
+      "recorded_stage_references": [
+        {
+          "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.png",
+          "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861",
+          "kind": "image"
+        },
+        {
+          "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.png",
+          "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861",
+          "kind": "image"
+        }
+      ]
+    },
+    {
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt",
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+      "kind": "text",
+      "recorded_stage_references": [
+        {
+          "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/prompt.txt",
+          "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md",
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+      "kind": "text",
+      "recorded_stage_references": [
+        {
+          "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/context.md",
+          "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/user-profile.md",
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f",
+      "kind": "text",
+      "recorded_stage_references": [
+        {
+          "path": "process-proofs/printed-replacement-part/mixed-default-071/inputs/user-profile.md",
+          "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f",
+          "kind": "text"
+        }
+      ]
+    }
+  ],
+  "resolved_stage_prompt_sha256": "f7374876100ec022dea091d39baeccaceb468cd71f8482aac4928bf6ae850139",
+  "original_native_user_prompt_byte_identity": true,
+  "native_argument_fields": [
+    "code",
+    "user_prompt"
+  ],
+  "native_code_sha256": "35ae49e6423e32c694c5c82477d32efcfc8985700ab517f38185b18f6078b3a6",
+  "actual_source_and_repaired_meshes": {
+    "source_mesh.stl": {
+      "sha256": "bb3528ee00f7661864d8289dd810de91c1f40e220285f36081e0f17b15a42f93",
+      "triangles": 10824,
+      "bounds_mm": [
+        [
+          -18.360532760620117,
+          18.360532760620117
+        ],
+        [
+          -19.0,
+          19.0
+        ],
+        [
+          0.0,
+          18.0
+        ]
+      ],
+      "extent_mm": [
+        36.721065521240234,
+        38.0,
+        18.0
+      ]
+    },
+    "repaired_mesh.stl": {
+      "sha256": "bc2c6fc4727a98ef27fcf1eced09cf551f12d34d0b6fe1f049d0ca0fe9512127",
+      "triangles": 10808,
+      "bounds_mm": [
+        [
+          -18.360532760620117,
+          18.360532760620117
+        ],
+        [
+          -19.0,
+          19.0
+        ],
+        [
+          0.0,
+          18.0
+        ]
+      ],
+      "extent_mm": [
+        36.721065521240234,
+        38.0,
+        18.0
+      ]
+    }
+  },
+  "image_boundary": "The original image is a recorded attached image of Wright's actual Blender MCP AI task. The selected provider code tool accepts code and user_prompt; it has no image argument. Do not claim a nonexistent native image API or arbitrary image-to-geometry qualification.",
+  "dimensions_boundary": "The same original scaled reference and reviewed numeric basis feed the AI construction stage. Exact native measurements and full original source gate remain separate authority.",
+  "configured_repair_arguments_match": true,
+  "source_gate_counts": {
+    "blocked": 1,
+    "error": 0,
+    "fail": 0,
+    "inconclusive": 0,
+    "not_applicable": 0,
+    "pass": 17
+  },
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false
+}

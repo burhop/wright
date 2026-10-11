@@ -1,0 +1,14 @@
+{
+  "build_volume_mm": [
+    256.0,
+    256.0,
+    256.0
+  ],
+  "build_volume_tolerance_mm": 1e-06,
+  "triangle_limit": 80000,
+  "merge_tolerance_mm": 0.001,
+  "degenerate_tolerance_mm": 1e-06,
+  "force_voxel_remesh": false,
+  "envelope_margin_mm": 0.0,
+  "planar_cleanup": false
+}

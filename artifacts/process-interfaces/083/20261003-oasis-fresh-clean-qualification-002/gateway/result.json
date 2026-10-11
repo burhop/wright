@@ -1,0 +1,13 @@
+{
+  "_meta": {},
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"job_id\": \"e5d0d53a\",\n  \"solver\": \"skfem\",\n  \"status\": \"completed\",\n  \"work_dir\": \"/workspace/gateway/solve\",\n  \"elapsed\": \"0.73s\",\n  \"output_files\": [\n    \"qualification_fixed-coarse-temperature.vtu\",\n    \"qualification_fixed-fine-temperature.vtu\"\n  ],\n  \"stdout_tail\": \"{\\\"status\\\": \\\"candidate_selected\\\", \\\"case_count\\\": 1, \\\"output_root\\\": \\\"/workspace/gateway/solve\\\"}\\n\",\n  \"trustworthy_result\": false,\n  \"verification\": \"NOT VERIFIED \\u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.\",\n  \"critic_review\": \"REQUIRED \\u2014 mandatory critic not yet performed\"\n}"
+    }
+  ],
+  "structuredContent": {
+    "result": "{\n  \"job_id\": \"e5d0d53a\",\n  \"solver\": \"skfem\",\n  \"status\": \"completed\",\n  \"work_dir\": \"/workspace/gateway/solve\",\n  \"elapsed\": \"0.73s\",\n  \"output_files\": [\n    \"qualification_fixed-coarse-temperature.vtu\",\n    \"qualification_fixed-fine-temperature.vtu\"\n  ],\n  \"stdout_tail\": \"{\\\"status\\\": \\\"candidate_selected\\\", \\\"case_count\\\": 1, \\\"output_root\\\": \\\"/workspace/gateway/solve\\\"}\\n\",\n  \"trustworthy_result\": false,\n  \"verification\": \"NOT VERIFIED \\u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.\",\n  \"critic_review\": \"REQUIRED \\u2014 mandatory critic not yet performed\"\n}"
+  },
+  "isError": false
+}

@@ -10,6 +10,7 @@ from api.routers.agent import (
     ChatRequest,
     ChatStreamJob,
     _restart_hermes_gateway_process,
+    _wait_for_hermes_gateway,
     chat,
 )
 from fastapi import HTTPException
@@ -78,6 +79,37 @@ class _AttachFailureJob:
 class _AttachFailureRegistry:
     async def start(self, request, engine):
         return _AttachFailureJob()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("ready_after", [0, 59, None])
+async def test_gateway_readiness_allows_cold_start_but_remains_bounded(
+    monkeypatch, ready_after
+):
+    clock = {"seconds": 0.0}
+    monkeypatch.setattr(
+        "api.routers.agent.time", SimpleNamespace(monotonic=lambda: clock["seconds"])
+    )
+
+    async def sleep(seconds):
+        clock["seconds"] += seconds
+
+    async def health():
+        return {
+            "state": "connected"
+            if ready_after is not None and clock["seconds"] >= ready_after
+            else "disconnected"
+        }
+
+    monkeypatch.setattr("api.routers.agent.asyncio.sleep", sleep)
+    engine = SimpleNamespace(check_health=health)
+    if ready_after is None:
+        with pytest.raises(RuntimeError, match="did not become ready"):
+            await _wait_for_hermes_gateway(engine)
+        assert clock["seconds"] == 120.0
+    else:
+        await _wait_for_hermes_gateway(engine)
+        assert clock["seconds"] == ready_after
 
 
 def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
@@ -236,7 +268,9 @@ async def test_chat_job_failure_emits_generic_trace_bearing_error():
 
 
 @pytest.mark.asyncio
-async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch):
+async def test_chat_attach_failure_emits_generic_trace_bearing_error(
+    monkeypatch, tmp_path
+):
     request = Request(
         {
             "type": "http",
@@ -257,6 +291,12 @@ async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch
     monkeypatch.setattr(
         "api.routers.agent.get_chat_stream_registry",
         lambda request: _AttachFailureRegistry(),
+    )
+    monkeypatch.setattr(
+        "api.routers.workspace._workflow_source_scope",
+        lambda session, service: SimpleNamespace(
+            workspace_id="workspace", workspace_dir=str(tmp_path)
+        ),
     )
 
     response = await chat(

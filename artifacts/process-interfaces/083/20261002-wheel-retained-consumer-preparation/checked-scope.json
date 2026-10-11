@@ -1,0 +1,27 @@
+{
+  "checkpoint": "retained consumer preparation and declared waiting-review browser proof",
+  "producer_run_id": "685147075ac94ca3b69fe0d208548af9",
+  "producer_status": "failed",
+  "producer_native_construction_proved": true,
+  "producer_repair_tool_started": false,
+  "producer_constructed_triangles": 10824,
+  "producer_constructed_nonmanifold_edges": 0,
+  "consumer_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "consumer_runtime_steps": 10,
+  "original_full_gate_checks": 18,
+  "live_input_snapshot_and_readiness_proved": true,
+  "served_workspace_waiting_reload_checks": 9,
+  "focused_checks": 120,
+  "fixture_tests_prove_native_geometry": false,
+  "consumer_native_repair_slicing_assessment_proved_in_this_checkpoint": false,
+  "consumer_tailored_interface_proved": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false,
+  "limitations": [
+    "Frozen provider syntax is not runtime/native geometry compliance",
+    "Input origin metadata is supplied lineage, not engineering acceptance",
+    "Derived native export is not byte identity with its retained input",
+    "Consumer native outcomes and original mandatory review remain separate evidence"
+  ]
+}

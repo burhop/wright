@@ -1,0 +1,71 @@
+workflow structured_validation_loop
+  name: "Structured output validation and correction"
+end
+
+task produce
+  name: "Produce controlled structured output"
+  step_type: work
+  performed_by: ai_assisted
+  inputs: []
+  outputs: [{"key":"result","name":"Structured result","kind":"structured_result","required":true,"quantity":"one"}]
+  prompt: "This is a controlled validation demonstration. Return exactly one JSON object with fields part_id and length_mm. If this prompt has no validation findings appended, deliberately set part_id to demo-plate and length_mm to 98 so the validator can measure the seeded defect. If validation findings are appended, create a new corrected JSON revision that satisfies their measured acceptance targets while preserving every listed passing requirement. Do not describe the exercise or add fields."
+  settings: {"output_format":"json","output_filename":"structured-output.json","file_policy":"indexed","save_output":true}
+  tool: null
+  reusable_step: null
+end
+
+task inspect
+  name: "Validate structured output"
+  step_type: work
+  performed_by: configured_tool
+  inputs: [{"key":"subject","name":"Structured result","kind":"structured_result","required":true,"quantity":"one"}]
+  outputs: [{"key":"assessment","name":"Validation assessment","kind":"engineering_document","required":true,"quantity":"one"}]
+  prompt: ""
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":2,"validation":{"profile":{"source":"packaged","name":"structured-demo","reference":{"id":"structured-demo","version":"2","sha256":"d8f95a1b3511a30e97d410e51397fd410340a684a48704ca51a59f4e6efc534c"}},"baseline":{"id":"structured-demo","version":"1","sha256":"709c8ed3b175034b161e062c1b2fae85d25061e170b2efaa94c2947d0cad3b04"},"subjects":{"result":"subject"}}}
+  tool: null
+  reusable_step: null
+end
+
+task consume
+  name: "Consume validated structured output"
+  step_type: work
+  performed_by: ai_assisted
+  inputs: [{"key":"validated_result","name":"Validated result","kind":"structured_result","required":true,"quantity":"one"}]
+  outputs: [{"key":"release_note","name":"Release note","kind":"engineering_document","required":true,"quantity":"one"}]
+  prompt: "State in one sentence that the connected structured result was released after the current revision passed its pinned validation profile. Include its part_id and length_mm exactly as supplied."
+  settings: {"output_format":"text","output_filename":"release-note.txt","file_policy":"indexed","save_output":true}
+  tool: null
+  reusable_step: null
+end
+
+connection subject
+  type: item
+  from: "produce.result"
+  to: "inspect.subject"
+  label: "Output to validate"
+  when: null
+end
+
+connection current_result
+  type: item
+  from: "produce.result"
+  to: "consume.validated_result"
+  label: "Current validated output"
+  when: null
+end
+
+connection repair
+  type: revision
+  from: "inspect"
+  to: "produce"
+  label: "Correct measured defects"
+  when: revise
+end
+
+connection release
+  type: approval
+  from: "inspect"
+  to: "consume"
+  label: "Release current passing revision"
+  when: pass
+end

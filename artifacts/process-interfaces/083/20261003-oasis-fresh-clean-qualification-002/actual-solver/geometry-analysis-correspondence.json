@@ -1,0 +1,48 @@
+{
+  "schema": "wright-heat-geometry-analysis-correspondence-v1",
+  "operation": "3D P1 tetrahedral scikit-fem conduction",
+  "cases": [
+    {
+      "case_id": "qualification_fixed",
+      "geometry": null,
+      "solver_input": {
+        "case_id": "qualification_fixed",
+        "length_mm": 50,
+        "width_mm": 30,
+        "thickness_mm": 2,
+        "conductivity_w_mk": 150,
+        "density_kg_m3": 2700,
+        "heat_input_w": 1,
+        "cold_face_temperature_c": 20,
+        "limit_c": 30
+      },
+      "fields": {
+        "coarse": {
+          "csv": {
+            "path": "/workspace/gateway/solve/qualification_fixed-coarse-temperature.csv",
+            "sha256": "0f843bb9aa086b96f2dddba4d988e52a0e399ab585712591ad84531efb41b3c2",
+            "bytes": 13526
+          },
+          "vtu": {
+            "path": "/workspace/gateway/solve/qualification_fixed-coarse-temperature.vtu",
+            "sha256": "d45a74f13bc53a94e55ed541855aa10828399ca364bb535e176c1825d91cc196",
+            "bytes": 4399
+          }
+        },
+        "fine": {
+          "csv": {
+            "path": "/workspace/gateway/solve/qualification_fixed-fine-temperature.csv",
+            "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b",
+            "bytes": 76526
+          },
+          "vtu": {
+            "path": "/workspace/gateway/solve/qualification_fixed-fine-temperature.vtu",
+            "sha256": "c7d3b9d234a472c2bd6d4c6d1893348885d1edc4cdc9b6a5eced9568ffd175c3",
+            "bytes": 29028
+          }
+        }
+      }
+    }
+  ],
+  "claim": "The listed field files were generated from the measured dimensions and SHA-256 identity of the listed same-attempt STEP. This digital identity check does not establish physical thermal performance."
+}

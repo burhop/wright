@@ -1,0 +1,118 @@
+# Prompt to printed part — historical prototype
+
+## Current entry point
+
+The custom **Print a part demo** page and its embedded device/Studio transport
+are retired by Feature 083. The old preparation, status, dispatch, retry, cancel
+and camera API routes are inert compatibility responses. The setup commands,
+environment switches and button instructions below describe the retained
+prototype; they are not current installation or operating instructions.
+
+For current work, use [process working interfaces](../workflows/process-working-interfaces.md)
+and the [printed replacement-part example](https://github.com/burhop/wright/blob/dev/examples/process-interfaces/printed-replacement-part/README.md).
+Open the accepted workflow file through the workspace's **Workflows** control,
+then choose **Use saved process**. The common working view provides inputs,
+readiness, results and declared decisions. Create or choose a tailored interface
+through Wright and save it for reuse on later runs. Both views use the same
+accepted process and durable backend run.
+
+Existing independent MCP providers own geometry, slicing and any device-specific
+operations. Their supported options and operating requirements must be qualified
+for the chosen process. A digital package or passing automatic checks do not
+establish physical fit, strength, printer compatibility or human acceptance.
+The current isolated preparation proofs retain the original engineering-review
+holds and do not dispatch a physical printer. Migration of remaining campaign
+slicing bindings and full Feature 083 acceptance remain incomplete; see the
+[task and evidence ledger](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md).
+
+Historical result links remain read-only and retain their exact source, run and
+artifact identities. Opening one must not rerun or dispatch the old process.
+
+## Architecture direction and refactoring status
+
+This page describes the existing source-checkout prototype and retained evidence.
+The agreed [workflow platform vision](../design/workflow-platform-vision.md)
+governs future work: Wright provides general workflow mechanisms; independent
+integrations own vendor implementation. Printing is one manufacturing reference
+and does not define every workflow's stages, interactions, or validation needs.
+
+The [refactoring plan](../architecture/workflow-platform-refactoring-plan.md)
+maps the embedded Bambu code, shared review/evidence behaviour, saved workflow,
+and UI to their intended owners. It replaces further expansion of this embedded
+demo as the product plan. It prioritises the shared process interaction contract,
+UI kit/client, and workspace experience. Existing MCP providers are preferred;
+creating a new Bambu MCP is outside this plan. Migration is under implementation;
+the implementation details below remain a record of the retired prototype.
+
+## Pumpkin input for a quick UI run
+
+Upload [pumpkin-reference.png](assets/pumpkin-reference.png) in the **Reference image** field, set **Largest dimension** to **50 mm**, and enter:
+
+> Make one single-piece pumpkin-shaped decorative token using the attached front-view image as the outline reference. Make it 50 mm wide and about 45 mm tall including the short, broad stem, with a flat back and 5 mm overall thickness. Keep five broad rounded lobes and add four shallow curved grooves on the front, no deeper than 0.6 mm. The orange and green colors are visual guidance only; make one solid part from one material. No face, holes, leaves, vines, separate pieces, or floating details. Make a watertight STL and orient its flat back on the build plate to avoid supports. Use the 50 mm width as the controlling dimension and record any proportions inferred from the image.
+
+This is a design-input example, not a validated physical print or strength/fit claim. Review the resulting mesh, slice, and orientation before printing.
+
+The **Print a part demo** button in a workspace's **Workflows** view opens a short form. A prompt, an uploaded PNG/JPEG/GIF/WebP, or both become inputs to a new, isolated `.workflow.wflow` file. Wright runs three engineering stages:
+
+1. The existing Blender MCP server creates the requested mesh and exports `source_mesh.stl`. The geometry task exposes only the reviewed `execute_blender_code`, `get_scene_info`, and `get_viewport_screenshot` tools from that server.
+2. Wright's fixed mesh-repair MCP operation measures and repairs the mesh, checks the P1S build envelope, and exports `repaired_mesh.stl` plus `mesh-preview.png`. For this demo, an otherwise valid mesh above the 80,000-triangle limit is reduced with bounded geometry checks; the report records the triangle counts, size drift, and volume change. If a rounded part has insufficient contact with the plate, repair trims at most 12% of its height to create a flat base, verifies a closed nondegenerate solid, and records the exact trim and contact area. Review any changed geometry before printing.
+3. Wright's fixed slicer MCP operation drives the reviewed Bambu Studio CLI with a P1S 0.4 mm profile and the selected Generic PLA, PETG, ABS, or ASA filament profile. For this demo it rotates the repaired STL onto each of its six axis-aligned faces with enough bed contact and slices every viable orientation with supports enabled. It considers candidates that do not increase estimated time, filament, or support moves relative to the authored orientation, then prefers no supports and the shortest time. It exports the selected `oriented_mesh.stl`, `slice_package.gcode.3mf`, `toolpaths.json`, `support-preview.svg`, and candidate time, filament, contact-area, and support counts in the slice evidence. Other engineering examples retain their existing single-orientation behavior.
+
+The UI shows the uploaded image thumbnail and a stage log while the workflow runs. Review displays the selected STL beside a rotatable 3D rendering of the selected package's positive-extrusion paths at their actual heights. A layer slider reveals the stack up to a chosen level; model and support paths have separate colors and switches. **Link to this result** opens the saved review later from the workspace URL without running the process again. The toolpath JSON is tied to the sliced package SHA-256, and the renderer uses Wright's existing Three.js dependency. Cura's layer and feature controls and Prusa's layer inspection guided these controls; the view is an engineering preview, not a substitute for checking the 3MF in Bambu Studio. Travel moves and nozzle widths are not shown. The single-layer SVG remains downloadable. The embedded Bambu `plate_1.png` is a model thumbnail, not a support preview, so it is retained only as a package artifact. The UI offers downloads for the source, repaired and selected STL, sliced 3MF, slice evidence, and layer preview. During offline preparation, **Print on P1S** is disabled in both the UI and API. After the printer and AMS checks, set `WRIGHT_PRINT_DEMO_PRINTER_ENABLED=1` in the API process environment to enable it. A completed Wright run must publish one hashed sliced 3MF. On click, Wright rechecks the package, slice evidence, support preview, and embedded G-code, creates a one-use dispatch record, then calls the configured P1S printer MCP tool. If the call fails or its outcome is uncertain, the same package cannot be dispatched again automatically. MQTT delivery alone means the command was sent. Wright separately records a correlated printer acknowledgment or rejection; physical start is confirmed by telemetry naming the matching Wright job.
+
+The print panel polls printer MCP status and AMS inventory before dispatch and while printing. It displays available/busy state, progress, remaining time, layers, and loaded slot material and color. Selecting a loaded slot before creating a part sets the slice material. Existing 3MF packages can use a different slot of the same material; a different material requires a new slice. Print remains disabled if status is unavailable or busy, a slot is empty, or its type does not match the package. At dispatch the API refreshes the P1S status and AMS, checks the exact package and material again, then maps its single filament to the selected absolute AMS slot. The local `scripts/print_demo_p1s_mcp.py` adapter adds that explicit mapping to the pinned P1S MCP library's upload and MQTT behavior, whose original `printer_print` tool has no slot argument. **Cancel this print** sends `printer_stop` only when the active printer job matches Wright's one-use dispatch record; a successful response confirms a stop request, not that the printer has stopped. The camera endpoint streams local P1S JPEG frames as MJPEG. It uses `WRIGHT_P1S_IP` and `WRIGHT_P1S_ACCESS_CODE` when both are set in the API process; otherwise it uses the saved P1S MCP credentials. The endpoint connects to the printer's TLS port 6000 directly, or can relay repeated `camera_snapshot` MCP frames if a printer server provides that tool. Enable LAN liveview on the printer for the direct feed. The access code stays on the API host. Set `WRIGHT_PRINT_DEMO_MONITOR_ENABLED=1` to permit read-only status, AMS and camera checks while keeping `WRIGHT_PRINT_DEMO_PRINTER_ENABLED=0` and Print disabled.
+
+## Setup for this source-checkout demo
+
+- Run Wright's API and web UI in the source checkout. The demo preparer uses the reviewed local Bambu Studio 2.8.2.61 binary and P1S profile files under `.local-run/feature-081-live/tools/`.
+- For the offline phase, start the API with `WRIGHT_PRINT_DEMO_PRINTER_ENABLED=0`, a writable `WRIGHT_SECRETS_PATH`, and `WRIGHT_WORKSPACES_DIR` outside the source checkout. Start the web UI with `VITE_WRIGHT_WORKFLOW_RECOVERY=true` and its proxy pointed at that API. The API must finish startup before local MCP configuration, since catalog reconciliation restores the catalog Blender launch command at startup.
+- Start the pinned Blender 4.5.10 host with the `blender-mcp` add-on and `scripts/windows/blender-mcp-host.py` on its default loopback port 9876. Use isolated `BLENDER_USER_SCRIPTS` and `BLENDER_USER_CONFIG` directories for this workspace. Then run `uv run --no-sync python scripts/configure_print_demo_offline.py --database <wright.db> --workspace-id <workspace-id> --workspace <workspace-dir> --include-printer` and activate the four configured servers in Tool Registry. The script requires the local `.venv`, pinned Blender and P1S MCP sources, and Bambu Studio distribution already present in this checkout; it changes only the specified local database and workspace binding. Repeat the script after an API restart before activating Blender MCP. For this isolated run, point `WRIGHT_SECRETS_PATH` at its `credentials.json` so the previously saved P1S Tool Registry credentials are available.
+- Enable `blender-mcp-ahujasid`, `wright-printed-part-mesh-repair`, and `wright-printed-part-slicer` in the workspace. The latter two are the existing fixed MCP wrappers in `scripts/engineering_dataset_mesh_repair_mcp.py` and `scripts/engineering_dataset_slice_mcp.py`; run them with `WRIGHT_PRINT_WORKSPACE` set to the active workspace directory. The mesh-repair wrapper also needs `BLENDER_PORT` for its owned Blender connection. The saved workflow connects and verifies the source STL before repair, then the repaired STL before slicing; each fixed wrapper independently confines its input to the same attempt.
+- The geometry task requires a working Wright model backend capable of tool calls and image input. Configure local Hermes model access before expecting prompt-only, image-only, or combined requests to run. Preparation validates all three request forms independently of model availability.
+- Enable the catalogued `bambu-p1s-mcp-marctheshark3` server in the same workspace for `printer_status`, `printer_ams`, `printer_print`, and `printer_stop`. The source-checkout configurator points that local server at Wright's explicit-slot adapter, which reuses the pinned P1S MCP library. Configure its `BAMBU_IP`, `BAMBU_ACCESS_CODE`, `BAMBU_SERIAL`, and `BAMBU_MODEL=P1S` in Tool Registry, on a host that can reach the printer's LAN ports 8883 and 990. No credential is accepted in the browser form.
+- For the continuous camera, save the P1S MCP credentials in Wright's local secret store, or set both `WRIGHT_P1S_IP` and `WRIGHT_P1S_ACCESS_CODE` in the **API process environment** before starting Wright. The P1S must allow LAN liveview on port 6000. The browser only requests Wright's `/api/workspace/print-demo/camera.mjpeg` endpoint.
+- Confirm the selected AMS spool matches the Generic material profile saved in the 3MF and that the build plate is ready. The demo supports single-filament PLA, PETG, ABS and ASA packages; other reported AMS types remain visible but cannot be selected for this workflow.
+
+If any required MCP stage is unavailable, **Create printable part** reports which server/tool needs enabling and does not create a fictitious part or package. The P1S LAN status and one camera frame have been checked locally, but continuous camera reliability and a physical print remain unverified.
+
+The isolated offline diagnostic and its precise limits are recorded in [offline run evidence](prompt-to-printed-part-offline-evidence.md).
+
+Protocol and viewer references: [Bambu Studio CLI](https://github.com/bambulab/BambuStudio/wiki/Command-Line-Usage), [Cura simulation controls](https://github.com/Ultimaker/Cura/blob/main/plugins/SimulationView/SimulationViewMenuComponent.qml), [Prusa G-code viewer](https://help.prusa3d.com/article/standalone-g-code-viewer_193152), [catalogued P1S MCP](https://github.com/marctheshark3/bambu-p1s-mcp), [P1S AMS mapping and MQTT commands](https://github.com/Doridian/OpenBambuAPI/blob/main/mqtt.md), [P1S local camera framing](https://github.com/Doridian/OpenBambuAPI/blob/main/video.md).
+
+## When a sent print does not start
+
+The monitor excludes progress and estimates belonging to other jobs, including
+a cancelled job retained by the P1S as `FAILED`. It shows **Start not confirmed**
+until the printer reports this package, along with its last telemetry timestamp,
+nozzle and bed temperatures, and available diagnostic codes. Stale telemetry
+blocks printing. Once the matching job appears, the panel distinguishes heating,
+preparation, printing, pause, and terminal states.
+
+If the printer is idle and this job never started, check the printer and clear
+plate, select the confirmation checkbox, and click **Allow another attempt**.
+Wright refreshes readiness and retains the earlier attempt; it does not send a
+print from that action. Then select the matching AMS slot and click **Print on P1S**.
+Retries are blocked for an active or matching reported job and for the first minute
+after dispatch. An operator-confirmed retry is recorded separately from a
+confirmed upload failure; uncertainty in the original attempt is preserved.
+
+The P1S adapter uses `file:///sdcard/<name>` for the uploaded package and the
+firmware's `bed_leveling` field. This follows the P1/A1 handling in
+[bambu-printer-manager](https://github.com/synman/bambu-printer-manager/blob/devel/src/bpm/bambuprinter.py).
+Responses are correlated by command sequence and kept separate from telemetry.
+A missing acknowledgment never authorizes an automatic retry.
+
+## Official Studio desktop dispatch experiment
+
+On 2026-09-28, the cloud-connected P1S accepted a real pumpkin print submitted
+through automated controls in official Bambu Studio. After a transient AMS
+filament-feed error (`0700-8006`) cleared, it reached layer 2/247 using yellow
+PLA in A1, with no active errors. The desktop route passed the authorization
+barrier seen with direct MQTT and started printing. That initial GUI experiment
+regenerated the slice. The follow-on Windows adapter now connects the Print
+button to Studio with a print-only wrapper that preserves the reviewed G-code,
+explicit AMS selection/readback, submission progress, and a confirmation timeout.
+It is enabled in this isolated demo. A real print through the newly connected
+button is pending; cancellation uses Studio or Handy for this transport.
+See [the experiment record](prompt-to-printed-part-studio-automation.md) for the
+actual package, telemetry, limits, and remaining integration work.

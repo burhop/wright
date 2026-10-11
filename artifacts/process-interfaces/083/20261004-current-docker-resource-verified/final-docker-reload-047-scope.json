@@ -1,0 +1,22 @@
+{
+  "schema_version": "wright.process-presentation/1",
+  "process": {
+    "workspace_id": "083-printed-repeat-015",
+    "source_path": "workflows/printed-replacement-part-configured-default-016.workflow.wflow",
+    "source_digest": "1fb7fb48d6579448565b28553f5b0136ed7c7e19e7c5fbd90f6d50d26493c0b7",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "session_id": "083-printed-repeat-session-015",
+  "ui_id": "ui-0a09766ccdd94bfdb3dab1f5519d1628",
+  "revision_id": "revision-d38d8f51a4674fe7816f9b00ca43ad73",
+  "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+  "read_only": true,
+  "capabilities": [
+    "process.navigate",
+    "process.read",
+    "process.results"
+  ],
+  "presentation_id": "d596fa44-c7bf-4e01-8503-9035e0a4cf86",
+  "generation": 1
+}

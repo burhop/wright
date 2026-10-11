@@ -1,0 +1,32 @@
+{
+  "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+  "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+  "revision_id": "revision-9c8c8b164ea34a9ba65910567b41b170",
+  "result_ids": [
+    "67abaa021ee44972a94e3c9cbaa3dbbe:author_cad_live_default_model_002:cad_source",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:baseline_40_coarse",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:baseline_40_fine",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:correspondence",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:decision",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-coarse-temperature.vtu",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-fine-temperature.vtu",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/heat-balance.json",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/mesh-comparison.json",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-coarse-temperature.vtu",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-fine-temperature.vtu",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:revision_60_coarse",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:revision_60_fine",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:baseline_40_geometry",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:geometry_measurements",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:revision_60_geometry",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result",
+    "67abaa021ee44972a94e3c9cbaa3dbbe:validate_outputs_live_default_model_002:diagnostic:validation/assessment-c1cc56ecf12341938996ff0fa1c07b4e.json"
+  ],
+  "assessment_id": "assessment-c1cc56ecf12341938996ff0fa1c07b4e",
+  "working_context_read_only": false,
+  "field_samples": 765,
+  "common_and_tailored_parity": true,
+  "reload": true,
+  "navigation": true,
+  "url": "http://127.0.0.1:5243/workspace/083-heat-live-005?workflow=canonical&workflowPath=workflows%2Fheat-spreader-sizing-live-default-model-002.workflow.wflow&processView=87dd3848-6197-4c21-92ad-474afec1dc2c&processPath=workflows%2Fheat-spreader-sizing-live-default-model-002.workflow.wflow&processDigest=e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9&processRun=67abaa021ee44972a94e3c9cbaa3dbbe&processUIKind=working&processUI=ui-8858f2ec2bc24bc588ce5042626503ab&processUIRevision=revision-9c8c8b164ea34a9ba65910567b41b170"
+}

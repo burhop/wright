@@ -1,0 +1,16 @@
+{
+  "verified_viewports": [
+    1440,
+    1024,
+    480
+  ],
+  "normal_workflows_entry": true,
+  "outer_controls_minimum_height_px": 44,
+  "keyboard_focus_outline_px": 3,
+  "outer_horizontal_overflow": false,
+  "fixture_component_tests": 22,
+  "full_editor_regression": false,
+  "full_accessibility_acceptance": false,
+  "user_acceptance": false,
+  "full_feature_complete": false
+}

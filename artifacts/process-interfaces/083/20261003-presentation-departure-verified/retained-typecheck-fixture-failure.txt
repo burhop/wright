@@ -1,0 +1,6 @@
+src/services/process-ui-authoring.spec.ts(41,26): error TS2345: Argument of type '{ descriptor: { schemaVersion: number; surfaceId: string; workspaceId: string; source: { kind: string; sourceId: string; sourceVersion: string; manifestId: string; }; title: string; lifecycle: string; ... 5 more ...; updatedAt: string; }; launch: { ...; }; binding: { ...; }; job_id: string; build: BuildReport; }' is not assignable to parameter of type 'ProcessInterfacePresentation'.
+  The types of 'descriptor.schemaVersion' are incompatible between these types.
+    Type 'number' is not assignable to type '1'.
+src/services/process-ui-authoring.spec.ts(52,26): error TS2345: Argument of type '{ descriptor: { schemaVersion: number; surfaceId: string; workspaceId: string; source: { kind: string; sourceId: string; sourceVersion: string; manifestId: string; }; title: string; lifecycle: string; ... 5 more ...; updatedAt: string; }; launch: { ...; }; binding: { ...; }; job_id: string; build: BuildReport; }' is not assignable to parameter of type 'ProcessInterfacePresentation'.
+  The types of 'descriptor.schemaVersion' are incompatible between these types.
+    Type 'number' is not assignable to type '1'.

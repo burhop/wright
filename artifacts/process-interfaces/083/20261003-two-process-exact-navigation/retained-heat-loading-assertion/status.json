@@ -1,0 +1,64 @@
+{
+  "title": "Latest saved heat interface: exact outputs, field evidence and source navigation",
+  "summary": "A focused continuation of the verified normal-workspace journey using actual completed CAD/solver outputs. No process decision or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-03T03:13:03.093Z",
+  "manualSteps": [
+    {
+      "label": "Open saved comparison",
+      "instruction": "Open the latest saved heat working-interface link for the completed analysis run."
+    },
+    {
+      "label": "Inspect field",
+      "instruction": "On revision_60_fine, click Open representation. Expand View numerical samples and select x_m, y_m and temperature_c."
+    },
+    {
+      "label": "Inspect assessment",
+      "instruction": "Reopen the saved interface. On revision_60_fine, click Open assessment."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Reopen the saved interface. On revision_60_fine, click Open producing step. Inspect the selected computation block."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reopen the saved comparison and reload. Leave all reviews unchanged."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Latest comparison matches completed engineering outputs",
+      "summary": "The saved shared-controls interface reads all eighteen actual CAD/solver results.",
+      "purpose": "Prove current saved UI against completed outputs rather than only a waiting basis result.",
+      "action": "Open the latest saved heat comparison for the completed run.",
+      "controls": [
+        "Run inputs",
+        "Open representation",
+        "Open assessment"
+      ],
+      "expected": "Exact eighteen-result parity and original held assessment in a working context.",
+      "actual": "All eighteen identities match; exact working context and shared controls are present.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Latest heat interface check stopped",
+      "summary": "The current saved comparison did not meet the exact evidence expectation.",
+      "purpose": "Retain the first failure.",
+      "action": "Stop at the unexpected comparison state.",
+      "controls": [
+        "Open representation",
+        "Open assessment",
+        "Open producing step"
+      ],
+      "expected": "Exact completed-output parity and useful navigation.",
+      "actual": "expect(received).toEqual(expected) // deep equality\n\n- Expected  - 20\n+ Received  +  1\n\n- Array [\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:author_cad_live_default_model_002:cad_source\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:baseline_40_coarse\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:baseline_40_fine\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:correspondence\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:decision\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-coarse-temperature.vtu\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/baseline_40-fine-temperature.vtu\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/heat-balance.json\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/mesh-comparison.json\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-coarse-temperature.vtu\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:process-proofs/heat-spreader-sizing/live-default-model-002/outputs/revision_60-fine-temperature.vtu\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:revision_60_coarse\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:compute_fields_live_default_model_002:revision_60_fine\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:baseline_40_geometry\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:geometry_measurements\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:create_plate_geometry_live_default_model_002:revision_60_geometry\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:define_thermal_case_live_default_model_002:define_thermal_case_live_default_model_002_result\",\n-   \"67abaa021ee44972a94e3c9cbaa3dbbe:validate_outputs_live_default_model_002:diagnostic:validation/assessment-c1cc56ecf12341938996ff0fa1c07b4e.json\",\n- ]\n+ Array []",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

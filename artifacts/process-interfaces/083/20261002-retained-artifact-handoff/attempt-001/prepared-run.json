@@ -1,0 +1,9 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-retained-handoff-001.workflow.wflow",
+  "expected_storage_digest": "3cc48d6fd830ee6db4bc5ef83edb27954a34023f8b56d4cd7a6cb2b286274d05",
+  "input_snapshot_id": "inputs-57ed49be2d5d455a84169a0f90702fef",
+  "expected_input_digest": "1267a72308046b609653a9c0d61e88ff6d8bd17a56b0ed18a978ecb4a5a9106e",
+  "integration_policy_digest": "a5e01268a938743cbf5f87efa59e066704eb22dd4032968af3111584905e6595",
+  "status": "prepared_not_started"
+}

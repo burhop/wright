@@ -1,0 +1,99 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "assessment_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "assessment_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Assessment Digest",
+      "type": "string"
+    },
+    "requirement_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Requirement Id",
+      "type": "string"
+    },
+    "actor_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "actor_type": {
+      "const": "authenticated_human",
+      "title": "Actor Type",
+      "type": "string"
+    },
+    "authority_ref": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Authority Ref",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "approved",
+        "changes_requested"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "maxLength": 8192,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "created_at": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "workspace_id",
+    "assessment_id",
+    "assessment_digest",
+    "requirement_id",
+    "actor_id",
+    "actor_type",
+    "authority_ref",
+    "decision",
+    "rationale",
+    "evidence_refs",
+    "created_at"
+  ],
+  "title": "ReviewDecision",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:wright:process-validation:1:ReviewDecision"
+}

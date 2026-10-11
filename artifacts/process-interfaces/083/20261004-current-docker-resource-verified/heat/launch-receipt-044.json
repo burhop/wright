@@ -1,0 +1,13 @@
+{
+  "container_id": "4a6f7a67675389da77f0e58704f8c4da33881dfd6ae358509207715a3fda3ebe",
+  "label": "083-final-docker-043-heat",
+  "image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "port": 8061,
+  "running_at_launch": true,
+  "binds_read_only": true,
+  "cpu_limit": 2,
+  "memory_bytes": 2147483648,
+  "pids_limit": 256,
+  "wheel_sha256": "314009cea82c1eb6da44c0069dacd1bf80d4540b5bb4d5369d4572357c90fcf2",
+  "no_checkout_or_provider_model_configuration_mounted": true
+}

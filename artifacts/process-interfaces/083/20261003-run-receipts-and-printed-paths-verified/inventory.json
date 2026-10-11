@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "path": "first-failure-notes.json",
+      "sha256": "cc4aaabc6121c6e98992eb59e098cea92a5d18e2ff7d42a73850d345982ae7b4",
+      "bytes": 1616
+    },
+    {
+      "path": "preservation.json",
+      "sha256": "24d4e2dbdd53cbc36e5272d822b45df068cedef694273cc6bb97a32eb8c8e0ba",
+      "bytes": 1387
+    },
+    {
+      "path": "pytest.log",
+      "sha256": "1e06e7b7732b27442fa83aaf5c5cab83095f385329923b550a864f5dae58289f",
+      "bytes": 346
+    },
+    {
+      "path": "pytest.xml",
+      "sha256": "ab62d676c562e2226ecdaa9460b5e9cdee427c5f236bdcdd399d389fadf79825",
+      "bytes": 55985
+    },
+    {
+      "path": "README.md",
+      "sha256": "91784af8ebad54675d8c95cd50eac38c28dab0aff4f17a3e37846063b11a9888",
+      "bytes": 3426
+    },
+    {
+      "path": "reproduce.py",
+      "sha256": "6d4367559dc05d9031a362fdadfbe6dfcfa1eea47c5667bf2f4dd3636a05c0da",
+      "bytes": 1968
+    },
+    {
+      "path": "result.json",
+      "sha256": "c994ff93a6d22e86ad2c0585dfb45789c75014340b14fe0c7bace06c4a2cdf6b",
+      "bytes": 1615
+    },
+    {
+      "path": "ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "source-hashes.json",
+      "sha256": "b211a731c0adff35817ce14a3b6fe9b34b0fc8fbaf5a70c57f4fa86db37df199",
+      "bytes": 2452
+    }
+  ]
+}

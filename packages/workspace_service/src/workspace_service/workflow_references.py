@@ -6,6 +6,57 @@ import base64
 import hashlib
 
 
+def is_artifact_approval(step) -> bool:
+    action = getattr(step, "external_action", None) or {}
+    return action.get("action_kind") in {
+        "local_review",
+        "printer_transfer",
+        "supplier_upload_preview",
+        "cart_quote_handoff",
+    }
+
+
+def accepts_supplied_artifacts(step) -> bool:
+    if not is_artifact_approval(step):
+        return False
+    action = step.external_action
+    return action["action_kind"] == "local_review" or (
+        action.get("settings", {}).get("include_supplied_files") is True
+    )
+
+
+def allows_binary_file_reference(steps, addresses: set[str]) -> bool:
+    """Opaque bytes need a declared file consumer and no document/argument consumer."""
+    file_consumer = False
+    for step in steps:
+        # Fixed approval operations seal referenced artifact identities. They do
+        # not interpret those bytes as prompt text or provider arguments. MCP
+        # submissions retain their separately declared file/argument contract.
+        artifact_approval = accepts_supplied_artifacts(step)
+        if step.application_from in addresses:
+            file_consumer = True
+        for _, source in step.references:
+            if source in addresses and (
+                source in step.file_dependencies or artifact_approval
+            ):
+                file_consumer = True
+        if (
+            step.prompt_from in addresses
+            or step.arguments_from in addresses
+            or addresses.intersection(step.argument_sources.values())
+            or any(
+                source in addresses
+                and (
+                    (source not in step.file_dependencies and not artifact_approval)
+                    or sum(src == source for _, src in step.references) != 1
+                )
+                for _, source in step.references
+            )
+        ):
+            return False
+    return file_consumer
+
+
 def snapshot_task_files(workspace_dir: str, paths: tuple[str, ...]) -> dict:
     from .workspace_path import WorkspacePath
 
@@ -21,7 +72,7 @@ def verify_task_files(
     workspace_dir: str, paths: tuple[str, ...], before: dict | None = None
 ) -> list[dict]:
     from .workspace_path import WorkspacePath
-    from .workflow_source_execution import _invalid
+    from .workflow_source_execution import _error
 
     files = []
     for path in paths:
@@ -34,16 +85,29 @@ def verify_task_files(
                 raise ValueError("The existing file was not updated by this task")
             with target.open("rb") as stream:
                 digest = hashlib.file_digest(stream, "sha256").hexdigest()
+            media_type = None
+            if target.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp"}:
+                with target.open("rb") as stream:
+                    media_type = image_media_type(path, stream.read(16))
+                    if media_type in {"image/png", "image/jpeg"}:
+                        from .workflow_mcp_images import _dimensions
+
+                        stream.seek(0)
+                        width, height = _dimensions(stream.read(), media_type)
+                        if width <= 0 or height <= 0:
+                            raise ValueError("Image dimensions must be positive")
             files.append(
                 {
                     "output_path": path,
                     "output_bytes": size,
                     "output_format": target.suffix.lstrip("."),
                     "sha256": digest,
+                    **({"media_type": media_type} if media_type else {}),
                 }
             )
         except (OSError, ValueError) as error:
-            raise _invalid(
+            raise _error(
+                "WORKFLOW_OUTPUT_INVALID",
                 f"The task did not produce the expected file: {path}.",
                 "Inspect the tool results and correct the task or expected filename.",
             ) from error
@@ -75,6 +139,8 @@ class WorkflowReference:
     image_url: str = ""
     file_only: bool = False
     size_bytes: int | None = None
+    run_path_id: str = ""
+    resolved_sha256: str = ""
 
     @classmethod
     def from_bytes(
@@ -102,6 +168,82 @@ class WorkflowReference:
                 return cls(path, identity, file_only=True, size_bytes=len(data))
             raise ValueError("Choose a non-empty text document.")
         return cls(path, identity, text=text, size_bytes=len(data))
+
+
+def verified_file_dependencies(step, responses, workspace_dir):
+    """Pin connected tool files without interpreting binary bytes as model text."""
+    from .workflow_results import EngineeringResult
+    from .workflow_source_execution import _invalid
+    from .workspace_path import WorkspacePath
+
+    records = []
+    for source_id, expected_path in step.file_dependencies.items():
+        value = responses.get(source_id)
+        connected_output = expected_path == {"source": "connected_output"}
+        if isinstance(value, EngineeringResult):
+            if (
+                connected_output
+                and source_id
+                != f"{value.provenance.task_id}.{value.provenance.output_port}"
+            ):
+                raise _invalid(
+                    f"{step.title}: its file receipt belongs to another connected output."
+                )
+            representations = [
+                rep for rep in value.representations if rep.kind == "workspace_file"
+            ]
+            if len(representations) != 1:
+                raise _invalid(
+                    f"{step.title}: its connected file differs from the declared input."
+                )
+            rep = representations[0]
+            location, expected_hash, expected_size = (
+                rep.location,
+                rep.sha256,
+                rep.size_bytes,
+            )
+        elif isinstance(value, WorkflowReference):
+            # Supplied/defaulted input files are pinned by preparation, without
+            # pretending that an engineering tool produced those input bytes.
+            location, expected_hash, expected_size = (
+                value.path,
+                value.sha256,
+                value.size_bytes,
+            )
+        else:
+            raise _invalid(
+                f"{step.title}: its connected file was not supplied or produced."
+            )
+        if connected_output:
+            expected_path = location
+        if location != expected_path or expected_size is None:
+            raise _invalid(
+                f"{step.title}: its connected file differs from the declared input."
+            )
+        try:
+            target = WorkspacePath(workspace_dir).resolve(
+                expected_path, must_exist=True
+            )
+            with target.open("rb") as stream:
+                actual_hash = hashlib.file_digest(stream, "sha256").hexdigest()
+            actual_size = target.stat().st_size
+        except (OSError, ValueError) as error:
+            raise _invalid(
+                f"{step.title}: its connected file is unavailable."
+            ) from error
+        if actual_hash != expected_hash or actual_size != expected_size:
+            raise _invalid(
+                f"{step.title}: its connected file changed after the previous stage."
+            )
+        records.append(
+            {
+                "path": expected_path,
+                "sha256": actual_hash,
+                "kind": "workspace_file",
+                "source_port": source_id,
+            }
+        )
+    return records
 
 
 async def reference_from_result(result, *, service, workspace_dir, task_title):

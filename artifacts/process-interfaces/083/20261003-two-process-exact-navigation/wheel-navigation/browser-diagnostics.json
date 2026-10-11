@@ -1,0 +1,73 @@
+{
+  "console": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-ce377446f6d44705846a32f7c3eb94b2/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-f8ce7cde-a21d-40d4-895d-628a136053a3.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-f8ce7cde-a21d-40d4-895d-628a136053a3.localhost%3A8030/__wright/process/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/representations/read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-ce377446f6d44705846a32f7c3eb94b2/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-08bc4f58-2713-484b-af18-1527381bf74c.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-08bc4f58-2713-484b-af18-1527381bf74c.localhost%3A8030/__wright/process/navigation"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/navigation"
+    }
+  ],
+  "representationHeaders": [
+    {
+      "status": 200,
+      "bytes": "72157",
+      "sha256": "f093ea6e53198b3ba25a5a9f825330c9021ccf0c01814c8d82c42f7b6011712b",
+      "nosniff": "nosniff"
+    }
+  ],
+  "contexts": [
+    {
+      "read_only": false,
+      "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687"
+    },
+    {
+      "read_only": false,
+      "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687"
+    }
+  ]
+}

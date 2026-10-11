@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "integration_test": true,
+  "simulated_handoff": true,
+  "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+  "step_id": "authorize_transfer_configured_default_016",
+  "checkpoint_id": "checkpoint-2d81120517fd3327d71bf057",
+  "subject_digest": "8615e2be5deb83e413837fa96642453e8e1fbdc1926bd6d1360b9700268a1253",
+  "action_id": "printed-configured-second-transfer-continuation-016",
+  "campaign_id": "083-private-digital-printed-configured-016",
+  "dataset_id": "printed-replacement-part-01",
+  "integration_policy_digest": "4900217f07230440c1d564645a3b792c64bd9200be72d17eccb50fb34970714e",
+  "destination": {
+    "id": "test://083-private-digital-printed-configured-016/printer/printed-replacement-part-01",
+    "kind": "integration_test"
+  },
+  "action_kind": "printer_transfer",
+  "artifact_digests": [
+    "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+    "0fd5cdb55add6f7045b8679a7dbf1e56b684caee18f19801867723abb5b106d0",
+    "16c4eb9f19a696351e0c6dd88bcdde839c614aaf039a6d4734cef7111ee10420",
+    "207fdfdb57fa7426d3326168f4cc5cdfa14747dc100140d849a2b6c7a6435391",
+    "3062e455aadc3f0748a908c5e17774140fbc417db1eb69276d5a5fac5ebe15b3",
+    "31f0cb1760763af8edf66047b85da2a0930abd234467292e18b16c257d3f606d",
+    "3f6bfd9d8e1a7d7e655e9c10b7ba489d7111d21636c1094f9d122846a534858f",
+    "46957652534dc2bc2b132902b98c036daa6da07efe7cb86a7de38a8a5c7c764b",
+    "4af259ac30703a404bfd9f82a9634e344f7389cf3fb0e8bb8ac34e4d7ac3f615",
+    "67218d5f17a0fa9a7ebc0cebdb0cdea59988727468183f6b627f9946e61ae1d5",
+    "6ddbf0f461944ef7c8567240b9aaf5a221b1306afb861e22981ddfec4c24535b",
+    "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "9fb12c4975d916430b1389a995ca2dd18117592d33204d069f2e77507d7609de",
+    "ae07cdf81f4693d426ac0234cad96f73dc2ca6eaaa0e2eea27e8ae3dbbbf6112",
+    "b2f877bb3e7fde88fab22cef5eca85e33fd12d9225ebf28b032f575773fecf79",
+    "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+    "faca92496d00d7494ae5b69c18f8658b418a60a64896306a9697ec9416beda91"
+  ],
+  "network_dispatch": false
+}

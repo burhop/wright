@@ -1,0 +1,27 @@
+{
+  "schema_version": "wright.process-ui-checked-scope/1",
+  "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+  "job_id": "job-c165c08bc5bb4f77809f38f8e423e274",
+  "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+  "revision_id": "revision-04c1d0b36d3347b0b5c24318028e4f61",
+  "source_digest": "6fdf4b5b2b5717ff80d3bd103d16e0accf0607031fa5d77a2deb9229b091160a",
+  "inventory_digest": "3ab91c12ed6d60ff134bf476cb552d1a6dcdb1a4eba0c7dda5140778bfa05120",
+  "model_reference": "gpt-5.6-sol",
+  "browser_steps": 11,
+  "actual_result_cards": 18,
+  "method": "Actual default-model composition through Wright; fixed local build; real normal-workspace preview, save and saved open after generic proxy/recovery fixes.",
+  "controls": "Restored native job locator, owner-observed preview then explicit save/open; no local injected authoring intent.",
+  "source_line_count": 56,
+  "physical_dispatch": false,
+  "human_acceptance": false,
+  "focused_update_proved": false,
+  "second_run_reuse_proved": false,
+  "limitations": "Initial compact results comparison; preparation/review control enhancement, focused update, second-run reuse and printed workflow remain pending.",
+  "browser_report": "workspace-walkthrough/report.html",
+  "files": {
+    "source.json": "6fdf4b5b2b5717ff80d3bd103d16e0accf0607031fa5d77a2deb9229b091160a",
+    "binding.json": "99ecdb413762990bedbde7066e2e12bd513c6448393ccbf536fe56e4e42d8f03",
+    "build-report.json": "50d6aadae10ca7aba82a46b073f6ca62335798e259e16d4aad805160ac000bba",
+    "saved-revision.json": "c325fa9c017216aefa1b624d5904c7a8c67f646381326a6a72a1cd66223846a3"
+  }
+}

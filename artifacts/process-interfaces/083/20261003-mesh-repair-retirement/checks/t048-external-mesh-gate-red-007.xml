@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="2.073" timestamp="2026-10-03T06:37:55.944369-04:00" hostname="Work17"><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metrics_measure_actual_disconnected_bytes[triangle_count-8-1]" time="0.001"><failure message="workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.">tests\external\process_validation\test_printing.py:118: in test_mesh_metrics_measure_actual_disconnected_bytes
+    measurement = PrintingArtifactReader().measure(mesh, check("mesh_metric", selector="mesh/" + metric,
+packages\workspace_service\src\workspace_service\process_validation\readers\printing.py:381: in measure
+    raise ValidationIssue(
+E   workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metrics_measure_actual_disconnected_bytes[connected_components-2-1]" time="0.001"><failure message="workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.">tests\external\process_validation\test_printing.py:118: in test_mesh_metrics_measure_actual_disconnected_bytes
+    measurement = PrintingArtifactReader().measure(mesh, check("mesh_metric", selector="mesh/" + metric,
+packages\workspace_service\src\workspace_service\process_validation\readers\printing.py:381: in measure
+    raise ValidationIssue(
+E   workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_mesh_metrics_measure_actual_disconnected_bytes[signed_volume_mm3-2.0-mm3]" time="0.001"><failure message="workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.">tests\external\process_validation\test_printing.py:118: in test_mesh_metrics_measure_actual_disconnected_bytes
+    measurement = PrintingArtifactReader().measure(mesh, check("mesh_metric", selector="mesh/" + metric,
+packages\workspace_service\src\workspace_service\process_validation\readers\printing.py:381: in measure
+    raise ValidationIssue(
+E   workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.</failure></testcase><testcase classname="tests.external.process_validation.test_printing" name="test_signed_volume_metric_preserves_inward_orientation" time="0.001"><failure message="workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.">tests\external\process_validation\test_printing.py:127: in test_signed_volume_metric_preserves_inward_orientation
+    measurement = PrintingArtifactReader().measure(mesh, check("mesh_metric", selector="mesh/signed_volume_mm3",
+packages\workspace_service\src\workspace_service\process_validation\readers\printing.py:381: in measure
+    raise ValidationIssue(
+E   workspace_service.process_validation.readers.base.ValidationIssue: Print-artifact check requests an unsupported operation.</failure></testcase></testsuite></testsuites>

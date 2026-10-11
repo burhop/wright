@@ -1,0 +1,11 @@
+{
+  "checkpoint_id": "checkpoint-c8127aaf0165f8359bba2a5a",
+  "run_id": "8050d870b2254dfe92e84d9ddc144977",
+  "subject_digest": "7d7066daf8fbe935f3a8c15e1b46ab0f3ccdf8be23f01c816ffab6266703cde1",
+  "state": "approved",
+  "actor": "integration_test:083-private-digital-wheel-007",
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "continuation_executed": false
+}

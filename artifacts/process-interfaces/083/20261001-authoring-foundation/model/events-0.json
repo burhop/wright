@@ -1,0 +1,29 @@
+[
+  {
+    "type": "progress",
+    "data": {
+      "role": "process-ui-author",
+      "transport": "hermes-model-sdk",
+      "resolution": {
+        "provider": "openai-codex",
+        "model_reference": "gpt-5.6-sol",
+        "api_mode": "codex_responses",
+        "endpoint_digest": "9ab74da1d15bdc50a0f3fd1cfdab8a6cda45487d2b2774cb7631bd831331ad24",
+        "sdk_digest": "f75d7c7c5d0e37065f7c944e6def66aae2acf66bc3af36af822c4736a4f7da64",
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a"
+      },
+      "instructions_version": "process-ui-author-1",
+      "effective_instructions_digest": "658e467cf492c6d9778417e0625d507a86da4d66e1067c0e9c694b0345f4fbaa"
+    }
+  },
+  {
+    "type": "token",
+    "data": {
+      "text": "{\"source\":{\"files\":{\"App.tsx\":\"import type { InteractionSnapshot, ProcessClient } from '@wright/process-client';\\nimport {\\n  ProcessUI,\\n  Section,\\n  ProgressPanel,\\n  ResultCard,\\n  ReasonNotice,\\n} from '@wright/ui-kit';\\n\\nexport interface AppProps {\\n  client: ProcessClient;\\n  snapshot: InteractionSnapshot;\\n  readOnly: boolean;\\n}\\n\\nexport default function App({ snapshot, readOnly }: AppProps) {\\n  const diagnostics = snapshot.diagnostics ?? [];\\n  const outputs = snapshot.outputs ?? [];\\n\\n  return (\\n    <ProcessUI>\\n      <Section title=\\\"Process status\\\">\\n        <p>\\n          Read-only SDK qualification review. No engineering acceptance or\\n          operational action is requested.\\n        </p>\\n        {readOnly && <p>The host has also marked this view read-only.</p>}\\n        <ProgressPanel\\n          state={snapshot.state}\\n          observations={snapshot.observations ?? []}\\n        />\\n        {diagnostics.length === 0 ? (\\n          <p>No backend diagnostic reasons are currently reported.</p>\\n        ) : (\\n          diagnostics.map((reason, index) => (\\n            <ReasonNotice key={`${reason.code}-${index}`} reason={reason} />\\n          ))\\n        )}\\n      </Section>\\n\\n      <Section title=\\\"Exact outputs and checks\\\">\\n        {outputs.length === 0 ? (\\n          <p>No outputs or checks are currently available.</p>\\n        ) : (\\n          outputs.map((output) => (\\n            <ResultCard key={output.result_id} output={output} />\\n          ))\\n        )}\\n      </Section>\\n    </ProcessUI>\\n  );\\n}\\n\"}},\"manifest\":{\"schema_version\":\"wright.process-ui/1\",\"ui_id\":\"comparison-ui\",\"revision_id\":\"revision-one\",\"parent_revision\":null,\"title\":\"Comparison review\",\"process\":{\"workspace_id\":\"synthetic-ui-model-test\",\"source_path\":\"workflows/synthetic-comparison.wflow\",\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"semantic_digest\":null,\"source_contract\":\"canonical-source\"},\"interaction_version\":\"wright.process-interaction/1\",\"client_version\":\"1.0.0\",\"kit_version\":\"1.0.0\",\"bindings\":[],\"capabilities\":[\"process.read\",\"process.results\",\"process.navigate\"],\"navigation\":[],\"viewers\":[]}}"
+    }
+  },
+  {
+    "type": "stream_end",
+    "data": {}
+  }
+]

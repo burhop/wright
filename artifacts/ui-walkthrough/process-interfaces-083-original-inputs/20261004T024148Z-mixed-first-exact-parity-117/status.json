@@ -1,0 +1,41 @@
+{
+  "title": "Exact preparation geometry, toolpaths and held assessment in both working views",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-04T02:42:26.830862+00:00",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved wheel process and click Use saved process."
+    },
+    {
+      "label": "Inspect the held preparation run",
+      "instruction": "Open the recorded first-run link and inspect its preparation results and human-review hold."
+    },
+    {
+      "label": "Reuse the interface",
+      "instruction": "Click Create or choose interface, select Focus-wheel original-input preparation and click Open saved interface."
+    },
+    {
+      "label": "Inspect geometry",
+      "instruction": "Reload the saved working interface, then click Open representation on repaired_mesh.stl."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Return to the saved interface and click Open producing step on repaired_mesh.stl."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Browser launch unavailable in sandbox",
+      "summary": "The browser could not start; no Wright page or process action was reached.",
+      "purpose": "Preserve the first pre-navigation host limitation.",
+      "action": "Launch the owned headless browser.",
+      "controls": [],
+      "expected": "A browser starts for a read-only workspace walkthrough.",
+      "actual": "Browser spawn EPERM before navigation; no product result is claimed."
+    }
+  ]
+}

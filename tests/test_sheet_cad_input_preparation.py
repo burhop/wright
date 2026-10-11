@@ -11,6 +11,30 @@ from workspace_service.workflow_source_execution import _parse, compile_prompt_w
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = ROOT / "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff"
+DXF_SERVER = "autocad-headless-fixture"
+
+
+def available_tools(binding):
+    tools = [
+        {
+            "server_id": server,
+            "tool_name": tool,
+            "name": server + "__" + tool,
+            "schema_digest": "a" * 64,
+        }
+        for server, names in binding["allowed_tools"].items()
+        for tool in names
+    ]
+    tools.extend(
+        {
+            "server_id": DXF_SERVER,
+            "tool_name": tool,
+            "name": DXF_SERVER + "__" + tool,
+            "schema_digest": "b" * 64,
+        }
+        for tool in binding["headless_dxf_review"]["tools"]
+    )
+    return tools
 
 
 @pytest.fixture
@@ -24,15 +48,14 @@ def preparer():
 @pytest.mark.parametrize("directory", sorted(SCENARIOS.iterdir()), ids=lambda path: path.name)
 def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, preparer, directory):
     binding = json.loads(preparer.BINDING.read_text(encoding="utf-8"))
-    available = [{"server_id": server, "tool_name": tool, "name": server + "__" + tool, "schema_digest": "a" * 64}
-                 for server, names in binding["allowed_tools"].items() for tool in names]
+    available = available_tools(binding)
     args = SimpleNamespace(workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "draft"),
                            attempt="attempt-test", campaign_id="fixture-campaign", instance_source=None)
     result = preparer.prepare(args, directory, available)
     text = Path(result["draft"]).read_text(encoding="utf-8")
     plan = compile_prompt_workflow(text)
     report = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text(encoding="utf-8"))
-    assert len(plan.steps) == (13 if directory.name.startswith("03") else 10)
+    assert len(plan.steps) == (18 if directory.name.startswith("03") else 14)
     assert len(report["preserved_original_stages"]) == len(report["preserved_original_edges"]) == 6
     assert set(report["preserved_original_stages"]).issubset({step.id for step in plan.steps})
     workspace = Path(args.workspace_root)
@@ -64,7 +87,7 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
         assert len(creators) == (2 if directory.name.startswith("03") else 1)
         assert all("ready_for_geometry_verification" in step.prompt for step in creators)
         assert all("override an explicit needs_input" in step.prompt for step in creators)
-        checks = [step for step in plan.steps if step.design_check]
+        checks = [step for step in plan.steps if step.design_check and not step.validation]
         assert all("missing observations cannot pass" in step.prompt for step in checks)
         assert all("known supplier hard-limit conflict" in step.prompt for step in checks)
         assert all("development discrepancy and die-width cautions" in step.prompt for step in checks)
@@ -74,21 +97,74 @@ def test_fresh_graph_binds_revised_inputs_and_runtime_output_contract(tmp_path, 
     for part in binding["scenarios"][report["scenario_id"]]["parts"]:
         assert report["output_root"] + "/" + part + ".psm" in intent.prompt
     research = next(step for step in plan.steps if step.id.startswith("supplier_research_"))
-    assert len(research.expected_files) == 16  # All eight raw HTML/text pairs; retained manifest is hash-bound by each read.
+    assert {Path(path).name for path in research.expected_files} == {
+        "supplier-evidence.json",
+        *(f"supplier-source-{index}.{extension}"
+          for index in range(1, 9) for extension in ("html", "txt")),
+    }  # The producer owns the manifest and all eight raw HTML/text pairs.
     assert "what-are-your-bend-relief-requirements" in research.prompt
     assert "what-are-your-channel-bend-requirements" in research.prompt
     assert "read_reference_text" in research.prompt
     assert "ordinary channel ratio before its optional thin-sheet exceptions" in research.prompt
     assert "A passing channel ratio alone does not verify full box-forming tool access" in research.prompt
+    sealed = next(step for step in plan.steps if step.id.startswith("seal_supplier_evidence_"))
+    assert sealed.tool_name == "wright-workspace-files__copy_file"
+    assert set(sealed.expected_file_ports) == {"supplier_evidence"}
     final = next(step for step in plan.steps if step.id.startswith("collect_handoff_"))
-    assert report["output_root"] + "/supplier-evidence.json" in final.prompt
+    assert report["output_root"] + "/sealed/supplier-evidence.json" in final.prompt
+    assert set(final.expected_file_ports) == {"final_manifest"}
+    validator = next(step for step in plan.steps if step.id.startswith("validate_sheet_content_"))
+    expected_roles = {
+        "installed_materials", "manufacturing_intent", "supplier_evidence",
+        "preview_receipt", "cart_receipt", "final_manifest", "engineering_handoff",
+    }
+    for part in binding["scenarios"][report["scenario_id"]]["parts"]:
+        token = part.replace("-", "_")
+        expected_roles.update(token + "_" + role for role in ("native", "check", "step", "dxf", "screenshot"))
+        expected_roles.update(token + "_" + role for role in ("review_dxf", "review_report"))
+        review = next(
+            step
+            for step in plan.steps
+            if step.id.startswith("review_" + token + "_flat_dxf_")
+        )
+        assert review.server_id == DXF_SERVER
+        assert review.tool_name == ""
+        assert "AutoCAD MCP Pro 3.4.7 headless ezdxf backend" in review.prompt
+        assert set(review.expected_file_ports) == {
+            token + "_review_dxf",
+            token + "_review_report",
+        }
+    assert {role for role, _ in validator.validation_sources} == expected_roles
+    assert report["headless_dxf_review"]["server_id"] == DXF_SERVER
+    assert report["headless_dxf_review"]["provider"] == "AutoCAD MCP Pro 3.4.7 headless ezdxf backend"
+    assert report["headless_dxf_review"]["claim_limit"].startswith("Headless DXF")
+    assert validator.validation["profile"]["name"] == report["scenario_id"]
+    validation_review = next(
+        step.external_action["settings"]["validation_review"]
+        for step in plan.steps
+        if step.id.startswith("review_sheet_outputs_")
+    )
+    assert validation_review["profile_ref"] == validator.validation["profile"]["reference"]
+    assert validation_review["requirement_ids"]
     actions = [step.external_action for step in plan.steps if step.external_action]
-    assert len(actions) == 3
+    assert len(actions) == 4
+    receipts = {
+        port
+        for step in plan.steps
+        if step.external_action
+        and step.external_action.get("action_kind") != "local_review"
+        for port, kind in step.output_ports
+        if kind == "workspace_file"
+    }
+    assert receipts == {"preview_receipt", "cart_receipt"}
     for action in actions:
         if action["action_kind"] != "local_review":
             assert action["destination"]["id"].startswith("test://fixture-campaign/")
             assert action["settings"]["manufacturing_release"] == "HOLD"
-    assert not (workspace / report["output_root"]).exists()
+    output_directory = workspace / report["output_root"]
+    assert list(output_directory.iterdir()) == [output_directory / "sealed"]
+    assert list((output_directory / "sealed").iterdir()) == []
+    assert not any((workspace / path).exists() for path in report["expected_tool_created_files"])
     assert [section for section in _parse(text) if section["kind"] == "task"]
 
 
@@ -117,8 +193,7 @@ def test_fresh_research_retains_material_identity_and_complete_table_contract(
 ):
     binding_before = preparer.BINDING.read_bytes()
     binding = json.loads(binding_before)
-    available = [{"server_id": server, "tool_name": tool, "name": server + "__" + tool, "schema_digest": "a" * 64}
-                 for server, names in binding["allowed_tools"].items() for tool in names]
+    available = available_tools(binding)
     args = SimpleNamespace(workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "draft"),
                            attempt="attempt-research-repair", campaign_id="fixture-campaign", instance_source=None)
     result = preparer.prepare(args, directory, available)
@@ -129,7 +204,9 @@ def test_fresh_research_retains_material_identity_and_complete_table_contract(
     assert len(urls) == 8
     assert f"urls={urls!r}" in research.prompt  # The actual operation request matches the stated references.
     assert {Path(path).name for path in research.expected_files} == {
-        f"supplier-source-{index}.{extension}" for index in range(1, 9) for extension in ("html", "txt")
+        "supplier-evidence.json",
+        *(f"supplier-source-{index}.{extension}"
+          for index in range(1, 9) for extension in ("html", "txt")),
     }
     for requirement in [
         "column header plus the complete matching thickness row",
@@ -154,5 +231,5 @@ def test_fresh_research_retains_material_identity_and_complete_table_contract(
         "supplier_acceptance=unverified",
     ]:
         assert requirement in intent.prompt
-    assert len([step for step in plan.steps if step.external_action]) == 3
+    assert len([step for step in plan.steps if step.external_action]) == 4
     assert preparer.BINDING.read_bytes() == binding_before

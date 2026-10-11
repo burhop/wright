@@ -1,0 +1,71 @@
+workflow jig_validation_loop
+  name: "Jig geometry validation and correction"
+end
+
+task produce
+  name: "Create isolated jig geometry"
+  step_type: work
+  performed_by: ai_assisted
+  inputs: []
+  outputs: [{"key":"jig_step","name":"Jig STEP","kind":"workspace_file","required":true,"quantity":"one"}]
+  prompt: "Create a new jig.step by calling create_jig_step exactly once. This is a controlled validator demonstration. If this prompt has no validation findings appended, deliberately use h1_x_mm=31 and h2_x_mm=171 so the independent validator measures the seeded datum defect. If measured validation findings are appended, use their exact acceptance targets to create a corrected new jig.step while preserving the 10.2 mm seat diameter and y=30 mm. After the successful tool call, return the required task completion JSON citing that call. Do not claim measurements that the tool did not return."
+  settings: {"authoring_template":"mcp-task","mcp_server":"process-validation-engineering","output_format":"json","file_policy":"indexed","expected_files":"jig.step","expected_file_ports":{"jig_step":"jig.step"},"revision_policy":"create_new_files","max_tool_calls":2,"timeout_seconds":300}
+  tool: null
+  reusable_step: null
+end
+
+task inspect
+  name: "Validate jig seat geometry"
+  step_type: work
+  performed_by: configured_tool
+  inputs: [{"key":"jig","name":"Jig STEP","kind":"workspace_file","required":true,"quantity":"one"}]
+  outputs: [{"key":"assessment","name":"Validation assessment","kind":"engineering_document","required":true,"quantity":"one"}]
+  prompt: ""
+  settings: {"authoring_template":"process-validator","output_format":"json","max_revisions":2,"validation":{"profile":{"source":"packaged","name":"parametric-drill-jig-01","reference":{"id":"parametric-drill-jig-01-seat-geometry","version":"1","sha256":"5488f377adfa5eaea61ce4b8e299654bb74709ed313b67e8f04494bd2e4a3884"}},"baseline":{"id":"parametric-drill-jig-01-seat-basis","version":"1","sha256":"5fb63ff5fca47d189665efe2d22424743205a0c12812f193cd79b49fe4ebf2d8"},"subjects":{"jig_step":"jig"}}}
+  tool: null
+  reusable_step: null
+end
+
+task consume
+  name: "Release validated jig evidence"
+  step_type: work
+  performed_by: ai_assisted
+  inputs: [{"key":"validation_assessment","name":"Validation assessment","kind":"engineering_document","required":true,"quantity":"one"}]
+  outputs: [{"key":"release_note","name":"Release note","kind":"engineering_document","required":true,"quantity":"one"}]
+  prompt: "State in one sentence that the current jig STEP revision was released after its pinned seat-geometry profile passed. Do not claim full jig, fit, manufacturing, or physical qualification."
+  settings: {"output_format":"text","output_filename":"jig-release-note.txt","file_policy":"indexed","save_output":true}
+  tool: null
+  reusable_step: null
+end
+
+connection subject
+  type: item
+  from: "produce.jig_step"
+  to: "inspect.jig"
+  label: "Jig geometry to validate"
+  when: null
+end
+
+connection current_assessment
+  type: item
+  from: "inspect.assessment"
+  to: "consume.validation_assessment"
+  label: "Current validation evidence"
+  when: null
+end
+
+connection repair
+  type: revision
+  from: "inspect"
+  to: "produce"
+  label: "Correct measured geometry"
+  when: revise
+end
+
+connection release
+  type: approval
+  from: "inspect"
+  to: "consume"
+  label: "Release current passing revision"
+  when: pass
+end

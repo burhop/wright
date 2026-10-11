@@ -1,0 +1,411 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "assessment-a867edfeee654ea9a2e196ea3ff740a2",
+  "attempt_id": "54495d226fa149e9a4f4f6aafb65f943",
+  "request": {
+    "schema_version": "wright.process-validation/1",
+    "trace_id": "structured-loop-20260916T202659Z",
+    "workspace_id": "process-validation-structured-loop",
+    "invocation_id": "inspect:2",
+    "run_id": "structured-loop-20260916T202659Z",
+    "check_step_id": "inspect",
+    "subjects": [
+      {
+        "id": "output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33",
+        "role": "result",
+        "result_id": "structured-loop-20260916T202659Z:produce:result",
+        "producer": {
+          "run_id": "structured-loop-20260916T202659Z",
+          "step_id": "produce",
+          "attempt": 2,
+          "output_port": "result"
+        },
+        "kind": "value",
+        "sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c",
+        "value": "{\"part_id\":\"demo-plate\",\"length_mm\":100}",
+        "locator": null,
+        "format": "json",
+        "provider_id": null,
+        "resource_id": null,
+        "revision": null,
+        "input_digests": [],
+        "encoding": "raw-bytes"
+      }
+    ],
+    "profile_ref": {
+      "id": "structured-demo",
+      "version": "2",
+      "sha256": "d8f95a1b3511a30e97d410e51397fd410340a684a48704ca51a59f4e6efc534c"
+    },
+    "baseline_ref": {
+      "id": "structured-demo",
+      "version": "1",
+      "sha256": "709c8ed3b175034b161e062c1b2fae85d25061e170b2efaa94c2947d0cad3b04"
+    },
+    "idempotency_key": "revision:1",
+    "budget": {
+      "max_bytes": 16777216,
+      "max_entities": 100000,
+      "timeout_seconds": 120,
+      "memory_limit_mb": 512
+    }
+  },
+  "profile": {
+    "schema_version": "wright.process-validation/1",
+    "id": "structured-demo",
+    "version": "2",
+    "baseline": {
+      "id": "structured-demo",
+      "version": "1",
+      "requirements": [
+        {
+          "id": "DEMO-001",
+          "text": "length_mm is 100.0 +/- 0.2 mm inclusive",
+          "scope": "design",
+          "sources": [
+            {
+              "artifact_ref": "baseline:structured-demo-v1",
+              "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+              "locator": "DEMO-001"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "DEMO-002",
+          "text": "part_id is demo-plate",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "baseline:structured-demo-v1",
+              "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+              "locator": "DEMO-002"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        },
+        {
+          "id": "DEMO-003",
+          "text": "Output is a JSON object with required fields",
+          "scope": "content",
+          "sources": [
+            {
+              "artifact_ref": "baseline:structured-demo-v1",
+              "sha256": "62b4581597095ae6b169c8195a7182e119d32fa07683f081db150d733ea55119",
+              "locator": "DEMO-003"
+            }
+          ],
+          "mandatory": true,
+          "review_required": false
+        }
+      ],
+      "unresolved_decisions": [],
+      "amendments": []
+    },
+    "checks": [
+      {
+        "id": "length",
+        "version": "1",
+        "requirement_ids": [
+          "DEMO-001"
+        ],
+        "subject_role": "result",
+        "reader": "structured",
+        "selector": "/length_mm",
+        "constraint": {
+          "operator": "within",
+          "expected": null,
+          "target": 100.0,
+          "tolerance": 0.2,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": "mm",
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "part-identity",
+        "version": "1",
+        "requirement_ids": [
+          "DEMO-002",
+          "DEMO-003"
+        ],
+        "subject_role": "result",
+        "reader": "structured",
+        "selector": "/part_id",
+        "constraint": {
+          "operator": "equals",
+          "expected": "demo-plate",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "object",
+        "version": "1",
+        "requirement_ids": [
+          "DEMO-003"
+        ],
+        "subject_role": "result",
+        "reader": "structured",
+        "selector": "",
+        "constraint": {
+          "operator": "type",
+          "expected": "object",
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      },
+      {
+        "id": "length-present",
+        "version": "1",
+        "requirement_ids": [
+          "DEMO-003"
+        ],
+        "subject_role": "result",
+        "reader": "structured",
+        "selector": "/length_mm",
+        "constraint": {
+          "operator": "exists",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "unit": null,
+        "frame": null,
+        "evidence_method": "structured_value",
+        "parameters": {},
+        "applicability_reason": null
+      }
+    ],
+    "excluded_scope": [
+      "Geometry, manufacture and physical fit are not assessed."
+    ],
+    "limitations": [],
+    "supported_kinds": [
+      "value",
+      "file"
+    ]
+  },
+  "created_at": "2026-09-16T20:27:11.945522+00:00",
+  "measurements": [
+    {
+      "id": "m-bdecd761026f4cd7b6e72790f8d1644390cd4d9c5a9f0a91634bb2d2c43a0816",
+      "subject_id": "output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33",
+      "subject_sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c",
+      "selector": "/length_mm",
+      "value": 100,
+      "unit": "mm",
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#/length_mm"
+      ]
+    },
+    {
+      "id": "m-5cf28cbb3a8a0e44af68f68869f763377cd9fc6af524f859f2840415c5aa9d23",
+      "subject_id": "output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33",
+      "subject_sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c",
+      "selector": "/part_id",
+      "value": "demo-plate",
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#/part_id"
+      ]
+    },
+    {
+      "id": "m-9b076d2a2a7c9ab1cbec57ac7cbff4dc3c5cb13460c7817b77ce30f627126424",
+      "subject_id": "output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33",
+      "subject_sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c",
+      "selector": "",
+      "value": {
+        "length_mm": 100,
+        "part_id": "demo-plate"
+      },
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#"
+      ]
+    },
+    {
+      "id": "m-27549260c3567fe15629e344cce37ac5d30a6c165d34d0ce9338a068e84f9ec8",
+      "subject_id": "output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33",
+      "subject_sha256": "8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c",
+      "selector": "/length_mm",
+      "value": 100,
+      "unit": null,
+      "frame": null,
+      "uncertainty": 0.0,
+      "reader": {
+        "id": "structured",
+        "version": "1",
+        "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+        "method": "structured_value",
+        "tool_identity": null,
+        "formats": [
+          "json",
+          "csv",
+          "text",
+          "markdown",
+          "html"
+        ]
+      },
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#/length_mm"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "length",
+      "requirement_ids": [
+        "DEMO-001"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-bdecd761026f4cd7b6e72790f8d1644390cd4d9c5a9f0a91634bb2d2c43a0816"
+      ],
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#/length_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "part-identity",
+      "requirement_ids": [
+        "DEMO-002",
+        "DEMO-003"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-5cf28cbb3a8a0e44af68f68869f763377cd9fc6af524f859f2840415c5aa9d23"
+      ],
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#/part_id"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "object",
+      "requirement_ids": [
+        "DEMO-003"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-9b076d2a2a7c9ab1cbec57ac7cbff4dc3c5cb13460c7817b77ce30f627126424"
+      ],
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    },
+    {
+      "check_id": "length-present",
+      "requirement_ids": [
+        "DEMO-003"
+      ],
+      "state": "pass",
+      "measurement_ids": [
+        "m-27549260c3567fe15629e344cce37ac5d30a6c165d34d0ce9338a068e84f9ec8"
+      ],
+      "evidence_refs": [
+        "subject:output-5c832f3f764935c83214564e3e6c9c82b0094f28a072dd392290f075e7e12d33@8011f5be7f0e949a6046f6d775e65b6f7d084372d1cfa7e50ec608abc920281c#/length_mm"
+      ],
+      "finding_ids": [],
+      "applicability_reason": null
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "content_verified": true,
+    "requirements_compliant": true,
+    "evaluation_complete": true,
+    "release_eligible": true,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 0,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 4
+    }
+  },
+  "subject_current": true,
+  "review_ids": [],
+  "supersedes": null
+}

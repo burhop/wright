@@ -10,7 +10,23 @@
   },
   "allowed_tools": {
     "wright-workspace-files": ["write_text_document", "inspect_file"],
-    "agentcad": ["context", "docs", "run", "measure", "inspect", "export"]
+    "agentcad": ["context", "docs", "run", "measure", "inspect", "export"],
+    "wright-drill-jig-slicer": ["slice_jig_file"]
+  },
+  "slicer": {
+    "server": "wright-drill-jig-slicer",
+    "tool": "slice_jig_file",
+    "executable": ".local-run/feature-081-live/tools/bambu-studio-2.8.2.61/bambu-studio.exe",
+    "profiles_root": ".local-run/feature-081-live/tools/bambu-studio-2.8.2.61/resources/profiles/BBL",
+    "machine": "machine/Bambu Lab P1S 0.4 nozzle.json",
+    "filament": "filament/Bambu PETG HF @BBL P1S 0.4 nozzle.json",
+    "process": {
+      "base": "process/0.20mm Standard @BBL X1C.json",
+      "layer_height": "0.20",
+      "wall_loops": "5",
+      "sparse_infill_density": "40%",
+      "enable_support": "1"
+    }
   },
   "native_prerequisite": "Initialize a fresh project with pinned AgentCAD 0.6.0 CLI before dispatch. The preparer's explicit --initialize-agentcad option records command and result; default staging does not execute it. Runtime context checks real state. No Blender script bridge is required.",
   "scenarios": {
@@ -20,5 +36,15 @@
   },
   "expected_generated_files": ["jig.step", "jig.stl", "hole-layout.dxf", "cad-lineage.json"],
   "expected_checked_files": ["dimension-report.json"],
+  "expected_slice_files": [
+    "additive-manufacturing/slice_package.gcode.3mf",
+    "additive-manufacturing/support-preview.svg",
+    "additive-manufacturing/slice-preview.png",
+    "additive-manufacturing/slice-evidence.json",
+    "additive-manufacturing/process-profile.json",
+    "additive-manufacturing/machine-profile.json",
+    "additive-manufacturing/filament-profile.json",
+    "additive-manufacturing/slicer.stdout.log"
+  ],
   "scope": "All profiles, workpieces, bushing data and process capabilities are synthetic user inputs. Preserve the uploaded CSV coordinates exactly; no supplier rating, machining safety, physical fit or manufacturing dispatch is claimed."
 }

@@ -4,6 +4,27 @@ import { ValidationError } from "./domain/errors.ts";
 import { sha256, stableJson } from "./domain/hashing.ts";
 import { validateExportInput } from "./recorded-export.ts";
 
+export const SELECTED_KIT_ID = "wright-water-heater-v1";
+export const SELECTED_KIT_VERSION = "0.1.0";
+
+export function buildKitRunParameters(
+  selectedElectricalPowerW: number | null,
+  timeLimitS: number,
+  candidatePowersW: unknown[],
+  lossConductancesWPerK: unknown[],
+  runs: unknown[],
+) {
+  return {
+    kit_id: SELECTED_KIT_ID,
+    kit_version: SELECTED_KIT_VERSION,
+    selected_electrical_power_w: selectedElectricalPowerW,
+    time_limit_s: timeLimitS,
+    candidate_powers_w: candidatePowersW,
+    loss_conductances_w_per_k: lossConductancesWPerK,
+    runs,
+  };
+}
+
 /** Derive engineering observations from native recorded results, never an ODE surrogate. */
 export function observeCsv(source: string, parameters: Record<string, { value: number }>, target: number) {
   const rows = source.trim().split(/\r?\n/).map(line => line.split(",").map(cell => cell.replace(/^"|"$/g, "")));
@@ -47,7 +68,7 @@ export async function summarizeStudy(service: ResumableSimulationService, input:
     const evidence = await service.getCompletedEvidence(identity.request_id);
     const record = evidence.runJson.record;
     const manifest = record.manifest as { manifest_sha256: string; model: { id: string; version: string }; scenario: { public: { numerical_controls: { max_step_size_s: number; tolerance: number } } } };
-    if (record.status !== "succeeded" || manifest.manifest_sha256 !== identity.expected_manifest_sha256 || manifest.model.id !== "wright-water-heater-v1" || manifest.model.version !== "0.1.0") throw new ValidationError("Study request is not the exact successful selected native run.");
+    if (record.status !== "succeeded" || manifest.manifest_sha256 !== identity.expected_manifest_sha256 || manifest.model.id !== SELECTED_KIT_ID || manifest.model.version !== SELECTED_KIT_VERSION) throw new ValidationError("Study request is not the exact successful selected native run.");
     const artifact = evidence.artifacts.find(item => item.kind === "result")!;
     const verified = await service.store.readArtifact(identity.request_id, artifact);
     const parameters = record.resolved_parameters as Record<string, { value: number }>;
@@ -82,7 +103,7 @@ export async function summarizeStudy(service: ResumableSimulationService, input:
   const polylines = baseline.map((run, index) => { const samples = run.result.samples.filter((_, i) => i % Math.max(1, Math.floor(run.result.samples.length / 900)) === 0); return `<polyline fill="none" stroke="${colors[index % colors.length]}" stroke-width="1.8" points="${samples.map(row => `${60 + row[0] / maxTime * 800},${380 - row[1] / 110 * 330}`).join(" ")}"/><text x="70" y="${440 + 20 * index}" fill="${colors[index % colors.length]}">${run.power} W electrical; UA ${run.loss} W/K</text>`; }).join("\n");
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="920" height="${480 + baseline.length * 20}" viewBox="0 0 920 ${480 + baseline.length * 20}"><rect width="100%" height="100%" fill="white"/><g font-family="sans-serif" font-size="14"><text x="60" y="25">Native Modelica temperature curves — ${dataset_id}</text><path d="M60 50 V380 H860" fill="none" stroke="#333"/><text x="50" y="45">°C</text><text x="800" y="410">time (s)</text><text x="50" y="400">0</text><text x="830" y="400">${maxTime}</text><path d="M60 110 H860" stroke="#888" stroke-dasharray="5 5"/><text x="865" y="115">90°C</text>${polylines}</g></svg>\n`;
   const report = `# Heater selection from recorded Modelica runs\n\n${chosen === null ? "No setting has demonstrated every declared time, energy and numerical-stability criterion in the supplied completed runs." : `Lowest demonstrated electrical setting: **${chosen} W** across every supplied loss case.`}\n\nTarget90°C; time limit${time_limit_s}s. All ${baseline.length} declared candidate/loss baselines are present. Independent first-crossing interpolation, trapezoidal electrical/thermal energy integration and capacity-plus-ambient-loss balance use the actual sealed CSV samples. Refined simulations independently constrain DASSL maxStepSize to0.25s and tolerance1e-8; baseline1s/1e-6, with unchanged1s output grid. Engineering screening thresholds used here:1% energy consistency, time difference at most max(1s,1%), and1% final electrical-energy difference. These explicit numerical screening assumptions are not manufacturing approval or the campaign's future content-validation tests.\n\nThermal power equals electrical input times heater efficiency. Inverter efficiency is outside this thermal model; apply the supplied battery/inverter budget separately. The selected model retains upstream lumped storage, ambient losses and thermostat topology.\n\n| Power W | Loss W/K | Time to90°C s | Refined difference s | Time met | Energy consistent | Stable |\n|---|---|---|---|---|---|---|\n${comparisons.map(row => `| ${row.run.power} | ${row.run.loss} | ${row.run.result.timeToTarget ?? "not reached"} | ${row.delta ?? "not demonstrated"} | ${row.reached} | ${row.energyConsistent} | ${row.stable} |`).join("\n")}\n`;
-  const files = new Map<string, string>([["temperature-time.csv", csv(times)], ["power-comparison.csv", csv(powerRows)], ["energy-summary.csv", csv(energyRows)], ["temperature-curve.svg", svg], ["heater-selection.md", report], ["kit-run-parameters.json", JSON.stringify({ selected_electrical_power_w: chosen, time_limit_s, candidate_powers_w, loss_conductances_w_per_k, runs: observed.map(({ result: _result, ...run }) => run) }, null, 2) + "\n"]]);
+  const files = new Map<string, string>([["temperature-time.csv", csv(times)], ["power-comparison.csv", csv(powerRows)], ["energy-summary.csv", csv(energyRows)], ["temperature-curve.svg", svg], ["heater-selection.md", report], ["kit-run-parameters.json", JSON.stringify(buildKitRunParameters(chosen, time_limit_s, candidate_powers_w, loss_conductances_w_per_k, observed.map(({ result: _result, ...run }) => run)), null, 2) + "\n"]]);
   const root = `/exports/${dataset_id}/${attempt_id}`;
   if ((await Deno.realPath(root)) !== root || !(await Deno.lstat(root)).isDirectory) throw new ValidationError("Study output root is missing or redirected.");
   const produced_files = [];

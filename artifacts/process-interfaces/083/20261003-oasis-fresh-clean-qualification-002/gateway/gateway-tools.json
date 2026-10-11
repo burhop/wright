@@ -1,0 +1,1019 @@
+{
+  "tools": [
+    {
+      "name": "qualification-083-oasis-clean-003__couple",
+      "description": "GENERAL partitioned multi-code coupling \u2014 works for ANY physics/coupling.\n\n        Have an independent critic review the setup before coupling; pass\n        critic_approved=True only after that review (every simulation must be\n        critic-reviewed first).\n\n        Unlike coupled_solve (legacy, fixed toy geometries), this is physics-agnostic:\n        you write one self-contained solver script per subdomain/participant and OASiS\n        runs the fixed-point iteration, Aitken relaxation, convergence-or-fail, AND\n        silent-wrong validation (interface flux balance + finiteness). No fixed geometry\n        or physics is assumed.\n\n        PARTICIPANT CONTRACT \u2014 each iteration the driver, per participant:\n          1. writes <work_dir>/imports.json = {partner_name: InterfaceData} (boundary\n             data this participant consumes; empty on iteration 1).\n          2. runs your `command` in <work_dir>.\n          3. reads <work_dir>/exports.json = the InterfaceData your script produced on\n             the shared interface.\n        Your script decides HOW to apply imports (Dirichlet/Neumann/Robin/traction/\n        flux/...) and WHAT to export \u2014 opaque to the driver, so it generalizes.\n\n        InterfaceData JSON shape (read imports, write exports):\n          {\"field_name\": str, \"n_points\": N, \"coordinates\": [[x,y(,z)],...],\n           \"values\": [...], \"normal_fluxes\": [...]  # optional, for conservation check}\n\n        Args:\n            participants: JSON list of {\"name\", \"command\":[argv...], \"work_dir\",\n              \"imports_from\":[partner names]}.\n            max_iter, tol, accelerator: iteration controls (\"aitken\"|\"constant\").\n\n        Returns: JSON with converged, iterations, residual, exports, and a\n            `validation` block (interface-balance + finiteness). A non-converged or\n            unbalanced coupling is reported as a FAILURE, never as a trustworthy result.\n        ",
+      "inputSchema": {
+        "properties": {
+          "participants": {
+            "title": "Participants",
+            "type": "string"
+          },
+          "max_iter": {
+            "default": 50,
+            "title": "Max Iter",
+            "type": "integer"
+          },
+          "tol": {
+            "default": 1e-06,
+            "title": "Tol",
+            "type": "number"
+          },
+          "accelerator": {
+            "default": "aitken",
+            "title": "Accelerator",
+            "type": "string"
+          },
+          "critic_approved": {
+            "default": false,
+            "title": "Critic Approved",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "participants"
+        ],
+        "title": "coupleArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "coupleOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "couple",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__couple_precice",
+      "description": "GENERAL preCICE coupling of ARBITRARY codes/paradigms, end-to-end.\n\n        Have an independent critic review the setup before coupling; pass\n        critic_approved=True only after that review.\n\n        The standard-library (preCICE) path for cross-code coupling \u2014 works for any\n        number of participants, any data fields, any exchange pattern. OASiS generates\n        the preCICE config and launches every participant's solver command. Use this\n        when each side is a separate executable/script that talks preCICE (e.g. a DSMC\n        particle code <-> a FEM solid; FSI; TSI). Each backend's preCICE participant\n        pattern is available via knowledge(topic='precice', solver=...).\n\n        Args (all JSON strings except scheme/numbers):\n            participants: list of {\"name\",\"mesh\",\"writes\":[data],\"reads\":[data],\n                          \"command\":[argv...]} \u2014 one per coupled code.\n            data:      list of {\"name\",\"type\":\"scalar\"|\"vector\"}.\n            exchanges: list of {\"data\",\"from\",\"to\"} \u2014 one per coupled field.\n            work_dir:  directory to run in (config + participant cwd).\n            scheme:    serial-explicit|serial-implicit|parallel-explicit|parallel-implicit.\n            dimensions, max_time, time_window, timeout: coupling controls.\n            extra_env: optional JSON dict of extra env (e.g. {\"LD_LIBRARY_PATH\":...,\n                       \"PYTHONPATH\":...}) for the participant processes.\n\n        Returns: JSON {converged, returncodes, config, logs}. A non-zero participant\n            return code is reported as a failed coupling, never as a trustworthy result.\n        ",
+      "inputSchema": {
+        "properties": {
+          "participants": {
+            "title": "Participants",
+            "type": "string"
+          },
+          "data": {
+            "title": "Data",
+            "type": "string"
+          },
+          "exchanges": {
+            "title": "Exchanges",
+            "type": "string"
+          },
+          "work_dir": {
+            "title": "Work Dir",
+            "type": "string"
+          },
+          "scheme": {
+            "default": "serial-explicit",
+            "title": "Scheme",
+            "type": "string"
+          },
+          "dimensions": {
+            "default": 2,
+            "title": "Dimensions",
+            "type": "integer"
+          },
+          "max_time": {
+            "default": 10.0,
+            "title": "Max Time",
+            "type": "number"
+          },
+          "time_window": {
+            "default": 1.0,
+            "title": "Time Window",
+            "type": "number"
+          },
+          "timeout": {
+            "default": 1800,
+            "title": "Timeout",
+            "type": "integer"
+          },
+          "extra_env": {
+            "default": "",
+            "title": "Extra Env",
+            "type": "string"
+          },
+          "critic_approved": {
+            "default": false,
+            "title": "Critic Approved",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "participants",
+          "data",
+          "exchanges",
+          "work_dir"
+        ],
+        "title": "couple_preciceArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "couple_preciceOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "couple_precice",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__coupled_solve",
+      "description": "LEGACY cross-solver coupling \u2014 FIXED toy geometries only. PREFER `couple`.\n\n        DEPRECATED: this tool only handles a fixed enum of benchmark problems on a\n        hardcoded unit-square split at x=0.5 (heat_dd/poisson_dd/one_way/tsi_dd/...).\n        For ANY real or non-benchmark coupling use the general `couple` tool, which is\n        physics-agnostic and validates the result for silent-wrong (flux balance,\n        convergence, finiteness). Only use coupled_solve to reproduce the legacy\n        benchmarks.\n\n        Domain A (Dirichlet at interface) supports: fenics, ngsolve, skfem, dune.\n        Domain B (Neumann at interface) supports: fenics, fourc, ngsolve, skfem, dune.\n        Any combination of these works for heat_dd and poisson_dd problems.\n\n        Args:\n            problem: 'heat_dd', 'poisson_dd', 'one_way', 'tsi_dd',\n                     'poisson_dd_study', 'l_bracket_tsi', 'heat_dd_precice'\n            solver_a, solver_b: Backend names\n            nx, ny: Elements per direction\n            max_iter: Max iterations\n            tol: Convergence tolerance\n            relaxation: Under-relaxation parameter\n            params: JSON with additional parameters\n            critic_approved: Set True after critic review\n        ",
+      "inputSchema": {
+        "properties": {
+          "problem": {
+            "default": "heat_dd",
+            "title": "Problem",
+            "type": "string"
+          },
+          "solver_a": {
+            "default": "fenics",
+            "title": "Solver A",
+            "type": "string"
+          },
+          "solver_b": {
+            "default": "fourc",
+            "title": "Solver B",
+            "type": "string"
+          },
+          "nx": {
+            "default": 32,
+            "title": "Nx",
+            "type": "integer"
+          },
+          "ny": {
+            "default": 32,
+            "title": "Ny",
+            "type": "integer"
+          },
+          "max_iter": {
+            "default": 20,
+            "title": "Max Iter",
+            "type": "integer"
+          },
+          "tol": {
+            "default": 1e-06,
+            "title": "Tol",
+            "type": "number"
+          },
+          "relaxation": {
+            "default": 1.0,
+            "title": "Relaxation",
+            "type": "number"
+          },
+          "params": {
+            "default": "{}",
+            "title": "Params",
+            "type": "string"
+          },
+          "critic_approved": {
+            "default": false,
+            "title": "Critic Approved",
+            "type": "boolean"
+          }
+        },
+        "title": "coupled_solveArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "coupled_solveOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "coupled_solve",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__developer",
+      "description": "Developer tools: architecture, source files, capabilities matrix.\n\n        Args:\n            action: What to surface. Options:\n                - \"architecture\" \u2014 extension points + source-tree\n                  layout for the requested solver\n                - \"files\" \u2014 source-file listing filtered by keyword\n                - \"capabilities\" \u2014 full backend \u00d7 physics \u00d7 variant\n                  matrix dump\n            solver: Backend name\n            keyword: File pattern for \"files\" action\n        ",
+      "inputSchema": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "solver": {
+            "default": "",
+            "title": "Solver",
+            "type": "string"
+          },
+          "keyword": {
+            "default": "",
+            "title": "Keyword",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "developerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "developerOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "developer",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__discover",
+      "description": "Discover available solvers and their capabilities.\n\n        Args:\n            query: What to discover. Options:\n                - \"list\" \u2014 list all solvers with status\n                - \"physics\" \u2014 list all physics types per solver\n                - \"capabilities\" \u2014 full capabilities matrix\n                - \"recommend\" \u2014 recommend solver for a physics (set solver= to physics name)\n            solver: Filter by solver name, or physics name for \"recommend\"\n        ",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "default": "list",
+            "title": "Query",
+            "type": "string"
+          },
+          "solver": {
+            "default": "",
+            "title": "Solver",
+            "type": "string"
+          }
+        },
+        "title": "discoverArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "discoverOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "discover",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__examples",
+      "description": "Find and retrieve example input files from solver test suites.\n\n        IMPORTANT: Always call this before writing new input files to study\n        real, validated configurations.\n\n        Args:\n            keyword: Search term (e.g. 'peridynamic', 'fsi', 'poisson', 'heat')\n            solver: Backend name (default: 'fourc')\n            action: What to do. Options:\n                - \"search\" \u2014 find matching test files with content preview\n                - \"template\" \u2014 get a generated template for this physics\n                - \"tutorials\" \u2014 list available tutorials\n            max_results: Maximum results (default 3)\n        ",
+      "inputSchema": {
+        "properties": {
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "solver": {
+            "default": "fourc",
+            "title": "Solver",
+            "type": "string"
+          },
+          "action": {
+            "default": "search",
+            "title": "Action",
+            "type": "string"
+          },
+          "max_results": {
+            "default": 3,
+            "title": "Max Results",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "keyword"
+        ],
+        "title": "examplesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "examplesOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "examples",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__generate_mesh",
+      "description": "Generate a mesh using Gmsh for non-trivial geometries.\n\n        Args:\n            geometry: One of the built-in geometries:\n                - \"l_domain\"          \u2014 2D L-shaped domain\n                - \"plate_with_hole\"   \u2014 2D plate with circular hole\n                - \"channel_cylinder\"  \u2014 2D channel with cylindrical obstacle\n                (No \"custom\" passthrough yet \u2014 passing any other name\n                returns a 'Unknown geometry' message with this list.)\n            mesh_size: Target element size\n            output_dir: Where to save (auto if empty)\n        ",
+      "inputSchema": {
+        "properties": {
+          "geometry": {
+            "title": "Geometry",
+            "type": "string"
+          },
+          "mesh_size": {
+            "default": 0.1,
+            "title": "Mesh Size",
+            "type": "number"
+          },
+          "output_dir": {
+            "default": "",
+            "title": "Output Dir",
+            "type": "string"
+          }
+        },
+        "required": [
+          "geometry"
+        ],
+        "title": "generate_meshArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "generate_meshOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "generate_mesh",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__knowledge",
+      "description": "Get knowledge about solvers, physics, materials, coupling,\n        post-mortems, or input formats.\n\n        This is the single entry point for ALL domain knowledge \u2014 the\n        catalog, the pitfall database, AND the post-mortem record\n        store. Wiring post-mortems through this same tool closes the\n        self-improvement loop: every prepare_simulation call also\n        surfaces the relevant post-mortems so the critic-gate can\n        retrieve them at planning time (Open-FEM-Agent \u00a73.2 / \u00a75\n        self-correction loop).\n\n        Args:\n            topic: What you want to know. Options:\n                - \"physics\" \u2014 physics-specific knowledge + matching\n                  post-mortems (needs solver + physics)\n                - \"pitfalls\" \u2014 all known pitfalls for a solver\n                - \"postmortems\" \u2014 formal post-mortem records under\n                  data/postmortems/*.json, filtered by solver +\n                  physics + optional signal pattern. These are the\n                  audit-trail entries that record WHY each pitfall\n                  exists; the critic-gate should retrieve them when\n                  the agent's plan touches the matching (solver,\n                  physics) area.\n                - \"materials\" \u2014 material catalog for a solver\n                - \"coupling\" \u2014 cross-solver coupling knowledge\n                - \"tsi\" \u2014 thermo-structural interaction patterns\n                - \"precice\" \u2014 preCICE comparison\n                - \"input_guide\" \u2014 how to write input files for a solver\n                - \"solver_guidance\" \u2014 which solver to use for a physics type\n                - \"hardware\" \u2014 parallelism, GPU, and hardware acceleration capabilities\n                - \"overview\" \u2014 backend-level reference catalog (element\n                  families, mesh types, solver catalogue, unique\n                  features). The content under the special \"_general\"\n                  knowledge key \u2014 for dealii ~5 KB, fenics / ngsolve /\n                  skfem / kratos / dune ~1-2 KB each. Needs solver=...\n                - \"cross_backend\" \u2014 collation pitfalls that surface ONLY\n                  when porting a problem between two backends (units\n                  conventions, Tet10/Hex20 node ordering, 'linear\n                  elastic' semantic drift across backends, Dirichlet\n                  strong-vs-penalty enforcement, restart file\n                  incompatibility, MPI launch idioms). Pass the\n                  optional `physics` arg as a topic filter\n                  (e.g. 'units', 'mesh', 'bc', 'restart', 'mpi') to\n                  narrow the response. These pitfalls belong to no\n                  single backend's catalog because they only fire on\n                  the delta between two.\n            solver: Backend name (e.g. 'fenics', 'fourc', 'dealii', 'ngsolve')\n            physics: Physics type (e.g. 'poisson', 'linear_elasticity', 'navier_stokes')\n            signal: Optional substring to filter post-mortem\n                pitfall_db_entries Signal: clauses against \u2014 useful\n                when the post-execution critic sees a specific error\n                text and wants to find the matching post-mortem.\n        ",
+      "inputSchema": {
+        "properties": {
+          "topic": {
+            "title": "Topic",
+            "type": "string"
+          },
+          "solver": {
+            "default": "",
+            "title": "Solver",
+            "type": "string"
+          },
+          "physics": {
+            "default": "",
+            "title": "Physics",
+            "type": "string"
+          },
+          "signal": {
+            "default": "",
+            "title": "Signal",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic"
+        ],
+        "title": "knowledgeArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "knowledgeOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "knowledge",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__prepare_simulation",
+      "description": "Prepare everything needed to set up a simulation \u2014 in ONE call.\n\n        Returns: knowledge + real test file examples + generated template.\n        This eliminates 3 separate tool calls before every simulation.\n\n        Supports fuzzy matching: e.g. 'magnetostatics' finds 'maxwell',\n        'thermal' finds 'heat', 'elasticity' finds 'linear_elasticity'.\n\n        Args:\n            solver: Backend name (e.g. 'fourc', 'fenics', 'ngsolve')\n            physics: Physics type (e.g. 'poisson', 'particle_pd', 'navier_stokes',\n                     'magnetostatics', 'thermal', 'elasticity')\n        ",
+      "inputSchema": {
+        "properties": {
+          "solver": {
+            "title": "Solver",
+            "type": "string"
+          },
+          "physics": {
+            "title": "Physics",
+            "type": "string"
+          }
+        },
+        "required": [
+          "solver",
+          "physics"
+        ],
+        "title": "prepare_simulationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "prepare_simulationOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "prepare_simulation",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__rediscover_backends",
+      "description": "Probe the system for solver backends and report findings.\n\n        Searches pip packages, conda environments, common build directories,\n        and source roots. In developer mode, reports git branch and status.\n\n        Args:\n            confirm: If True, save the discovered config for future sessions.\n                     If False (default), just report what was found.\n        ",
+      "inputSchema": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "rediscover_backendsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "rediscover_backendsOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "rediscover_backends",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__reload_catalog",
+      "description": "Hot-reload the per-backend KNOWLEDGE dicts from disk.\n\n        Closes the gap identified by the\n        mcp-catalog-staleness-runtime-isolation post-mortem\n        (2026-06-01): the MCP server normally imports\n        src/backends/<be>/generators/<physics>.py modules ONCE at\n        startup and never refreshes them, so catalog edits made\n        during a long-running session are invisible. Postmortems\n        in data/postmortems/ are scanned on every request (already\n        hot), but pitfall dicts are not.\n\n        This tool walks every imported `backends.<be>.generators.*`\n        and `backends.<be>.backend` module, runs importlib.reload\n        on each, and re-runs load_all_backends() so the registry\n        re-binds the backend objects to the refreshed module\n        attributes. After the call, the very next\n        mcp__oasis__knowledge call returns the on-disk\n        catalog without having to restart Claude Code.\n\n        Returns a one-line summary of which modules were\n        successfully reloaded vs which raised, so the caller can\n        tell when a syntax error in a newly-edited generator\n        prevented its module from re-importing (in that case the\n        OLD dict is still served from the previous import).\n        ",
+      "inputSchema": {
+        "properties": {},
+        "title": "reload_catalogArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "reload_catalogOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "reload_catalog",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__run_simulation",
+      "description": "Run a simulation directly with input content.\n\n        Use this for Python-based solvers (FEniCS, NGSolve, scikit-fem, DUNE-fem)\n        where the input IS a Python script. The tool routes through the correct\n        Python environment automatically (e.g., conda env for FEniCS).\n\n        For 4C/deal.II/Kratos where a separate input file must be generated\n        first, use run_with_generator() instead.\n\n        Args:\n            solver: Backend name (best for: fenics, ngsolve, skfem, dune)\n            input_content: The input content (Python script / YAML / C++ / XML)\n            job_name: Optional job name\n            np: MPI processes\n            critic_approved: Set True only after critic agent approved\n        ",
+      "inputSchema": {
+        "properties": {
+          "solver": {
+            "title": "Solver",
+            "type": "string"
+          },
+          "input_content": {
+            "title": "Input Content",
+            "type": "string"
+          },
+          "job_name": {
+            "default": "",
+            "title": "Job Name",
+            "type": "string"
+          },
+          "np": {
+            "default": 1,
+            "title": "Np",
+            "type": "integer"
+          },
+          "critic_approved": {
+            "default": false,
+            "title": "Critic Approved",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "solver",
+          "input_content"
+        ],
+        "title": "run_simulationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "run_simulationOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "run_simulation",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__run_with_generator",
+      "description": "Run a generator script that creates an input file, then execute the solver.\n\n        Use this for solvers that need a COMPILED binary or separate input files:\n        - 4C: generator creates .4C.yaml + mesh, then 4C binary runs on them\n        - deal.II: generator creates main.cpp, then cmake + make + ./fem_solve\n        - Kratos (with real binary): generator creates ProjectParameters.json +\n          .mdpa + MainKratos.py, then Kratos Python runs MainKratos.py\n\n        DO NOT use this for:\n        - FEniCS, NGSolve, scikit-fem, DUNE-fem: use run_simulation() instead\n        - Kratos manual-assembly scripts (numpy/scipy): use run_simulation()\n          since those are standalone Python scripts, not input-file generators\n\n        The generator script runs in the server's Python. It must produce an\n        input file matching one of: *.4C.yaml, *.yaml, input.*, solve.py,\n        MainKratos.py\n\n        Args:\n            solver: Backend name (fourc, dealii, kratos)\n            generator_script: Python script that creates the input file\n            job_name: Optional job directory name\n            np: MPI processes (default 1)\n            critic_approved: Set True only after critic agent approved setup\n        ",
+      "inputSchema": {
+        "properties": {
+          "solver": {
+            "title": "Solver",
+            "type": "string"
+          },
+          "generator_script": {
+            "title": "Generator Script",
+            "type": "string"
+          },
+          "job_name": {
+            "default": "",
+            "title": "Job Name",
+            "type": "string"
+          },
+          "np": {
+            "default": 1,
+            "title": "Np",
+            "type": "integer"
+          },
+          "critic_approved": {
+            "default": false,
+            "title": "Critic Approved",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "solver",
+          "generator_script"
+        ],
+        "title": "run_with_generatorArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "run_with_generatorOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "run_with_generator",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__session_insights",
+      "description": "Review knowledge discovered during this session or from saved\n        journals on disk.\n\n        Two flows are supported:\n\n        * In-session flow: call ``review`` -> ``approve_all`` /\n          ``reject_all`` during the live MCP session to surface\n          candidates from the current journal and save approved ones\n          to ``data/community_knowledge/pending/``.\n        * Ingest flow: call ``ingest`` with ``path`` pointing at a\n          previously-saved session journal (``data/sessions/session_*.json``,\n          which the server writes on shutdown) or at a directory of\n          such files.  Candidates are surfaced just like ``review``\n          and can be approved with ``approve_all``.\n\n        Args:\n            action:\n                - \"review\" \u2014 show candidate knowledge from the current\n                  session for approval\n                - \"ingest\" \u2014 load saved journal(s) from ``path`` and\n                  analyse them; requires ``path``\n                - \"approve_all\" \u2014 approve all pending candidates and\n                  save to community_knowledge/pending/\n                - \"reject_all\" \u2014 dismiss all pending candidates\n                - \"stats\" \u2014 current session statistics\n            path: file or directory used by the ``ingest`` action;\n                ignored otherwise.  Directories are scanned for\n                ``session_*.json``.\n        ",
+      "inputSchema": {
+        "properties": {
+          "action": {
+            "default": "review",
+            "title": "Action",
+            "type": "string"
+          },
+          "path": {
+            "default": "",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "title": "session_insightsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "session_insightsOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "session_insights",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__setup_backend",
+      "description": "Guided backend setup: detect, plan, install, verify, persist.\n\n        Helps a new user get any of the 8 FEM backends working on THIS\n        machine \u2014 picking the fastest install route for the current OS\n        (pip > conda > binary download > source build), executing it,\n        running the backend's smoke test, and persisting the resolved\n        paths into ~/.config/oasis/sources.json so every future MCP\n        session finds the install without re-discovery.\n\n        Actions:\n          status  \u2014 one-row-per-backend table: available? source tree?\n                    build dir? (no args needed)\n          plan    \u2014 recommended install route for `solver` on this OS,\n                    incl. system deps (apt/brew), human notes, and\n                    whether the route is verified on this OS. Nothing\n                    executes. Optional `route` (pip|conda|binary|source)\n                    forces an alternative.\n          install \u2014 execute the planned route. pip/conda run inline\n                    (minutes); source builds start in the BACKGROUND\n                    (30-120 min) \u2014 re-run with action='verify' when\n                    done. binary routes return manual instructions.\n          verify  \u2014 run the smoke test for `solver` and, on success,\n                    persist its paths.\n\n        macOS note: darwin routes are structured but mostly UNVERIFIED\n        (flagged in the plan output). They are extension points \u2014 when\n        a route is validated on a Mac, its os_support['darwin'] entry\n        in src/core/backend_setup.py should be updated with the working\n        steps (e.g. the 4C brew/CMake settings).\n\n        Args:\n            action: status | plan | install | verify\n            solver: backend name (required for plan/install/verify)\n            route:  optional route kind override (pip|conda|binary|source)\n        ",
+      "inputSchema": {
+        "properties": {
+          "action": {
+            "default": "status",
+            "title": "Action",
+            "type": "string"
+          },
+          "solver": {
+            "default": "",
+            "title": "Solver",
+            "type": "string"
+          },
+          "route": {
+            "default": "",
+            "title": "Route",
+            "type": "string"
+          }
+        },
+        "title": "setup_backendArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "setup_backendOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "setup_backend",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__transfer_field",
+      "description": "Extract field values at an interface from a VTU file and format for transfer.\n\n        Universal data connector for cross-solver coupling. Reads VTU output\n        from any solver, extracts values at the interface plane, and formats\n        them for the target solver's expected input shape.\n\n        Args:\n            source_vtu: Path to VTU result file from the source solver.\n            field_name: Field to extract (e.g. 'temperature', 'displacement').\n            interface_coord: Coordinate value defining the interface plane.\n            interface_axis: Axis perpendicular to interface (0=x, 1=y, 2=z).\n            target_format: Output format. Options:\n                - \"json\"        \u2014 interface coordinates + values (default)\n                - \"fenics\"      \u2014 Python BoundaryCondition snippet (Dirichlet\n                                  at this interface), saved as .py\n                - \"4c_neumann\"  \u2014 4C-format YAML snippet for a Neumann\n                                  boundary condition, saved as .yaml\n            output_path: Where to save the formatted output. If empty,\n                auto-generated next to the source VTU as\n                'interface_<field_name>.<ext>'.\n\n        Returns:\n            A summary string with the interface min/max/mean and the path\n            of the saved file.\n        ",
+      "inputSchema": {
+        "properties": {
+          "source_vtu": {
+            "title": "Source Vtu",
+            "type": "string"
+          },
+          "field_name": {
+            "title": "Field Name",
+            "type": "string"
+          },
+          "interface_coord": {
+            "title": "Interface Coord",
+            "type": "number"
+          },
+          "interface_axis": {
+            "default": 0,
+            "title": "Interface Axis",
+            "type": "integer"
+          },
+          "target_format": {
+            "default": "json",
+            "title": "Target Format",
+            "type": "string"
+          },
+          "output_path": {
+            "default": "",
+            "title": "Output Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_vtu",
+          "field_name",
+          "interface_coord"
+        ],
+        "title": "transfer_fieldArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "transfer_fieldOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "transfer_field",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    },
+    {
+      "name": "qualification-083-oasis-clean-003__visualize",
+      "description": "Post-process and visualize simulation results.\n\n        Args:\n            job_id: Job ID from run_simulation (or leave empty and set work_dir)\n            work_dir: Direct path to results directory\n            action: What to do. Options:\n                - \"summary\" \u2014 field statistics + results_summary.json content\n                  (default; the fastest pulse-check on a finished run)\n                - \"list\" \u2014 list every result file under the work dir\n                - \"plot\" \u2014 generate a PNG of the named field (needs field=)\n                - \"validate\" \u2014 automated sanity checks across the first\n                  3 result files: NaN/Inf detection, constant-field\n                  detection, suspiciously-large-magnitude detection\n                  (>1e15). Use after summary when a field looks wrong.\n            field: Specific field name to plot (e.g. 'temperature', 'displacement')\n        ",
+      "inputSchema": {
+        "properties": {
+          "job_id": {
+            "default": "",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "work_dir": {
+            "default": "",
+            "title": "Work Dir",
+            "type": "string"
+          },
+          "action": {
+            "default": "summary",
+            "title": "Action",
+            "type": "string"
+          },
+          "field": {
+            "default": "",
+            "title": "Field",
+            "type": "string"
+          }
+        },
+        "title": "visualizeArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "visualizeOutput",
+        "type": "object"
+      },
+      "annotations": {},
+      "_meta": {
+        "wright/serverId": "qualification-083-oasis-clean-003",
+        "wright/toolName": "visualize",
+        "wright/approvalGates": [],
+        "wright/provenance": {
+          "server_id": "qualification-083-oasis-clean-003",
+          "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+          "installed_version": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+          "server_revision": "config-5cdef532d65630036e33d171246d23a578fa72228eb3d9f0e739beb30f553465",
+          "validation_status": "not_tested",
+          "validation_evidence_id": "gateway-validation:qualification-083-oasis-clean-003:1791013615:not_tested"
+        },
+        "wright/safetyReviewed": true
+      }
+    }
+  ]
+}

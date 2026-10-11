@@ -1,0 +1,116 @@
+{
+  "mesh": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-016\\artifacts\\repaired_mesh.stl",
+  "sha256": "edbb58ae732fb7a40869480294c356718f973f8c83c8314d427cd369f10839be",
+  "scope": "Actual mesh vertices at pad outer-wall and bore-axis tangencies. For the retained quarter-circle bevel construction, tangency height equals its geometric fillet radius. No new tolerance or approval.",
+  "required_touched_edge_radius_mm": 1.0,
+  "pads": [
+    {
+      "center_x_mm": 0,
+      "outer_wall_rounds": [
+        {
+          "wall_x_mm": -9,
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743,
+          "measured_lower_radius_mm": 1.0099999904632568,
+          "measured_upper_radius_mm": 1.0099999904632568
+        },
+        {
+          "wall_x_mm": 9,
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743,
+          "measured_lower_radius_mm": 1.0099999904632568,
+          "measured_upper_radius_mm": 1.0099999904632568
+        }
+      ],
+      "bore_round_tangencies": [
+        {
+          "axis_xy_mm": [
+            2.25,
+            0
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        },
+        {
+          "axis_xy_mm": [
+            -2.25,
+            0
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        },
+        {
+          "axis_xy_mm": [
+            0,
+            2.25
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        },
+        {
+          "axis_xy_mm": [
+            0,
+            -2.25
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        }
+      ]
+    },
+    {
+      "center_x_mm": 96,
+      "outer_wall_rounds": [
+        {
+          "wall_x_mm": 87,
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743,
+          "measured_lower_radius_mm": 1.0099999904632568,
+          "measured_upper_radius_mm": 1.0099999904632568
+        },
+        {
+          "wall_x_mm": 105,
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743,
+          "measured_lower_radius_mm": 1.0099999904632568,
+          "measured_upper_radius_mm": 1.0099999904632568
+        }
+      ],
+      "bore_round_tangencies": [
+        {
+          "axis_xy_mm": [
+            98.25,
+            0
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        },
+        {
+          "axis_xy_mm": [
+            93.75,
+            0
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        },
+        {
+          "axis_xy_mm": [
+            96,
+            2.25
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        },
+        {
+          "axis_xy_mm": [
+            96,
+            -2.25
+          ],
+          "lower_tangency_z_mm": 1.0099999904632568,
+          "upper_tangency_z_mm": 3.990000009536743
+        }
+      ]
+    }
+  ],
+  "minimum_measured_outer_round_mm": 1.0099999904632568,
+  "unchanged_after_inspection": true
+}

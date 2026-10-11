@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "seconds": 24.729,
+  "cases": 81,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "selected_functions": 35,
+  "scope": "Controlled existing backend/transport/compiler fixtures; no live model/MCP/hardware effects."
+}

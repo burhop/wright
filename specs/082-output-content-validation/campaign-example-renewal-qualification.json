@@ -1,0 +1,246 @@
+{
+  "schema": "wright.campaign-example-renewal-qualification/1",
+  "revision_id": "campaign-example-renewal-r1-2026-09-21",
+  "observed_at": "2026-09-22",
+  "execution_hold": {
+    "reason": "user_requested_stop_for_cleanup_and_process_redesign",
+    "resume_requires_user_direction": true,
+    "checkpoint": "specs/082-output-content-validation/campaign-stop-checkpoint-20260922.md",
+    "native_harness_evidence": "artifacts/campaign-example-renewal/qualification/harness-native-20260922/README.md",
+    "native_correspondence_passed": ["sensor-fan-harness-01", "sensor-fan-harness-02"],
+    "native_correspondence_failed": {"sensor-fan-harness-03": "Selected tool rejects reference S_ZX; no correction dispatched"},
+    "new_campaign_credit": false
+  },
+  "campaign_dispatch_count": 11,
+  "broad_campaign_dispatch_count": 0,
+  "isolated_qualification_dispatch_count": 11,
+  "static_qualification": {
+    "status": "pass",
+    "scenario_contracts": 30,
+    "validator_profiles": 30,
+    "focused_tests": 106,
+    "modelica_followup_focused_tests": 18,
+    "ruff": "pass",
+    "git_diff_check": "pass"
+  },
+  "targeted_wrong_content": [
+    "wrong jig STL digest in Bambu slice evidence",
+    "wrong KiCad schematic digest in harness correspondence",
+    "wrong reviewed DXF digest in headless review evidence",
+    "wrong heat-spreader STEP digest in field correspondence",
+    "wrong water-package CAD digest",
+    "missing or invalid Robot corrective-design evidence"
+  ],
+  "native_qualification": [
+    {
+      "branch": "jig-to-bambu",
+      "status": "pass",
+      "scope": "Retained jig-01 STL processed by Bambu Studio 2.8.2.61 with pinned P1S/PETG/support settings; no printer connection or physical print.",
+      "source_sha256": "9031bd2a495a143903e9d331880845f2cfb500d8ab8fd3c476d68c79116a5eef",
+      "package_sha256": "4363a2a47dd326a07f6b0383eb79cd56a211badb735a33a611f3ec9808c1fbf4",
+      "package_bytes": 4739275,
+      "extrusion_moves": 128252,
+      "support_moves": 66120,
+      "evidence": {
+        "path": ".local-run/renewal-qualification/jig01/workspace/campaign/parametric-drill-jig-01/qualification/artifacts/additive-manufacturing/slice-evidence.json",
+        "sha256": "17979e2c1bf92ebeec6c9ba0705f0f26c032d04d2c966e61940b5b5831faa403"
+      }
+    },
+    {
+      "branch": "headless-dxf-provider",
+      "status": "provider_pass_handoff_pending",
+      "scope": "Pinned AutoCAD MCP Pro 3.4.7 headless ezdxf server passed direct MCP, Wright gateway, Wright gateway MCP, save/reopen and workspace-boundary checks in a disposable clean container.",
+      "tool_count": 47,
+      "cleanup": "pass",
+      "evidence": {
+        "path": "artifacts/campaign-example-renewal/qualification/autocad-headless-clean-container.json",
+        "sha256": "869c8abf49b2e64119b851c992296f1253284c48a33763ae0cd385b0885bb16f"
+      },
+      "remaining": "Qualify reopen/preservation of an actual Solid Edge flat-pattern DXF; no retained sheet attempt currently contains one."
+    },
+    {
+      "branch": "wireviz-to-kicad-harness",
+      "status": "native_save_pass_canonical_completion_pending",
+      "scope": "Attempt 907 completed actual component retrieval, WireViz generation and independent harness verification before the old PCB-only KiCad mount rejected save. A separate exact-attempt no-network harness KiCad runtime then created, connected, validated and saved a native schematic from the actual attempt evidence; no canonical credit was awarded.",
+      "canonical_attempts": [
+        {
+          "attempt_id": "attempt-906",
+          "run_id": "ee67fdbdde5a46689b79bf8c3c7b9e73",
+          "status": "failed",
+          "failure": "retained WireViz container stopped"
+        },
+        {
+          "attempt_id": "attempt-907",
+          "run_id": "fabdee86f84a4c7195b8099c383ae36a",
+          "status": "failed",
+          "failure": "old KiCad runtime had only PCB mounts; native save permission denied"
+        }
+      ],
+      "native_schematic": {
+        "sha256": "665e59cc33eb81edd3c67bacd70b2867c559b6bad9e1ae8f7cbaf599291714f4",
+        "bytes": 17487
+      },
+      "evidence": [
+        {
+          "path": "artifacts/campaign-example-renewal/qualification/kicad-harness-attempt907-runtime.json",
+          "sha256": "6ca4bf1c64764b4fc2e2ee2517829d2411ebfd99262749f0cbc66f9485c666be"
+        },
+        {
+          "path": "artifacts/campaign-example-renewal/qualification/kicad-harness-native-save.json",
+          "sha256": "d7dfcb59afabf55821fd95ded8feb647679de7b97110767096b7eb40c2fde1e3"
+        }
+      ],
+      "remaining": "Run the corrected path canonically through native ERC and exact WireViz/KiCad correspondence. No attempt 908 was dispatched during this checkpoint."
+    }
+  ],
+  "modelica_followup": {
+    "status": "native_export_pass_canonical_package_pending",
+    "canonical_attempts": [
+      {"attempt_id": "attempt-901", "run_id": "86088c0fe4db4788a053ba98e14560a6", "status": "failed", "failure": "historical Modelica container stopped"},
+      {"attempt_id": "attempt-902", "run_id": "9a39d55ceead467e84524ccc83d1be21", "status": "failed", "failure": "native export child_unavailable; historical runtime lacked same-attempt export mounts"},
+      {"attempt_id": "attempt-903", "run_id": "61a39518aefe46f5beb7983b39660f43", "status": "failed", "observed_at": "2026-09-22T18:07:16Z", "failure": "Native simulation and ten-file export succeeded; registering the exact composite result identity exceeded SubjectBinding's single-identifier length bound", "manifest": ".local-run/renewal-qualification/water01-canonical-903/path-correction/modelica-attempt-903.json"},
+      {"attempt_id": "attempt-904", "run_id": "3c5c5df74d654915a82a6b02fcade9b8", "status": "failed", "observed_at": "2026-09-22T18:29:09Z", "failure": "Completed native candidate/refined study, then the shared instruction incorrectly required the other mobile-brewer scenario's battery inputs", "manifest": ".local-run/renewal-qualification/water01-canonical-904/modelica-attempt-904-linked.json", "server_id": "2a1008b4-9345-4dbc-b04f-5e2d1be27f30"},
+      {"attempt_id": "attempt-905", "run_id": "7b07f263952c4a0da10616cf936ea9f3", "status": "failed", "observed_at": "2026-09-22T18:53:06Z", "failure": "Full native Modelica study and CAD preflight completed, then source authoring correctly refused missing insulation density and outer-shell material/density. No package or full pass. Engineering addendum proposed for human review, not adopted.", "manifest": ".local-run/renewal-qualification/water01-canonical-905/modelica-attempt-905-linked.json", "server_id": "7d9e7af6-e1f3-4463-9749-8ccdf5a39918"}
+    ],
+    "registered_server_id": "4328a581-59ea-49d4-a90e-fb40fe8f75b7",
+    "evidence": {
+      "path": "artifacts/campaign-example-renewal/qualification/modelica-renewal-native-export.json",
+      "sha256": "7d4e53f584f95c0d79979bbd7b07cf1b730d43f765f2cd185b19641145d2568a"
+    },
+    "scope": "Actual native simulation, ten-file sealed export, host byte/hash verification and repeated-export idempotence; not canonical full-package or public catalog qualification."
+  },
+  "remaining_native_gates": [
+    "Harness: independent native XML/ERC reader and prospective three-case handoff are implemented and deployed; actual gateway native export and retained missing-B1 rejection pass. Correct native correspondence, obtain the resistance-basis decision and complete the canonical handoff before claiming completion.",
+    "Sheet metal: deferred by user while another agent improves Solid Edge MCP. Preserve all three cases and quarantine; no dispatch, probes or deployment changes until updated handoff.",
+    "Water heater: run the approved Modelica-to-AgentCAD-to-scikit-fem package chain and reopen the exact CAD/field evidence.",
+    "Robot: run the approved diagnosis-to-corrective-CAD-to-CalculiX chain in an isolated successor; do not approve or reuse Robot 010.",
+    "Run one representative normal-workspace workflow per family or bind still-current sufficient prior native evidence, then verify result access through Workflows."
+  ],
+  "missing_input_proposal": {
+    "path": "specs/082-output-content-validation/campaign-missing-inputs-addendum-proposal.md",
+    "status": "prepared_for_review_not_approved_or_applied",
+    "scope": "Water 01-03 material/density basis and Harness 01-03 contact/splice resistance allowances",
+    "authority": "User approved preparing the proposal; actual engineering values still need a decision."
+  },
+  "native_interconnect_export_followup": {
+    "status": "direct_and_gateway_native_export_and_reader_control_pass_correct_design_pending",
+    "evidence": "artifacts/campaign-example-renewal/qualification/kicad-native-interconnect-export.json",
+    "gateway_evidence": "artifacts/campaign-example-renewal/qualification/harness-native-gateway-control.json",
+    "focused_tests": 29,
+    "campaign_runs": 0,
+    "reader_integration": {
+      "status": "implemented_live_deployed",
+      "profile_version": "2",
+      "baseline_changes": false,
+      "tests_passed": 67,
+      "native_qualification_tests_skipped": 4,
+      "skip_reason": "No explicit completed native harness qualification configured; not counted as pass",
+      "actual_wrong_content_control": {
+        "path": "artifacts/campaign-example-renewal/qualification/harness-native-missing-splice-control.json",
+        "sha256": "55a89e5ecd5ec142e47c30b9efed8a55e41487591f66113faf0bce836cf7ea92"
+      },
+      "finding": "The actual native schematic omits B1 despite zero ERC errors; a false producer pass report cannot conceal it.",
+      "scope": "Three-case preparer/profile/credit-scope wiring, bounded independent native comparison and actual retained negative control. Actual selected gateway export also passed; no correct new schematic, human approval or campaign pass."
+    }
+  },
+  "printed01_followup": {
+    "status": "awaiting_human_review_not_qualified",
+    "attempt_id": "attempt-901",
+    "run_id": "8877a99cc7054faab6b4d586b05845cb",
+    "checkpoint_id": "checkpoint-e4ec7f837b7f20acbc7f91df",
+    "review_state": "pending",
+    "review_actor": null,
+    "source_sha256": "f5ff66cf111a07498550d82b110d1f88c2ca2ead328ea78989742fc6c27e00b6",
+    "immutable_review_files": 15,
+    "isolated_full_profile_inspection": {
+      "pass": 17,
+      "blocked": 1,
+      "release_eligible": false,
+      "path": ".local-run/renewal-qualification/printed01-canonical-901/pre-review-inspection/assessment.json",
+      "sha256": "14c967cd545660adf53c722a7759e971159fb2c7ef30a85381a2de14aeae1108"
+    },
+    "results_access": {
+      "status": "verified_saved_results_with_invalid_diagram_warning",
+      "steps_passed": 9,
+      "report": "artifacts/ui-walkthrough/printed01-results/20260922T1932Z-recovery/report.html",
+      "status_sha256": "b098a1bc67afef418dbfce3bf68fd05e929eb7a80db8ec4f3c531a94f5c53394"
+    },
+    "review_brief": "specs/082-output-content-validation/printed01-attempt901-engineering-review.md",
+    "scope": "Actual Blender design and repair, Bambu slice and simulated transfer. No human approval, canonical final validation, physical printing or campaign completion credit."
+  },
+  "bracket01_followup": {
+    "status": "failed_source_syntax_native_topology_followup_held",
+    "attempt_id": "attempt-901",
+    "started_at": "2026-09-22T20:00:11Z",
+    "run_id": "9ccf3bd8f9c4438aaaaad725f004fa1c",
+    "last_observed_step": "Create and measure bracket CAD",
+    "finished_at": "2026-09-22T20:14:34.792600Z",
+    "failure": "Source line 279 has a mismatched delimiter; canonical CAD produced no STEP. Isolated syntax repair then exposed missing load-centroid topology. Two unsuccessful isolated topology corrections are held.",
+    "repair_record": "artifacts/campaign-example-renewal/qualification/bracket01-source-publication-repair.json",
+    "run_path": "runs/campaign-bracket-01-attempt-901/20260922T200011Z-c03989178397.json",
+    "source_sha256": "1bab748705d8cbc4bc04db515092ca54c725036827adbc7d1e67011fbc614d0d",
+    "manifest": ".local-run/renewal-qualification/bracket01-canonical-901/manifest-linked.json",
+    "manifest_sha256": "3e82724d10507ae1f97fa17ef9685eac34a097ea2adcb17f76e9954ae9e60b4f",
+    "retry_episode": "bracket01-deterministic-reviewed-geometry",
+    "baseline_attempts": ["attempt-006"],
+    "max_corrections": 2,
+    "evidence": {
+      "path": "artifacts/engineering-workflow-datasets/retry-evidence/bracket01-reviewed-geometry-901.json",
+      "sha256": "b78159f30c9599de0f530896b9a552d35fe6fddb232f5d92da7603f585fcba9b"
+    },
+    "focused_tests": 13,
+    "preflight": "1 case passed, no errors or warnings, 14 steps and 12 inputs",
+    "native_proof_scope": "Actual tiny AgentCAD STEP and CalculiX retained-geometry mesh/selection preflight; not the new bracket design or strength solution.",
+    "solid_edge_used": false,
+    "campaign_credit": false
+  },
+  "heat01_followup": {
+    "status": "original_changes_requested_successor_pending_with_mesh_limit_error",
+    "attempt_id": "attempt-901",
+    "run_id": "4079f5e988bb4442a9b7c3d4ea37ebbe",
+    "human_decision": "changes_requested",
+    "scope_repair": "artifacts/campaign-example-renewal/qualification/heat01-review-scope-repair.json",
+    "source_path": "workflows/campaign-heat-01-attempt-901.workflow.wflow",
+    "source_sha256": "13a1fca405a36c2d87281eacd42352c546a848d4ab73696063091203c63bb793",
+    "manifest": ".local-run/renewal-qualification/heat01-canonical-901/manifest.json",
+    "manifest_sha256": "7995c7f5af108898082e24f23cdcbcb297435fcbb43f0c2718130cd58729fe3a",
+    "preflight": ".local-run/renewal-qualification/heat01-canonical-901/preflight.json",
+    "preflight_sha256": "1cb49e2b31b9e34817894f6b9994a1d2eda3d96492bbb3b23203d76df4aeb46a",
+    "required_steps": 10,
+    "staged_inputs": 11,
+    "authorized_tools": 8,
+    "preflight_errors": 0,
+    "preflight_warnings": 0,
+    "campaign_credit": false,
+    "solid_edge_used": false,
+    "successor": {
+      "attempt_id": "attempt-902",
+      "run_id": "a01fefe4badd4e6bb7418d4704f75a65",
+      "source_sha256": "13c936025776e25d126d693ed0dcfdc333a5227b81176767bfe01d39e72483bd",
+      "manifest": ".local-run/renewal-qualification/heat01-canonical-902/manifest-linked.json",
+      "manifest_sha256": "0803a340615c65670556a7d80c762d7746267cbf1f140c6bbc68e2a45a6e9946",
+      "status": "awaiting_actual_review_remaining_mesh_limit_error",
+      "checkpoint_id": "checkpoint-875a69002c5f61ec041f3b25",
+      "subject_digest": "d9a7b3eb2a0a3f58d1516fb422bc8ba2c3ab89d050f468d79ce142c89cedd7f5",
+      "basis_sha256": "78e2c8d1e5fe8e5e9578c0501899a6656193dee621779f15f3476c72c69463e2",
+      "review_actor": null,
+      "scope_correction": "Unrelated copper/contact case removed; approved aluminum inputs, analytical 50/41.667 C results and claim boundaries retained.",
+      "remaining_finding": "Section 8.6 incorrectly says no mesh-sensitivity threshold is supplied; original context and HEAT01-REFINEMENT require at most 2% hot-end temperature-rise change.",
+      "approved": false,
+      "original_input_files_unchanged": 7,
+      "retry_episode": "heat01-aluminum-basis-scope",
+      "corrections_used": 1,
+      "max_corrections": 2
+    },
+    "prospective_mesh_limit_repair": {
+      "status": "implemented_tested_not_dispatched",
+      "change": "Include the exact analytical/balance/refinement requirements from the same pinned baseline in the basis prompt, instead of relying on ambiguous historic aims wording.",
+      "focused_tests_passed": 15,
+      "engineering_limits_changed": false,
+      "review_decision_requested": true,
+      "review_decision_received": false
+    },
+    "remaining": "Obtain the actual decision on attempt 902; do not approve the contradictory basis or overwrite it. The second linked correction is prepared in code but not staged or dispatched. Full CAD-to-FE qualification remains."
+  },
+  "overall_status": "qualification_in_progress_not_campaign_ready"
+}

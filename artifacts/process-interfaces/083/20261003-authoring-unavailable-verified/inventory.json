@@ -1,0 +1,172 @@
+{
+  "files": {
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/checked-scope.json": {
+      "bytes": 7050,
+      "sha256": "e3f738341707d716728a059f661a444c0cbf32100f0f3dcf7396200c8c68f47b"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/README.md": {
+      "bytes": 2278,
+      "sha256": "9ab8082ac6bb59452bca90429bd4b811cee62d455442c01308e53811d3ddb4d8"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/regression-command.txt": {
+      "bytes": 370,
+      "sha256": "4b6f20df151fae6355f1c207ba31e1e13401b91af130225b22f50984bdd3d369"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/t041-authoring-states-001.json": {
+      "bytes": 77232,
+      "sha256": "3bfac3746e242e6a2f70f4f74233153600954d04dc126202e9db596624d0a9c6"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-verified/t041-authoring-states-002.json": {
+      "bytes": 77210,
+      "sha256": "24a3892ef3531c53099359799f3425b5911c3fa8da3c23b2cb002a6cd15a26c2"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 673,
+      "sha256": "1fa98471e10f071dc8994888473f5a233917bef7bd1ea7f2346a6e77df95c820"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 19624,
+      "sha256": "6910db350a3dd99ea06114a6d755e9fcc2d72f44c155c10e3b7fd2e995251096"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 1836,
+      "sha256": "4d5c07d8f799393e6c0d89457bc99751ea8021b0ae05f06d2412b6907ed52a08"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/progress.md": {
+      "bytes": 5101,
+      "sha256": "96b3327ec043c7f771013eef40cbdbeda65b53a77ab3c789022ace12fa2b6b1a"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/report.html": {
+      "bytes": 6288,
+      "sha256": "93cb25678fe3317e12942132b9570db68a67a47cc521fbe525287a18d01bab5b"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 48177,
+      "sha256": "2fcd2e5888933117eb0bc0818e9224d937bcb7b2f472b1a19910501fa09c69a9"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 94895,
+      "sha256": "8d615273e21b64b8fe5d04658c293dabee7dc450a277413c10f09cb1d975f68f"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/annotated/S03.png": {
+      "bytes": 94951,
+      "sha256": "744aba37cccf06c9e009ba028611c1fc35d1686bb56c84f7b91b0e2397cc0a33"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/annotated/S04.png": {
+      "bytes": 78987,
+      "sha256": "4864f6c8a3c4ec0cc70629d6820b25546b8c75e4e8b45137512e46959f6c7c8e"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/annotated/S05.png": {
+      "bytes": 71213,
+      "sha256": "c30c2929b395c9eeef4d820dda0516f9ddd3061c25e14ba7f1e562531828d421"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42669,
+      "sha256": "3083fc0511f46511ae62871e82913db259d5f4352d949d56f9eb30bf640d5ec7"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 81315,
+      "sha256": "e0b2324c901f2a54dbceb856c969d7d270d87f28e9650782f1b3ab35109264cd"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/raw/S03.png": {
+      "bytes": 77438,
+      "sha256": "222d2a67b319a5e2c118e9b4ff07821a9e9eb79c9b2acd9ea25a2fa0aae92815"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/raw/S04.png": {
+      "bytes": 61489,
+      "sha256": "8399ff3c66f6576fcec62b7f25588a14cdc64ac0ef7cfb9d78bbf03fa68daa2c"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/screenshots/raw/S05.png": {
+      "bytes": 55731,
+      "sha256": "8f64f8d2b570cfbd8ac2d6bdf96fb61fe250d3971fd9a2ae3c75e2d31d2dae91"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/status.json": {
+      "bytes": 5205,
+      "sha256": "a73c6254f98836dc36301cd0b5c64798f6ac5df2feae4061965a07dc2e478bd9"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough/trace/README.md": {
+      "bytes": 180,
+      "sha256": "a467482d75b4c377e7ac5db2dacaab90351b3de7a83b1f33f17b103ba3f4477d"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/.gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 673,
+      "sha256": "95f4c3b2e97a7f931cb912d380238f4844a936fd3a43702e3c049958f45212ef"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 19624,
+      "sha256": "6910db350a3dd99ea06114a6d755e9fcc2d72f44c155c10e3b7fd2e995251096"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/presentation-request-timings.json": {
+      "bytes": 1871,
+      "sha256": "38e6766c9a27a92b953ba6731f0e9683add6da35a3494763234df2434b15eca2"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/progress.md": {
+      "bytes": 5157,
+      "sha256": "f6bd5d4fc91d2f93eaefd5096a911cc9e911f229d4df59743f6189f29b98e0cf"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/report.html": {
+      "bytes": 6294,
+      "sha256": "bb922bba388d048665326c5962d1217a7164865bf17d7b629f02c27a3714b1aa"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 40435,
+      "sha256": "1974143950c1e55e3992604ed11b44d9a70d27fcfe5ced85505cb7054e958fb7"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 95337,
+      "sha256": "0ead85d1e2d8cee069adb73313ee1326d438b8aaca5ddfd5d46e1f2b39b1fd7a"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/annotated/S03.png": {
+      "bytes": 95480,
+      "sha256": "84f4d575473023a9c66c26cfc1b5836cb37946b9ca24f2906615509e5f0cbff7"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/annotated/S04.png": {
+      "bytes": 79039,
+      "sha256": "dc9b47b9eb06138f6eaaf38ed63fb1ce77b69fd2ea2218be6de33b69b920060d"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/annotated/S05.png": {
+      "bytes": 70481,
+      "sha256": "3e74e0cdce27d46a9745f3173f3eb35696dfb136143590ba53dd99f46478823e"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 37805,
+      "sha256": "006b3a6ef8fa6839e07b7c75b915812192e68d7fa80cfe78c482656ced679d50"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 81753,
+      "sha256": "67f18c3bfcff8dfcb17f24d498092bb31c28e8c8dd5e62cfde044ec7aa24a7b3"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/raw/S03.png": {
+      "bytes": 77537,
+      "sha256": "ba5de8d07e2a61afaa09b2cf79f557bd63fd4124310e67f3fcacc66f80c26258"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/raw/S04.png": {
+      "bytes": 61348,
+      "sha256": "127a4b61f6d59e81c728d67189e25ef44c134c636e5db8ba44ae679f55c9738b"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/screenshots/raw/S05.png": {
+      "bytes": 54816,
+      "sha256": "cf57628fafd57a1c1cf8eacaad717e75cb2ba3e8ca60579b4e2947be898943da"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/status.json": {
+      "bytes": 5208,
+      "sha256": "251d19994a772424b4bbf020684500c406b22099b0752557c82f3ff83ebc26c5"
+    },
+    "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough/trace/README.md": {
+      "bytes": 180,
+      "sha256": "a467482d75b4c377e7ac5db2dacaab90351b3de7a83b1f33f17b103ba3f4477d"
+    }
+  }
+}

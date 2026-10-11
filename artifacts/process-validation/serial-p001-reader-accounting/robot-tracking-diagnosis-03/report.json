@@ -1,0 +1,4466 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "9e3321be2c34f8984571a67c6dc51fc421f1fe8299e2250a61f0a1edef9b2688",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:40.734842+00:00",
+    "selected_assessment_id": "assessment-939dbedc205b4e25b0a751efb6dddb8e",
+    "selected_attempt_id": "f796e45a369843a2a3b6ce1f78dc3e5b",
+    "selected_subject_ids": [
+      "timeline",
+      "metrics",
+      "plot",
+      "diagnosis",
+      "conversion-manifest"
+    ],
+    "latest_attempt_id": "f796e45a369843a2a3b6ce1f78dc3e5b",
+    "latest_assessment_id": "assessment-939dbedc205b4e25b0a751efb6dddb8e",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "ROBOT03-INPUT-LINEAGE",
+      "ROBOT03-OCCLUSION",
+      "ROBOT03-SAMPLE-SCOPE",
+      "ROBOT03-METRICS",
+      "ROBOT03-EVENT",
+      "ROBOT03-PLOTS",
+      "ROBOT03-DIAGNOSIS",
+      "ROBOT03-DELIVERABLES",
+      "ROBOT03-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Physical robot operation and causal proof remain outside this digital validation gate."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    },
+    {
+      "id": "tracking-timeline",
+      "version": "1",
+      "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded tracking timeline reader v1",
+      "formats": [
+        "csv"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "conversion-format",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/format",
+      "expected": {
+        "operator": "equals",
+        "expected": "ROS2 sqlite3 CDR",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "ROS2 sqlite3 CDR"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/format"
+      ],
+      "subject_id": "conversion-manifest",
+      "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "conversion_manifest"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "conversion-frame",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/frame_transform_applied",
+      "expected": {
+        "operator": "equals",
+        "expected": false,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        false
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/frame_transform_applied"
+      ],
+      "subject_id": "conversion-manifest",
+      "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "conversion_manifest"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "conversion-clock",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/header_clock_corrected",
+      "expected": {
+        "operator": "equals",
+        "expected": false,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        false
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/header_clock_corrected"
+      ],
+      "subject_id": "conversion-manifest",
+      "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "conversion_manifest"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "alignment-external-frame",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/alignment/external_frame",
+      "expected": {
+        "operator": "equals",
+        "expected": "map",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "map"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/external_frame"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "alignment-map-frame",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/alignment/map_frame",
+      "expected": {
+        "operator": "equals",
+        "expected": "map",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "map"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/map_frame"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "alignment-translation-x-m",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/alignment/translation_x_m",
+      "expected": {
+        "operator": "equals",
+        "expected": 0.0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/translation_x_m"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "alignment-translation-y-m",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/alignment/translation_y_m",
+      "expected": {
+        "operator": "equals",
+        "expected": 0.0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/translation_y_m"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "alignment-rotation-rad",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/alignment/rotation_rad",
+      "expected": {
+        "operator": "equals",
+        "expected": 0.0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/rotation_rad"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-INPUT-LINEAGE",
+      "requirement_text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+          "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+          "locator": "complete mapping"
+        }
+      ],
+      "check_id": "alignment-header-offset-s",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/alignment/header_offset_s",
+      "expected": {
+        "operator": "equals",
+        "expected": 0.0,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        0
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/header_offset_s"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "timeline-position-rmse",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/position_rmse",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 0.008614542537186748,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "m",
+      "expected_frame": null,
+      "observed": [
+        0.008614542537186746
+      ],
+      "observed_units": [
+        "m"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "timeline-lateral-rmse",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/lateral_rmse",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 0.006423582096768288,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "m",
+      "expected_frame": null,
+      "observed": [
+        0.006423582096768288
+      ],
+      "observed_units": [
+        "m"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "timeline-retained-samples",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/retained_samples",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 56.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        56
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-SAMPLE-SCOPE",
+      "requirement_text": "Metrics record the common valid comparison interval, exact retained-sample count and denominator, with any separately calculated interpolation explicitly labeled and excluded from primary RMSE.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid"
+        }
+      ],
+      "check_id": "timeline-retained-samples",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/retained_samples",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 56.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        56
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "timeline-start-time",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/start_time",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 0.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        0.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-SAMPLE-SCOPE",
+      "requirement_text": "Metrics record the common valid comparison interval, exact retained-sample count and denominator, with any separately calculated interpolation explicitly labeled and excluded from primary RMSE.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid"
+        }
+      ],
+      "check_id": "timeline-start-time",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/start_time",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 0.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        0.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "timeline-end-time",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/end_time",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 30.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        30.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-SAMPLE-SCOPE",
+      "requirement_text": "Metrics record the common valid comparison interval, exact retained-sample count and denominator, with any separately calculated interpolation explicitly labeled and excluded from primary RMSE.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid"
+        }
+      ],
+      "check_id": "timeline-end-time",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/end_time",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 30.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        30.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "timeline-largest-gap",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/largest_gap",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 3.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        3.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "velocity-rmse",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/velocity_disagreement_rmse_mps",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 0.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "m/s",
+      "expected_frame": null,
+      "observed": [
+        0.0
+      ],
+      "observed_units": [
+        "m/s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/velocity_disagreement_rmse_mps"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-OCCLUSION",
+      "requirement_text": "External poses from 14.0 through 16.0 s inclusive remain missing and are neither zero-filled nor represented as measured or silently interpolated evidence.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "rows:time_s 14.0..16.0"
+        }
+      ],
+      "check_id": "gap-record",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/external_gaps_not_interpolated",
+      "expected": {
+        "operator": "equals",
+        "expected": [
+          [
+            13.5,
+            16.5
+          ]
+        ],
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        [
+          [
+            13.5,
+            16.5
+          ]
+        ]
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/external_gaps_not_interpolated"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-EVENT",
+      "requirement_text": "Timeline and diagnosis correlate E01 at 14.0 s with the start of visual occlusion within one 0.5 s sample without treating it as proof of later drift cause.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/events.csv",
+          "sha256": "32f822af3bdd0782eda19295c9a9165023dea85ac9d7c384a28f4a422ea44faf",
+          "locator": "row:E01"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        }
+      ],
+      "check_id": "event-id",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/events/0/event_id",
+      "expected": {
+        "operator": "equals",
+        "expected": "E01",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        "E01"
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/event_id"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-EVENT",
+      "requirement_text": "Timeline and diagnosis correlate E01 at 14.0 s with the start of visual occlusion within one 0.5 s sample without treating it as proof of later drift cause.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/events.csv",
+          "sha256": "32f822af3bdd0782eda19295c9a9165023dea85ac9d7c384a28f4a422ea44faf",
+          "locator": "row:E01"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        }
+      ],
+      "check_id": "event-time",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/events/0/bag_elapsed_s",
+      "expected": {
+        "operator": "within",
+        "expected": null,
+        "target": 14.0,
+        "tolerance": 1e-09,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        14.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/bag_elapsed_s"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-EVENT",
+      "requirement_text": "Timeline and diagnosis correlate E01 at 14.0 s with the start of visual occlusion within one 0.5 s sample without treating it as proof of later drift cause.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/events.csv",
+          "sha256": "32f822af3bdd0782eda19295c9a9165023dea85ac9d7c384a28f4a422ea44faf",
+          "locator": "row:E01"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        }
+      ],
+      "check_id": "event-correlation",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "/events/0/difference_s",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": -0.5,
+        "maximum": 0.5,
+        "inclusive": true
+      },
+      "expected_unit": "s",
+      "expected_frame": null,
+      "observed": [
+        0.0
+      ],
+      "observed_units": [
+        "s"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/difference_s"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-PLOTS",
+      "requirement_text": "The path overlay visibly gaps the external-pose series over the occlusion and distinguishes planned, wheel-odometry and observed visual paths.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "visible missing-evidence request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        }
+      ],
+      "check_id": "plot-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "plot",
+      "subject_sha256": "7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "plot"
+      },
+      "finding_ids": [
+        "f-9e204cf18086434e866987f1c3a980dd"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "ROBOT03-DIAGNOSIS",
+      "requirement_text": "The diagnosis separates observed drift from possible causes, treats telemetry as context rather than proof, lists uncertainty, and recommends an additional observation.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "diagnosis request"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        }
+      ],
+      "check_id": "diagnosis-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "diagnosis",
+      "subject_sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "diagnosis"
+      },
+      "finding_ids": [
+        "f-d23c490ea21940869621e4033e5442b9"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "ROBOT03-ACTION-SCOPE",
+      "requirement_text": "The result does not command a physical robot, change its controller, connect to production ROS, or present synthetic data as a real failure record.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+        }
+      ],
+      "check_id": "diagnosis-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "diagnosis",
+      "subject_sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "diagnosis"
+      },
+      "finding_ids": [
+        "f-d23c490ea21940869621e4033e5442b9"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "ROBOT03-METRICS",
+      "requirement_text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Curved-route test with occlusion"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+          "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+          "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+          "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+          "locator": "valid rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+          "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+          "locator": "all rows"
+        }
+      ],
+      "check_id": "yaw-wrapping",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "tracking-timeline",
+      "evidence_method": "independent_measurement",
+      "selector": "timeline/max_yaw_residual",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 3.141592653589793,
+        "inclusive": true
+      },
+      "expected_unit": "rad",
+      "expected_frame": null,
+      "observed": [
+        0.0
+      ],
+      "observed_units": [
+        "rad"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-DELIVERABLES",
+      "requirement_text": "The output set contains aligned data/timeline, trajectory overlay SVG or PNG, tracking metrics CSV or JSON, and an evidence-linked diagnosis Markdown or PDF.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Requested outputs"
+        }
+      ],
+      "check_id": "deliverable-timeline",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 6839,
+          "present": true,
+          "sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#"
+      ],
+      "subject_id": "timeline",
+      "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "timeline"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-DELIVERABLES",
+      "requirement_text": "The output set contains aligned data/timeline, trajectory overlay SVG or PNG, tracking metrics CSV or JSON, and an evidence-linked diagnosis Markdown or PDF.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Requested outputs"
+        }
+      ],
+      "check_id": "deliverable-metrics",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1757,
+          "present": true,
+          "sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#"
+      ],
+      "subject_id": "metrics",
+      "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "metrics"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-DELIVERABLES",
+      "requirement_text": "The output set contains aligned data/timeline, trajectory overlay SVG or PNG, tracking metrics CSV or JSON, and an evidence-linked diagnosis Markdown or PDF.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Requested outputs"
+        }
+      ],
+      "check_id": "deliverable-diagnosis",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 13779,
+          "present": true,
+          "sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:diagnosis@d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24#"
+      ],
+      "subject_id": "diagnosis",
+      "subject_sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "diagnosis"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-DELIVERABLES",
+      "requirement_text": "The output set contains aligned data/timeline, trajectory overlay SVG or PNG, tracking metrics CSV or JSON, and an evidence-linked diagnosis Markdown or PDF.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Requested outputs"
+        }
+      ],
+      "check_id": "deliverable-plot",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 64606,
+          "present": true,
+          "sha256": "7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:plot@7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd#"
+      ],
+      "subject_id": "plot",
+      "subject_sha256": "7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "plot"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "ROBOT03-DELIVERABLES",
+      "requirement_text": "The output set contains aligned data/timeline, trajectory overlay SVG or PNG, tracking metrics CSV or JSON, and an evidence-linked diagnosis Markdown or PDF.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+          "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+          "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+          "locator": "Requested outputs"
+        }
+      ],
+      "check_id": "deliverable-conversion-manifest",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 2867,
+          "present": true,
+          "sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#"
+      ],
+      "subject_id": "conversion-manifest",
+      "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+      "producer": {
+        "run_id": "retained-successor-robot-tracking-diagnosis-03",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "conversion_manifest"
+      },
+      "finding_ids": [],
+      "action": null
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-939dbedc205b4e25b0a751efb6dddb8e",
+    "attempt_id": "f796e45a369843a2a3b6ce1f78dc3e5b",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "robot-tracking-diagnosis-03",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "timeline",
+          "role": "timeline",
+          "result_id": "retained-successor:robot-tracking-diagnosis-03:timeline",
+          "producer": {
+            "run_id": "retained-successor-robot-tracking-diagnosis-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "timeline"
+          },
+          "kind": "file",
+          "sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+          "value": null,
+          "locator": "analysis/timeline.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "metrics",
+          "role": "metrics",
+          "result_id": "retained-successor:robot-tracking-diagnosis-03:metrics",
+          "producer": {
+            "run_id": "retained-successor-robot-tracking-diagnosis-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "metrics"
+          },
+          "kind": "file",
+          "sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+          "value": null,
+          "locator": "analysis/tracking-metrics.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "plot",
+          "role": "plot",
+          "result_id": "retained-successor:robot-tracking-diagnosis-03:plot",
+          "producer": {
+            "run_id": "retained-successor-robot-tracking-diagnosis-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "plot"
+          },
+          "kind": "file",
+          "sha256": "7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd",
+          "value": null,
+          "locator": "analysis/trajectory-overlay.svg",
+          "format": "svg",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "diagnosis",
+          "role": "diagnosis",
+          "result_id": "retained-successor:robot-tracking-diagnosis-03:diagnosis",
+          "producer": {
+            "run_id": "retained-successor-robot-tracking-diagnosis-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "diagnosis"
+          },
+          "kind": "file",
+          "sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24",
+          "value": null,
+          "locator": "diagnosis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "conversion-manifest",
+          "role": "conversion_manifest",
+          "result_id": "retained-successor:robot-tracking-diagnosis-03:conversion_manifest",
+          "producer": {
+            "run_id": "retained-successor-robot-tracking-diagnosis-03",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "conversion_manifest"
+          },
+          "kind": "file",
+          "sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+          "value": null,
+          "locator": "converted/conversion-manifest.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "robot-tracking-diagnosis-03-full",
+        "version": "1",
+        "sha256": "11f5ca4b297e60132c541f55bce8720ee987e61924ed340dbff058eb814375cf"
+      },
+      "baseline_ref": {
+        "id": "robot-tracking-diagnosis-03-basis",
+        "version": "1",
+        "sha256": "c08adf5cd747d36651e57e565fb5a63b4c989b7f25041321eec44ccbaee257ce"
+      },
+      "idempotency_key": "robot-tracking-diagnosis-03",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "robot-tracking-diagnosis-03-full",
+      "version": "1",
+      "baseline": {
+        "id": "robot-tracking-diagnosis-03-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "ROBOT03-INPUT-LINEAGE",
+            "text": "Any ROS 2 analysis uses a traceable CSV-to-bag conversion with the documented topic/message map, retains the original CSVs, and preserves timing, validity masks and map frame.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Data contract and reproducibility"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/bag-conversion.md",
+                "sha256": "76dc930e6976dbf21f065aa8016ccdfb634075372c12ce4db6ac49af24f3536d",
+                "locator": "complete mapping"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "ROBOT03-OCCLUSION",
+            "text": "External poses from 14.0 through 16.0 s inclusive remain missing and are neither zero-filled nor represented as measured or silently interpolated evidence.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+                "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+                "locator": "rows:time_s 14.0..16.0"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "ROBOT03-SAMPLE-SCOPE",
+            "text": "Metrics record the common valid comparison interval, exact retained-sample count and denominator, with any separately calculated interpolation explicitly labeled and excluded from primary RMSE.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+                "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+                "locator": "valid"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "ROBOT03-METRICS",
+            "text": "Metrics independently report duration, lateral RMSE, position-error RMSE and velocity disagreement on retained valid samples, and wrap yaw residuals continuously.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/planned-path.csv",
+                "sha256": "e0182ef767eef16124988d51e59305760b42aba0e699b7240773ff835c3b603f",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/odometry.csv",
+                "sha256": "efc21aed3ddf91aafbe9e12fe4955d4379bcbf6c175e8c2ed7f57f1e8e3e4c8d",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/external-pose.csv",
+                "sha256": "87373d30578412e4ab90fe5d13ba56e2a4265540d2c4c984843a2ef66b5b8eec",
+                "locator": "valid rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/velocity-command.csv",
+                "sha256": "60f73f71cb0f0d69aae49e08769823a118b72d20a394d9521f5cb70ce9553256",
+                "locator": "all rows"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "ROBOT03-EVENT",
+            "text": "Timeline and diagnosis correlate E01 at 14.0 s with the start of visual occlusion within one 0.5 s sample without treating it as proof of later drift cause.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/events.csv",
+                "sha256": "32f822af3bdd0782eda19295c9a9165023dea85ac9d7c384a28f4a422ea44faf",
+                "locator": "row:E01"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "ROBOT03-PLOTS",
+            "text": "The path overlay visibly gaps the external-pose series over the occlusion and distinguishes planned, wheel-odometry and observed visual paths.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+                "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+                "locator": "visible missing-evidence request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "ROBOT03-DIAGNOSIS",
+            "text": "The diagnosis separates observed drift from possible causes, treats telemetry as context rather than proof, lists uncertainty, and recommends an additional observation.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+                "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+                "locator": "diagnosis request"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "ROBOT03-DELIVERABLES",
+            "text": "The output set contains aligned data/timeline, trajectory overlay SVG or PNG, tracking metrics CSV or JSON, and an evidence-linked diagnosis Markdown or PDF.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+                "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Requested outputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "ROBOT03-ACTION-SCOPE",
+            "text": "The result does not command a physical robot, change its controller, connect to production ROS, or present synthetic data as a real failure record.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+                "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+                "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "conversion-format",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "conversion_manifest",
+          "reader": "structured",
+          "selector": "/format",
+          "constraint": {
+            "operator": "equals",
+            "expected": "ROS2 sqlite3 CDR",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "conversion-frame",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "conversion_manifest",
+          "reader": "structured",
+          "selector": "/frame_transform_applied",
+          "constraint": {
+            "operator": "equals",
+            "expected": false,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "conversion-clock",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "conversion_manifest",
+          "reader": "structured",
+          "selector": "/header_clock_corrected",
+          "constraint": {
+            "operator": "equals",
+            "expected": false,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "alignment-external-frame",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/alignment/external_frame",
+          "constraint": {
+            "operator": "equals",
+            "expected": "map",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "alignment-map-frame",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/alignment/map_frame",
+          "constraint": {
+            "operator": "equals",
+            "expected": "map",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "alignment-translation-x-m",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/alignment/translation_x_m",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0.0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "alignment-translation-y-m",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/alignment/translation_y_m",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0.0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "alignment-rotation-rad",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/alignment/rotation_rad",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0.0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "alignment-header-offset-s",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-INPUT-LINEAGE"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/alignment/header_offset_s",
+          "constraint": {
+            "operator": "equals",
+            "expected": 0.0,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "timeline-position-rmse",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/position_rmse",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 0.008614542537186748,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "m",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "position_rmse"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "timeline-lateral-rmse",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/lateral_rmse",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 0.006423582096768288,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "m",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "lateral_rmse"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "timeline-retained-samples",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS",
+            "ROBOT03-SAMPLE-SCOPE"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/retained_samples",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 56.0,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "retained_samples"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "timeline-start-time",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS",
+            "ROBOT03-SAMPLE-SCOPE"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/start_time",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 0.0,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "s",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "start_time"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "timeline-end-time",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS",
+            "ROBOT03-SAMPLE-SCOPE"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/end_time",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 30.0,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "s",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "end_time"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "timeline-largest-gap",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/largest_gap",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 3.0,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "s",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "largest_gap"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "velocity-rmse",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/velocity_disagreement_rmse_mps",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 0.0,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "m/s",
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "gap-record",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-OCCLUSION"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/external_gaps_not_interpolated",
+          "constraint": {
+            "operator": "equals",
+            "expected": [
+              [
+                13.5,
+                16.5
+              ]
+            ],
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "event-id",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-EVENT"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/events/0/event_id",
+          "constraint": {
+            "operator": "equals",
+            "expected": "E01",
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "event-time",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-EVENT"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/events/0/bag_elapsed_s",
+          "constraint": {
+            "operator": "within",
+            "expected": null,
+            "target": 14.0,
+            "tolerance": 1e-09,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "s",
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "event-correlation",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-EVENT"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "/events/0/difference_s",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": -0.5,
+            "maximum": 0.5,
+            "inclusive": true
+          },
+          "unit": "s",
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "plot-review",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-PLOTS"
+          ],
+          "subject_role": "plot",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "diagnosis-review",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-DIAGNOSIS",
+            "ROBOT03-ACTION-SCOPE"
+          ],
+          "subject_role": "diagnosis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "yaw-wrapping",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-METRICS"
+          ],
+          "subject_role": "timeline",
+          "reader": "tracking-timeline",
+          "selector": "timeline/max_yaw_residual",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 3.141592653589793,
+            "inclusive": true
+          },
+          "unit": "rad",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "max_yaw_residual"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-timeline",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-DELIVERABLES"
+          ],
+          "subject_role": "timeline",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-metrics",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-DELIVERABLES"
+          ],
+          "subject_role": "metrics",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-diagnosis",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-DELIVERABLES"
+          ],
+          "subject_role": "diagnosis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-plot",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-DELIVERABLES"
+          ],
+          "subject_role": "plot",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-conversion-manifest",
+          "version": "1",
+          "requirement_ids": [
+            "ROBOT03-DELIVERABLES"
+          ],
+          "subject_role": "conversion_manifest",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Physical robot operation and causal proof remain outside this digital validation gate."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:40.654418+00:00",
+    "measurements": [
+      {
+        "id": "m-62a965708dac2c7c2b66801f0dc5ed5c4a972a76711577c1315098d2a474dfb7",
+        "subject_id": "conversion-manifest",
+        "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+        "selector": "/format",
+        "value": "ROS2 sqlite3 CDR",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/format"
+        ]
+      },
+      {
+        "id": "m-63a8f06eaf5b1a6026f05cc03ae98e0afd47f1fff61584ee433384922e43e3bd",
+        "subject_id": "conversion-manifest",
+        "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+        "selector": "/frame_transform_applied",
+        "value": false,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/frame_transform_applied"
+        ]
+      },
+      {
+        "id": "m-07f6db407f9af2a50ab4161d845ab80a2604232f42910bd8238adfc9b868a669",
+        "subject_id": "conversion-manifest",
+        "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+        "selector": "/header_clock_corrected",
+        "value": false,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/header_clock_corrected"
+        ]
+      },
+      {
+        "id": "m-a5009dceaf568e2a6b3cbdb0032a4bbe43bd5d7ad0367ee80b3ab6812610a73d",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/alignment/external_frame",
+        "value": "map",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/external_frame"
+        ]
+      },
+      {
+        "id": "m-9dfff06bdde925c591a3f2c2c6d48058c5be6fccd5ee81fb50d097dcf3ec78f9",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/alignment/map_frame",
+        "value": "map",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/map_frame"
+        ]
+      },
+      {
+        "id": "m-630217249f81210ea20ae88458776027b60e282855dd69535f67fa280947b96a",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/alignment/translation_x_m",
+        "value": 0,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/translation_x_m"
+        ]
+      },
+      {
+        "id": "m-5a26a2d01629bcd0d51c44089276a99e56771e57f7388f9cf27705584fecfba6",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/alignment/translation_y_m",
+        "value": 0,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/translation_y_m"
+        ]
+      },
+      {
+        "id": "m-d88a44f5fa1b55b86db74bacc1ad1a2c1f7034ffcf76893a4bfa78b18449b9b5",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/alignment/rotation_rad",
+        "value": 0,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/rotation_rad"
+        ]
+      },
+      {
+        "id": "m-cbed53cf985cb0dd38fbb250a34a5a31b974bc5d9cb64dd45f7dfbc9a150e62c",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/alignment/header_offset_s",
+        "value": 0,
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/header_offset_s"
+        ]
+      },
+      {
+        "id": "m-1f191964cd4ad7a5201771a3c754773e357310f01949ca342a596c69181c63ca",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/position_rmse",
+        "value": 0.008614542537186746,
+        "unit": "m",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-cd750d7ae7844a09b580003e6c236f39d7b0076ec6793fd57bbb0f57356b3aa3",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/lateral_rmse",
+        "value": 0.006423582096768288,
+        "unit": "m",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-6941695f7eb858d7e9f053b62c8281526611e57170535eda4750c8ddbb22683a",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/retained_samples",
+        "value": 56,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-f011243ba7457609c0b3e30f8c01b9194d280b07052b9b212bddc8a557f35682",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/start_time",
+        "value": 0.0,
+        "unit": "s",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-f5ce79552596e3cf8a567967dc4633ae57516f5069788bc58bf5d0d811f9d876",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/end_time",
+        "value": 30.0,
+        "unit": "s",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-dd65b447d4f61d992e2c2b2e2ea5de92ce23da273a4d5854a608f11ea7c5f49f",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/largest_gap",
+        "value": 3.0,
+        "unit": "s",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-9f66e7b4e564b35c03eec05a82b8f7de18170e0429aac6415848cc8124a887a4",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/velocity_disagreement_rmse_mps",
+        "value": 0.0,
+        "unit": "m/s",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/velocity_disagreement_rmse_mps"
+        ]
+      },
+      {
+        "id": "m-f498fdede0a2d2a7e302748cbb6c4e99dd9fca68f14d8e0ce85c37ae0707ba82",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/external_gaps_not_interpolated",
+        "value": [
+          [
+            13.5,
+            16.5
+          ]
+        ],
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/external_gaps_not_interpolated"
+        ]
+      },
+      {
+        "id": "m-f87902f4542d7ec2de64b8d26ae870d5eddcad603f8f17f220efeeb21135c408",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/events/0/event_id",
+        "value": "E01",
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/event_id"
+        ]
+      },
+      {
+        "id": "m-1c50ea09fa59d20b9fbf2ca618f5c40026a10a06b2e23d033d279359c43020a0",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/events/0/bag_elapsed_s",
+        "value": 14.0,
+        "unit": "s",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/bag_elapsed_s"
+        ]
+      },
+      {
+        "id": "m-9000e403639a7260e6b8e365ab5d6391ad22d0a48e18e0e47b612d772da261d7",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "/events/0/difference_s",
+        "value": 0.0,
+        "unit": "s",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/difference_s"
+        ]
+      },
+      {
+        "id": "m-435e0227bc03c9aee512364bff0ea1d2eb37fd489ff0d01cd5e1caec3e05e12d",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "timeline/max_yaw_residual",
+        "value": 0.0,
+        "unit": "rad",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "tracking-timeline",
+          "version": "1",
+          "config_digest": "a5b3eb9b239473747ad8ccea45795da98985c8ffbd7fc55585f8e7e04ad22a97",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded tracking timeline reader v1",
+          "formats": [
+            "csv"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ]
+      },
+      {
+        "id": "m-78691d2d941a1c1a7849680e57b2bc0f8c70f8763e765445bdf7b364bdb8fe70",
+        "subject_id": "timeline",
+        "subject_sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8",
+        "selector": "",
+        "value": {
+          "bytes": 6839,
+          "present": true,
+          "sha256": "ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#"
+        ]
+      },
+      {
+        "id": "m-b2f65e302d7a8232ab460fef5398f61d42a313ab3f7ea6291953c484e005c332",
+        "subject_id": "metrics",
+        "subject_sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204",
+        "selector": "",
+        "value": {
+          "bytes": 1757,
+          "present": true,
+          "sha256": "662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#"
+        ]
+      },
+      {
+        "id": "m-c0eecce68c3edc94306d0edfee527dbe429e0944d5272877a4bfc81348234571",
+        "subject_id": "diagnosis",
+        "subject_sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24",
+        "selector": "",
+        "value": {
+          "bytes": 13779,
+          "present": true,
+          "sha256": "d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:diagnosis@d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24#"
+        ]
+      },
+      {
+        "id": "m-260c91a2316d7268c7268b9da50590f94003f48648abc3153f41a7907f266612",
+        "subject_id": "plot",
+        "subject_sha256": "7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd",
+        "selector": "",
+        "value": {
+          "bytes": 64606,
+          "present": true,
+          "sha256": "7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:plot@7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd#"
+        ]
+      },
+      {
+        "id": "m-4876798fc75101eeee34b8af2d0b1f27e9dfd8cf6e73ec6e81eb45959c7dc068",
+        "subject_id": "conversion-manifest",
+        "subject_sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8",
+        "selector": "",
+        "value": {
+          "bytes": 2867,
+          "present": true,
+          "sha256": "84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "conversion-format",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-62a965708dac2c7c2b66801f0dc5ed5c4a972a76711577c1315098d2a474dfb7"
+        ],
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/format"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "conversion-frame",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-63a8f06eaf5b1a6026f05cc03ae98e0afd47f1fff61584ee433384922e43e3bd"
+        ],
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/frame_transform_applied"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "conversion-clock",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-07f6db407f9af2a50ab4161d845ab80a2604232f42910bd8238adfc9b868a669"
+        ],
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#/header_clock_corrected"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "alignment-external-frame",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-a5009dceaf568e2a6b3cbdb0032a4bbe43bd5d7ad0367ee80b3ab6812610a73d"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/external_frame"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "alignment-map-frame",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9dfff06bdde925c591a3f2c2c6d48058c5be6fccd5ee81fb50d097dcf3ec78f9"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/map_frame"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "alignment-translation-x-m",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-630217249f81210ea20ae88458776027b60e282855dd69535f67fa280947b96a"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/translation_x_m"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "alignment-translation-y-m",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-5a26a2d01629bcd0d51c44089276a99e56771e57f7388f9cf27705584fecfba6"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/translation_y_m"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "alignment-rotation-rad",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d88a44f5fa1b55b86db74bacc1ad1a2c1f7034ffcf76893a4bfa78b18449b9b5"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/rotation_rad"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "alignment-header-offset-s",
+        "requirement_ids": [
+          "ROBOT03-INPUT-LINEAGE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cbed53cf985cb0dd38fbb250a34a5a31b974bc5d9cb64dd45f7dfbc9a150e62c"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/alignment/header_offset_s"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "timeline-position-rmse",
+        "requirement_ids": [
+          "ROBOT03-METRICS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1f191964cd4ad7a5201771a3c754773e357310f01949ca342a596c69181c63ca"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "timeline-lateral-rmse",
+        "requirement_ids": [
+          "ROBOT03-METRICS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-cd750d7ae7844a09b580003e6c236f39d7b0076ec6793fd57bbb0f57356b3aa3"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "timeline-retained-samples",
+        "requirement_ids": [
+          "ROBOT03-METRICS",
+          "ROBOT03-SAMPLE-SCOPE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-6941695f7eb858d7e9f053b62c8281526611e57170535eda4750c8ddbb22683a"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "timeline-start-time",
+        "requirement_ids": [
+          "ROBOT03-METRICS",
+          "ROBOT03-SAMPLE-SCOPE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f011243ba7457609c0b3e30f8c01b9194d280b07052b9b212bddc8a557f35682"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "timeline-end-time",
+        "requirement_ids": [
+          "ROBOT03-METRICS",
+          "ROBOT03-SAMPLE-SCOPE"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f5ce79552596e3cf8a567967dc4633ae57516f5069788bc58bf5d0d811f9d876"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "timeline-largest-gap",
+        "requirement_ids": [
+          "ROBOT03-METRICS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-dd65b447d4f61d992e2c2b2e2ea5de92ce23da273a4d5854a608f11ea7c5f49f"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "velocity-rmse",
+        "requirement_ids": [
+          "ROBOT03-METRICS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9f66e7b4e564b35c03eec05a82b8f7de18170e0429aac6415848cc8124a887a4"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/velocity_disagreement_rmse_mps"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "gap-record",
+        "requirement_ids": [
+          "ROBOT03-OCCLUSION"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f498fdede0a2d2a7e302748cbb6c4e99dd9fca68f14d8e0ce85c37ae0707ba82"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/external_gaps_not_interpolated"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "event-id",
+        "requirement_ids": [
+          "ROBOT03-EVENT"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f87902f4542d7ec2de64b8d26ae870d5eddcad603f8f17f220efeeb21135c408"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/event_id"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "event-time",
+        "requirement_ids": [
+          "ROBOT03-EVENT"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-1c50ea09fa59d20b9fbf2ca618f5c40026a10a06b2e23d033d279359c43020a0"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/bag_elapsed_s"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "event-correlation",
+        "requirement_ids": [
+          "ROBOT03-EVENT"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-9000e403639a7260e6b8e365ab5d6391ad22d0a48e18e0e47b612d772da261d7"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#/events/0/difference_s"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "plot-review",
+        "requirement_ids": [
+          "ROBOT03-PLOTS"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-9e204cf18086434e866987f1c3a980dd"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "diagnosis-review",
+        "requirement_ids": [
+          "ROBOT03-DIAGNOSIS",
+          "ROBOT03-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-d23c490ea21940869621e4033e5442b9"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "yaw-wrapping",
+        "requirement_ids": [
+          "ROBOT03-METRICS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-435e0227bc03c9aee512364bff0ea1d2eb37fd489ff0d01cd5e1caec3e05e12d"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#timeline"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-timeline",
+        "requirement_ids": [
+          "ROBOT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-78691d2d941a1c1a7849680e57b2bc0f8c70f8763e765445bdf7b364bdb8fe70"
+        ],
+        "evidence_refs": [
+          "subject:timeline@ac496e012abac9251f7cd6536840b110271b5035f48182204df5a9f4e86f5bf8#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-metrics",
+        "requirement_ids": [
+          "ROBOT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-b2f65e302d7a8232ab460fef5398f61d42a313ab3f7ea6291953c484e005c332"
+        ],
+        "evidence_refs": [
+          "subject:metrics@662cef943cf7cdc922f5098b9c676c3707862112beb2c748704e5c2663c5b204#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-diagnosis",
+        "requirement_ids": [
+          "ROBOT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-c0eecce68c3edc94306d0edfee527dbe429e0944d5272877a4bfc81348234571"
+        ],
+        "evidence_refs": [
+          "subject:diagnosis@d7b77509964b7a6023dbba135cc5173e269d52b8ebb6dfcf133f5687836b8d24#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-plot",
+        "requirement_ids": [
+          "ROBOT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-260c91a2316d7268c7268b9da50590f94003f48648abc3153f41a7907f266612"
+        ],
+        "evidence_refs": [
+          "subject:plot@7b78d9e9fcf42520b871833261bc159b560a5ebdfb8c8f2aa9d8bcc66b81c9bd#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-conversion-manifest",
+        "requirement_ids": [
+          "ROBOT03-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4876798fc75101eeee34b8af2d0b1f27e9dfd8cf6e73ec6e81eb45959c7dc068"
+        ],
+        "evidence_refs": [
+          "subject:conversion-manifest@84da95725a3e66114f684649e195b2c66e0bfb22abd15100681ad5cf8dff9ba8#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-9e204cf18086434e866987f1c3a980dd",
+        "code": "review.required",
+        "check_id": "plot-review",
+        "requirement_ids": [
+          "ROBOT03-PLOTS"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "plot",
+        "owner": {
+          "run_id": "retained-successor-robot-tracking-diagnosis-03",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "plot"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+            "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+            "locator": "visible missing-evidence request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+            "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+            "locator": "Curved-route test with occlusion"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "conversion-format",
+            "conversion-frame",
+            "conversion-clock",
+            "alignment-external-frame",
+            "alignment-map-frame",
+            "alignment-translation-x-m",
+            "alignment-translation-y-m",
+            "alignment-rotation-rad",
+            "alignment-header-offset-s",
+            "timeline-position-rmse",
+            "timeline-lateral-rmse",
+            "timeline-retained-samples",
+            "timeline-start-time",
+            "timeline-end-time",
+            "timeline-largest-gap",
+            "velocity-rmse",
+            "gap-record",
+            "event-id",
+            "event-time",
+            "event-correlation",
+            "plot-review",
+            "diagnosis-review",
+            "yaw-wrapping",
+            "deliverable-timeline",
+            "deliverable-metrics",
+            "deliverable-diagnosis",
+            "deliverable-plot",
+            "deliverable-conversion-manifest"
+          ]
+        }
+      },
+      {
+        "id": "f-d23c490ea21940869621e4033e5442b9",
+        "code": "review.required",
+        "check_id": "diagnosis-review",
+        "requirement_ids": [
+          "ROBOT03-DIAGNOSIS",
+          "ROBOT03-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "diagnosis",
+        "owner": {
+          "run_id": "retained-successor-robot-tracking-diagnosis-03",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "diagnosis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/prompt.txt",
+            "sha256": "3da4ce8141dfc8ec7320df659d2d0bbf99a65b34ac1f552492bba72f101294ef",
+            "locator": "diagnosis request"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+            "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+            "locator": "Curved-route test with occlusion"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/context.md",
+            "sha256": "f1cf9a1239e4f6ac2af85bb6ba522f3b67e54548d5079c66fd39decb4766bb01",
+            "locator": "Curved-route test with occlusion; Data contract and reproducibility"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "conversion-format",
+            "conversion-frame",
+            "conversion-clock",
+            "alignment-external-frame",
+            "alignment-map-frame",
+            "alignment-translation-x-m",
+            "alignment-translation-y-m",
+            "alignment-rotation-rad",
+            "alignment-header-offset-s",
+            "timeline-position-rmse",
+            "timeline-lateral-rmse",
+            "timeline-retained-samples",
+            "timeline-start-time",
+            "timeline-end-time",
+            "timeline-largest-gap",
+            "velocity-rmse",
+            "gap-record",
+            "event-id",
+            "event-time",
+            "event-correlation",
+            "plot-review",
+            "diagnosis-review",
+            "yaw-wrapping",
+            "deliverable-timeline",
+            "deliverable-metrics",
+            "deliverable-diagnosis",
+            "deliverable-plot",
+            "deliverable-conversion-manifest"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": true,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 2,
+        "error": 0,
+        "fail": 0,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 26
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

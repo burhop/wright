@@ -1,0 +1,29 @@
+{
+  "schema_version": "wright.process-ui-checked-scope/1",
+  "source_path": "workflows/printed-replacement-part-live-default-model-004.workflow.wflow",
+  "source_digest": "bb43c03ebc365a77785527a699e807bed060b5caf264b9773804d892a5d798c6",
+  "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+  "workspace_checks": 9,
+  "actual_default_model_basis": true,
+  "basis_review_wait_and_reload": true,
+  "synthetic_decision": {
+    "checkpoint_id": "checkpoint-f42781124eba9b2c339afb55",
+    "run_id": "adb5cefc54a545eda7abcb9ab9b9fbdc",
+    "subject_digest": "b0434bd9667bad2e966b72e8291df3e14995227aa092dec7556149a0b6cbd298",
+    "state": "approved",
+    "actor": "integration_test:083-private-digital-wheel-004",
+    "integration_test": true,
+    "human_engineering_acceptance": false,
+    "physical_dispatch": false,
+    "continuation_executed": false
+  },
+  "continuation": "One durable request returned OUTCOME_UNKNOWN; subsequent read-only reconciliation showed consumed review and known run failure. No replay.",
+  "failure": "Geometry model requested undeclared input because the proposed basis left construction choices unresolved. No geometry MCP call or STL export occurred.",
+  "retained_profile": "Original full 18-check printed-replacement-part-01; not reached in this run.",
+  "changes_for_next_attempt": "Explicit complete digital design proposal before declared review, plus order-barrier explanation; no fabricated approval or weakened gate.",
+  "earlier_attempts": "First preflight missed the Python provider backend; two editor attempts exposed mismatched ports and duplicate order links. A later browser deadline preceded observed basis completion. All retained.",
+  "physical_dispatch": false,
+  "live_geometry_slice_chain": false,
+  "tailored_interface_proved": false,
+  "human_engineering_acceptance": false
+}

@@ -1,0 +1,206 @@
+{
+  "scope": "T049 coupling/error audit and bounded existing-owner corrections; not full goal acceptance",
+  "source_commit_before_changes": "bea07e54238f0257ea6d95f19786a893ce190e7f",
+  "source_sha256": {
+    "tests/test_process_platform_generality.py": "479ee9801d1d3a6bfc96bf8555051eef8947ec54152c70303d3a85b99eb75870",
+    "tests/external/process_validation/test_printing.py": "cb0cb6096df85dc6753b0cc5e055774aec38af3150d050d4ba154e0c20b6ae51",
+    "packages/workspace_service/src/workspace_service/process_validation/readers/printing.py": "1203cd84d62bc50c24f5067134c73aad4e89f71238dbcdb28b28e4a454a98f1e",
+    "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py": "4cb4ba95124de46913b9cdc27f1cf11dde88faa0fb7372b396c74d8a0ef5b2da",
+    "packages/workspace_service/tests/test_workflow_mcp_execution.py": "feb0b8ee19a1432e92ea899c93a0997f67976ba55c06ce97bea162eb6336e686"
+  },
+  "backend_final": {
+    "tests": 372,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 372
+  },
+  "frontend": [
+    {
+      "file": "t049-generality-components-001.json",
+      "checks": 81,
+      "modules": [
+        "process-ui-authoring-recovery.spec.ts",
+        "process-ui-authoring.spec.ts",
+        "CommonProcessView.spec.tsx"
+      ]
+    },
+    {
+      "file": "t049-generality-client-001.json",
+      "checks": 75,
+      "modules": [
+        "process-client.spec.ts"
+      ]
+    }
+  ],
+  "all_attempt_reports": [
+    {
+      "file": "002-regression.xml",
+      "tests": 360,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "003-regression.xml",
+      "tests": 360,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "004-regression.xml",
+      "tests": 372,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "t049-generality-001.xml",
+      "tests": 3,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "t049-reader-green-001.xml",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "t049-reader-red-001.xml",
+      "tests": 26,
+      "failures": 7,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "t049-task-message-red-001.xml",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "t049-task-message-red-002.xml",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "shared_python_owners": 36,
+  "public_client_kit_view_files": 22,
+  "surveyed_tracked_python_files": 447,
+  "pre083_residual_dispositions": {
+    "canonical_catalog.py": "catalog alias metadata",
+    "lifecycle_adapters.py": "existing application classification and adapter selection",
+    "manager.py": "existing application classification and adapter selection",
+    "mcp_validation.py": "existing selected-host prerequisite policy",
+    "native_application_blender.py": "unchanged inherited native lifecycle implementation; separately scoped migration debt",
+    "native_application_blender_host.py": "unchanged inherited lifecycle host; separately scoped migration debt",
+    "workflow_mcp_source_contracts.py": "unchanged declared native-source safeguards; separately scoped migration debt"
+  },
+  "original_six_profiles": [
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json",
+      "sha256": "3950b7e088a9eb9c3f3b51971db8b4a1813feece448f1c7517a7fa98f7d51d7a",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-lineage",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-02.json",
+      "sha256": "60e164adeb1f41686ead462bd803ff7b194b679afab8a07f9210e17d0a482f3c",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-lineage",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-03.json",
+      "sha256": "0564c7f15f4365b3dd8311b6a537985100fd1d08641b22343159c8344320e1ad",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-lineage",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-01.json",
+      "sha256": "085e1e1ce9aa6452bb3be95b037f533f7729e635c7302b4c8f58a257d3ad6d00",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": []
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-02.json",
+      "sha256": "b1472174693e2bc4eb101552de33ff57cd597707628b286bff7d539d49ce32db",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-binding",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    },
+    {
+      "path": "packages/workspace_service/src/workspace_service/process_validation/profiles/parametric-drill-jig-03.json",
+      "sha256": "b13a39d51833469e73167098b6c78b3fd81868efb65d49c26ca836b1d59ad518",
+      "full_profile_matches_pre083_source_normalized": true,
+      "slice_binding_checks": [
+        {
+          "id": "slice-binding",
+          "expected_operation": "actual_local_bambu_slice"
+        }
+      ]
+    }
+  ],
+  "new_reader_identity": {
+    "id": "printing",
+    "version": "3",
+    "config_digest": "a45f2876ae37af1ab440a0f9f8a1b35ab36abfc91837b962dd0d8a3283a8f1e3",
+    "method": "independent_measurement",
+    "tool_identity": "wright bounded mesh/print artifact reader v3",
+    "formats": [
+      "stl",
+      "json",
+      "3mf"
+    ]
+  },
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "retained_actual_engineering_ui_proofs": [
+    {
+      "root": "20261003-configured-preparation-and-saved-reuse-verified",
+      "files": 282,
+      "inventory_sha256": "5a24c7592b8f07a627b541d3b1b39d19114eccd59f213f3ce6e2008cd7de3f6f"
+    },
+    {
+      "root": "20261003-heat-repeat-and-saved-ui-verified",
+      "files": 268,
+      "inventory_sha256": "85fae47b4ac309055fefc65743f97eeb03c1ec33fd452c628cea1982409e21ea"
+    }
+  ],
+  "fresh_installed_or_served_browser_proof": false,
+  "fresh_model_provider_process_execution": false,
+  "review_responses": 0,
+  "physical_effects": false,
+  "human_acceptance": false,
+  "task_ledger": "52 checked / 5 open"
+}

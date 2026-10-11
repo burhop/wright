@@ -1,0 +1,80 @@
+{
+  "parent": "38d1a6691ca2515f577f0ef267b0f26edd0a58fd",
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "checks": {
+    "t044-final-qualified.xml": {
+      "sha256": "7091989148034fdeeb4933cbad2b56cf14242a0c2eccb5a373e3358410c0bca6",
+      "passed": 78,
+      "seconds": "20.188"
+    },
+    "t044-surface.xml": {
+      "sha256": "2965f4c370e145ee9ab0363ec3cfde5f17610a2acd8a05706d29bf5261209721",
+      "passed": 32,
+      "seconds": "40.939"
+    }
+  },
+  "frontend": "157 passes/3 files/30.77s; controlled canvas fallback",
+  "typescript": "passed",
+  "ruff": "passed",
+  "owned_source_hashes": {
+    "packages/workspace_service/src/workspace_service/process_interfaces/representations.py": "f6df059d446d38784b03e88a447ec5e0738dd5aa9794e9dfcf804b6eaf573642",
+    "packages/workspace_service/src/workspace_service/process_interfaces/artifacts.py": "3c46c7b95f3c5ed43cfbc41e0ffa3453d1e79a6b1df57dd1b306bb7f5a22917d",
+    "packages/workspace_service/src/workspace_service/process_interfaces/limits.py": "d1bdf9a0a2cbf339699e2c2b1a4644d59657140766746af616f4bea613c54916",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/public-api.md": "f11f9a1cac5c48f598d3e28990cd442ed66b094c7eb2d7dfb50cd8362a3bee91",
+    "packages/workspace_service/tests/test_process_representations.py": "4cd1eccb7ce54cbc4f7c7b1d0a26d36fdac97d7832d82951ad785f82f3fc1029",
+    "packages/workspace_service/tests/test_process_artifact_access.py": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+    "apps/api/src/api/routers/process_interfaces.py": "1277d67114cdc98203888722df3981357f926b0c39393e052b83497f22108123",
+    "apps/api/src/api/schemas/process_interfaces.py": "45f4b0938b246be695f860cc413a91c2456761bca09c6002663d18a8e7ca9d13",
+    "apps/api/tests/test_process_interface_artifacts.py": "4ae828036f1d87a389b4cc5eae51e1662e69025927ce540f8337374ec00f7141",
+    "apps/api/tests/test_process_ui_surface_authority.py": "6397284c49d30c7d606e5ca2516669fd17e2acca75e1b3463f0e9210eb561ca5",
+    "packages/process_client/src/client.ts": "eda1a10d00dd9c1db39bf75f083a013c6aca507412e548b1b6cd28d5f1207c5c",
+    "packages/ui_kit/src/geometry.tsx": "ca6ea551d59da35abbea54023d3477c292de45f7eb138f5c60dacbd141f7db5e",
+    "packages/ui_kit/src/toolpaths.ts": "37e0feb4476027df306643a3bfd00addce64042a3f0545e42f4ee58ba346b8c0",
+    "packages/ui_kit/src/representations.tsx": "8329ba3992eebe1d6a045e97bf3cdf847e232f4b8250b0f46cec5b52307376ea",
+    "apps/web/src/components/common/ProcessUIKit.spec.tsx": "6a1b0da56af800f3c6742a6973ee7b26519c4741e60c80bf95392b8629f657e5",
+    "apps/web/src/services/process-client.spec.ts": "6897c9367acb8cb2ff1c3053f0f424275d8ae538ee6dd7289093eeb692b293b3",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx": "2993200ae51582b5e03ad0b3c2b75b172ba3458b63618f25ee7341fc9e256971",
+    "specs/083-process-working-interfaces/contracts/process-interaction.md": "005b1be394d305f0f8518612731c772b620c3c539cf81ea0c2a0ab43430491aa",
+    "specs/083-process-working-interfaces/tasks.md": "0e534106a4f61cdeb87224f0b187a2b0bc930170728c16ebf50757285c4f093a",
+    "specs/083-process-working-interfaces/progress.md": "893303fcaaa08a0f7e2ea687eb3680e0c8332b8df8ce871b3eab05b15f293906",
+    "specs/083-process-working-interfaces/evidence/representation-readers.md": "db12066a1452f7b44990df71d2d0e62e3f9e56e5ecf5b521ccadb8d9cab78622",
+    "specs/083-process-working-interfaces/evidence/provider-qualification.md": "241c850358e01644fd4d72a14a5ac62258f2bfe80db6ed41d03786995885dbf4",
+    "artifacts/process-interfaces/083/20261001-engineering-readers/reader-smoke.json": "5cba75e37149fb72e14e7b22b81b367918494109ea1f829c00273ca276e08664",
+    "artifacts/process-interfaces/083/20261001-engineering-readers/provider-probes.json": "14cf7da59b403cbc2663197876d3bb47757c93375986e4ec0103837a256abaca"
+  },
+  "claims": {
+    "passive_readers": true,
+    "exact_owner_transport": true,
+    "actual_provider_sample_read": true,
+    "full_engineering_process": false,
+    "rendered_browser": false,
+    "physical": false,
+    "complete_feature": false
+  }
+}

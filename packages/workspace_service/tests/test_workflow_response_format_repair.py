@@ -28,7 +28,8 @@ from workspace_service.workflow_source_execution import WorkflowSourceExecutionE
     ],
 )
 async def test_tool_free_format_correction_preserves_single_actual_call(repair_kind):
-    item = tool()
+    # These formatting-only decisions inspect a qualified read-only measurement.
+    item = tool(annotations={"readOnlyHint": True})
     gateway = Gateway([item])
     service = runtime(gateway)
     events, decisions = [], []

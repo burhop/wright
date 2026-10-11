@@ -1,0 +1,21 @@
+{
+  "status": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+      "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "heat-saved-interface-reuse-001",
+    "payload_digest": "944209100ee348358dab36daec0da9dd1e8c84d18e52030d835350591b8a9891",
+    "input_snapshot_id": "inputs-d89fdf8d7e6149688687d140880fc692",
+    "input_digest": "2cd270947705c170aa5d16ffc14d91ff475c2b7d186ad3a7bdd481ded8c781f8",
+    "run_id": "9cfe133164bd4e70b97be9a058d0feb8",
+    "run_log_path": "runs/heat-spreader-sizing-live-default-model-002/9cfe133164bd4e70b97be9a058d0feb8.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-02T05:10:06.891646+00:00"
+  }
+}

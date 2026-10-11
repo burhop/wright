@@ -1,0 +1,297 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 21,
+      "sha256": "ffe82f3c5b968ed009c2577fa38f32c83be167799ee565d40a18e3440c57b342"
+    },
+    "browser-report-index.json": {
+      "bytes": 1969,
+      "sha256": "f75de34190535de3f884e851fdf9812eaeb4a59b750c64841cff56549496691b"
+    },
+    "checked-scope.json": {
+      "bytes": 1850,
+      "sha256": "f9b5f073c101ecf425a099c1c7365d8a26c9dc192d378f2bbbe8b6e9728badb7"
+    },
+    "first-stop-disposition.json": {
+      "bytes": 700,
+      "sha256": "45eacab8698ff2917cb702cf0fe03dae49df0801380f1657e4da71db99aa8d42"
+    },
+    "inventory.json": {
+      "bytes": 14889,
+      "sha256": "b64e362e1f2bb0a4a73d3173658a5ae5f7f00e4b7bb3021d4ef8be0e783619d7"
+    },
+    "preservation.json": {
+      "bytes": 923,
+      "sha256": "37ae686da2923f6b12652ff0523b42b23796316e2e9357cc12ef1b1cd576c79d"
+    },
+    "primary-review.json": {
+      "bytes": 7313,
+      "sha256": "83f08cc71206748309ea8dee9124de94ec49098063095cccbd68d542cf2b58e2"
+    },
+    "README.md": {
+      "bytes": 1678,
+      "sha256": "c42fd4a7aa2a0e3b0f27e182b880c8779abcdd3acb7002a676117a67f6bcde86"
+    },
+    "semantic-ledger.json": {
+      "bytes": 303057,
+      "sha256": "30e455638a575a9361aaffafc807dde7c2b63feffaacd34485f7cfbaac70d448"
+    },
+    "navigation/first-assessment-display.json": {
+      "bytes": 74633,
+      "sha256": "327f1ea90dada1d53b63588be2df8b55e99d198ee59427421090adb2f6e1b07c"
+    },
+    "navigation/first-assessment-navigation.json": {
+      "bytes": 1075,
+      "sha256": "8944658aec00e66aa712f12f5f5793692aa67c423c78db1b08e99b4a93cec7f7"
+    },
+    "navigation/first-geometry-navigation.json": {
+      "bytes": 1151,
+      "sha256": "00364f0a04a46842b27fe636b2135cde70ae3335cad784d5d99ed6631a055a9d"
+    },
+    "navigation/first-navigation.json": {
+      "bytes": 650,
+      "sha256": "db25e63d82939790e4bd3b2064b22b9fd1a22f171aceb5e146c1cabc7c081f76"
+    },
+    "navigation/first-retention.json": {
+      "bytes": 5115,
+      "sha256": "d92ac40e9ae7f9b3a503c7de76d98ae32196d13b9bc1c11303126c7486279cb4"
+    },
+    "navigation/first-toolpath-navigation.json": {
+      "bytes": 1161,
+      "sha256": "1dd8b57579a6170b8cec4de4bc810f38743e20fc5aec14ca19a08d8653a1fed0"
+    },
+    "navigation/second-assessment-display.json": {
+      "bytes": 75273,
+      "sha256": "5337486bf023728618590dca766ebbe9ea6bd640479bbbb6683cac9d48bcca49"
+    },
+    "navigation/second-assessment-navigation.json": {
+      "bytes": 1075,
+      "sha256": "14eb58f39afd243f7704d76cb2f0996f7c981e5327fcff4273a9309ebb29dee7"
+    },
+    "navigation/second-geometry-navigation.json": {
+      "bytes": 1151,
+      "sha256": "aae649cfa4083f299aa6abfaf56ca7dca1644951a3d0810bb1f256b260e3cbed"
+    },
+    "navigation/second-navigation.json": {
+      "bytes": 650,
+      "sha256": "27488c94f166e50e99281c040c2bac88c23ddf1eb960cfb505e4f6ceb41fe96f"
+    },
+    "navigation/second-retention.json": {
+      "bytes": 5115,
+      "sha256": "e16a77086e36e9bac1c61140758014175ceea19f7225a9069f7358811108b295"
+    },
+    "navigation/second-toolpath-navigation.json": {
+      "bytes": 1161,
+      "sha256": "da36c694c5c7cd825f850045d259c3bed2e5d52c6153034ab3aac36f1ca5fe8d"
+    },
+    "second-run/frozen.json": {
+      "bytes": 12155,
+      "sha256": "fdada3f0dd77f1fc7deb46b4bd8bee27ef522994029a0dadb4e736b7324d18e6"
+    },
+    "second-run/second-basis-proposal-comparison.json": {
+      "bytes": 1490,
+      "sha256": "642cf4d530e43de9fd6d7764d367ca7d57ba5e33bfe5c5eb8763e5d8da1dea10"
+    },
+    "second-run/second-current-interaction.json": {
+      "bytes": 6802,
+      "sha256": "627b29e6f0d439cdd691cfcc7e38a907c23fb66bcb61cb0ce69b406df56b3960"
+    },
+    "second-run/second-final-interaction.json": {
+      "bytes": 46633,
+      "sha256": "b1f680fc1690e518116cdbbb68b7244ac9ab82e196572bd6bfbc7b3f85236d94"
+    },
+    "second-run/second-start-receipt.json": {
+      "bytes": 962,
+      "sha256": "d1dc1f395d6c6799f4151ecac33c00ca1e67ba846ca49b03e7eb57b81d5e80f8"
+    },
+    "second-run/second-start-request.json": {
+      "bytes": 540,
+      "sha256": "d03e1725eda7b6bef5b2e695c86c18b7ae484546c402d1a1b20995765c9a5954"
+    },
+    "second-run/second-synthetic-basis-review.json": {
+      "bytes": 429,
+      "sha256": "35713e43f4c01673c1e3f015e239993169ac7b8ac33cc6f9a48437d2c50d9082"
+    },
+    "second-run/second-synthetic-transfer-review.json": {
+      "bytes": 429,
+      "sha256": "578661bbdde26ce6e861edbcf44667844c3d2a66b3ce2cded994f3307dd931d8"
+    },
+    "second-run/second-transfer-continuation-receipt.json": {
+      "bytes": 38161,
+      "sha256": "1acacecaa55ebf2e84bace3ea4ec99336f639c7ffced326545d5583547926f76"
+    },
+    "second-run/second-transfer-continuation-request.json": {
+      "bytes": 388,
+      "sha256": "53a2dd09d5f41ebc56e8fd19496e259b44f375ab44cb2cb1066f37270f4e3d7f"
+    },
+    "second-run/second-transfer-current-interaction.json": {
+      "bytes": 35514,
+      "sha256": "3123b2db77d33dc2abc44ec9697836fe24f897e777d498016fc20f9719c43381"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.png": {
+      "bytes": 67577,
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/concept.svg": {
+      "bytes": 2295,
+      "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/configured-geometry-basis.json": {
+      "bytes": 3882,
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/construction-provider-arguments.json": {
+      "bytes": 5272,
+      "sha256": "7d41e1f3b1729d94e75cecd646501870f984df7c54c7f83700e25471b83d78c8"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/context.md": {
+      "bytes": 2236,
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/filament-profile.json": {
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/geometry-capability-guidance.md": {
+      "bytes": 1832,
+      "sha256": "2efc420176a9714335306ec99cd0b616b1418ab690db031f7b2630cdb2d07eef"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/inspection-call.json": {
+      "bytes": 3075,
+      "sha256": "e64ce486f5ef7f14c6dbea9d9bf8c2bf2fb75538fa649f17667c6469db239c42"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/inspect_manufacturing_package.py": {
+      "bytes": 8561,
+      "sha256": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/machine-profile.json": {
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/passive-representations.py": {
+      "bytes": 25554,
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/process-profile.json": {
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/prompt.txt": {
+      "bytes": 697,
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/repair-operation-review.json": {
+      "bytes": 13773,
+      "sha256": "cd2decbf3e83e5b6539e914c4690b97c70a1b3fe3421266d2f9838bfe442c7d7"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/repair-provider-arguments.json": {
+      "bytes": 13773,
+      "sha256": "cd2decbf3e83e5b6539e914c4690b97c70a1b3fe3421266d2f9838bfe442c7d7"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/requirements.md": {
+      "bytes": 1759,
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/scenario.json": {
+      "bytes": 1662,
+      "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/slice-call.json": {
+      "bytes": 558,
+      "sha256": "61c34bd9a91c3afe2ae5b6bb8bb5169d8659b16829e5118491bc87418679696e"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/inputs/user-profile.md": {
+      "bytes": 584,
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/filament-profile.json": {
+      "bytes": 7954,
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/geometry-basis.json": {
+      "bytes": 3500,
+      "sha256": "6e02217bc19013c096cc2116e32d982e6753e874ae54211904c68d299f71631f"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/machine-profile.json": {
+      "bytes": 20560,
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-preview.png": {
+      "bytes": 266980,
+      "sha256": "3d5d2d5f4e8996b00bb8afe7600c36b6b92661a5e85055028b4d505fc1896bed"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/mesh-repair-report.json": {
+      "bytes": 6178,
+      "sha256": "86dd3ff9dcb1b8fd3ac0c09358c058dbd05625f3d6f630a2c89a5901bbd07c42"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/package-inspection-result.json": {
+      "bytes": 1868,
+      "sha256": "a335a4dad25830a6bcd27c5fc8951ff1680175b0d070da80630f98a00a201331"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/process-profile.json": {
+      "bytes": 8180,
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/repaired_mesh.stl": {
+      "bytes": 540484,
+      "sha256": "568cf612a6150b1473155bab3c0f628c547936e9484555c60d9a562ea00e617d"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/response-retention-receipt.json": {
+      "bytes": 344,
+      "sha256": "2135632602731662a751950b96f9d75a08e09d8db51a6c9051672d020d80fd0a"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/simulated-transfer-receipt.json": {
+      "bytes": 2059,
+      "sha256": "345658b76ce395c02be6806e72fe5fcf4bc6df75a656f1081fdfac40e0402021"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-evidence.json": {
+      "bytes": 1321,
+      "sha256": "25a041ce10ca491bcb1d56ae92dabef56be5159710d5cc484f6d4a48ef31b8e7"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice-provider-response.json": {
+      "bytes": 2135,
+      "sha256": "287569ca825abd54b19bfd70c4c5c036d2028856d281db2f457b9055ce6e3ae6"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slicer-execution.json": {
+      "bytes": 2135,
+      "sha256": "287569ca825abd54b19bfd70c4c5c036d2028856d281db2f457b9055ce6e3ae6"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/slice_package.gcode.3mf": {
+      "bytes": 361066,
+      "sha256": "2877d7e7b4fc692512da3924774152a6a7320e4bb8381f260a7d576c2bfa64bc"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source-model-report.json": {
+      "bytes": 1198,
+      "sha256": "f1525cff869dd054d28ca0a7334a1a6bdf2557fcb44c0a88eee6baba5815e99b"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source-report.json": {
+      "bytes": 5514,
+      "sha256": "66920cde623439529e5c647f5cd0a5344e8f711307fcf28d0a65331e1238acad"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/source_mesh.stl": {
+      "bytes": 541284,
+      "sha256": "662a28365d5808af0d769c37d8b5efee372804c485806fde96627bf21041c618"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json": {
+      "bytes": 4493751,
+      "sha256": "8bb38c5dc49d03d8c8a17304356b24d589dbbd3290e9ac55a2a7f1fad2d31f30"
+    },
+    "second-run/workspace/process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/toolpath-summary.json": {
+      "bytes": 1654,
+      "sha256": "bf5eac36be5ae76acb9edc2f0dce4842f389705f198862a97b6978d2b3a901f9"
+    },
+    "second-run/workspace/runs/printed-replacement-part-mixed-default-071/84cd89a395af406e80d094ec071abe59.json": {
+      "bytes": 3286697,
+      "sha256": "0c7f544c0d243c3b6b25c27e2ebe121e82cb1e19c3d3651a181b6f690e4e014c"
+    },
+    "second-run/workspace/validation/assessment-55acf245b63f4f2d8e34a83bfaac8480.json": {
+      "bytes": 71355,
+      "sha256": "dcd19cecfa3f5b0f5b9dcc93fd13660b08a0a99a4d3b7172c667115bd0cd8ddc"
+    },
+    "second-run/workspace/workflows/printed-replacement-part-mixed-default-071.workflow.wflow": {
+      "bytes": 77388,
+      "sha256": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589"
+    }
+  },
+  "original_inventory_preserved": true
+}

@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "JB",
+    "pin1": "3",
+    "comp2_ref": "J0",
+    "pin2": "4",
+    "net_name": "FAN_B_TACH"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"FAN_B_TACH\",\"labels_created\":2,\"label_uuids\":[\"e4a876d8-8ac8-476a-a4b7-ef976be0d721\",\"3afe533f-166b-45a9-86e7-346b84297eb9\"]}"
+    }
+  ]
+}

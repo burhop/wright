@@ -1,0 +1,94 @@
+{
+  "at": "2026-09-21T16:24:50.372217+00:00",
+  "scope": "postprocess copied retained fields only; no solve or campaign dispatch",
+  "source_case": "/retained/campaign/raspberry-pi-enclosure-01/attempt-032/pi-cfd/variant-a/case",
+  "checkpoint": "300",
+  "compiler_sha256": "65483e914b2dfd5ba072c985f28271cb03f4f7797c6e9f64a1b1f3247a0c2406",
+  "retained_files_unchanged": 134,
+  "boundary_audit": {
+    "case": "/retained/campaign/raspberry-pi-enclosure-01/attempt-032/pi-cfd/variant-a/case",
+    "contract_sha256": "5fdcaed8090d87d8cb0afcb874e229043a1e3c38993baae9a56dd4e4b5adb263",
+    "global_solution_controls": "FoamFile { version 2.0; format ascii; class dictionary; object fvSolution; }\nPIMPLE { nOuterCorrectors 1; }",
+    "regions": [
+      {
+        "name": "air",
+        "kind": "fluid",
+        "heat_w": 0,
+        "exterior_patches": [
+          {
+            "name": "ambient_x_min",
+            "faces": 1600
+          },
+          {
+            "name": "ambient_y_min",
+            "faces": 1748
+          },
+          {
+            "name": "ambient_z_max",
+            "faces": 2072
+          },
+          {
+            "name": "ambient_y_max",
+            "faces": 1748
+          },
+          {
+            "name": "outer_air",
+            "faces": 5062
+          },
+          {
+            "name": "ambient_x_max",
+            "faces": 1600
+          }
+        ]
+      },
+      {
+        "name": "petg_shell",
+        "kind": "solid",
+        "heat_w": 0,
+        "exterior_patches": []
+      },
+      {
+        "name": "board",
+        "kind": "solid",
+        "heat_w": 0,
+        "exterior_patches": []
+      },
+      {
+        "name": "board_hot_patch",
+        "kind": "solid",
+        "heat_w": 6,
+        "exterior_patches": []
+      },
+      {
+        "name": "brass_inserts",
+        "kind": "solid",
+        "heat_w": 0,
+        "exterior_patches": []
+      },
+      {
+        "name": "feet",
+        "kind": "solid",
+        "heat_w": 0,
+        "exterior_patches": [
+          {
+            "name": "outer_feet",
+            "faces": 232
+          }
+        ]
+      }
+    ],
+    "solid_exterior_faces_not_covered_by_fluid_only_heat_integral": 232,
+    "solver_executed": false,
+    "campaign_credit": false
+  },
+  "energy": {
+    "heat_balance_file": "boundary-energy.csv",
+    "heat_balance_file_sha256": "879ebb29aa8cbb58c8745d50d3fd7509b01fd6b8f73ad3d6ed906d68245e3694",
+    "input_heat_w": 6.0,
+    "net_outward_heat_w": 0.01512711160669954,
+    "heat_balance_relative": 0.9974788147322168,
+    "heat_balance_method": "external-region-face sensible-enthalpy-plus-conduction-v2"
+  },
+  "solver_executed": false,
+  "campaign_credit": false
+}

@@ -1,0 +1,35 @@
+{
+  "attempts": {
+    "probe-migration-checks.xml": {
+      "tests": 58,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "a0c663113124a7e35aa3304b442699a6131851d4a857f7e361d7818bd233696c"
+    },
+    "retired-caller-checks.xml": {
+      "tests": 89,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f88835ff9c2c9d89ae4c724a4295efd284c630066c7cae96bddff197ac832669"
+    },
+    "retired-caller-checks-002.xml": {
+      "tests": 89,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "c39de8ca99d54497aad87208b2b9dc54b564a92a6c40500ea330ac3fb42f8824"
+    },
+    "affected-retirement-checks.xml": {
+      "tests": 86,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "ed459400114a57928664be4a3d0f68d016d16c9ecd31678d37fcec9c0d64d55f"
+    }
+  },
+  "fresh_final_passes": 175,
+  "ruff_first_failure": "fixture assigned a lambda; explicit function correction passes three-file Ruff",
+  "default_delete_failure": "apply_patch removed two files then could not delete the remaining wrapper; exact archive/path checked removal completed"
+}

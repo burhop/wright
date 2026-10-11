@@ -1,0 +1,70 @@
+{
+  "files": [
+    {
+      "path": "125-focused-checks.xml",
+      "bytes": 28486,
+      "sha256": "7cc232094a6fa16f65aaf2a63936aaa917b5717b62a1eb5f5450f10e040a69da"
+    },
+    {
+      "path": "89-canonical-and-example-checks.xml",
+      "bytes": 22944,
+      "sha256": "c96e0a569cc11585657dff9b5b99a5c5cdff94d719179e668dcba0d29fd18dae"
+    },
+    {
+      "path": "assessment-001/assessment.json",
+      "bytes": 68529,
+      "sha256": "512bfc71d348ef0b991bd360dfe260b23e11ec1f97a58b9800f091e98a97d90e"
+    },
+    {
+      "path": "assessment-001/checked-scope.json",
+      "bytes": 996,
+      "sha256": "648e6c07f86f10d0ffdd303e2c41136a3b9134244cda5cb895c5bbc803ee053d"
+    },
+    {
+      "path": "assessment-001/report.json",
+      "bytes": 124675,
+      "sha256": "8e35b79718effd403325270e0caedf6585a0ffa80e79fef419ff43bfee32bc5c"
+    },
+    {
+      "path": "assessment-001/report.md",
+      "bytes": 14969,
+      "sha256": "acad746d8af14633be34c8c110456190967438f3eb1c6153f1e71fcc81e9159b"
+    },
+    {
+      "path": "assessment-001/request.json",
+      "bytes": 7873,
+      "sha256": "ee31edd7b796ffc738d556e212834b155dd647eb9650819887ce6d2fc1edda19"
+    },
+    {
+      "path": "assessment-002/assessment.json",
+      "bytes": 66910,
+      "sha256": "8cef72a93eb6d344898530682e93206b804105948e8f831c55065206f4e6a5cb"
+    },
+    {
+      "path": "assessment-002/checked-scope.json",
+      "bytes": 1139,
+      "sha256": "3a03bf5b334d3ee76ff540392e23263bd70a44bedb70c568a525c57f07a5d76f"
+    },
+    {
+      "path": "assessment-002/report.json",
+      "bytes": 123151,
+      "sha256": "7a8a2e50239fd939ce72d1b3b1dc99c1910c661ac5873b5ca58cdd1d07aa1f64"
+    },
+    {
+      "path": "assessment-002/report.md",
+      "bytes": 15164,
+      "sha256": "b4d9dde555b693858fb8200c614852ea2dc6a0b1f917ffbe341df0840e85bac0"
+    },
+    {
+      "path": "assessment-002/request.json",
+      "bytes": 7874,
+      "sha256": "274be737f7b4eaf2abaac285c93703a4092cbd1b475dc055a2d67135269b5748"
+    },
+    {
+      "path": "checked-scope.json",
+      "bytes": 955,
+      "sha256": "c96b6310bc7a09f000b07d7325a3a18f9ddbd91df9a4b946a77dfa7270aad192"
+    }
+  ],
+  "credential_values_checked_and_absent": true
+}

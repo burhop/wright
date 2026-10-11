@@ -1,0 +1,80 @@
+{
+  "cases": [
+    {
+      "label": "Original failed pumpkin",
+      "run_id": "997873e33f2143ac90d6bfb9fe02c2e2",
+      "status": "failed",
+      "result_count": 3,
+      "read_only": true,
+      "permitted_actions": []
+    },
+    {
+      "label": "Original PETG pumpkin",
+      "run_id": "55f5dbe635a1444e8229314b959f665c",
+      "status": "completed",
+      "result_count": 16,
+      "read_only": true,
+      "permitted_actions": []
+    },
+    {
+      "label": "Original PLA pumpkin",
+      "run_id": "52e77c29cce9456b8f38788f637b7ece",
+      "status": "completed",
+      "result_count": 16,
+      "read_only": true,
+      "permitted_actions": []
+    }
+  ],
+  "retired_urls": [
+    {
+      "operation": "prepare",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "capabilities",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "printer-status",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "print",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "dispatch",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "allow-retry",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "cancel",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    },
+    {
+      "operation": "camera.mjpeg",
+      "http": 410,
+      "code": "PROTOTYPE_RETIRED"
+    }
+  ],
+  "original_and_copy_files_unchanged": 48,
+  "durable_tables_unchanged": [
+    "process_ui_authoring_jobs",
+    "process_ui_authoring_records",
+    "process_ui_revisions",
+    "process_uis",
+    "workflow_continuation_checkpoints"
+  ],
+  "provider_autostart": false,
+  "engineering_starts": 0
+}

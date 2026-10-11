@@ -1,0 +1,186 @@
+{
+  "source_commit": "e01f7eb519dce4168feb3f8454d84d5916da370e",
+  "wheel_sha256": "01f9e2270872522d99ed8939471bbc5bcee5b00c9b9db020ec7ff9abe70b3885",
+  "frontend_manifest_sha256": "fb52d2f15433cc0c2842b1644a914ec3c2f5e2ecf87e9c6d2ae3cdfdcc49b05b",
+  "installed_owning_modules": {
+    "installed_owning_modules": [
+      "api.main",
+      "core",
+      "data_vault",
+      "agent_adapters",
+      "workspace_service",
+      "tool_registry",
+      "wright_engineering"
+    ],
+    "frontend_from_installed_wheel": true,
+    "compiler_available": false,
+    "provider_autostart": false,
+    "original_worktree_imports": false,
+    "retired_modules_absent": true,
+    "fixture_local_credentials": true,
+    "fixture_local_agent_config": true,
+    "agent_unavailable_on_checked_loopback_port": true
+  },
+  "reports": [
+    {
+      "report": "artifacts\\process-interfaces\\083\\20261002-editor-native-003\\workspace-walkthrough",
+      "outcome": "blocked",
+      "passed_steps": [
+        "S01",
+        "S02"
+      ]
+    },
+    {
+      "report": "artifacts\\process-interfaces\\083\\20261002-editor-native-004\\workspace-walkthrough",
+      "outcome": "pass",
+      "passed_steps": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09"
+      ]
+    },
+    {
+      "report": "artifacts\\process-interfaces\\083\\20261002-editor-native-005\\workspace-walkthrough",
+      "outcome": "blocked",
+      "passed_steps": []
+    },
+    {
+      "report": "artifacts\\process-interfaces\\083\\20261002-editor-native-006\\workspace-walkthrough",
+      "outcome": "blocked",
+      "passed_steps": [
+        "S10"
+      ]
+    },
+    {
+      "report": "artifacts\\process-interfaces\\083\\20261002-editor-native-007\\workspace-walkthrough",
+      "outcome": "blocked",
+      "passed_steps": [
+        "S10",
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "report": "artifacts\\process-interfaces\\083\\20261002-editor-native-008\\workspace-walkthrough",
+      "outcome": "pass",
+      "passed_steps": [
+        "S13",
+        "S14"
+      ]
+    }
+  ],
+  "durable_tables_unchanged": [
+    "workflow_continuation_checkpoints",
+    "process_uis",
+    "process_ui_revisions",
+    "process_ui_authoring_jobs",
+    "process_ui_authoring_records"
+  ],
+  "history_hashes_unchanged": {
+    "runs/printed-replacement-part-retained-consumer-001/a87d84b40a244bcaa035d9ed8308ac5a.json": "565f1adfdc441ec6b3af7285caf8baf2b5bfbeab2ef4c01bb32607d3a1a2cbca",
+    "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f"
+  },
+  "browser_mutations": [
+    {
+      "report": "003",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "003",
+      "method": "POST",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "report": "004",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "004",
+      "method": "POST",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "report": "004",
+      "method": "PUT",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "report": "004",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "005",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "006",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "006",
+      "method": "PUT",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "report": "006",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "007",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "007",
+      "method": "PUT",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "report": "007",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "008",
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "report": "008",
+      "method": "PUT",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "report": "008",
+      "method": "PUT",
+      "path": "/api/workspace/workflow-sources"
+    }
+  ],
+  "scratch_workflows_created": [
+    "workflows/editor-verification-083-002.workflow.wflow",
+    "workflows/editor-verification-083-004.workflow.wflow"
+  ],
+  "process_started": false,
+  "review_answered": false,
+  "model_work_submitted": false,
+  "full_T052_complete": false,
+  "remaining_scope": [
+    "pointer port connection",
+    "pan",
+    "broader accessibility",
+    "working and preview journeys on current build",
+    "completed engineering output parity"
+  ]
+}

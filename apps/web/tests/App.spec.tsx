@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import App from "../src/App";
+import App, { createAppRouter } from "../src/App";
 import Sidebar from "../src/components/layout/Sidebar";
 import { hostAdapter } from "../src/services/host-adapter";
 
@@ -54,12 +54,19 @@ vi.mock("../src/store/tools", () => ({
   ToolsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 vi.mock("../src/store/viewer", () => ({
+  useViewerPanel: () => ({ openTabs: [], setTabDirty: vi.fn() }),
   ViewerPanelProvider: ({ children }: { children: ReactNode }) => (
     <>{children}</>
   ),
 }));
 
 describe("App startup", () => {
+  const routers: ReturnType<typeof createAppRouter>[] = [];
+  const renderApp = () => {
+    const router = createAppRouter();
+    routers.push(router);
+    return render(<App router={router} />);
+  };
   beforeEach(() => {
     featureFlags.processDefinitionEnabled = false;
     processPageRender.mockReset();
@@ -67,6 +74,7 @@ describe("App startup", () => {
   });
 
   afterEach(() => {
+    routers.splice(0).forEach((router) => router.dispose());
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -85,7 +93,7 @@ describe("App startup", () => {
     );
     vi.spyOn(hostAdapter, "fetch").mockReturnValue(new Promise(() => {}));
 
-    render(<App />);
+    renderApp();
 
     expect(await screen.findByTestId("page-dashboard")).toBeInTheDocument();
     expect(screen.queryByText("Welcome to Wright")).not.toBeInTheDocument();
@@ -111,7 +119,7 @@ describe("App startup", () => {
       new Response(JSON.stringify({ theme: "dark" }), { status: 200 }),
     );
 
-    render(<App />);
+    renderApp();
 
     expect(await screen.findByTestId(testId)).toBeInTheDocument();
   });
@@ -134,7 +142,7 @@ describe("App startup", () => {
       new Response(JSON.stringify({ theme: "dark" }), { status: 200 }),
     );
 
-    const app = render(<App />);
+    const app = renderApp();
 
     expect(await screen.findByTestId("page-not-found")).toBeInTheDocument();
     expect(processPageRender).not.toHaveBeenCalled();
@@ -150,5 +158,28 @@ describe("App startup", () => {
       </MemoryRouter>,
     );
     expect(screen.queryByTestId("nav-process-definition")).toBeNull();
+  });
+
+  it("preserves hash routing for the desktop host", async () => {
+    vi.spyOn(hostAdapter, "getRouterType").mockReturnValue("hash");
+    window.history.replaceState({}, "", "/#/engineering-models");
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({ auth_required: false, authenticated: true }),
+            { status: 200 },
+          ),
+        ),
+    );
+    vi.spyOn(hostAdapter, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ theme: "dark" }), { status: 200 }),
+    );
+    renderApp();
+    expect(
+      await screen.findByTestId("page-engineering-models"),
+    ).toBeInTheDocument();
   });
 });

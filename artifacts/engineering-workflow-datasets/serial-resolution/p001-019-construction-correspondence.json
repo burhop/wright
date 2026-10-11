@@ -1,0 +1,12 @@
+{
+  "scope": "Read-only canonical source correspondence, with artifact inspection in the separately linked full-profile assessment. No approval or campaign credit.",
+  "run_id": "4a16015946e94f898727b0a49b256dc1",
+  "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+  "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916",
+  "canonical_construction_ast_matches_qualified_code_except_output_paths": true,
+  "staged_correction_source_sha256": "26ffb26cba68d7ab239daee31c50dea50e4bcfabc88fc9bcd1926bd6bbc6b327",
+  "canonical_code_sha256": "ce5b75ba5c6fc5a4c2b32eeba66e56a9466cd1fb466987b78942960e95cee611",
+  "canonical_repaired_stl_sha256": "544c4077d68c8454e96db9a5ef62848db43e14b7c21ff0f09c928c9526106e87",
+  "qualification_mesh_sha256": "544c4077d68c8454e96db9a5ef62848db43e14b7c21ff0f09c928c9526106e87",
+  "source_and_verification_tool_calls": 2
+}

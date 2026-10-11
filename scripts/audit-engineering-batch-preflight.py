@@ -18,7 +18,7 @@ def digest(data):
 
 
 def declared_paths_for_task(section):
-    """Return static task outputs, including a bound external-action receipt."""
+    """Return static task outputs, including adapter and approval contracts."""
     settings = section["fields"].get("settings") or {}
     raw_files = settings.get("expected_files", "")
     files = (
@@ -26,6 +26,21 @@ def declared_paths_for_task(section):
         if isinstance(raw_files, str)
         else list(raw_files or [])
     )
+    cad = settings.get("cad") or {}
+    if isinstance(cad, str):
+        try:
+            cad = json.loads(cad)
+        except ValueError:
+            cad = {}
+    if isinstance(cad, dict):
+        native_path = cad.get("native_path")
+        if cad.get("save_native") and isinstance(native_path, str) and native_path.strip():
+            files.append(native_path.strip())
+        for export in cad.get("exports") or []:
+            path = export.get("path") if isinstance(export, dict) else None
+            if isinstance(path, str) and path.strip():
+                files.append(path.strip())
+    files = list(dict.fromkeys(files))
     declared = []
     if settings.get("save_output") and settings.get("output_filename"):
         declared.append(settings["output_filename"])
@@ -40,7 +55,48 @@ def declared_paths_for_task(section):
         receipt_path = approval.get("receipt_path") if isinstance(approval, dict) else None
         if isinstance(receipt_path, str) and receipt_path.strip():
             declared.append(receipt_path.strip())
-    return declared, files
+    return list(dict.fromkeys(declared)), files
+
+
+def validation_contract_errors(settings, support):
+    """Check one validator binding against the declared whole-case credit scope."""
+    errors = []
+    validation = settings.get("validation") or {}
+    if isinstance(validation, str):
+        try:
+            validation = json.loads(validation)
+        except ValueError:
+            return [{"code": "validation_settings_invalid_json"}]
+    profile = validation.get("profile") if isinstance(validation, dict) else None
+    profile = profile if isinstance(profile, dict) else {}
+    expected_profile = support.get("profile") or {}
+    credit = support.get("campaign_credit") or {}
+    if not all(
+        expected_profile.get(key)
+        for key in ("profile_resource", "profile_ref", "baseline_ref")
+    ):
+        errors.append({"code": "campaign_profile_not_declared"})
+    if credit.get("full_scope") is not True:
+        errors.append({"code": "campaign_full_scope_not_declared"})
+    if (
+        profile.get("name") != expected_profile.get("profile_resource")
+        or profile.get("reference") != expected_profile.get("profile_ref")
+    ):
+        errors.append({"code": "validator_profile_not_current_full_scope"})
+    if validation.get("baseline") != expected_profile.get("baseline_ref"):
+        errors.append({"code": "validator_baseline_not_current_full_scope"})
+    subjects = validation.get("subjects")
+    actual_roles = set(subjects) if isinstance(subjects, dict) else set()
+    expected_roles = set(credit.get("subject_roles") or [])
+    if not expected_roles or actual_roles != expected_roles:
+        errors.append(
+            {
+                "code": "validator_subject_scope_mismatch",
+                "missing_roles": sorted(expected_roles - actual_roles),
+                "extra_roles": sorted(actual_roles - expected_roles),
+            }
+        )
+    return errors
 
 
 def audit(args):
@@ -56,6 +112,16 @@ def audit(args):
     batch = json.loads(batch_bytes)
     state = json.loads(Path(args.campaign_state).read_text(encoding="utf-8"))
     inventory = {row["scenario_id"]: row for row in state["datasets"]}
+    coverage_document = json.loads(
+        (
+            root
+            / "packages/workspace_service/src/workspace_service/process_validation/"
+            "profiles/coverage.json"
+        ).read_text(encoding="utf-8")
+    )
+    coverage = {
+        row["scenario_id"]: row for row in coverage_document["scenarios"]
+    }
     inputs = root / "tests/datasets/engineering-workflows"
     configuration = json.loads((inputs / "campaign.json").read_text(encoding="utf-8"))
     templates = root / "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates"
@@ -125,6 +191,7 @@ def audit(args):
         except Exception as failure:
             error("canonical_compile_failed", detail=str(failure))
         static_count = dynamic_count = max_files = 0
+        validator_count = 0
         declared = []
         input_names = {Path(path).name for path in grant["input_files"]}
         for section in sections:
@@ -133,6 +200,12 @@ def audit(args):
             settings = section["fields"].get("settings") or {}
             template = settings.get("authoring_template")
             server = settings.get("mcp_server", "")
+            if template == "process-validator":
+                validator_count += 1
+                for validation_error in validation_contract_errors(
+                    settings, coverage.get(case["scenario_id"], {})
+                ):
+                    error(**validation_error, step=section["id"])
             if template == "mcp-tool":
                 static_count += 1
                 name, schema = settings.get("mcp_tool", ""), settings.get("mcp_schema_digest", "")
@@ -159,6 +232,8 @@ def audit(args):
                     error("existing_declared_artifact_is_input_copy", step=section["id"], path=relative)
                 elif Path(relative).name in input_names:
                     warnings.append({"code": "declared_output_shares_input_basename", "step": section["id"], "path": relative, "meaning": "Name overlap alone does not establish copied bytes; review operation output contract."})
+        if validator_count != 1:
+            error("full_profile_validator_count", observed=validator_count, expected=1)
         role_matches = {role["role"]: [name for name in declared if any(matches(name.removeprefix(case["output_root"] + "/"), p) for p in role["patterns"])] for role in fresh["expected_outputs"]}
         for role, paths in role_matches.items():
             if not paths:
@@ -172,7 +247,7 @@ def audit(args):
                     run_records.append({"run_id": record.get("run_id"), "status": record.get("status")})
             except (OSError, ValueError):
                 pass
-        row.update(status="fail" if errors else "review" if warnings else "pass", original_stages=len(original_tasks), required_stages=len(case["required_step_ids"]), staged_inputs=len(grant["input_files"]), granted_tools=len(allowed), static_tool_nodes=static_count, dynamic_tool_nodes=dynamic_count, max_expected_files_per_node=max_files, output_roles={key: bool(value) for key, value in role_matches.items()}, observed_run_records=run_records)
+        row.update(status="fail" if errors else "review" if warnings else "pass", original_stages=len(original_tasks), required_stages=len(case["required_step_ids"]), staged_inputs=len(grant["input_files"]), granted_tools=len(allowed), static_tool_nodes=static_count, dynamic_tool_nodes=dynamic_count, full_profile_validators=validator_count, max_expected_files_per_node=max_files, output_roles={key: bool(value) for key, value in role_matches.items()}, observed_run_records=run_records)
     db.close()
     result = {"at": datetime.now(timezone.utc).isoformat(), "scope": "Read-only source/grant/corpus/file-presence preflight. No engineering validation or native calls.", "manifest": str(batch_path), "manifest_sha256": digest(batch_bytes), "manifest_unchanged": batch_path.read_bytes() == batch_bytes, "cases": rows, "summary": {"cases": len(rows), "passed": sum(r["status"] == "pass" for r in rows), "review": sum(r["status"] == "review" for r in rows), "failed": sum(r["status"] == "fail" for r in rows)}}
     destination = Path(args.output)

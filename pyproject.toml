@@ -44,6 +44,8 @@ runtime = [
     "mcp>=1.27.2,<2",
     "jsonschema>=4.26,<5",
     "python-multipart>=0.0.32,<1",
+    "pypdfium2>=5,<6",
+    "pillow>=12,<13",
 ]
 workspace-surfaces-test = [
     "build>=1.2,<2",
@@ -63,6 +65,7 @@ Releases = "https://github.com/burhop/wright/releases"
 [project.scripts]
 wright = "wright_engineering.cli:main"
 wright-rivet-mcp = "workspace_service.rivet_mcp:main"
+wright-process-validate = "workspace_service.process_validation_cli:main"
 
 [tool.uv.sources]
 wright-engineering = { workspace = true }
@@ -149,6 +152,12 @@ packages = [
 ]
 
 [tool.hatch.build.targets.wheel.force-include]
+"packages/process_client/src" = "workspace_service/process_interfaces/resources/public/process_client/src"
+"packages/process_client/package.json" = "workspace_service/process_interfaces/resources/public/process_client/package.json"
+"packages/process_client/README.md" = "workspace_service/process_interfaces/resources/public/process_client/README.md"
+"packages/ui_kit/src" = "workspace_service/process_interfaces/resources/public/ui_kit/src"
+"packages/ui_kit/package.json" = "workspace_service/process_interfaces/resources/public/ui_kit/package.json"
+"packages/ui_kit/README.md" = "workspace_service/process_interfaces/resources/public/ui_kit/README.md"
 "integrations/rivet/editor/host.py" = "workspace_service/_rivet/editor/host.py"
 "integrations/rivet/editor/manifest.json" = "workspace_service/_rivet/editor/manifest.json"
 "integrations/rivet/editor/dist" = "workspace_service/_rivet/editor/dist"
@@ -166,27 +175,36 @@ artifacts = [
     "/integrations/rivet/editor/dist",
     "/integrations/rivet/runner/dist",
 ]
-include = [
-    "/src/wright",
-    "/src/wright_engineering",
-    "/apps/api/src/api",
-    "/packages/core/src/core",
-    "/packages/agent_adapters/src/agent_adapters",
-    "/packages/tool_registry/src/tool_registry",
-    "/packages/data_vault/src/data_vault",
-    "/packages/model_registry/src/model_registry",
-    "/packages/workspace_service/src/workspace_service",
-    "/integrations/rivet/editor/host.py",
-    "/integrations/rivet/editor/manifest.json",
-    "/integrations/rivet/editor/dist",
-    "/integrations/rivet/editor/patches",
-    "/integrations/rivet/editor/wrapper",
-    "/integrations/rivet/runner/manifest.json",
-    "/integrations/rivet/runner/dist",
-    "/integrations/rivet/runner/src",
-    "/README.md",
-    "/LICENSE",
-    "/pyproject.toml",
+# Select source roots directly. A whole-tree walk can encounter npm's local
+# package links first, then suppress the real directories as already visited.
+# Direct roots also avoid traversing unrelated local caches and worktrees.
+only-include = [
+    "src/wright",
+    "src/wright_engineering",
+    "apps/api/src/api",
+    "packages/core/src/core",
+    "packages/agent_adapters/src/agent_adapters",
+    "packages/tool_registry/src/tool_registry",
+    "packages/data_vault/src/data_vault",
+    "packages/model_registry/src/model_registry",
+    "packages/workspace_service/src/workspace_service",
+    "packages/process_client/src",
+    "packages/process_client/package.json",
+    "packages/process_client/README.md",
+    "packages/ui_kit/src",
+    "packages/ui_kit/package.json",
+    "packages/ui_kit/README.md",
+    "integrations/rivet/editor/host.py",
+    "integrations/rivet/editor/manifest.json",
+    "integrations/rivet/editor/dist",
+    "integrations/rivet/editor/patches",
+    "integrations/rivet/editor/wrapper",
+    "integrations/rivet/runner/manifest.json",
+    "integrations/rivet/runner/dist",
+    "integrations/rivet/runner/src",
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
 ]
 exclude = [
     "/.gitignore",

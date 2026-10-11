@@ -157,6 +157,14 @@ class WorkflowSourceCreateRequest(_WorkflowSourceContentRequest):
     path: str = Field(min_length=1, max_length=256)
 
 
+class WorkflowSourceCopyRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    session_id: str = Field(min_length=1, max_length=256)
+    source_path: str = Field(min_length=1, max_length=256)
+    destination_path: str = Field(min_length=1, max_length=256)
+    expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class WorkflowSourceUpdateRequest(_WorkflowSourceContentRequest):
     session_id: str = Field(min_length=1, max_length=256)
     path: str = Field(min_length=1, max_length=256)
@@ -339,13 +347,17 @@ class WorkflowSourceRunRequest(BaseModel):
     session_id: str = Field(min_length=1, max_length=256)
     path: str = Field(min_length=1, max_length=256)
     expected_storage_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    request_id: str | None = Field(default=None, min_length=1, max_length=160)
     integration_policy_digest: str | None = Field(
         default=None, pattern=r"^[0-9a-f]{64}$"
     )
 
 
 class WorkflowSourceRunResponse(BaseModel):
-    status: Literal["completed", "pending_review", "awaiting_approval"] = "completed"
+    status: Literal[
+        "completed", "pending_review", "awaiting_approval", "waiting_human"
+    ] = "completed"
+    input_checkpoint: dict | None = None
     review: dict | None = None
     approval: WorkflowApprovalCheckpointResponse | None = None
     verification: dict | None = None
@@ -373,6 +385,22 @@ class WorkflowArtifactReviewDecisionRequest(BaseModel):
         default=None, max_length=200
     )  # Compatibility label, never reviewer authority.
     reason: str = Field(default="", max_length=2000)
+
+
+class ProcessValidationReviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    session_id: str = Field(min_length=1, max_length=256)
+    requirement_id: str = Field(min_length=1, max_length=160)
+    decision: Literal["approved", "changes_requested"]
+    rationale: str = Field(min_length=1, max_length=8192)
+    evidence_refs: list[str] = Field(min_length=1, max_length=50)
+
+    @field_validator("evidence_refs")
+    @classmethod
+    def bounded_evidence_refs(cls, value: list[str]) -> list[str]:
+        if any(not item.strip() or len(item) > 8192 for item in value):
+            raise ValueError("Review evidence references must be bounded and nonempty")
+        return value
 
 
 class WorkflowInputFileResponse(BaseModel):
@@ -979,6 +1007,7 @@ class GitStatusResponse(BaseModel):
     branch_name: str
     is_clean: bool
     changes: List[GitStatusItem]
+    is_repository: bool = True
 
 
 class GitDiffResponse(BaseModel):
@@ -1035,7 +1064,9 @@ class WorkspaceConfigRequest(BaseModel):
     git_username: Optional[str] = None
     git_token: Optional[str] = None
     workspace_prompt: Optional[str] = None
-    git_large_file_threshold: Optional[int] = None
+    git_large_file_threshold: Optional[int] = Field(
+        default=None, description="File-size threshold in bytes."
+    )
 
 
 class WorkspaceConfigResponse(BaseModel):
@@ -1050,7 +1081,9 @@ class WorkspaceConfigGetResponse(BaseModel):
     has_token: bool
     workspace_path: Optional[str] = None
     workspace_prompt: Optional[str] = None
-    git_large_file_threshold: Optional[int] = None
+    git_large_file_threshold: Optional[int] = Field(
+        default=None, description="File-size threshold in bytes."
+    )
 
 
 #  Workspace Tools

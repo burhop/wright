@@ -1,5 +1,12 @@
 # Model-enabled Rivet scenarios
 
+**Historical compatibility documentation.** The current Wright workspace uses
+its canonical workflow editor and working views. Rivet is not the workspace's
+new-workflow entry or an automatically installed workspace server. These pages
+retain legacy contracts and evidence; remaining compatibility code is migration
+debt. Use the [current workflow guide](../workflows/process-working-interfaces.md)
+for ordinary authoring and execution.
+
 Rivet can compose MCP application capabilities and local engineering-model capabilities in one reviewed workflow. Both travel through Wright's workspace gateway. Rivet receives a static namespaced tool, a one-run binding, and a short-lived authority; it never receives child commands, server configuration, model runtime endpoints, process handles, credentials, or independent lifecycle control.
 
 ## Provider-neutral review

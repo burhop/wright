@@ -21,7 +21,6 @@ def _with_builtin_tools(tools: list[str] | None) -> list[str]:
         for tool in (tools or [])
         if tool not in {RIVET_WORKFLOWS_SERVER_ID, RIVET_WORKFLOWS_SERVER_NAME}
     ]
-    enabled.append(RIVET_WORKFLOWS_SERVER_ID)
     return enabled
 
 
@@ -109,6 +108,7 @@ class WorkspaceToolUseCases:
             server
             for server in self.servers()
             if server.is_installed
+            and server.server_id != RIVET_WORKFLOWS_SERVER_ID
             and (server.name in enabled or server.server_id in enabled)
         ]
         running: list[dict[str, Any]] = []

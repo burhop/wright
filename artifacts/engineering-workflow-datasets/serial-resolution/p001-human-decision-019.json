@@ -1,0 +1,25 @@
+{
+  "at": "2026-09-22T23:57:17.909582+00:00",
+  "user_instruction": "approved",
+  "approval_context": "Request changes on attempt 019 and allow one additional correction in the same episode",
+  "retry_budget_authorization": {
+    "episode_id": "printed02-final-feature-review",
+    "from_max_corrections": 2,
+    "to_max_corrections": 3,
+    "additional_corrections": 1,
+    "preserve_history": true
+  },
+  "run_id": "4a16015946e94f898727b0a49b256dc1",
+  "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+  "subject_digest": "be9c11d3ccc06abfc80e5958759c4e5d8a032c641174b62901db07747408c916",
+  "state": "changes_requested",
+  "actor": "local_workspace_user",
+  "reason": "User replied approved to the exact proposal to record Request changes on attempt 019 and authorize one additional correction in the same episode. Final pad and bore rounds measure 0.9692049 mm against the required 1 mm. The isolated native-qualified correction measures 1.01 mm. Preserve the successful grip, native file, orientation, envelope, clearance and mounting features. Extend printed02-final-feature-review from two to three corrections, retaining baseline 017 and both prior attempts. This is not approval of attempt 019 or any successor; the successor requires its own human review.",
+  "updated_at": 1790121437,
+  "source_sha256": "03c95f921bfc4569d14af5e626f7806df2a7a510eee55d29298dfd6b38eae1a0",
+  "protected_files_unchanged": 23,
+  "automatic_approval": false,
+  "successor_approved": false,
+  "campaign_credit": false,
+  "solid_edge_touched": false
+}

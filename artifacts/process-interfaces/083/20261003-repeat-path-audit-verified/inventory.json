@@ -1,0 +1,21 @@
+{
+  "files": {
+    "active-slicing-references.json": {
+      "bytes": 1534,
+      "sha256": "649401139500ff83a00aa3acf4511da4bd0ab92770497c3f057859a6473faa7c"
+    },
+    "audit.json": {
+      "bytes": 10527,
+      "sha256": "dff667f8925a7fed4a0f299049702891da089518a11a76851f2d173039ef9195"
+    },
+    "preservation-observation.json": {
+      "bytes": 18038,
+      "sha256": "e4c1a79565084397d081935ac40a786b94b67eaf58b0870f2de139c789465730"
+    },
+    "README.md": {
+      "bytes": 1519,
+      "sha256": "4738c5b3a111305a7d41ba0ac36763a92943db82f61e162a504e04b790f11209"
+    }
+  },
+  "credential_values_scanned": true
+}

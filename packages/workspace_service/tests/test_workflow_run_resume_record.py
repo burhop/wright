@@ -12,6 +12,7 @@ from workspace_service.workflow_run_record import (
     record_workflow_run,
     record_workflow_resume,
     record_workflow_approval_transition,
+    record_workflow_artifact_review_decision,
 )
 from workspace_service.workflow_source_execution import WorkflowSourceExecutionError
 
@@ -25,6 +26,12 @@ class Files:
 
     async def read_reference(self, root, path):
         return (Path(root) / path).read_bytes()
+
+    async def read_bytes(self, root, path, *, maximum_bytes):
+        data = (Path(root) / path).read_bytes()
+        if len(data) > maximum_bytes:
+            raise ValueError("The file exceeds this reader's supported size.")
+        return data
 
 
 async def waiting_run(tmp_path):
@@ -168,3 +175,131 @@ async def test_missing_later_step_cannot_report_terminal_or_replay_claim(tmp_pat
         == "outcome_unknown"
     )
     assert not any(e["kind"] == "run_completed" for e in persisted["events"])
+
+
+@pytest.mark.asyncio
+async def test_large_run_projection_and_resume_use_run_limit_not_prompt_limit(tmp_path):
+    from workspace_service.adapters.filesystem import LocalWorkspaceFiles
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.use_cases.files import WorkspaceFileUseCases
+
+    service, checkpoint, log = await waiting_run(tmp_path)
+    service.files = WorkspaceFileUseCases(
+        str(tmp_path / "state.db"), BoundedExecutor(), LocalWorkspaceFiles
+    )
+    path = tmp_path / log
+    record = json.loads(path.read_text())
+    record["retained_evidence_fixture"] = "x" * (4 * 1024 * 1024)
+    path.write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="smaller than 4 MiB"):
+        await service.files.read_reference(str(tmp_path), log)
+    await record_workflow_approval_transition(
+        service=service,
+        workspace_dir=str(tmp_path),
+        checkpoint=checkpoint,
+        kind="external_action_reconciled",
+    )
+    calls = []
+
+    async def execute(emit):
+        calls.append("after")
+        await emit({"kind": "step_completed", "task_id": "after"})
+        return {
+            "run_id": "original-run",
+            "steps": [{"task_id": s} for s in ("before", "review", "after")],
+        }
+
+    arguments = dict(
+        service=service,
+        workspace_dir=str(tmp_path),
+        workspace_id="ws",
+        checkpoint=checkpoint,
+        execute=execute,
+    )
+    first = await record_workflow_resume(**arguments)
+    assert await record_workflow_resume(**arguments) == first
+    assert calls == ["after"]
+    persisted = json.loads(path.read_bytes())
+    assert persisted["status"] == "completed"
+    assert len(persisted["retained_evidence_fixture"]) == 4 * 1024 * 1024
+
+
+@pytest.mark.asyncio
+async def test_run_limit_still_rejects_oversized_log_before_continuation(
+    tmp_path, monkeypatch
+):
+    from workspace_service.adapters.filesystem import LocalWorkspaceFiles
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.use_cases.files import WorkspaceFileUseCases
+
+    service, checkpoint, log = await waiting_run(tmp_path)
+    import workspace_service.workflow_run_record as recorder
+
+    monkeypatch.setattr(recorder, "_MAX_RUN_RECORD_BYTES", 1024)
+    service.files = WorkspaceFileUseCases(
+        str(tmp_path / "state.db"), BoundedExecutor(), LocalWorkspaceFiles
+    )
+    path = tmp_path / log
+    path.write_bytes(b"x" * 1025)
+    calls = []
+
+    async def execute(emit):
+        calls.append("forbidden")
+
+    with pytest.raises(ValueError, match="exceeds this reader"):
+        await record_workflow_resume(
+            service=service,
+            workspace_dir=str(tmp_path),
+            workspace_id="ws",
+            checkpoint=checkpoint,
+            execute=execute,
+        )
+    assert not calls
+    assert path.stat().st_size == 1025
+
+
+@pytest.mark.asyncio
+async def test_terminal_review_projects_large_record_once_without_execution(tmp_path):
+    from workspace_service.adapters.filesystem import LocalWorkspaceFiles
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.use_cases.files import WorkspaceFileUseCases
+
+    service, _, log = await waiting_run(tmp_path)
+    service.files = WorkspaceFileUseCases(
+        str(tmp_path / "state.db"), BoundedExecutor(), LocalWorkspaceFiles
+    )
+    path = tmp_path / log
+    record = json.loads(path.read_text())
+    review = {
+        "run_log_path": log,
+        "run_id": "original-run",
+        "workflow_path": record["workflow_path"],
+        "source_digest": record["source_digest"],
+        "review_id": "review-exact",
+        "package_digest": "e" * 64,
+        "state": "approved",
+        "request_id": "test-review-decision",
+        "task_id": "review",
+        "task_title": "Review",
+        "actor": "integration_test:fixture",
+    }
+    record.update(
+        status="pending_review", retained_evidence_fixture="x" * (4 * 1024 * 1024)
+    )
+    record["result"]["review"] = {
+        "review_id": review["review_id"],
+        "package_digest": review["package_digest"],
+        "state": "pending",
+    }
+    path.write_text(json.dumps(record))
+    arguments = dict(
+        service=service, workspace_dir=str(tmp_path), workspace_id="ws", review=review
+    )
+    await record_workflow_artifact_review_decision(**arguments)
+    first = path.read_bytes()
+    await record_workflow_artifact_review_decision(**arguments)
+    assert path.read_bytes() == first
+    persisted = json.loads(first)
+    assert persisted["status"] == "completed"
+    assert len([e for e in persisted["events"] if e["kind"] == "review_decided"]) == 1
+    assert len(persisted["retained_evidence_fixture"]) == 4 * 1024 * 1024

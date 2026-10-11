@@ -1,0 +1,54 @@
+{
+  "title": "New workflow authoring through the installed workspace",
+  "summary": "Continue the newly saved scratch workflow through type rejection, layout persistence, zoom and concurrent-save protection. No process execution or engineering review.",
+  "overall": "blocked",
+  "updated": "2026-10-02T22:37:55.063Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Incompatible socket rejection",
+      "summary": "A connection diagnostic is visible and the semantic digest is unchanged.",
+      "purpose": "Preserve normal-workspace authoring behavior.",
+      "action": "Create Engineering document, then try connecting Response output to its reference-file input using Enter.",
+      "controls": [
+        "Engineering document",
+        "Response output",
+        "Reference document input"
+      ],
+      "expected": "Explain incompatible types without changing the accepted graph.",
+      "actual": "A connection diagnostic is visible and the semantic digest is unchanged.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Editor continuation stopped at Live dragging",
+      "summary": "First unexpected state retained; no execution or review submitted.",
+      "purpose": "Preserve real failure.",
+      "action": "Live dragging",
+      "controls": [
+        "Live dragging"
+      ],
+      "expected": "Editor action succeeds without guesses or workarounds.",
+      "actual": "expect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('[data-testid=\"retained-workspace-workflow-panel\"][aria-hidden=\"false\"]').getByTestId('workflow-recovery-concept')\nExpected: \"sha256:549eca46bfc5c58df85e6b69cc1761e7c33356c2917900202aae7070c28e6d8d\"\nReceived: \"sha256:bc3ed7646ba4845f713ad7297fc1664795040674d71b68b7798a3fc83d3d48ad\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.attribute.value\" with timeout 60000ms\n  - waiting for locator('[data-testid=\"retained-workspace-workflow-panel\"][aria-hidden=\"false\"]').getByTestId('workflow-recovery-concept')\n    - locator resolved to <section aria-busy=\"true\" data-surface-state=\"loading\" data-testid=\"workflow-recovery-concept\" class=\"workflow-recovery recovery-boundary-state\">…</section>\n    - unexpected value \"null\"\n    115 × locator resolved to <section data-revision=\"3\" data-testid=\"workflow-recovery-concept\" class=\"workflow-recovery workflow-recovery--redesign\" data-layout-digest=\"sha256:bc3ed7646ba4845f713ad7297fc1664795040674d71b68b7798a3fc83d3d48ad\" data-semantic-digest=\"sha256:1232c25f705f6367197fce63096c772b1242861200d5b7739cc7a1631f2e4a9a\">…</section>\n        - unexpected value \"sha256:bc3ed7646ba4845f713ad7297fc1664795040674d71b68b7798a3fc83d3d48ad\"\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

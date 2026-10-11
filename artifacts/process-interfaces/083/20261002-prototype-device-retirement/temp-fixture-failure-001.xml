@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="23" failures="0" skipped="0" tests="62" time="5.271" timestamp="2026-10-02T17:54:16.995330-04:00" hostname="Work17"><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[POST-prepare]" time="0.234" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[GET-capabilities]" time="0.102" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[GET-printer-status]" time="0.097" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[POST-print]" time="0.185" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[GET-dispatch]" time="0.109" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[POST-allow-retry]" time="0.096" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[POST-cancel]" time="0.104" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_old_operations_return_retired_without_a_workspace_or_gateway[GET-camera.mjpeg]" time="0.109" /><testcase classname="apps.api.tests.test_process_prototype_retirement" name="test_retired_operation_has_no_vendor_dependencies_or_request_schema" time="0.001" /><testcase classname="packages.workspace_service.tests.test_process_legacy_results" name="test_historical_read_is_exact_read_only_and_preserves_files" time="0.006"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_historical_read_is_exact_read_only_and_preserves_files&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_process_legacy_results" name="test_historical_locator_cannot_escape_or_select_other_source[../outside.json]" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_historical_locator_cannot_escape_or_select_other_source[../outside.json]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_process_legacy_results" name="test_historical_locator_cannot_escape_or_select_other_source[runs/other/retained.json]" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_historical_locator_cannot_escape_or_select_other_source[runs/other/retained.json]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_process_legacy_results" name="test_historical_locator_cannot_escape_or_select_other_source[runs/saved/retained.txt]" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_historical_locator_cannot_escape_or_select_other_source[runs/saved/retained.txt]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_process_legacy_results" name="test_historical_record_cannot_claim_another_source" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_historical_record_cannot_claim_another_source&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_external_action_execution" name="test_compile_and_execute_pause_on_exact_external_action_subject" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_compile_and_execute_pause_on_exact_external_action_subject&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_external_action_execution" name="test_run_log_recovers_approval_decision_and_one_shot_authority" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_run_log_recovers_approval_decision_and_one_shot_authority&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_submission_is_polled_to_completion_once" time="0.087" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_timeout_requests_cancel_without_resubmission_or_false_completion" time="1.084" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_missing_status_capability_rejected_before_submission" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[failed]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[cancelled]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[input_required]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_unfinished_or_unknown_job_is_never_success[mystery]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_progress_is_provider_observed_and_only_configured_metrics_are_used" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[True]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[50]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[-1]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[101]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[nan]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_progress_is_unavailable_never_guessed_or_clamped[inf]" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_another_operation_status_never_becomes_this_operations_progress" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_interrupting_monitor_does_not_send_a_remote_cancellation" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission" time="0.063" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_status_binding_changed_during_submission_is_not_adopted" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change0]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change1]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change2]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change3]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change4]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_invalid_observation_profile_rejected_before_submission[change5]" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_missing_cancel_authority_is_unavailable_without_a_runtime_question" time="0.002" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_status_authority_is_required_before_submission" time="0.001" /><testcase classname="packages.workspace_service.tests.test_workflow_async_operations" name="test_missing_submission_identity_is_unknown_without_resubmission" time="0.001" /><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_derives_identity_and_continues_the_same_run[local-review]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_derives_identity_and_continues_the_same_run[local-review]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_derives_identity_and_continues_the_same_run[digital-operation]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_derives_identity_and_continues_the_same_run[digital-operation]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-principal_id]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-principal_id]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-actor]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-actor]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-run_id]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-run_id]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-destination]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-destination]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-settings]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-settings]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-auto]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-auto]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[local-review-integration_test]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[local-review-integration_test]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-principal_id]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-principal_id]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-actor]" time="0.001"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-actor]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-run_id]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-run_id]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-destination]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-destination]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-settings]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-settings]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-auto]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-auto]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="apps.api.tests.test_process_interface_actions" name="test_action_route_rejects_client_supplied_authority[digital-operation-integration_test]" time="0.002"><error message="failed on setup with &quot;PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'&quot;">fixturedef = &lt;FixtureDef argname='tmp_path' scope='function' baseid=''&gt;
+request = &lt;SubRequest 'tmp_path' for &lt;Function test_action_route_rejects_client_supplied_authority[digital-operation-integration_test]&gt;&gt;
+
+    @pytest.hookimpl(wrapper=True)
+    def pytest_fixture_setup(fixturedef: FixtureDef, request) -&gt; object | None:
+        if (
+            fixturedef.argname == "event_loop_policy"
+            and fixturedef.func.__module__ != __name__
+        ):
+            warnings.warn(
+                PytestDeprecationWarning(_EVENT_LOOP_POLICY_FIXTURE_DEPRECATION_WARNING),
+            )
+        asyncio_mode = _get_asyncio_mode(request.config)
+        if not _is_asyncio_fixture_function(fixturedef.func):
+            if asyncio_mode == Mode.STRICT:
+                # Ignore async fixtures without explicit asyncio mark in strict mode
+                # This applies to pytest_trio fixtures, for example
+&gt;               return (yield)
+                        ^^^^^
+E               PermissionError: [WinError 5] Access is denied: 'D:\\TEMP\\pytest-of-markb'
+
+.venv\Lib\site-packages\pytest_asyncio\plugin.py:924: PermissionError</error></testcase><testcase classname="tests.packaging.test_process_prototype_distribution_boundary" name="test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo]" time="0.001" /><testcase classname="tests.packaging.test_process_prototype_distribution_boundary" name="test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo_printer]" time="0.001" /><testcase classname="tests.packaging.test_process_prototype_distribution_boundary" name="test_workspace_owner_has_no_imports_of_retired_operational_implementations" time="0.781" /></testsuite></testsuites>

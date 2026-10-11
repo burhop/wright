@@ -1,0 +1,512 @@
+# Workflow platform refactoring plan
+
+**Date:** 30 September 2026.
+**Prototype branch (historical):** `codex/prompt-to-3d-printed-part-demo`.
+**Implementation branch:** `codex/083-process-working-interfaces`.
+**Direction:** [Workflow platform vision](../design/workflow-platform-vision.md) and
+[process UI design](../design/process-apps.md).
+**Status:** Feature 083 locally implements the bounded stages below. The shared
+interaction contract/client/kit, runtime and migration have actual scoped evidence.
+Final local completion is recorded in the
+[completion audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/completion.md);
+release, arbitrary provider support and human/physical engineering acceptance
+remain separate. Earlier dated checkpoints retain their original scopes.
+
+## Current source checkpoint — 10 October 2026
+
+The instruction-portability correction described below was implemented and locally
+qualified on 8 October. Saved instruction bodies, explicit assumption policy,
+declared input waits and portable dependencies now have
+[recorded implementation evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/instruction-portability-completion.md).
+The [current user guide](../workflows/process-working-interfaces.md) describes the
+shipped source controls. Later usability/engineering checks and unfinished examples
+are tracked separately in the
+[development delivery checkpoint](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/dev-delivery-checkpoint-090.md).
+Local qualification does not establish GitHub CI, dev integration or user acceptance.
+
+## Historical finding — 7 October 2026: instruction portability and deliberate input
+
+The user requires saved/exported workflows to carry their applicable prompts and
+prefers questions at declared process steps. A code audit found hidden prompt
+policy, incomplete instruction provenance and an inconsistent projection of
+declared input waits through the diagram's Run transport. The separate
+[analysis and implementation plan](workflow-instructions-and-interactions-plan.md)
+proposes versioned settings resolved into saved instructions, documented
+assumptions, portable export and improvements to the existing user-input step.
+This is planned correction work; earlier implementation evidence does not prove
+these newly identified requirements or close these gaps.
+
+## Historical migration checkpoint — 3 October 2026
+
+T048's complete caller inventory and T049's shared-code/error audit now have
+scoped verification. The implicit vendor slice-operation default and vendor-named
+missing-tool guidance are removed from existing generic owners.372 current
+controlled checks and156 frontend checks pass. Seven unchanged prior-feature
+catalog/lifecycle/source-contract references remain explicitly documented metadata
+or inherited integration debt, not new independent MCP implementations or a
+vendor-free-platform claim. Original profiles and engineering evidence remain
+preserved. See the [shared audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/shared-platform-audit.md).
+Current provider/scenario qualification and complete installed/workspace/regression
+acceptance are separate; earlier checkpoint paragraphs retain their original scope.
+
+The original printed preparer now declares independent geometry and passive
+inspection with explicit pinned arguments, original policy and exact native output
+ownership. The bundled repair implementation/wrapper, private campaign launcher
+and wrapper-only test are retired with six exact original files retained inactive.
+The inspector's original handle measurement functions remain AST-identical.
+
+A fresh negative control exposed a failed job inside a successful MCP transport
+response. An existing 082 validation step now directly measures the exact STL
+before slicing. Two components fail the original requirement and hold slicing;
+a fresh valid cube passes 13 checks and reaches the actual independent slicer.
+This reuses the existing validator, subjects, reports and recovery; it adds no
+executor or inferred vendor status authority. 207 owning/affected and 231 broader
+082 checks pass (overlapping counts); all twelve exact proof containers are stopped.
+See [mesh evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#independent-mesh-retirement-and-existing-validator-gate)
+and [explicit configuration](../workflows/external-mesh-bindings.md).
+Small digital handoff qualification does not prove native repair-policy equivalence
+for the original assignments or complete provider/UI/installed migration acceptance.
+
+The new independent slicing declarations now have a small actual accepted-source
+runtime proof. Package ownership stays with the slicer; passive inspection creates
+only its evidence/preview/profile outputs, and both original preparers route their
+unchanged package validation role to the actual producer. Explicit mounted job
+paths, exact test write enrollment, fifteen recorded output hashes and duplicate
+start reconciliation are checked. This supplements the earlier diagnostic below;
+it does not establish all six assignments or complete provider/migration tasks.
+See [runtime evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#actual-slicing-handoffs-and-package-producer-correction).
+
+Both original printed/drill-jig preparers declare independent slicing and passive
+inspection. The final diagnostic now uses an explicit independent MCP definition.
+The three embedded slicing implementations and their wrapper-only test are
+removed with exact inactive archives; frozen campaign bindings and engineering
+requirements remain intact. Historical inventory and earlier pending statements
+below retain their original scope and are superseded for these four files.
+
+One fresh selected-provider installation/cache and offline native diagnostic
+produced actual 3MF/preview/nominal paths on the existing Windows Python/native
+host, with exact owned MCP cleanup. 175 final owning/affected checks pass.
+This does not establish live canonical-runtime qualification of the new bindings,
+clean Linux catalog qualification, physical verification or human acceptance.
+Other active provider coupling and full qualification still require their own
+audit/disposition. T043/T048/T049 remain open, as do complete current platform
+acceptance and final audits. See [migration evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#slice-probe-migration-and-embedded-file-retirement).
+
+## User outcome comes first
+
+Users and AI can define a useful engineering process, then carry it out through
+a common or tailored interface within Wright. Preserve complementary experiences:
+
+- The existing flowchart, blocks, source, and inspectors for building and inspecting.
+- A working interface for inputs, results, questions, decisions, and progress,
+  hosted in a workspace tab and connected to the same accepted process and run.
+
+The journey is create/open, choose a common or tailored view, review/save it,
+run in the workspace, and inspect/refine when needed. A dashboard, comparison
+table, interactive model, questionnaire, or guided sequence can be appropriate.
+No single arrangement or manufacturing lifecycle is required.
+
+The platform investment is the connection between a process and its interface:
+an explicit interaction contract, shared components/style, a scoped client over
+existing process services, and consistent workspace hosting. AI authors the
+presentation using those foundations. Wright owns execution and durable state.
+
+### Confirmed implementation choices
+
+The user selected the complete experience, including AI-created reusable UIs and
+proof on two different processes. Users request UI generation, preview, saving,
+and updates through Wright. Start with the configured default LLM and prepared
+Wright API/UI instructions, mapping a coding-agent role/profile into the existing
+agent-adapter boundary. Model, role instructions, and platform remain replaceable;
+future platform support is qualified separately.
+
+Runs may be long running and unattended between declared interaction steps.
+Resolve required user choices before starting, or explicitly identify configured
+defaults, automatic upstream producers, and planned user-review/action steps.
+At declared interaction steps persist waiting state and resume the same run.
+Do not invent runtime questions or forms to repair predictable missing inputs.
+Live prerequisite changes follow declared wait/recovery/failure policy.
+
+The printing prototype is a reference and source of reusable work. Its integration
+difficulties do not become the platform roadmap. Prefer existing MCP providers.
+Creating a new Bambu MCP or maintaining Handy/firmware workarounds is outside
+this plan. Provider-specific requirements and unsupported operations are disclosed.
+
+## Deliverables and first implementation slice
+
+1. A versioned process interaction contract describing available inputs, outputs,
+   evidence, pending questions/decisions, observed state, and permitted actions.
+2. A scoped process client, shared UI kit, and usable common working view, built
+   on current services, design tokens, viewers, and workspace surface lifecycle.
+3. An AI authoring reference and saved UI artifact/binding contract, allowing
+   users to generate and update reusable tailored views through Wright, with
+   compatibility checked as processes change and recorded agent/profile provenance.
+4. Migration of the reference experience and proof with a substantially different
+   existing engineering process using the same platform foundation.
+
+The first implementation slice should let a user open an accepted process,
+provide supported inputs, start or attach to a run, follow its actual state,
+inspect a result, make an existing supported decision, navigate to its block or
+evidence, close the view, and reopen the same run. Provide a common view first.
+
+Map these operations to actual runtime support before freezing the feature plan.
+Expose capability limits. Extend missing semantics only in an approved bounded
+feature; do not create a second executor to make the UI appear complete.
+
+## Architecture and existing ownership
+
+| Foundation | Existing seam and intended use |
+|---|---|
+| Accepted definition and execution | `packages/workspace_service/src/workspace_service/workflow_source_execution.py` and `packages/workspace_service/src/workspace_service/workflow_mcp_execution.py`: retain canonical compilation, accepted revisions, artifact handoffs, run records, and gateway execution. |
+| Results and evidence | `packages/workspace_service/src/workspace_service/workflow_results.py`: reuse `EngineeringResult`, representations, provenance, and `external_action_receipt`. |
+| Checks and correction | `packages/core/src/core/process_validation.py` and `packages/workspace_service/src/workspace_service/process_validation/`: reuse exact subject/profile identity, findings, gates, bounded corrections, and report projections. |
+| Capability operations | `packages/tool_registry/src/tool_registry/gateway_service.py` and existing onboarding: reuse discovery, installation, connection, workspace grants, schemas, audit, and lifecycle. |
+| Workspace hosting | `packages/workspace_service/src/workspace_service/surfaces/` and `apps/web/src/components/surfaces/`: reuse tabs, managed applications, MCP App views, restoration, and scoped presentation. |
+| Authoring and navigation | `apps/web/src/prototypes/workflow-recovery/` and `apps/web/src/components/chat/WorkspacePanel.tsx`: preserve the reviewed editor and workspace entry. |
+| Client and style | `apps/web/src/services/workspace-service.ts`, `apps/web/src/tokens/design-tokens.css`, and `apps/web/src/styles/tokens.css`: reuse process calls and style primitives; review the public boundary needed by isolated process UIs. |
+
+Pure shared contracts belong in `core`; persisted records in `data_vault`;
+workspace use cases in `workspace_service`; MCP policy/lifecycle in
+`tool_registry`; routes remain thin. UI components and the scoped browser client
+compose those services rather than importing private backend implementation.
+
+Existing hosting is a foundation, not a complete process-app contract. Packaged
+MCP Apps have provider-scoped operations. Wright's current WebMCP SDK exposes
+page-local tools to Wright; that direction alone does not allow the page to
+drive a process. Design the bounded process host/client contract explicitly.
+Do not widen a provider panel into arbitrary cross-server access.
+
+## Contract decisions to close in the feature plan
+
+- **Identity:** workspace, accepted process revision, UI source/binding version,
+  run, and exact result/review subjects. Run inputs are distinct from definition edits.
+- **Interactions:** input schemas/units, defaults, current availability, pending
+  declared questions/decisions, results/evidence, and supported viewing options.
+- **Readiness and autonomy:** required user choices resolved before execution;
+  distinguish explicit defaults, upstream-produced data, and planned human
+  interactions. Define durable pause/resume and permitted recovery without new
+  ad hoc runtime questions. External freshness checks still apply.
+- **Coding-agent role:** default-model inheritance, prepared versioned Wright
+  API/UI instructions, permitted capability/workspace scope, adapter requirements,
+  and generation provenance. Reuse existing configuration and agent services.
+- **Actions:** currently permitted operation and subject, prerequisites, reason
+  when unavailable, backend authority, and supported lifecycle. Submission,
+  observed external execution, and completion remain distinct facts.
+- **Dependencies:** option/input changes invalidate affected downstream work and
+  reviews through runtime rules. Browser layout changes alone need not invalidate
+  engineering outputs.
+- **Presentation:** common fallback, shared components/theme, workspace tabs,
+  deep links, accessibility, custom viewers, and the first packaging model.
+  Isolated apps do not inherit parent CSS or private React components automatically.
+- **Persistence and compatibility:** saved UI/binding manifest, kit/client/contract
+  versions, compatible process changes, stale bindings, update path, and rollback.
+  Do not regenerate the interface for every run.
+- **Recovery:** close/reopen and reconnect reconcile with backend state. Closing a
+  view is not cancelling a run. Unknown external outcomes do not trigger replay.
+- **Engineering evidence:** use current validation and review contracts. Tool
+  success and UI rendering cannot set a compliance verdict or remove a requirement.
+
+These are bounded design subjects, not a requirement to build an all-purpose
+screen language or support every graph shape in the initial slice.
+
+## Staged work and acceptance
+
+### M0: Direction, user journey, and baseline
+
+- [x] D01 Record the agreed vision and process UI experience.
+- [x] D02 Put stable guidance outside the managed Spec Kit section in
+  `AGENTS.md`; align specification, planning, task, and PR templates.
+- [x] D03 Record this roadmap with the shared platform foundation first and
+  prototype migration inventory as supporting material.
+- [x] R01 Capture a reviewed snapshot of the existing prototype, uncommitted
+  fixes, saved runs, artifact identities, and rollback basis with explicit paths.
+  Preserve needed ignored evidence separately; exclude credentials.
+- [x] R02 Map the proposed first user journey to accepted definitions, run,
+  event, review, result, validation, readiness, agent, and hosting contracts.
+  State real gaps and capabilities before proposing extensions.
+
+Exit: direction and current support are distinguishable. Documentation does not
+prove runtime delivery, engineering correctness, or user acceptance.
+
+### M1: Process interaction contract
+
+Depends on M0 and review of the first feature's technical plan.
+
+- [x] R03 Define the minimal versioned interaction description using existing
+  contract shapes: context, inputs, outputs/evidence, pending interactions,
+  observations, declared interaction policy, readiness, and permitted actions
+  with exact subjects and reasons.
+- [x] R04 Map those interactions to current services and accepted source semantics.
+  Declare unsupported arrangements and any minimal approved schema extensions,
+  including compatibility and migration. Define pre-run input readiness and
+  durable declared pause/resume without creating a second executor.
+- [x] R05 Define scoped host/client operations and server enforcement. Keep the
+  existing runner as the execution authority; preserve provider-panel grants.
+- [x] R06 Define UI artifact/binding compatibility, invalidation, restoration,
+  common-view fallback, and rules for separating definition edits from run inputs.
+
+Exit: a common view and a tailored view can consume the same process interactions.
+No screen layout, mandatory stage order, or device protocol controls the contract.
+
+### M2: Shared client, UI kit, and common working view
+
+Depends on approved M1 contracts.
+
+- [x] R07 Implement the narrow process client over existing services, including
+  following and reconciling durable run state, results, and current decisions.
+- [x] R08 Assemble shared inputs, result viewers, progress/findings, review/actions,
+  and navigation using existing style tokens and useful components. Package the
+  public pieces required by the chosen host; avoid copying private page code.
+- [x] R09 Integrate the common view into Wright workspace tabs. Preserve the editor,
+  exact process/run context, deep links, and close/reopen behaviour.
+- [x] R10 Preserve evidence gates, actionable errors, missing-capability behaviour,
+  currentness, option invalidation, and uncertain-action handling in the common view.
+  Reject unresolved predictable input before a run; show planned human waiting,
+  external waiting, and failure distinctly without inventing runtime questions.
+
+Exit: users can complete the supported first journey without a custom app.
+Reopening reconstructs presentation from backend state without resending work.
+
+### M3: AI-authored, reusable tailored interfaces
+
+Depends on M2 and the reviewed packaging model.
+
+- [x] R11 Implement UI generation, preview, saving, and updates through Wright's
+  default coding-agent role over the existing agent boundary. Supply versioned
+  API/kit instructions, documented client, examples, and a reference UI. Record
+  resolved model/profile/prompt/adapter and artifact provenance. Design replaceable
+  platform bindings without claiming unqualified future adapters.
+- [x] R12 Save a generated UI with its binding manifest and supported versions.
+  Check bindings on process/capability changes; support focused updates and
+  common-view fallback when incompatible.
+- [x] R13 Verify a tailored UI can present the same inputs, results, decisions,
+  and permitted actions as the common view. Inspect actual layout, accessibility,
+  failures, stale bindings, reload, navigation, and restored runs. Prove generation
+  through Wright, upfront readiness, declared pause/resume, and uninterrupted
+  unattended sections.
+
+Exit: AI creates a reusable presentation from the shared foundation. The generated
+code contains no graph executor, vendor protocol, or independent job-status truth.
+
+### M4: Migrate and prove the general platform
+
+Depends on M2; use M3 when proving AI-authored composition.
+
+- [x] R14 Inspect and select one substantially different existing engineering
+  workflow and its useful tool chain. Reuse the existing examples and evidence;
+  avoid inventing a new campaign or silently rewriting an assignment.
+- [x] R15 Qualify the existing providers needed by the chosen reference workflows
+  through normal onboarding. Record actual schemas, operating requirements, and
+  gaps. Provider-specific compatibility work does not block shared platform design.
+- [x] R16 Migrate the prompt-to-part reference using public capability bindings
+  and the shared process UI foundation. Retire embedded vendor code after all
+  live callers migrate; preserve saved-result access and historical evidence.
+- [x] R17 Use the same contract/client/kit to complete the supported journey for
+  the different process, including an AI-authored view. Document its substantive
+  engineering tools and handoffs, applicable checks, and actual limitations.
+- [x] R18 Compare the two experiences, remove discovered coupling in the owning
+  layer, and record exactly which architecture and engineering claims are proved.
+
+Exit: different process arrangements use one platform and consistent workspace
+experience. Another printer alone does not prove generality.
+
+## Verification and completion evidence
+
+When implementation is separately authorised, verify the changed behaviours:
+
+- Contract/currentness/recovery checks: revised inputs, stale outputs/reviews,
+  missing required evidence, duplicate or uncertain actions, reconnects, resumed
+  runs, incompatible UI bindings, and unsupported operations. Include predictable
+  missing inputs rejected before execution, automatically produced intermediate
+  data, declared human pauses, and unexpected AI clarification rejected/reported
+  without presenting a new runtime question.
+- Common and tailored UI use the same backend facts. Closing, reopening, and
+  switching to the diagram retain exact context and do not launch duplicate work.
+- Changed UI needs component, mocked journey, and served-workspace verification
+  through the normal Workflow/Workflows entry. Preserve the existing editor
+  acceptance harness and [integration guide](../contributing/workflow-ui-integration.md).
+- Provider qualification follows [MCP validation](../mcp-catalog/mcp-server-testing-process.md).
+  Protocol, engineering behaviour, browser experience, and physical actions have
+  separate evidence; fixtures are labelled and support only their observed scope.
+- Installed-package checks preserve native/Docker boundaries as applicable, public
+  provider contracts, and freedom from private checkout/runtime dependencies.
+- Preserve the 081 generation campaign, 082 validator evidence, and report contract.
+  Use isolated demonstrations. Do not build the reporting UI assigned to another
+  branch or rewrite the 30 examples as part of this architectural follow-on.
+
+Record direction, planning, implementation, protocol qualification, engineering
+evidence, browser verification, and user acceptance separately. Run push/merge/
+release gates at their authorised transitions, not as a substitute for user evidence.
+
+## Authority and Feature 083 implementation
+
+The original 30 September proposal recorded the concept and guidance without
+starting implementation. The subsequently submitted Feature083 goal explicitly
+authorized local M0–M5 implementation and verification; its task/evidence record
+defines the bounded delivered scope.
+
+The concrete follow-on is
+[Feature 083: Process working interfaces](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/plan.md),
+with a [saved implementation goal](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/implementation-goal.md).
+Its approved scope is the complete experience selected by the user: interaction/runtime
+foundation, shared client/kit/common view, actual UI generation/preview/save/update
+through Wright's coding role, and proof on two different existing engineering
+processes. The shared foundation is an increment, not the final deliverable.
+The user submitted that goal and approved local implementation and verification.
+Local interaction/runtime, client/kit/common view, actual-model authoring and
+saved reuse, digital engineering parity, active prototype retirement and installed
+native/Linux browser checks have bounded evidence. The completion audit records
+their limits rather than implying physical or universal provider acceptance. See
+the [operator guide](../workflows/process-working-interfaces.md) and the feature's
+[task record](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/tasks.md).
+
+The managed context now points to approved Feature 083; preserve Feature 082's
+historical approvals and validator contracts. This roadmap
+does not create a new vendor project or authorise device/supplier actions or
+external publication. The following inventory informs later migration work.
+
+## Appendix: prototype migration inventory and verified dispositions
+
+The responsibilities below describe the original prototype. The dispositions
+are reconciled against current source at `7be4cc9b` by the 3 October T048 audit.
+This is migration evidence, not qualification of every provider/scenario, hardware
+support or engineering acceptance. Earlier checkpoints below retain their
+historical scopes. See the [complete caller audit](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/migration-disposition-audit.md).
+
+| Original location | Original responsibility | Current disposition and boundary |
+|---|---|---|
+| `packages/workspace_service/src/workspace_service/print_part_demo_printer.py` | Package checks, dispatch receipts, Bambu aliases, AMS/state decoding, Studio restoration and P1S camera protocol. | Removed; exact edited bytes retained privately. Existing action, validation, observation and result owners retain shared behavior. Independent providers must supply device options/status/media; Wright adds no replacement protocol. |
+| `scripts/print_demo_p1s_mcp.py`, `scripts/print_demo_p1s_session.py`, `scripts/print_demo_p1s_transfer.py` | Vendor MCP tools, MQTT telemetry/replies, FTPS upload and slot mapping. | All removed; exact private archives verified. Saved commands are not silently redirected or replayed. Missing independently configured capabilities remain actionable readiness limitations. |
+| `scripts/print_demo_studio.py`, `scripts/windows/inspect-bambu-studio.ps1`, `scripts/windows/studio-desktop.ps1` | Studio conversion, desktop controls, OCR and worker monitoring. | All removed; original experiments retained privately. No desktop automation, Handy workaround or firmware bypass was moved into a shared owner. |
+| `scripts/configure_print_demo_studio.py`, `scripts/configure_print_demo_offline.py` | Repo-local script/profile/source registration and launch overrides. | Removed. Saved replacement examples and explicit independent-provider bindings use normal Wright installation/grant/readiness mechanisms. Historical configuration remains inert and is not auto-restored. |
+| `scripts/engineering_dataset_slice.py`, `scripts/engineering_dataset_slice_mcp.py`, `scripts/engineering_jig_slice_mcp.py` | Vendor CLI/profiles/envelope and slice metadata/support/toolpath extraction. | Removed with exact inactive archives. Both original preparers now preflight and declare external slicing plus passive inspection; the final diagnostic also uses an independent MCP. Actual small canonical-runtime and clean slicer proofs are retained. Frozen bindings/assignments/profiles remain unchanged; all original scenario qualification remains T043. |
+| `scripts/engineering_dataset_mesh_repair.py` and `scripts/engineering_dataset_mesh_repair_mcp.py` | Retired active paths; exact originals retained as inactive archives. Original preparer declares existing independent geometry and passive measurements, then the existing 082 gate. | No native implementation or transport was relocated. Preserve original policy/history and exact handle functions. Small positive/negative runtime proofs establish the handoff/gate, not every original native recipe or engineering acceptance. |
+| `scripts/run_printed_validator_campaign.py` | Retired private-lifecycle launcher; exact original retained inactive and wrapper-only test archived/retired. | New work uses normal Wright accepted-source/runtime mechanisms. Private historical campaign scripts, bindings and evidence remain preserved and unexecuted. No replacement domain executor is introduced. |
+| `packages/workspace_service/src/workspace_service/print_part_demo.py` | Hard-coded example/tools, checkout lookup, material defaults and artifact conventions. | Removed; archived edited bytes verified. New work opens accepted saved workflows with exact bindings through shared preparation/runtime/client/UI. Installed history readers have no checkout or provider dependency. |
+| `apps/api/src/api/main.py` | Studio binding restoration after catalog reconciliation. | Vendor restoration removed; normal catalog reconciliation remains. Current installed005 startup bytes equal current source. No previous vendor command is rewritten or launched by this migration. |
+| `apps/api/src/api/routers/workspace.py` `/print-demo/*` handlers | Preparation, vendor checks, dispatch/retry/cancel and camera mediation. | Eight operational endpoints replaced by one hidden inert GET/POST HTTP410 reply, with no workspace/gateway/body dependencies. Exact recorded results use the separate authenticated read-only historical adapter. No current operational compatibility shim remains. |
+| `apps/web/src/components/pages/PrintPartDemoPage.tsx` | Shared previews/progress mixed with vendor controls and campaign paths. | Page and stylesheet removed. Shared format-based viewers, exact result navigation and common/saved interfaces replace the product entry; both actual engineering/UI chains are verified at T045/T047 scope. Physical status/camera support is provider-dependent and unqualified here. |
+| `apps/web/src/services/workspace-service.ts`, `apps/web/src/components/chat/WorkspacePanel.tsx`, and actual entry `apps/web/src/components/pages/WorkflowRecoveryPage.tsx` | Demo API types/calls, workspace entry and restored result queries. | Operational methods/types removed; neutral `uploadWorkflowImage` retained. Workspace tabs preserve editor/file state. The actual page uses **Use saved process**, attaches historical queries only to their exact workflow, and renders `HistoricalResultView` without execution actions. |
+| Catalog entries, example bindings, campaign records, demo evidence | Descriptive provider qualification, configuration and observations. | Retained as metadata/inactive history; protected original binding/profile hashes are checked. Active preparation requires explicit independent definitions/schema pins and preflight. Missing or uncertain capabilities are not guessed; no historical physical qualification is inherited. |
+
+The original reverse import of `printer_status_summary` disappeared with the
+retired scripts and service. The current application/script import audit finds no
+retired implementation dependency. One remaining operational-name reference is
+an explicit diagnostic rejection guard. It is not an active caller or copied
+integration. Broader provider/process coupling remains a separate T049 audit.
+
+### Entry-point migration checkpoint, 2 October 2026
+
+The workflow workspace entry no longer imports the active `PrintPartDemoPage`.
+New work uses the existing **Use saved process** common/tailored interface path.
+Historical `printDemoRun` queries select a read-only `HistoricalResultView` over
+the existing canonical run recorder, with exact source/run locator checks,
+original result/error metadata, saved artifact navigation and no permitted
+actions. Its native route is
+`GET /api/workspace/process-interfaces/historical-results` with `session_id`,
+`path` and `run_log_path`. It has no provider dependency or device monitoring.
+
+This entry migration now has six passing served-workspace checks against an
+isolated retained native engineering run: exact source selection, eleven saved
+outputs, the original failure, editor return, history reopening and saved JSON
+navigation. An explicit workflow URL takes precedence over restored active tabs;
+other restored tabs cannot attach that workflow's history query. Both the initial
+route failure and a subsequent test-selector failure remain in
+`artifacts/process-interfaces/083/20261002-historical-result-navigation/`.
+The original user workspace and installed distributions were not tested here.
+The original prototype files and existing
+mixed worktree changes are preserved. Demo endpoint implementations, vendor
+startup restoration, client methods and repo-local automation remain retirement
+debt; they are not removed or made independent by this checkpoint. T048/T049
+remain incomplete until those active paths are retired and installed historical
+navigation is verified.
+
+### Operational caller retirement checkpoint, 2 October 2026
+
+The source web client no longer exposes prototype preparation/status/dispatch/
+retry/cancel methods or vendor status types. Its canonical image upload remains
+as `uploadWorkflowImage`. The unused vendor page/style and three obsolete API
+request models are removed. The Studio startup restoration hook is removed.
+Eight operational API handlers are replaced by a hidden, inert HTTP 410
+compatibility response directing users to the saved workflow/common working view.
+The history adapter remains read-only and exact-source/run bound.
+
+Original mixed/untracked prototype bytes are preserved in a private ignored
+archive, with protected campaign/context checks retained. Fourteen API/history
+checks and fourteen affected component tests pass; web TypeScript passes.
+See [caller retirement evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
+Service modules, vendor scripts, transitive slicing bindings and fresh installed
+history verification remain open T048/T049 work. Source retirement alone does
+not establish their removal or the full migration.
+
+### Device/Studio retirement checkpoint, 2 October 2026
+
+Both prototype workspace-service modules and unused device/Studio setup,
+transport and desktop automation scripts are removed after application caller
+retirement. Their vendor-only test is retired with them; shared action/observation/
+history authority is verified separately. Eighteen original files, including
+mixed edits and untracked experiments, remain privately byte-preserved. No
+configured provider or user run was mutated. The workspace owner no longer
+imports or ships these two modules; aggregate/private/rebuilt-wheel checks pass.
+Commands referring to removed scripts need qualified independent bindings;
+their effects are not replayed or silently substituted.
+
+This supersedes the historical inventory's two `print_part_demo` service rows
+and device/Studio script rows. Dataset/jig slicing still has campaign/proof
+dependencies. T048/T049 remain open for those dispositions, full replacement
+proof and fresh installed history. See the [retirement evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/prototype-caller-retirement.md).
+
+Fresh installed native history now passes six read-only workspace/editor/file-tab
+checks with the retired modules absent and eight inert compatibility replies.
+Copied source/run/UI/continuation identities remain unchanged. The first launcher
+and configuration failures are retained separately. Original user prototype
+formats, transitive slicing and complete engineering replacement remain open;
+T048/T049 are not complete. See [installed history evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/installed-history-retirement.md).
+
+### Original prototype compatibility checkpoint, 3 October 2026
+
+The three actual original failed/completed pumpkin recorder formats are verified
+through the shared historical adapter on an isolated current installed build.
+Sixteen served workspace checks preserve exact results/errors, editor return,
+read-only reopen and saved recorder/artifact tabs; eight retired URLs are inert.
+Original and copied source/run/artifact/journal bytes and durable reviews remain
+unchanged. Failed fixture/selector attempts are retained; source integrity was
+not relaxed. See [original history compatibility](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/original-history-compatibility.md).
+This qualifies those formats only. Active slicing wrappers and their transitive
+campaign/probe bindings still require deliberate migration to existing independent
+providers. T048/T049 remain open; historical campaign data and baseline bindings
+remain immutable.
+
+### Neutral example-helper extraction, 3 October 2026
+
+The printing preparer's shared declaration/staging functions now live in
+scripts/engineering_campaign_binding_helpers.py. Eleven other preparers and one
+fixture load that file directly. Original function ASTs/preparation bodies and
+campaign bindings remain unchanged; 74 focused/affected checks pass. The printed
+preparer loads the exact file without an installed namespace assumption. Existing
+AgentCAD guidance is metadata; no slicing/device implementation is relocated.
+See [migration evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#neutral-helper-extraction-before-slicer-retirement).
+
+This removes transitive helper coupling before actual vendor slicing retirement.
+The three slicing implementation rows, printed/drill-jig operation callers and
+diagnostic remain debt. Original two-process digital UI/handoff/source-gate proof
+now satisfies T045/T047; qualification, active retirement and final platform
+acceptance retain their separate obligations.
+## External slicing preparer migration, 3 October 2026
+
+Both original printed-part/drill-jig preparers now require an explicit exact
+scenario binding to independently installed slicing, file-retention and passive
+inspection providers. No embedded slice operation source is staged. Shared
+declarations reuse the canonical compiler/runtime and original evidence stage;
+they do not derive native profiles, run a CLI or implement a vendor protocol.
+Original six assignments, stage identities, packaged validators and frozen
+campaign bindings remain unchanged.
+
+The existing passive package reader supplies actual nominal toolpaths and their
+historical SVG view; PNG bytes come from the actual package. Predictable missing
+bindings/profile/configuration are rejected before staging/native initialization.
+141 fixture/declaration/affected checks pass. Live qualification of the new
+bindings is pending. The diagnostic probe and three embedded slicing operation
+files remain migration debt; audit other active wrappers separately. T048/T049
+are not complete. See [configuration](../workflows/external-slicing-bindings.md)
+and [migration evidence](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/evidence/generality-and-migration.md#external-slicing-declarations-in-existing-preparers).

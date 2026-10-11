@@ -1,0 +1,3 @@
+The plastic focus wheel on our training telescope cracked. Please use my attached sketch to make a friendlier six-scallop replacement. The outside diameter is 38 mm; use that as the image scale reference. The shaft is a 6.00 mm D shaft, with 5.20 mm from its flat to the far round surface. Make the blind socket 10 mm deep and allow the slip clearance in the notes. Please keep the raised grip dots subtle so gloves do not catch.
+
+Produce the source mesh, repaired printable mesh, support/slicing preview, and P1S 0.4 mm PETG slice package. Keep the shaft opening facing up if it improves the bore. I need a local test transfer receipt after review; do not send anything to a physical printer.

@@ -1,0 +1,12 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+··························································································
+
+ Test Files  2 passed (2)
+      Tests  90 passed (90)
+   Start at  14:59:23
+   Duration  6.74s (transform 259ms, setup 619ms, import 312ms, tests 154ms, environment 4.93s)
+
+
+owned_exit_code=0

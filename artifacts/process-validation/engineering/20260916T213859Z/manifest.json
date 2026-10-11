@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-09-16T21:41:00.618136+00:00",
+  "files": [
+    {
+      "path": "evidence.json",
+      "bytes": 49663,
+      "sha256": "1b3543576b78f64541e98812b8a606c125d9164015cff8332f245a24d23dbce3"
+    },
+    {
+      "path": "heat/events.json",
+      "bytes": 25738,
+      "sha256": "28e82fa6dc8d0063972556be6a600f7df3fd02ef4cf54eadb6b6beb9e2ca0064"
+    },
+    {
+      "path": "heat/evidence.json",
+      "bytes": 18677,
+      "sha256": "fdae430be55c9c7d35376a4393f20e14f34ae3802500171ea1f6d702d2745b7c"
+    },
+    {
+      "path": "heat/mcp-tools.json",
+      "bytes": 1700,
+      "sha256": "1f39cc8f3d08f76d781c409e3413651f02e386fd44201f781b54f2888097faf9"
+    },
+    {
+      "path": "heat/result.json",
+      "bytes": 23900,
+      "sha256": "50e598eea8b1bc894ebfc88d25f7b4f426c049573b92e5832654df5f78b1fca6"
+    },
+    {
+      "path": "heat/workspace/.gitignore",
+      "bytes": 77,
+      "sha256": "0d8ce0ecef224db9712ebc1094f71bf387ad26b5768d457c005300f371fd32cc"
+    },
+    {
+      "path": "heat/workspace/baseline-coarse.csv",
+      "bytes": 13526,
+      "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b"
+    },
+    {
+      "path": "heat/workspace/baseline-fine.csv",
+      "bytes": 76526,
+      "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0"
+    },
+    {
+      "path": "heat/workspace/engineering_validation_mcp.py",
+      "bytes": 4226,
+      "sha256": "5cfba8982a92391de5f46da3178b63c8071bde896a367af1f055f2b8a81128b8"
+    },
+    {
+      "path": "heat/workspace/heat-release-note.txt",
+      "bytes": 193,
+      "sha256": "663ed12d9b29e6c23712bd60488cfc8a5e793d2f74278959c5e3d147a2cb39cd"
+    },
+    {
+      "path": "heat/workspace/heat-validation.workflow.wflow",
+      "bytes": 4745,
+      "sha256": "f6ef1657a0a9d84f6b9f66cac2fa01aabbda181db7adb7f202820b6ad4ada0d5"
+    },
+    {
+      "path": "heat/workspace/inputs/baseline-coarse-temperature.csv",
+      "bytes": 13526,
+      "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b"
+    },
+    {
+      "path": "heat/workspace/inputs/baseline-fine-temperature.csv",
+      "bytes": 76526,
+      "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0"
+    },
+    {
+      "path": "heat/workspace/inputs/revision-coarse-temperature.csv",
+      "bytes": 13526,
+      "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12"
+    },
+    {
+      "path": "heat/workspace/inputs/revision-fine-temperature.csv",
+      "bytes": 76526,
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73"
+    },
+    {
+      "path": "heat/workspace/inputs/sizing-decision.json",
+      "bytes": 5943,
+      "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a"
+    },
+    {
+      "path": "heat/workspace/revision-coarse.csv",
+      "bytes": 13526,
+      "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12"
+    },
+    {
+      "path": "heat/workspace/revision-fine.csv",
+      "bytes": 76526,
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73"
+    },
+    {
+      "path": "heat/workspace/runs/heat-validation/20260916T214050Z-bc54d4d37243.json",
+      "bytes": 58302,
+      "sha256": "dab31ec01c04b031d77ff568b6dff3f875989899dc82d608194e9db565fb630a"
+    },
+    {
+      "path": "heat/workspace/sizing-decision.json",
+      "bytes": 5943,
+      "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a"
+    },
+    {
+      "path": "heat/workspace/validation/assessment-dadcac109d70423992bd47228ca54d45.json",
+      "bytes": 52717,
+      "sha256": "dce3a6ab56af3747a77d0abde85686404f6b668d6f10f45682f85ab3af6649fd"
+    },
+    {
+      "path": "jig/events.json",
+      "bytes": 38763,
+      "sha256": "85970e67046e8b8085e62e99426cfc9dcf063c4b5441b09fd38beda1593c95c8"
+    },
+    {
+      "path": "jig/evidence.json",
+      "bytes": 28394,
+      "sha256": "f63ff9de80876446a55ad66878771d32e96631fa447210dc4a47caeba6fcf3bf"
+    },
+    {
+      "path": "jig/mcp-tools.json",
+      "bytes": 1700,
+      "sha256": "1f39cc8f3d08f76d781c409e3413651f02e386fd44201f781b54f2888097faf9"
+    },
+    {
+      "path": "jig/result.json",
+      "bytes": 32497,
+      "sha256": "7aa3b5bdfb49cc53cc96bf7ef735ddbfa527e89a5830c71ce95f6fd03656500e"
+    },
+    {
+      "path": "jig/snapshots/jig-attempt-1.step",
+      "bytes": 22595,
+      "sha256": "db5b8217606a9f190fbd7a445f84dc3c9fe94cd2dc4cb1ca3d215d2875e3309f"
+    },
+    {
+      "path": "jig/snapshots/jig-attempt-2.step",
+      "bytes": 22595,
+      "sha256": "030e0b4ecbda1ae629439dccc14aa81020a52220ac2341f23b7105f7f3633c76"
+    },
+    {
+      "path": "jig/workspace/.gitignore",
+      "bytes": 77,
+      "sha256": "0d8ce0ecef224db9712ebc1094f71bf387ad26b5768d457c005300f371fd32cc"
+    },
+    {
+      "path": "jig/workspace/engineering_validation_mcp.py",
+      "bytes": 4226,
+      "sha256": "5cfba8982a92391de5f46da3178b63c8071bde896a367af1f055f2b8a81128b8"
+    },
+    {
+      "path": "jig/workspace/jig-release-note.txt",
+      "bytes": 100,
+      "sha256": "d0339948fdc2a776ae1b2e01ed57fab3c6cdc70782c8f39daecf7808fc326dae"
+    },
+    {
+      "path": "jig/workspace/jig-validation-loop.workflow.wflow",
+      "bytes": 3389,
+      "sha256": "84de8da3f4af074302835ac17e597688588222cf34b383c4464aa36b91d86e3c"
+    },
+    {
+      "path": "jig/workspace/jig.step",
+      "bytes": 22595,
+      "sha256": "030e0b4ecbda1ae629439dccc14aa81020a52220ac2341f23b7105f7f3633c76"
+    },
+    {
+      "path": "jig/workspace/runs/jig-validation-loop/20260916T213913Z-0dcb0cfc544f.json",
+      "bytes": 76534,
+      "sha256": "01f6387dff0a7fc5170040a3f9f83fa8004c7f7be4ed68464e617cc1a8da8640"
+    },
+    {
+      "path": "jig/workspace/validation/assessment-784aa83e624c471daf66cf8d9c2247bb.json",
+      "bytes": 30684,
+      "sha256": "5ac07c004cf88ea9ff3d17decfdbb152e6c8a5ff839222ec25620764f54006be"
+    },
+    {
+      "path": "jig/workspace/validation/assessment-e629d4174e524959a9191a22ba596d31.json",
+      "bytes": 25827,
+      "sha256": "e44663dbf0aa507c92470fe5d22aa5d3afddfc4a84be02cf40d6997684e90d47"
+    }
+  ]
+}

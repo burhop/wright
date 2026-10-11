@@ -1,0 +1,95 @@
+{
+  "schema": "wright-heat-geometry-analysis-correspondence-v1",
+  "operation": "3D P1 tetrahedral scikit-fem conduction",
+  "cases": [
+    {
+      "case_id": "baseline_40",
+      "geometry": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40.step",
+        "sha256": "58e7e019326e09faf0d0b8011b385e6216f970595b93a0f24c94ebb8f90fb4dc"
+      },
+      "solver_input": {
+        "case_id": "baseline_40",
+        "length_mm": "100",
+        "width_mm": "40",
+        "thickness_mm": "2",
+        "conductivity_w_mk": "200",
+        "density_kg_m3": "2700",
+        "heat_input_w": "4",
+        "cold_face_temperature_c": "25",
+        "limit_c": "45"
+      },
+      "fields": {
+        "coarse": {
+          "csv": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.csv",
+            "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+            "bytes": 13526
+          },
+          "vtu": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+            "sha256": "c02be52b9e78e6a06234e3f560984934f546da0754c9bb28a15d1c353b6fd2e6",
+            "bytes": 4383
+          }
+        },
+        "fine": {
+          "csv": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.csv",
+            "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+            "bytes": 76526
+          },
+          "vtu": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+            "sha256": "a65a7e08a01f96e86a9ed1274ee396e510d832bcddb79cf84b9ebc186c670797",
+            "bytes": 29200
+          }
+        }
+      }
+    },
+    {
+      "case_id": "revision_60",
+      "geometry": {
+        "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60.step",
+        "sha256": "a98b1700811f78a73700843a79b1088accb5a5d7f6bcdc7630c20964de59422b"
+      },
+      "solver_input": {
+        "case_id": "revision_60",
+        "length_mm": "100",
+        "width_mm": "60",
+        "thickness_mm": "2",
+        "conductivity_w_mk": "200",
+        "density_kg_m3": "2700",
+        "heat_input_w": "4",
+        "cold_face_temperature_c": "25",
+        "limit_c": "45"
+      },
+      "fields": {
+        "coarse": {
+          "csv": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.csv",
+            "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+            "bytes": 13526
+          },
+          "vtu": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+            "sha256": "c127479729f46f66ca5b1f9ace7412535f4e86ab01fb024f42281258524d6fea",
+            "bytes": 4427
+          }
+        },
+        "fine": {
+          "csv": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.csv",
+            "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+            "bytes": 76526
+          },
+          "vtu": {
+            "path": "/workspace/process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+            "sha256": "4674660d7ccf117959521c2ab5fc59e61dc4f8edfecbc1b326247ca144813d07",
+            "bytes": 29260
+          }
+        }
+      }
+    }
+  ],
+  "claim": "The listed field files were generated from the measured dimensions and SHA-256 identity of the listed same-attempt STEP. This digital identity check does not establish physical thermal performance."
+}

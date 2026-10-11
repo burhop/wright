@@ -1,0 +1,53 @@
+{
+  "http": 202,
+  "context": {
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/heat-spreader-sizing-live-default-model-001.workflow.wflow",
+      "source_digest": "4208d4194fcf8273e32262bf5c263ea51cc47fa67f2176f751005f869ed4466c",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "86533be67a404058bc21a633146bd598",
+    "input_snapshot_id": "inputs-00fc404978f64cd7ab146d83c1f31fce",
+    "input_digest": "9f57ad47ecd54ac4b8cab9fb2c30aec0deccebd7cce39efd7406ee83211b8bd8",
+    "cursor": 8,
+    "generated_at": "2026-10-02T02:50:01.375183+00:00"
+  },
+  "state_at_ack": "waiting_human",
+  "interactions": [
+    {
+      "checkpoint_id": "checkpoint-034718d47328d52cded70cf3",
+      "step_id": "review_basis_live_default_model_001",
+      "kind": "action",
+      "subject_digest": "e0e8147916a83ea769a3282c90582df1896062f0a5f12a3240cf101cb450ed3b",
+      "instructions": "Review the exact process action and its evidence before continuing.",
+      "response_schema": null,
+      "decisions": [
+        "approved",
+        "changes_requested"
+      ],
+      "evidence": [],
+      "state": "consumed",
+      "decision": {
+        "decision": "approved",
+        "actor": "integration_test:083-private-digital-heat-005",
+        "reason": "Integration campaign 083-private-digital-heat-005 policy 0d5fa7c88f97f57101ddee844ead11ea90ebf76a0a955c90c977fec5bf5f894a",
+        "request_id": "synthetic-basis-review-001",
+        "integration_test": true
+      },
+      "action_receipt": {
+        "request_id": "793268a7-f728-42ac-993b-d0de9b2ccd0f",
+        "principal_id": "local-control-plane",
+        "submission": "accepted",
+        "delivery_completed": true,
+        "observed_outcome": null,
+        "provider_reference": null,
+        "cancellation_requested": false,
+        "cancellation_outcome": null
+      }
+    }
+  ],
+  "physical_dispatch": false,
+  "engineering_acceptance": false
+}

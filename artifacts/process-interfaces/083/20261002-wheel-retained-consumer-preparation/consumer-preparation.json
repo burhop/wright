@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "feature": "083-process-working-interfaces",
+  "status": "prepared_not_executed",
+  "template_id": "printed-replacement-part",
+  "attempt": "retained-consumer-001",
+  "source_path": "process-proofs/printed-replacement-part/retained-consumer-001/prepared.workflow.wflow",
+  "accepted_source_path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+  "source_acceptance_required": true,
+  "source_sha256": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+  "template_source_sha256": "5640e9e81b19a6c62691a330a34e2e178d1c5dbbcd94237b08c638c508f371cf",
+  "input_files": [
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/concept.png",
+      "sha256": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861",
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.png"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/concept.svg",
+      "sha256": "1fb9bf77664878cf31776ab2f03ad60b98734060974aadd24fb1a52ed0a0c50c",
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/concept.svg"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/context.md",
+      "sha256": "89fb96796f499c0412d1eeacb8e27c855ce331cae0f36f9f9a236d13460f43ff",
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/context.md"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/prompt.txt",
+      "sha256": "818f0b80f8417670c7d8b7a1af4514cbf4bb41236ae0848c80820d663f116631",
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/prompt.txt"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/scenario.json",
+      "sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2",
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/scenario.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/user-profile.md",
+      "sha256": "50b8333fa3bb3f8950003189af6f080200b349a5a8ad2e45d8e310e4e68bc15f",
+      "original": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/user-profile.md"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/requirements.md",
+      "sha256": "62964f873c9879894db2726be4f56cee3ff426246cdaa31e30255ce010065df7",
+      "original": null
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/geometry-capability-guidance.md",
+      "sha256": "f3c24bc2da50391e5d9e53592509b0ce25c7315f461a8ad2de2f51d782fe266b",
+      "original": null
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/machine-profile.json",
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-001\\provider-profiles\\machine-profile.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/process-profile.json",
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-001\\provider-profiles\\process-profile.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/filament-profile.json",
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-001\\provider-profiles\\filament-profile.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/configured-geometry-basis.json",
+      "sha256": "b5086429844a756e39a9e227cbc3d7c88183214a50c219214106f08e774e2b6e",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-014\\configured-geometry-basis.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/construction-provider-arguments.json",
+      "sha256": "ae70ac7cd242084c97a3c4511dffea055c8c0262945fb74d99e0f282a02f101c",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-live-014\\construction-provider-arguments.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/repair-provider-arguments.json",
+      "sha256": "b1c4bc2289a8fd5ce88b534b2eb4c5eda9bf35b9333b94e81830ba9d39936ace",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-retained-consumer-001\\repair-provider-arguments.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/slice-call.json",
+      "sha256": "a20ed2d415977a30e1b40507b9095156fcf540d697cd4573a3b22032e1d0427b",
+      "original": null
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/passive-representations.py",
+      "sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+      "original": "packages/workspace_service/src/workspace_service/process_interfaces/representations.py"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/inspect_manufacturing_package.py",
+      "sha256": "e340e87d48c120ee618dd3e56ac9c3e8e91004b126e37aa2ad601c3da68fbd6c",
+      "original": "scripts/engineering/inspect_manufacturing_package.py"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/inspection-call.json",
+      "sha256": "d66c54f8a70697d7596ce09f0d74e59a0181f50b162bdbd830ca5a6fe1d10610",
+      "original": null
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/retained-source.stl",
+      "sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18",
+      "original": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t047-heat-live-005\\process-proofs\\printed-replacement-part\\live-default-model-014\\outputs\\source_mesh.stl"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/retained-construction-observations.json",
+      "sha256": "719bd43690de663da28fd54b04f5f3e84f55b721974c44781bb2188bc5157e3d",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-retained-consumer-001\\construction-observations.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/retained-producer-origin.json",
+      "sha256": "776794cd0a57618dfb2242b7f5ccc569f4e5265d1134eb9dbf82bd20c03e2c2f",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-retained-consumer-001\\producer-origin.json"
+    },
+    {
+      "path": "process-proofs/printed-replacement-part/retained-consumer-001/inputs/retained-repair-call.json",
+      "sha256": "b1c4bc2289a8fd5ce88b534b2eb4c5eda9bf35b9333b94e81830ba9d39936ace",
+      "original": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t047-printed-retained-consumer-001\\repair-provider-arguments.json"
+    }
+  ],
+  "output_root": "process-proofs/printed-replacement-part/retained-consumer-001/outputs",
+  "tool_allowlist": [
+    {
+      "server_id": "proof-083-blender-wheel-001",
+      "name": "proof-083-blender-wheel-001__execute_blender_code",
+      "schema_digest": "dfd1ca59b91d0193c495fe116c4c8624f338c45ba816b37f533cd42773cccef1"
+    },
+    {
+      "server_id": "wright-workspace-files",
+      "name": "wright-workspace-files__write_text_document",
+      "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12"
+    },
+    {
+      "server_id": "wright-workspace-files",
+      "name": "wright-workspace-files__inspect_file",
+      "schema_digest": "b0c9ce7a52c766833056df2615e0a29e4d11641d639b91174da51c8ac9cc330a"
+    },
+    {
+      "server_id": "proof-083-slicer-wheel-001",
+      "name": "proof-083-slicer-wheel-001__slice_model_file",
+      "schema_digest": "53bd2aebef4edebf76c41a565079a0a1419f47ececf834d6fe2dc996a370c460"
+    },
+    {
+      "server_id": "proof-083-oasis",
+      "name": "proof-083-oasis__run_simulation",
+      "schema_digest": "d00af216c4eccc4b64ad13c0aee9da9ced7260edc8347e4be471e0c8ead48646"
+    }
+  ],
+  "step_count": 10,
+  "physical_dispatch": false,
+  "approval_policy_not_enrolled": true,
+  "engineering_acceptance": false
+}

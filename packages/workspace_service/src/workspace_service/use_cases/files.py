@@ -165,6 +165,27 @@ class WorkspaceFileUseCases:
             "workspace.files.reference", work, timeout_seconds=self._timeout
         )
 
+    async def read_bytes(
+        self, workspace_dir: str, path: str, *, maximum_bytes: int
+    ) -> bytes:
+        """Confined binary/text read with an owning caller's explicit finite bound."""
+        from ..workspace_path import WorkspacePath
+
+        if type(maximum_bytes) is not int or not 0 < maximum_bytes <= 100 * 1024 * 1024:
+            raise ValueError("File reads require a bound no larger than 100 MiB.")
+
+        def work():
+            target = WorkspacePath(workspace_dir).resolve(path, must_exist=True)
+            with target.open("rb") as stream:
+                content = stream.read(maximum_bytes + 1)
+            if len(content) > maximum_bytes:
+                raise ValueError("The file exceeds this reader's supported size.")
+            return content
+
+        return await self._executor.run(
+            "workspace.files.bounded_read", work, timeout_seconds=self._timeout
+        )
+
     async def hash_reference(self, workspace_dir: str, path: str) -> str:
         """Verify checkpoint bytes without applying the document-loading limit."""
         from ..workspace_file_identity import workspace_file_sha256

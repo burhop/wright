@@ -1,0 +1,19 @@
+{
+  "run_id": "9e96b255a24b44fda968ec10a5b2ed73",
+  "source_digest": "66100986382b98449bb49ce200d5aef761d0e116a83b71af77af65d316c45fae",
+  "workspace_checks": 9,
+  "declared_wait_and_reload": true,
+  "synthetic_basis_review": true,
+  "continuation_http": 202,
+  "completed_native_construction": true,
+  "source_stl_sha256": "7517df4b70b093f6a3ef4dfbb831af83fd6a77c0e403855a8d3b791094afeeaf",
+  "source_stl_bytes": 3054784,
+  "source_triangles": 61094,
+  "consumer_started_with_verified_file_dependency": true,
+  "repair_completed": false,
+  "slice_completed": false,
+  "scope_limit": "Snapshot after source completion and repair start; later outcomes are separate. Provider geometry observations are not independent feature/fit/strength acceptance.",
+  "prior_editor_failure_retained": true,
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false
+}

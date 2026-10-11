@@ -1,0 +1,94 @@
+{
+  "source_commit": "bcbb31c7",
+  "workspace_id": "083-printed-repeat-015",
+  "source_digest": "9c782e103202a11bef40a94faa03c6d58eb35d890fdd3653659a78eff9895b82",
+  "failed_runs": [
+    "86289015177e4d55ab93460101ec1d43",
+    "0a81a465287248d5a2a79a17519f7c74"
+  ],
+  "run_status": "failed",
+  "run_code": "MODEL_UNAVAILABLE",
+  "actual_repair_completed": false,
+  "actual_slice_completed": false,
+  "actual_source_gate_executed": false,
+  "outputs_per_run": 2,
+  "frozen_files_per_run": [
+    22,
+    22
+  ],
+  "ui_id": "ui-ee4c80bbdfad4b2d9468b37a4dbc0451",
+  "latest_revision": "revision-35cac9bd65794c36a408135a71ac0a65",
+  "unchanged_saved_assets": 6,
+  "authoring_table_row_counts": {
+    "process_ui_authoring_jobs": 2,
+    "process_ui_authoring_records": 10
+  },
+  "authoring_default_model": "gpt-5.6-sol",
+  "adapter": "hermes",
+  "reports": {
+    "first-authoring-default-source-stop": {
+      "overall": "blocked",
+      "passed": 13,
+      "blocked": 1
+    },
+    "focused-update": {
+      "overall": "pass",
+      "passed": 13,
+      "blocked": 0
+    },
+    "saved-waiting-reuse": {
+      "overall": "pass",
+      "passed": 10,
+      "blocked": 0
+    },
+    "first-representation-assumption": {
+      "overall": "blocked",
+      "passed": 9,
+      "blocked": 1
+    },
+    "first-url-focus-assumption": {
+      "overall": "blocked",
+      "passed": 11,
+      "blocked": 1
+    },
+    "owned-view-capacity-stop": {
+      "overall": "blocked",
+      "passed": 10,
+      "blocked": 1
+    },
+    "first-editor-identity-assumption": {
+      "overall": "blocked",
+      "passed": 11,
+      "blocked": 1
+    },
+    "exact-partial-result-navigation": {
+      "overall": "pass",
+      "passed": 12,
+      "blocked": 0
+    }
+  },
+  "common_tailored_result_ids": [
+    "86289015177e4d55ab93460101ec1d43:create_mesh_repeatable_default_015:source_mesh",
+    "86289015177e4d55ab93460101ec1d43:define_geometry_basis_repeatable_default_015:define_geometry_basis_repeatable_default_015_result"
+  ],
+  "browser_execution_mutations": [],
+  "diagnostics": {
+    "console": [],
+    "pageErrors": [],
+    "failedResponses": []
+  },
+  "configured_operation_preparation_verified": true,
+  "configured_operation_live_source_gate_verified": false,
+  "affected_backend_and_example_tests": 202,
+  "focused_authoring_tests": 48,
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "limits": [
+    "Both printed repair AI tasks timed out; partial geometry is not a complete package.",
+    "New configured-operation preparation passed controlled tests; fresh live execution remains required.",
+    "Selected cached provider installations are not fresh clean provider qualification.",
+    "Source-served browser evidence is not current installed-build acceptance.",
+    "Other Feature083 obligations remain open."
+  ]
+}

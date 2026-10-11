@@ -417,7 +417,7 @@ def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
 
 def test_full_merge_gate_does_not_reinstall_live_frontend_dependencies() -> None:
     gate = _read("scripts/check-dev-merge.sh")
-    frontend_build = "run npm run build --workspace=apps/web"
+    frontend_build = "npm run build --workspace=apps/web"
     native_package_build = (
         'run env WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1 PYTHON="$PYTHON_BIN" '
         "scripts/build-python-distributions.sh --dist-root "
@@ -426,6 +426,18 @@ def test_full_merge_gate_does_not_reinstall_live_frontend_dependencies() -> None
     assert gate.count(frontend_build) == 1
     assert native_package_build in gate
     assert gate.index(frontend_build) < gate.index(native_package_build)
+    build_step = gate[
+        gate.rfind("run env", 0, gate.index(frontend_build)) : gate.index(
+            frontend_build
+        )
+    ]
+    for flag in (
+        "VITE_WRIGHT_PROCESS_DEFINITION_VIEW",
+        "VITE_WRIGHT_WORKFLOW_COMPOSER",
+        "VITE_WRIGHT_WORKFLOW_RECOVERY",
+        "VITE_WORKSPACE_SURFACES_ENABLED",
+    ):
+        assert f"{flag}=1" in build_step
 
 
 def test_codeql_cancels_superseded_runs_and_skips_generated_bundles() -> None:

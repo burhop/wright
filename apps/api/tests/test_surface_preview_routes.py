@@ -267,6 +267,7 @@ class _Tokens:
             session_id="session-1",
             surface_id="surface-1",
             source_id="server-1",
+            source_version="a" * 64,
             instance_id="instance-1",
             generation=3,
             effective_origin=ORIGIN,
@@ -309,6 +310,7 @@ def test_route_authority_revalidates_cookie_generation_and_immutable_pin() -> No
     route = authority.authorize(host=HOST, cookie="C")
     assert route.authority_valid()
     assert route.target_valid()
+    assert route.source_version == "a" * 64
     route.activity()
     assert manager.activities == 1
 

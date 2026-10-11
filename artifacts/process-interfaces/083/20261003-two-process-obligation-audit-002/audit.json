@@ -1,0 +1,172 @@
+{
+  "source_commit": "1d529f0e7ea14e0d8e9a27f4dbd9f92eaffa928b",
+  "scope": "Read-only retained engineering, UI and frozen-profile evidence audit",
+  "fresh_provider_execution": false,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "packages": {
+    "20261003-configured-preparation-and-saved-reuse-verified": {
+      "files_checked": 282,
+      "inventory_sha256": "5a24c7592b8f07a627b541d3b1b39d19114eccd59f213f3ce6e2008cd7de3f6f"
+    },
+    "20261003-heat-repeat-and-saved-ui-verified": {
+      "files_checked": 268,
+      "inventory_sha256": "85fae47b4ac309055fefc65743f97eeb03c1ec33fd452c628cea1982409e21ea"
+    }
+  },
+  "report_structure": [
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/actual-model-authoring",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 13
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/actual-model-focused-update",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 13
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/first-run-exact-output-parity",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 15
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/saved-second-run-waiting-reuse",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 10
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/second-run-capacity-stop",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 10
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/second-run-exact-output-parity",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 15
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/second-run-self-digest-assumption",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 12
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/actual-generation",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 13
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/complete-repeat-reuse",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 13
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/first-complete-producer-selector",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 12
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/first-complete-viewer-assumption",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 9
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/first-model-timeout",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 9
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/first-reuse-loading-stop",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 7
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/first-setup-stop",
+      "validation": "passed",
+      "recorded_outcome": "blocked",
+      "passed_steps": 1
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/focused-update",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 13
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/saved-waiting-reuse",
+      "validation": "passed",
+      "recorded_outcome": "pass",
+      "passed_steps": 10
+    }
+  ],
+  "printed-replacement-part": {
+    "original_profile_path": "packages/workspace_service/src/workspace_service/process_validation/profiles/printed-replacement-part-01.json",
+    "original_profile_sha256": "3950b7e088a9eb9c3f3b51971db8b4a1813feece448f1c7517a7fa98f7d51d7a",
+    "assessments": [
+      {
+        "assessment_id": "assessment-da4a53f1a99f4c0b95358956e3dce7cf",
+        "assessment_file_sha256": "dae29eb07428b4abd4bb35f2c481f52001b992deb991432c3f591622ad4f4c88",
+        "original_profile_exactly_equal": true,
+        "passing_checks": 17,
+        "held_check": "engineering-review",
+        "release_eligible": false
+      },
+      {
+        "assessment_id": "assessment-5f34914203794f148d653c47e99f98d4",
+        "assessment_file_sha256": "6334d47afb6442a5028171d1ba706d6c5c9d89bbb8f9c46ae77ea2d8a93a3042",
+        "original_profile_exactly_equal": true,
+        "passing_checks": 17,
+        "held_check": "engineering-review",
+        "release_eligible": false
+      }
+    ]
+  },
+  "heat-spreader-sizing": {
+    "original_profile_path": "packages/workspace_service/src/workspace_service/process_validation/profiles/heat-spreader-sizing-01-full.json",
+    "original_profile_sha256": "33859475386debc00c574f54cb09d5ddc0a95933b8da2872104219c87ac35122",
+    "assessments": [
+      {
+        "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+        "assessment_file_sha256": "d6c833a6106119a204a509a3248a4542ec4a64a69802256f97c623117067df3b",
+        "original_profile_exactly_equal": true,
+        "passing_checks": 25,
+        "held_check": "basis-review",
+        "release_eligible": false
+      }
+    ]
+  },
+  "retained_audit_failure": {
+    "path": "artifacts/process-interfaces/083/20261003-two-process-obligation-audit/failure.json",
+    "cause": "Audit harness assumed both original profiles used the same human-review check ID. Printed uses engineering-review; Heat uses basis-review. Exact original profiles and blocked states are preserved."
+  },
+  "visually_inspected": [
+    "second-run-exact-output-parity/screenshots/raw/S10.png: actual repaired wheel, grid, artifact locator, preview limitation",
+    "second-run-exact-output-parity/screenshots/raw/S10T.png: 90 nominal layers, support/model/unclassified controls, excluded-machine-scope limitation",
+    "second-run-exact-output-parity/screenshots/raw/S11.png: exact repair producer selected, preserved editor and actual output inspector"
+  ],
+  "task_disposition": {
+    "T045": "satisfied: example/bindings and normal shared workspace entry retain original assignment and full profile",
+    "T047": "satisfied: both actual isolated chains plus actual-model generation/update/save/reuse and exact handoff/view parity",
+    "T043": "open: fresh selected-provider qualification has remaining scope",
+    "T048_T049_T052_T053_T056_T057": "separate migration/platform/audit obligations remain open"
+  },
+  "limits": [
+    "Recorded source-served proof is not final current installed/editor/accessibility acceptance.",
+    "Human review remains blocked; no physical/critic acceptance is implied.",
+    "Configured printed geometry is a qualified supplied recipe, not arbitrary prompt modelling.",
+    "Nominal toolpaths exclude startup/shutdown; serial CAD project reuse is not concurrency proof."
+  ]
+}

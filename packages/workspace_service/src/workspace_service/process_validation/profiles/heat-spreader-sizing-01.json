@@ -1,0 +1,733 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "heat-spreader-sizing-01-fields",
+  "version": "1",
+  "baseline": {
+    "id": "heat-spreader-sizing-01-basis",
+    "version": "1",
+    "requirements": [
+      {
+        "id": "HEAT-FIELDS",
+        "text": "Both 40 mm and 60 mm candidates retain actual coarse and refined numerical temperature fields with the declared dimensions.",
+        "scope": "content",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+            "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+            "locator": "rows:baseline_40,revision_60"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Geometry and boundary definitions"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "HEAT-ANALYTICAL",
+        "text": "Each field's numerical temperature rise agrees within 2% of Q*L/(k*W*t) using 4 W, 100 mm, 2 mm, k=200 W/(m K), and a 25 C cold face.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+            "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+            "locator": "rows:baseline_40,revision_60"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Geometry and boundary definitions"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "HEAT-BALANCE",
+        "text": "Each refined field implies heat removal within 1% of the 4 W source under the declared one-dimensional model.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+            "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+            "locator": "rows:baseline_40,revision_60"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Geometry and boundary definitions"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "HEAT-REFINEMENT",
+        "text": "Coarse-to-refined hot-end temperature-rise sensitivity is at most 2% for each candidate.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Reporting policy"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "HEAT-BASELINE-OUTCOME",
+        "text": "The 40 mm candidate exceeds the 45 C limit in the declared model, so it is not selected.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+            "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+            "locator": "rows:baseline_40,revision_60"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Geometry and boundary definitions"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "HEAT-REVISION-OUTCOME",
+        "text": "The 60 mm candidate is at or below the inclusive 45 C limit in the declared model.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+            "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+            "locator": "rows:baseline_40,revision_60"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Geometry and boundary definitions"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      },
+      {
+        "id": "HEAT-SELECTION",
+        "text": "The sizing decision selects the narrowest bound candidate at or below 45 C: revision_60.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md",
+            "sha256": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+            "locator": "Engineering objective and shop capability"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv",
+            "sha256": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+            "locator": "width_mm,limit_c"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      }
+    ],
+    "unresolved_decisions": [],
+    "amendments": []
+  },
+  "checks": [
+    {
+      "id": "baseline_coarse-field",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "subject_role": "baseline_coarse",
+      "reader": "thermal-field",
+      "selector": "field/node_count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 2.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "field_nodes"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "baseline_coarse-analytical",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "subject_role": "baseline_coarse",
+      "reader": "thermal-field",
+      "selector": "field/analytical_relative_rise_error",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.02,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "analytical_relative_error"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "baseline_fine-field",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "subject_role": "baseline_fine",
+      "reader": "thermal-field",
+      "selector": "field/node_count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 2.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "field_nodes"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "baseline_fine-analytical",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "subject_role": "baseline_fine",
+      "reader": "thermal-field",
+      "selector": "field/analytical_relative_rise_error",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.02,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "analytical_relative_error"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "baseline-fine-balance",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-BALANCE"
+      ],
+      "subject_role": "baseline_fine",
+      "reader": "thermal-field",
+      "selector": "field/relative_heat_imbalance",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.01,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "heat_balance_relative"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "baseline-refinement",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-REFINEMENT"
+      ],
+      "subject_role": "baseline_fine",
+      "reader": "thermal-field",
+      "selector": "field/refinement_relative_sensitivity",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.02,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "refinement_relative",
+        "coarse_role": "baseline_coarse",
+        "related_roles": [
+          "baseline_coarse"
+        ]
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "baseline-maximum",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-BASELINE-OUTCOME"
+      ],
+      "subject_role": "baseline_fine",
+      "reader": "thermal-field",
+      "selector": "field/maximum_temperature_c",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 45.0,
+        "maximum": null,
+        "inclusive": false
+      },
+      "unit": "degC",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          40.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 40.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "maximum_temperature"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision_coarse-field",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "subject_role": "revision_coarse",
+      "reader": "thermal-field",
+      "selector": "field/node_count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 2.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "field_nodes"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision_coarse-analytical",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "subject_role": "revision_coarse",
+      "reader": "thermal-field",
+      "selector": "field/analytical_relative_rise_error",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.02,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "analytical_relative_error"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision_fine-field",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-FIELDS"
+      ],
+      "subject_role": "revision_fine",
+      "reader": "thermal-field",
+      "selector": "field/node_count",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 2.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "field_nodes"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision_fine-analytical",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-ANALYTICAL"
+      ],
+      "subject_role": "revision_fine",
+      "reader": "thermal-field",
+      "selector": "field/analytical_relative_rise_error",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.02,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "analytical_relative_error"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision-fine-balance",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-BALANCE"
+      ],
+      "subject_role": "revision_fine",
+      "reader": "thermal-field",
+      "selector": "field/relative_heat_imbalance",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.01,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "heat_balance_relative"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision-refinement",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-REFINEMENT"
+      ],
+      "subject_role": "revision_fine",
+      "reader": "thermal-field",
+      "selector": "field/refinement_relative_sensitivity",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.02,
+        "inclusive": true
+      },
+      "unit": "1",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "refinement_relative",
+        "coarse_role": "revision_coarse",
+        "related_roles": [
+          "revision_coarse"
+        ]
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "revision-maximum",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-REVISION-OUTCOME"
+      ],
+      "subject_role": "revision_fine",
+      "reader": "thermal-field",
+      "selector": "field/maximum_temperature_c",
+      "constraint": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 45.0,
+        "inclusive": true
+      },
+      "unit": "degC",
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "dimensions_mm": [
+          100.0,
+          60.0,
+          2.0
+        ],
+        "length_mm": 100.0,
+        "width_mm": 60.0,
+        "thickness_mm": 2.0,
+        "conductivity_w_mk": 200.0,
+        "heat_input_w": 4.0,
+        "cold_temperature_c": 25.0,
+        "operation": "maximum_temperature"
+      },
+      "applicability_reason": null
+    },
+    {
+      "id": "candidate-selection",
+      "version": "1",
+      "requirement_ids": [
+        "HEAT-SELECTION"
+      ],
+      "subject_role": "decision",
+      "reader": "thermal-field",
+      "selector": "decision/selected_case_id",
+      "constraint": {
+        "operator": "equals",
+        "expected": "revision_60",
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "unit": null,
+      "frame": null,
+      "evidence_method": "independent_measurement",
+      "parameters": {
+        "operation": "selection",
+        "temperature_limit_c": 45.0,
+        "cases": [
+          {
+            "id": "baseline_40",
+            "role": "baseline_fine",
+            "width_mm": 40.0,
+            "dimensions_mm": [
+              100.0,
+              40.0,
+              2.0
+            ]
+          },
+          {
+            "id": "revision_60",
+            "role": "revision_fine",
+            "width_mm": 60.0,
+            "dimensions_mm": [
+              100.0,
+              60.0,
+              2.0
+            ]
+          }
+        ],
+        "related_roles": [
+          "baseline_fine",
+          "revision_fine"
+        ]
+      },
+      "applicability_reason": null
+    }
+  ],
+  "excluded_scope": [
+    "Convection, radiation, interfaces, fasteners, local chip footprint, temperature-dependent properties and transient behavior are outside the source model.",
+    "STEP geometry topology, manufacturing details and material procurement are not acceptance checks in this profile."
+  ],
+  "limitations": [
+    "The source is a synthetic constant-property one-dimensional conduction case; passing does not establish physical thermal qualification.",
+    "Uniform end loading yields a linear field, so refinement agreement is a data-lineage check rather than independent validation of model physics."
+  ],
+  "supported_kinds": [
+    "file"
+  ]
+}

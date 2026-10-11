@@ -1,0 +1,114 @@
+{
+  "title": "Compact printed editor, common view and read-only preview continuation",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-03T13:52:49.835Z",
+  "manualSteps": [
+    {
+      "label": "Open saved interface",
+      "instruction": "Open the saved working-interface link for the proof run."
+    },
+    {
+      "label": "Desktop preference",
+      "instruction": "At desktop width, open Workspace Files."
+    },
+    {
+      "label": "Compact navigation",
+      "instruction": "Resize to480px. Open Files, then close with Escape, Close or clicking the shaded space to the right of Files."
+    },
+    {
+      "label": "Restore",
+      "instruction": "Resize back to1440px and check the file panel returns."
+    },
+    {
+      "label": "Editor",
+      "instruction": "At compact width click Open workflow and inspect Diagram and Source."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Updated installed workspace",
+      "summary": "The updated package opens through the normal workspace.",
+      "purpose": "Verify the owning workspace, not a detached UI route.",
+      "action": "Open the isolated workspace.",
+      "controls": [
+        "Workflows",
+        "Workspace Files"
+      ],
+      "expected": "Existing workspace navigation visible.",
+      "actual": "Normal Workflows and Files controls are available.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Saved engineering interface and desktop navigation",
+      "summary": "The same exact results render with the desktop file panel open.",
+      "purpose": "Establish saved identity and desktop preference before compact resizing.",
+      "action": "Open the saved working link; click Workspace Files if closed.",
+      "controls": [
+        "Workspace Files",
+        "Working tab"
+      ],
+      "expected": "Exact recorded results and docked navigation.",
+      "actual": "20 exact result identities; docked file panel 260px wide.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Compact accessibility and editor return",
+      "summary": "Navigation passes the scoped accessibility scan and Open workflow returns to the existing editor.",
+      "purpose": "Preserve the complementary editor journey and accessible compact controls.",
+      "action": "Open Files, scan navigation, close it and click Open workflow.",
+      "controls": [
+        "Workspace Files",
+        "Open workflow",
+        "Diagram",
+        "Source",
+        "Use saved process"
+      ],
+      "expected": "Zero scoped automated violations and existing editor available.",
+      "actual": "Navigation has zero WCAG A/AA violations; Diagram, Source and Use saved process remain available.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Compact common working view",
+      "summary": "The common view shows the same exact engineering outputs at the available compact width.",
+      "purpose": "Prove shared layout applies to the common fallback as well as the saved interface.",
+      "action": "Open the saved working interface and click Use common working view.",
+      "controls": [
+        "Use common working view",
+        "Open workflow"
+      ],
+      "expected": "Same exact recorded results; full available width and no outer overflow.",
+      "actual": "20 exact common results; document 432px with 432px scroll width.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Compact read-only preview",
+      "summary": "The preview remains a workspace tab, with the same results and accessible Files navigation.",
+      "purpose": "Verify exact backend read-only scope and compact presentation without compilation or execution.",
+      "action": "Open the retained preview link; open Files and close with Escape.",
+      "controls": [
+        "Preview tab",
+        "Workspace Files",
+        "Open workflow"
+      ],
+      "expected": "Read-only preview of the same UI revision/run and exact results; navigation return works.",
+      "actual": "Backend read-only binding and 20 exact results verified; preview has the available width and Files returns focus.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    }
+  ]
+}

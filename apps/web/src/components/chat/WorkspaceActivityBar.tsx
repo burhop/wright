@@ -7,7 +7,6 @@ import {
   BackIcon,
   MCPIcon,
   BookOpenIcon,
-  BrepIcon,
   WorkflowIcon,
 } from "../common/Icons";
 
@@ -20,12 +19,11 @@ interface WorkspaceActivityBarProps {
   onBack: () => void;
   onSelectSidebar: (sidebar: WorkspaceSidebarId) => void;
   onOpenWorkflows?: () => void;
-  onOpenBrepPanel: () => void;
   workflowsEnabled?: boolean;
 }
 
 const items: Array<{
-  id: WorkspaceSidebarId | "workflows" | "brep";
+  id: WorkspaceSidebarId | "workflows";
   testId: string;
   title: string;
   icon: (size: number) => ReactElement;
@@ -41,12 +39,6 @@ const items: Array<{
     testId: "activity-bar-workflows-btn",
     title: "Workflows",
     icon: (size) => <WorkflowIcon size={size} />,
-  },
-  {
-    id: "brep",
-    testId: "activity-bar-brep-btn",
-    title: "Start BREP",
-    icon: (size) => <BrepIcon size={size} />,
   },
   {
     id: "marketplace",
@@ -91,7 +83,6 @@ export function WorkspaceActivityBar({
   onBack,
   onSelectSidebar,
   onOpenWorkflows,
-  onOpenBrepPanel,
   workflowsEnabled = false,
 }: WorkspaceActivityBarProps) {
   return (
@@ -121,7 +112,7 @@ export function WorkspaceActivityBar({
         .filter((item) => item.id !== "workflows" || workflowsEnabled)
         .map((item) => {
           const isActive =
-            item.id !== "brep" &&
+            item.id !== "workflows" &&
             !isSidebarCollapsed &&
             activeSidebar === item.id;
           return (
@@ -133,14 +124,16 @@ export function WorkspaceActivityBar({
                   onOpenWorkflows?.();
                   return;
                 }
-                if (item.id === "brep") {
-                  onOpenBrepPanel();
-                  return;
-                }
                 onSelectSidebar(item.id);
               }}
               style={iconButtonStyle(isActive)}
               title={item.title}
+              {...(item.id !== "workflows"
+                ? {
+                    "aria-controls": "workspace-navigation-panel",
+                    "aria-expanded": isActive,
+                  }
+                : {})}
               className="activity-bar-icon"
             >
               {item.icon(20)}

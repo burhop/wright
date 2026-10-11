@@ -1,0 +1,9 @@
+{
+  "session_id": "083-heat-live-session-005",
+  "path": "workflows/printed-replacement-part-live-default-model-010.workflow.wflow",
+  "expected_storage_digest": "66100986382b98449bb49ce200d5aef761d0e116a83b71af77af65d316c45fae",
+  "input_snapshot_id": "inputs-6d0752498ac744ec9259bcafebbf373f",
+  "expected_input_digest": "1a96282f1dd2681210aaa2d7166a19395c55e8718b599a1a0f8310faa98dc7aa",
+  "integration_policy_digest": "13bc92dc8bbf61cf574e1725908c9ffc4d0c46cd2cebb32d82962f7e07ee5daa",
+  "request_id": "printed-original-wheel-live-start-010"
+}

@@ -1,0 +1,198 @@
+{
+  "affected-082-checks-002.xml": {
+    "tests": 72,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 72,
+    "raw_xml_sha256": "9a2909f87206859936e8aed2b96ca53b17156a0f286d078dd299e201ab56dcba",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/affected-082-checks-002.xml",
+    "failure_messages": []
+  },
+  "affected-082-checks.xml": {
+    "tests": 0,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 0,
+    "raw_xml_sha256": "785f473fa161255375c9d482fff819293c931e2ce92a946b17724fa366c9d62a",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/affected-082-checks.xml",
+    "failure_messages": []
+  },
+  "fifth-checks.xml": {
+    "tests": 27,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 27,
+    "raw_xml_sha256": "afe56782323f15cb8e0b67c4996598492cadf6c43e578e5707305fbc1808a024",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/fifth-checks.xml",
+    "failure_messages": []
+  },
+  "first-checks.xml": {
+    "tests": 27,
+    "failed": 7,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 20,
+    "raw_xml_sha256": "016867c12b884ac8a8a42dfc892fc0ba453433c058657659d2c4651321ee4b9b",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/first-checks.xml",
+    "failure_messages": [
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[1-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 221 is invalid or duplicated."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 221 is invalid or duplicated."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-True]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 265 is invalid or duplicated."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[3-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 221 is invalid or duplicated."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[1]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 330 is invalid or duplicated."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[2]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 330 is invalid or duplicated."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[3]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: The source declaration at line 330 is invalid or duplicated."
+      }
+    ]
+  },
+  "fourth-checks.xml": {
+    "tests": 27,
+    "failed": 7,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 20,
+    "raw_xml_sha256": "06fa25da1e8cb6790b9900c53cef504271c2636c5309e83745397acf63d923be",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/fourth-checks.xml",
+    "failure_messages": [
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[1-False]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32ACF530>('/repaired_mesh.stl')\n +    where <built-in method endswith of str object at 0x0000028E32ACF530> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_original_full_graph_and_h0\\\\workspace\\\\campaign\\\\printed-replacement-part-01\\\\isolated\\\\artifacts\\\\repaired_mesh.stl'.endswith"
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-False]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32ACD730>('/repaired_mesh.stl')\n +    where <built-in method endswith of str object at 0x0000028E32ACD730> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_original_full_graph_and_h1\\\\workspace\\\\campaign\\\\printed-replacement-part-02\\\\isolated\\\\artifacts\\\\repaired_mesh.stl'.endswith"
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-True]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32ACE530>('/repaired_mesh.stl')\n +    where <built-in method endswith of str object at 0x0000028E32ACE530> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_original_full_graph_and_h2\\\\workspace\\\\campaign\\\\printed-replacement-part-02\\\\isolated\\\\artifacts\\\\repaired_mesh.stl'.endswith"
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[3-False]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32ACE030>('/repaired_mesh.stl')\n +    where <built-in method endswith of str object at 0x0000028E32ACE030> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_original_full_graph_and_h3\\\\workspace\\\\campaign\\\\printed-replacement-part-03\\\\isolated\\\\artifacts\\\\repaired_mesh.stl'.endswith"
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[1]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32AF9430>('/jig.stl')\n +    where <built-in method endswith of str object at 0x0000028E32AF9430> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_author_path_literals_matc0\\\\workspace\\\\campaign\\\\parametric-drill-jig-01\\\\path-contract-unit\\\\artifacts\\\\jig.stl'.endswith"
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[2]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32AFB730>('/jig.stl')\n +    where <built-in method endswith of str object at 0x0000028E32AFB730> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_author_path_literals_matc1\\\\workspace\\\\campaign\\\\parametric-drill-jig-02\\\\path-contract-unit\\\\artifacts\\\\jig.stl'.endswith"
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[3]",
+        "message": "AssertionError: assert False\n +  where False = <built-in method endswith of str object at 0x0000028E32AF8F30>('/jig.stl')\n +    where <built-in method endswith of str object at 0x0000028E32AF8F30> = 'D:\\\\repos\\\\wright\\\\.local-run\\\\process-interfaces-083\\\\t048-external-slice-migration-001\\\\pytest-004\\\\test_author_path_literals_matc2\\\\workspace\\\\campaign\\\\parametric-drill-jig-03\\\\path-contract-unit\\\\artifacts\\\\jig.stl'.endswith"
+      }
+    ]
+  },
+  "second-checks.xml": {
+    "tests": 27,
+    "failed": 7,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 20,
+    "raw_xml_sha256": "de1501dc5ce3cb894239d0efc5691508aad7f038425dcd15f6302549e146b050",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/second-checks.xml",
+    "failure_messages": [
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[1-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_supports_and_slice_api_created_identity is missing authoring fields: group."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_supports_and_slice_api_created_identity is missing authoring fields: group."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-True]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_supports_and_slice_api_created_identity is missing authoring fields: group."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[3-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_supports_and_slice_api_created_identity is missing authoring fields: group."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[1]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_slice_jig_for_review_parametric_drill_jig_01_path_contract_unit is missing authoring fields: group."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[2]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_slice_jig_for_review_parametric_drill_jig_02_path_contract_unit is missing authoring fields: group."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[3]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: task invoke_external_slice_slice_jig_for_review_parametric_drill_jig_03_path_contract_unit is missing authoring fields: group."
+      }
+    ]
+  },
+  "sixth-checks.xml": {
+    "tests": 69,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 69,
+    "raw_xml_sha256": "21164317d3502913166cd1b5adc1ab256c2abae8dbed83eb3c92b19f656870da",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/sixth-checks.xml",
+    "failure_messages": []
+  },
+  "third-checks.xml": {
+    "tests": 27,
+    "failed": 7,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 20,
+    "raw_xml_sha256": "0a2dfdb690c2fe7fa04f5c4f7f5b0d41ace09921d14e40c2f4573554ef5c6c60",
+    "retained_raw_private_path": ".local-run/process-interfaces-083/t048-external-slice-migration-001/third-checks.xml",
+    "failure_messages": [
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[1-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_supports_and_slice_api_created_identity_machine_profile_input."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_supports_and_slice_api_created_identity_machine_profile_input."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[2-True]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_supports_and_slice_api_created_identity_machine_profile_input."
+      },
+      {
+        "case": "test_original_full_graph_and_human_inputs_remain_bound[3-False]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_supports_and_slice_api_created_identity_machine_profile_input."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[1]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_slice_jig_for_review_parametric_drill_jig_01_path_contract_unit_machine_profile_input."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[2]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_slice_jig_for_review_parametric_drill_jig_02_path_contract_unit_machine_profile_input."
+      },
+      {
+        "case": "test_author_path_literals_match_actual_producers_and_native_run_arguments[3]",
+        "message": "workspace_service.workflow_source_execution.WorkflowSourceExecutionError: Slice the actual upstream geometry with the selected independent provider: connect one named workspace file to invoke_external_slice_slice_jig_for_review_parametric_drill_jig_03_path_contract_unit_machine_profile_input."
+      }
+    ]
+  }
+}

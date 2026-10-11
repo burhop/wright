@@ -1,0 +1,79 @@
+{
+  "scope": "Actual default-model generation and one focused update through normal Wright workspace controls on the fresh original-input full source.",
+  "failed_first_request_retained": true,
+  "model": "gpt-5.6-sol",
+  "adapter": "hermes",
+  "jobs": [
+    {
+      "label": "failed-generation",
+      "job_id": "job-8ba8edd218164cafb0aa4b587acb51df",
+      "state": "failed",
+      "revision_id": null,
+      "model": "gpt-5.6-sol",
+      "adapter": "hermes"
+    },
+    {
+      "label": "actual-generation",
+      "job_id": "job-bfb37b924d534dbbab48e2788b5f6a4e",
+      "state": "saved",
+      "revision_id": "revision-fd3eb8640fb4409d8e04a62a2408f503",
+      "model": "gpt-5.6-sol",
+      "adapter": "hermes"
+    },
+    {
+      "label": "actual-focused-update",
+      "job_id": "job-439a49a6248944f0b411c9c1a689cce3",
+      "state": "saved",
+      "revision_id": "revision-b1d66dc13ace45889297568cd38c6ee0",
+      "model": "gpt-5.6-sol",
+      "adapter": "hermes"
+    }
+  ],
+  "saved_revisions": [
+    {
+      "ui_id": "ui-f47e26fbcc2e44a2a7c4dc939aef1948",
+      "revision_id": "revision-fd3eb8640fb4409d8e04a62a2408f503",
+      "parent_revision": null,
+      "source_digest": "6ec245a1e043c739e66140869beca014713ea704a8c58a24e38f1ba5192d6463",
+      "bundle_digest": "4abca0c261e1886907377fa7d897de4baa6023d05520adb817924d5827a65f40"
+    },
+    {
+      "ui_id": "ui-f47e26fbcc2e44a2a7c4dc939aef1948",
+      "revision_id": "revision-b1d66dc13ace45889297568cd38c6ee0",
+      "parent_revision": "revision-fd3eb8640fb4409d8e04a62a2408f503",
+      "source_digest": "21eb2d9c7364f7bdbb9de05b5b893195bdfc32d569189a608b27d5dbde4bd7d4",
+      "bundle_digest": "48b797d708c99147f0bd3cfb412098a7e523344e7a6a6ef0c389862d2fa82281"
+    }
+  ],
+  "browser_reports": [
+    {
+      "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T021340Z-original-input-authoring-retry-096",
+      "checks": 13,
+      "overall": "pass",
+      "diagnostics": {
+        "console": [],
+        "pageErrors": [],
+        "failedResponses": []
+      }
+    },
+    {
+      "path": "artifacts/ui-walkthrough/process-interfaces-083-original-inputs/20261004T021835Z-original-input-focused-update-098",
+      "checks": 13,
+      "overall": "pass",
+      "diagnostics": {
+        "console": [],
+        "pageErrors": [],
+        "failedResponses": []
+      }
+    }
+  ],
+  "saved_asset_files": 12,
+  "process_execution_or_review_repeated_for_authoring": false,
+  "focused_update": "Exact physical-acceptance limitation added; same ui_id, new revision and parent, all20 current result cards retained in read-only preview.",
+  "same_source_second_digital_run": "84cd89a395af406e80d094ec071abe59",
+  "same_source_second_run_progress": "Basis decision consumed under exact synthetic enrollment; engineering continuation remains separate from authoring.",
+  "remaining": "Exact common/tailored evidence navigation and saved updated interface reuse on the second run still need their own proof. Earlier interface proofs retain their exact source bindings.",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "push_merge_release": false
+}

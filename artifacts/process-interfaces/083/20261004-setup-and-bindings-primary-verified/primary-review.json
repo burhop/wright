@@ -1,0 +1,55 @@
+{
+  "scope": "Read-only primary audit of setup, initial capability limits, frozen original requirements and exact isolated test enrollment. No process/provider/model/review replay.",
+  "obligations": {
+    "T001": {
+      "primary_behaviors": [
+        "The first feature commit retains the exact recorded parent and 42 pre-existing dirty identities/hashes; current and initial feature pointers select 083.",
+        "Stable platform guidance remains outside managed context; retained baseline preserves prior 082 guidance, and current managed context preserves separate 082/081 history. Protected original review and binding hashes remain unchanged. Later authorized migration edits are not misrepresented as unchanged original source bytes."
+      ],
+      "evidence": [
+        "specs/083-process-working-interfaces/evidence/pre-implementation-baseline.json",
+        "specs/083-process-working-interfaces/evidence/baseline.md",
+        "AGENTS.md",
+        ".specify/feature.json"
+      ]
+    },
+    "T002": {
+      "primary_behaviors": [
+        "The initial baseline explicitly records no served UI and maps accepted source/compiler, immutable run overlays, recorder/continuation, existing review/action, 082 checks, gateway, hosting, agent and additive storage boundaries.",
+        "Subsequent common/installed/editor evidence verifies the existing refined workspace editor and shared services; the extension map did not substitute an editor or process executor. Initial inspection and later served verification retain separate scope."
+      ],
+      "evidence": [
+        "specs/083-process-working-interfaces/evidence/baseline.md",
+        "specs/083-process-working-interfaces/evidence/common-view.md",
+        "docs/contributing/workflow-ui-integration.md"
+      ]
+    },
+    "T003": {
+      "primary_behaviors": [
+        "Initial preflight records Python/compiler/Docker, authenticated Hermes discovery and actual unavailable Blender/UI resources, without treating health as actual model qualification.",
+        "Later selected provider audit qualifies the four independent pinned providers, matching gateway schemas and five safe native invocations; current gateway owner hashes match that audit. Actual default-model generation and fixed compilation now retain built revision and Hermes inherited-model/empty-tool provenance. Failures, platform limits and unrelated services remain explicit."
+      ],
+      "evidence": [
+        "specs/083-process-working-interfaces/evidence/prerequisites.md",
+        "artifacts/process-interfaces/083/20261003-selected-provider-primary-audit-verified/primary-review.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/authoring-continuation.json"
+      ]
+    },
+    "T004": {
+      "primary_behaviors": [
+        "Both original assignments retain all 13 original inputs, two mandatory profiles and two historical bindings byte-for-byte; private proof roots and protected campaigns remain identified.",
+        "The frozen initial decision policy requires exact enrollment, explicit test actor, no measured-failure override and waiting for un-enrolled reviews. Later exact-source isolated policy and recorded synthetic decisions satisfy that boundary while the full source gate still holds for required human engineering review. No campaign or physical acceptance is inferred."
+      ],
+      "evidence": [
+        "examples/process-interfaces/proof-bindings.json",
+        "specs/083-process-working-interfaces/evidence/proof-scope.md",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-input-chain/prepared-run.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-input-chain/first-synthetic-basis-review.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-input-chain/first-synthetic-transfer-review.json",
+        "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/original-input-chain/frozen.json"
+      ]
+    }
+  },
+  "full_semantic_signoff": false,
+  "physical_or_human_acceptance": false
+}

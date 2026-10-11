@@ -1,0 +1,13 @@
+{
+  "docs/workflows/process-working-interfaces.md": "cf0dd3a2fce62ff7ef85e3933acbc620a24cfdc49872fe0ab74e53a170c571e5",
+  "docs/design/process-apps.md": "934a253bd0f77ad522f5d1a8f6ac7cf226d3199c68dde45c595886c7d66fb8b2",
+  "docs/architecture/workflow-platform-refactoring-plan.md": "0273d1b8a21a8ebca1a89dce05798c790e5c1792aa6af53ac6631be3434acd01",
+  "docs/architecture/agent-adapters.md": "18ff01ae7f58a0154068f88fd388ce58596e86c27c3e9abc84bf08b32a4283be",
+  "docs/contributing/workflow-ui-integration.md": "0cee9f8d5331844e0e315c9daa4ede406ac1d369b64cc4416448444bef0bb90f",
+  "examples/process-interfaces/README.md": "ab521be7b347217493951cbe1266c874090e7c4c163109224725101dc8fbc2b8",
+  "examples/process-interfaces/heat-spreader-sizing/README.md": "2a63444352bb56bc7871b03033c584ad6737d3fcdef4d09afbef0b8aa85fb43e",
+  "examples/process-interfaces/printed-replacement-part/README.md": "50d1fab2b59c6bbfc3baf8457463f73b791d6447b2786473167fdff05ac1b42e",
+  "specs/083-process-working-interfaces/quickstart.md": "f4ad077308b0363d33883fd14246fccefa65bc8edbec4c095bba4ac41f67aeba",
+  "specs/083-process-working-interfaces/evidence/operator-examples.md": "b72bd68538c682b607e78aa814c7245ae4cd6b13cd5345713a08c1a1167066aa",
+  "docs/design/workflow-platform-vision.md": "8f02950143e59f4262b13557404e2e44ccd5b25168bf212c0a6e6daa54c75e35"
+}

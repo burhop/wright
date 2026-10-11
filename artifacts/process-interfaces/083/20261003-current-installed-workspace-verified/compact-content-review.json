@@ -1,0 +1,11 @@
+{
+  "status": "requires_followup",
+  "source_report": "../20261003-current-heat-installed-016/workspace-walkthrough/report.html",
+  "source_image": "../20261003-current-heat-installed-016/workspace-walkthrough/screenshots/raw/S17.png",
+  "viewport_width": 480,
+  "verified_scope": "Native controls remain reachable, outer viewport does not overflow and keyboard focus is visible.",
+  "visual_observation": "The fixed workspace sidebar leaves a narrow iframe. Comparison content clips inside it; control checks do not establish full compact-content usability.",
+  "next_action": "Improve and verify compact working/preview presentation through shared workspace mechanisms, preserving the editor and saved interface identities.",
+  "task": "T052",
+  "user_acceptance": false
+}

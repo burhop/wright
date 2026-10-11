@@ -1,0 +1,141 @@
+{
+  "status": "failed",
+  "code": "MODEL_UNAVAILABLE",
+  "error": "The model task could not continue (upstream_timeout): Hermes AI request timed out.",
+  "run_id": "685147075ac94ca3b69fe0d208548af9",
+  "events": [
+    {
+      "kind": "run_started",
+      "at": "2026-10-02T13:18:06.300535+00:00",
+      "task_id": ""
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-02T13:18:06.421815+00:00",
+      "task_id": "define_geometry_basis_live_default_model_014"
+    },
+    {
+      "kind": "model_usage",
+      "at": "2026-10-02T13:18:48.763874+00:00",
+      "task_id": "define_geometry_basis_live_default_model_014"
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-02T13:18:48.836513+00:00",
+      "task_id": "define_geometry_basis_live_default_model_014"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-02T13:18:48.957930+00:00",
+      "task_id": "define_geometry_basis_live_default_model_014"
+    },
+    {
+      "kind": "output_saved",
+      "at": "2026-10-02T13:18:48.974812+00:00",
+      "task_id": "define_geometry_basis_live_default_model_014"
+    },
+    {
+      "kind": "approval_requested",
+      "at": "2026-10-02T13:18:49.101596+00:00",
+      "task_id": "review_basis_live_default_model_014",
+      "message": "Review the exact basis, supplied image scale and proposed geometry/socket interpretations. This digital process does not establish fit, strength or printing success."
+    },
+    {
+      "kind": "approval_decided",
+      "at": "2026-10-02T13:22:35.192361+00:00",
+      "task_id": "review_basis_live_default_model_014",
+      "message": "Approval is approved."
+    },
+    {
+      "kind": "external_action_authorized",
+      "at": "2026-10-02T13:24:09.543013+00:00",
+      "task_id": "review_basis_live_default_model_014",
+      "message": "External action outcome is not_dispatched."
+    },
+    {
+      "kind": "external_action_reconciled",
+      "at": "2026-10-02T13:24:09.850053+00:00",
+      "task_id": "review_basis_live_default_model_014",
+      "message": "External action outcome is dispatched."
+    },
+    {
+      "kind": "run_resumed",
+      "at": "2026-10-02T13:24:09.990917+00:00",
+      "task_id": ""
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-02T13:24:10.251354+00:00",
+      "task_id": "review_basis_live_default_model_014"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-02T13:24:10.354390+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "task_progress",
+      "at": "2026-10-02T13:24:10.512051+00:00",
+      "task_id": "create_mesh_live_default_model_014",
+      "message": "Planning the task"
+    },
+    {
+      "kind": "model_usage",
+      "at": "2026-10-02T13:25:03.630644+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "tool_started",
+      "at": "2026-10-02T13:25:03.814897+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "tool_completed",
+      "at": "2026-10-02T13:25:07.365850+00:00",
+      "task_id": "create_mesh_live_default_model_014",
+      "status": "succeeded"
+    },
+    {
+      "kind": "task_progress",
+      "at": "2026-10-02T13:25:07.689334+00:00",
+      "task_id": "create_mesh_live_default_model_014",
+      "message": "Reviewing tool results"
+    },
+    {
+      "kind": "model_usage",
+      "at": "2026-10-02T13:25:23.321574+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "task_response_format_repair",
+      "at": "2026-10-02T13:25:23.397337+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "model_usage",
+      "at": "2026-10-02T13:25:38.251181+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-02T13:25:38.375634+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-02T13:25:38.482346+00:00",
+      "task_id": "create_mesh_live_default_model_014"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-02T13:25:38.614008+00:00",
+      "task_id": "repair_measure_orient_live_default_model_014"
+    },
+    {
+      "kind": "task_progress",
+      "at": "2026-10-02T13:25:38.961011+00:00",
+      "task_id": "repair_measure_orient_live_default_model_014",
+      "message": "Planning the task"
+    }
+  ]
+}

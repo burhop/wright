@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"command\": \"init\", \"status\": \"success\", \"project\": \"project\", \"runtime\": \"build123d\", \"agent_setup\": {\"status\": \"ready\", \"guide_fingerprint\": \"72b76082bc25\", \"targets\": [{\"name\": \"claude-skill\", \"paths\": [\"/workspace/project/.claude/skills/agentcad/SKILL.md\"], \"activation\": \"skill-discovery\"}, {\"name\": \"project-instructions\", \"paths\": [\"/workspace/project/AGENTS.md\"], \"activation\": \"always-loaded\"}]}, \"next_actions\": [\"agentcad docs quickstart --build-dir /workspace/project/build \\u2014 follow the first-script workflow for this project\", \"agentcad docs preamble --build-dir /workspace/project/build \\u2014 see the names available in build123d scripts\"], \"more_at\": \"agentcad docs quickstart\", \"project_root\": \"/workspace/project\", \"build_root\": \"/workspace/project/build\", \"build_root_source\": \"command\"}\n",
+  "stderr": ""
+}

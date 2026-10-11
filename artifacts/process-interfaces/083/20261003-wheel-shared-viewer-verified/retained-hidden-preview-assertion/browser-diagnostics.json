@@ -1,0 +1,79 @@
+{
+  "console": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-844e87c725754f3d988b2d1cdd26371c/preview"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-844e87c725754f3d988b2d1cdd26371c/preview"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-d2b239ef-b454-49e0-b1ea-3db90d2811b6.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-a6577b1e-a7ba-4855-bd5e-5bf909c1874a.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-a6577b1e-a7ba-4855-bd5e-5bf909c1874a.localhost%3A8030/__wright/process/loaded"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-a6577b1e-a7ba-4855-bd5e-5bf909c1874a.localhost%3A8030/__wright/process/representations/read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/uis/ui-ce377446f6d44705846a32f7c3eb94b2/present"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-4a0880fd-2ce6-44c9-a3d9-f49a1a781930.localhost%3A8030/__wright/bootstrap"
+    }
+  ],
+  "representationHeaders": [
+    {
+      "status": 200,
+      "bytes": "4493731",
+      "sha256": "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44",
+      "nosniff": "nosniff"
+    }
+  ],
+  "contexts": [
+    {
+      "read_only": true,
+      "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687"
+    },
+    {
+      "read_only": true,
+      "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687"
+    },
+    {
+      "read_only": false,
+      "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+      "ui_id": "ui-ce377446f6d44705846a32f7c3eb94b2",
+      "revision_id": "revision-5d5d6defda104980a2455c7ddc95e687"
+    }
+  ]
+}

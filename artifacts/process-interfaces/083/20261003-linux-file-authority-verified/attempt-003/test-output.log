@@ -1,0 +1,24 @@
+........................................................................ [ 75%]
+F..........s............                                                 [100%]
+=================================== FAILURES ===================================
+______ test_actual_gateway_dispatch_preserves_private_authority_and_audit ______
+
+case = namespace(root=PosixPath('/tmp/authority-proof/test_actual_gateway_dispatch_p0/workspace'), artifacts=<workspace_servi...674e78eb77a52c8574702f3aa95dd9d64c435d32360da18de7e1ec80bb98', input_snapshot=None, run_path_id='', run_path_roots=()))
+
+    @pytest.mark.asyncio
+    async def test_actual_gateway_dispatch_preserves_private_authority_and_audit(case):
+        from tool_registry.gateway_service import GatewayService
+        from tool_registry.gateway_notifications import GatewayNotificationHub
+        from tool_registry.gateway_resources import GatewayResourceProvider
+>       from packages.tool_registry.tests.test_gateway_service import (
+            Catalog,
+            Lifecycle,
+            Audit,
+        )
+E       ModuleNotFoundError: No module named 'packages.tool_registry.tests'
+
+/proof/src/packages/workspace_service/tests/test_workflow_integration_file_copy.py:477: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED ../../proof/src/packages/workspace_service/tests/test_workflow_integration_file_copy.py::test_actual_gateway_dispatch_preserves_private_authority_and_audit
+1 failed, 94 passed, 1 skipped in 29.96s
+

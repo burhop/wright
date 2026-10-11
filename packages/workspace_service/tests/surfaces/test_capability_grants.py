@@ -71,6 +71,122 @@ def _request(**overrides) -> CapabilityRequest:
     return CapabilityRequest(**values)
 
 
+def _process_request(capability="process.read", **overrides):
+    constraints = {
+        "process": {
+            "workspace_id": "workspace-1",
+            "source_path": "workflows/analysis.wflow",
+            "source_digest": "a" * 64,
+            "semantic_digest": None,
+            "source_contract": "canonical-source",
+        },
+        "ui_id": "ui-1",
+        "revision_id": "revision-1",
+        "run_id": None,
+        "read_only": True,
+        "presentation_id": "presentation-1",
+        "generation": 1,
+    }
+    return _request(
+        capability=capability,
+        operation=capability,
+        constraints=constraints,
+        persistence="instance",
+        **overrides,
+    )
+
+
+def test_process_grant_matches_exact_ui_process_run_presentation_and_generation(
+    tmp_path,
+):
+    from dataclasses import replace
+
+    _, service = _service(tmp_path)
+    request = _process_request()
+    grant = service.decide(actor=_actor(), request=request)
+    assert service.authorize(actor=_actor(), request=request).grant_id == grant.grant_id
+    for field, value in [
+        ("ui_id", "another-ui"),
+        ("revision_id", "another-revision"),
+        ("run_id", "different-run"),
+        ("presentation_id", "different-presentation"),
+        ("generation", 2),
+    ]:
+        changed = replace(request, constraints=request.constraints | {field: value})
+        with pytest.raises(CapabilityGrantError, match="grant scope"):
+            service.authorize(actor=_actor(), request=changed)
+    changed_process = request.constraints["process"] | {"source_digest": "b" * 64}
+    with pytest.raises(CapabilityGrantError, match="grant scope"):
+        service.authorize(
+            actor=_actor(),
+            request=replace(
+                request, constraints=request.constraints | {"process": changed_process}
+            ),
+        )
+    service.revoke(actor=_actor(), grant_id=grant.grant_id)
+    with pytest.raises(CapabilityGrantError, match="revoked"):
+        service.authorize(actor=_actor(), request=request)
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"constraints": {}},
+        {"operation": "invokeTool"},
+        {"risk_tier": "mutating"},
+        {"persistence": "remembered_exact"},
+        {"persistence": "operation"},
+    ],
+)
+def test_process_grants_require_exact_closed_instance_binding(tmp_path, changes):
+    from dataclasses import replace
+
+    _, service = _service(tmp_path)
+    with pytest.raises(CapabilityGrantError):
+        service.decide(actor=_actor(), request=replace(_process_request(), **changes))
+
+
+@pytest.mark.parametrize(
+    "capability",
+    [
+        "process.inputs",
+        "process.start",
+        "process.respond",
+        "process.review",
+        "process.action",
+        "process.cancel",
+    ],
+)
+def test_read_only_preview_cannot_be_granted_process_mutation(tmp_path, capability):
+    from dataclasses import replace
+
+    _, service = _service(tmp_path)
+    request = replace(_process_request(capability), risk_tier="mutating")
+    with pytest.raises(CapabilityGrantError, match="bound scope"):
+        service.decide(actor=_actor(), request=request)
+    working = replace(request, constraints=request.constraints | {"read_only": False})
+    grant = service.decide(actor=_actor(), request=working)
+    assert service.authorize(actor=_actor(), request=working) == grant
+
+
+def test_process_grant_rejects_cross_workspace_and_extra_tool_authority(tmp_path):
+    from dataclasses import replace
+
+    _, service = _service(tmp_path)
+    request = _process_request()
+    changed = replace(request, constraints=request.constraints | {"invokeTool": True})
+    with pytest.raises(CapabilityGrantError, match="presentation binding"):
+        service.decide(actor=_actor(), request=changed)
+    process = request.constraints["process"] | {"workspace_id": "other-workspace"}
+    with pytest.raises(CapabilityGrantError, match="bound scope"):
+        service.decide(
+            actor=_actor(),
+            request=replace(
+                request, constraints=request.constraints | {"process": process}
+            ),
+        )
+
+
 def test_low_risk_grant_is_exactly_scoped_and_expires(tmp_path: Path) -> None:
     clock, service = _service(tmp_path)
     grant = service.decide(actor=_actor(), request=_request())

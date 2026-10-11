@@ -1,0 +1,13 @@
+{
+  "exit_code": 0,
+  "modules": 22,
+  "counts": {
+    "tests": 351,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "passed": 351
+  },
+  "scope": "Controlled gateway/model responses; actual existing runtime, storage and recovery owners.",
+  "live_model_mcp_engineering_hardware_or_user_acceptance": false
+}

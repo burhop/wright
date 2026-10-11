@@ -1,0 +1,85 @@
+{
+  "console": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-844e87c725754f3d988b2d1cdd26371c/preview"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-844e87c725754f3d988b2d1cdd26371c/preview"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-aa68601c-619f-42db-a23c-8994f8db414b.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-feed9f6d-1ce0-4a12-b700-3e909f0e377d.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-feed9f6d-1ce0-4a12-b700-3e909f0e377d.localhost%3A8030/__wright/process/loaded"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-feed9f6d-1ce0-4a12-b700-3e909f0e377d.localhost%3A8030/__wright/process/representations/read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/activate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-844e87c725754f3d988b2d1cdd26371c/preview"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/process-interfaces/authoring-jobs/job-844e87c725754f3d988b2d1cdd26371c/preview"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-de38b70c-cf85-4d9b-b8eb-ed09c4f1e20e.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-04aac20f-a0ec-42ac-88b8-784132c1780b.localhost%3A8030/__wright/bootstrap"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-04aac20f-a0ec-42ac-88b8-784132c1780b.localhost%3A8030/__wright/process/loaded"
+    },
+    {
+      "method": "POST",
+      "path": "/__wright-surface/s-04aac20f-a0ec-42ac-88b8-784132c1780b.localhost%3A8030/__wright/process/representations/read"
+    }
+  ],
+  "representationHeaders": [
+    {
+      "status": 200,
+      "bytes": "4493731",
+      "sha256": "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44",
+      "nosniff": "nosniff"
+    },
+    {
+      "status": 200,
+      "bytes": "4493731",
+      "sha256": "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44",
+      "nosniff": "nosniff"
+    }
+  ]
+}

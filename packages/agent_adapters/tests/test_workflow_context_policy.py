@@ -25,10 +25,8 @@ def route_to_transport(monkeypatch, handler):
     )
 
     def construct(settings, **kwargs):
-        if not kwargs:  # Production entry point; repair subtracts its reserve.
-            assert settings.maximum_translation_prompt_bytes == 200_000
-        else:
-            assert 0 < settings.maximum_translation_prompt_bytes < 200_000
+        # Primary and self-contained repair both use the complete fixed budget.
+        assert settings.maximum_translation_prompt_bytes == 200_000
         return actual_bridge(
             settings, transport=kwargs.get("transport", httpx.MockTransport(handler))
         )

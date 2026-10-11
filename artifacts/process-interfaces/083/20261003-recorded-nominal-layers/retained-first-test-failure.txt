@@ -1,0 +1,58 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ❯ src/components/common/ProcessUIKit.spec.tsx (57 tests | 1 failed) 1629ms
+     × rejects oversized application/json before reading bytes 1013ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/common/ProcessUIKit.spec.tsx > bounded representation views > rejects oversized application/json before reading bytes
+TestingLibraryElementError: Unable to find an element with the text: /exceeds the supported preview size/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <p
+      role="status"
+    >
+      This representation exceeds the supported text preview size. Download it to inspect the complete file.
+    </p>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <p
+      role="status"
+    >
+      This representation exceeds the supported text preview size. Download it to inspect the complete file.
+    </p>
+  </div>
+</body>
+ ❯ waitForWrapper ../../node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/components/common/ProcessUIKit.spec.tsx:981:20
+    979|     render(<RepresentationViewer blob={blob} title="Bounded evidence" …
+    980|     expect(
+    981|       await screen.findByText(/exceeds the supported preview size/),
+       |                    ^
+    982|     ).toBeInTheDocument();
+    983|     expect(read).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 56 passed (57)
+   Start at  22:16:51
+   Duration  5.81s (transform 252ms, setup 101ms, import 3.04s, tests 1.63s, environment 867ms)
+

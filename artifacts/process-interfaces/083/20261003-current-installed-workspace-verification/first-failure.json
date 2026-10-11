@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "scope": "Read-only publication verifier; no model/provider/run/action",
+  "reason": "The first verifier assumed a copied host-local managed declaration remained identical. Actual approved relocation changes only argv indices0 and4 for the installed interpreter and copied immutable vault. Original saved UI source/build/results and original declaration remain unchanged.",
+  "followup": "Fresh publication verifier002 explicitly checks both expected host-local paths and every other declaration field."
+}

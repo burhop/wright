@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "source_commit_before_changes": "f0ef106892602b19ef64c29d71933d9451021883",
+  "generic_functions_unchanged": [
+    "_renewal_module",
+    "_agentcad_guidance",
+    "digest",
+    "confined",
+    "write_once",
+    "port",
+    "render",
+    "add_reference",
+    "add_file_input",
+    "selected_tool",
+    "publish_input_binding_evidence"
+  ],
+  "printed_prepare_main_asts_unchanged": true,
+  "other_example_function_bodies_unchanged": 11,
+  "neutral_import_callers_migrated": 12,
+  "source_hashes": {
+    "scripts/engineering_campaign_binding_helpers.py": "fb278bde92addb0b04332b9b6ec024bf21aab9912f97760a00d3670cb876bda4",
+    "scripts/prepare-printed-dataset-campaign.py": "da3f47fe77eecedc1c5bdf21b769fc35a28720939bdb2a2225f4e296843c9ba9",
+    "tests/test_engineering_campaign_binding_helpers.py": "dac695523a4ad2cd04c7adb20ee7afbc385bc86386da0e8dbce7a56ba5a35a1f",
+    "scripts/prepare-bracket-dataset-campaign.py": "70c1862ec9bcf5637e1b43b6f765339d2478777d1cac5d04c9dd378da450674d",
+    "scripts/prepare-drill-jig-dataset-campaign.py": "d7b57a22570e02740dbacdd871553cc293a9a4364467fd5c32cee8cebde08e87",
+    "scripts/prepare-harness-dataset-campaign.py": "78b0622a2c10fdc005a69030356e09af5ace88bb9a98750d87d93ca4874e35ca",
+    "scripts/prepare-heat-dataset-campaign.py": "cef059b39c599ba7666758735809e3aa8453f2715426b458eea8a2db36cb2baa",
+    "scripts/prepare-modelica-dataset-campaign.py": "43f6c1a138094fe3dfe6d98c92484d13785a80440955cd9f47095a82afb6c647",
+    "scripts/prepare-pcb-dataset-campaign.py": "0384620bae193e0c14aa3d977ce23c97d3eb8f6280e053d3fa8d9a5a72c66eda",
+    "scripts/prepare-pi-dataset-campaign.py": "dddbe5d702e1d997620365b8e4a8ebaa691071506676bb8194d7480484c23fe7",
+    "scripts/prepare-pi-fixed-dataset-campaign.py": "4502a797c2dfe252f37ba5d6364639533dfa561d575f764c23c57f5b5ea82a3a",
+    "scripts/prepare-pi-visual-dataset-campaign.py": "58d7e3229044981d168de91a88fd423dbcf9949fc2036fcee8c81878991e48c8",
+    "scripts/prepare-robot-dataset-campaign.py": "c1abc7fa265f65b44653bb51a7706431d8abf249346c05ef9a71328aad6556c0",
+    "scripts/prepare-sheet-metal-dataset-campaign.py": "6ce94b590ea3bf5f838bd93ee5dfca82b8f58cc798f0166f6c699dac98b005df",
+    "tests/test_engineering_dataset_input_bindings.py": "29520feba3416c00da6782a25f87becbf6c6bc0a3b493f3ff7d0b44a8353ab0d"
+  },
+  "checks": {
+    "regressions.xml": {
+      "tests": 29,
+      "errors": 24,
+      "failures": 0,
+      "skipped": 0,
+      "passed": 5
+    },
+    "regressions-002.xml": {
+      "tests": 35,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "passed": 35
+    },
+    "caller-regressions-003.xml": {
+      "tests": 39,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "passed": 39
+    }
+  },
+  "passing_checks": 74,
+  "direct_launch_fixed": true,
+  "ruff": "three owning files passed; cache permission warning retained",
+  "commands": [
+    ".venv/Scripts/python.exe -m pytest tests/test_engineering_campaign_binding_helpers.py tests/test_printed_dataset_bindings.py tests/test_engineering_dataset_input_bindings.py tests/test_campaign_example_renewal.py tests/test_campaign_example_renewal_revision.py tests/test_sheet_dataset_input_revision.py -q --basetemp=D:/repos/wright/.local-run/process-interfaces-083/t048-neutral-helper-extraction-001/pytest-002 --junitxml=.local-run/process-interfaces-083/t048-neutral-helper-extraction-001/regressions-002.xml",
+    ".venv/Scripts/python.exe -m pytest tests/test_drill_jig_source_paths.py tests/test_heat_campaign_validator.py tests/test_harness_kicad_handoff.py tests/test_enroll_harness_dataset_campaign.py tests/test_pi_campaign_region_boolean_contract.py tests/test_modelica_campaign_binding.py tests/test_pcb_campaign_stage_budgets.py tests/test_robot_campaign_manifest_handoff.py tests/test_sheet_cad_input_preparation.py -q --basetemp=D:/repos/wright/.local-run/process-interfaces-083/t048-neutral-helper-extraction-001/pytest-003 --junitxml=.local-run/process-interfaces-083/t048-neutral-helper-extraction-001/caller-regressions-003.xml -p no:cacheprovider"
+  ],
+  "engineering_execution": false,
+  "frozen_campaign_bindings_changed": false,
+  "vendor_operation_retired": false,
+  "T048_T049_complete": false,
+  "limits": [
+    "Current vendor slicer implementations and their actual two preparer/probe callers still need migration.",
+    "The helper retains existing AgentCAD entrypoint guidance metadata; no protocol, slicer or executor moved into it.",
+    "These are declaration/fixture regressions, not fresh model/provider or physical engineering runs."
+  ]
+}

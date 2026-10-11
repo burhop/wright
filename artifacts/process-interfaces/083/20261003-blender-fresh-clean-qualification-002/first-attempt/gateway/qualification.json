@@ -1,0 +1,28 @@
+{
+  "status": "failed",
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "definition_sha256": "2ef76c5a8b3205e8cd1127d04331b98954a77ce4ff84f68d937015cee17621ed",
+  "schema_file_sha256": "9500998c844f828e70bcd4c54fac1a7887e14a06055cbf1b8144b7ae15937f89",
+  "production_gateway_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "server_id": "qualification-083-blender-clean-001",
+  "source_url": "https://github.com/ahujasid/blender-mcp",
+  "source_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "selected_tool_count": 28,
+  "error_type": "RuntimeError",
+  "diagnostic": "Actual backend response was not the expected success payload",
+  "cleanup": {
+    "gateway_runner_stopped": true
+  }
+}

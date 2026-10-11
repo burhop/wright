@@ -1,0 +1,514 @@
+{
+  "files": {
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/compatible-source-cas.json": {
+      "bytes": 262,
+      "sha256": "89d7af8bbf9d6c242d8d74a2f81f20faaa44bbd1d6b920d7ccad4af7630e97a5"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/diagnostics.json": {
+      "bytes": 4482,
+      "sha256": "e8dc87d51e1b8fefbd5f32ad2fb9723fed165dac70ef92113fedbb18c83cbe34"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/incompatible-source-cas.json": {
+      "bytes": 262,
+      "sha256": "9bd56ebde35923257b59dcb70f50df71b8124665bbe87fe66ffae4a5126c6333"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/observed-snapshots.json": {
+      "bytes": 22491,
+      "sha256": "ecd3d6db6a9e412d2c9603859adebc3d9d1be8fe8df2edb0afbdd5cbef9dd674"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/progress.md": {
+      "bytes": 8023,
+      "sha256": "ab4df5872b3cfa4f8d5930a1e401db4073e2ad7a1abadd3bf99715f835d66453"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/report.html": {
+      "bytes": 12058,
+      "sha256": "ec9d15336ee704731797ddc14b17ab8b3b196b286319509c014c2fb58dc95f5a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/source-restoration.json": {
+      "bytes": 158,
+      "sha256": "df5e9ed8605c766cea5e0a3c42e050479b6411c97474319a355f05ca20839077"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/status.json": {
+      "bytes": 9440,
+      "sha256": "e367aea34c5d62ff6819365ef97ca5692885e5e85e0807220674e39fc6aa4871"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/playwright/negative-evidence.mjs": {
+      "bytes": 18123,
+      "sha256": "8fbc45cb692e519647c9b18e73d24b8bbebe491c71459c355cfed029848326d0"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/trace/README.md": {
+      "bytes": 234,
+      "sha256": "6028b3457d3f08b4bf1baaff64d0da66de123c85073c75f66faecc0ed78dd8a6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S01.png": {
+      "bytes": 46669,
+      "sha256": "abc0c3e0ae5e3c072db50b8a5341f3dd26a888ba072062314f8abd6b1615ede5"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S02-before.png": {
+      "bytes": 46653,
+      "sha256": "a9c32ab4f33df3e3facd660aee1065892ca206296254d4d7128a199096cb8a86"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S02.png": {
+      "bytes": 331385,
+      "sha256": "06dec3adc84579ea8e1323a29d12d8430120abad835b201afd3f4a958e5a6ab7"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S03-before.png": {
+      "bytes": 331369,
+      "sha256": "3a13e806f4cf22e315e19c6955a5e9c8d001d3d7e404e65b01dfb02564fa38d6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S03.png": {
+      "bytes": 306032,
+      "sha256": "f3a7648060dddb710f7bf40bb27dd31210dac4868d2cecfbef36cc35fccd335e"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S04-before.png": {
+      "bytes": 305439,
+      "sha256": "67cd35a1ea0ca96f8c49397482063bede5d5946735cc6a7405b1d5d7d80740d5"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S04.png": {
+      "bytes": 239712,
+      "sha256": "96a49231f2e11aee5e2b48e51282bfbc50c58e5523c8cf6669d17957a5ab61d3"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S05-before.png": {
+      "bytes": 239777,
+      "sha256": "1492ff673d8fd85a6d70e1b7bf39f29f2d60f5b76d85948db8a4dadb4cfac354"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S05.png": {
+      "bytes": 46187,
+      "sha256": "aefd0c046659c7b1b887ea8ba0459099c90ec8df399f3f0fcf03dfef036ed0cf"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S06-before.png": {
+      "bytes": 79047,
+      "sha256": "0c99fc07bee365fa68343244b971032f5c8882558c37e16da8ddc4654f412400"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S06.png": {
+      "bytes": 77049,
+      "sha256": "3fc2e3f1ec1d9a1e890be7f05950651950746ffecf839eb960f3ffa1b5013c60"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S07-before.png": {
+      "bytes": 76772,
+      "sha256": "058f5a1712d00feb9cb714679b7af3a26d27d406ab66cbf62a755f7218e9f7f1"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S07.png": {
+      "bytes": 79947,
+      "sha256": "690957a4f6f974196c15c0b14bf1631d53dc0224f167d4373b55806c230c41bb"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S08-before.png": {
+      "bytes": 80065,
+      "sha256": "869d35b6f4dfb9378cf3007f9cc0a76e8753da747cd981fb26e03c704d4ea940"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S08.png": {
+      "bytes": 79747,
+      "sha256": "192fcc6bae7de61407eb6684447cfc57af0bf98fab06c225448dcfe4223a6c1e"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S09-before.png": {
+      "bytes": 79618,
+      "sha256": "5bb09f1296fdc6c46748467fd84655368b5d68a8e5dff838deb22dffc267ef74"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S09.png": {
+      "bytes": 60774,
+      "sha256": "85d5e2ad481efb813fc98a79b9277ca06179ab6a10b3e0e1dd3378ae84576fd6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S10-before.png": {
+      "bytes": 92246,
+      "sha256": "b42cfb5e0f31a32e6f72753c3e2926b6fdede26f12b22478cdcb8583d0631f37"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S10.png": {
+      "bytes": 60307,
+      "sha256": "26303dfdc7537fc8592227b58bddf6d3d917bb5511131b7232b6030befc39fe0"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S11-before.png": {
+      "bytes": 62625,
+      "sha256": "1159ceafd906cc51175cd26b8fafd0de44694d8fb83ac28f2ae9e4786753f2eb"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S11.png": {
+      "bytes": 90369,
+      "sha256": "a33cc75dbc818cc9373fef835679ebe338e1d390d0cb07d458f1664bca14f6ea"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S12-before.png": {
+      "bytes": 90234,
+      "sha256": "9528ea1eeafe095930ff0d3b701da55b1d3c1405fbe28bcfd667c5c19049b7a2"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/annotated/S12.png": {
+      "bytes": 99740,
+      "sha256": "be9043b41ddbe801060118f90e38bfa536d2a021947c37dfcf8da6dd9d118b2e"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S01.png": {
+      "bytes": 42132,
+      "sha256": "a60679ce80ee7468203584328d2ddf301800ba95ba2deb7fa87ea730ffba78d3"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S02-before.png": {
+      "bytes": 42155,
+      "sha256": "c31e9e5ee1f863d8369c65478cd44cdaa0ccb469e2293b65764a65049af09d39"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S02.png": {
+      "bytes": 325742,
+      "sha256": "306d928deb1c8b29ae50e491a2a216bf1023f8b77ae28675c377b9d3ee9cae5b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S03-before.png": {
+      "bytes": 326143,
+      "sha256": "b821ab340d9e567a6e713427a0d26ed7336e02c1eecedb820097c2dc49d38833"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S03.png": {
+      "bytes": 301833,
+      "sha256": "5caa10ea33cfe0a189734f5da40dbc349d4d5661b0c3b2dbf3cd161aa9684d32"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S04-before.png": {
+      "bytes": 301462,
+      "sha256": "c34f9ba4003aabf76ce1e33a106af699055a895c3b0fdeec9cc813bb7c08632a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S04.png": {
+      "bytes": 241968,
+      "sha256": "300f40c351e9f87953ae15f59880284622024a0792d7f80556f797f41289963a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S05-before.png": {
+      "bytes": 234957,
+      "sha256": "7b93e0e4e17237aee61aa8ea48adc7b789a46186e41fbe137cb4dab2506b5d3c"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S05.png": {
+      "bytes": 42529,
+      "sha256": "79a01027c26e0cb65362b66e3dcd060e516411b0305009f0871f494066ab6d83"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S06-before.png": {
+      "bytes": 41586,
+      "sha256": "26230e1eb3943c3916f4a0068852aaf623d1d3a1f1b74777aae34d85b34ed4b1"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S06.png": {
+      "bytes": 69792,
+      "sha256": "33a6d8bb4f8f54e2a736f558108d2773e7346725277f8bd0502ce533c29aea85"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S07-before.png": {
+      "bytes": 69748,
+      "sha256": "82c44cd9d3874acd7e50c5cfacdcd05749cf8a8328a503f23906e54e2b730629"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S07.png": {
+      "bytes": 72876,
+      "sha256": "2c1fff8b91cc6d68d5a1ced4560eb60a290c7490876b43239dbda67cc8d4367d"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S08-before.png": {
+      "bytes": 73284,
+      "sha256": "95769933148b5e4d7648bd9e25cb56fde2e1ab18f5e99f92bf0b96dd87c3ff45"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S08.png": {
+      "bytes": 73312,
+      "sha256": "1e359cecade286a3fc22e3180772466d4778759031b3e0eae03bdacec96a77c6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S09-before.png": {
+      "bytes": 72859,
+      "sha256": "d47a033a62b203f56c401eac3529931a5756a12013616d6a28518d7f9388969a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S09.png": {
+      "bytes": 54442,
+      "sha256": "54b788e6b0fa707fda6f9246b44be0537b73e1e95f14a5288074db307403b011"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S10-before.png": {
+      "bytes": 54479,
+      "sha256": "7dd5ea08229b9cdd9412a448915bb903713e7e6737572de283789ddbd13e5b7b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S10.png": {
+      "bytes": 54201,
+      "sha256": "505e28bc7d07a3ba74fd6c5dbd8ca6f15bc3104a2137804c39bf1154e7662bc1"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S11-before.png": {
+      "bytes": 54213,
+      "sha256": "08fc78b4da6aa1bd4968276228833146d090080bbd76ca06602076ddf807aa06"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S11.png": {
+      "bytes": 82440,
+      "sha256": "3b9e315950d9e99cfb05f7247adcf8d23d5b902f06b56a0c1b0569e7c9ae9286"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S12-before.png": {
+      "bytes": 84430,
+      "sha256": "72690bb461d367a309d3009c8616d0a655646bd90dfec2acb7fc9babeda2fd64"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S12.png": {
+      "bytes": 93066,
+      "sha256": "ee9adc000f5175b759d6d8fc4d212696faefdb79fd7ae7681bb8eb30082243f8"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/diagnostics.json": {
+      "bytes": 950,
+      "sha256": "96db943eee858c0f543b72b5afef6412a9f53ce7be5f575c143f8e5dbd50ef63"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/incompatible-source-cas.json": {
+      "bytes": 264,
+      "sha256": "addc806af89c17b723901d517395a0621a61110281410bc90e04386e81b519eb"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/observed-snapshots.json": {
+      "bytes": 3391,
+      "sha256": "cacfe4a1ccb7cbfd29211ac189407445f258eeabc1c404f7f42f0c9d95a6921b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/progress.md": {
+      "bytes": 2951,
+      "sha256": "c18d6c9a579ae8fbaad3371f4a738b0f9c12a534d665275d86d73be07dcde94e"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/report.html": {
+      "bytes": 4997,
+      "sha256": "56ec20df388b7eb432ccc5d55a06846e35bd8df848c812963d569ff5ccd52118"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/source-restoration.json": {
+      "bytes": 158,
+      "sha256": "22d215e278c07119cdcebb1f57a1616f64289227ca9f3cec6e7bc424b03bc537"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/status.json": {
+      "bytes": 4152,
+      "sha256": "3e5fe7578da8a24d21935917cfaa98da772b756879d625f4cee2b5aec2dba628"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/playwright/negative-evidence.mjs": {
+      "bytes": 14655,
+      "sha256": "12a1b23a683642fdcc6cf33de81b61cec5b06f8a29d4849619086b92e05cc168"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/trace/README.md": {
+      "bytes": 234,
+      "sha256": "6028b3457d3f08b4bf1baaff64d0da66de123c85073c75f66faecc0ed78dd8a6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/annotated/C01.png": {
+      "bytes": 60006,
+      "sha256": "77389fe1d7ed4f55d35aac50b734b363d72cc52a634cc480e23ec568ef3fd2ea"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/annotated/C02-before.png": {
+      "bytes": 59730,
+      "sha256": "bd758b9e069401ed8ee293fb382c28989d12ef618410fb6233b2169015fb763e"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/annotated/C02.png": {
+      "bytes": 92141,
+      "sha256": "1d088cdeda89144cf0ed09f6a9afef8dbd1ea6044b96888442b69631c66362a1"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/annotated/C03-before.png": {
+      "bytes": 91872,
+      "sha256": "73f68fd0d8db42f88de86fe69c432552b0eecb79ff24f94261e7d6e49646aab0"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/annotated/C03.png": {
+      "bytes": 91459,
+      "sha256": "69f29acc03ed0014df7a466d22da0f136ef9a7ce0d604af513a24c05d12fcb05"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C01.png": {
+      "bytes": 54305,
+      "sha256": "b489c1dbae9b0f4e0dee0f1f140c34aa7cd07571db8079785b0bb713487c788d"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C02-before.png": {
+      "bytes": 54171,
+      "sha256": "f8d57737aa8dfc330d3ab895afbe685eef1048e774bf833d482d6acd2c7d84e7"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C02.png": {
+      "bytes": 85883,
+      "sha256": "840ae3d1a91de4f34ddb91ddd09743a66706dd0bf0a7d14a058237b9f35d5f1f"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C03-before.png": {
+      "bytes": 85885,
+      "sha256": "e35a3142b4d4960d91dd44790acbb4164ee7410c328394359c04dd61e2cbf530"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C03.png": {
+      "bytes": 85542,
+      "sha256": "0e4a02c8bf4d903413f2471bf187c660a5bef2aab5c8c76cb3472358e2e6f707"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/compatible-default-cas.json": {
+      "bytes": 934,
+      "sha256": "1cb7c094314c1b91e59cb1e6e3206e9b49bcfc01085c7f6ffc0c8bf4d08c4e53"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/diagnostics.json": {
+      "bytes": 2397,
+      "sha256": "171e30490a916d565e2a6a3aa2b0ab9b2d27111a1d2c50a245672980ea43e729"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/observed-snapshots.json": {
+      "bytes": 10211,
+      "sha256": "c5276ff552d49a81132a2d9d90705d014e633069d9183055e0859a8f43d87e6d"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/progress.md": {
+      "bytes": 2897,
+      "sha256": "5af1fd5a891f028ff154ca1f2d06aab808665a383782261290639450066deeb2"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/report.html": {
+      "bytes": 4701,
+      "sha256": "5405b7ae43715c341b82deaac27fe1158d7d1e97d3418ccd3c74510aa4c2b1b7"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/source-restoration.json": {
+      "bytes": 158,
+      "sha256": "c21dc0fe84cdd17ac9eac3acb80ef4ee4204a9d1eaf7eb48205acfb3a8e1b45b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/status.json": {
+      "bytes": 3813,
+      "sha256": "9f09f86b7b5ddd9f8f776cce3e991d28231547186e23559af6b02ba8946dcf77"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/playwright/negative-evidence.mjs": {
+      "bytes": 14714,
+      "sha256": "3086b002b51e4b6670dec5524ce11524dcc4b0785b0ce56748507bf6b56f9a22"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/trace/README.md": {
+      "bytes": 234,
+      "sha256": "6028b3457d3f08b4bf1baaff64d0da66de123c85073c75f66faecc0ed78dd8a6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/annotated/D01.png": {
+      "bytes": 81441,
+      "sha256": "f2c70ec8cb9a15c0e785b486ca07108a9fc6bc75d658c1ca3c7b2dd837b212c9"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/annotated/D02-before.png": {
+      "bytes": 81747,
+      "sha256": "280941d3545136fcae297bc11ea09abc9a27a0659835003bc584c5917ee13164"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/annotated/D02.png": {
+      "bytes": 92363,
+      "sha256": "683ed850455c19f6c5ae32e4c5d50be2096373d82de38e154645afb8a9a20d99"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/annotated/D03-before.png": {
+      "bytes": 91971,
+      "sha256": "b60cdefc657b0113bdc13b385c2bad737dc87e5e7bbe44fde3f455fe527629c4"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/annotated/D03.png": {
+      "bytes": 82380,
+      "sha256": "d73d6462c9c36a182e860d0786fc854aefbafc4991155450d099f42e46cb7bcb"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D01.png": {
+      "bytes": 74506,
+      "sha256": "3a2b7c5bb07ba4a0aaa622ace54cc5f92f56a0406198e90506b00c54783c2c45"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D02-before.png": {
+      "bytes": 74753,
+      "sha256": "ffa11651b9c52dbe407cab8f249e2a5096d85ed2f88c65e287f552c8af093f34"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D02.png": {
+      "bytes": 86070,
+      "sha256": "a7161d574929a407ec4388f8c3f4a0c47963794e2b3f033e77ba4052d4b92c2b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D03-before.png": {
+      "bytes": 85748,
+      "sha256": "547004d7727a8235c330996db0d2a06dffdd1beaaa7cb3389a7625c046ae17a5"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D03.png": {
+      "bytes": 75680,
+      "sha256": "60b209c8ebba925143ce74df4c4d624841cec1fc158e396082516b405bed4a99"
+    }
+  },
+  "raw_images": {
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S01.png": {
+      "bytes": 42132,
+      "sha256": "a60679ce80ee7468203584328d2ddf301800ba95ba2deb7fa87ea730ffba78d3"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S02-before.png": {
+      "bytes": 42155,
+      "sha256": "c31e9e5ee1f863d8369c65478cd44cdaa0ccb469e2293b65764a65049af09d39"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S02.png": {
+      "bytes": 325742,
+      "sha256": "306d928deb1c8b29ae50e491a2a216bf1023f8b77ae28675c377b9d3ee9cae5b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S03-before.png": {
+      "bytes": 326143,
+      "sha256": "b821ab340d9e567a6e713427a0d26ed7336e02c1eecedb820097c2dc49d38833"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S03.png": {
+      "bytes": 301833,
+      "sha256": "5caa10ea33cfe0a189734f5da40dbc349d4d5661b0c3b2dbf3cd161aa9684d32"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S04-before.png": {
+      "bytes": 301462,
+      "sha256": "c34f9ba4003aabf76ce1e33a106af699055a895c3b0fdeec9cc813bb7c08632a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S04.png": {
+      "bytes": 241968,
+      "sha256": "300f40c351e9f87953ae15f59880284622024a0792d7f80556f797f41289963a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S05-before.png": {
+      "bytes": 234957,
+      "sha256": "7b93e0e4e17237aee61aa8ea48adc7b789a46186e41fbe137cb4dab2506b5d3c"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S05.png": {
+      "bytes": 42529,
+      "sha256": "79a01027c26e0cb65362b66e3dcd060e516411b0305009f0871f494066ab6d83"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S06-before.png": {
+      "bytes": 41586,
+      "sha256": "26230e1eb3943c3916f4a0068852aaf623d1d3a1f1b74777aae34d85b34ed4b1"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S06.png": {
+      "bytes": 69792,
+      "sha256": "33a6d8bb4f8f54e2a736f558108d2773e7346725277f8bd0502ce533c29aea85"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S07-before.png": {
+      "bytes": 69748,
+      "sha256": "82c44cd9d3874acd7e50c5cfacdcd05749cf8a8328a503f23906e54e2b730629"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S07.png": {
+      "bytes": 72876,
+      "sha256": "2c1fff8b91cc6d68d5a1ced4560eb60a290c7490876b43239dbda67cc8d4367d"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S08-before.png": {
+      "bytes": 73284,
+      "sha256": "95769933148b5e4d7648bd9e25cb56fde2e1ab18f5e99f92bf0b96dd87c3ff45"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S08.png": {
+      "bytes": 73312,
+      "sha256": "1e359cecade286a3fc22e3180772466d4778759031b3e0eae03bdacec96a77c6"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S09-before.png": {
+      "bytes": 72859,
+      "sha256": "d47a033a62b203f56c401eac3529931a5756a12013616d6a28518d7f9388969a"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S09.png": {
+      "bytes": 54442,
+      "sha256": "54b788e6b0fa707fda6f9246b44be0537b73e1e95f14a5288074db307403b011"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S10-before.png": {
+      "bytes": 54479,
+      "sha256": "7dd5ea08229b9cdd9412a448915bb903713e7e6737572de283789ddbd13e5b7b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S10.png": {
+      "bytes": 54201,
+      "sha256": "505e28bc7d07a3ba74fd6c5dbd8ca6f15bc3104a2137804c39bf1154e7662bc1"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S11-before.png": {
+      "bytes": 54213,
+      "sha256": "08fc78b4da6aa1bd4968276228833146d090080bbd76ca06602076ddf807aa06"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S11.png": {
+      "bytes": 82440,
+      "sha256": "3b9e315950d9e99cfb05f7247adcf8d23d5b902f06b56a0c1b0569e7c9ae9286"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S12-before.png": {
+      "bytes": 84430,
+      "sha256": "72690bb461d367a309d3009c8616d0a655646bd90dfec2acb7fc9babeda2fd64"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001/screenshots/raw/S12.png": {
+      "bytes": 93066,
+      "sha256": "ee9adc000f5175b759d6d8fc4d212696faefdb79fd7ae7681bb8eb30082243f8"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C01.png": {
+      "bytes": 54305,
+      "sha256": "b489c1dbae9b0f4e0dee0f1f140c34aa7cd07571db8079785b0bb713487c788d"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C02-before.png": {
+      "bytes": 54171,
+      "sha256": "f8d57737aa8dfc330d3ab895afbe685eef1048e774bf833d482d6acd2c7d84e7"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C02.png": {
+      "bytes": 85883,
+      "sha256": "840ae3d1a91de4f34ddb91ddd09743a66706dd0bf0a7d14a058237b9f35d5f1f"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C03-before.png": {
+      "bytes": 85885,
+      "sha256": "e35a3142b4d4960d91dd44790acbb4164ee7410c328394359c04dd61e2cbf530"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002/screenshots/raw/C03.png": {
+      "bytes": 85542,
+      "sha256": "0e4a02c8bf4d903413f2471bf187c660a5bef2aab5c8c76cb3472358e2e6f707"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D01.png": {
+      "bytes": 74506,
+      "sha256": "3a2b7c5bb07ba4a0aaa622ace54cc5f92f56a0406198e90506b00c54783c2c45"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D02-before.png": {
+      "bytes": 74753,
+      "sha256": "ffa11651b9c52dbe407cab8f249e2a5096d85ed2f88c65e287f552c8af093f34"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D02.png": {
+      "bytes": 86070,
+      "sha256": "a7161d574929a407ec4388f8c3f4a0c47963794e2b3f033e77ba4052d4b92c2b"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D03-before.png": {
+      "bytes": 85748,
+      "sha256": "547004d7727a8235c330996db0d2a06dffdd1beaaa7cb3389a7625c046ae17a5"
+    },
+    "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003/screenshots/raw/D03.png": {
+      "bytes": 75680,
+      "sha256": "60b209c8ebba925143ce74df4c4d624841cec1fc158e396082516b405bed4a99"
+    }
+  }
+}

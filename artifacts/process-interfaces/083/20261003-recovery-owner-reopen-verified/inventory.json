@@ -1,0 +1,36 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 139,
+      "sha256": "a4d0c179cd8eb43b2b124d9325df54556cd665e71bdbf9165289f20978862f84"
+    },
+    "case-index.json": {
+      "bytes": 13452,
+      "sha256": "b2f48e46677a9d5789f29e7cc3d9c499d339329c5619ccc62ff65ff6a2870df1"
+    },
+    "checked-scope.json": {
+      "bytes": 2320,
+      "sha256": "e9839d3a47d9b515dd44d090c18352c6d4d0ced3a2abd9c479657b67841655de"
+    },
+    "command.json": {
+      "bytes": 1465,
+      "sha256": "3246360362726115289f052ef90abf72d99fcea4b723aaa7e5377e7460cba15a"
+    },
+    "output.log": {
+      "bytes": 102,
+      "sha256": "2279f201203935c2aeb982c912c4735bdfb217f3051904a124a854563a05edce"
+    },
+    "primary-assertions.json": {
+      "bytes": 2078,
+      "sha256": "93daadc9b03f31467fa58cd773bce40de837cbe61b457d5dc66c9b94485c5e79"
+    },
+    "README.md": {
+      "bytes": 1829,
+      "sha256": "53230d4e3ee6b1e6d12f4bbd8f408cd6c3ca8dd3d6c5f0caf86753ee06152d33"
+    },
+    "results.xml": {
+      "bytes": 12420,
+      "sha256": "dab3534c0104a562bfc63ca103c7a72c0c81ab0325acc71116b849fb947012db"
+    }
+  }
+}

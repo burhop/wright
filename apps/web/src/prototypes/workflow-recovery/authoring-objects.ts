@@ -22,6 +22,8 @@ export {
   hydrateAuthoringLayout,
 } from "./authoring-positioning";
 
+import { isValidatorBlock, validatorSettings } from "./validation-settings";
+
 export type AuthoringGroup =
   "input" | "document" | "tool" | "check3d" | "drawing" | "fdm" | "more";
 export const AUTHORING_GROUPS: readonly {
@@ -32,7 +34,7 @@ export const AUTHORING_GROUPS: readonly {
   {
     id: "input",
     label: "Input",
-    description: "Text and existing workspace files",
+    description: "Text, workspace files and declared requests for user input",
   },
   {
     id: "document",
@@ -45,7 +47,11 @@ export const AUTHORING_GROUPS: readonly {
     description:
       "Add a task configured for an available application or service",
   },
-  { id: "more", label: "Review", description: "Engineer review and approval" },
+  {
+    id: "more",
+    label: "Review",
+    description: "Output validation, engineer review and approval",
+  },
 ];
 
 interface TemplatePort {
@@ -88,6 +94,22 @@ const documentOut: TemplatePort = {
   typeId: "type.document.engineering",
   direction: "output",
 };
+const promptIn: TemplatePort = {
+  key: "prompt-in",
+  name: "Prompt",
+  typeId: "type.document.engineering",
+  direction: "input",
+  required: false,
+  cardinality: "optional",
+};
+const referenceImageIn: TemplatePort = {
+  key: "reference-image-in",
+  name: "Reference image",
+  typeId: "type.file.workspace",
+  direction: "input",
+  required: false,
+  cardinality: "optional",
+};
 const modelIn: TemplatePort = {
   key: "model-in",
   name: "CAD model",
@@ -123,17 +145,7 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
       save_output: false,
       file_policy: "indexed",
     },
-    ports: [
-      {
-        key: "prompt-in",
-        name: "Prompt",
-        typeId: "type.document.engineering",
-        direction: "input",
-        required: false,
-        cardinality: "optional",
-      },
-      { ...documentOut, name: "Response" },
-    ],
+    ports: [promptIn, referenceImageIn, { ...documentOut, name: "Response" }],
   },
   {
     id: "text-input",
@@ -240,6 +252,42 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
     ports: [textIn, fileIn, { ...documentOut, name: "Work order" }],
   },
   {
+    id: "process-validator",
+    group: "more",
+    label: "Validate output",
+    description:
+      "Inspect a previous step's output and provide correction findings",
+    executionKind: "deterministic",
+    instructions:
+      "Inspect connected outputs with the pinned validation profile.",
+    configuration: { output_format: "json", max_revisions: 0 },
+    ports: [{ ...documentOut, name: "Validation assessment" }],
+  },
+  {
+    id: "human-input",
+    group: "input",
+    label: "Request input",
+    description: "Ask for declared answers and continue the same run",
+    executionKind: "human",
+    instructions: "",
+    ports: [
+      {
+        ...documentOut,
+        key: "evidence-in",
+        name: "Evidence to review",
+        direction: "input",
+        required: false,
+        cardinality: "optional",
+      },
+      {
+        key: "response-out",
+        name: "User response",
+        typeId: "type.result.structured",
+        direction: "output",
+      },
+    ],
+  },
+  {
     id: "mcp-task",
     group: "tool",
     label: "AI task with MCP",
@@ -254,7 +302,11 @@ export const AUTHORING_TEMPLATES: readonly AuthoringTemplate[] = [
       max_tool_calls: 8,
       timeout_seconds: 300,
     },
-    ports: [{ ...documentOut, name: "Task result" }],
+    ports: [
+      promptIn,
+      referenceImageIn,
+      { ...documentOut, name: "Task result" },
+    ],
   },
   {
     id: "mcp-tool",
@@ -426,16 +478,17 @@ export function createAuthoringObject(
     authoring_template: template.id,
     ...template.configuration,
   };
-  if (template.id === "ai-prompt")
+  if (template.id === "ai-prompt" || template.id === "mcp-task")
     configuration.prompt_input = ports[0]!.id.slice(5).replaceAll("-", "_");
-  if (template.group === "input")
+  if (template.inputMode)
     Object.assign(configuration, {
       [RECOVERY_AUTHORING_SECTION_CONFIGURATION_KEY]: "input",
       input_mode: template.inputMode!,
       input_text: "",
       workspace_file: "",
     });
-  else configuration.binding_state = "unbound";
+  else if (template.id !== "process-validator" && template.id !== "human-input")
+    configuration.binding_state = "unbound";
   if (template.applicationHint)
     configuration.application_hint = template.applicationHint;
   const selectedPosition = options.selectedBlockId
@@ -517,6 +570,29 @@ export function validateAuthoringConfiguration(
       line: null,
     });
   const configuration = block.configuration;
+  if (
+    isValidatorBlock(block) &&
+    configuration.validation !== undefined &&
+    !validatorSettings(block)
+  )
+    fail(
+      "WFR-VALIDATION-CONFIGURATION-INVALID",
+      "The validation profile, requirement reference or subject roles are invalid.",
+      "Choose a pinned validation profile and bind each subject role once.",
+    );
+  if (
+    isValidatorBlock(block) &&
+    configuration.max_revisions !== undefined &&
+    (typeof configuration.max_revisions !== "number" ||
+      !Number.isInteger(configuration.max_revisions) ||
+      configuration.max_revisions < 0 ||
+      configuration.max_revisions > 3)
+  )
+    fail(
+      "WFR-VALIDATION-LIMIT-INVALID",
+      "The validator revision limit must be a whole number from zero to three.",
+      "Choose a finite revision limit; zero disables automatic correction.",
+    );
   if (
     configuration.authoring_template === "mcp-task" &&
     configuration.max_tool_calls !== undefined &&

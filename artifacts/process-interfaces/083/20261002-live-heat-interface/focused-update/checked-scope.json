@@ -1,0 +1,30 @@
+{
+  "schema_version": "wright.process-ui-checked-scope/1",
+  "run_id": "67abaa021ee44972a94e3c9cbaa3dbbe",
+  "job_id": "job-331a7203cbb142da80a9f0ea20a7d023",
+  "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+  "revision_id": "revision-13d5997c275849df87ce1cd08bfa0ac2",
+  "parent_revision": "revision-04c1d0b36d3347b0b5c24318028e4f61",
+  "source_digest": "a5fb963d84e0a226882ca9fa307d3926dbb7c8380aad750a78efe91960de91f3",
+  "inventory_digest": "ec263cf03afc6a2c61bc42aa5b54c631fb9d2d92f5cca633f588beb531e471bc",
+  "model_reference": "gpt-5.6-sol",
+  "repair_attempts": 0,
+  "browser_steps": 13,
+  "actual_result_cards": 18,
+  "source_line_count": 70,
+  "method": "Actual default-model focused update through Wright; fixed build; real workspace preview/save/new-revision open.",
+  "corrected_fields": "Typed snapshot.interactions and role prefixes; removed guessed root fields; enabled explicit exact evidence/assessment/block navigation.",
+  "physical_dispatch": false,
+  "human_acceptance": false,
+  "focused_update_proved": true,
+  "second_run_reuse_proved": false,
+  "navigation_click_proved": false,
+  "limitations": "Actual link activation, second-run reuse, preparation/review enhancement and printed workflow remain pending.",
+  "browser_report": "workspace-walkthrough/report.html",
+  "files": {
+    "source.json": "a5fb963d84e0a226882ca9fa307d3926dbb7c8380aad750a78efe91960de91f3",
+    "binding.json": "4ce6e270633435d5325386ab8e48cd6045939ce78bb69ed8c399136139af11fa",
+    "build-report.json": "39292a8f3f5bc081d20946d45033efe736406cb9706ffc8032aac5845ba7036c",
+    "saved-revision.json": "5b0121188d9eb6e5279d238247b5a350aadf14ee9a8fab012f1bbc402c7efd80"
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "state": "ready",
+  "assessment_id": "readiness-8ccd160fb8a34dc2b3a770645f1f7752",
+  "process": {
+    "workspace_id": "083-heat-live-005",
+    "source_path": "workflows/printed-replacement-part-live-default-model-011.workflow.wflow",
+    "source_digest": "a4d06fa25e6c5ad86ec37de35d23f6fe68da1e45e9d1f899d28f9475c2d27ebb",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "700a7b15f6cceecd0cd0c534cc78272a9c73a8f196d828d0a89ddf4ff8188dc5",
+  "assessed_at": "2026-10-02T11:18:56.213074+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "image_and_scale_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_concept_png_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_concept_svg_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_context_md_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_prompt_txt_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_scenario_json_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_user_profile_md_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_requirements_md_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_geometry_capability_guidance_md_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_machine_profile_json_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_process_profile_json_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_filament_profile_json_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_slice_call_json_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_passive_representations_py_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_inspect_manufacturing_package_py_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_inspection_call_json_live_default_model_011",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "review_basis_live_default_model_011.review_basis_live_default_model_011_basis",
+      "classification": "upstream_produced",
+      "producer_step": "define_geometry_basis_live_default_model_011",
+      "producer_port": "define_geometry_basis_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "create_mesh_live_default_model_011.create_mesh_live_default_model_011_reviewed_basis",
+      "classification": "upstream_produced",
+      "producer_step": "define_geometry_basis_live_default_model_011",
+      "producer_port": "define_geometry_basis_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "repair_measure_orient_live_default_model_011.repair_measure_orient_live_default_model_011_actual_source",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_live_default_model_011",
+      "producer_port": "source_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "repair_measure_orient_live_default_model_011.repair_measure_orient_live_default_model_011_construction_report",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_live_default_model_011",
+      "producer_port": "create_mesh_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "supports_and_slice_live_default_model_011.supports_and_slice_live_default_model_011_selected_geometry",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_live_default_model_011",
+      "producer_port": "repaired_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "retain_slice_response_live_default_model_011.retain_slice_response_live_default_model_011_actual_response",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_live_default_model_011",
+      "producer_port": "supports_and_slice_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "inspect_slice_handoff_live_default_model_011.inspect_slice_handoff_live_default_model_011_slice_package",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_live_default_model_011",
+      "producer_port": "slice_package",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "inspect_slice_handoff_live_default_model_011.inspect_slice_handoff_live_default_model_011_provider_response",
+      "classification": "upstream_produced",
+      "producer_step": "retain_slice_response_live_default_model_011",
+      "producer_port": "provider_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "inspect_slice_handoff_live_default_model_011.inspect_slice_handoff_live_default_model_011_slice_source",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_live_default_model_011",
+      "producer_port": "repaired_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_live_default_model_011.summarize_preparation_live_default_model_011_construction",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_live_default_model_011",
+      "producer_port": "create_mesh_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_live_default_model_011.summarize_preparation_live_default_model_011_repair",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_live_default_model_011",
+      "producer_port": "repair_measure_orient_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_live_default_model_011.summarize_preparation_live_default_model_011_slice_evidence",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "slice_evidence",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_live_default_model_011.summarize_preparation_live_default_model_011_support_preview",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "support_preview",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "authorize_transfer_live_default_model_011.authorize_transfer_live_default_model_011_exact_package",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_live_default_model_011",
+      "producer_port": "slice_package",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "authorize_transfer_live_default_model_011.authorize_transfer_live_default_model_011_preparation_review",
+      "classification": "upstream_produced",
+      "producer_step": "summarize_preparation_live_default_model_011",
+      "producer_port": "summarize_preparation_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_source_mesh",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_live_default_model_011",
+      "producer_port": "source_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_repaired_mesh",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_live_default_model_011",
+      "producer_port": "repaired_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_slice_package",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_live_default_model_011",
+      "producer_port": "slice_package",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_slice_evidence",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "slice_evidence",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_support_preview",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "support_preview",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_machine_profile",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "machine_profile",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_process_profile",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "process_profile",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_filament_profile",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_live_default_model_011",
+      "producer_port": "filament_profile",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_source_report",
+      "classification": "upstream_produced",
+      "producer_step": "summarize_preparation_live_default_model_011",
+      "producer_port": "summarize_preparation_live_default_model_011_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_live_default_model_011.validate_transfer_receipt",
+      "classification": "upstream_produced",
+      "producer_step": "authorize_transfer_live_default_model_011",
+      "producer_port": "receipt",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "review_preparation_live_default_model_011.review_preparation_live_default_model_011_assessment",
+      "classification": "upstream_produced",
+      "producer_step": "validate_outputs_live_default_model_011",
+      "producer_port": "assessment",
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": []
+}

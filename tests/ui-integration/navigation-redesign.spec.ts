@@ -174,7 +174,7 @@ test.describe("UI Navigation Redesign E2E", () => {
           has_token: false,
           workspace_path: '/tmp/wright-e2e-workspace',
           workspace_prompt: '',
-          git_large_file_threshold: 50,
+          git_large_file_threshold: 50 * 1024 * 1024,
         }),
       });
     });
@@ -489,7 +489,7 @@ test.describe("UI Navigation Redesign E2E", () => {
           has_token: true,
           workspace_path: '/tmp/wright-e2e-workspace',
           workspace_prompt: 'Initial prompt context',
-          git_large_file_threshold: 10
+          git_large_file_threshold: 10 * 1024 * 1024
         }),
       });
     });
@@ -533,7 +533,7 @@ test.describe("UI Navigation Redesign E2E", () => {
       git_username: 'burhop',
       git_token: null,
       workspace_prompt: 'Use strict CAD constraints',
-      git_large_file_threshold: 25
+      git_large_file_threshold: 25 * 1024 * 1024
     });
 
     // Verify success indicator is rendered

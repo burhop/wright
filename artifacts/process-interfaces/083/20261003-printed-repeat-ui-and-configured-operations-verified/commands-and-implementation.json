@@ -1,0 +1,17 @@
+{
+  "source_commit_before_correction": "bcbb31c7",
+  "affected_command": ".venv/Scripts/python.exe -m pytest tests/test_process_interface_examples.py tests/test_process_interface_operator_example.py packages/workspace_service/tests/test_workflow_run_paths.py packages/workspace_service/tests/test_workflow_source_execution.py packages/workspace_service/tests/test_workflow_ai_file_dependencies.py packages/workspace_service/tests/test_workflow_mcp_source_contracts.py packages/workspace_service/tests/test_process_interface_continuation.py --basetemp=.local-run/process-interfaces-083/t045-configured-operation-regression-001/tmp -p no:cacheprovider --junitxml=.local-run/process-interfaces-083/t045-configured-operation-regression-001/results.xml -q",
+  "ruff_command": ".venv/Scripts/python.exe -m ruff check --no-cache examples/process-interfaces/printed-replacement-part/prepare.py examples/process-interfaces/printed-replacement-part/provider_inputs.py tests/test_process_interface_examples.py",
+  "cwd": "D:/repos/wright",
+  "tests": 202,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "implementation_working_file_sha256": {
+    "examples/process-interfaces/printed-replacement-part/prepare.py": "9932c138aa75233e749e1447e875f781bb4fa03cc23769d10ba340a0821b36b4",
+    "examples/process-interfaces/printed-replacement-part/provider_inputs.py": "d7ff3ab56d9aad84b8c4e629e4bfc8bc9be031e1b0c444113c7f100b3227276e",
+    "examples/process-interfaces/printed-replacement-part/bindings.example.json": "14490ec8a7a92c01bb29e1327d3179b3bfa9088b247119d3d8e6041af9820066",
+    "tests/test_process_interface_examples.py": "f5a6502add950946849df08591ce06e36960e92de00271a95167bad12d22974d"
+  },
+  "scope": "Controlled preparation, compiler/run-path, operator/source/file-dependency/MCP-contract and continuation tests; no actual configured native chain completion."
+}

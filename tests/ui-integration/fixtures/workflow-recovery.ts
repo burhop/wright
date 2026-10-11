@@ -34,8 +34,16 @@ export interface RecoveryWorkspaceMock {
   current(): WorkflowSourceDocument | null;
   createCount(): number;
   missingReadCount(): number;
+  runCount(): number;
+  runRequestCount(): number;
   updateCount(): number;
   conflictNextUpdate(): void;
+}
+
+export interface RecoveryWorkflowRunMock {
+  events: Array<Record<string, unknown>>;
+  result: Record<string, unknown>;
+  recentRuns?: Array<Record<string, unknown>>;
 }
 
 function workflowDocument(
@@ -73,7 +81,11 @@ function conflictEnvelope(current: WorkflowSourceDocument | null) {
 
 export async function mockRecoveryWorkspace(
   page: Page,
-  options: { source?: string | null } = {},
+  options: {
+    source?: string | null;
+    run?: RecoveryWorkflowRunMock;
+    readiness?: "not_template" | "setup_required";
+  } = {},
 ): Promise<RecoveryWorkspaceMock> {
   await page.addInitScript(() => {
     window.localStorage.setItem("wright.workspaceSurfaces.testEnabled", "1");
@@ -83,9 +95,12 @@ export async function mockRecoveryWorkspace(
       ? null
       : workflowDocument(options.source ?? publicWorkflowSource, 1, 2);
   let currentPath = WORKFLOW_PATH;
-  let sourceReadiness: "not_template" | "setup_required" = "not_template";
+  let sourceReadiness: "not_template" | "setup_required" =
+    options.readiness ?? "not_template";
   let creates = 0;
   let missingReads = 0;
+  let runs = 0;
+  let runRequests = 0;
   let updates = 0;
   let rejectNextUpdate = false;
 
@@ -225,6 +240,63 @@ export async function mockRecoveryWorkspace(
             { path: "references/bracket.png", name: "bracket.png" },
           ],
         },
+      });
+    }
+    if (
+      path === "/api/workspace/workflow-sources/reviews" &&
+      method === "GET"
+    ) {
+      return route.fulfill({ json: { reviews: [] } });
+    }
+    if (path === "/api/workspace/workflow-sources/runs" && method === "GET") {
+      return route.fulfill({
+        headers: { "Cache-Control": "no-store" },
+        json: {
+          workspace_id: WORKSPACE_ID,
+          workflow_path: currentPath,
+          runs: options.run?.recentRuns ?? [],
+        },
+      });
+    }
+    if (path === "/api/workspace/workflow-sources/run" && method === "POST") {
+      runRequests += 1;
+      if (!options.run || !document) {
+        return route.fulfill({
+          status: 501,
+          json: { detail: { message: "No workflow run was configured" } },
+        });
+      }
+      const body = request.postDataJSON() as {
+        session_id: string;
+        path: string;
+        expected_storage_digest: string;
+      };
+      if (
+        body.session_id !== SESSION_ID ||
+        body.path !== currentPath ||
+        body.expected_storage_digest !== document.storage_digest
+      ) {
+        return route.fulfill({
+          status: 409,
+          json: { detail: { message: "Run subject did not match" } },
+        });
+      }
+      runs += 1;
+      const terminal =
+        typeof options.run.result.status === "string" &&
+        ["pending_review", "awaiting_approval"].includes(
+          options.run.result.status,
+        )
+          ? options.run.result.status
+          : "completed";
+      return route.fulfill({
+        contentType: "application/x-ndjson",
+        body: [
+          ...options.run.events,
+          { kind: terminal, result: options.run.result },
+        ]
+          .map((event) => JSON.stringify(event))
+          .join("\n"),
       });
     }
     if (
@@ -405,7 +477,7 @@ export async function mockRecoveryWorkspace(
         typeof body.semantic_change_validated !== "boolean" ||
         (body.layout !== undefined &&
           body.expected_layout_revision !== document.layout_revision);
-      if (rejectNextUpdate || stale) {
+      if (rejectNextUpdate || stale || document === null) {
         rejectNextUpdate = false;
         return route.fulfill({ status: 409, json: conflictEnvelope(document) });
       }
@@ -463,6 +535,8 @@ export async function mockRecoveryWorkspace(
     current: () => document,
     createCount: () => creates,
     missingReadCount: () => missingReads,
+    runCount: () => runs,
+    runRequestCount: () => runRequests,
     updateCount: () => updates,
     conflictNextUpdate: () => {
       rejectNextUpdate = true;

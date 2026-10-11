@@ -1,0 +1,24 @@
+{
+  "process": {
+    "workspace_id": "083-fresh-prompt-055",
+    "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+    "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "target": {
+    "kind": "evidence",
+    "block_id": "inspect_slice_handoff_mixed_default_071",
+    "run_id": "84cd89a395af406e80d094ec071abe59",
+    "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+    "assessment_id": null,
+    "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json"
+  },
+  "representation": {
+    "artifact_ref": "process-proofs/printed-replacement-part/mixed-default-071/outputs/84cd89a395af406e80d094ec071abe59/support-preview.json",
+    "sha256": "8bb38c5dc49d03d8c8a17304356b24d589dbbd3290e9ac55a2a7f1fad2d31f30",
+    "media_type": null,
+    "result_id": "84cd89a395af406e80d094ec071abe59:inspect_slice_handoff_mixed_default_071:support_preview",
+    "representation_id": null
+  }
+}

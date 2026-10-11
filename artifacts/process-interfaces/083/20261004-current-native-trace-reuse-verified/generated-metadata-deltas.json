@@ -1,0 +1,36 @@
+{
+  "copied_files": 155,
+  "no_added_or_removed_workspace_files": true,
+  "surface_json_changed_leaf_paths": [
+    {
+      "path": "/launch/argv/0",
+      "old_type": "str",
+      "new_type": "str"
+    },
+    {
+      "path": "/launch/argv/4",
+      "old_type": "str",
+      "new_type": "str"
+    }
+  ],
+  "workspace_context_line_deltas": [
+    {
+      "tag": "replace",
+      "old_range": [
+        4,
+        5
+      ],
+      "new_range": [
+        4,
+        5
+      ],
+      "old_line_sha256": [
+        "7431719232ba1f4e6f1bad2c3a3a93dd3f2ae85030502bb7a335e98fb94b1870"
+      ],
+      "new_line_sha256": [
+        "fcb2211187f0d7cd48361dbe626f0e0b2f0ada866a683f651324844484eef6e6"
+      ]
+    }
+  ],
+  "all_153_other_copied_files_byte_unchanged": true
+}

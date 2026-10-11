@@ -1,5 +1,7 @@
 import asyncio
+from dataclasses import replace
 import json
+from types import SimpleNamespace
 import pytest
 from tool_registry.gateway_models import (
     GatewayTool,
@@ -36,6 +38,25 @@ TOOL = GatewayTool(
         "additionalProperties": False,
     },
 )
+
+
+@pytest.mark.parametrize("server", ["geometry-provider", "thermal-provider"])
+def test_missing_task_tool_has_provider_neutral_correction_without_dispatch(server):
+    gateway = Gateway()
+    tool = replace(TOOL, name=server + "__search", server_id=server)
+    gateway.list_tools = lambda *args: (tool,)
+    runtime = WorkflowMcpRuntime(gateway, workspace_id="workspace", session_id="test")
+    step = SimpleNamespace(
+        server_id=server,
+        title="Prepare engineering result",
+        task_tool_allowlist=("search", "missing-tool"),
+    )
+    with pytest.raises(WorkflowSourceExecutionError) as caught:
+        runtime.task_tools(step)
+    assert caught.value.code == "WORKFLOW_NOT_READY"
+    assert "Tool Registry" in caught.value.correction
+    assert "Blender" not in caught.value.correction
+    assert gateway.calls == []
 
 
 class Gateway:

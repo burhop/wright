@@ -1,0 +1,84 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 139,
+      "sha256": "a4d0c179cd8eb43b2b124d9325df54556cd665e71bdbf9165289f20978862f84"
+    },
+    "checked-scope.json": {
+      "bytes": 7514,
+      "sha256": "f1acd0c65c468a293c6c2ad0477a46ebf812aaee5f8290839dcd75cca23f6c2f"
+    },
+    "primary-assertions.json": {
+      "bytes": 22260,
+      "sha256": "82c8115a70bd388b00db838bc4e2df98d95498b14215bb8d0eadb9f72097b927"
+    },
+    "README.md": {
+      "bytes": 2148,
+      "sha256": "81fdba4b889e169bc585a9170c0005606311631aad752d0e02a850b3d1cdab0a"
+    },
+    "semantic-ledger.json": {
+      "bytes": 134945,
+      "sha256": "710e2621d3258f196d131775f7c43490aadb4199414548910089afb508464013"
+    },
+    "boundaries/case-index.json": {
+      "bytes": 8963,
+      "sha256": "4ed56c654fa5171d5d9cb3b73a2da6718b94724eb391cc2a37e88ec1b88ee466"
+    },
+    "boundaries/command.json": {
+      "bytes": 2913,
+      "sha256": "94c515a1b9fdd3ee2d326ed4f3ec3c7ab49952539ef5cc223f05d394b4cc0e4a"
+    },
+    "boundaries/output.log": {
+      "bytes": 101,
+      "sha256": "7461fa76b67bd60f1e2dd98d160ca4eab136bcab31258f712d53ec9875faa30f"
+    },
+    "boundaries/result.json": {
+      "bytes": 359,
+      "sha256": "1cd80d788904560ee7fc45fb0130ba292269f22456e58e46171292648d7d4e6a"
+    },
+    "boundaries/results.xml": {
+      "bytes": 8118,
+      "sha256": "7d8aa47d72cdd558f904d9dab3b79fa84a7c2ee0238a7bf2686e03a20d85f9d7"
+    },
+    "regression/case-index.json": {
+      "bytes": 40502,
+      "sha256": "49418d63f0cf0d0a237b4655017c0c5fbbd910f2fc1090e30d30a71dd4324db1"
+    },
+    "regression/command.json": {
+      "bytes": 6726,
+      "sha256": "d8e60b33492cf39f103afa0d057c1b9fc1f54406cf3da2532ee3b4a5e47ead49"
+    },
+    "regression/output.log": {
+      "bytes": 265,
+      "sha256": "1fab88f632e603c15b219c83e9037e8160896e15d90ef63d28e73cf1d1f3a9e4"
+    },
+    "regression/result.json": {
+      "bytes": 362,
+      "sha256": "c9b6d037464ccf6be77815c35a1673b13cf0f09a8cf596e5893612f330b4582f"
+    },
+    "regression/results.xml": {
+      "bytes": 36424,
+      "sha256": "8c918279f5ee342525b2cc559c317c2ccf53e5b08f57cb4553138935fc1371a6"
+    },
+    "transport/case-index.json": {
+      "bytes": 13769,
+      "sha256": "b3216ec361bf2fcd5bfbf0fcb5a006e23754a5aa448cbecf207e19eecf0612ba"
+    },
+    "transport/command.json": {
+      "bytes": 1458,
+      "sha256": "41f9326cf5b89444e905fa524c8f843574cf5b1ec854dbaafa88f2ba7279a4d5"
+    },
+    "transport/output.log": {
+      "bytes": 900,
+      "sha256": "1b77e2814935a80d591c5bb07ad2864645f5e6f7263dcab819d80a3d8869d921"
+    },
+    "transport/result.json": {
+      "bytes": 359,
+      "sha256": "74224cb5d0d85dea547c3217d51cf1ee8d6060d13afa308f6a424e49662b043d"
+    },
+    "transport/results.xml": {
+      "bytes": 12280,
+      "sha256": "528e6f66296062a64df14e5898143a3b002d2f5e13584edd534e612217502c33"
+    }
+  }
+}

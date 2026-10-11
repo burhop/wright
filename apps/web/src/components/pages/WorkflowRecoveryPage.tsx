@@ -1,24 +1,22 @@
+import { copyWorkspaceWorkflowSource } from "../../services/workflow-source-copy";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import type { ProcessRef } from "@wright/process-client";
 
 import WorkflowRecoveryConcept, {
   type WorkflowRunOptions,
   type WorkflowRecoveryStoredSource,
 } from "../../prototypes/workflow-recovery/WorkflowRecoveryConcept";
+import { HistoricalResultView } from "../process-interfaces/HistoricalResultView";
 import { EngineeringTemplateDialog } from "../../prototypes/workflow-recovery/EngineeringTemplateDialog";
-import {
-  initialWorkflow,
-  type RecoveryLayout,
-} from "../../prototypes/workflow-recovery/model";
-import { formatRecoveryAuthoringSource } from "../../prototypes/workflow-recovery/recovery-authoring";
+import { WorkflowBundleDialog } from "../../prototypes/workflow-recovery/WorkflowBundleDialog";
+import { type RecoveryLayout } from "../../prototypes/workflow-recovery/model";
+import { blankWorkflowSource } from "../../services/blank-workflow";
 import {
   workspaceService,
   WorkspaceWorkflowSourceNotFoundError,
   type WorkspaceWorkflowSourceDocument,
   type WorkspaceWorkflowSourceReadiness,
 } from "../../services/workspace-service";
-
-const starterWorkflowSource =
-  formatRecoveryAuthoringSource(initialWorkflow).text;
 
 export interface WorkflowRecoveryPageProps {
   workspaceId: string;
@@ -27,7 +25,12 @@ export interface WorkflowRecoveryPageProps {
   workflowFilePath: string;
   reopenRequest?: number;
   onOpenWorkflow?: (path: string) => void;
+  onUnsavedChange?: (path: string, unsaved: boolean) => void;
+  onSavingChange?: (path: string, saving: boolean) => void;
   onOpenFile?: (path: string) => void;
+  onOpenProcess?: (process: ProcessRef, runId?: string) => void;
+  createIfMissing?: boolean;
+  navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
 }
 
 export function WorkflowRecoveryPage({
@@ -37,7 +40,12 @@ export function WorkflowRecoveryPage({
   workflowFilePath,
   reopenRequest = 0,
   onOpenWorkflow,
+  onUnsavedChange,
+  onSavingChange,
   onOpenFile,
+  onOpenProcess,
+  createIfMissing = false,
+  navigation,
 }: WorkflowRecoveryPageProps) {
   const visiblePath = workflowFilePath.replace(/^\/+/, "");
   const dialogId = useId();
@@ -49,11 +57,36 @@ export function WorkflowRecoveryPage({
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
   const [editorInstance, setEditorInstance] = useState(0);
-  const [fileAction, setFileAction] = useState<"new" | "open" | null>(null);
+  const [fileAction, setFileAction] = useState<
+    "new" | "open" | "save-as" | "clone" | null
+  >(null);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
   const [fileActionError, setFileActionError] = useState("");
   const [fileActionPending, setFileActionPending] = useState(false);
+  const [editorUnsaved, setEditorUnsaved] = useState(false);
+  const handleUnsavedChange = useCallback(
+    (unsaved: boolean) => {
+      setEditorUnsaved(unsaved);
+      onUnsavedChange?.(workflowFilePath, unsaved);
+    },
+    [onUnsavedChange, workflowFilePath],
+  );
   const [newWorkflowName, setNewWorkflowName] = useState("");
+  const historicalQuery = new URLSearchParams(window.location.search);
+  const historicalWorkflow = historicalQuery
+    .get("workflowPath")
+    ?.replace(/^\/+/, "");
+  const initialPrintDemoRun =
+    historicalWorkflow === visiblePath
+      ? historicalQuery.get("printDemoRun")
+      : null;
+  const [printDemoOpen, setPrintDemoOpen] = useState(
+    Boolean(initialPrintDemoRun),
+  );
+  useEffect(() => {
+    if (initialPrintDemoRun) setPrintDemoOpen(true);
+  }, [initialPrintDemoRun]);
   const [workflowChoices, setWorkflowChoices] = useState<
     Array<{ path: string; name: string }>
   >([]);
@@ -106,6 +139,12 @@ export function WorkflowRecoveryPage({
       if (!(error instanceof WorkspaceWorkflowSourceNotFoundError)) {
         throw error;
       }
+      if (!createIfMissing) {
+        throw new Error(
+          "The saved workflow file is no longer available. Choose an existing workflow or create a new one explicitly.",
+          { cause: error },
+        );
+      }
     }
 
     let created: WorkspaceWorkflowSourceDocument;
@@ -113,7 +152,7 @@ export function WorkflowRecoveryPage({
       created = await workspaceService.createWorkspaceWorkflowSource(
         sessionId,
         visiblePath,
-        starterWorkflowSource,
+        blankWorkflowSource(),
       );
     } catch (createError) {
       try {
@@ -134,6 +173,7 @@ export function WorkflowRecoveryPage({
 
     return requireScopedDocument(created);
   }, [
+    createIfMissing,
     requireScopedDocument,
     sessionId,
     visiblePath,
@@ -141,7 +181,7 @@ export function WorkflowRecoveryPage({
     workspaceName,
   ]);
 
-  const workflowScope = `${workspaceId}\u0000${sessionId}\u0000${visiblePath}`;
+  const workflowScope = `${workspaceId}\u0000${sessionId}\u0000${visiblePath}\u0000${createIfMissing}`;
 
   const openWorkflow = useCallback(
     (retry = false) => {
@@ -304,17 +344,22 @@ export function WorkflowRecoveryPage({
       document.storage_digest,
       true,
     ] as const;
-    const saved = requireScopedDocument(
-      await (layout
-        ? workspaceService.updateWorkspaceWorkflowSource(
-            ...sourceArguments,
-            layout,
-            document.layout_revision ?? 0,
-          )
-        : workspaceService.updateWorkspaceWorkflowSource(...sourceArguments)),
-    );
-    setDocument(saved);
-    return saved;
+    onSavingChange?.(workflowFilePath, true);
+    try {
+      const saved = requireScopedDocument(
+        await (layout
+          ? workspaceService.updateWorkspaceWorkflowSource(
+              ...sourceArguments,
+              layout,
+              document.layout_revision ?? 0,
+            )
+          : workspaceService.updateWorkspaceWorkflowSource(...sourceArguments)),
+      );
+      setDocument(saved);
+      return saved;
+    } finally {
+      onSavingChange?.(workflowFilePath, false);
+    }
   };
 
   const listWorkspaceFiles = useCallback(
@@ -387,6 +432,7 @@ export function WorkflowRecoveryPage({
         status: result.status,
         review: result.review,
         approval: result.approval,
+        inputCheckpoint: result.input_checkpoint,
         runId: result.run_id,
         verification: result.verification,
         captureRights: result.capture_rights,
@@ -421,7 +467,9 @@ export function WorkflowRecoveryPage({
     }
   }, [fileAction]);
 
-  const showFileAction = async (action: "new" | "open") => {
+  const showFileAction = async (
+    action: "new" | "open" | "save-as" | "clone",
+  ) => {
     setFileAction(action);
     setFileActionError("");
     setNewWorkflowName("");
@@ -465,16 +513,28 @@ export function WorkflowRecoveryPage({
       return;
     }
     const path = `workflows/${slug}.workflow.wflow`;
-    const key = `authored_${crypto.randomUUID().replaceAll("-", "_")}`;
-    const source = `workflow ${key}\n  name: ${JSON.stringify(title)}\n  purpose: "Define this workflow's steps and outputs."\n  discipline: "engineering"\n  reviewed_ai_suggestions: true\nend\n`;
+    const source = blankWorkflowSource(title);
+    const copying = fileAction === "save-as" || fileAction === "clone";
+    if (copying && (!currentDocument || editorUnsaved)) {
+      setFileActionError("Save your edits before copying this workflow.");
+      return;
+    }
     setFileActionPending(true);
     setFileActionError("");
     try {
-      const created = await workspaceService.createWorkspaceWorkflowSource(
-        sessionId,
-        path,
-        source,
-      );
+      const created =
+        copying && currentDocument
+          ? await copyWorkspaceWorkflowSource(
+              sessionId,
+              currentDocument.path,
+              path,
+              currentDocument.storage_digest,
+            )
+          : await workspaceService.createWorkspaceWorkflowSource(
+              sessionId,
+              path,
+              source,
+            );
       if (created.workspace_id !== workspaceId || created.path !== path)
         throw new Error(
           "Wright returned a workflow for a different workspace or path.",
@@ -511,6 +571,66 @@ export function WorkflowRecoveryPage({
         overflow: "hidden",
       }}
     >
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-end",
+          padding: "5px 12px",
+          borderBottom: "1px solid var(--color-border)",
+        }}
+      >
+        <button
+          type="button"
+          className="recovery-button recovery-button--secondary"
+          data-testid="workflow-transfer-open"
+          disabled={state !== "ready" || !currentDocument || editorUnsaved}
+          onClick={() => setTransferOpen(true)}
+          style={{ padding: "5px 12px", marginRight: 8 }}
+        >
+          Export / import workflow
+        </button>
+        {onOpenProcess && (
+          <button
+            type="button"
+            className="recovery-button recovery-button--secondary"
+            data-testid="workflow-working-view-open"
+            disabled={state !== "ready" || !currentDocument || editorUnsaved}
+            onClick={() => {
+              if (!currentDocument || editorUnsaved) return;
+              onOpenProcess({
+                workspace_id: currentDocument.workspace_id,
+                source_path: currentDocument.path,
+                source_digest: currentDocument.storage_digest,
+              });
+            }}
+            style={{ padding: "5px 12px", marginRight: 8 }}
+            title={
+              editorUnsaved
+                ? "Save your changes before opening the working view"
+                : "Open this workflow's input, result and progress interface in a workspace tab. Nothing runs automatically."
+            }
+          >
+            Open working view
+          </button>
+        )}
+        {onOpenProcess && editorUnsaved && (
+          <small style={{ alignSelf: "center" }}>
+            Save your changes to open the working view.
+          </small>
+        )}
+        {initialPrintDemoRun && (
+          <button
+            type="button"
+            className="recovery-button recovery-button--secondary"
+            data-testid="workflow-print-demo-open"
+            onClick={() => setPrintDemoOpen(true)}
+            style={{ padding: "5px 12px" }}
+          >
+            View saved result
+          </button>
+        )}
+      </div>
       {currentDocument?.layout_status === "stale" && (
         <p role="status">
           Diagram placement is from an older file version. Review the current
@@ -525,6 +645,19 @@ export function WorkflowRecoveryPage({
         onClose={closeTemplateDialog}
         onCreated={(path) => onOpenWorkflow?.(path)}
       />
+      {transferOpen && currentDocument && (
+        <WorkflowBundleDialog
+          document={currentDocument}
+          sessionId={sessionId}
+          onClose={() => setTransferOpen(false)}
+          onImported={(path) => {
+            if (onOpenWorkflow) {
+              setTransferOpen(false);
+              onOpenWorkflow(path);
+            } else onOpenFile?.(path);
+          }}
+        />
+      )}
       <dialog
         ref={fileDialog}
         aria-labelledby={`${dialogId}-title`}
@@ -540,13 +673,19 @@ export function WorkflowRecoveryPage({
         }}
       >
         <h2 id={`${dialogId}-title`}>
-          {fileAction === "new" ? "New workflow" : "Open workflow"}
+          {fileAction === "new"
+            ? "New workflow"
+            : fileAction === "save-as"
+              ? "Save workflow as"
+              : fileAction === "clone"
+                ? "Clone workflow"
+                : "Open workflow"}
         </h2>
         <p>
           Stored in {workspaceName}/workflows. Existing files are never
           replaced.
         </p>
-        {fileAction === "new" ? (
+        {fileAction && fileAction !== "open" ? (
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -565,8 +704,9 @@ export function WorkflowRecoveryPage({
               style={{ display: "block", width: "100%", margin: "8px 0 16px" }}
             />
             <p>
-              Starts with the editable engineering example. The Run panel states
-              which saved workflow capabilities are available.
+              {fileAction === "new"
+                ? "Starts with a blank workflow. Add inputs and steps in the editor. Check run readiness before starting work."
+                : "Copies the saved definition, instructions and current diagram to a new file. Run history and approvals stay with the original."}
             </p>
             <button
               type="submit"
@@ -574,7 +714,11 @@ export function WorkflowRecoveryPage({
               data-testid="workflow-file-create"
               disabled={fileActionPending}
             >
-              Create workflow
+              {fileAction === "new"
+                ? "Create workflow"
+                : fileAction === "clone"
+                  ? "Clone workflow"
+                  : "Save copy"}
             </button>
           </form>
         ) : (
@@ -626,102 +770,188 @@ export function WorkflowRecoveryPage({
           Cancel
         </button>
       </dialog>
-      <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
-        {(state === "loading" || (state === "ready" && !currentDocument)) && (
-          <WorkflowRecoveryConcept surfaceState="loading" />
-        )}
-        {state === "error" && (
-          <section
-            className="recovery-boundary-state"
-            role="alert"
-            data-testid="workflow-source-load-error"
-          >
-            <b>Workflow could not be opened.</b>
-            <span>{message}</span>
-            <button
-              type="button"
-              className="recovery-button recovery-button--secondary"
-              data-testid="workflow-source-load-retry"
-              onClick={() => void showWorkflow(true)}
-            >
-              Retry
-            </button>
-          </section>
-        )}
-        {state === "ready" && currentDocument && (
-          <WorkflowRecoveryConcept
-            key={`${sessionId}\u0000${visiblePath}\u0000${editorInstance}`}
-            fileActions={
-              onOpenWorkflow && (
-                <details
-                  className="recovery-file-menu"
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") {
-                      e.currentTarget.open = false;
-                      e.currentTarget.querySelector("summary")?.focus();
-                    }
-                  }}
-                >
-                  <summary
-                    aria-label="Workflow files"
-                    title="Workflow files"
-                    data-testid="workflow-file-menu"
-                  >
-                    ⋯
-                  </summary>
-                  <div>
-                    <small>{workspaceName}</small>
-                    <button
-                      type="button"
-                      data-testid="workflow-file-open"
-                      onClick={(e) => {
-                        e.currentTarget.closest("details")!.open = false;
-                        void showFileAction("open");
-                      }}
-                    >
-                      Open workflow
-                    </button>
-                    <button
-                      type="button"
-                      data-testid="workflow-file-new"
-                      onClick={(e) => {
-                        e.currentTarget.closest("details")!.open = false;
-                        void showFileAction("new");
-                      }}
-                    >
-                      New workflow
-                    </button>
-                    <button
-                      type="button"
-                      data-testid="workflow-start-template"
-                      onClick={(e) => {
-                        e.currentTarget.closest("details")!.open = false;
-                        setTemplateDialogOpen(true);
-                      }}
-                    >
-                      Start from template
-                    </button>
-                  </div>
-                </details>
-              )
-            }
-            workflowSource={currentDocument.source}
-            definitionRevision={currentDocument.definition_revision}
-            storageDigest={currentDocument.storage_digest}
-            workflowFilePath={visiblePath}
-            reopenRequest={reopenRequest}
-            workflowLayout={currentDocument.layout ?? undefined}
-            workspaceSessionId={sessionId}
-            workspaceId={workspaceId}
-            onSave={saveWorkflow}
-            onListWorkspaceFiles={listWorkspaceFiles}
-            onReadStoredSource={readStoredWorkflow}
-            onReloadStoredSource={reloadStoredWorkflow}
-            onRun={runWorkflow}
-            templateReadiness={templateReadiness}
-            onRefreshTemplateReadiness={refreshTemplateReadiness}
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {printDemoOpen && initialPrintDemoRun && (
+          <HistoricalResultView
+            sessionId={sessionId}
+            workflowPath={visiblePath}
+            runLogPath={initialPrintDemoRun}
             onOpenFile={onOpenFile}
+            onClose={() => setPrintDemoOpen(false)}
           />
+        )}
+        {!printDemoOpen && (
+          <>
+            {(state === "loading" ||
+              (state === "ready" && !currentDocument)) && (
+              <WorkflowRecoveryConcept surfaceState="loading" />
+            )}
+            {state === "error" && (
+              <section
+                className="recovery-boundary-state"
+                role="alert"
+                data-testid="workflow-source-load-error"
+              >
+                <b>Workflow could not be opened.</b>
+                <span>{message}</span>
+                <button
+                  type="button"
+                  className="recovery-button recovery-button--secondary"
+                  data-testid="workflow-source-load-retry"
+                  onClick={() => void showWorkflow(true)}
+                >
+                  Retry
+                </button>
+              </section>
+            )}
+            {state === "ready" && currentDocument && (
+              <WorkflowRecoveryConcept
+                key={`${sessionId}\u0000${visiblePath}\u0000${editorInstance}`}
+                fileActions={
+                  onOpenWorkflow && (
+                    <details
+                      className="recovery-file-menu"
+                      onKeyDown={(e) => {
+                        if (e.key === "Escape") {
+                          e.currentTarget.open = false;
+                          e.currentTarget.querySelector("summary")?.focus();
+                        }
+                      }}
+                    >
+                      <summary
+                        aria-label="Workflow files"
+                        title="Workflow files"
+                        data-testid="workflow-file-menu"
+                      >
+                        ⋯
+                      </summary>
+                      <div>
+                        <small>{workspaceName}</small>
+                        <button
+                          type="button"
+                          data-testid="workflow-file-open"
+                          onClick={(e) => {
+                            e.currentTarget.closest("details")!.open = false;
+                            void showFileAction("open");
+                          }}
+                        >
+                          Open workflow
+                        </button>
+                        <button
+                          type="button"
+                          data-testid="workflow-file-new"
+                          onClick={(e) => {
+                            e.currentTarget.closest("details")!.open = false;
+                            void showFileAction("new");
+                          }}
+                        >
+                          New workflow
+                        </button>
+                        {(["save-as", "clone"] as const).map((action) => (
+                          <button
+                            key={action}
+                            type="button"
+                            data-testid={`workflow-file-${action}`}
+                            disabled={editorUnsaved || !currentDocument}
+                            title={
+                              editorUnsaved
+                                ? "Save your edits before copying this workflow."
+                                : undefined
+                            }
+                            onClick={(event) => {
+                              event.currentTarget.closest("details")!.open =
+                                false;
+                              void showFileAction(action);
+                            }}
+                          >
+                            {action === "save-as"
+                              ? "Save as…"
+                              : "Clone workflow…"}
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          data-testid="workflow-start-template"
+                          onClick={(e) => {
+                            e.currentTarget.closest("details")!.open = false;
+                            setTemplateDialogOpen(true);
+                          }}
+                        >
+                          Start from template
+                        </button>
+                      </div>
+                    </details>
+                  )
+                }
+                workflowSource={currentDocument.source}
+                definitionRevision={currentDocument.definition_revision}
+                storageDigest={currentDocument.storage_digest}
+                workflowFilePath={visiblePath}
+                reopenRequest={reopenRequest}
+                navigation={navigation}
+                workflowLayout={currentDocument.layout ?? undefined}
+                workspaceSessionId={sessionId}
+                workspaceId={workspaceId}
+                onSave={saveWorkflow}
+                onLoadInstructionDefaults={() =>
+                  workspaceService.getWorkflowInstructionDefaults(sessionId)
+                }
+                onReviewInstructionProtocolUpgrade={(instructions) =>
+                  workspaceService.proposeWorkflowActionIntentUpgrade(
+                    instructions,
+                  )
+                }
+                onExportSource={async () => {
+                  const stored = await readStoredWorkflow();
+                  if (stored.storage_digest !== currentDocument.storage_digest)
+                    throw new Error(
+                      "The saved workflow changed elsewhere. Reload or compare it before exporting.",
+                    );
+                  const blob = new Blob([stored.source], {
+                    type: "text/plain;charset=utf-8",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const link = window.document.createElement("a");
+                  link.href = url;
+                  link.download =
+                    visiblePath.split("/").at(-1) ?? "workflow.wflow";
+                  window.document.body.append(link);
+                  link.click();
+                  link.remove();
+                  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+                }}
+                onUnsavedChange={handleUnsavedChange}
+                onListWorkspaceFiles={listWorkspaceFiles}
+                onReadStoredSource={readStoredWorkflow}
+                onReloadStoredSource={reloadStoredWorkflow}
+                onRun={runWorkflow}
+                templateReadiness={templateReadiness}
+                onRefreshTemplateReadiness={refreshTemplateReadiness}
+                onOpenFile={onOpenFile}
+                onOpenRunWorkingView={
+                  onOpenProcess
+                    ? (runId, sourceDigest) =>
+                        onOpenProcess(
+                          {
+                            workspace_id: workspaceId,
+                            source_path: visiblePath,
+                            source_digest: sourceDigest,
+                          },
+                          runId,
+                        )
+                    : undefined
+                }
+              />
+            )}
+          </>
         )}
       </div>
     </section>

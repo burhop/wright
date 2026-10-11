@@ -1,0 +1,133 @@
+{
+  "status": "passed",
+  "proofs": [
+    {
+      "kind": "heat",
+      "walkthrough": "artifacts/process-interfaces/083/20261003-authoring-unavailable-heat-installed-001/workspace-walkthrough",
+      "results": 18,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "ui_id": "ui-512d6109b37f4c0f89b86d86a34827b2",
+      "revision_id": "revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0",
+      "checks_passed": 5,
+      "automated_accessibility_violations": 0,
+      "protected_tables": {
+        "workflow_continuation_checkpoints": {
+          "rows": 3,
+          "sha256": "697b49cdd16719fc94818d0c0cbeea590648a13178a4be590c38512b0c3496c0"
+        },
+        "process_uis": {
+          "rows": 2,
+          "sha256": "515311b848e96f37bfa77986df4f50b7ba7f201f05ed7457e7fb31f6dad99210"
+        },
+        "process_ui_revisions": {
+          "rows": 2,
+          "sha256": "f1b69dc01108e627564a7d436498c8826961f9ee62dfbd918cb9882148257ccc"
+        },
+        "process_ui_authoring_jobs": {
+          "rows": 3,
+          "sha256": "e5c057d5a7fda2536bfbdde0acd675324bcf54fa4469c12762dd885f68fea1c9"
+        },
+        "process_ui_authoring_records": {
+          "rows": 11,
+          "sha256": "34d738eaf0ea0683a89ab6bece2b3f2358ad1c01e4c0572b521267ec559558be"
+        }
+      },
+      "protected_tables_unchanged": true,
+      "authoring_or_execution_posts": [],
+      "owned_views_closed": 2,
+      "all_close_statuses": 204,
+      "sizes": {
+        "width": 432,
+        "scrollWidth": 432
+      },
+      "original_report_metadata_sha256": {
+        "status.json": "815e33a2a596e66347a0771dc6f23727ce1b3fb953aa5f402fbd5b58aad2842b",
+        "report.html": "e548520f50bdc9002e60e89a272c7f37747a5b0915961bb0d41f7d5e074a8f33",
+        "progress.md": "59bff9b81297a78aefccc5bc6a4884e1b257dd955b83b3eeae8b5b006137dd0f",
+        "playwright/workspace-entry.mjs": "bfa22d0e570bd60ddc217ab4b839d8e4cf8e8bf258afc7f463304f4325f7418d"
+      },
+      "recorded_steps_unchanged_sha256": "09b10c42961112197e93de778052f1f896d04ca17f47e337a8a8b3b39b0fdd11",
+      "private_trace_sha256": "588d55dddc2b260ea267095291ab2b5bb9597147aa2d68cf8ddbfc88f8f75a59"
+    },
+    {
+      "kind": "printed",
+      "walkthrough": "artifacts/process-interfaces/083/20261003-authoring-unavailable-printed-installed-001/workspace-walkthrough",
+      "results": 20,
+      "run_id": "5c3a84a335854e88aa8bbe48a591ce0d",
+      "ui_id": "ui-0a09766ccdd94bfdb3dab1f5519d1628",
+      "revision_id": "revision-d38d8f51a4674fe7816f9b00ca43ad73",
+      "checks_passed": 5,
+      "automated_accessibility_violations": 0,
+      "protected_tables": {
+        "workflow_continuation_checkpoints": {
+          "rows": 6,
+          "sha256": "7e27d5490745f2bb61d13229cc3388f064f4a4ad30c8b6e282db214d40645141"
+        },
+        "process_uis": {
+          "rows": 2,
+          "sha256": "850ea53952e509741161971ea027d405526fe3a7cb957105a01cee0555d3fb3a"
+        },
+        "process_ui_revisions": {
+          "rows": 4,
+          "sha256": "bff5d02ef6023f1aeed057446f2de803cf41543e9650b3cbdbc6a67dc41f985d"
+        },
+        "process_ui_authoring_jobs": {
+          "rows": 4,
+          "sha256": "c49a74d2f9f9925db38ff07330375a5b9631f2f8a6e946b074fea8d9f98d2802"
+        },
+        "process_ui_authoring_records": {
+          "rows": 20,
+          "sha256": "fc5f4f4bd61f79e400c786bd6afd8cdabf2fe19b47d3b334714addda7f02aca7"
+        }
+      },
+      "protected_tables_unchanged": true,
+      "authoring_or_execution_posts": [],
+      "owned_views_closed": 2,
+      "all_close_statuses": 204,
+      "sizes": {
+        "width": 432,
+        "scrollWidth": 432
+      },
+      "original_report_metadata_sha256": {
+        "status.json": "b00409d5d55a0e0177773b6950127962011a35b544d337428be52bb307438896",
+        "report.html": "0e4821f6c700bddc25a8772246e7b5a553d56926c8481b34f54008b0d4249232",
+        "progress.md": "309e2df7920d7daf3dcdbc348679d782a44e525be59fcec4ff02e498ea4a9b89",
+        "playwright/workspace-entry.mjs": "bfa22d0e570bd60ddc217ab4b839d8e4cf8e8bf258afc7f463304f4325f7418d"
+      },
+      "recorded_steps_unchanged_sha256": "deab6baa05e889214a51fb60f608a2e4a7a9dfdd3ac3b5bf5b489dbbdd064af3",
+      "private_trace_sha256": "5a5ffb69b0e75c6628b54497ae266af51ded8241b8a121219c10c5aa2288412a"
+    }
+  ],
+  "installed_build": "005",
+  "wheel_sha256": "ba9bc8d8604629cca3d07544943a01ce2fd96df199f507e7f13d9c00a0cab33e",
+  "scope": "Installed unavailable-authoring readiness, exact saved/common reuse, compact keyboard and scoped accessibility on both retained engineering jobs.",
+  "report_metadata_correction": "Inherited compact checklist/title corrected to actual authoring actions; private original metadata retained; steps/screenshots/outcomes unchanged. Initial correction helper failed decoding UTF-8 with the Windows default codec and changed no file; this publisher uses explicit UTF-8.",
+  "limits": [
+    "No fresh generation, update, rollback or failed-generation job exercised; earlier actual-model evidence retains its own scope.",
+    "Scoped automated accessibility and keyboard checks do not prove all UI states or user acceptance.",
+    "Real mandatory engineering reviews remain held; no process, model, provider or action started."
+  ],
+  "tasks_not_closed": [
+    "T052",
+    "T053"
+  ],
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "current_component_verification": {
+    "passed": 71,
+    "failed": 0,
+    "skipped": 0,
+    "modules": 4,
+    "typescript_exit_code": 0,
+    "first_typescript_failure": "A new Testing Library getByRole query incorrectly included a Playwright-only exact option. Removed that unsupported test-only option; exact role-name matching remains the Testing Library default. First 71-test run passed, TypeScript failed, corrected 71-test run and TypeScript pass."
+  },
+  "source_hashes": {
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx": "5210a48494a71d934cc459c0de7e6b320356dd4a653a6b802d3efe6ea1b3abe1",
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx": "64595d24256ddc8fed1dc33d58904aa333e03e11e426420cb6a8be5878ff9894",
+    "apps/web/src/services/process-ui-authoring.ts": "6e2e56af9e59a9e9eaf5040361351894a065f7cfbe2ca45e560be6cd47791a48",
+    "apps/web/src/services/process-ui-authoring-recovery.ts": "cbba18771de752f4bf7881eaa7fb363eba46581d668698e8c1e11ae060ec1d17",
+    "apps/web/src/services/process-presentation-host.ts": "e9c46f29fe65612d9a3a034cd45e63e2997d9d575d2cd2cdd2c36e8eaf5d71f3",
+    "tests/ui-integration/process-ui-authoring-live.spec.ts": "6680dc47e214c322298db24ac5006114b06430921d778310688792266e186898"
+  },
+  "t041_disposition": "The separate authoring-state-acceptance.md obligation audit combines this scoped proof with current71 checks and retained actual-model/theme evidence to complete T041; this installed negative journey alone does not establish generation/update/rollback."
+}

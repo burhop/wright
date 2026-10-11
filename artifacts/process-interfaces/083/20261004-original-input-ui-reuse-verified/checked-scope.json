@@ -1,0 +1,31 @@
+{
+  "source_commit": "793cede68587234b8449aba3d194ded4980bbd5a",
+  "source_sha256": {
+    "examples/process-interfaces/printed-replacement-part/prepare.py": "857a16cdddd2e9448d631915439b3324c1c9df94ddc80442e6c06980407c65b1",
+    "examples/process-interfaces/printed-replacement-part/provider_inputs.py": "57e24837f624152e6ef0a36a8be19b37b8297eee46c898d974bbe265d8a218df",
+    "packages/workspace_service/src/workspace_service/process_interfaces/resources/reference.tsx": "4b36616bb51361db7dd0dd39ebb15c6c9e8abe5eed1b5ee6f52792fc436c56cf",
+    "packages/workspace_service/src/workspace_service/process_interfaces/navigation.py": "8335239dd161c0528fd787dcb23643dd1686e7680f0ac2779148c9bfaeb68120",
+    "packages/workspace_service/src/workspace_service/process_interfaces/representations.py": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+    "apps/web/src/services/process-presentation-host.ts": "e9c46f29fe65612d9a3a034cd45e63e2997d9d575d2cd2cdd2c36e8eaf5d71f3"
+  },
+  "second_actual_run": "84cd89a395af406e80d094ec071abe59",
+  "original_gate": {
+    "content_verified": null,
+    "requirements_compliant": null,
+    "evaluation_complete": false,
+    "release_eligible": false,
+    "physical_validation": "not_assessed",
+    "counts": {
+      "blocked": 1,
+      "error": 0,
+      "fail": 0,
+      "inconclusive": 0,
+      "not_applicable": 0,
+      "pass": 17
+    }
+  },
+  "new_browser_checks": 32,
+  "saved_revision_unchanged": true,
+  "physical_or_human_acceptance": false,
+  "scope": "Actual same-source second digital chain and saved UI reuse; exact common/tailored result identities and host geometry/toolpath/assessment/block navigation. Full public eleven-step start remains at its disclosed builtin-write authority seam; enrolled digital test authority is not general public readiness."
+}

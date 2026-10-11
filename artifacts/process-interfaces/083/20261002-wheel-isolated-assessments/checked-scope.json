@@ -1,0 +1,25 @@
+{
+  "producer_run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "independent_assessments_not_original_gate_completion": true,
+  "registered_actual_output_subjects": 8,
+  "original_profile_checks": 18,
+  "original_profile_and_baseline_unchanged": true,
+  "earlier_default_budget_outcome": {
+    "pass": 14,
+    "blocked": 4
+  },
+  "explicit_bounded_budget_outcome": {
+    "pass": 15,
+    "blocked": 3
+  },
+  "preview_entities": 348376,
+  "optional_preparation_budget_verified": true,
+  "missing_report_and_transfer_receipt_not_fabricated": true,
+  "failed_run_log_unchanged": true,
+  "native_operations_replayed": false,
+  "model_calls_or_review_decisions_submitted": false,
+  "engineering_acceptance": false,
+  "physical_dispatch": false,
+  "full_feature_complete": false,
+  "remaining": "Independent source-report/simulated-handoff process, required engineering review, tailored wheel UI and remaining shared/installed M5 proof."
+}

@@ -1,0 +1,13 @@
+{
+  "_meta": {},
+  "content": [
+    {
+      "type": "text",
+      "text": "Error executing code: Communication error with Blender: Code execution error: Calling operator \"bpy.ops.export_mesh.stl\" error, could not be found"
+    }
+  ],
+  "structuredContent": {
+    "result": "Error executing code: Communication error with Blender: Code execution error: Calling operator \"bpy.ops.export_mesh.stl\" error, could not be found"
+  },
+  "isError": false
+}

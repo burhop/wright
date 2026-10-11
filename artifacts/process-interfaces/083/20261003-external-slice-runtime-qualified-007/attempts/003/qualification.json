@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "scope": "Generated slice/response-retention/passive-inspection declarations on the accepted source and existing durable runtime; small digital qualification only",
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "public_catalog_promotion": false,
+  "ai_generation": false,
+  "workspace": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-slice-runtime-003",
+  "error_type": "GatewayError",
+  "diagnostic": "Unsupported gateway transport: local-native",
+  "durable_runtime_owner_closed": true,
+  "gateway_closed": true,
+  "cleanup": [
+    {
+      "container_id": "443620594a252e033b928f8e275eb5f6ad4d85479ccce7320df4abb9ad570d6a",
+      "running": false
+    },
+    {
+      "container_id": "1fc5206be6a029727a3ae30b74e8cfa621ce49b2dc3caa3d2619fc0687a7f3c0",
+      "running": false
+    }
+  ]
+}

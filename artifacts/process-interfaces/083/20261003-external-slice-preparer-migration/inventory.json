@@ -1,0 +1,33 @@
+{
+  "files": {
+    ".gitattributes": {
+      "bytes": 20,
+      "sha256": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae"
+    },
+    "affected-082-checks-002.xml": {
+      "bytes": 19210,
+      "sha256": "9a2909f87206859936e8aed2b96ca53b17156a0f286d078dd299e201ab56dcba"
+    },
+    "attempts.json": {
+      "bytes": 13909,
+      "sha256": "ab5aebd8752dbcdbc85aab546c4b6d338aa8b7e609b3b677a27d35b2d2ac240b"
+    },
+    "checked-scope.json": {
+      "bytes": 5027,
+      "sha256": "5ac44ead8632b6e58954d81ed259e2542d0be7d0d329804b30bdfdf59596bedf"
+    },
+    "protected-preservation.json": {
+      "bytes": 1420,
+      "sha256": "605629cea1234cb6eaac3463687bd0b9462c9c8af6b60dc5541a6bd03e6ff411"
+    },
+    "README.md": {
+      "bytes": 921,
+      "sha256": "a326860c3e90cab5a5f1bf6a8215234f65c97587f146d00d093a23f3a09eb048"
+    },
+    "sixth-checks.xml": {
+      "bytes": 10814,
+      "sha256": "21164317d3502913166cd1b5adc1ab256c2abae8dbed83eb3c92b19f656870da"
+    }
+  },
+  "credential_value_scan": "passed"
+}

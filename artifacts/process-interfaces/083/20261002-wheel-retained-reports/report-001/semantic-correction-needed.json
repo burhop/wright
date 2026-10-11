@@ -1,0 +1,11 @@
+{
+  "report_retained": true,
+  "corrected_in_place": false,
+  "incorrect_statement": "The inspection process produced no output files",
+  "actual_retained_inspection_outputs": 5,
+  "provider_critic_metadata_remains_unverified": true,
+  "correction_attempt": 1,
+  "maximum_attempts": 2,
+  "native_operations_replayed": false,
+  "physical_dispatch": false
+}

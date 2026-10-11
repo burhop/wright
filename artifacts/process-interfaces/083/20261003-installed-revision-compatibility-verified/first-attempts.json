@@ -1,0 +1,17 @@
+{
+  "pre_browser_script_preparation_failures": [
+    {
+      "stage": "first generator",
+      "error": "Windows cp1252 could not encode an arrow; empty private script retained. Explicit UTF-8 writes corrected it before any browser action."
+    },
+    {
+      "stage": "supplement generator",
+      "error": "Default cp1252 read could not decode UTF-8 source; explicit UTF-8 read corrected it. Subsequent missing-module checks launched no browser and made no source change."
+    }
+  ],
+  "supplement_reason": "First common fallback screenshot left form below expanded authoring panel; fresh three-step report completes fields, collapses panel and exposes actual common input. Original twelve-step statuses/images remain unchanged.",
+  "meaningful_change_reason": "Fresh three-step report proves changed accepted default in both views rather than relying only on a whitespace digest change.",
+  "report_documentation_corrections": "Supplement/default manual checklists now describe their actual checks and controlled CAS prerequisites; no images or statuses rewritten.",
+  "private_authenticated_traces_retained": true,
+  "public_script_line_endings": "LF; private executable records preserved"
+}

@@ -212,6 +212,25 @@ async def test_input_copy_is_new_mutable_file_with_lineage_not_artifact(case):
 
 
 @pytest.mark.asyncio
+async def test_fixed_copy_keeps_valid_frozen_routing_separate_from_its_grant(case):
+    from core.workflow_model_routing import WorkflowModelRouting, WorkflowTextResolution
+    from packages.workspace_service.tests.test_workflow_model_routing import route
+
+    await case.bind()
+    authority = case.runtime._integration_file_copy_authority
+    authority.context["model_routing"] = WorkflowModelRouting(
+        text=WorkflowTextResolution.model_validate(route())
+    ).model_dump(mode="json")
+    original = (case.root / "inputs/brief.md").read_bytes()
+    value, _ = await case.runtime.call(
+        case.step, case.step.arguments, on_event=case.emit
+    )
+    assert (case.root / case.step.arguments["destinationPath"]).read_bytes() == original
+    assert value["source"]["sha256"] == sha(original)
+    assert authority.context["model_routing"]["text"] == route()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "change",
     [

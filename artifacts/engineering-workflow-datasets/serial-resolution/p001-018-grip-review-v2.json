@@ -1,0 +1,278 @@
+{
+  "mesh": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\attempt-018\\artifacts\\repaired_mesh.stl",
+  "sha256": "85aac165aab97d4160fedc92f7af321eb8364340730f00fbb2f82e329fb4816e",
+  "unchanged_after_inspection": true,
+  "scope": "Read-only review evidence. No artifact edits, native runs, acceptance changes or campaign credit. Adds centerline-plane intersections for recess depth; upper-envelope section measurements in v1 include the flanks and do not measure centerline depth.",
+  "shoulders": [
+    {
+      "x_mm": 15.5,
+      "large_crease_edges": 30,
+      "maximum_turn_degrees": 81.10934057355433,
+      "examples": [
+        {
+          "edge_mm": [
+            [
+              15.5,
+              5.333421230316162,
+              25.758386611938477
+            ],
+            [
+              15.5,
+              6.242640495300293,
+              26.31801986694336
+            ]
+          ],
+          "face_normal_turn_degrees": 81.10934057355433
+        },
+        {
+          "edge_mm": [
+            [
+              15.5,
+              -2.242640733718872,
+              32.68198013305664
+            ],
+            [
+              15.5,
+              -1.3334213495254517,
+              33.24161148071289
+            ]
+          ],
+          "face_normal_turn_degrees": 81.10932491518615
+        }
+      ]
+    },
+    {
+      "x_mm": 80.5,
+      "large_crease_edges": 30,
+      "maximum_turn_degrees": 81.12236143143075,
+      "examples": [
+        {
+          "edge_mm": [
+            [
+              80.5,
+              5.333421230316162,
+              25.758386611938477
+            ],
+            [
+              80.5,
+              6.242640495300293,
+              26.31801986694336
+            ]
+          ],
+          "face_normal_turn_degrees": 81.12236143143075
+        },
+        {
+          "edge_mm": [
+            [
+              80.5,
+              -2.242640733718872,
+              32.68198013305664
+            ],
+            [
+              80.5,
+              -1.3334213495254517,
+              33.24161148071289
+            ]
+          ],
+          "face_normal_turn_degrees": 81.12234574227234
+        }
+      ]
+    }
+  ],
+  "thumb_recess_sections": [
+    {
+      "x_mm": 28.0,
+      "measured_maximum_y_mm": 12.544517517089844,
+      "authored_uncut_maximum_y_mm": 12.544517973849246,
+      "recess_depth_at_station_mm": 4.5675940185674335e-07,
+      "measured_upper_y_at_z29p5_mm": 12.544517517089844,
+      "recess_centerline_depth_mm": 4.5675940185674335e-07
+    },
+    {
+      "x_mm": 29.5,
+      "measured_maximum_y_mm": 13.009481430053711,
+      "authored_uncut_maximum_y_mm": 13.00948158030651,
+      "recess_depth_at_station_mm": 1.5025279864744334e-07,
+      "measured_upper_y_at_z29p5_mm": 13.009481430053711,
+      "recess_centerline_depth_mm": 1.5025279864744334e-07
+    },
+    {
+      "x_mm": 31.5,
+      "measured_maximum_y_mm": 13.588090896606445,
+      "authored_uncut_maximum_y_mm": 13.588090921991496,
+      "recess_depth_at_station_mm": 2.538505050608819e-08,
+      "measured_upper_y_at_z29p5_mm": 13.588090896606445,
+      "recess_centerline_depth_mm": 2.538505050608819e-08
+    },
+    {
+      "x_mm": 33.5,
+      "measured_maximum_y_mm": 14.11452579498291,
+      "authored_uncut_maximum_y_mm": 14.114525764366785,
+      "recess_depth_at_station_mm": -3.061612474652975e-08,
+      "measured_upper_y_at_z29p5_mm": 14.11452579498291,
+      "recess_centerline_depth_mm": -3.061612474652975e-08
+    },
+    {
+      "x_mm": 35.5,
+      "measured_maximum_y_mm": 14.583870887756348,
+      "authored_uncut_maximum_y_mm": 14.58387092714925,
+      "recess_depth_at_station_mm": 3.9392903161683535e-08,
+      "measured_upper_y_at_z29p5_mm": 14.583870887756348,
+      "recess_centerline_depth_mm": 3.9392903161683535e-08
+    },
+    {
+      "x_mm": 37.5,
+      "measured_maximum_y_mm": 14.991744041442871,
+      "authored_uncut_maximum_y_mm": 14.991744261012144,
+      "recess_depth_at_station_mm": 2.1956927298560913e-07,
+      "measured_upper_y_at_z29p5_mm": 14.991744041442871,
+      "recess_centerline_depth_mm": 2.1956927298560913e-07
+    },
+    {
+      "x_mm": 39.5,
+      "measured_maximum_y_mm": 15.33433723449707,
+      "authored_uncut_maximum_y_mm": 15.33433756253266,
+      "recess_depth_at_station_mm": 3.280355898027665e-07,
+      "measured_upper_y_at_z29p5_mm": 15.33433723449707,
+      "recess_centerline_depth_mm": 3.280355898027665e-07
+    },
+    {
+      "x_mm": 41.5,
+      "measured_maximum_y_mm": 15.608451843261719,
+      "authored_uncut_maximum_y_mm": 15.60845213036123,
+      "recess_depth_at_station_mm": 2.8709951038763393e-07,
+      "measured_upper_y_at_z29p5_mm": 15.608451843261719,
+      "recess_centerline_depth_mm": 2.8709951038763393e-07
+    },
+    {
+      "x_mm": 43.5,
+      "measured_maximum_y_mm": 15.425086975097656,
+      "authored_uncut_maximum_y_mm": 15.811528630634177,
+      "recess_depth_at_station_mm": 0.38644165553652066,
+      "measured_upper_y_at_z29p5_mm": 15.0341390582363,
+      "recess_centerline_depth_mm": 0.7773895723978761
+    },
+    {
+      "x_mm": 45.5,
+      "measured_maximum_y_mm": 15.316164016723633,
+      "authored_uncut_maximum_y_mm": 15.941670992784431,
+      "recess_depth_at_station_mm": 0.6255069760607981,
+      "measured_upper_y_at_z29p5_mm": 14.676360201858634,
+      "recess_centerline_depth_mm": 1.2653107909257972
+    },
+    {
+      "x_mm": 47.5,
+      "measured_maximum_y_mm": 15.258275032043457,
+      "authored_uncut_maximum_y_mm": 15.997664112641544,
+      "recess_depth_at_station_mm": 0.7393890805980874,
+      "measured_upper_y_at_z29p5_mm": 14.524567154259183,
+      "recess_centerline_depth_mm": 1.4730969583823619
+    },
+    {
+      "x_mm": 48.0,
+      "measured_maximum_y_mm": 15.246293067932129,
+      "authored_uncut_maximum_y_mm": 16.0,
+      "recess_depth_at_station_mm": 0.7537069320678711,
+      "measured_upper_y_at_z29p5_mm": 14.500004002102104,
+      "recess_centerline_depth_mm": 1.499995997897896
+    },
+    {
+      "x_mm": 49.5,
+      "measured_maximum_y_mm": 15.275688171386719,
+      "authored_uncut_maximum_y_mm": 15.97898519753193,
+      "recess_depth_at_station_mm": 0.7032970261452114,
+      "measured_upper_y_at_z29p5_mm": 14.573694583002371,
+      "recess_centerline_depth_mm": 1.4052906145295587
+    },
+    {
+      "x_mm": 51.5,
+      "measured_maximum_y_mm": 15.368501663208008,
+      "authored_uncut_maximum_y_mm": 15.885808647453207,
+      "recess_depth_at_station_mm": 0.5173069842451987,
+      "measured_upper_y_at_z29p5_mm": 14.824695155516967,
+      "recess_centerline_depth_mm": 1.06111349193624
+    },
+    {
+      "x_mm": 53.5,
+      "measured_maximum_y_mm": 15.509003639221191,
+      "authored_uncut_maximum_y_mm": 15.719004426748413,
+      "recess_depth_at_station_mm": 0.21000078752722118,
+      "measured_upper_y_at_z29p5_mm": 15.284625639889518,
+      "recess_centerline_depth_mm": 0.4343787868588951
+    },
+    {
+      "x_mm": 55.5,
+      "measured_maximum_y_mm": 15.480130195617676,
+      "authored_uncut_maximum_y_mm": 15.48012994148332,
+      "recess_depth_at_station_mm": -2.5413435622567704e-07,
+      "measured_upper_y_at_z29p5_mm": 15.480130195617676,
+      "recess_centerline_depth_mm": -2.5413435622567704e-07
+    },
+    {
+      "x_mm": 57.5,
+      "measured_maximum_y_mm": 15.171415328979492,
+      "authored_uncut_maximum_y_mm": 15.17141549836563,
+      "recess_depth_at_station_mm": 1.6938613711658945e-07,
+      "measured_upper_y_at_z29p5_mm": 15.171415328979492,
+      "recess_centerline_depth_mm": 1.6938613711658945e-07
+    },
+    {
+      "x_mm": 59.5,
+      "measured_maximum_y_mm": 14.795743942260742,
+      "authored_uncut_maximum_y_mm": 14.79574348097217,
+      "recess_depth_at_station_mm": -4.612885717847348e-07,
+      "measured_upper_y_at_z29p5_mm": 14.795743942260742,
+      "recess_centerline_depth_mm": -4.612885717847348e-07
+    },
+    {
+      "x_mm": 61.5,
+      "measured_maximum_y_mm": 14.356621742248535,
+      "authored_uncut_maximum_y_mm": 14.356621437710034,
+      "recess_depth_at_station_mm": -3.045385010835844e-07,
+      "measured_upper_y_at_z29p5_mm": 14.356621742248535,
+      "recess_centerline_depth_mm": -3.045385010835844e-07
+    },
+    {
+      "x_mm": 63.5,
+      "measured_maximum_y_mm": 13.858149528503418,
+      "authored_uncut_maximum_y_mm": 13.85814933278219,
+      "recess_depth_at_station_mm": -1.9572122766930988e-07,
+      "measured_upper_y_at_z29p5_mm": 13.858149528503418,
+      "recess_centerline_depth_mm": -1.9572122766930988e-07
+    },
+    {
+      "x_mm": 65.5,
+      "measured_maximum_y_mm": 13.304981231689453,
+      "authored_uncut_maximum_y_mm": 13.304981265926362,
+      "recess_depth_at_station_mm": 3.423690841941607e-08,
+      "measured_upper_y_at_z29p5_mm": 13.304981231689453,
+      "recess_centerline_depth_mm": 3.423690841941607e-08
+    },
+    {
+      "x_mm": 67.5,
+      "measured_maximum_y_mm": 12.702281951904297,
+      "authored_uncut_maximum_y_mm": 12.702282018339787,
+      "recess_depth_at_station_mm": 6.64354899981845e-08,
+      "measured_upper_y_at_z29p5_mm": 12.702281951904297,
+      "recess_centerline_depth_mm": 6.64354899981845e-08
+    },
+    {
+      "x_mm": 68.0,
+      "measured_maximum_y_mm": 12.544517517089844,
+      "authored_uncut_maximum_y_mm": 12.544517973849246,
+      "recess_depth_at_station_mm": 4.5675940185674335e-07,
+      "measured_upper_y_at_z29p5_mm": 12.544517517089844,
+      "recess_centerline_depth_mm": 4.5675940185674335e-07
+    }
+  ],
+  "findings": [
+    "The two shoulders contain large face-normal discontinuities and the retained authoring code applies no shoulder fillet; smooth shading does not round geometry.",
+    "Centerline recess reaches 1.5 mm depth at X=48, but measured stations remain uncut at X=28..39.5 and X=55.5..68. The sphere cutter does not produce a recess along the full required central 40 mm.",
+    "The 1 mm pad/bore bevel was applied before union. Final junction blending and touched-edge rounding are not established by that operation."
+  ],
+  "authoring_code_sha256": "79f71889d9c234b19c9d137d1ffb7305ed07f3aafc574a7d05aa9e5fe61635f3",
+  "prior_measurement_report": {
+    "path": "artifacts\\engineering-workflow-datasets\\serial-resolution\\p001-018-grip-review.json",
+    "sha256": "762c43c939992b76a66820e28d85d7284268acfd95a6b8b39d3279ec04592b62"
+  }
+}

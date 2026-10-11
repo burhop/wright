@@ -1,0 +1,10 @@
+{
+  "phase": "publication_preflight",
+  "status": "failed",
+  "assertion": "Compared pretty result.json file SHA with gateway canonical sorted response JSON SHA",
+  "product_defect": false,
+  "target_created": false,
+  "provider_calls": 0,
+  "correction": "Verify the recorded json.dumps(response, sort_keys=True) digest and independently inventory exact saved file bytes",
+  "native_creation_retried": false
+}

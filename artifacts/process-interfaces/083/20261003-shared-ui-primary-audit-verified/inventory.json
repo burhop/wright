@@ -1,0 +1,52 @@
+{
+  "files": {
+    "browser-reports.json": {
+      "bytes": 1803,
+      "sha256": "79ba29c556ed10c14a183378796521436cc1e302060ba85fafaa61757d9bded6"
+    },
+    "checked-scope.json": {
+      "bytes": 18878,
+      "sha256": "8fc24b99fbb34273d367a57b2cdd811dd01062b3636786810cf97f3581873633"
+    },
+    "commands.json": {
+      "bytes": 4253,
+      "sha256": "9904532d38237695719af275a59afacdfa15d138cbc2091418662e6a73fe33fb"
+    },
+    "current-backend-cases.json": {
+      "bytes": 16222,
+      "sha256": "c45b363e255ad6ba5ecd6d77ee83009e94414bdf54e106c3fea7ced7c3856fb0"
+    },
+    "current-backend-results.xml": {
+      "bytes": 14973,
+      "sha256": "1744ac045194f09f49fbabb8042a111c9f0d86852cb3017a4ee20600313314ce"
+    },
+    "first-type-errors.log": {
+      "bytes": 846,
+      "sha256": "93505ef6d9a36bf692a9a9000f352676795c7fbc73858938dad65d39dd883dbc"
+    },
+    "first-workflow-recovery-source.ts": {
+      "bytes": 18145,
+      "sha256": "044f5914ddc2323c99337ad6af01e3c1c13f196679449a5feef974600d91be5e"
+    },
+    "primary-review.json": {
+      "bytes": 18691,
+      "sha256": "efeacb8029327cb8309e4e229c2474c5fba2c9c107f20f7ac3f8367859b059d7"
+    },
+    "README.md": {
+      "bytes": 4450,
+      "sha256": "e402da3f6ad43789b8457ef3f6f2b9440a03d5a7690fd10160350347214e4045"
+    },
+    "retained-case-index.json": {
+      "bytes": 71078,
+      "sha256": "e2346a4667bfe6ae66cdf6785cde786c864d2679811d24378678f0810ffa5f32"
+    },
+    "semantic-ledger.json": {
+      "bytes": 222292,
+      "sha256": "50086bbd6420e9ef83a8863c8900e64fa16ac500cf2d7b57b1b3a45ed1bbf807"
+    },
+    "source-parity.json": {
+      "bytes": 9837,
+      "sha256": "408bef7afe518b738850f15b2a522022827df45301234ebc55f48ff0a22b0d54"
+    }
+  }
+}

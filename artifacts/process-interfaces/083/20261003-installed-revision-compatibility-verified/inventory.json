@@ -1,0 +1,64 @@
+{
+  "files": {
+    "checked-scope.json": {
+      "bytes": 9920,
+      "sha256": "8d71c69235d70fd30be79b3e1b88e74560ed0a224fa45215469c5b9ba258bc10"
+    },
+    "first-attempts.json": {
+      "bytes": 1196,
+      "sha256": "41c393045598e45286e052c12c75d88eac17d256a558bba5a3015cb441245005"
+    },
+    "fixture-001-final-authority-and-cleanup.json": {
+      "bytes": 635,
+      "sha256": "43e1bd9bb8c6fd22eccdd7594e4bbad94638aa4b08cd90b7a1b80bf97749b670"
+    },
+    "fixture-001-host-identity.json": {
+      "bytes": 483,
+      "sha256": "2e28ab5e3d7e6661ecbd853b10d799e753a82dad9ff233560c087088f45410f5"
+    },
+    "fixture-002-final-authority-and-cleanup.json": {
+      "bytes": 635,
+      "sha256": "de50419b18f18d9a8bc3a497b44e78fc096b968a03d94b8651306806bf60f333"
+    },
+    "fixture-002-host-identity.json": {
+      "bytes": 483,
+      "sha256": "2e28ab5e3d7e6661ecbd853b10d799e753a82dad9ff233560c087088f45410f5"
+    },
+    "fixture-003-final-authority-and-cleanup.json": {
+      "bytes": 735,
+      "sha256": "9f6a0bbf86dbdeef69338a677db5b2bb712a6a4b73263a416e3965d857cbbbed"
+    },
+    "fixture-003-host-identity.json": {
+      "bytes": 483,
+      "sha256": "2e28ab5e3d7e6661ecbd853b10d799e753a82dad9ff233560c087088f45410f5"
+    },
+    "package-build-output.txt": {
+      "bytes": 123,
+      "sha256": "db31d65eb617a22e3696e4db6a6b3db9512637d9fac47af0e01611292cfb39ab"
+    },
+    "package-build-record.json": {
+      "bytes": 483,
+      "sha256": "53312364f2525572a54ce6c7d84b9754d5205946a5129382c1b4dd019c5bca94"
+    },
+    "package-command.json": {
+      "bytes": 220,
+      "sha256": "6779ca4f4c2a059dc29627992aa6415d609552eaffcc7187cac6028bd32f2342"
+    },
+    "primary-assertions.json": {
+      "bytes": 3496,
+      "sha256": "86444b19dae88c350314cc4927159e09163762200c3ab291ce4a1388d2bd85f2"
+    },
+    "README.md": {
+      "bytes": 3080,
+      "sha256": "d5a042f405dfdc38c6b074593ecc1e81ec4cfb675df3399cc1d24f087c4267e5"
+    },
+    "semantic-ledger.json": {
+      "bytes": 142287,
+      "sha256": "5f6ca88e509851f25ea2f9d4a4d42ce3439765d98c4ea14096eb1eeb122a531e"
+    },
+    "walkthrough-inventory.json": {
+      "bytes": 29514,
+      "sha256": "ce75399735a9b1e0984d8d3aaa0b203dd6323b3743d2443514042f31ca297023"
+    }
+  }
+}

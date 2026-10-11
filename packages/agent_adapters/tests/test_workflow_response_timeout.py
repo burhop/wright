@@ -376,7 +376,11 @@ def test_post_tool_completion_blocks_with_recorded_evidence_after_exact_nulls(
     ]
     monkeypatch.setattr(hermes_openai_bridge, "HermesOpenAICompatibilityBridge", Bridge)
 
-    message = asyncio.run(report_generation.decide_workflow_tool_action(messages, [{}]))
+    message = asyncio.run(
+        report_generation.decide_workflow_tool_action(
+            messages, [{}], output_format="json"
+        )
+    )
     envelope = json.loads(message["content"])
     response = json.loads(envelope["response"])
     assert Bridge.calls == 3

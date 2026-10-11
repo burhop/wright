@@ -1,0 +1,62 @@
+{
+  "source_claim": "actual independent MCP qualification artifacts; not full assignment or engineering acceptance",
+  "configured_package_fallback": {
+    "source": ".local-run/process-interfaces-083/t043-slicer-003/direct.gcode.3mf",
+    "package_sha256": "ba7f678d4cb6d8cf8b9a19c4f863b27732ba5e8f57cb8090e3ae7044d9ae5569",
+    "preview": "unavailable",
+    "diagnostic": "Unsupported motion or coordinate semantics: G380.",
+    "raw_download_retained": true
+  },
+  "toolpaths": {
+    "source": ".local-run/process-interfaces-083/t043-slicer-001/direct.gcode.3mf",
+    "package_sha256": "1000755ddd7c023294f8e3edd927e0f1783c94d56a9adb533336bafb5f497cf5",
+    "layer_count": 30,
+    "first_z_mm": 0.2,
+    "last_z_mm": 6.0,
+    "classification_source": "gcode_feature_comments",
+    "provenance": {
+      "reader": "wright.passive-representations/1",
+      "source_sha256": "02fc79cb1c457165b71473adf87fdf486d8c53eb4edd1f0896d746dc517a68b3",
+      "archive_entry": "Metadata/plate_1.gcode",
+      "method": "recorded planar extrusion commands and explicit layer/feature comments",
+      "units": "mm",
+      "segments": 995,
+      "extruding_arcs": 0,
+      "arc_maximum_chord_error_mm": 0.02,
+      "unlayered_extrusion_commands_excluded": 0,
+      "recognized_features": [
+        "bottom surface",
+        "bridge",
+        "inner wall",
+        "internal solid infill",
+        "outer wall",
+        "sparse infill",
+        "top surface"
+      ],
+      "unclassified_features": [
+        "custom",
+        "floating vertical shell",
+        "skirt"
+      ],
+      "limits": "Nominal paths; firmware commands are not executed, and machine/material acceptance is not established.",
+      "engineering_acceptance": false
+    }
+  },
+  "scalar": {
+    "source": ".local-run/process-interfaces-083/t043-oasis-001/workspace/qualification/001/direct/qualification_fixed-fine-temperature.csv",
+    "sha256": "3c456da209883d25304d996f8835b737aa0feb41cc22b754c1310bbbf5b8fb8b",
+    "sample_count": 765,
+    "minimum": 20.0,
+    "maximum": 25.55555555558066,
+    "provenance": {
+      "reader": "wright.passive-representations/1",
+      "method": "exact configured CSV columns; raw XYZ/value samples",
+      "units": "as declared by source columns",
+      "interpolated_geometry": false,
+      "engineering_acceptance": false
+    }
+  },
+  "process_execution": false,
+  "engineering_acceptance": false,
+  "rendered_browser_proof": false
+}

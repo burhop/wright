@@ -1,0 +1,33 @@
+{
+  "frozen_records": [
+    {
+      "folder": "t047-fresh-prompt-055",
+      "record": "failed-producer-frozen.json",
+      "files_unchanged": 24
+    },
+    {
+      "folder": "t047-fresh-mixed-071",
+      "record": "first-run-frozen.json",
+      "files_unchanged": 41
+    },
+    {
+      "folder": "t047-fresh-mixed-071",
+      "record": "second-run-frozen.json",
+      "files_unchanged": 41
+    },
+    {
+      "folder": "t056-common-digital-083",
+      "record": "common-run-frozen.json",
+      "files_unchanged": 9
+    },
+    {
+      "folder": "t047-fresh-mixed-071",
+      "record": "saved-ui-revision-files-frozen-104.json",
+      "files_unchanged": 12
+    }
+  ],
+  "same_saved_ui": "ui-f47e26fbcc2e44a2a7c4dc939aef1948",
+  "same_updated_revision": "revision-b1d66dc13ace45889297568cd38c6ee0",
+  "generation_build_replay_during_viewing": false,
+  "physical_or_human_acceptance": false
+}

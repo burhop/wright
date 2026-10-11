@@ -1,0 +1,15 @@
+{
+  "exit_code": 0,
+  "modules": [
+    "packages/core/tests/test_process_validation.py"
+  ],
+  "source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+  "live_model_provider_or_physical_execution": false,
+  "counts": {
+    "tests": 22,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 22
+  }
+}

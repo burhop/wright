@@ -1,0 +1,210 @@
+{
+  "title": "Saved interfaces across accepted workflow revisions",
+  "summary": "Current installed workspace reuses the immutable saved UI across a compatible source revision without compiler/model, supplies exact current context, preserves reopening/common fallback, and contains a required binding change with an explicit unavailable focused-update path. No execution, decision or old authority transfer.",
+  "overall": "pass",
+  "updated": "2026-10-03T21:03:57.373Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace, click Workflows, Workflow files, Open workflow, select ui-evidence-negative-001.workflow.wflow and click Use saved process."
+    },
+    {
+      "label": "Saved baseline",
+      "instruction": "Open the saved UI for the retained run; inspect its pending review without approving it."
+    },
+    {
+      "label": "Compatible change",
+      "instruction": "After a conditional source revision that preserves bindings, open the saved UI for the new revision as a preparation view. Reopen it and use the common working view; neither should attach the old run."
+    },
+    {
+      "label": "Required binding change",
+      "instruction": "After the fixture conditionally renames the bound output, open its saved UI for the new revision. It should explain the incompatible binding and offer the common view."
+    },
+    {
+      "label": "Update and fallback",
+      "instruction": "Click Create or choose interface. Inspect the existing saved interface and disabled Update selected interface control with the explicit missing compiler/model reason. Use the common view; restore the owned source conditionally."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Normal installed workspace",
+      "summary": "Workspace loads from the current installed wheel.",
+      "purpose": "Normal Workflows control, installed frontend",
+      "action": "Open isolated workspace",
+      "controls": [
+        "Open isolated workspace"
+      ],
+      "expected": "Normal Workflows control, installed frontend",
+      "actual": "Workspace loads from the current installed wheel.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Existing editor retained",
+      "summary": "Established editor and workflow-file controls are present.",
+      "purpose": "Refined editor inside workspace",
+      "action": "Click Workflows",
+      "controls": [
+        "Click Workflows"
+      ],
+      "expected": "Refined editor inside workspace",
+      "actual": "Established editor and workflow-file controls are present.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Saved workflow listed",
+      "summary": "The synthetic saved workflow is available through normal file selection.",
+      "purpose": "Exact accepted fixture listed",
+      "action": "Workflow files → Open workflow",
+      "controls": [
+        "Workflow files → Open workflow"
+      ],
+      "expected": "Exact accepted fixture listed",
+      "actual": "The synthetic saved workflow is available through normal file selection.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Accepted workflow opened",
+      "summary": "The accepted diagram opens inside the workspace.",
+      "purpose": "Accepted diagram; no execution",
+      "action": "Choose ui-evidence-negative-001.workflow.wflow",
+      "controls": [
+        "Choose ui-evidence-negative-001.workflow.wflow"
+      ],
+      "expected": "Accepted diagram; no execution",
+      "actual": "The accepted diagram opens inside the workspace.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Common view available",
+      "summary": "Common view opens without starting a run.",
+      "purpose": "Common working tab using same process",
+      "action": "Click Use saved process",
+      "controls": [
+        "Click Use saved process"
+      ],
+      "expected": "Common working tab using same process",
+      "actual": "Common view opens without starting a run.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Retained saved UI baseline",
+      "summary": "The saved UI presents the original pending review; no decision is made.",
+      "purpose": "Original exact pending review visible",
+      "action": "Open saved UI for original exact run",
+      "controls": [
+        "Open saved UI for original exact run"
+      ],
+      "expected": "Original exact pending review visible",
+      "actual": "The saved UI presents the original pending review; no decision is made.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Compatible saved UI reused",
+      "summary": "Saved UI loads without model/compiler; current backend snapshot has no old run, outputs or reviews.",
+      "purpose": "Exact same saved build, current process context and no old decision",
+      "action": "Open saved UI on changed accepted revision without old run",
+      "controls": [
+        "Open saved UI on changed accepted revision without old run"
+      ],
+      "expected": "Exact same saved build, current process context and no old decision",
+      "actual": "Saved UI loads without model/compiler; current backend snapshot has no old run, outputs or reviews.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Compatible reuse survives reopening",
+      "summary": "Saved UI reconnects without generation/build or starting a process.",
+      "purpose": "New isolated presentation, current accepted context",
+      "action": "Click Reopen interface view",
+      "controls": [
+        "Click Reopen interface view"
+      ],
+      "expected": "New isolated presentation, current accepted context",
+      "actual": "Saved UI reconnects without generation/build or starting a process.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Current common view has no old permission",
+      "summary": "Common preparation view does not inherit the historical run or review.",
+      "purpose": "Same current process; no old run review",
+      "action": "Click Use common working view",
+      "controls": [
+        "Click Use common working view"
+      ],
+      "expected": "Same current process; no old run review",
+      "actual": "Common preparation view does not inherit the historical run or review.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Required binding change blocks saved UI",
+      "summary": "Wright contains the incompatible saved revision and explains the required binding mismatch.",
+      "purpose": "No generated frame; exact incompatible binding and fallback",
+      "action": "Open saved UI for renamed required output",
+      "controls": [
+        "Open saved UI for renamed required output"
+      ],
+      "expected": "No generated frame; exact incompatible binding and fallback",
+      "actual": "Wright contains the incompatible saved revision and explains the required binding mismatch.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "Focused update and resource limit visible",
+      "summary": "Update selected interface is unavailable with the missing compiler/model; saved metadata and the common view remain usable.",
+      "purpose": "Selected old UI, update control, explicit missing authoring capability",
+      "action": "Click Create or choose interface",
+      "controls": [
+        "Click Create or choose interface"
+      ],
+      "expected": "Selected old UI, update control, explicit missing authoring capability",
+      "actual": "Update selected interface is unavailable with the missing compiler/model; saved metadata and the common view remain usable.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "Common fallback remains usable",
+      "summary": "Common view opens for the changed accepted source. No old run/evidence/decision authority is transferred.",
+      "purpose": "Current accepted inputs without old permission or replay",
+      "action": "Click Use common working view",
+      "controls": [
+        "Click Use common working view"
+      ],
+      "expected": "Current accepted inputs without old permission or replay",
+      "actual": "Common view opens for the changed accepted source. No old run/evidence/decision authority is transferred.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    }
+  ]
+}

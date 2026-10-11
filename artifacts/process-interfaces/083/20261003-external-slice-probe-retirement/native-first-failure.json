@@ -1,0 +1,26 @@
+{
+  "status": "partial",
+  "native_calls": 0,
+  "physical_dispatch": false,
+  "source_commit_before_changes": "369993bee0eb750681da0fc31a7f8fd4643087ca",
+  "provider_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "provider_source": "https://github.com/marctheshark3/bambu-p1s-mcp",
+  "fresh_selected_install": false,
+  "geometry_seed": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t043-slicer-003\\qualification-only.stl",
+  "geometry_seed_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+  "scope": "fresh isolated native call through migrated direct diagnostic; not clean installation, production gateway, CAD creation or engineering acceptance",
+  "runner_cleanup": [
+    {
+      "pid": null,
+      "returncode": null,
+      "stopped": false
+    },
+    {
+      "pid": null,
+      "returncode": null,
+      "stopped": false
+    }
+  ],
+  "error_type": "RuntimeError",
+  "error": "MCP handshake failed within 60 seconds: Child MCP transport closed"
+}

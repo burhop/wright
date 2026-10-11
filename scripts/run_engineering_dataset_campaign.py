@@ -43,6 +43,14 @@ def fingerprint(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def requires_human_validation_review(checkpoint):
+    """Validation credit can only consume an authenticated human review."""
+    subject = checkpoint.get("subject")
+    settings = subject.get("settings") if isinstance(subject, dict) else None
+    configured = settings.get("validation_review") if isinstance(settings, dict) else None
+    return isinstance(configured, dict) and bool(configured)
+
+
 def atomic_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(path.name + ".tmp")
@@ -99,6 +107,57 @@ class RetryEpisodeLedger:
         ):
             raise ValueError("Retry episode ledger is invalid")
         return document
+
+    def _extended_limit(self, episode_id, episode, evidence):
+        """Check a byte-bound operator decision; manifests cannot raise the limit."""
+        try:
+            path = (self.path.parent / evidence["path"]).resolve()
+            path.relative_to(self.path.parent)
+            raw = path.read_bytes()
+            if hashlib.sha256(raw).hexdigest() != evidence["sha256"]:
+                raise ValueError("Decision bytes changed")
+            decision = json.loads(raw)
+            authority = decision["retry_budget_authorization"]
+            maximum = episode["max_corrections"]
+            if (
+                decision["actor"] != "local_workspace_user"
+                or decision["state"] != "changes_requested"
+                or decision["automatic_approval"] is not False
+                or not decision["user_instruction"]
+                or authority != {
+                    "episode_id": episode_id,
+                    "from_max_corrections": maximum,
+                    "to_max_corrections": maximum + 1,
+                    "additional_corrections": 1,
+                    "preserve_history": True,
+                }
+            ):
+                raise ValueError("Decision does not authorize this extension")
+            return maximum + 1
+        except (KeyError, TypeError, OSError, ValueError) as exc:
+            raise ValueError("Retry budget extension evidence is invalid") from exc
+
+    def record_human_budget_extension(self, episode_id, evidence):
+        """Operator-only action after explicit user authority, never automatic retry."""
+        document = self._load()
+        episode = document["episodes"][episode_id]
+        maximum = self._extended_limit(episode_id, episode, evidence)
+        if episode.get("human_budget_extension"):
+            raise ValueError("Retry budget extension already recorded")
+        if (
+            len(episode["attempts"]) != episode["max_corrections"]
+            or any(row["outcome"] not in TERMINAL for row in episode["attempts"])
+        ):
+            raise ValueError("Retry budget extension requires exhausted terminal attempts")
+        episode["human_budget_extension"] = {
+            "evidence": evidence,
+            "authorized_max_corrections": maximum,
+            "prior_attempts_sha256": fingerprint(episode["attempts"]),
+            "prior_attempt_count": len(episode["attempts"]),
+            "recorded_at": now(),
+        }
+        atomic_json(self.path, document)
+        return episode["human_budget_extension"]
 
     def authorize(self, case):
         configured = case.get("retry_episode")
@@ -168,6 +227,15 @@ class RetryEpisodeLedger:
             episodes[episode_id] = episode
         elif any(episode.get(key) != value for key, value in identity.items()):
             raise ValueError("Retry episode identity changed")
+        extension = episode.get("human_budget_extension")
+        if extension:
+            maximum = self._extended_limit(episode_id, episode, extension["evidence"])
+            if (
+                maximum != extension["authorized_max_corrections"]
+                or fingerprint(episode["attempts"][:extension["prior_attempt_count"]])
+                != extension["prior_attempts_sha256"]
+            ):
+                raise ValueError("Retry budget extension history changed")
         attempt_identity = (case["scenario_id"], case["attempt_id"])
         existing = next(
             (
@@ -271,7 +339,59 @@ class HttpTransport:
                     raise ValueError("Runtime response exceeds bound")
                 return {"ok":True,"data":json.loads(raw)}
         except urllib.error.HTTPError as error:
-            return {"ok":False,"http_status":error.code,"error_type":"HTTPError"}
+            detail = None
+            try:
+                # Validation frameworks may echo a bounded source/input value in
+                # their raw body. Read enough to parse and then retain only the
+                # explicit safe diagnostic fields below.
+                raw = error.read(1024 * 1024 + 1)
+                if len(raw) <= 1024 * 1024:
+                    document = json.loads(raw)
+                    candidate = document.get("detail") if isinstance(document, dict) else None
+                    if isinstance(candidate, dict):
+                        detail = {
+                            key: candidate[key]
+                            for key in ("code", "message", "correction")
+                            if isinstance(candidate.get(key), str)
+                        }
+                    elif isinstance(candidate, str):
+                        detail = {"message": candidate}
+                    elif isinstance(candidate, list):
+                        errors = []
+                        for item in candidate[:20]:
+                            if not isinstance(item, dict):
+                                continue
+                            errors.append(
+                                {
+                                    key: item[key]
+                                    for key in ("loc", "msg", "type")
+                                    if key in item
+                                    and isinstance(item[key], (str, int, float, bool, list))
+                                }
+                            )
+                        if errors:
+                            detail = {"validation_errors": errors}
+                    if detail is None and isinstance(document, dict):
+                        normalized = {
+                            key: document[key]
+                            for key in ("error_code", "message", "trace_id")
+                            if isinstance(document.get(key), str)
+                        }
+                        extra = document.get("details")
+                        if isinstance(extra, dict) and isinstance(
+                            extra.get("correction"), str
+                        ):
+                            normalized["correction"] = extra["correction"]
+                        if normalized:
+                            detail = normalized
+            except (OSError, UnicodeError, ValueError, AttributeError):
+                pass
+            return {
+                "ok": False,
+                "http_status": error.code,
+                "error_type": "HTTPError",
+                "error_detail": detail,
+            }
         except (OSError, ValueError, TimeoutError, http.client.HTTPException) as error:
             return {"ok":False,"error_type":type(error).__name__}
 
@@ -400,7 +520,9 @@ class Runner:
                     required_step_ids=case["required_step_ids"],output_root=case["output_root"],lifecycle=lifecycle)
                 self.save(state_path,state,evidence_status="exported",last_receipt_status=receipt["status"],
                           evidence_exporter_revision=_evidence.EXPORTER_REVISION,observed_lifecycle_digest=lifecycle_identity,
-                          usage=receipt.get("usage", {"status": "unknown"}))
+                          usage=receipt.get("usage", {"status": "unknown"}),
+                          validations=receipt.get("validations", []),
+                          content_validated=receipt.get("content_validated") is True)
             except (ValueError, KeyError, OSError, TypeError) as error:
                 self.save(state_path,state,evidence_status="not_exportable",evidence_error_type=type(error).__name__,
                           evidence_error=str(error) if isinstance(error,_evidence.EvidenceError) else "Runtime evidence could not be read",
@@ -477,7 +599,7 @@ class Runner:
                         reply = future.result()
                     except Exception as error:
                         reply = {"ok":False,"error_type":type(error).__name__}
-                    state["operations"][operation].update(state="response_received" if reply["ok"] else "response_failed",http_status=reply.get("http_status"),error_type=reply.get("error_type"),finished_at=now())
+                    state["operations"][operation].update(state="response_received" if reply["ok"] else "response_failed",http_status=reply.get("http_status"),error_type=reply.get("error_type"),error_detail=reply.get("error_detail"),finished_at=now())
                     self.save(state_path,state,"observing",active_operation=None)
                     self.emit(case,"dispatch_response",operation=operation,ok=reply["ok"],http_status=reply.get("http_status"))
                     future = None
@@ -560,13 +682,18 @@ class Runner:
                     if checkpoint["state"] == "pending":
                         preference = self.approval_preference()
                         grant_mode = record.get("execution_context", {}).get("approval_mode", "manual")
-                        if preference != "auto" or grant_mode != "auto":
+                        validation_review = requires_human_validation_review(checkpoint)
+                        if validation_review or preference != "auto" or grant_mode != "auto":
+                            manual_reason = ("validation_review_requires_human"
+                                             if validation_review else "campaign_policy")
                             changed = state.get("phase") != "awaiting_manual_approval"
                             self.save(state_path,state,"awaiting_manual_approval",
                                       campaign_approval_mode=preference,enrolled_approval_mode=grant_mode,
-                                      pending_checkpoint_id=checkpoint_id)
+                                      pending_checkpoint_id=checkpoint_id,
+                                      manual_approval_reason=manual_reason)
                             if changed:
-                                self.emit(case,"awaiting_manual_approval",checkpoint_id=checkpoint_id)
+                                self.emit(case,"awaiting_manual_approval",checkpoint_id=checkpoint_id,
+                                          reason_code=manual_reason)
                             time.sleep(self.poll_seconds)
                             continue
                         key = "decision:" + checkpoint_id
@@ -634,16 +761,22 @@ class Runner:
                 if self.pause_after_current and self.pause_after_current.exists():
                     self.emit(case,"campaign_paused_between_cases",reason_code="pause_sentinel_present")
                     atomic_json(self.root/"summary.json",{"updated_at":now(),"cases":results,
-                        "paused":True,"next_scenario_id":case["scenario_id"],"content_validation_enabled":False})
+                        "paused":True,"next_scenario_id":case["scenario_id"],
+                        "content_validation_enabled":True,
+                        "validation_contract":"wright.process-validation/1"})
                     break
                 try:
                     result=self.run_case(case)
                     results.append({"scenario_id":case["scenario_id"],"attempt_id":case["attempt_id"],"phase":result["phase"],
+                                    "content_validated":result.get("content_validated", False),
+                                    "validations":result.get("validations", []),
                                     **({"native_cleanup":result["native_cleanup"]} if "native_cleanup" in result else {})})
                 except (OSError,ValueError,KeyError,TypeError) as error:
                     results.append({"scenario_id":case["scenario_id"],"attempt_id":case["attempt_id"],"phase":"runner_blocked","error_type":type(error).__name__})
                 self.emit(case,"case_checkpoint",phase=results[-1]["phase"])
-                atomic_json(self.root/"summary.json",{"updated_at":now(),"cases":results,"content_validation_enabled":False})
+                atomic_json(self.root/"summary.json",{"updated_at":now(),"cases":results,
+                    "content_validation_enabled":True,
+                    "validation_contract":"wright.process-validation/1"})
         return results
 
 

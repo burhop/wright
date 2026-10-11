@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "command": ".venv/Scripts/python.exe .local-run/process-interfaces-083/t047-final-obligation-audit-016.py",
+  "exit_code": 1,
+  "failing_assertion": "len(blocked) == 1 and blocked[0]['check_id'] == 'engineering-review'",
+  "observed_heat_blocked_check": "basis-review",
+  "cause": "Harness assumed the printed review ID also applied to Heat. The original Heat profile uses basis-review.",
+  "product_or_assessment_changed": false,
+  "engineering_execution": false,
+  "task_closed_by_this_attempt": false
+}

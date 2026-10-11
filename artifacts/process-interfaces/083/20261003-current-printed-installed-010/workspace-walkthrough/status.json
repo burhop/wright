@@ -1,0 +1,58 @@
+{
+  "title": "Exact preparation geometry, toolpaths and held assessment in both working views",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-03T11:37:29.342398+00:00",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved wheel process and click Use saved process."
+    },
+    {
+      "label": "Inspect the held preparation run",
+      "instruction": "Open the recorded second-run link and inspect its preparation results and human-review hold."
+    },
+    {
+      "label": "Reuse the interface",
+      "instruction": "Click Create or choose interface, select Focus-wheel configured preparation and click Open saved interface."
+    },
+    {
+      "label": "Inspect geometry",
+      "instruction": "Reload the saved working interface, then click Open representation on repaired_mesh.stl."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Return to the saved interface and click Open producing step on repaired_mesh.stl."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Installed preparation workspace",
+      "summary": "Continue the retained walkthrough at its first unverified assessment.",
+      "purpose": "Reuse the same isolated installed host without replaying preparation.",
+      "action": "Open the proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Normal workspace available.",
+      "actual": "The existing workspace opens.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Assessment response observer terminated",
+      "summary": "The test could not retain its response during navigation.",
+      "purpose": "Preserve the first eager-response observer failure and unavailable stopping capture.",
+      "action": "Click Open assessment.",
+      "controls": [
+        "Open assessment"
+      ],
+      "expected": "Retain the exact backend assessment resolution before the interface frame is removed.",
+      "actual": "The response-body observer terminated when the interface frame navigated away. The browser stopped before a stopping screenshot or finalized trace could be captured. No engineering run or review was executed; fresh011 verifies the real assessment separately."
+    }
+  ]
+}

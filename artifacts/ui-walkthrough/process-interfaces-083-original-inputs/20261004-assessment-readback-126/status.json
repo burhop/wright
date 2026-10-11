@@ -1,0 +1,35 @@
+{
+  "title": "Inspect the two original source assessments",
+  "summary": "Read-only exact assessment display for two completed digital preparation chains. Both remain held for required human engineering review. No new execution, decision or acceptance.",
+  "overall": "blocked",
+  "updated": "2026-10-04T02:53:46.817Z",
+  "manualSteps": [
+    {
+      "label": "Recorded run",
+      "instruction": "Open the exact recorded-run workspace link."
+    },
+    {
+      "label": "Assessment",
+      "instruction": "Click Open assessment on repaired_mesh.stl, then scroll to the opened assessment."
+    },
+    {
+      "label": "Review hold",
+      "instruction": "Inspect the digital findings and required human-review hold; leave decisions unanswered."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "First stopping point",
+      "summary": "expect(received).toBe(expected) // Object.is equality\n\nExpected: \"assessment-e16a660ca1854022ad82e2a2fefe0cea\"\nReceived: undefined",
+      "purpose": "Retain unexpected assessment display",
+      "action": "Stop at first error",
+      "controls": [],
+      "expected": "Exact source assessment remains readable",
+      "actual": "expect(received).toBe(expected) // Object.is equality\n\nExpected: \"assessment-e16a660ca1854022ad82e2a2fefe0cea\"\nReceived: undefined",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

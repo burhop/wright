@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "scope": "Neutral existing Linux image test-runtime metadata only",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "provider_execution": false,
+  "physical_dispatch": false,
+  "runtime": {
+    "python": "3.13.15 (main, Aug 10 2026, 21:10:14) [GCC 14.2.0]",
+    "pytest": false,
+    "pytest_asyncio": false,
+    "workspace_service": false
+  },
+  "owned_container": {
+    "id": "bbc13f22e08e35b42af883ab79818872e623d25e9544cda3609a3782bc767b8b",
+    "running": false
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "id": "wall-dock-route-fixture",
+  "version": "1",
+  "baseline": {
+    "id": "wall-dock-route-fixture-basis",
+    "version": "1",
+    "requirements": [
+      {
+        "id": "DOCK-REQUESTED-MANUFACTURING-ROUTE",
+        "text": "The barcode-reader dock assignment requests a sheet-metal fabrication design with native sheet-metal CAD, folded STEP and a developed flat-pattern DXF. A polymer material-extrusion route does not satisfy this assignment.",
+        "scope": "design",
+        "sources": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/prompt.txt",
+            "sha256": "bbd6cc955b15e5153e94668029dd668d7cfa9e4c81358fb7775adb062b886e63",
+            "locator": "Sheet-metal design request; required PSM, folded STEP and developed flat-pattern DXF"
+          }
+        ],
+        "mandatory": true,
+        "review_required": false
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "manufacturing-route",
+      "version": "1",
+      "requirement_ids": ["DOCK-REQUESTED-MANUFACTURING-ROUTE"],
+      "subject_role": "route_choice",
+      "reader": "structured",
+      "selector": "/manufacturing_route",
+      "constraint": {
+        "operator": "equals",
+        "expected": "Sheet-metal fabrication"
+      },
+      "evidence_method": "structured_value"
+    }
+  ],
+  "supported_kinds": ["value", "file"],
+  "excluded_scope": [
+    "This fixture checks a declared route choice against the assignment; it does not verify the actual manufacturing route, CAD geometry, native flat pattern, material, supplier capability or physical performance.",
+    "Passing this single gate is not an engineering release or human approval. The original full engineering profile and all its requirements remain required."
+  ],
+  "limitations": [
+    "The route vocabulary is local to this fixture. Other workflows may intentionally combine manufacturing methods under their own accepted requirements.",
+    "Fixture responses are synthetic; no MCP provider, LLM, machine or supplier is invoked by the regression test."
+  ]
+}

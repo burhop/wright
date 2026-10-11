@@ -1,0 +1,224 @@
+[
+  {
+    "path": "packages/process_client/src/client.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "eda1a10d00dd9c1db39bf75f083a013c6aca507412e548b1b6cd28d5f1207c5c"
+  },
+  {
+    "path": "packages/process_client/src/validation.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "522b3d6349e003e4de1bf3f15aa5703a501b4272e1b4c891321565c5a56c2877"
+  },
+  {
+    "path": "packages/process_client/src/sse.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "c5dd4c60d8b0e6c7fc049ef3b55c7673cb92e2cfc1db8c1756c2beca351f1482"
+  },
+  {
+    "path": "packages/process_client/src/contracts.generated.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "823ddb839496f1672bbdebf9601cda05bf7576cf6f3dc8738fe02d08eda8d021"
+  },
+  {
+    "path": "packages/process_client/src/schemas.generated.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "cf542237942d98c56d6e01c4eb5876b19c4558d608e29b7aa3eb1253496cec2a"
+  },
+  {
+    "path": "packages/process_client/src/presentation.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "6e236bcfd02d5c7bec0406ae7b30c949442e0efaf2f48db1d1123f6a4353d16b"
+  },
+  {
+    "path": "packages/ui_kit/src/patterns.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "805adb0858a2194e0fc1ce0267646954b43282afad0f4451c5a472fe8f73c2b9"
+  },
+  {
+    "path": "packages/ui_kit/src/inputs.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "2b3c0da072037b9d5f24e702e02b2cd83c50b6dda6bd67d0a81849ea31ca9fad"
+  },
+  {
+    "path": "packages/ui_kit/src/representations.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "90969e1db0afc8d7904bced3e1a174939e6e9058465980f8c535b002c8d7056a"
+  },
+  {
+    "path": "packages/ui_kit/src/result-representation.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "67ee22799b76f8e2f4a661dc7e6d3adf8eae535654086428b67ec81e57f95dfc"
+  },
+  {
+    "path": "packages/ui_kit/src/geometry.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "c6cd10de12fb9721b84b15dc06dab3fd3392d821aa242c4a8413d057afe57ef7"
+  },
+  {
+    "path": "packages/ui_kit/src/toolpaths.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "1cca5244f9d4eabf538fd0172d0525468f8f43478bc8846b878b4235809011db"
+  },
+  {
+    "path": "packages/ui_kit/src/styles.css",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "035426e200bd5f8e681d76b556e0d485734a04fa1a0ac41f139e3e68d7a5725d"
+  },
+  {
+    "path": "packages/ui_kit/src/tokens.css",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3"
+  },
+  {
+    "path": "apps/web/src/components/process-interfaces/CommonProcessView.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "df6d648572918f3dd607b1771d38286e099e7b86a45d223d34e1d91c87580aa9"
+  },
+  {
+    "path": "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": false,
+    "normalized_sha256": "3061333061b89cc9a737705fc2c87175279392363eb4a6228609db8780367583"
+  },
+  {
+    "path": "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "157e57d90ab90dca666f29fb205d196ba96c7abedcc75c45ead96c424a12f985"
+  },
+  {
+    "path": "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "880b82eda81c16dde90213d59c76b512171ea041614d3a5e47daac35cf24b1c6"
+  },
+  {
+    "path": "apps/web/src/components/process-interfaces/ProcessInterfaceView.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "81872ebf4dbbe59ea8d6a5a23875e30cc144309a6336f6177ca21613c2b1d033"
+  },
+  {
+    "path": "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "f75711c8f6990bed74d5a63f939ee4efd87a0d3fbdc83f8500b7c493b00b84a4"
+  },
+  {
+    "path": "apps/web/src/services/process-presentation-host.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "e9c46f29fe65612d9a3a034cd45e63e2997d9d575d2cd2cdd2c36e8eaf5d71f3"
+  },
+  {
+    "path": "apps/web/src/services/process-presentation-host.spec.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "f2c54c0546ccadf15d15e75f778d25c9516e1c71b7c33e81db15d628e942443b"
+  },
+  {
+    "path": "apps/web/src/services/process-client.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "7baa31324653221c8b358ada5c97b9ea5ab1311a586b5014fdb147fd139b8778"
+  },
+  {
+    "path": "apps/web/src/services/process-client.spec.ts",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "6897c9367acb8cb2ff1c3053f0f424275d8ae538ee6dd7289093eeb692b293b3"
+  },
+  {
+    "path": "apps/web/src/components/common/ProcessUIKit.spec.tsx",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "1c30cf49ff180ac9ff7eabd128b94ec9b06cf7c7d6460cbaa4bc4933e381a212"
+  },
+  {
+    "path": "packages/core/src/core/process_interactions.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "b4ca5f83b123d56a86488ae132440b6899e747af4bd943882e2b89e2b413b137"
+  },
+  {
+    "path": "packages/core/src/core/process_interfaces.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "b74fe4c44ebd7beff6fdb1e89189ae668feeac5188c6862af49e482ba12bbbd0"
+  },
+  {
+    "path": "packages/core/tests/test_process_interface_contracts.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": false,
+    "normalized_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d"
+  },
+  {
+    "path": "packages/core/tests/test_process_client_contracts.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "292609f8f000cb9f26d4d22d5f64913de29e261983586ab3d44dafc093bb2cd4"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/projection.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "3acd0410f123f66367b2eaba2e05cfc7f2a71b7699e541d81cecde1a40e60c4b"
+  },
+  {
+    "path": "packages/workspace_service/src/workspace_service/process_interfaces/representations.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_representations.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "8f8d47b8720bdaef6880ee0d0af735f45fb8ad5cdc86d248cc6d3c53629e60eb"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_artifact_access.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interaction_projection.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "5ba542b0efa5eab864ab08bd718b2b1f178a8708ab356216fc68fe1b00f7b818"
+  },
+  {
+    "path": "packages/workspace_service/tests/test_process_interface_service_boundaries.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "a27210d14505bb3bdf95d03028a043b2298dc61245a072e5800303cf9d41276c"
+  },
+  {
+    "path": "apps/api/tests/test_process_interface_artifacts.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": true,
+    "normalized_sha256": "4ae828036f1d87a389b4cc5eae51e1662e69025927ce540f8337374ec00f7141"
+  },
+  {
+    "path": "apps/api/tests/test_process_ui_surface_authority.py",
+    "retained_source_commit": "a429c3ff14e7428d1d55c8d3afd0a5c443a41447",
+    "unchanged": false,
+    "normalized_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896"
+  }
+]

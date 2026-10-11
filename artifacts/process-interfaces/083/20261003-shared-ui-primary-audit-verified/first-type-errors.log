@@ -1,0 +1,8 @@
+tests/ui-integration/fixtures/workflow-recovery.ts(485,45): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(488,9): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(489,9): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(494,36): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(502,36): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(503,50): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(505,28): error TS18047: 'previous' is possibly 'null'.
+tests/ui-integration/fixtures/workflow-recovery.ts(507,15): error TS18047: 'previous' is possibly 'null'.

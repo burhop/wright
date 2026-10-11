@@ -1,0 +1,569 @@
+[
+  {
+    "classname": "apps.api.tests.test_process_interface_checkpoints",
+    "name": "test_changed_actual_artifact_returns_actionable_conflict",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_checkpoints",
+    "name": "test_route_rejects_stale_invalid_and_cross_process_answer[changes0-409-SUBJECT_STALE]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_checkpoints",
+    "name": "test_route_rejects_stale_invalid_and_cross_process_answer[changes1-422-RESPONSE_INVALID]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_checkpoints",
+    "name": "test_route_rejects_stale_invalid_and_cross_process_answer[changes2-403-SCOPE_DENIED]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_checkpoints",
+    "name": "test_undeclared_question_after_response_is_a_diagnostic_not_another_form[False]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_checkpoints",
+    "name": "test_undeclared_question_after_response_is_a_diagnostic_not_another_form[True]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_actual_sse_disconnect_leaves_backend_running",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_legacy_actual_ndjson_disconnect_detaches_observer",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "apps.api.tests.test_process_interface_run_lifecycle",
+    "name": "test_reopened_api_reconciles_interruption_without_restarting",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_every_required_evidence_port_must_have_a_producer",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_readiness_distinguishes_planned_human_response_from_ordinary_production",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[version-2]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[version-True]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[kind-approval]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[instructions-  ]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[instructions-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[output_port-missing]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[response_schema-value6]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[response_schema-value7]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[response_schema-value8]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[response_schema-value9]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_human_input_source",
+    "name": "test_rejects_unsupported_declarations[unknown_field-no implicit instruction channel]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_readiness",
+    "name": "test_file_reference_is_hashed_and_reread_without_path_as_contents",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_readiness",
+    "name": "test_supplied_value_and_declared_upstream_output_are_ready",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_input_readiness",
+    "name": "test_unknown_schema_or_graph_semantics_are_explicitly_unsupported",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_concurrent_duplicate_response_and_consumption_are_single_use",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_exact_lost_ack_retry_retains_original_answer_after_consumption",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_interrupted_input_continuation_blocks_replay_of_uncertain_segment",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes0-RESPONSE_INVALID]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes1-RESPONSE_INVALID]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes2-RESPONSE_INVALID]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes3-RESPONSE_INVALID]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes4-RESPONSE_INVALID]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes5-SCOPE_DENIED]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes6-SCOPE_DENIED]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_invalid_schema_scope_and_subject_create_no_response[changes7-SUBJECT_STALE]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_two_source_barriers_resume_original_record_and_retry_without_model_replay",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[not_consumed]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[cursor]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[completed]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[definition]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[input]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[snapshot]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[schema]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[upstream]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[artifact]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[response_ref]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_continuation",
+    "name": "test_v3_restore_rejects_changed_or_unconsumed_subject[state_version]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_interface_service_boundaries",
+    "name": "test_changed_source_requires_repreparation_not_silent_rebinding",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_preparation_service",
+    "name": "test_missing_later_choice_blocks_public_start_before_any_dispatch",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_preparation_service",
+    "name": "test_unavailable_tool_gateway_has_a_useful_blocking_reason",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_run_supervisor",
+    "name": "test_cancel_observer_disconnect_does_not_abandon_persisted_command",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_run_supervisor",
+    "name": "test_concurrent_duplicate_start_allocates_only_one_task",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_run_supervisor",
+    "name": "test_explicit_local_cancel_keeps_completed_earlier_output",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_run_supervisor",
+    "name": "test_reopened_supervisor_reattaches_terminal_run_without_model_work",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_process_run_supervisor",
+    "name": "test_wrong_input_digest_rejects_before_allocating_or_generating",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_explicit_observation_timeout_retains_uncertainty_and_single_submit",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_blocks_readiness[False]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_blocks_readiness[True]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[True]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[None]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[7200]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[0]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[-1]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[604801]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[nan]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_invalid_observation_timeout_rejected_before_submission[inf]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_multihour_budget_does_not_hold_a_stalled_status_call_open",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_multihour_observation_is_outside_ai_budget_but_models_remain_bounded",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_async_operations",
+    "name": "test_timeout_cancellation_reads_actual_terminal_outcome_without_resubmission",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[definition]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[input]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[artifact]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[unknown]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[not_dispatched]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[cursor]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[completed]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_stale_or_uncertain_continuations_never_execute_later_steps[binding]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_execution_continuation",
+    "name": "test_two_sequential_checkpoints_resume_same_run_and_execute_true_final_step",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_mcp_execution",
+    "name": "test_missing_task_tool_has_provider_neutral_correction_without_dispatch[geometry-provider]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  },
+  {
+    "classname": "packages.workspace_service.tests.test_workflow_mcp_execution",
+    "name": "test_missing_task_tool_has_provider_neutral_correction_without_dispatch[thermal-provider]",
+    "failed": false,
+    "error": false,
+    "skipped": false
+  }
+]

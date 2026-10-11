@@ -1,0 +1,30 @@
+{
+  "scope": "Exact owned resources observed at final local checkpoint; earlier stopped installed/qualification hosts keep their historical scope.",
+  "api": {
+    "url": "http://127.0.0.1:8063",
+    "exec_session": 16644,
+    "accepts_connection": true
+  },
+  "ui": {
+    "url": "http://127.0.0.1:5246",
+    "exec_session": 39319,
+    "accepts_connection": true
+  },
+  "native": {
+    "session_id": "blender-27e7f4df7a5a4cacb140454c2e968794",
+    "version": "4.5.10 LTS",
+    "addon_port": 19988,
+    "accepts_connection": true
+  },
+  "offline_solver_container": {
+    "id": "911e4fa3b49e0c9ceb889f9a7dc31123000cc96e2ded1ce3c56b958858a84a75",
+    "state": "running",
+    "network_mode": "none",
+    "image": "sha256:49ad6b866d93cf85fa4c82c175241be5e0e7c17239773c658e550b50e0580f8d",
+    "status_read_only_inspected": true
+  },
+  "engineering_runs_active": false,
+  "mandatory_reviews_answered": false,
+  "resources_retained_for_local_user_inspection": true,
+  "browser_test_workers_running": false
+}

@@ -1,0 +1,11 @@
+{
+  "installed_candidate_sha256": "bdf22b705bade14132c75ead42e92ad8020f23d77e01b783b05b021ccaabdcae",
+  "browser_outcome": "stopped_at_misleading_new_workflow_instructions",
+  "verification_workflow_created": false,
+  "process_started": false,
+  "review_answered": false,
+  "component_tests": 25,
+  "new_copy_served_verification": false,
+  "fixture_agent_endpoint_fallback_disabled": true,
+  "fixture_setup_error": "Private quoting error before isolation settings were applied; exact preliminary host stopped and corrected before browser actions"
+}

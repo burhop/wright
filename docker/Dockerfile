@@ -11,20 +11,25 @@ FROM node:26-slim@sha256:4ebb5ace66f15a24c14c492e01a8beeed4fddf970a856109f5126e7
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
+# Local file dependencies must be present when npm installs their links and when
+# TypeScript compiles the web app from a clean checkout.
+COPY packages/process_client/ packages/process_client/
+COPY packages/ui_kit/ packages/ui_kit/
 RUN npm ci
 # npm 12.0.2 still bundles fixed upstream dependencies at vulnerable versions.
-# Replace only those three nested packages in a temporary clean project so the
+# Replace only those affected nested packages in a temporary clean project so the
 # global npm CLI remains functional without inheriting a vulnerable bundle.
 RUN npm install --global npm@12.0.2
 RUN set -eux; \
     mkdir -p /tmp/npm-security-overrides; \
     cd /tmp/npm-security-overrides; \
     npm init -y >/dev/null; \
-    npm install --omit=dev brace-expansion@5.0.9 ip-address@10.3.1 tar@7.5.22 >/dev/null; \
-    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/tar; \
+    npm install --omit=dev brace-expansion@5.0.11 ip-address@10.3.1 tar@7.5.22 undici@6.28.1 >/dev/null; \
+    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/tar /usr/local/lib/node_modules/npm/node_modules/undici; \
     cp -a node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/brace-expansion; \
     cp -a node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/ip-address; \
     cp -a node_modules/tar /usr/local/lib/node_modules/npm/node_modules/tar; \
+    cp -a node_modules/undici /usr/local/lib/node_modules/npm/node_modules/undici; \
     node -e "const version=require('/usr/local/lib/node_modules/npm/node_modules/tar/package.json').version; if(version !== '7.5.22') throw new Error('unexpected npm tar override '+version)"; \
     rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
@@ -33,8 +38,14 @@ COPY apps/web/ apps/web/
 # neither source path is copied from the web builder into the runtime image.
 COPY packages/core/tests/fixtures/workflow_drafts/representative-workflow.json packages/core/tests/fixtures/workflow_drafts/representative-workflow.json
 COPY specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json specs/080-canonical-workflow-recovery/fixtures/mounting-bracket.workflow.json
-ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0
+ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1
+ARG VITE_WRIGHT_WORKFLOW_COMPOSER=1
+ARG VITE_WRIGHT_WORKFLOW_RECOVERY=1
+ARG VITE_WORKSPACE_SURFACES_ENABLED=1
 RUN VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}" \
+    VITE_WRIGHT_WORKFLOW_COMPOSER="${VITE_WRIGHT_WORKFLOW_COMPOSER}" \
+    VITE_WRIGHT_WORKFLOW_RECOVERY="${VITE_WRIGHT_WORKFLOW_RECOVERY}" \
+    VITE_WORKSPACE_SURFACES_ENABLED="${VITE_WORKSPACE_SURFACES_ENABLED}" \
     npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
@@ -52,10 +63,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libblkid1 \
     liblastlog2-2 \
     libmount1 \
+    libpcre2-8-0=10.46-1~deb13u3 \
     libsmartcols1 \
+    libssl3t64=3.5.7-1~deb13u3 \
     libuuid1 \
     login \
     mount \
+    openssl=3.5.7-1~deb13u3 \
+    openssl-provider-legacy=3.5.7-1~deb13u3 \
     util-linux \
     && rm -rf /var/lib/apt/lists/*
 
@@ -64,21 +79,24 @@ COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a
 RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
     rm -rf /root/.cache/uv
 
-# pip 26.2.1 vendors vulnerable msgpack and a deprecated setuptools
+# pip 26.2.1 vendors vulnerable msgpack/urllib3 and a deprecated setuptools
 # pkg_resources compatibility module. The supported pip CLI does not use that
-# module, so replace msgpack, remove it, and update its inventory together.
+# module, so replace the affected libraries, remove it, and update its inventory together.
 RUN set -eux; \
     pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
     mkdir -p /tmp/pip-security-overrides; \
-    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1"; \
-    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/pkg_resources"; \
+    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1" "urllib3==2.8.0"; \
+    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/pkg_resources"; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
+    cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
     sed -i \
       -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
+      -e "s/urllib3==2.7.0/urllib3==2.8.0/" \
       -e "s/setuptools==70.3.0/setuptools==78.1.1/" \
       "${pip_vendor}/vendor.txt"; \
     sed -i \
       -e "s/msgpack@1.1.2/msgpack@1.2.1/g" \
+      -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
       -e "s/setuptools@70.3.0/setuptools@78.1.1/g" \
       "${pip_vendor}/bom.cdx.json"; \
     rm -rf /tmp/pip-security-overrides /root/.cache/uv
@@ -101,6 +119,9 @@ ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/u
 ENV HOME=/home/agent
 ENV HERMES_HOME=/home/agent/.hermes
 ENV HERMES_PROFILE=wright
+ENV WRIGHT_WORKFLOW_MODEL_TRANSPORT=hermes-model-sdk
+ENV HERMES_ROLE_PYTHON=/opt/hermes/.venv/bin/python
+ENV HERMES_ROLE_RUNTIME_ROOT=/opt/hermes/.venv/lib/python3.13/site-packages
 ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
 ENV FRONTEND_DIST_DIR=/workspace/apps/web/dist
 ENV WRIGHT_WORKSPACES_DIR=/home/agent/workspace
@@ -127,7 +148,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libblkid1 \
     liblastlog2-2 \
     libmount1 \
-    libpcre2-8-0 \
+    libpcre2-8-0=10.46-1~deb13u3 \
     libpython3.13-minimal \
     libpython3.13-stdlib \
     libsmartcols1 \
@@ -135,11 +156,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssh2-1t64 \
     libuuid1 \
     libatomic1 \
-    libssl3t64 \
+    libssl3t64=3.5.7-1~deb13u3 \
     login \
     mount \
-    openssl \
-    openssl-provider-legacy \
+    openssl=3.5.7-1~deb13u3 \
+    openssl-provider-legacy=3.5.7-1~deb13u3 \
     perl-base \
     python3.13 \
     python3.13-minimal \
@@ -179,9 +200,9 @@ RUN set -eux; \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
-# Hermes 0.19.0 exactly pins older cryptography and Pillow releases. Wright
+# Hermes 0.19.0 exactly pins older cryptography, Pillow and PyJWT releases. Wright
 # installs the security-fixed releases below and the exact-image smoke gate
-# runs `uv pip check`, accepting only those two version-specific metadata
+# runs `uv pip check`, accepting only those three version-specific metadata
 # conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
 # independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
@@ -190,7 +211,9 @@ RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \
-        "tornado==6.5.8" && \
+        "tornado==6.5.9" \
+        "pyjwt==2.15.1" \
+        "urllib3==2.8.0" && \
     rm -rf /root/.cache/uv /home/agent/.cache/uv
 
 # Create agent user (UID 1000).

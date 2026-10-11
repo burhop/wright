@@ -17,6 +17,9 @@ from packages.workspace_service.tests.test_workflow_artifact_review import (
 
 
 def scope_service(root, svc):
+    from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+
+    bind_process_interfaces(svc, root, "ws")
     svc.lifecycle = SimpleNamespace(
         get_by_session=lambda session: {
             "workspace_id": "ws" if session == "s" else "other",
@@ -88,6 +91,16 @@ def test_native_stream_terminates_pending_review_without_waiting_or_autoapproval
     _, svc, _, _ = asyncio.run(run_review(tmp_path))
     scope_service(tmp_path, svc)
     calls = []
+
+    async def read_bytes(workspace_dir, path, *, maximum_bytes):
+        from workspace_service.workspace_path import WorkspacePath
+
+        data = WorkspacePath(workspace_dir).resolve(path, must_exist=True).read_bytes()
+        if len(data) > maximum_bytes:
+            raise ValueError("Fixture input exceeds the declared bound")
+        return data
+
+    svc.files.read_bytes = read_bytes
 
     async def generate(prompt, fmt, **kwargs):
         calls.append(fmt)

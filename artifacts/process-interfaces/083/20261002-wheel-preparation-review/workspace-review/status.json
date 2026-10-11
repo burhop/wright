@@ -1,0 +1,169 @@
+{
+  "title": "Original wheel process and declared review in the workspace",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-02T06:08:05.658Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated isolated engineering proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved heat-spreader workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Inspect declared review",
+      "instruction": "Inspect Review the next action in the common working view, then reload and confirm the same waiting review."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open isolated engineering proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the wheel workflow",
+      "summary": "The exact accepted wheel workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/printed-replacement-part-live-default-model-004.workflow.wflow"
+      ],
+      "expected": "The accepted wheel workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Wheel workflow diagram",
+      "summary": "The original wheel assignment opens with connected review, geometry, repair and slicing stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted wheel workflow file.",
+      "controls": [
+        "workflows/printed-replacement-part-live-default-model-004.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted wheel diagram and working view action available.",
+      "actual": "Exact saved wheel source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual wheel run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded wheel run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing wheel run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Original wheel waits for its declared basis review",
+      "summary": "The actual default model produced a basis and Wright persisted its declared waiting review.",
+      "purpose": "Prove the deliberate review boundary before geometry execution.",
+      "action": "Open the recorded digital wheel run.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "Same run waits with one basis result and an undecided review.",
+      "actual": "Declared basis review is visible; no geometry or slicing has executed.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Reload preserves the waiting wheel run",
+      "summary": "The same run and unconsumed review are restored in the workspace.",
+      "purpose": "Prove view restoration without execution replay.",
+      "action": "Reload the working tab.",
+      "controls": [
+        "Review the next action"
+      ],
+      "expected": "The exact declared review remains waiting.",
+      "actual": "Same waiting run restored; no review was submitted.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    }
+  ]
+}

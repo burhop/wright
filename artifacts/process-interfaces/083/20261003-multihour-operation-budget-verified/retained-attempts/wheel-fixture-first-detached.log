@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "D:\repos\wright\.local-run\process-interfaces-083\t056-observation-installed-001\detached-proof.py", line 100, in <module>
+    asyncio.run(run())
+    ~~~~~~~~~~~^^^^^^^
+  File "D:\Users\markb\miniconda3\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "D:\Users\markb\miniconda3\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Users\markb\miniconda3\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "D:\repos\wright\.local-run\process-interfaces-083\t056-observation-installed-001\detached-proof.py", line 49, in run
+    runtime = WorkflowMcpRuntime(gateway, workspace_id="proof", session_id="proof")
+  File "D:\repos\wright\.local-run\process-interfaces-083\t056-observation-installed-001\wheel-root\workspace_service\workflow_mcp_execution.py", line 255, in __init__
+    gateway.initialize_session(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Gateway' object has no attribute 'initialize_session'

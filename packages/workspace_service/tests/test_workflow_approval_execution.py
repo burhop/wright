@@ -47,7 +47,12 @@ async def setup_case(
     expires_at=None,
     review_uploads=False,
     package_artifact=None,
+    uploaded_artifact=None,
+    include_supplied_files=False,
+    run_paths=False,
+    run_receipt=False,
 ):
+    run_id = uuid4().hex
     services = service(tmp_path)
     text = source()
     original = {
@@ -70,7 +75,10 @@ async def setup_case(
     text = text.replace(
         json.dumps({"material": "PLA", "profile": "0.20-standard"}),
         json.dumps(
-            {"receipt_path": "outputs/attempt/receipt.json"}
+            {
+                "receipt_path": "outputs/attempt/receipt.json",
+                **({"include_supplied_files": True} if include_supplied_files else {}),
+            }
             if handoff
             else {"review_task_id": "approve"}
         ),
@@ -188,11 +196,45 @@ async def setup_case(
                     quantity="one",
                     description="Test artifact",
                 )
+        if run_receipt and block["id"] == "approve":
+            from workspace_service.workflow_run_paths import VERSION, TOKEN
+
+            fields["outputs"] = [
+                {
+                    "key": "handoff_receipt",
+                    "kind": "workspace_file",
+                    "name": "Receipt",
+                    "item": None,
+                    "required": False,
+                    "quantity": "one",
+                    "description": "Test receipt",
+                }
+            ]
+            fields["settings"]["approval_settings"].pop("receipt_path", None)
+            fields["settings"].update(
+                run_path_template=VERSION,
+                output_filename=f"outputs/attempt/{TOKEN}/receipt.json",
+            )
+        if (
+            run_paths
+            and block["kind"] == "task"
+            and fields.get("performed_by") == "ai_assisted"
+        ):
+            from workspace_service.workflow_run_paths import VERSION, TOKEN
+
+            settings = fields["settings"]
+            settings["run_path_template"] = VERSION
+            settings["output_filename"] = settings["output_filename"].replace(
+                "outputs/attempt/", f"outputs/attempt/{TOKEN}/"
+            )
         text += section(block["kind"], block["id"], **fields)
     source_path = "workflows/example.workflow.wflow"
     (tmp_path / "workflows").mkdir()
     (tmp_path / source_path).write_text(text, encoding="utf-8", newline="")
-    (tmp_path / "brief.md").write_bytes(b"Fictional human brief")
+    uploaded_bytes = (
+        uploaded_artifact if uploaded_artifact is not None else b"Fictional human brief"
+    )
+    (tmp_path / "brief.md").write_bytes(uploaded_bytes)
 
     async def read(workspace_dir, path):
         raw = (tmp_path / path).read_bytes()
@@ -208,6 +250,7 @@ async def setup_case(
         path=source_path,
         expected_digest=digest(text.encode()),
         tool_runtime=tool_runtime,
+        run_id=run_id,
     )
     context = None
     if integration:
@@ -218,7 +261,7 @@ async def setup_case(
             workspace_id="ws",
             source_path=source_path,
             source_digest=plan.definition_digest,
-            input_files={"brief.md": digest(b"Fictional human brief")},
+            input_files={"brief.md": digest(uploaded_bytes)},
             output_root="outputs/attempt",
             allowed_tools=allowed_tools,
             approval_mode=mode,
@@ -236,7 +279,6 @@ async def setup_case(
             files=services.files,
         )
     calls = []
-    run_id = uuid4().hex
 
     async def generate(prompt, fmt):
         calls.append(prompt)
@@ -293,7 +335,89 @@ async def setup_case(
         calls=calls,
         root=tmp_path,
         tool_calls=gateway.calls if gateway else [],
+        plan=plan,
+        inputs=inputs,
     )
+
+
+def reopen_case(case):
+    """Recreate persisted owners without enrolling or dispatching anything."""
+    previous = case.services
+    reopened = service(case.root)
+    reopened.workflow_integration_policies = WorkflowIntegrationPolicyService(
+        str(case.root / "policy.db"), enabled=True
+    )
+
+    async def read(workspace_dir, path):
+        raw = (case.root / path).read_bytes()
+        return SimpleNamespace(source=raw.decode(), storage_digest=digest(raw))
+
+    reopened.workflow_sources = SimpleNamespace(read=read)
+    checkpoint = reopened.workflow_external_actions.lookup(
+        case.checkpoint.checkpoint_id
+    )
+    assert reopened.workflow_external_actions is not previous.workflow_external_actions
+    assert checkpoint.subject_digest == case.checkpoint.subject_digest
+    case.services = reopened
+    case.args = {**case.args, "service": reopened, "checkpoint": checkpoint}
+
+
+@pytest.mark.asyncio
+async def test_first_simulated_handoff_seals_exact_supplied_binary_without_generation(
+    tmp_path,
+):
+    raw = b"PK\xff\0\x80 exact retained package"
+    case = await setup_case(
+        tmp_path,
+        handoff=True,
+        review_uploads=True,
+        uploaded_artifact=raw,
+        include_supplied_files=True,
+    )
+    assert case.calls == [] and case.result["outputs"] == []
+    assert case.checkpoint.subject["artifact_digests"] == [digest(raw)]
+    assert case.checkpoint.continuation["artifact_files"] == [
+        {"path": "brief.md", "sha256": digest(raw)}
+    ]
+    await decide_workflow_approval(**case.args, decision="approved", auto=True)
+    checkpoint, result = await resume_workflow_approval(
+        **case.args,
+        request_id="supplied-artifact-test-handoff",
+        response_generator=case.generate,
+    )
+    receipt = json.loads((tmp_path / "outputs/attempt/receipt.json").read_bytes())
+    assert receipt["artifact_digests"] == [digest(raw)]
+    assert receipt["integration_test"] and receipt["simulated_handoff"]
+    assert receipt["network_dispatch"] is False
+    assert result["status"] == "completed" and result["run_id"] == case.result["run_id"]
+    assert checkpoint.external_action["outcome"] == "dispatched"
+    assert len(case.calls) == 1  # Only the separately declared post-handoff report.
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("when", ["before_decision", "after_decision"])
+async def test_changed_supplied_handoff_artifact_never_dispatches(tmp_path, when):
+    case = await setup_case(
+        tmp_path,
+        handoff=True,
+        review_uploads=True,
+        uploaded_artifact=b"PK\xff\0original",
+        include_supplied_files=True,
+    )
+    if when == "after_decision":
+        await decide_workflow_approval(**case.args, decision="approved", auto=True)
+    (tmp_path / "brief.md").write_bytes(b"PK\xff\0changed")
+    with pytest.raises((WorkflowExternalActionError, WorkflowSourceExecutionError)):
+        if when == "before_decision":
+            await decide_workflow_approval(**case.args, decision="approved", auto=True)
+        else:
+            await resume_workflow_approval(
+                **case.args,
+                request_id="changed-supplied-handoff",
+                response_generator=case.generate,
+            )
+    assert not (tmp_path / "outputs/attempt/receipt.json").exists()
+    assert case.calls == []
 
 
 @pytest.mark.asyncio
@@ -370,6 +494,7 @@ async def test_auto_resume_and_restart_retry_complete_same_run_without_replay(
     assert result["run_id"] == case.result["run_id"]
     assert checkpoint.external_action["outcome"] == "dispatched"
     assert len(case.calls) == 2
+    reopen_case(case)
     _, repeated = await resume_workflow_approval(
         **case.args, request_id="resume-after-restart", response_generator=case.generate
     )
@@ -456,6 +581,7 @@ async def test_failed_continuation_has_unknown_mutation_protection_on_retry(tmp_
             **case.args, request_id="resume", response_generator=case.generate
         )
     assert len(case.calls) == 2
+    reopen_case(case)
     with pytest.raises(WorkflowSourceExecutionError, match="cannot be replayed"):
         await resume_workflow_approval(
             **case.args, request_id="resume-retry", response_generator=case.generate
@@ -483,13 +609,18 @@ async def test_uncertain_handoff_is_never_dispatched_again(tmp_path):
         case.checkpoint.checkpoint_id
     )
     assert checkpoint.external_action["outcome"] == "outcome_unknown"
-    case.services.files.write_generated = write
+    # Fresh owners no longer have the injected receipt failure. The durable
+    # unknown action must still prevent dispatch after backend recreation.
+    original_record = (tmp_path / case.result["run_log_path"]).read_bytes()
+    reopen_case(case)
+    assert case.args["checkpoint"].external_action["outcome"] == "outcome_unknown"
     with pytest.raises(WorkflowSourceExecutionError, match="no confirmed"):
         await resume_workflow_approval(
             **case.args, request_id="retry", response_generator=case.generate
         )
     assert not (tmp_path / "outputs/attempt/receipt.json").exists()
     assert len(case.calls) == 1
+    assert (tmp_path / case.result["run_log_path"]).read_bytes() == original_record
 
 
 @pytest.mark.asyncio

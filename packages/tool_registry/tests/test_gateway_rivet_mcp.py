@@ -142,6 +142,49 @@ def _service(tmp_path, *, capability_providers=()):
     database = str(tmp_path / "state.db")
     upgrade_database(database)
     reconcile_wright_managed_servers(database)
+    # Historical compatibility is exercised only through an explicit fixture.
+    # Normal startup no longer installs this retired provider.
+    now = int(time.time())
+    insert_server(
+        database,
+        McpServer(
+            server_id="rivet-workflows",
+            name="Legacy test provider",
+            type="stdio",
+            command=["test-only-provider"],
+            is_active=True,
+            is_installed=True,
+            status="active",
+            risk_level="medium",
+            created_at=now,
+            updated_at=now,
+        ),
+    )
+    insert_tools(
+        database,
+        [
+            McpTool(
+                tool_id=f"rivet-workflows:{name}",
+                server_id="rivet-workflows",
+                name=name,
+                description="Historical gateway fixture",
+                input_schema={"type": "object"},
+                annotations={
+                    "readOnlyHint": name not in {"create_workflow", "run_workflow"}
+                },
+                is_enabled=True,
+                created_at=now,
+            )
+            for name in (
+                "create_workflow",
+                "inspect_workflow",
+                "list_templates",
+                "list_workflows",
+                "run_workflow",
+                "validate_workflow",
+            )
+        ],
+    )
     server, tool = _other_server()
     insert_server(database, server)
     insert_tools(database, [tool])

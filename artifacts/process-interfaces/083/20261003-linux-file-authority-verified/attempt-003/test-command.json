@@ -1,0 +1,17 @@
+[
+  "python3",
+  "-m",
+  "pytest",
+  "-c",
+  "/dev/null",
+  "--rootdir=/proof/src",
+  "-p",
+  "no:cacheprovider",
+  "--basetemp=/tmp/authority-proof",
+  "--junitxml=/tmp/authority-results.xml",
+  "-q",
+  "/proof/src/packages/workspace_service/tests/test_workflow_integration_document_write.py",
+  "/proof/src/packages/workspace_service/tests/test_workflow_integration_file_read.py",
+  "/proof/src/packages/workspace_service/tests/test_workflow_integration_file_copy.py",
+  "/proof/src/packages/workspace_service/tests/test_process_preparation_service.py"
+]

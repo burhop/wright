@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "JF",
+    "pin1": "4",
+    "comp2_ref": "J0",
+    "pin2": "4",
+    "net_name": "TACH"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"TACH\",\"labels_created\":2,\"label_uuids\":[\"3c05be92-6e39-420e-a02f-d377c50b0e1e\",\"eeca25d4-5bd4-4054-87a5-cb1a7ca862ee\"]}"
+    }
+  ]
+}

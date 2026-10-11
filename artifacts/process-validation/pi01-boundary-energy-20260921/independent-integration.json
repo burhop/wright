@@ -1,0 +1,9 @@
+{
+  "scope": "independent per-face CSV integration; not a full-profile assessment",
+  "diagnostic_max_entities": 200000,
+  "default_100000_entity_budget": "insufficient; production limits unchanged",
+  "sha256": "879ebb29aa8cbb58c8745d50d3fd7509b01fd6b8f73ad3d6ed906d68245e3694",
+  "net_outward_heat_w": 0.015127111606699592,
+  "matches_producer": true,
+  "campaign_credit": false
+}

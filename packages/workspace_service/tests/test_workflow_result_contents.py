@@ -187,8 +187,13 @@ def test_compiled_cad_export_connection_reads_pixels_or_rejects_binary(
     fmt, path = (
         ("screenshot_jpeg", "view.jpg") if image_export else ("step", "model.step")
     )
+    # Complete 2x2 JPEG fixture generated once with the native encoder.
+    import base64
+
     data = (
-        b"\xff\xd8\xfftest-cad-preview"
+        base64.b64decode(
+            "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAACAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD8qqKKKAP/2Q=="
+        )
         if image_export
         else b"ISO-10303-21;\nEND-ISO-10303-21;"
     )
@@ -211,6 +216,21 @@ def test_compiled_cad_export_connection_reads_pixels_or_rejects_binary(
     consumer = task("review", fmt="text")
     plan = compile_prompt_workflow(source(cad, consumer, links=[("cad", "review")]))
     assert plan.steps[0].output_ports == (("cad_response", "workspace_file"),)
+    # This legacy media transport fixture explicitly delegates choices; it is
+    # not evidence for modern strict action-intent enforcement.
+    plan = replace(
+        plan,
+        steps=tuple(
+            replace(
+                step,
+                instruction_override={
+                    "origin": "media-transport-fixture",
+                    "assumption_policy": "document_reasonable",
+                },
+            )
+            for step in plan.steps
+        ),
+    )
     gateway = CadGateway()
     original_call = gateway.call_tool
 

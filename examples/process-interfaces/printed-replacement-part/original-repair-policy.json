@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "basis": "Retained original printed-part preparation policy; configuration, not engineering acceptance",
+  "archived_operation_sha256": "69645e039b62ed5d1eedda0860a42258413ecd0cc0e49ea693481fd83ea6cc82",
+  "build_volume_mm": [256.0, 256.0, 256.0],
+  "build_volume_tolerance_mm": 0.000001,
+  "triangle_limit": 80000,
+  "handle_triangle_limit": 24000,
+  "merge_tolerance_mm": 0.001,
+  "degenerate_tolerance_mm": 0.000001,
+  "force_voxel_remesh": false,
+  "envelope_margin_mm": 0.0
+}

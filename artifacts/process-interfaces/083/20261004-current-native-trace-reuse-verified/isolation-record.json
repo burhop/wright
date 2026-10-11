@@ -1,0 +1,20 @@
+{
+  "original_files": 155,
+  "original_files_and_copied_bytes_checked": true,
+  "only_workspace_locator_changed": true,
+  "copy_scope": "Every enumerated readable regular file, byte-checked; no unreadable provider-local generated viewer cache directory is traversed",
+  "wheel_sha256": "314009cea82c1eb6da44c0069dacd1bf80d4540b5bb4d5369d4572357c90fcf2",
+  "model_or_provider_or_process_run": false,
+  "source_commit": "2af72d9faa88a28663f70ae33672a6581b19e85f",
+  "frontend_manifest_sha256": "f1fd7ae74f7c6cadeea1c2f9b22b36b107f060623b8a46166dcd78a687031e35",
+  "current_owner_hashes": {
+    "api/routers/process_ui_authoring.py": "e2ed589f7afde5655e5e0d965751def7905056f1a0d0824b86057e3ba295e867",
+    "api/routers/process_interfaces.py": "6958f710fb623af0d3177d0860d0a39a7fe7be6b0d37d9594bd90ab399674e37",
+    "workspace_service/process_interfaces/presentation.py": "567f0123166b07fe33f023c2cf714425048c6da16d59b13103418927abb1eef6",
+    "workspace_service/process_interfaces/surface_bridge.py": "f3019ceeda0c35566ec5f89c7463d0a4647959f388f2663db1526a060986981f",
+    "workspace_service/process_interfaces/artifacts.py": "7f35fac4dc6d62ef30a5103dd158b3418d36ae1c68ad57979c32f7167939a33a",
+    "workspace_service/process_interfaces/toolchain.py": "67e1e8926f0030be644c8b8241f549b27988035216b909233e7efe2da461fa60"
+  },
+  "retained_actual_model_authoring_jobs": 2,
+  "read_only_original_authoring_identity_lookup": true
+}

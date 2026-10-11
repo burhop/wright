@@ -9,6 +9,119 @@ from api.routers import agent
 
 
 @pytest.mark.asyncio
+async def test_sdk_discovery_reports_only_actual_model_and_no_remote_selection(
+    client, monkeypatch
+):
+    from agent_adapters import workflow_sdk
+
+    monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
+
+    async def capabilities():
+        return {
+            "available": True,
+            "resolution": {
+                "provider": "configured-provider",
+                "model_reference": "configured-model",
+            },
+        }
+
+    async def forbidden_http(*args, **kwargs):
+        pytest.fail("SDK discovery must not fall back to unsupported HTTP endpoints")
+
+    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", capabilities)
+    monkeypatch.setattr(agent, "_hermes_json_request", forbidden_http)
+    response = await client.get("/api/agent/models")
+    assert response.status_code == 200
+    result = response.json()
+    assert result["current_value"] == "configured-provider::configured-model"
+    assert result["selection_supported"] is False
+    assert "Model Setup" in result["selection_message"]
+    assert len(result["groups"]) == len(result["groups"][0]["options"]) == 1
+    rejected = await client.post(
+        "/api/agent/model",
+        json={
+            "provider": "configured-provider",
+            "model": "another-model",
+            "session_id": "private-session",
+        },
+    )
+    assert (
+        rejected.status_code == 409 and "No session model was changed" in rejected.text
+    )
+
+
+@pytest.mark.asyncio
+async def test_sdk_unavailable_has_bounded_diagnostic_and_no_http_fallback(
+    client, monkeypatch
+):
+    from agent_adapters import workflow_sdk
+
+    monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
+
+    async def unavailable():
+        raise ValueError("fake-private-provider-response")
+
+    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", unavailable)
+    response = await client.get("/api/agent/models")
+    assert response.status_code == 503
+    assert (
+        "Model Setup" in response.text
+        and "fake-private-provider-response" not in response.text
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("upstream_status", [404, 405, 501])
+async def test_missing_model_service_is_unavailable_not_missing_workspace(
+    client, monkeypatch, upstream_status
+):
+    original_request = httpx.AsyncClient.request
+    calls = []
+
+    async def gateway_request(self, method, url, **kwargs):
+        if str(url).startswith("http://127.0.0.1:8642/"):
+            calls.append((method, str(url)))
+            return httpx.Response(
+                upstream_status,
+                text="fake-private-upstream-response",
+                request=httpx.Request(method, url),
+            )
+        return await original_request(self, method, url, **kwargs)
+
+    monkeypatch.setattr(
+        agent,
+        "resolve_agent_api_settings",
+        lambda _: SimpleNamespace(base_url="http://127.0.0.1:8642", api_key=""),
+    )
+    monkeypatch.setattr(httpx.AsyncClient, "request", gateway_request)
+    response = await client.get("/api/agent/models")
+    assert response.status_code == 503
+    assert response.json()["error_code"] != "WORKSPACE_NOT_FOUND"
+    assert "required model service" in response.json()["message"]
+    assert f"HTTP {upstream_status}" in response.json()["message"]
+    assert "fake-private-upstream-response" not in response.text
+    assert calls == [("GET", "http://127.0.0.1:8642/api/model/options")]
+
+
+@pytest.mark.asyncio
+async def test_model_auth_failure_retains_auth_status(monkeypatch):
+    from fastapi import HTTPException
+
+    async def gateway_request(self, method, url, **kwargs):
+        return httpx.Response(401, request=httpx.Request(method, url))
+
+    monkeypatch.setattr(
+        agent,
+        "resolve_agent_api_settings",
+        lambda _: SimpleNamespace(base_url="http://127.0.0.1:8642", api_key=""),
+    )
+    monkeypatch.setattr(httpx.AsyncClient, "request", gateway_request)
+    with pytest.raises(HTTPException) as failure:
+        await agent._hermes_json_request("GET", "/api/model/options")
+    assert failure.value.status_code == 401
+
+
+@pytest.mark.asyncio
 async def test_model_discovery_does_not_block_api_health(client, monkeypatch):
     loop = asyncio.get_running_loop()
     loop_thread = threading.get_ident()
@@ -80,3 +193,94 @@ async def test_model_request_uses_running_gateway_credentials_not_model_profile(
 
     assert result == {"providers": []}
     assert resolver_calls == [("hermes", None)]
+
+
+def test_model_options_only_include_account_accessible_models() -> None:
+    result = agent._build_model_options_response(
+        {
+            "provider": "openai-codex",
+            "model": "gpt-5.6-sol",
+            "providers": [
+                {
+                    "slug": "openai-codex",
+                    "name": "OpenAI Codex",
+                    "authenticated": True,
+                    "models": [
+                        "gpt-6-astra",
+                        "gpt-5.6-sol",
+                        "gpt-5.6-sol-pro",
+                    ],
+                },
+                {
+                    "slug": "openai-api",
+                    "name": "OpenAI API",
+                    "authenticated": False,
+                    "models": ["gpt-5.6-sol"],
+                },
+                {
+                    "slug": "copilot",
+                    "name": "GitHub Copilot",
+                    "models": ["gpt-5.6-sol"],
+                },
+                {
+                    "slug": "custom-team",
+                    "name": "Team Gateway",
+                    "authenticated": True,
+                    "models": ["team-model"],
+                },
+            ],
+        }
+    )
+
+    assert [group.provider for group in result.groups] == [
+        "openai-codex",
+    ]
+    assert [option.model for option in result.groups[0].options] == [
+        "gpt-6-astra",
+        "gpt-5.6-sol",
+    ]
+
+
+def test_model_options_keep_current_provider_for_older_hermes_payloads() -> None:
+    result = agent._build_model_options_response(
+        {
+            "provider": "openai-codex",
+            "model": "gpt-5.6-sol",
+            "providers": [
+                {
+                    "slug": "openai-codex",
+                    "name": "OpenAI Codex",
+                    "models": ["gpt-5.6-sol"],
+                },
+                {
+                    "slug": "copilot",
+                    "name": "GitHub Copilot",
+                    "models": ["gpt-5.6-sol"],
+                },
+            ],
+        }
+    )
+
+    assert [group.provider for group in result.groups] == ["openai-codex"]
+
+
+def test_model_options_do_not_restore_an_inaccessible_current_model() -> None:
+    result = agent._build_model_options_response(
+        {
+            "provider": "openai-codex",
+            "model": "gpt-5.6-sol-pro",
+            "providers": [
+                {
+                    "slug": "openai-codex",
+                    "name": "OpenAI Codex",
+                    "authenticated": True,
+                    "models": ["gpt-5.6-sol", "gpt-5.6-sol-pro"],
+                }
+            ],
+        }
+    )
+
+    assert result.current_provider == "openai-codex"
+    assert result.current_model is None
+    assert result.current_value is None
+    assert [option.model for option in result.groups[0].options] == ["gpt-5.6-sol"]

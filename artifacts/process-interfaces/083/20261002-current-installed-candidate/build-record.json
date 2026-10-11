@@ -1,0 +1,12 @@
+{
+  "exit_code": 0,
+  "frontend_manifest_sha256": "34ca258c1b727b49c8b9584b0a7a75f1e59c94b74600aff75304ce7d30c779b1",
+  "source_root": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t051-current-installed-002\\build-source",
+  "published": false,
+  "browser_verified": false,
+  "original_packaged_frontend_unchanged": true,
+  "wheel": "wright_engineering-0.1.9-py3-none-any.whl",
+  "wheel_sha256": "88f3afa844dd8f2d5de1956a194b94922ad68c64a00bde9c173e639d5ab34820",
+  "native_artifact_inspection_passed": true,
+  "bundled_frontend_manifest_verified": true
+}

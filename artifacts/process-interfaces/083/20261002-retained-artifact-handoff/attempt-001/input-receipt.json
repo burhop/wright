@@ -1,0 +1,21 @@
+{
+  "status": 422,
+  "body": {
+    "error_code": "RESPONSE_INVALID",
+    "message": "The selected file cannot supply this process input.",
+    "trace_id": "052ffa01879aac20e6ec356590e544c5",
+    "details": {
+      "correction": "Select an existing supported file inside this workspace.",
+      "reason": {
+        "code": "RESPONSE_INVALID",
+        "message": "The selected file cannot supply this process input.",
+        "correction": "Select an existing supported file inside this workspace.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      },
+      "diagnostic": {}
+    }
+  }
+}

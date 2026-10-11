@@ -1,0 +1,30 @@
+{
+  "run_id": "bebf24bcdec44058a46371fa05d7cd83",
+  "revision_id": "revision-e699e31782df459986a1c795f9c2bf65",
+  "result_ids": [
+    "bebf24bcdec44058a46371fa05d7cd83:authorize_transfer_retained_consumer_003:receipt",
+    "bebf24bcdec44058a46371fa05d7cd83:define_geometry_basis_retained_consumer_003:define_geometry_basis_retained_consumer_003_result",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:filament_profile",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:inspect_slice_handoff_retained_consumer_003_result",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:machine_profile",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:process_profile",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:slice_evidence",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:support_preview",
+    "bebf24bcdec44058a46371fa05d7cd83:inspect_slice_handoff_retained_consumer_003:toolpath_summary",
+    "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:mesh_preview",
+    "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:repair_measure_orient_retained_consumer_003_result",
+    "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:repaired_mesh",
+    "bebf24bcdec44058a46371fa05d7cd83:repair_measure_orient_retained_consumer_003:source_mesh",
+    "bebf24bcdec44058a46371fa05d7cd83:retain_slice_response_retained_consumer_003:provider_response",
+    "bebf24bcdec44058a46371fa05d7cd83:retain_slice_response_retained_consumer_003:retain_slice_response_retained_consumer_003_result",
+    "bebf24bcdec44058a46371fa05d7cd83:summarize_preparation_retained_consumer_003:summarize_preparation_retained_consumer_003_result",
+    "bebf24bcdec44058a46371fa05d7cd83:supports_and_slice_retained_consumer_003:slice_package",
+    "bebf24bcdec44058a46371fa05d7cd83:supports_and_slice_retained_consumer_003:supports_and_slice_retained_consumer_003_result",
+    "bebf24bcdec44058a46371fa05d7cd83:validate_outputs_retained_consumer_003:diagnostic:validation/assessment-46f892fa42ae4a21950679d986815e55.json"
+  ],
+  "assessment_id": "assessment-46f892fa42ae4a21950679d986815e55",
+  "preview": true,
+  "saved": true,
+  "reload": true,
+  "url": "http://127.0.0.1:5243/workspace/083-heat-live-005?workflow=canonical&workflowPath=workflows%2Fprinted-replacement-part-retained-consumer-003.workflow.wflow&processView=68a6f735-0bf5-426a-ac26-b43a812b5154&processPath=workflows%2Fprinted-replacement-part-retained-consumer-003.workflow.wflow&processDigest=8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5&processRun=bebf24bcdec44058a46371fa05d7cd83&processUIKind=preview&processUI=ui-ce377446f6d44705846a32f7c3eb94b2&processUIRevision=revision-e699e31782df459986a1c795f9c2bf65&processUIJob=job-47c7e3d74681486e9f9f76493c384ee5"
+}

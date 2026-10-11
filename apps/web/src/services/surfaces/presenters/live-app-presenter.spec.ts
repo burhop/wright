@@ -90,7 +90,11 @@ describe("LiveAppPresenter", () => {
 
     frame?.dispatchEvent(new Event("load"));
     expect(statuses).toEqual(["loading", "unknown"]);
+    presenter.confirmReady();
+    expect(statuses).toEqual(["loading", "unknown", "ready"]);
     presenter.dispose();
+    presenter.confirmReady();
+    expect(statuses).toEqual(["loading", "unknown", "ready"]);
   });
 
   it("updates only the presentation's current instance generation", () => {

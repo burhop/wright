@@ -1,0 +1,665 @@
+{
+  "groups": {
+    "authority": [
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[source_id-vendor.server.resource]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[source_version-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[presentation_id-other-presentation]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[generation-2]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[instance_id-other-instance]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[principal_id-other-user]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[workspace_id-other-workspace]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_presentation_identity_drift_denies_context[http_declared-False]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_readonly_preview_rejects_every_mutation_before_owner[inputs-body0]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_readonly_preview_rejects_every_mutation_before_owner[runs-body1]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_readonly_preview_rejects_every_mutation_before_owner[runs/other-run/cancel-body2]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_readonly_preview_rejects_every_mutation_before_owner[actions/continue-other-body3]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_readonly_preview_rejects_every_mutation_before_owner[interactions/other/response-body4]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_readonly_preview_rejects_every_mutation_before_owner[interactions/other/decision-body5]",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_foreign_run_and_ambiguous_selectors_are_rejected",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_no_generic_tool_or_authoring_authority_or_native_cookie_equivalence",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_live_stream_grants_are_revalidated_without_rereading_static_bundle",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_surface_authority.py",
+        "source_sha256": "8bb4e775de63951fe97069dabbf237498553fad569467699978a5fbd0e77a896",
+        "name": "test_corrupted_built_asset_never_receives_bridge_authority",
+        "class": "apps.api.tests.test_process_ui_surface_authority",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_presentations.py",
+        "source_sha256": "6089b6460a7cf315a0fae75061935c446f88f4df254e972177dcb6d3ac258519",
+        "name": "test_preview_uses_fixed_existing_owner_and_exact_read_only_grants",
+        "class": "packages.workspace_service.tests.test_process_ui_presentations",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_manifest_process_capabilities_are_exactly_the_public_closed_operations",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_manifest_cannot_request_generic_tool_or_admin_scope",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      }
+    ],
+    "coding_role": [
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_process_ui_author_role.py",
+        "source_sha256": "f5f309950d3eadaec58a6a46ac1ddd64cfc22a51a08a72bc3cabb4239e348e93",
+        "name": "test_role_instructions_are_effective_on_every_turn_without_workspace_hints",
+        "class": "packages.agent_adapters.tests.test_process_ui_author_role",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_process_ui_author_role.py",
+        "source_sha256": "f5f309950d3eadaec58a6a46ac1ddd64cfc22a51a08a72bc3cabb4239e348e93",
+        "name": "test_qualified_sdk_role_applies_prepared_instructions_each_turn_and_avoids_native_chat",
+        "class": "packages.agent_adapters.tests.test_process_ui_author_role",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_process_ui_author_role.py",
+        "source_sha256": "f5f309950d3eadaec58a6a46ac1ddd64cfc22a51a08a72bc3cabb4239e348e93",
+        "name": "test_changed_default_model_is_rejected_before_generation",
+        "class": "packages.agent_adapters.tests.test_process_ui_author_role",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_process_ui_author_role.py",
+        "source_sha256": "f5f309950d3eadaec58a6a46ac1ddd64cfc22a51a08a72bc3cabb4239e348e93",
+        "name": "test_existing_adapter_defaults_to_unavailable_scoped_role",
+        "class": "packages.agent_adapters.tests.test_process_ui_author_role",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_hermes_role_worker.py",
+        "source_sha256": "70ce12a2b974263258be3f8112a178060acdab47b9cf3829862e1c3082b21dd4",
+        "name": "test_probe_and_generation_never_export_credentials_or_execute_tools",
+        "class": "packages.agent_adapters.tests.test_hermes_role_worker",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_hermes_role_worker.py",
+        "source_sha256": "70ce12a2b974263258be3f8112a178060acdab47b9cf3829862e1c3082b21dd4",
+        "name": "test_confined_sdk_rejects_changed_scope_or_invalid_response[configuration]",
+        "class": "packages.agent_adapters.tests.test_hermes_role_worker",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_hermes_role_worker.py",
+        "source_sha256": "70ce12a2b974263258be3f8112a178060acdab47b9cf3829862e1c3082b21dd4",
+        "name": "test_confined_sdk_rejects_changed_scope_or_invalid_response[tool-request]",
+        "class": "packages.agent_adapters.tests.test_hermes_role_worker",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_hermes_role_worker.py",
+        "source_sha256": "70ce12a2b974263258be3f8112a178060acdab47b9cf3829862e1c3082b21dd4",
+        "name": "test_confined_sdk_rejects_changed_scope_or_invalid_response[model]",
+        "class": "packages.agent_adapters.tests.test_hermes_role_worker",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_hermes_role_worker.py",
+        "source_sha256": "70ce12a2b974263258be3f8112a178060acdab47b9cf3829862e1c3082b21dd4",
+        "name": "test_confined_sdk_rejects_changed_scope_or_invalid_response[messages]",
+        "class": "packages.agent_adapters.tests.test_hermes_role_worker",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/agent_adapters/tests/test_hermes_role_worker.py",
+        "source_sha256": "70ce12a2b974263258be3f8112a178060acdab47b9cf3829862e1c3082b21dd4",
+        "name": "test_confined_sdk_rejects_changed_scope_or_invalid_response[oversized]",
+        "class": "packages.agent_adapters.tests.test_hermes_role_worker",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_generation_retains_scope_build_provenance_and_survives_reopen",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_tool_or_unattested_model_response_fails_closed[options0]",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_tool_or_unattested_model_response_fails_closed[options1]",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      }
+    ],
+    "build_and_job": [
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_reference_compiles_with_public_packages_and_no_generated_scripts",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import x from 'node:fs'; export default function App(){return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import * as THREE from 'three'; export default function App(){return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import x from 'three/addons/controls/OrbitControls.js'; export default function App(){return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[import x from '../../apps/web/private'; export default function App(){return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){import('react');return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){fetch('/admin');return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){return <a href='https://example.invalid'>Link</a>}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[export default function App(){return new Function('return 1')()}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_fixed_compiler_rejects_private_dynamic_network_or_invalid_source[const value: number = 'wrong type'; export default function App(){return null}]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_builder_bounds_and_disposes_its_owned_child[timeout]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_builder_bounds_and_disposes_its_owned_child[overflow]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_build.py",
+        "source_sha256": "b0c33ef8761d076ff67a2bb622f43535c0306a5a32468e71224178b588dee5ab",
+        "name": "test_builder_bounds_and_disposes_its_owned_child[cancel]",
+        "class": "packages.workspace_service.tests.test_process_ui_build",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_two_exact_diagnostic_repairs_preserve_role_and_default_model",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_exhausted_repairs_are_durable_and_not_replayed",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_explicit_cancel_and_shutdown_stop_owned_model_work",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_immutable_files_survive_reopen_and_reject_corruption_or_overwrite",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_source_envelope_rejects_arbitrary_build_or_backend[package.json]",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_source_envelope_rejects_arbitrary_build_or_backend[server.py]",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_source_envelope_rejects_arbitrary_build_or_backend[../App.tsx]",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_source_envelope_rejects_arbitrary_build_or_backend[vite.config.ts]",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_source_envelope_rejects_arbitrary_build_or_backend[App.tsx/evil]",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_source_text_limit_accepts_boundary_and_rejects_next_byte",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_raster_asset_limit_accepts_boundary_and_rejects_next_byte",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_aggregate_assets_limit_cannot_be_bypassed_with_smaller_files",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      },
+      {
+        "record": "current_envelope",
+        "source": "packages/core/tests/test_process_interface_contracts.py",
+        "source_sha256": "0111468827574db14153041f6c28442861af803eb20045ad2f7947b318d62c3d",
+        "name": "test_total_source_asset_count_limit_includes_fixed_source_files",
+        "class": "packages.core.tests.test_process_interface_contracts",
+        "passed": true
+      }
+    ],
+    "saved_revisions": [
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_save_update_rollback_and_saved_source_reuse_without_model_or_compile",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_authoring.py",
+        "source_sha256": "4183f76b42d31f0e13f42dc7cbfe772bfa95ff3b6f71bd3bdd37deeae403f843",
+        "name": "test_save_requires_exact_preview_hashes_permissions_and_current_source",
+        "class": "packages.workspace_service.tests.test_process_ui_authoring",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+        "source_sha256": "2946f4584234966a32b3fa307bfaa90f882cc9f18b6433540eeca4d4d8422ea1",
+        "name": "test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source",
+        "class": "packages.workspace_service.tests.test_process_ui_revision_compatibility",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "packages/workspace_service/tests/test_process_ui_revision_compatibility.py",
+        "source_sha256": "2946f4584234966a32b3fa307bfaa90f882cc9f18b6433540eeca4d4d8422ea1",
+        "name": "test_compatible_source_revision_reuses_exact_saved_build_and_current_grants",
+        "class": "packages.workspace_service.tests.test_process_ui_revision_compatibility",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_authoring_api.py",
+        "source_sha256": "90f87905c3de555861ecb7aee9d10e70b398e8c4f27225cd88eadd01eba6b835",
+        "name": "test_save_update_rollback_saved_open_and_close_use_exact_revisions",
+        "class": "apps.api.tests.test_process_ui_authoring_api",
+        "passed": true
+      },
+      {
+        "record": "current_owner_api",
+        "source": "apps/api/tests/test_process_ui_authoring_api.py",
+        "source_sha256": "90f87905c3de555861ecb7aee9d10e70b398e8c4f27225cd88eadd01eba6b835",
+        "name": "test_generation_status_events_idempotency_and_preview_are_native_scoped",
+        "class": "apps.api.tests.test_process_ui_authoring_api",
+        "passed": true
+      }
+    ],
+    "installed_resources": [
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_actual_static_server_serves_only_verified_dist_and_health_with_restrictive_headers",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[command]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[inventory]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[environment]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[capabilities]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[isolation]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[vault]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/surfaces/test_process_ui_static.py",
+        "source_sha256": "52a2b4beff3494e49f7ea0da56763778019b099a74ec0c5858d41805fc0ca209",
+        "name": "test_relocation_does_not_accept_changed_launch_or_authority[relative]",
+        "class": "packages.workspace_service.tests.surfaces.test_process_ui_static",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/test_process_ui_toolchain.py",
+        "source_sha256": "915e46b6ce2e5e61f59410c69ed48c11aefb5dc6511e8531751e9a3926240087",
+        "name": "test_installed_without_native_configuration_never_guesses_an_ancestor_checkout",
+        "class": "packages.workspace_service.tests.test_process_ui_toolchain",
+        "passed": true
+      },
+      {
+        "record": "qualified_backend",
+        "source": "packages/workspace_service/tests/test_process_ui_toolchain.py",
+        "source_sha256": "915e46b6ce2e5e61f59410c69ed48c11aefb5dc6511e8531751e9a3926240087",
+        "name": "test_installed_missing_public_resources_cannot_borrow_source_from_native_dependency_root",
+        "class": "packages.workspace_service.tests.test_process_ui_toolchain",
+        "passed": true
+      },
+      {
+        "record": "qualified_packaging",
+        "source": "tests/packaging/test_process_interfaces_distribution.py",
+        "source_sha256": "18b85e61c84b5b01bd0d787e1a7b33de7634f6a2b28307658c7b59f10d5705bd",
+        "name": "test_public_resources_and_static_host_work_without_compiler_or_model",
+        "class": "tests.packaging.test_process_interfaces_distribution",
+        "passed": true
+      },
+      {
+        "record": "qualified_packaging",
+        "source": "tests/packaging/test_process_interfaces_distribution.py",
+        "source_sha256": "18b85e61c84b5b01bd0d787e1a7b33de7634f6a2b28307658c7b59f10d5705bd",
+        "name": "test_installed_compiler_uses_shipped_public_sources_and_explicit_native_dependencies",
+        "class": "tests.packaging.test_process_interfaces_distribution",
+        "passed": true
+      },
+      {
+        "record": "qualified_packaging",
+        "source": "tests/packaging/test_process_interfaces_distribution.py",
+        "source_sha256": "18b85e61c84b5b01bd0d787e1a7b33de7634f6a2b28307658c7b59f10d5705bd",
+        "name": "test_private_service_direct_wheel_and_sdist_rebuild_include_the_same_resources",
+        "class": "tests.packaging.test_process_interfaces_distribution",
+        "passed": true
+      }
+    ]
+  },
+  "source_records": {
+    "current_owner_api": {
+      "path": "artifacts/process-interfaces/083/20261003-ui-revision-compatibility-verified/attempt-007-results.xml",
+      "sha256": "99d6db5eae3b130f36d993f9d9bd5251c457aa51cb5bcc617c558e8b0cb761fc"
+    },
+    "qualified_backend": {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/main/results.xml",
+      "sha256": "89323f68f0db69cecc006da8f528e54eb95d119a75a96f586bcea5e5ffd17049"
+    },
+    "qualified_packaging": {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/results.xml",
+      "sha256": "714f8e91320b6796bcd27ef490cad2c779cd546936b2d67806130f1ca483bfad"
+    },
+    "current_envelope": {
+      "path": ".local-run/process-interfaces-083/t056-authoring-envelope-002.xml",
+      "sha256": "de720f6a068cc42e43b7381f05764f6253a18aa8ea6ade34a6e995f1b25d0234"
+    }
+  },
+  "counts_overlap_do_not_sum": true
+}

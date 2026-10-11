@@ -1,0 +1,103 @@
+{
+  "title": "Common and saved interface evidence checks",
+  "summary": "EXDEV: cross-device link not permitted, rename 'C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t056-negative-native-home-003\\data\\workspaces\\proof\\first.txt' -> 'D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-negative-native-003\\missing-reviewed-document.txt'",
+  "overall": "blocked",
+  "updated": "2026-10-03T19:34:24.186Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the isolated workspace. Click Workflows, Workflow files, Open workflow, choose ui-evidence-negative-001.workflow.wflow, then Use saved process."
+    },
+    {
+      "label": "Attach prepared run",
+      "instruction": "Open the prepared run link; inspect the available document review without approving it."
+    },
+    {
+      "label": "Save UI",
+      "instruction": "Open its prepared preview. Click Create or choose interface, Save interface, then Open saved interface."
+    },
+    {
+      "label": "Changed or missing evidence",
+      "instruction": "After the controlled fixture changes or removes the reviewed document, reload each view. Approve must be unavailable and explain which evidence needs refreshing."
+    },
+    {
+      "label": "Changed process",
+      "instruction": "Open the saved interface link for the changed process revision. Use common working view must remain available; historical evidence must not authorize a new review."
+    }
+  ],
+  "steps": [
+    {
+      "id": "C01",
+      "state": "pass",
+      "label": "common restored exact baseline",
+      "summary": "Exact original evidence enables Approve. Earlier ten-step saved-preview proof is retained; no preview, producer or authoring is repeated.",
+      "purpose": "Same exact saved review available; no execution or decision",
+      "action": "Open retained common run link",
+      "controls": [
+        "Open retained common run link"
+      ],
+      "expected": "Same exact saved review available; no execution or decision",
+      "actual": "Exact original evidence enables Approve. Earlier ten-step saved-preview proof is retained; no preview, producer or authoring is repeated.",
+      "raw": "screenshots/raw/C01.png",
+      "annotated": "screenshots/annotated/C01.png"
+    },
+    {
+      "id": "C02",
+      "state": "pass",
+      "label": "working restored exact baseline",
+      "summary": "Exact original evidence enables Approve. Earlier ten-step saved-preview proof is retained; no preview, producer or authoring is repeated.",
+      "purpose": "Same exact saved review available; no execution or decision",
+      "action": "Open retained working run link",
+      "controls": [
+        "Open retained working run link"
+      ],
+      "expected": "Same exact saved review available; no execution or decision",
+      "actual": "Exact original evidence enables Approve. Earlier ten-step saved-preview proof is retained; no preview, producer or authoring is repeated.",
+      "raw": "screenshots/raw/C02.png",
+      "annotated": "screenshots/annotated/C02.png"
+    },
+    {
+      "id": "S11",
+      "state": "pass",
+      "label": "common changed evidence blocked",
+      "summary": "Changed document blocks the review and explains refreshing its exact evidence.",
+      "purpose": "Approve unavailable with exact stale evidence reason",
+      "action": "Reload common view after controlled evidence change",
+      "controls": [
+        "Reload common view after controlled evidence change"
+      ],
+      "expected": "Approve unavailable with exact stale evidence reason",
+      "actual": "Changed document blocks the review and explains refreshing its exact evidence.",
+      "raw": "screenshots/raw/S11.png",
+      "annotated": "screenshots/annotated/S11.png"
+    },
+    {
+      "id": "S12",
+      "state": "pass",
+      "label": "working changed evidence blocked",
+      "summary": "Changed document blocks the review and explains refreshing its exact evidence.",
+      "purpose": "Approve unavailable with exact stale evidence reason",
+      "action": "Reload working view after controlled evidence change",
+      "controls": [
+        "Reload working view after controlled evidence change"
+      ],
+      "expected": "Approve unavailable with exact stale evidence reason",
+      "actual": "Changed document blocks the review and explains refreshing its exact evidence.",
+      "raw": "screenshots/raw/S12.png",
+      "annotated": "screenshots/annotated/S12.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "First unexpected stopping point",
+      "summary": "EXDEV: cross-device link not permitted, rename 'C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t056-negative-native-home-003\\data\\workspaces\\proof\\first.txt' -> 'D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-negative-native-003\\missing-reviewed-document.txt'",
+      "purpose": "Preserve the first failure",
+      "action": "Stop current walkthrough",
+      "controls": [],
+      "expected": "The declared next behavior",
+      "actual": "EXDEV: cross-device link not permitted, rename 'C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\t056-negative-native-home-003\\data\\workspaces\\proof\\first.txt' -> 'D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-negative-native-003\\missing-reviewed-document.txt'",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

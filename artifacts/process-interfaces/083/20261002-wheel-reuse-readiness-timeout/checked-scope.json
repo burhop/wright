@@ -1,0 +1,15 @@
+{
+  "second_run_id": "00201b136bff4e4e91f097891d96e8e2",
+  "state": "awaiting_approval",
+  "review_unanswered": true,
+  "saved_revision": "revision-415f9e4911f0447199dd6fbd4bbc46c0",
+  "authoring_and_revision_records_unchanged": true,
+  "saved_source_and_bundle_files_unchanged": true,
+  "common_waiting_view_verified": true,
+  "saved_preparation_and_reuse_verified": false,
+  "failed_browser_check_preserved": true,
+  "blind_additional_retry": false,
+  "physical_dispatch": false,
+  "human_acceptance": false,
+  "full_feature_complete": false
+}

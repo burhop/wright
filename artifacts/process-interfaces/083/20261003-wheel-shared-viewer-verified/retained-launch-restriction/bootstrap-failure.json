@@ -1,0 +1,5 @@
+{
+  "error": "browserType.launch: spawn EPERM",
+  "before_navigation": true,
+  "application_mutation": false
+}

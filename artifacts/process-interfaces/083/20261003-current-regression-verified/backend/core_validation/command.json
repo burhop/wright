@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-p",
+    "t053_collection_audit",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "packages/core/tests/test_process_validation.py",
+    "--basetemp=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-current-regression-006\\core_validation\\temp",
+    "--junitxml=D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053-current-regression-006\\core_validation\\results.xml"
+  ],
+  "cwd": "D:\\repos\\wright",
+  "selected_modules": 1,
+  "live_opt_ins_removed": true
+}

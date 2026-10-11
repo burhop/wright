@@ -1,0 +1,85 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_ test_compatible_source_revision_reuses_exact_saved_build_and_current_grants _
+packages\workspace_service\src\workspace_service\process_interfaces\service.py:371: in resolve_process
+    document = await self.workspace.workflow_sources.read(
+packages\workspace_service\src\workspace_service\workflow_sources.py:1834: in read
+    return await self._executor.run(
+packages\workspace_service\src\workspace_service\executor.py:37: in run
+    return await loop.run_in_executor(self._pool, partial(work))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1836: in <lambda>
+    lambda: self._store_factory(workspace_dir).read(path),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1292: in read
+    slug, self._read_state_unlocked(normalized, slug, path).document
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1256: in _read_state_unlocked
+    raise WorkflowSourceStorageError(
+E   workspace_service.workflow_sources.WorkflowSourceStorageError: Workflow source bytes do not match the committed head
+
+The above exception was the direct cause of the following exception:
+packages\workspace_service\tests\test_process_ui_revision_compatibility.py:69: in test_compatible_source_revision_reuses_exact_saved_build_and_current_grants
+    job, revision = await managed(case, executor)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\tests\test_process_ui_revision_compatibility.py:41: in managed
+    job = await build(case)
+          ^^^^^^^^^^^^^^^^^
+packages\workspace_service\tests\test_process_ui_presentations.py:131: in build
+    job = await case.author.submit(
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\authoring.py:220: in submit
+    resolved = await self.application.resolve_process(
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\service.py:375: in resolve_process
+    raise ProcessInterfaceError(
+E   workspace_service.process_interfaces.errors.ProcessInterfaceError: Wright could not read the accepted process.
+_ test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source _
+packages\workspace_service\src\workspace_service\process_interfaces\service.py:371: in resolve_process
+    document = await self.workspace.workflow_sources.read(
+packages\workspace_service\src\workspace_service\workflow_sources.py:1834: in read
+    return await self._executor.run(
+packages\workspace_service\src\workspace_service\executor.py:37: in run
+    return await loop.run_in_executor(self._pool, partial(work))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\Users\markb\miniconda3\Lib\concurrent\futures\thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1836: in <lambda>
+    lambda: self._store_factory(workspace_dir).read(path),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1292: in read
+    slug, self._read_state_unlocked(normalized, slug, path).document
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\workflow_sources.py:1256: in _read_state_unlocked
+    raise WorkflowSourceStorageError(
+E   workspace_service.workflow_sources.WorkflowSourceStorageError: Workflow source bytes do not match the committed head
+
+The above exception was the direct cause of the following exception:
+packages\workspace_service\tests\test_process_ui_revision_compatibility.py:108: in test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source
+    job, revision = await managed(case, executor)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\tests\test_process_ui_revision_compatibility.py:41: in managed
+    job = await build(case)
+          ^^^^^^^^^^^^^^^^^
+packages\workspace_service\tests\test_process_ui_presentations.py:131: in build
+    job = await case.author.submit(
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\authoring.py:220: in submit
+    resolved = await self.application.resolve_process(
+packages\core\src\core\tracing.py:47: in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+packages\workspace_service\src\workspace_service\process_interfaces\service.py:375: in resolve_process
+    raise ProcessInterfaceError(
+E   workspace_service.process_interfaces.errors.ProcessInterfaceError: Wright could not read the accepted process.
+2 failed in 1.22s

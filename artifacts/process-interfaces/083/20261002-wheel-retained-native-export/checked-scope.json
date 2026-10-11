@@ -1,0 +1,14 @@
+{
+  "run_id": "b3302d597ce344c2be288233f106aeb8",
+  "source_digest": "2a01565d55f25135055e464e4f7fc72da754f35c16fe928a0f37db5363245981",
+  "source_sha256": "8554b2e9f0bd1cff7398abd02d360079ac55c0c503f46a7274601f65f2b74833",
+  "native_export_observed": true,
+  "step_completed": false,
+  "run_state": "failed/TASK_TIMEOUT after native export",
+  "native_correction": "Exterior voxel union at 0.08 mm followed by analytic blind D cut; provider reports 61,044 triangles and zero non-manifold edges.",
+  "independent_passive_inspection": "Exact binary length, finite facet coordinates, bounds and quantized edge incidence only; no feature, manifold vertex-link or engineering compliance verdict.",
+  "next_example_change": "Bounded 360-second construction/repair tasks, still at most two calls; individual MCP limits and original full 18-check gate unchanged.",
+  "slicing_or_assessment_reached": false,
+  "physical_dispatch": false,
+  "engineering_acceptance": false
+}

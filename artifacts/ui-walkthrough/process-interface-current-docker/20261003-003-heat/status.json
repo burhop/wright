@@ -1,0 +1,103 @@
+{
+  "title": "Saved Heat comparison after repeated CAD and solver execution",
+  "summary": "Current installed Linux Docker continuation: saved comparison, unavailable authoring and read-only preview; original first stops retained.",
+  "overall": "blocked",
+  "updated": "2026-10-03T22:11:37.309Z",
+  "manualSteps": [
+    {
+      "label": "Open process",
+      "instruction": "Open the proof workspace, click Workflows, choose the saved heat workflow and click Use saved process."
+    },
+    {
+      "label": "Attach second run",
+      "instruction": "Open the third recorded run link and inspect its CAD, analysis and held assessment results."
+    },
+    {
+      "label": "Reuse",
+      "instruction": "Click Create or choose interface, select Heat-spreader candidate comparison and click Open saved interface. Inspect the full results; leave human reviews untouched."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working interface and inspect the same third-run results and held assessment."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Current installed workspace entry",
+      "summary": "The normal workspace opens on the same current installed package.",
+      "purpose": "Continue unreached authoring and preview checks after retained harness failures.",
+      "action": "Open the isolated workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Normal workspace available.",
+      "actual": "Workflows is visible on the current installed host.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Open the retained working view before preview",
+      "summary": "The same saved interface renders the recorded engineering run before opening its preview.",
+      "purpose": "Reproduce the original working-to-preview journey with proper test-view cleanup.",
+      "action": "Open the exact retained saved interface link.",
+      "controls": [
+        "Saved interface tab"
+      ],
+      "expected": "Working context and eighteen exact results.",
+      "actual": "The original run is visible with unchanged result identities.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Creation unavailable; saved interface usable",
+      "summary": "The installed app reports the missing qualified compiler and keeps saved interfaces usable.",
+      "purpose": "Verify real current capability schema and visible UI behavior.",
+      "action": "Click Create or choose interface.",
+      "controls": [
+        "Create interface",
+        "Open saved interface"
+      ],
+      "expected": "Authoring unavailable with compiler reason; saved interfaces still enabled.",
+      "actual": "Exact GET response and visible controls agree; no model call or authoring job.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Working controls accessible",
+      "summary": "No automated WCAG A/AA violations detected in the active working and authoring controls.",
+      "purpose": "Verify current installed semantics and contrast.",
+      "action": "Inspect active working/authoring controls.",
+      "controls": [
+        "Working view",
+        "Authoring controls"
+      ],
+      "expected": "No detected A/AA violations.",
+      "actual": "Current scan reports zero violations; human accessibility acceptance remains separate.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByText('Preview - process controls are read-only.', { exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for locator('[data-testid=\"surface-panel-host\"]:visible').locator('iframe').contentFrame().getByText('Preview - process controls are read-only.', { exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

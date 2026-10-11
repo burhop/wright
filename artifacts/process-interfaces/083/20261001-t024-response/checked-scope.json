@@ -1,0 +1,369 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-01",
+  "branch": "codex/083-process-working-interfaces",
+  "base_commit": "9ac221a0cee14758d4253ab2b2097121e4a6d79e",
+  "implemented_scope": [
+    "scoped native response route",
+    "read-only fresh input checkpoint inspection",
+    "server-derived run/actor",
+    "backend-owned same-run continuation",
+    "public client response acknowledgement guards",
+    "shared schema-bound input form",
+    "common-view explicit same-request reconciliation"
+  ],
+  "backend": {
+    "passed": 231,
+    "skipped": 0,
+    "seconds": 96.76,
+    "log": ".local-run/process-interfaces-083/t024-response-final.log",
+    "synthetic_model": true,
+    "actual_source_store_sqlite_executor_recorder": true,
+    "cases": [
+      {
+        "test_case": "test_two_supervised_checkpoint0",
+        "run_id": "f93dc4dbe28449be85f521414306cb91",
+        "status": "completed",
+        "source_digest": "c7f75cf0243712238989a3b5d6b9d2ab21b2f476e160df44306532d21144c63b",
+        "claims": {
+          "checkpoint-1c2b5ec1c8dcf8486fd879ed": {
+            "state": "completed",
+            "subject_digest": "e9ee119fc2ac710a889137d90092d539ebbd3d167f6dc19fedf813c9c4ccc27e"
+          },
+          "checkpoint-cef2e51f8434995dbb1a6db4": {
+            "state": "completed",
+            "subject_digest": "83178518dc6d3b364cf8fcafae8b833571844f0fe05eabb5219aedb913b3ff34"
+          }
+        },
+        "responses": [
+          {
+            "task_id": "choice",
+            "checkpoint_id": "checkpoint-1c2b5ec1c8dcf8486fd879ed",
+            "subject_digest": "e9ee119fc2ac710a889137d90092d539ebbd3d167f6dc19fedf813c9c4ccc27e",
+            "response_id": "response-1b6004c8c3319fd1eee6998c",
+            "response_digest": "5b31d61b7a7426b11d061b61fbb9c6d0f6cebb7a4197ec504bf398c532cd9e14",
+            "actor": "user",
+            "integration_test": false
+          },
+          {
+            "task_id": "choice_two",
+            "checkpoint_id": "checkpoint-cef2e51f8434995dbb1a6db4",
+            "subject_digest": "83178518dc6d3b364cf8fcafae8b833571844f0fe05eabb5219aedb913b3ff34",
+            "response_id": "response-4e8cc846b9c69bc9422ac556",
+            "response_digest": "f9ba6bd0a484e7d4211bab7d5c1e56d2606eb024a7279fc266ceb45a781df020",
+            "actor": "user",
+            "integration_test": false
+          }
+        ]
+      },
+      {
+        "test_case": "test_response_owns_task_return0",
+        "run_id": "869286f461c54a42a2dd2aaa5ae42d5a",
+        "status": "completed",
+        "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+        "claims": {
+          "checkpoint-e618f4172b91e4d6a459868d": {
+            "state": "completed",
+            "subject_digest": "52d893a030938bc6356ff8acbbeb2048d1f64533cbb81662c09de0a9476a2b82"
+          }
+        },
+        "responses": [
+          {
+            "task_id": "choice",
+            "checkpoint_id": "checkpoint-e618f4172b91e4d6a459868d",
+            "subject_digest": "52d893a030938bc6356ff8acbbeb2048d1f64533cbb81662c09de0a9476a2b82",
+            "response_id": "response-0824308e99b62e362783647c",
+            "response_digest": "6811842285f1c3ca23ea4f486d3b1f6eed5bcd8e6293f6a889b8bc19637283f5",
+            "actor": "user",
+            "integration_test": false
+          }
+        ]
+      },
+      {
+        "test_case": "test_saved_response_without_ex0",
+        "run_id": "0aad7f8a23af47768496c2e6fcae2ac2",
+        "status": "completed",
+        "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+        "claims": {
+          "checkpoint-b11f9c52263fa472dacb75eb": {
+            "state": "completed",
+            "subject_digest": "925d008c9d3dda8380f2c484df4d804df0b8abfac352c24fc7b378ec29dae0cb"
+          }
+        },
+        "responses": [
+          {
+            "task_id": "choice",
+            "checkpoint_id": "checkpoint-b11f9c52263fa472dacb75eb",
+            "subject_digest": "925d008c9d3dda8380f2c484df4d804df0b8abfac352c24fc7b378ec29dae0cb",
+            "response_id": "response-8a9d2748b4993b0f03bcfb5b",
+            "response_digest": "f770787703b1e0164f3913388e178ac0c28df2685482a6bb60077ffa1e55c40f",
+            "actor": "user",
+            "integration_test": false
+          }
+        ]
+      },
+      {
+        "test_case": "test_saved_response_without_ex1",
+        "run_id": "47d4638e2abd4d88b871425292f17b41",
+        "status": "completed",
+        "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+        "claims": {
+          "checkpoint-b277a4e021352fc1153018f7": {
+            "state": "completed",
+            "subject_digest": "b0cf46baeec20debaaff8aa80222805212fa8e3c317a120150fecdcb779786e0"
+          }
+        },
+        "responses": [
+          {
+            "task_id": "choice",
+            "checkpoint_id": "checkpoint-b277a4e021352fc1153018f7",
+            "subject_digest": "b0cf46baeec20debaaff8aa80222805212fa8e3c317a120150fecdcb779786e0",
+            "response_id": "response-eda73c13d6758d2067b59dbb",
+            "response_digest": "fde4b4c2a7fd4151b7c23bd2a1a6a41e570f3fdf269c3e8a49d1afb8ad50efa5",
+            "actor": "user",
+            "integration_test": false
+          }
+        ]
+      },
+      {
+        "test_case": "test_unfinished_saved_claim_is0",
+        "run_id": "6a62de5294b64fad9fa96b25990b5d3c",
+        "status": "waiting_human",
+        "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+        "claims": {
+          "checkpoint-2f5660bafd354c07bbe8247f": {
+            "state": "executing",
+            "subject_digest": "20779075b99ba85da4d7df63905583ef33c62d4aeeb596d2cf8d7c5ec341cbc0"
+          }
+        },
+        "responses": []
+      }
+    ],
+    "final_inspection_rerun": {
+      "passed": 48,
+      "seconds": 39.67,
+      "log": ".local-run/process-interfaces-083/t024-response-inspection-final.log"
+    }
+  },
+  "components": {
+    "passed": 135,
+    "failed": 0,
+    "report": ".local-run/process-interfaces-083/t027-input-kit-final.json"
+  },
+  "browser": {
+    "stats": {
+      "startTime": "2026-10-01T08:47:15.960Z",
+      "duration": 27010.862999999998,
+      "expected": 5,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "report": ".local-run/process-interfaces-083/t027-input-browser-final.json",
+    "asset_directory": "artifacts/process-interfaces/083/20261001-t027-input-browser-final",
+    "journeys": [
+      {
+        "title": "uses the normal workspace to prepare, follow and inspect an exact run while retaining source edits",
+        "status": "passed",
+        "scopes": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5239/workspace/ws-recovery?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow&processView=cfbb9872-6d6d-4b04-b504-fbf4b75ab155&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+            "viewport": {
+              "width": 1280,
+              "height": 720
+            },
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "live_backend": false,
+            "live_model": false,
+            "live_mcp": false,
+            "physical_operation": false,
+            "user_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "reconciles a lost start acknowledgement after reload using the original request identity",
+        "status": "passed",
+        "scopes": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5239/workspace/ws-recovery?workflow=canonical&processView=ecd0a1d9-59d8-4c7f-99ec-5237e90bb720&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+            "viewport": {
+              "width": 1280,
+              "height": 720
+            },
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "live_backend": false,
+            "live_model": false,
+            "live_mcp": false,
+            "physical_operation": false,
+            "user_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "preserves declared input schemas through workspace source editing, saving and reopening",
+        "status": "passed",
+        "scopes": [
+          {
+            "browser": "154.0.8037.58",
+            "viewport": {
+              "width": 1280,
+              "height": 720
+            },
+            "url": "http://127.0.0.1:5239/workspace/ws-recovery?workflow=canonical",
+            "original_source_sha256": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+            "saved_source_sha256": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d",
+            "saved_definition_revision": 3,
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d"
+            },
+            "controlled_run_start_count": 0,
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "source_edit_save_reopen": true,
+            "runtime_checkpoint_consumption": false,
+            "live_api": false,
+            "live_model": false,
+            "live_mcp": false,
+            "engineering_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "declared response resumes the saved workspace run after closing and reopening its tab",
+        "status": "passed",
+        "scopes": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5239/workspace/ws-recovery?workflow=canonical&processView=19748b5b-fca6-4aa2-80fc-2f5c01c09e88&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4&processRun=common-browser-run",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4"
+            },
+            "run_id": "common-browser-run",
+            "checkpoint_id": "browser-input-checkpoint",
+            "subject_digest": "580ad2b6f17d96d7ba1b08d9cd76689bde87b23557f8695d18eefb1a82382535",
+            "start_count": 1,
+            "response_request_count": 1,
+            "same_request_retry": false,
+            "close_without_cancel": true,
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "live_api": false,
+            "live_model": false,
+            "live_mcp": false,
+            "engineering_acceptance": false
+          }
+        ]
+      },
+      {
+        "title": "declared response resumes the saved workspace run after explicit lost-ack reconciliation",
+        "status": "passed",
+        "scopes": [
+          {
+            "browser": "154.0.8037.58",
+            "url": "http://127.0.0.1:5239/workspace/ws-recovery?workflow=canonical&processView=6753c963-6a08-4c96-9efe-6d38a7c4ef18&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4&processRun=common-browser-run",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "process": {
+              "workspace_id": "ws-recovery",
+              "source_path": "workflows/mounting-bracket.workflow.wflow",
+              "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4"
+            },
+            "run_id": "common-browser-run",
+            "checkpoint_id": "browser-input-checkpoint",
+            "subject_digest": "580ad2b6f17d96d7ba1b08d9cd76689bde87b23557f8695d18eefb1a82382535",
+            "start_count": 1,
+            "response_request_count": 2,
+            "same_request_retry": true,
+            "close_without_cancel": true,
+            "served_frontend": true,
+            "controlled_http_contracts": true,
+            "live_api": false,
+            "live_model": false,
+            "live_mcp": false,
+            "engineering_acceptance": false
+          }
+        ]
+      }
+    ],
+    "source_server": "http://127.0.0.1:5239",
+    "flags": [
+      "VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1",
+      "VITE_WRIGHT_WORKFLOW_COMPOSER=1",
+      "VITE_WRIGHT_WORKFLOW_RECOVERY=1"
+    ],
+    "controlled_http_contracts": true,
+    "production_assets_served": false,
+    "owned_server_stopped": true
+  },
+  "production": {
+    "out_dir": ".local-run/process-interfaces-083/t027-input-production-final",
+    "modules": 927,
+    "files": {
+      "assets/index-CMS9mE0d.js": "5afa373d7376d35bbaae2af6545bbe7ac224dc2b06c37561e549c05c2538f364",
+      "assets/index-Dr397Mav.css": "b5fccbafd6cb25b7c7bf9e11082c40c77ae49b96f27397f0dc4344433ec21bc3",
+      "assets/NativeProcessPage-BKFfzjA2.js": "30235b7d1521b930974aaa613b141d54ae59348bd544712b5ee31989f9eadfdf",
+      "assets/NativeProcessPage-BR3Y0gMw.css": "cbd1e90b1f97d6c435e588bb02f95d93a61f0e15b6ea72177ee1a0ed4eb216fc",
+      "assets/plotly.min-dkCWgMZq.js": "caec8938c038746eff0681cdd6b9649fbad06633bc06c70a1454511563fcce2c",
+      "assets/rolldown-runtime-Dd_uD5pT.js": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8",
+      "favicon.svg": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "icons.svg": "7ca2d67c9c3aebf50cdc8709ee8aacf8cdb8cc7ea6325ea94939caef5da1c53d",
+      "index.html": "3dcc489badafed03316a2a7379de0a25543bff1aa30afb2804e3e3b072f67bd3",
+      "recovery-concept/manufacturability-report.html": "883a398d05cde39f034e5f09649fccd7815ffe3fbd6be9aa13316040f4260c38",
+      "recovery-concept/mounting-bracket.step": "b253b9e9dcf26ef8c44f932d9198c92dc0831abf80660f0727a7a701bc5afe74",
+      "recovery-concept/mounting-bracket.svg": "bf6d12dffa513ab255d25334e70d90041456db1c0aaf607ac38b6d9734dbdadb",
+      "surface-sandbox/index.html": "355d8670db4d040a872d071451d3a3e0394599ca103350d60dcd93e58bf6c04e",
+      "surface-sandbox/sandbox-proxy.js": "3bb60809a83d431263f37654611e4366302d18f01cf6fcbc03fd4e15fb0ba71a",
+      "third-party-licenses-web.txt": "1486d179e0b479f813e4f61fd185c51b3984d6ccc5f097b0d5be3d85920bee37",
+      "wright-mark.svg": "57e7f6cf1776d42ac251f98861c6ce7cdec54806df5226b31abfa5acfcfe843e"
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "approved_context_equals_HEAD": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    },
+    "original_mixed_deltas_preserved": {
+      "main": true,
+      "workspace": true
+    }
+  },
+  "limitations": [
+    "API/service responses are controlled transport fixtures with ordinary actor scope and integration_test=false; they are not human engineering acceptance.",
+    "No live default-model, engineering MCP, tailored authoring or distribution proof.",
+    "Input form controls only; review/action forms and undeclared-question policy remain pending.",
+    "Lost acknowledgement reconciliation is explicit within the retained view; broader reload/tailored-host interaction recovery remains pending T028.",
+    "No physical/supplier effect, campaign mutation, push, merge or release."
+  ]
+}

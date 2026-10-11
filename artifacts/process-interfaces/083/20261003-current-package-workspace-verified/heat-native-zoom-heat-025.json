@@ -1,0 +1,48 @@
+{
+  "method": "chrome.tabs.setZoom/getZoom via isolated test-only extension; no application script, CSS zoom or CDP page-scale emulation",
+  "beforeMetrics": {
+    "innerWidth": 1440,
+    "devicePixelRatio": 1,
+    "pageScale": 1
+  },
+  "afterMetrics": {
+    "innerWidth": 720,
+    "devicePixelRatio": 2,
+    "pageScale": 1
+  },
+  "zoom": {
+    "factor": 2,
+    "settings": {
+      "defaultZoomFactor": 1,
+      "mode": "automatic",
+      "scope": "per-origin"
+    }
+  },
+  "afterZoom": 2,
+  "zoomCommonSize": {
+    "width": 672,
+    "scrollWidth": 672
+  },
+  "result_ids": [
+    "63b639c7a8f446cd90a9285921ab9072:author_cad_repeatable_default_013:cad_source",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+    "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+    "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+    "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:geometry_measurements",
+    "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+    "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+    "63b639c7a8f446cd90a9285921ab9072:validate_outputs_repeatable_default_013:diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json"
+  ],
+  "run_id": "63b639c7a8f446cd90a9285921ab9072",
+  "model_or_process_or_review_requests": []
+}

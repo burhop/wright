@@ -1,0 +1,64 @@
+{
+  "at": "2026-09-22T21:16:55.577435+00:00",
+  "scenario_id": "heat-spreader-sizing-01",
+  "attempt_id": "attempt-902",
+  "baseline": {
+    "attempt_id": "attempt-901",
+    "run_id": "4079f5e988bb4442a9b7c3d4ea37ebbe",
+    "checkpoint_id": "checkpoint-f39e3eaead17a4ff4e941024",
+    "decision": "changes_requested",
+    "source_sha256": "13a1fca405a36c2d87281eacd42352c546a848d4ab73696063091203c63bb793",
+    "basis_sha256": "7186d96304a0732377e84dd0d551f861cc90f19db95b00f39b98f05c43082b44"
+  },
+  "material_change": "Case-derived thermal boundary guidance and actual approved brief attachment remove unrelated copper/contact instructions. Exact enriched review settings are recomputed without relaxing stale-input guards.",
+  "original_input_hashes_unchanged": {
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/alternatives.csv": "29d9f7d3b89d687edc7cdf14ded48e4357257a9f27764df212051c8ed02c328f",
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/concept.png": "84bb3847254d05164c8dcb447cf3a001e9d9b859ad6c2a67c26260ac54aa5f57",
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/concept.svg": "445941494d109662f292fe33830693358dcab34132cc774fd09bf49a5ac10161",
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/context.md": "4817f9a8f0dbaa6bb6ccd4ba03af8ba7347d9d1129b7b06c40685e42a0448feb",
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/prompt.txt": "f08a8caa5bc41b282b5386578be028bf60312da099b5613c600db9b73635e5d1",
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/scenario.json": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8",
+    "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/user-profile.md": "857f534051126b05af7a9345ebd4cc02372a5ba395ced50f78b41815bf79f146"
+  },
+  "focused_verification": "73 review/resume/process-validation/preparer/heat-profile tests passed before committed deployment c1e9977e; review identity and three-case scope regressions were first reproduced failing.",
+  "evidence": [
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\heat01-canonical-901\\human-scope-decision.json",
+      "sha256": "65725dcfe138c353eafe4b7a5869461ce2eb7af115b6bf45044d7536bec8bfc1"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\heat01-canonical-902\\preflight.json",
+      "sha256": "ee41b33d30dd067d6dac75f85cdfa29b9985a67da9552baee2cfde2269958a49"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\review-settings-api-deployment\\verification.json",
+      "sha256": "300d7c5138317a05b4e9a261480c2d184361cb9da222f96b2f4aaefa86530ebe"
+    },
+    {
+      "path": "D:\\repos\\wright\\.local-run\\renewal-qualification\\review-settings-api-deployment\\inference.json",
+      "sha256": "eb53b45fd8543bcecd30c3e294899d77f0d64637224d46e2cefc0c1c91381e0a"
+    },
+    {
+      "path": "D:\\repos\\wright\\scripts\\prepare-heat-dataset-campaign.py",
+      "sha256": "1400ec765494638dcf512b35331474813d25115a40d7b6b8afcdc4409dda5611"
+    },
+    {
+      "path": "D:\\repos\\wright\\packages\\workspace_service\\src\\workspace_service\\workflow_approval_execution.py",
+      "sha256": "0790e4d444768de94c7b39681cb18ae042e9d4ada1b6f34f3b9a48a6f4cf37b9"
+    },
+    {
+      "path": "D:\\repos\\wright\\packages\\workspace_service\\tests\\test_workflow_approval_review_settings.py",
+      "sha256": "2b1991765f8b58f4ab5a96e2cf825bee2a4a7f88bd6193c54c53ee3628d24d22"
+    },
+    {
+      "path": "D:\\repos\\wright\\packages\\workspace_service\\tests\\test_cad_file_observation_preparers.py",
+      "sha256": "0d7f4bb0d47afe030e4684ee81469f09e17e4954db5e55679067c4d2afa2ac36"
+    }
+  ],
+  "source_sha256": "13c936025776e25d126d693ed0dcfdc333a5227b81176767bfe01d39e72483bd",
+  "manifest_sha256": "763fa2add9eab6c079862f275a2a4a88cab0c36010ef5b4a386529d0cd906ea8",
+  "workflow_dispatches": 0,
+  "human_successor_approval": false,
+  "campaign_credit": false,
+  "solid_edge_touched": false
+}

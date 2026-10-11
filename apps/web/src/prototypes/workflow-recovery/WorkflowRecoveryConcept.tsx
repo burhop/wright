@@ -1,4 +1,7 @@
 import { createMcpServerBlock } from "./mcp-server-blocks";
+import { WorkflowInstructionsEditor } from "./WorkflowInstructionsEditor";
+import { StepInstructionsEditor } from "./StepInstructionsEditor";
+import { RunInstructionsEvidence } from "./RunInstructionsEvidence";
 import { disconnectedProcessDiagnostic } from "./run-readiness";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -34,6 +37,7 @@ import {
   parseRecoveryAuthoringSource,
   recoveryAuthoringSemanticIdAtOffset,
   recoveryAuthoringSourceSelection,
+  recoveryAuthoringBlockId,
   validateRecoveryAuthoringRoundTrip,
 } from "./recovery-authoring";
 import {
@@ -71,10 +75,27 @@ import {
   hiddenMcpInputs,
 } from "./mcp-settings";
 import { InputBlockEditor } from "./InputBlockEditor";
+import {
+  InputDeclarationEditor,
+  HumanInputDeclarationEditor,
+} from "./InteractionDeclarationEditor";
+import {
+  declarationEditorKey,
+  isHumanInputBlock,
+} from "./interaction-settings";
 import { PromptBlockEditor } from "./PromptBlockEditor";
+import { ValidatorBlockEditor } from "./ValidatorBlockEditor";
+import { isValidatorBlock } from "./validation-settings";
+import {
+  validationEvidenceReference,
+  validationRunPresentation,
+} from "./validation-run-status";
 import {
   connectPromptCommands,
+  connectReferenceCommands,
+  isImageSource,
   isPromptBlock,
+  promptConfigurationLabel,
   promptSourceCandidates,
   sourceKey,
 } from "./prompt-settings";
@@ -105,7 +126,26 @@ import {
 } from "./ApplicationTaskOptions";
 import { cadCommands, cadPortId, type CadOptions } from "./CadTaskOptions";
 import { EngineeringResults } from "./EngineeringResults";
-import { BlockNameHeading } from "./BlockNameHeading";
+import { EngineeringReviewFiles } from "./EngineeringReviewFiles";
+import {
+  recordedFailedStep,
+  workflowResultBlocks,
+} from "./workflow-result-blocks";
+import {
+  WorkflowResultInspector,
+  WorkflowResultsNavigator,
+} from "./WorkflowResultInspector";
+import {
+  EngineeringActionScope,
+  EngineeringRunProgress,
+  EngineeringStepContext,
+} from "./EngineeringRunContext";
+import {
+  approvalPresentation,
+  externallyManagedReview,
+  fileName,
+} from "./engineering-run-presentation";
+import { BlockNameHeading, WorkflowNameHeading } from "./BlockNameHeading";
 import { cadOutputPresentation } from "./cad-output-presentation";
 import { workspaceContentUrl } from "../../services/viewer-panel/providers/workspace-content-url";
 import "./workflow-recovery.css";
@@ -148,6 +188,16 @@ export interface WorkflowRecoveryPersistedSource {
 }
 
 export interface WorkflowRecoveryConceptProps {
+  readonly onLoadInstructionDefaults?: () => Promise<
+    import("../../services/workspace-service").WorkflowInstructionDefaultsDocument
+  >;
+  readonly onReviewInstructionProtocolUpgrade?: (
+    current: import("./workflow-instructions").WorkflowInstructionSet,
+  ) => Promise<
+    import("../../services/workspace-service").WorkflowInstructionUpgradeProposal
+  >;
+  readonly onExportSource?: () => void | Promise<void>;
+  readonly onUnsavedChange?: (unsaved: boolean) => void;
   /** Internal component demonstrations only; workspace pages must not enable this. */
   readonly simulationPreview?: boolean;
   readonly surfaceState?: "ready" | "loading" | "error";
@@ -157,6 +207,7 @@ export interface WorkflowRecoveryConceptProps {
   readonly storageDigest?: string;
   readonly workflowFilePath?: string;
   readonly reopenRequest?: number;
+  readonly navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
   readonly workflowLayout?: RecoveryLayout;
   readonly workspaceSessionId?: string;
   readonly workspaceId?: string;
@@ -170,6 +221,7 @@ export interface WorkflowRecoveryConceptProps {
     canReplace?: (stored: WorkflowRecoveryStoredSource) => boolean,
   ) => Promise<void>;
   readonly onOpenFile?: (path: string) => void;
+  readonly onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
   readonly fileActions?: ReactNode;
   readonly onRun?: (
     options?: WorkflowRunOptions,
@@ -188,6 +240,7 @@ export interface WorkflowRecoveryRunResult {
   readonly status?:
     | "completed"
     | "pending_review"
+    | "waiting_human"
     | "awaiting_approval"
     | "awaiting_external_outcome"
     | "external_action_not_dispatched"
@@ -195,6 +248,7 @@ export interface WorkflowRecoveryRunResult {
     | "changes_requested";
   readonly review?: WorkspaceWorkflowReview;
   readonly approval?: WorkflowApprovalCheckpoint;
+  readonly inputCheckpoint?: import("../../services/workspace-service").WorkspaceWorkflowInputCheckpoint;
   readonly runId?: string;
   readonly verification?: {
     status?: string;
@@ -353,14 +407,116 @@ function WorkflowDemoCapturePanel({
   );
 }
 
+interface ValidationReviewDetails {
+  readonly profileId: string;
+  readonly profileVersion: string;
+  readonly profileDigest: string;
+  readonly requirements: readonly ValidationReviewRequirement[];
+}
+
+interface ValidationReviewRequirement {
+  readonly id: string;
+  readonly text: string;
+  readonly scope: "content" | "design";
+  readonly sources: readonly ValidationReviewSource[];
+}
+
+interface ValidationReviewSource {
+  readonly artifactRef: string;
+  readonly locator: string;
+  readonly sha256: string;
+}
+
+function recordValue(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function validationReviewDetails(
+  checkpoint: WorkflowApprovalCheckpoint,
+): ValidationReviewDetails | null {
+  if (checkpoint.action_kind !== "local_review") return null;
+  const settings = recordValue(checkpoint.subject.settings);
+  const review = recordValue(settings?.validation_review);
+  const profile = recordValue(review?.profile_ref);
+  const requirementIds = review?.requirement_ids;
+  const requirementValues = settings?.validation_review_requirements;
+  if (
+    typeof profile?.id !== "string" ||
+    typeof profile.version !== "string" ||
+    typeof profile.sha256 !== "string" ||
+    !Array.isArray(requirementIds) ||
+    requirementIds.length === 0 ||
+    !requirementIds.every(
+      (value): value is string => typeof value === "string",
+    ) ||
+    !Array.isArray(requirementValues) ||
+    requirementValues.length !== requirementIds.length
+  ) {
+    return null;
+  }
+  const requirements: ValidationReviewRequirement[] = [];
+  for (const [index, value] of requirementValues.entries()) {
+    const requirement = recordValue(value);
+    const sourceValues = requirement?.sources;
+    if (
+      requirement?.id !== requirementIds[index] ||
+      typeof requirement.text !== "string" ||
+      !requirement.text.trim() ||
+      (requirement.scope !== "content" && requirement.scope !== "design") ||
+      !Array.isArray(sourceValues) ||
+      sourceValues.length === 0
+    ) {
+      return null;
+    }
+    const sources: ValidationReviewSource[] = [];
+    for (const value of sourceValues) {
+      const source = recordValue(value);
+      if (
+        typeof source?.artifact_ref !== "string" ||
+        typeof source.locator !== "string" ||
+        typeof source.sha256 !== "string"
+      ) {
+        return null;
+      }
+      sources.push({
+        artifactRef: source.artifact_ref,
+        locator: source.locator,
+        sha256: source.sha256,
+      });
+    }
+    requirements.push({
+      id: requirement.id as string,
+      text: requirement.text,
+      scope: requirement.scope,
+      sources,
+    });
+  }
+  return {
+    profileId: profile.id,
+    profileVersion: profile.version,
+    profileDigest: profile.sha256,
+    requirements,
+  };
+}
+
 function WorkflowExternalApprovalPanel({
   initial,
   sessionId,
+  onOpenFile,
+  onUpdate,
 }: {
   readonly initial: WorkflowApprovalCheckpoint;
   readonly sessionId: string;
+  readonly onOpenFile?: (path: string) => void;
+  readonly onUpdate: (checkpoint: WorkflowApprovalCheckpoint) => void;
 }) {
   const [checkpoint, setCheckpoint] = useState(initial);
+  const updateCheckpoint = (value: WorkflowApprovalCheckpoint) => {
+    setCheckpoint(value);
+    onUpdate(value);
+  };
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -372,7 +528,7 @@ function WorkflowExternalApprovalPanel({
     setBusy(true);
     setError("");
     try {
-      setCheckpoint(
+      updateCheckpoint(
         await workspaceService.getWorkflowApprovalCheckpoint(
           sessionId,
           checkpoint.run_id,
@@ -397,7 +553,7 @@ function WorkflowExternalApprovalPanel({
     setBusy(true);
     setError("");
     try {
-      setCheckpoint(
+      updateCheckpoint(
         await workspaceService.decideWorkflowApproval(
           sessionId,
           checkpoint,
@@ -420,7 +576,7 @@ function WorkflowExternalApprovalPanel({
     setBusy(true);
     setError("");
     try {
-      setCheckpoint(
+      updateCheckpoint(
         await workspaceService.resumeWorkflowApproval(
           sessionId,
           checkpoint,
@@ -438,6 +594,9 @@ function WorkflowExternalApprovalPanel({
     }
   };
   const outcome = checkpoint.external_action?.outcome;
+  const isValidationReview = checkpoint.action_kind === "local_review";
+  const validationReview = validationReviewDetails(checkpoint);
+  const reviewStatus = approvalPresentation(checkpoint);
   return (
     <section
       className="recovery-review-panel"
@@ -445,39 +604,145 @@ function WorkflowExternalApprovalPanel({
       aria-labelledby={`workflow-approval-${checkpoint.checkpoint_id}`}
     >
       <h3 id={`workflow-approval-${checkpoint.checkpoint_id}`}>
-        External action approval
+        {isValidationReview
+          ? "Review results against the requirements"
+          : "External action approval"}
       </h3>
+      {typeof checkpoint.continuation.step_title === "string" && (
+        <p>
+          <b>Review step:</b> {checkpoint.continuation.step_title}
+        </p>
+      )}
+      {!isValidationReview && (
+        <p>
+          <b>
+            {reviewStatus?.label ?? checkpoint.action_kind.replaceAll("_", " ")}
+          </b>
+          {!isValidationReview && ` · ${checkpoint.state.replaceAll("_", " ")}`}
+          {!isValidationReview && typeof outcome === "string"
+            ? ` · ${outcome.replaceAll("_", " ")}`
+            : ""}
+        </p>
+      )}
       <p>
-        <b>{checkpoint.action_kind.replaceAll("_", " ")}</b> ·{" "}
-        {checkpoint.state.replaceAll("_", " ")}
-        {typeof outcome === "string"
-          ? ` · ${outcome.replaceAll("_", " ")}`
-          : ""}
+        {isValidationReview
+          ? "Open the results, compare them with each requirement, then approve or describe what must change. Approval records your engineering judgment for these files; it does not mean the whole workflow has passed."
+          : "Check the proposed action, destination, and settings before approving. Approval applies only to this action and its recorded file versions."}
       </p>
-      <p>
-        This decision covers the exact definition, inputs, artifacts, binding,
-        destination, settings, and proposed action shown below.
-      </p>
-      <dl className="recovery-native-run__metadata">
-        <dt>Subject digest</dt>
-        <dd>
-          <code>{checkpoint.subject_digest}</code>
-        </dd>
-        {Object.entries(checkpoint.subject).map(([name, value]) => (
-          <div key={name}>
-            <dt>{name.replaceAll("_", " ")}</dt>
-            <dd>
-              <pre>{JSON.stringify(value, null, 2)}</pre>
-            </dd>
-          </div>
-        ))}
-      </dl>
+      {!isValidationReview && (
+        <section data-testid="workflow-approval-action-scope">
+          <h4>Proposed action</h4>
+          <EngineeringActionScope value={checkpoint.subject.action} />
+          <h4>Destination</h4>
+          <EngineeringActionScope value={checkpoint.subject.destination} />
+          <h4>Settings to confirm</h4>
+          <EngineeringActionScope value={checkpoint.subject.settings} />
+        </section>
+      )}
+      {isValidationReview && (
+        <EngineeringReviewFiles
+          checkpoint={checkpoint}
+          sessionId={sessionId}
+          onOpenFile={onOpenFile}
+        />
+      )}
+      {validationReview && (
+        <section
+          className="recovery-validation-review"
+          aria-labelledby={`workflow-validation-review-${checkpoint.checkpoint_id}`}
+        >
+          <h4 id={`workflow-validation-review-${checkpoint.checkpoint_id}`}>
+            Check these {validationReview.requirements.length} requirements
+          </h4>
+          <ol data-testid="workflow-validation-review-requirements">
+            {validationReview.requirements.map((requirement) => (
+              <li key={requirement.id}>
+                <p>{requirement.text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+      {isValidationReview && !validationReview && (
+        <p role="alert">
+          The requirements or their supporting record are incomplete. Approval
+          is unavailable. Request changes so the missing information can be
+          supplied.
+        </p>
+      )}
+      <details
+        className="recovery-technical-details"
+        data-testid="workflow-approval-technical-record"
+      >
+        <summary>
+          Technical record ·{" "}
+          {isValidationReview
+            ? "requirement sources and file versions"
+            : "exact action and file versions"}
+        </summary>
+        {validationReview && (
+          <>
+            <p>
+              These identifiers preserve which requirements and file versions
+              your decision covers.
+            </p>
+            <p>
+              <code>{validationReview.profileId}</code> · version{" "}
+              {validationReview.profileVersion}
+            </p>
+            <p>
+              Profile digest: <code>{validationReview.profileDigest}</code>
+            </p>
+            <ul>
+              {validationReview.requirements.map((requirement) => (
+                <li key={requirement.id}>
+                  <code>{requirement.id}</code> · {requirement.scope}
+                  <ul>
+                    {requirement.sources.map((source) => (
+                      <li
+                        key={`${source.artifactRef}:${source.locator}:${source.sha256}`}
+                      >
+                        {source.locator} · <code>{source.artifactRef}</code> ·
+                        SHA-256 <code>{source.sha256}</code>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        <dl className="recovery-native-run__metadata">
+          <dt>Subject digest</dt>
+          <dd>
+            <code>{checkpoint.subject_digest}</code>
+          </dd>
+          {Object.entries(checkpoint.subject).map(([name, value]) => (
+            <div key={name}>
+              <dt>{name.replaceAll("_", " ")}</dt>
+              <dd>
+                <pre>{JSON.stringify(value, null, 2)}</pre>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </details>
+      {checkpoint.reason && (
+        <p>
+          <b>Review note:</b> {checkpoint.reason}
+        </p>
+      )}
+      {isValidationReview && checkpoint.state !== "pending" && (
+        <p role="status">{reviewStatus?.detail}</p>
+      )}
       {checkpoint.state === "pending" && (
         <>
           <label
             htmlFor={`workflow-approval-reason-${checkpoint.checkpoint_id}`}
           >
-            Decision note
+            {isValidationReview
+              ? "Review note · describe any required changes"
+              : "Decision note"}
           </label>
           <textarea
             id={`workflow-approval-reason-${checkpoint.checkpoint_id}`}
@@ -491,10 +756,12 @@ function WorkflowExternalApprovalPanel({
               type="button"
               className="recovery-button recovery-button--primary"
               data-testid="workflow-external-approval-approve"
-              disabled={busy}
+              disabled={busy || (isValidationReview && !validationReview)}
               onClick={() => void decide("approved")}
             >
-              Approve exact action
+              {isValidationReview
+                ? "Approve reviewed requirements"
+                : "Approve exact action"}
             </button>
             <button
               type="button"
@@ -508,17 +775,20 @@ function WorkflowExternalApprovalPanel({
           </div>
         </>
       )}
-      {checkpoint.state === "approved" && (
-        <button
-          type="button"
-          className="recovery-button recovery-button--primary"
-          data-testid="workflow-external-approval-resume"
-          disabled={busy}
-          onClick={() => void resume()}
-        >
-          Resume with one-shot authority
-        </button>
-      )}
+      {checkpoint.state === "approved" &&
+        !externallyManagedReview(checkpoint) && (
+          <button
+            type="button"
+            className="recovery-button recovery-button--primary"
+            data-testid="workflow-external-approval-resume"
+            disabled={busy}
+            onClick={() => void resume()}
+          >
+            {isValidationReview
+              ? "Continue workflow"
+              : "Resume with one-shot authority"}
+          </button>
+        )}
       {checkpoint.state === "consumed" && outcome === "not_dispatched" && (
         <p role="status">
           One-shot dispatch authority was issued. Wright is waiting for the
@@ -549,6 +819,11 @@ interface NativeRunEvent {
   readonly at: string;
   readonly label: string;
   readonly detail: string;
+  readonly validationEvidence?: {
+    readonly assessmentId?: string;
+    readonly path: string;
+    readonly completeResultRef?: string;
+  };
 }
 
 interface NativeRunInput {
@@ -611,6 +886,12 @@ function NativeRunPanel({
   sourceMismatch,
   refreshError,
   onRefresh,
+  onOpenReadiness,
+  workflow,
+  onSelectBlock,
+  onApprovalUpdate,
+  onOpenRunWorkingView,
+  currentSourceDigest,
 }: {
   readonly reviews: ReturnType<typeof useWorkflowReviews>;
   readonly pending: boolean;
@@ -634,6 +915,12 @@ function NativeRunPanel({
   readonly sourceMismatch?: boolean;
   readonly refreshError?: string;
   readonly onRefresh?: () => void;
+  readonly onOpenReadiness: () => void;
+  readonly workflow: RecoveryWorkflow;
+  readonly onSelectBlock: (id: string) => void;
+  readonly onApprovalUpdate: (checkpoint: WorkflowApprovalCheckpoint) => void;
+  readonly onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
+  readonly currentSourceDigest?: string;
 }) {
   const reviewPresentation = reviewRunPresentation(
     reviews.reviews,
@@ -646,6 +933,11 @@ function NativeRunPanel({
       { label: string; detail: string }
     >
   > = {
+    waiting_human: {
+      label: "Waiting for your input",
+      detail:
+        "The workflow is paused at a declared input step. Answer in the working view to continue this same run.",
+    },
     awaiting_approval: {
       label: "Awaiting external action approval",
       detail:
@@ -673,8 +965,16 @@ function NativeRunPanel({
     },
   };
   const actionPresentation = result?.approval
-    ? actionPresentations[result.status ?? "completed"]
-    : undefined;
+    ? ((result.status === "awaiting_approval" ||
+      result.status === "changes_requested"
+        ? approvalPresentation(result.approval)
+        : null) ?? actionPresentations[result.status ?? "completed"])
+    : result?.status === "waiting_human"
+      ? actionPresentations.waiting_human
+      : undefined;
+  const checkEvidence = events.findLast(
+    (event) => event.validationEvidence,
+  )?.validationEvidence;
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
     if (!pending) return;
@@ -715,7 +1015,7 @@ function NativeRunPanel({
                         : error.startsWith("Run blocked")
                           ? "Run blocked"
                           : "Workflow failed"
-                      : "Ready to run"}
+                      : "Not started"}
         </b>
         <span>
           {statusPresentation
@@ -731,9 +1031,24 @@ function NativeRunPanel({
                       ? `${result.results.length} engineering result(s) ready.`
                       : `${result.outputs?.length ?? 1} output file(s) ready in this workspace.`
                     : error ||
-                      "Run the saved workflow to create its responses and output files."}
+                      "No run has started. Review the setup checks before starting this workflow."}
         </span>
       </div>
+      {!statusPresentation &&
+        !pending &&
+        !reviewPresentation &&
+        !actionPresentation &&
+        !result &&
+        !error && (
+          <button
+            type="button"
+            className="recovery-button recovery-button--secondary"
+            data-testid="workflow-run-open-readiness"
+            onClick={onOpenReadiness}
+          >
+            View run readiness
+          </button>
+        )}
       {refreshError && (
         <div role="alert" data-testid="workflow-run-refresh-error">
           <p>
@@ -757,20 +1072,39 @@ function NativeRunPanel({
           activity is hidden.
         </p>
       )}
-      {observed?.execution && (
-        <p data-testid="workflow-run-observed-metrics">
-          Observed execution · {observed.execution.model_call_count} model calls
-          · {observed.execution.tool_call_count} tool calls started ·{" "}
-          {observed.execution.tool_completed_count} tool calls finished ·{" "}
-          {observed.execution.event_count} events
-          {observed.execution.revision_count
-            ? ` · ${observed.execution.revision_count} design revisions`
-            : ""}
-          {durationMs !== null ? ` · ${(durationMs / 1000).toFixed(1)} s` : ""}
-          {observed.execution.truncated
-            ? " · Open the saved log for full evidence."
-            : ""}
-        </p>
+      {!sourceMismatch && workflow.metadata.purpose && (
+        <section data-testid="workflow-run-purpose">
+          <h3>What this workflow is for</h3>
+          <p>{workflow.metadata.purpose}</p>
+        </section>
+      )}
+      {observed && !sourceMismatch && (
+        <EngineeringRunProgress
+          run={observed}
+          workflow={workflow}
+          onSelectBlock={onSelectBlock}
+        />
+      )}
+      {error && (
+        <section className="recovery-run-problem" role="alert">
+          <h3>What stopped the run</h3>
+          <p>{error}</p>
+          {recordedFailedStep(workflow, observed)?.diagnostic && (
+            <p data-testid="workflow-run-diagnostic">
+              Step reported:{" "}
+              {recordedFailedStep(workflow, observed)!.diagnostic}
+            </p>
+          )}
+          {observed?.execution?.last_progress?.kind === "step_diagnostic" &&
+            observed.execution.last_progress.correction && (
+              <p>{observed.execution.last_progress.correction}</p>
+            )}
+          <p>
+            Inspect the affected step and any results already produced. If an
+            operation may still be running in another application, check that
+            application before retrying.
+          </p>
+        </section>
       )}
       {reviews.error && (
         <div role="alert">
@@ -799,70 +1133,99 @@ function NativeRunPanel({
         <WorkflowExternalApprovalPanel
           initial={result.approval}
           sessionId={workspaceSessionId}
+          onOpenFile={onOpenFile}
+          onUpdate={onApprovalUpdate}
         />
       )}
-      {result?.results?.length ? (
-        <EngineeringResults results={result.results} onOpenFile={onOpenFile} />
-      ) : (
-        (
-          result?.outputs ??
-          (result
-            ? [
-                {
-                  task_id: result.taskId ?? "",
-                  task_title: result.taskTitle,
-                  output_path: result.outputPath,
-                  output_bytes: result.outputBytes,
-                  output_format: "",
-                },
-              ]
-            : [])
-        ).map((output) => (
-          <p
-            className="recovery-native-run__output"
-            key={`${output.task_id}-${output.output_path}`}
+      {checkEvidence && statusPresentation && onOpenFile && (
+        <p>
+          <button
+            type="button"
+            className="recovery-button recovery-button--secondary"
+            data-testid="workflow-open-check-report"
+            onClick={() => onOpenFile(checkEvidence.path)}
           >
-            <span>
-              <b>{output.output_path}</b> ·{" "}
-              {output.output_bytes.toLocaleString("en-US")} bytes
-              <br />
-              <small>
-                {output.task_title}
-                {output.cad_role === "native"
-                  ? " · Native model"
-                  : output.cad_role === "export"
-                    ? " · CAD export"
-                    : ""}
-              </small>
-            </span>
-            {onOpenFile ? (
-              <button
-                type="button"
-                className="recovery-button recovery-button--primary"
-                data-testid="workflow-recovery-native-run-output-link"
-                onClick={() => onOpenFile(output.output_path)}
-              >
-                Open {output.output_path}
-              </button>
-            ) : workspaceSessionId ? (
-              <a
-                className="recovery-button recovery-button--primary"
-                data-testid="workflow-recovery-native-run-output-link"
-                href={workspaceContentUrl(
-                  output.output_path,
-                  workspaceSessionId,
-                )}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open {output.output_path}
-              </a>
-            ) : (
-              "Open the file in the workspace file browser."
-            )}
-          </p>
-        ))
+            Open check report
+          </button>
+        </p>
       )}
+      <details
+        className="recovery-run-results"
+        open={result?.approval?.action_kind !== "local_review"}
+      >
+        <summary>
+          {result?.approval?.action_kind === "local_review"
+            ? "All files produced in this run"
+            : "Results and output files"}
+        </summary>
+        {result?.results?.length ? (
+          <EngineeringResults
+            results={result.results}
+            onOpenFile={onOpenFile}
+          />
+        ) : (
+          (
+            result?.outputs ??
+            (result
+              ? [
+                  {
+                    task_id: result.taskId ?? "",
+                    task_title: result.taskTitle,
+                    output_path: result.outputPath,
+                    output_bytes: result.outputBytes,
+                    output_format: "",
+                  },
+                ]
+              : [])
+          ).map((output) => (
+            <p
+              className="recovery-native-run__output"
+              key={`${output.task_id}-${output.output_path}`}
+            >
+              <span>
+                <b title={output.output_path}>{fileName(output.output_path)}</b>{" "}
+                · {output.output_bytes.toLocaleString("en-US")} bytes
+                <br />
+                <small>
+                  {output.task_title}
+                  {output.cad_role === "native"
+                    ? " · Native model"
+                    : output.cad_role === "export"
+                      ? " · CAD export"
+                      : ""}
+                </small>
+              </span>
+              {onOpenFile ? (
+                <button
+                  type="button"
+                  className="recovery-button recovery-button--primary"
+                  data-testid="workflow-recovery-native-run-output-link"
+                  title={output.output_path}
+                  onClick={() => onOpenFile(output.output_path)}
+                >
+                  Open {fileName(output.output_path)}
+                </button>
+              ) : workspaceSessionId ? (
+                <a
+                  className="recovery-button recovery-button--primary"
+                  data-testid="workflow-recovery-native-run-output-link"
+                  title={output.output_path}
+                  href={workspaceContentUrl(
+                    output.output_path,
+                    workspaceSessionId,
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open {fileName(output.output_path)}
+                </a>
+              ) : (
+                "Open the file in the workspace file browser."
+              )}
+            </p>
+          ))
+        )}
+      </details>
       {!result && partialResults.length > 0 && (
         <section data-testid="workflow-recovery-partial-results">
           <h3>Results produced so far</h3>
@@ -895,10 +1258,11 @@ function NativeRunPanel({
         />
       )}
       {startedAt && dispatchConfirmed && !observed && (
-        <section
+        <details
           className="recovery-native-run__input"
           data-testid="workflow-recovery-native-run-input"
         >
+          <summary>Technical details · task instructions and responses</summary>
           {result?.steps?.length ? (
             result.steps.map((step) => (
               <details key={step.task_id}>
@@ -942,14 +1306,27 @@ function NativeRunPanel({
               <p>{prompt || "Preparing the saved inputs…"}</p>
             </>
           )}
-        </section>
+        </details>
       )}
       <details
         className="recovery-technical-details recovery-native-run__log"
-        open={pending}
         data-testid="workflow-recovery-native-run-log"
       >
         <summary>Technical log and telemetry</summary>
+        {observed?.execution && (
+          <p data-testid="workflow-run-observed-metrics">
+            Observed execution · {observed.execution.model_call_count} model
+            calls · {observed.execution.tool_call_count} tool calls started ·{" "}
+            {observed.execution.tool_completed_count} tool calls finished ·{" "}
+            {observed.execution.event_count} events
+            {observed.execution.revision_count
+              ? ` · ${observed.execution.revision_count} design revisions`
+              : ""}
+            {observed.execution.truncated
+              ? " · Open the saved log for full evidence."
+              : ""}
+          </p>
+        )}
         {(result?.runLogPath || runLogPath) && onOpenFile && (
           <button
             type="button"
@@ -969,6 +1346,42 @@ function NativeRunPanel({
               <div>
                 <b>{event.label}</b>
                 <span>{event.detail}</span>
+                {event.validationEvidence &&
+                  (onOpenFile ? (
+                    <button
+                      type="button"
+                      className="recovery-button recovery-button--secondary"
+                      data-testid="workflow-recovery-open-validation-evidence"
+                      onClick={() => onOpenFile(event.validationEvidence!.path)}
+                    >
+                      Open validation assessment
+                      {event.validationEvidence.assessmentId
+                        ? ` ${event.validationEvidence.assessmentId}`
+                        : ""}
+                    </button>
+                  ) : workspaceSessionId ? (
+                    <a
+                      className="recovery-button recovery-button--secondary"
+                      data-testid="workflow-recovery-open-validation-evidence"
+                      href={workspaceContentUrl(
+                        event.validationEvidence.path,
+                        workspaceSessionId,
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open validation assessment
+                      {event.validationEvidence.assessmentId
+                        ? ` ${event.validationEvidence.assessmentId}`
+                        : ""}
+                    </a>
+                  ) : null)}
+                {event.validationEvidence?.completeResultRef && (
+                  <small>
+                    Complete result:{" "}
+                    {event.validationEvidence.completeResultRef}
+                  </small>
+                )}
               </div>
             </li>
           ))}
@@ -993,11 +1406,21 @@ function NativeRunPanel({
         </div>
         <small>Recorded workflow events and request details.</small>
       </details>
+      {workspaceSessionId && runLogPath && (
+        <RunInstructionsEvidence
+          key={runLogPath}
+          sessionId={workspaceSessionId}
+          runLogPath={runLogPath}
+          onOpenFile={onOpenFile}
+        />
+      )}
       <WorkflowRunHistory
         sessionId={workspaceSessionId}
         path={workflowPath}
         refreshKey={completedAt}
         onOpenFile={onOpenFile}
+        currentSourceDigest={currentSourceDigest}
+        onOpenRunWorkingView={onOpenRunWorkingView}
       />
     </section>
   );
@@ -1011,7 +1434,134 @@ export interface WorkflowRecoveryStoredSource {
   readonly layout?: RecoveryLayout | null;
 }
 
+/** Recorded evidence remains inspectable even when authoring fails closed. */
+function InvalidSourceRunResults({
+  workspaceSessionId,
+  workspaceId,
+  workflowFilePath,
+  storageDigest,
+  onOpenFile,
+  onOpenRunWorkingView,
+}: Pick<
+  WorkflowRecoveryConceptProps,
+  | "workspaceSessionId"
+  | "workspaceId"
+  | "workflowFilePath"
+  | "storageDigest"
+  | "onOpenFile"
+  | "onOpenRunWorkingView"
+>) {
+  const observer = useWorkflowRunObserver(
+    workspaceSessionId,
+    workspaceId,
+    workflowFilePath ?? "",
+    storageDigest ?? "",
+  );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const record = observer.record;
+  const mismatch = Boolean(
+    record &&
+    (record.source_matches_current === false ||
+      (storageDigest && record.source_digest !== storageDigest)),
+  );
+  const results = workflowResultBlocks({
+    workflow: null,
+    results: record?.results,
+    outputs: record?.execution?.outputs,
+    checkpoint: record?.approval,
+    sourceMismatch: mismatch,
+    run: record,
+  });
+  const selected =
+    results.find((result) => result.id === selectedId) ?? results[0];
+  if (!observer.enabled) return null;
+  return (
+    <section
+      className="recovery-saved-run-results"
+      data-testid="workflow-invalid-source-results"
+    >
+      <h2>Results from the saved run</h2>
+      <p>
+        The diagram needs correction, but files already produced remain
+        available. Viewing these results does not correct the workflow or
+        approve the design.
+      </p>
+      <WorkflowRunHistory
+        sessionId={workspaceSessionId}
+        path={workflowFilePath ?? ""}
+        refreshKey={record?.run_id ?? ""}
+        currentSourceDigest={storageDigest}
+        onOpenRunWorkingView={onOpenRunWorkingView}
+        onOpenFile={onOpenFile}
+      />
+      {observer.error && (
+        <p role="status">
+          Could not refresh run status: {observer.error}
+          <button type="button" onClick={observer.refresh}>
+            Refresh saved run
+          </button>
+        </p>
+      )}
+      {!observer.checked && <p role="status">Loading saved run…</p>}
+      {observer.checked && !record && !observer.error && (
+        <p>No saved run was found for this workflow.</p>
+      )}
+      {record && (
+        <>
+          <p>
+            {approvalPresentation(record.approval)?.label ??
+              (record.status === "running"
+                ? "Workflow running"
+                : "Saved execution")}
+          </p>
+          {mismatch && (
+            <p role="status">
+              These results belong to a different saved workflow version. They
+              do not verify the current file.
+            </p>
+          )}
+          <WorkflowResultsNavigator
+            results={results}
+            onSelect={setSelectedId}
+          />
+          {selected && (
+            <WorkflowResultInspector
+              key={selected.id}
+              result={selected}
+              sessionId={workspaceSessionId}
+              onOpenFile={onOpenFile}
+              onSelectProducer={() => undefined}
+            />
+          )}
+          {onOpenFile && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              onClick={() => onOpenFile(record.path)}
+            >
+              Open saved run log
+            </button>
+          )}
+          {record.approval && workspaceSessionId && (
+            <WorkflowExternalApprovalPanel
+              key={`${record.run_id}:${record.approval.checkpoint_id}`}
+              initial={record.approval}
+              sessionId={workspaceSessionId}
+              onOpenFile={onOpenFile}
+              onUpdate={observer.refresh}
+            />
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
 export function WorkflowRecoveryConcept({
+  onLoadInstructionDefaults,
+  onReviewInstructionProtocolUpgrade,
+  onExportSource,
+  onUnsavedChange,
   simulationPreview = false,
   surfaceState = "ready",
   onRetry = () => undefined,
@@ -1020,6 +1570,7 @@ export function WorkflowRecoveryConcept({
   storageDigest,
   workflowFilePath = "workflows/mounting-bracket.workflow.wflow",
   reopenRequest = 0,
+  navigation,
   workflowLayout,
   workspaceSessionId,
   workspaceId,
@@ -1031,6 +1582,7 @@ export function WorkflowRecoveryConcept({
   templateReadiness,
   onRefreshTemplateReadiness,
   onOpenFile,
+  onOpenRunWorkingView,
   fileActions,
 }: WorkflowRecoveryConceptProps = {}) {
   if (surfaceState === "loading") {
@@ -1072,24 +1624,38 @@ export function WorkflowRecoveryConcept({
     const issue = loaded.diagnostics[0];
     return (
       <section
-        className="workflow-recovery recovery-boundary-state"
+        className="workflow-recovery recovery-invalid-source"
         data-testid="workflow-recovery-concept"
         data-surface-state="invalid-source"
-        role="alert"
       >
-        <b>Workflow file needs correction.</b>
-        <span>
-          {issue?.explanation ?? "The saved engineering source is invalid."}
-        </span>
-        <small>
-          {issue?.code ?? "WFR-SOURCE-INVALID"} · The accepted diagram was not
-          replaced with fallback content.
-        </small>
+        <div className="recovery-invalid-source__warning" role="alert">
+          <b>Workflow file needs correction.</b>
+          <span>
+            {issue?.explanation ?? "The saved engineering source is invalid."}
+          </span>
+          <small>
+            {issue?.code ?? "WFR-SOURCE-INVALID"} · The accepted diagram was not
+            replaced with fallback content.
+          </small>
+        </div>
+        <InvalidSourceRunResults
+          key={`${workspaceSessionId}:${workspaceId}:${workflowFilePath}`}
+          workspaceSessionId={workspaceSessionId}
+          workspaceId={workspaceId}
+          workflowFilePath={workflowFilePath}
+          storageDigest={storageDigest}
+          onOpenFile={onOpenFile}
+          onOpenRunWorkingView={onOpenRunWorkingView}
+        />
       </section>
     );
   }
   return (
     <WorkflowRecoveryReadyConcept
+      onLoadInstructionDefaults={onLoadInstructionDefaults}
+      onReviewInstructionProtocolUpgrade={onReviewInstructionProtocolUpgrade}
+      onExportSource={onExportSource}
+      onUnsavedChange={onUnsavedChange}
       simulationPreview={simulationPreview}
       loadedWorkflow={loaded.workflow}
       workflowSource={workflowSource}
@@ -1097,6 +1663,7 @@ export function WorkflowRecoveryConcept({
       storageDigest={storageDigest}
       workflowFilePath={workflowFilePath}
       reopenRequest={reopenRequest}
+      navigation={navigation}
       workflowLayout={workflowLayout}
       workspaceSessionId={workspaceSessionId}
       workspaceId={workspaceId}
@@ -1108,6 +1675,7 @@ export function WorkflowRecoveryConcept({
       templateReadiness={templateReadiness}
       onRefreshTemplateReadiness={onRefreshTemplateReadiness}
       onOpenFile={onOpenFile}
+      onOpenRunWorkingView={onOpenRunWorkingView}
       fileActions={fileActions}
     />
   );
@@ -1583,6 +2151,16 @@ function runDefinitionLockDiagnostic(): RecoveryDiagnostic {
 }
 
 interface WorkflowRecoveryReadyConceptProps {
+  readonly onLoadInstructionDefaults?: () => Promise<
+    import("../../services/workspace-service").WorkflowInstructionDefaultsDocument
+  >;
+  readonly onReviewInstructionProtocolUpgrade?: (
+    current: import("./workflow-instructions").WorkflowInstructionSet,
+  ) => Promise<
+    import("../../services/workspace-service").WorkflowInstructionUpgradeProposal
+  >;
+  readonly onExportSource?: () => void | Promise<void>;
+  readonly onUnsavedChange?: (unsaved: boolean) => void;
   readonly simulationPreview: boolean;
   readonly loadedWorkflow: RecoveryWorkflow;
   readonly workflowSource: string;
@@ -1590,6 +2168,7 @@ interface WorkflowRecoveryReadyConceptProps {
   readonly storageDigest?: string;
   readonly workflowFilePath: string;
   readonly reopenRequest: number;
+  readonly navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
   readonly workflowLayout?: RecoveryLayout;
   readonly workspaceSessionId?: string;
   readonly workspaceId?: string;
@@ -1603,6 +2182,7 @@ interface WorkflowRecoveryReadyConceptProps {
     canReplace?: (stored: WorkflowRecoveryStoredSource) => boolean,
   ) => Promise<void>;
   readonly onOpenFile?: (path: string) => void;
+  readonly onOpenRunWorkingView?: (runId: string, sourceDigest: string) => void;
   readonly fileActions?: ReactNode;
   readonly onRun?: (
     options?: WorkflowRunOptions,
@@ -1612,6 +2192,10 @@ interface WorkflowRecoveryReadyConceptProps {
 }
 
 function WorkflowRecoveryReadyConcept({
+  onLoadInstructionDefaults,
+  onReviewInstructionProtocolUpgrade,
+  onExportSource,
+  onUnsavedChange,
   simulationPreview,
   loadedWorkflow,
   workflowSource,
@@ -1619,6 +2203,7 @@ function WorkflowRecoveryReadyConcept({
   storageDigest,
   workflowFilePath,
   reopenRequest,
+  navigation,
   workflowLayout,
   workspaceSessionId,
   workspaceId,
@@ -1630,6 +2215,7 @@ function WorkflowRecoveryReadyConcept({
   templateReadiness,
   onRefreshTemplateReadiness,
   onOpenFile,
+  onOpenRunWorkingView,
   fileActions,
 }: WorkflowRecoveryReadyConceptProps) {
   const loadedDocumentKeyRef = useRef(
@@ -1652,12 +2238,52 @@ function WorkflowRecoveryReadyConcept({
   const [view, setView] = useState<ViewMode>("diagram");
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>("overview");
   const [inspectorOpen, setInspectorOpen] = useState(false);
+  const inspectorBodyRef = useRef<HTMLDivElement>(null);
+  const runDrawerRef = useRef<HTMLElement>(null);
+  const runReadinessRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (inspectorBodyRef.current) inspectorBodyRef.current.scrollTop = 0;
+  }, [selectedId, inspectorOpen]);
+  const focusedNavigation = useRef<string | undefined>(undefined);
+  const [navigationMessage, setNavigationMessage] = useState("");
+  useEffect(() => {
+    if (!navigation || focusedNavigation.current === navigation.requestId)
+      return;
+    const { process, target } = navigation.resolution;
+    if (
+      process.workspace_id !== workspaceId ||
+      process.source_path !== workflowFilePath.replace(/^\/+/, "") ||
+      process.source_digest !== storageDigest
+    ) {
+      focusedNavigation.current = navigation.requestId;
+      setInspectorOpen(true);
+      setNavigationMessage(
+        "This link refers to a different saved workflow revision. Your open edits are preserved. Open the matching recorded process to inspect it.",
+      );
+      return;
+    }
+    if (target.kind !== "process" && target.kind !== "block") return;
+    focusedNavigation.current = navigation.requestId;
+    setNavigationMessage("");
+    if (target.block_id) {
+      setInspectorOpen(true);
+      const semanticId = recoveryAuthoringBlockId(workflow, target.block_id);
+      if (workflow.blocks.some((block) => block.id === semanticId))
+        setSelectedId(semanticId);
+      else
+        setNavigationMessage(
+          "This step is absent from the open workflow draft. Your edits are preserved; inspect the saved definition before following this link.",
+        );
+    }
+  }, [navigation, workspaceId, workflowFilePath, storageDigest, workflow]);
   const [runDetailsOpen, setRunDetailsOpen] = useState(false);
+  const [runDetailsExpanded, setRunDetailsExpanded] = useState(false);
   const [focusPath, setFocusPath] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [diagnostics, setDiagnostics] = useState<RecoveryDiagnostic[]>([]);
   const checkButtonRef = useRef<HTMLButtonElement>(null);
   const [sourceDraft, setSourceDraft] = useState(workflowSource);
+  const [savedSource, setSavedSource] = useState(workflowSource);
   const [sourceDirty, setSourceDirty] = useState(false);
   const [savedSemanticIdentity, setSavedSemanticIdentity] = useState(() =>
     contentIdentity(loadedWorkflow),
@@ -1671,6 +2297,7 @@ function WorkflowRecoveryReadyConcept({
     "saved" | "saving" | "error" | "conflict"
   >("saved");
   const [saveMessage, setSaveMessage] = useState("");
+  const savePendingRef = useRef(false);
   const [saveConflict, setSaveConflict] = useState(false);
   const [storedComparison, setStoredComparison] =
     useState<WorkflowRecoveryStoredSource | null>(null);
@@ -1688,6 +2315,7 @@ function WorkflowRecoveryReadyConcept({
     | "source-compare"
     | "reload-stored"
     | "run-preflight"
+    | "instructions"
   >("none");
   const [portTreatment, setPortTreatment] = useState<PortTreatment>("dot");
   const [proposal, setProposal] = useState<RecoveryCommandBatch | null>(null);
@@ -1701,6 +2329,8 @@ function WorkflowRecoveryReadyConcept({
   const [runOverride, setRunOverride] = useState<RecoveryRunState | null>(null);
   const [workflowRun, setWorkflowRun] =
     useState<WorkflowRecoveryRunResult | null>(null);
+  const [approvalOverride, setApprovalOverride] =
+    useState<WorkflowApprovalCheckpoint | null>(null);
   const [workflowRunError, setWorkflowRunError] = useState("");
   const runAbort = useRef<AbortController | null>(null);
   const runStartInFlight = useRef(false);
@@ -1711,6 +2341,8 @@ function WorkflowRecoveryReadyConcept({
     useState(false);
   const [nativeRunCompletedAt, setNativeRunCompletedAt] = useState("");
   const [nativeRunEvents, setNativeRunEvents] = useState<NativeRunEvent[]>([]);
+  const [nativeValidationProgress, setNativeValidationProgress] =
+    useState<WorkspaceWorkflowRunEvent | null>(null);
   const [nativePartialResults, setNativePartialResults] = useState<
     WorkspaceEngineeringResult[]
   >([]);
@@ -1737,10 +2369,11 @@ function WorkflowRecoveryReadyConcept({
     startedAt: nativeRunStartedAt,
     logPath: nativeRunLogPath || workflowRun?.runLogPath || "",
     hasResult: Boolean(workflowRun),
+    status: workflowRun?.status,
   })
     ? observer.record
     : null;
-  const presentedRun = useMemo<WorkflowRecoveryRunResult | null>(() => {
+  const recordedRun = useMemo<WorkflowRecoveryRunResult | null>(() => {
     if (!observed)
       return workflowRun &&
         observer.record &&
@@ -1752,6 +2385,7 @@ function WorkflowRecoveryReadyConcept({
       ![
         "completed",
         "pending_review",
+        "waiting_human",
         "changes_requested",
         "awaiting_approval",
         "awaiting_external_outcome",
@@ -1779,7 +2413,20 @@ function WorkflowRecoveryReadyConcept({
       results: observed.results,
     };
   }, [observed, workflowRun, observer.record]);
+  const presentedRun =
+    recordedRun &&
+    approvalOverride &&
+    recordedRun.approval?.checkpoint_id === approvalOverride.checkpoint_id &&
+    approvalOverride.updated_at >= recordedRun.approval.updated_at
+      ? { ...recordedRun, approval: approvalOverride }
+      : recordedRun;
   const presentedPending = workflowRunPending || observed?.status === "running";
+  const presentedInputWait = presentedRun?.status === "waiting_human";
+  const inputWaitRunId = presentedInputWait ? presentedRun.runId : undefined;
+  const inputWaitSourceDigest =
+    observed?.source_digest ??
+    presentedRun?.inputCheckpoint?.subject.definition_digest ??
+    storageDigest;
   const presentedError = observed
     ? observed.status === "cancelled"
       ? "Workflow cancelled. An application operation already submitted may still be running. Check the saved run before retrying."
@@ -1810,9 +2457,15 @@ function WorkflowRecoveryReadyConcept({
               {
                 at: observed.execution.last_progress.at ?? observed.started_at,
                 label:
+                  validationRunPresentation(observed.execution.last_progress)
+                    ?.label ??
                   observed.execution.last_progress.message ??
                   observed.execution.last_progress.kind.replaceAll("_", " "),
                 detail: observed.execution.last_progress.task_title ?? "",
+                validationEvidence:
+                  validationEvidenceReference(
+                    observed.execution.last_progress,
+                  ) ?? undefined,
               },
             ]
           : []
@@ -1835,13 +2488,13 @@ function WorkflowRecoveryReadyConcept({
       ? {
           label: "Execution interrupted",
           detail:
-            "The workflow no longer owns its execution lease. An already submitted application operation may still be running; inspect the saved run before retrying.",
+            "The connection to the running workflow was interrupted. An operation already submitted to another application may still be running; check that application and the saved run before retrying.",
         }
       : observed?.status === "unknown"
         ? {
             label: "Execution status unknown",
             detail:
-              "Wright cannot confirm who owns this execution. Its last recorded activity and results are preserved.",
+              "Wright cannot confirm whether the workflow is still running. Its last recorded activity and results are preserved. Check before starting another run.",
           }
         : observer.enabled && !observer.checked && !nativeRunStartedAt
           ? {
@@ -1854,6 +2507,12 @@ function WorkflowRecoveryReadyConcept({
                 detail: "Refresh status before starting another run.",
               }
             : null;
+  const validationStatus = validationRunPresentation(
+    observed?.execution?.last_progress ?? nativeValidationProgress,
+  );
+  const presentedStatus =
+    observedStatus ??
+    (presentedPending || presentedError ? validationStatus : null);
   useEffect(() => {
     if (!simulationPreview) {
       setRunStage(0);
@@ -1933,6 +2592,11 @@ function WorkflowRecoveryReadyConcept({
   );
   const layoutDirty =
     canonicalLayoutPositionBytes(layout) !== savedLayoutIdentity;
+  useEffect(() => {
+    onUnsavedChange?.(
+      semanticDirty || sourceDirty || layoutDirty || proposal !== null,
+    );
+  }, [onUnsavedChange, semanticDirty, sourceDirty, layoutDirty, proposal]);
   const reopenState = useRef({
     dirty: false,
     busy: false,
@@ -2142,6 +2806,40 @@ function WorkflowRecoveryReadyConcept({
     /^sha256:([a-f0-9]{64})$/.exec(persistedSemanticDigest)?.[1] ?? null;
   const layoutDigest = useSha256(canonicalLayoutBytes(layout));
   const inspectionWorkflow = proposal !== null ? candidateWorkflow : workflow;
+  const resultBlocks = useMemo(
+    () =>
+      workflowResultBlocks({
+        workflow: inspectionWorkflow,
+        results:
+          presentedRun?.results ?? observed?.results ?? nativePartialResults,
+        outputs: presentedRun?.outputs ?? observed?.execution?.outputs ?? [],
+        checkpoint: presentedRun?.approval ?? observed?.approval,
+        run: observed,
+        sourceMismatch:
+          observedSourceMismatch ||
+          semanticDirty ||
+          sourceDirty ||
+          proposal !== null,
+      }),
+    [
+      inspectionWorkflow,
+      presentedRun,
+      observed,
+      nativePartialResults,
+      observedSourceMismatch,
+      semanticDirty,
+      sourceDirty,
+      proposal,
+    ],
+  );
+  const selectedResult =
+    resultBlocks.find((result) => result.id === selectedId) ?? null;
+  const failedRunStep = observedSourceMismatch
+    ? null
+    : recordedFailedStep(inspectionWorkflow, observed);
+  const runWasCancelled =
+    observed?.status === "cancelled" ||
+    presentedError.startsWith("Workflow cancelled.");
   const selectedBlock = findBlock(inspectionWorkflow, selectedId);
   const selectedRelationship =
     inspectionWorkflow.relationships.find((item) => item.id === selectedId) ??
@@ -2175,9 +2873,12 @@ function WorkflowRecoveryReadyConcept({
   const hasInspection =
     inspectorOpen &&
     (selectedBlock !== null ||
+      selectedResult !== null ||
       selectedPort !== null ||
-      selectedRelationship !== null);
+      selectedRelationship !== null ||
+      !!navigationMessage);
   const selectObject = (id: string | null, tab: InspectorTab = "overview") => {
+    if (inspectorBodyRef.current) inspectorBodyRef.current.scrollTop = 0;
     const block = findBlock(inspectionWorkflow, id);
     const preferredTab =
       tab === "overview" &&
@@ -2188,6 +2889,17 @@ function WorkflowRecoveryReadyConcept({
     setSelectedId(id);
     setInspectorOpen(id !== null);
     setInspectorTab(preferredTab);
+  };
+  const showRunDetails = () => {
+    setRunDetailsOpen(true);
+    setRunDetailsExpanded(true);
+    requestAnimationFrame(() => {
+      const body = runDrawerRef.current?.querySelector<HTMLDivElement>(
+        ".recovery-run-drawer__body",
+      );
+      if (body) body.scrollTop = 0;
+      runDrawerRef.current?.scrollIntoView({ block: "nearest" });
+    });
   };
   const requestDelete = (id: string) => {
     setDeleteTargetId(id);
@@ -2229,6 +2941,7 @@ function WorkflowRecoveryReadyConcept({
     setLayout(incomingLayout);
     setSavedLayoutIdentity(canonicalLayoutPositionBytes(incomingLayout));
     setSourceDraft(workflowSource);
+    setSavedSource(workflowSource);
     setSourceDirty(false);
     setSavedSemanticIdentity(contentIdentity(incoming));
     setHostDefinitionRevision(definitionRevision);
@@ -2292,6 +3005,7 @@ function WorkflowRecoveryReadyConcept({
   };
 
   const applyBatch = (batch: RecoveryCommandBatch) => {
+    if (savePendingRef.current) return false;
     const result = applyRecoveryBatch(workflow, layout, batch);
     if (!result.ok) {
       setDiagnostics(result.diagnostics);
@@ -2335,6 +3049,7 @@ function WorkflowRecoveryReadyConcept({
   };
 
   const restore = (snapshot: Snapshot, direction: "undo" | "redo") => {
+    if (savePendingRef.current) return;
     const current = {
       workflow: cloneWorkflow(workflow),
       layout: cloneLayout(layout),
@@ -2398,6 +3113,13 @@ function WorkflowRecoveryReadyConcept({
         (port) => port.id === sourceId,
       );
     }
+    if (owner && isPromptBlock(owner) && target.name === "Reference image")
+      return (
+        isImageSource(sourceId, workflow) &&
+        promptSourceCandidates(owner, workflow, true).some(
+          (port) => port.id === sourceId,
+        )
+      );
     if (owner && isMcpBlock(owner))
       return mcpCandidates(owner, workflow, target).some(
         (p) => p.id === sourceId,
@@ -2505,6 +3227,13 @@ function WorkflowRecoveryReadyConcept({
         );
         return;
       }
+      if (owner && isPromptBlock(owner) && target.name === "Reference image") {
+        applyCommands(
+          "graph",
+          connectReferenceCommands(owner, workflow, source.id, target.id),
+        );
+        return;
+      }
       const known =
         source.id === "port.approved-geometry-out" &&
         target.id === "port.approved-geometry-in";
@@ -2540,6 +3269,7 @@ function WorkflowRecoveryReadyConcept({
   };
 
   const applySource = () => {
+    if (savePendingRef.current) return;
     const parsed = parseRecoveryAuthoringSource(sourceDraft, workflow);
     if (!parsed.ok || !parsed.workflow) {
       setDiagnostics(parsed.diagnostics);
@@ -2560,6 +3290,7 @@ function WorkflowRecoveryReadyConcept({
   };
 
   const requestProposal = () => {
+    if (savePendingRef.current) return;
     if (sourceDirty) {
       setDiagnostics([
         {
@@ -2660,6 +3391,7 @@ function WorkflowRecoveryReadyConcept({
     }
     if (
       presentedPending ||
+      presentedInputWait ||
       (observer.enabled &&
         (!observer.checked || Boolean(observer.error && !observer.record)))
     )
@@ -2713,6 +3445,7 @@ function WorkflowRecoveryReadyConcept({
       }
       setWorkflowRun(null);
       setWorkflowRunError("");
+      setNativeValidationProgress(null);
       // Source `prompt` maps to canonical block.instructions. Capture the saved
       // subject now so later edits cannot rewrite the input shown for this run.
       const savedBlock = subject.workflow.blocks.find(
@@ -2753,6 +3486,15 @@ function WorkflowRecoveryReadyConcept({
           signal: runAbort.current?.signal,
           expectedStorageDigest: subject.storageDigest,
           onEvent: (event) => {
+            if (
+              [
+                "design_check",
+                "design_revision",
+                "validation_feedback_delivered",
+                "validation_exhausted",
+              ].includes(event.kind)
+            )
+              setNativeValidationProgress(event);
             if (event.kind === "run_started") {
               executionConfirmed = true;
               setNativeRunDispatchConfirmed(true);
@@ -2823,18 +3565,33 @@ function WorkflowRecoveryReadyConcept({
                       : {
                           review_requested: "Awaiting your review",
                           approval_requested: "Awaiting exact action approval",
-                          design_check: `Design check: ${event.report?.verdict ?? "reviewed"}`,
-                          design_revision: `Correcting design · revision ${event.revision}`,
+                          design_check:
+                            validationRunPresentation(event)?.label ??
+                            `Design check: ${event.report?.verdict ?? "reviewed"}`,
+                          design_revision: `Repairing output${event.revision === undefined ? "" : ` · revision ${event.revision}`}`,
+                          validation_feedback_delivered:
+                            "Correction feedback delivered",
+                          validation_exhausted: "Correction budget exhausted",
                           run_started: "Run log opened",
                           result_ready: "Result ready",
                           step_started: "Step started",
                           step_completed: "Response validated",
+                          input_requested: "Waiting for your input",
+                          instructions_resolved: "Instructions resolved",
+                          model_invocation: "Model request recorded",
+                          model_invocation_result:
+                            "Model request results recorded",
+                          assumptions_recorded: "Assumptions recorded",
+                          input_condition_evaluated:
+                            "Declared input condition checked",
                           output_saved: "File saved",
                           task_progress: "Task progress",
                           tool_started: "Tool started",
                           tool_completed: "Tool result",
                         }[event.kind],
-                detail: `${event.task_title} · ${event.report ? event.report.corrections.join(" ") : (event.message ?? event.tool ?? event.output_path ?? "")}${event.arguments ? ` · ${JSON.stringify(event.arguments)}` : ""}${event.kind === "tool_completed" ? ` · ${event.status}: ${event.text ?? ""}` : ""}`,
+                detail: `${event.task_title} · ${event.report ? event.report.corrections.join(" ") : (event.message ?? event.tool ?? event.output_path ?? validationRunPresentation(event)?.detail ?? "")}${event.arguments ? ` · ${JSON.stringify(event.arguments)}` : ""}${event.kind === "tool_completed" ? ` · ${event.status}: ${event.text ?? ""}` : ""}`,
+                validationEvidence:
+                  validationEvidenceReference(event) ?? undefined,
               },
             ]);
           },
@@ -2847,14 +3604,19 @@ function WorkflowRecoveryReadyConcept({
           {
             at: completedAt,
             label:
-              result.status === "pending_review"
-                ? "Awaiting your review"
-                : result.status === "awaiting_approval"
-                  ? "Awaiting exact action approval"
-                  : "Run completed",
-            detail: result.outputPath
-              ? `${result.outputPath} was saved in this workspace (${result.outputBytes.toLocaleString("en-US")} bytes).`
-              : `${result.results?.length ?? 0} engineering result(s) produced; open the results to review them.`,
+              result.status === "waiting_human"
+                ? "Waiting for your input"
+                : result.status === "pending_review"
+                  ? "Awaiting your review"
+                  : result.status === "awaiting_approval"
+                    ? "Awaiting exact action approval"
+                    : "Run completed",
+            detail:
+              result.status === "waiting_human"
+                ? "Answer the declared question in the working view to continue this same run."
+                : result.outputPath
+                  ? `${result.outputPath} was saved in this workspace (${result.outputBytes.toLocaleString("en-US")} bytes).`
+                  : `${result.results?.length ?? 0} engineering result(s) produced; open the results to review them.`,
           },
         ]);
       } catch (error) {
@@ -2922,6 +3684,7 @@ function WorkflowRecoveryReadyConcept({
       !sourceValid ||
       (!semanticDirty && !layoutDirty) ||
       saveState === "saving" ||
+      savePendingRef.current ||
       saveConflict
     )
       return null;
@@ -2948,11 +3711,16 @@ function WorkflowRecoveryReadyConcept({
       );
       return null;
     }
+    savePendingRef.current = true;
     setSaveState("saving");
     setSaveMessage("");
     try {
       const saved = await onSave(
-        formatRecoveryAuthoringSource(workflowToSave).text,
+        // A layout move must not rewrite accepted source or invalidate its
+        // exact revision, run inputs, results, and review subjects.
+        contentIdentity(workflowToSave) === savedSemanticIdentity
+          ? savedSource
+          : formatRecoveryAuthoringSource(workflowToSave).text,
         cloneLayout(layout),
       );
       if (
@@ -2993,6 +3761,7 @@ function WorkflowRecoveryReadyConcept({
       );
       setSavedSemanticIdentity(contentIdentity(rebasedWorkflow));
       setSourceDraft(saved.source);
+      setSavedSource(saved.source);
       setSourceDirty(false);
       setSaveState("saved");
       setSaveMessage("Saved in workspace");
@@ -3016,6 +3785,8 @@ function WorkflowRecoveryReadyConcept({
             : "The workflow could not be saved. Your local edits are still here.",
       );
       return null;
+    } finally {
+      savePendingRef.current = false;
     }
   };
 
@@ -3089,9 +3860,16 @@ function WorkflowRecoveryReadyConcept({
       >
         <div className="recovery-filebar__identity">
           <div>
-            <h1 title={`${visibleFileName} · ${visibleFileStatus}`}>
-              {workflow.metadata.title}
-            </h1>
+            <WorkflowNameHeading
+              title={workflow.metadata.title}
+              fileTitle={`${visibleFileName} · ${visibleFileStatus}`}
+              readOnly={blockEditorReadOnly}
+              onRename={(title) =>
+                applyCommands("form", [
+                  { kind: "set_workflow_metadata", patch: { title } },
+                ])
+              }
+            />
           </div>
         </div>
         {simulationPreview && (
@@ -3172,6 +3950,14 @@ function WorkflowRecoveryReadyConcept({
             ))}
           </div>
           <div className="recovery-toolbar__actions">
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-recovery-instructions"
+              onClick={() => setModal("instructions")}
+            >
+              Instructions
+            </button>
             {onSave && (
               <span
                 className={`recovery-save-status recovery-save-status--${visibleSaveState}`}
@@ -3201,7 +3987,11 @@ function WorkflowRecoveryReadyConcept({
               data-testid="workflow-recovery-undo"
               aria-label="Undo"
               title="Undo"
-              disabled={workflowRunPending || undoStack.length === 0}
+              disabled={
+                workflowRunPending ||
+                saveState === "saving" ||
+                undoStack.length === 0
+              }
               onClick={() => restore(undoStack.at(-1)!, "undo")}
             >
               ↶
@@ -3212,7 +4002,11 @@ function WorkflowRecoveryReadyConcept({
               data-testid="workflow-recovery-redo"
               aria-label="Redo"
               title="Redo"
-              disabled={workflowRunPending || redoStack.length === 0}
+              disabled={
+                workflowRunPending ||
+                saveState === "saving" ||
+                redoStack.length === 0
+              }
               onClick={() => restore(redoStack.at(-1)!, "redo")}
             >
               ↷
@@ -3320,6 +4114,7 @@ function WorkflowRecoveryReadyConcept({
               </button>
             )}
             <AuthoringRunReadiness
+              detailsRef={runReadinessRef}
               workflow={workflow}
               saved={
                 !semanticDirty &&
@@ -3340,15 +4135,20 @@ function WorkflowRecoveryReadyConcept({
               data-testid="workflow-recovery-run-start"
               disabled={
                 presentedPending ||
+                presentedInputWait ||
                 (observer.enabled &&
                   (!observer.checked ||
                     Boolean(observer.error && !observer.record))) ||
                 saveState === "saving" ||
+                (Boolean(onRun) &&
+                  (sourceDirty || !sourceValid || saveConflict)) ||
                 (simulationPreview && !canRun)
               }
               title={
                 onRun
-                  ? "Run the saved workspace workflow"
+                  ? presentedInputWait
+                    ? "Answer the pending question in the working view to continue this run"
+                    : "Run the saved workspace workflow"
                   : simulationPreview
                     ? canRun
                       ? "Run the fixed local example. No AI, CAD, or external tool is executed."
@@ -3374,8 +4174,93 @@ function WorkflowRecoveryReadyConcept({
         {fileActions}
       </header>
 
+      {onRun && presentedInputWait && (
+        <section
+          className="recovery-runbar"
+          role="status"
+          data-testid="workflow-run-input-wait"
+        >
+          <div>
+            <b>Waiting for your input</b>
+            <p>
+              {presentedRun?.inputCheckpoint?.subject.declaration
+                .instructions ??
+                observed?.execution?.last_progress?.message ??
+                "The workflow is paused at its declared input step."}
+            </p>
+            <p>
+              Answer in the working view to continue this same run. Completed
+              work is retained.
+            </p>
+          </div>
+          {onOpenRunWorkingView && inputWaitRunId && inputWaitSourceDigest && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-run-answer-input"
+              onClick={() =>
+                onOpenRunWorkingView(inputWaitRunId, inputWaitSourceDigest)
+              }
+            >
+              Answer in working view
+            </button>
+          )}
+        </section>
+      )}
+
+      {onRun && presentedError && !presentedPending && (
+        <section
+          className={`recovery-run-failure-banner${runWasCancelled ? " is-cancelled" : ""}`}
+          data-testid="workflow-run-failure-banner"
+          role={runWasCancelled ? "status" : "alert"}
+        >
+          <div>
+            <b>
+              {runWasCancelled
+                ? "Run cancelled"
+                : observedSourceMismatch
+                  ? "Saved run failed"
+                  : presentedError.startsWith("Run blocked")
+                    ? "Run blocked"
+                    : "Workflow failed"}
+            </b>
+            <p
+              className="recovery-run-failure-banner__message"
+              title={failedRunStep?.diagnostic ?? presentedError}
+            >
+              {failedRunStep?.diagnostic
+                ? `Step reported: ${failedRunStep.diagnostic}`
+                : presentedError}
+            </p>
+            {observedSourceMismatch && (
+              <small>This error belongs to an earlier workflow version.</small>
+            )}
+          </div>
+          <div className="recovery-run-failure-banner__actions">
+            {failedRunStep?.id && (
+              <button
+                type="button"
+                className="recovery-button recovery-button--secondary"
+                data-testid="workflow-run-failure-step"
+                onClick={() => selectObject(failedRunStep.id!)}
+              >
+                Inspect failed step
+              </button>
+            )}
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-run-failure-details"
+              onClick={showRunDetails}
+            >
+              View error details
+            </button>
+          </div>
+        </section>
+      )}
+
       <div
-        className={`recovery-workbench ${hasInspection ? "recovery-workbench--inspecting" : ""}`}
+        className={`recovery-workbench ${hasInspection ? "recovery-workbench--inspecting" : ""}${hasInspection && selectedResult ? " recovery-workbench--result-viewing" : ""}`}
       >
         <AuthoringCreateRail
           onCreateServer={(server) => {
@@ -3415,12 +4300,16 @@ function WorkflowRecoveryReadyConcept({
                 workflow={workflow}
                 onSelect={(id) => selectObject(id)}
               />
+              <WorkflowResultsNavigator
+                results={resultBlocks}
+                onSelect={(id) => selectObject(id)}
+              />
               <button
                 type="button"
                 className="recovery-button recovery-button--secondary"
                 data-testid="workflow-recovery-focus-path"
                 aria-pressed={focusPath}
-                disabled={!selectedId}
+                disabled={!selectedId || selectedResult !== null}
                 onClick={() => setFocusPath(!focusPath)}
               >
                 Focus path
@@ -3448,27 +4337,42 @@ function WorkflowRecoveryReadyConcept({
           {(view === "diagram" || view === "split") && (
             <RecoveryCanvasRuntimeProvider
               value={{
+                resultBlocks,
                 hiddenPorts,
                 outputLabels: cadOutputs.labels,
                 outputGroups: cadOutputs.groups,
                 executionLabels: Object.fromEntries(
                   candidateWorkflow.blocks.map((block) => {
                     const template = block.configuration.authoring_template;
-                    const server = String(block.configuration.mcp_server ?? "");
                     const tool = String(block.configuration.mcp_tool ?? "");
                     const binding = candidateWorkflow.bindings.find(
                       (item) => item.id === block.bindingId,
                     );
+                    const serverName = String(
+                      block.configuration.mcp_server_name ?? "",
+                    ).trim();
+                    const serviceLabel =
+                      serverName &&
+                      !/^[a-f0-9]{8}-[a-f0-9-]{27,}$/i.test(serverName)
+                        ? serverName
+                        : "Configured tool service";
                     const label =
-                      template === "mcp-task"
-                        ? `MCP server: ${String(block.configuration.mcp_server_name ?? server)} · AI-selected operation`
-                        : template === "mcp-tool"
-                          ? `MCP tool: ${server} / ${tool}`
-                          : block.executionKind === "human"
-                            ? "Human review"
-                            : binding
-                              ? `${binding.kind === "internal" ? "Internal" : binding.kind} · ${binding.capabilityName}`
-                              : "Execution binding not selected";
+                      template === "ai-prompt" &&
+                      block.configuration.image_output
+                        ? "Configured AI · Image output"
+                        : template === "ai-prompt"
+                          ? promptConfigurationLabel(block, candidateWorkflow)
+                          : template === "mcp-task"
+                            ? `${serviceLabel} · AI-assisted step`
+                            : template === "mcp-tool"
+                              ? `Tool: ${tool.replaceAll("_", " ") || "Not selected"}`
+                              : block.executionKind === "human"
+                                ? isHumanInputBlock(block)
+                                  ? "Declared user input"
+                                  : "Human review"
+                                : binding
+                                  ? `${binding.kind === "internal" ? "Internal" : binding.kind} · ${binding.capabilityName}`
+                                  : "Automation not configured";
                     return [block.id, label];
                   }),
                 ),
@@ -3561,8 +4465,10 @@ function WorkflowRecoveryReadyConcept({
                 spellCheck={false}
                 aria-label="Workflow source"
                 data-testid="workflow-recovery-source-editor"
+                readOnly={saveState === "saving"}
                 value={sourceDraft}
                 onChange={(event) => {
+                  if (savePendingRef.current) return;
                   setSourceDraft(event.target.value);
                   setSourceDirty(event.target.value !== formatted.text);
                   setSaveState("saved");
@@ -3582,11 +4488,13 @@ function WorkflowRecoveryReadyConcept({
               />
               <footer>
                 <span>
-                  {sourceDirty
-                    ? "Unapplied source edit"
-                    : semanticDirty
-                      ? "Applied locally · not saved"
-                      : "Matches the saved workflow"}
+                  {saveState === "saving"
+                    ? "Saving this version. Editing resumes when the save finishes."
+                    : sourceDirty
+                      ? "Unapplied source edit"
+                      : semanticDirty
+                        ? "Applied locally · not saved"
+                        : "Matches the saved workflow"}
                 </span>
                 <details className="recovery-code__managed">
                   <summary data-testid="workflow-recovery-source-managed-details">
@@ -3601,6 +4509,7 @@ function WorkflowRecoveryReadyConcept({
                   type="button"
                   className="recovery-button recovery-button--primary"
                   data-testid="workflow-recovery-source-apply"
+                  disabled={saveState === "saving"}
                   onClick={applySource}
                 >
                   Apply checked edit
@@ -3666,7 +4575,7 @@ function WorkflowRecoveryReadyConcept({
             data-testid="workflow-recovery-inspector"
           >
             <div className="recovery-inspector__titlebar">
-              <b>Inspector</b>
+              <b>{selectedResult ? "Result viewer" : "Inspector"}</b>
               <button
                 type="button"
                 data-testid="workflow-recovery-inspector-close"
@@ -3676,6 +4585,11 @@ function WorkflowRecoveryReadyConcept({
                 ⌄
               </button>
             </div>
+            {navigationMessage && (
+              <p role="alert" data-testid="workflow-navigation-error">
+                {navigationMessage}
+              </p>
+            )}
             <div className="recovery-panel-heading">
               <span>
                 {candidateSelection
@@ -3709,43 +4623,93 @@ function WorkflowRecoveryReadyConcept({
                   }
                 />
               ) : (
-                <h2>{selectedPort?.name ?? selectedRelationship?.label}</h2>
+                <h2>
+                  {selectedResult?.title ??
+                    selectedPort?.name ??
+                    selectedRelationship?.label}
+                </h2>
               )}
               <small>
                 {selectedBlock
-                  ? selectedBlock.configuration.authoring_template ===
-                    "mcp-task"
-                    ? "AI task · MCP"
-                    : isPromptBlock(selectedBlock)
-                      ? "AI prompt"
-                      : isMcpBlock(selectedBlock)
-                        ? "MCP tool"
-                        : selectedBlock.executionKind === "ai_capable"
-                          ? "AI task"
-                          : selectedBlock.executionKind === "human"
-                            ? "Engineer review"
-                            : "Task"
-                  : selectedPort
-                    ? selectedOwner?.title
-                    : "Connection between steps"}
+                  ? recoveryAuthoringSectionKind(selectedBlock) === "input"
+                    ? "Input source · supplies text or a file"
+                    : isHumanInputBlock(selectedBlock)
+                      ? "Declared user input · pauses the run"
+                      : selectedBlock.configuration.authoring_template ===
+                          "mcp-task"
+                        ? "AI task · MCP"
+                        : isPromptBlock(selectedBlock)
+                          ? "AI prompt"
+                          : isMcpBlock(selectedBlock)
+                            ? "MCP tool"
+                            : isValidatorBlock(selectedBlock)
+                              ? "Output validator"
+                              : selectedBlock.executionKind === "ai_capable"
+                                ? "AI task"
+                                : selectedBlock.executionKind === "human"
+                                  ? "Engineer review"
+                                  : "Task"
+                  : selectedResult
+                    ? "Output files · read-only"
+                    : selectedPort
+                      ? selectedOwner?.title
+                      : "Connection between steps"}
               </small>
             </div>
-            <div className="recovery-inspector__body">
+            <div className="recovery-inspector__body" ref={inspectorBodyRef}>
+              {selectedResult && (
+                <WorkflowResultInspector
+                  key={selectedResult.id}
+                  result={selectedResult}
+                  sessionId={workspaceSessionId}
+                  onOpenFile={onOpenFile}
+                  onSelectProducer={(id) => selectObject(id)}
+                  onShowRunDetails={showRunDetails}
+                />
+              )}
+              {selectedBlock && (
+                <EngineeringStepContext
+                  block={selectedBlock}
+                  workflow={inspectionWorkflow}
+                  outputs={
+                    observed?.execution?.outputs ?? presentedRun?.outputs ?? []
+                  }
+                  sourceMismatch={
+                    observedSourceMismatch ||
+                    candidateSelection ||
+                    semanticDirty ||
+                    sourceDirty ||
+                    (!observed &&
+                      nativeRunInput?.storageDigest !==
+                        persistedSubject?.storageDigest)
+                  }
+                  onOpenFile={onOpenFile}
+                />
+              )}
               {selectedBlock &&
                 recoveryAuthoringSectionKind(selectedBlock) === "input" && (
-                  <InputBlockEditor
-                    isImage={selectedBlock.outputPortIds.some(
-                      (id) =>
-                        findPort(inspectionWorkflow, id)?.typeId ===
-                        "type.image.reference-set",
-                    )}
-                    key={selectedBlock.id}
-                    block={selectedBlock}
-                    sessionId={workspaceSessionId}
-                    onListFiles={onListWorkspaceFiles}
-                    readOnly={blockEditorReadOnly}
-                    onApply={(commands) => applyCommands("form", commands)}
-                  />
+                  <>
+                    <InputBlockEditor
+                      isImage={selectedBlock.outputPortIds.some(
+                        (id) =>
+                          findPort(inspectionWorkflow, id)?.typeId ===
+                          "type.image.reference-set",
+                      )}
+                      key={selectedBlock.id}
+                      block={selectedBlock}
+                      sessionId={workspaceSessionId}
+                      onListFiles={onListWorkspaceFiles}
+                      onOpenFile={onOpenFile}
+                      readOnly={blockEditorReadOnly}
+                      onApply={(commands) => applyCommands("form", commands)}
+                    />
+                    <InputDeclarationEditor
+                      key={declarationEditorKey(selectedBlock)}
+                      block={selectedBlock}
+                      readOnly={blockEditorReadOnly}
+                      onApply={(commands) => applyCommands("form", commands)}
+                    />
+                  </>
                 )}
               {selectedBlock && isMcpBlock(selectedBlock) && (
                 <McpBlockEditor
@@ -3768,18 +4732,49 @@ function WorkflowRecoveryReadyConcept({
                 />
               )}
               {selectedBlock &&
+                selectedBlock.executionKind === "ai_capable" && (
+                  <StepInstructionsEditor
+                    key={`${selectedBlock.id}:${String(selectedBlock.configuration.__wright_authoring_approval_objects ?? "")}:${JSON.stringify(inspectionWorkflow.metadata.instructions ?? null)}`}
+                    block={selectedBlock}
+                    workflow={inspectionWorkflow}
+                    readOnly={blockEditorReadOnly}
+                    onOpenWorkflowInstructions={() => setModal("instructions")}
+                    onApply={(commands) => applyCommands("form", commands)}
+                  />
+                )}
+              {selectedBlock && isValidatorBlock(selectedBlock) && (
+                <ValidatorBlockEditor
+                  key={selectedBlock.id}
+                  block={selectedBlock}
+                  workflow={inspectionWorkflow}
+                  readOnly={blockEditorReadOnly}
+                  onApply={(commands) => applyCommands("form", commands)}
+                />
+              )}
+              {selectedBlock &&
                 !isPromptBlock(selectedBlock) &&
                 !isMcpBlock(selectedBlock) &&
+                !isValidatorBlock(selectedBlock) &&
                 recoveryAuthoringSectionKind(selectedBlock) !== "input" && (
                   <>
-                    <AuthoringSettings
-                      direct
-                      key={selectedBlock.id}
-                      block={selectedBlock}
-                      workflow={inspectionWorkflow}
-                      readOnly={blockEditorReadOnly}
-                      onApply={(commands) => applyCommands("form", commands)}
-                    />
+                    {isHumanInputBlock(selectedBlock) ? (
+                      <HumanInputDeclarationEditor
+                        key={declarationEditorKey(selectedBlock)}
+                        block={selectedBlock}
+                        workflow={inspectionWorkflow}
+                        readOnly={blockEditorReadOnly}
+                        onApply={(commands) => applyCommands("form", commands)}
+                      />
+                    ) : (
+                      <AuthoringSettings
+                        direct
+                        key={selectedBlock.id}
+                        block={selectedBlock}
+                        workflow={inspectionWorkflow}
+                        readOnly={blockEditorReadOnly}
+                        onApply={(commands) => applyCommands("form", commands)}
+                      />
+                    )}
                     {(selectedBlock.inputPortIds.length > 0 ||
                       selectedBlock.outputPortIds.length > 0) && (
                       <details
@@ -3988,47 +4983,78 @@ function WorkflowRecoveryReadyConcept({
       </div>
 
       <section
-        className={`recovery-run-drawer ${runDetailsOpen ? "is-open" : ""}`}
+        className={`recovery-run-drawer ${runDetailsOpen ? "is-open" : ""} ${runDetailsOpen && runDetailsExpanded ? "is-expanded" : ""}`}
         data-testid="workflow-recovery-run-drawer"
+        ref={runDrawerRef}
       >
-        <button
-          type="button"
-          className="recovery-run-drawer__toggle"
-          data-testid="workflow-recovery-run-details-toggle"
-          aria-expanded={runDetailsOpen}
-          onClick={() => setRunDetailsOpen(!runDetailsOpen)}
-        >
-          <b>▷ Run details</b>
-          <span>
-            {onRun
-              ? observedStatus
-                ? observedStatus.label
-                : presentedPending
-                  ? `Running saved workflow…${observer.error ? " · Status not refreshed" : ""}`
-                  : reviewPresentation
-                    ? reviewPresentation.label
-                    : presentedRun
-                      ? `Completed · ${presentedRun.outputPath}`
-                      : presentedError
-                        ? presentedError.startsWith("Workflow cancelled.")
-                          ? "Run cancelled"
-                          : presentedError.startsWith("Run blocked")
-                            ? "Run blocked"
-                            : "Run failed"
-                        : "Ready to run"
-              : runStage > 0
-                ? `Simulation · ${runStateLabel[run.state]}`
-                : simulationPreview
-                  ? "No run · local simulation available for the unchanged example"
-                  : "No run · execution not connected"}
-          </span>
-          <span aria-hidden="true">{runDetailsOpen ? "⌄" : "⌃"}</span>
-        </button>
+        <div className="recovery-run-drawer__header">
+          <button
+            type="button"
+            className="recovery-run-drawer__toggle"
+            data-testid="workflow-recovery-run-details-toggle"
+            aria-expanded={runDetailsOpen}
+            onClick={() => setRunDetailsOpen(!runDetailsOpen)}
+          >
+            <b>▷ Run details</b>
+            <span>
+              {onRun
+                ? presentedStatus
+                  ? presentedStatus.label
+                  : presentedPending
+                    ? `Running saved workflow…${observer.error ? " · Status not refreshed" : ""}`
+                    : reviewPresentation
+                      ? reviewPresentation.label
+                      : presentedRun
+                        ? presentedRun.status === "waiting_human"
+                          ? "Waiting for your input"
+                          : presentedRun.status === "awaiting_approval" ||
+                              presentedRun.status === "changes_requested"
+                            ? (approvalPresentation(presentedRun.approval)
+                                ?.label ?? "Awaiting action review")
+                            : presentedRun.status ===
+                                "awaiting_external_outcome"
+                              ? "Awaiting external action outcome"
+                              : presentedRun.status ===
+                                  "external_action_outcome_unknown"
+                                ? "External action outcome unknown"
+                                : presentedRun.status ===
+                                    "external_action_not_dispatched"
+                                  ? "External action was not dispatched"
+                                  : `Completed · ${presentedRun.outputPath ? fileName(presentedRun.outputPath) : "results available"}`
+                        : presentedError
+                          ? presentedError.startsWith("Workflow cancelled.")
+                            ? "Run cancelled"
+                            : presentedError.startsWith("Run blocked")
+                              ? "Run blocked"
+                              : "Run failed"
+                          : "Not started"
+                : runStage > 0
+                  ? `Simulation · ${runStateLabel[run.state]}`
+                  : simulationPreview
+                    ? "No run · local simulation available for the unchanged example"
+                    : "No run · execution not connected"}
+            </span>
+            <span aria-hidden="true">{runDetailsOpen ? "⌄" : "⌃"}</span>
+          </button>
+          {runDetailsOpen && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              data-testid="workflow-recovery-run-details-expand"
+              aria-pressed={runDetailsExpanded}
+              onClick={() => setRunDetailsExpanded(!runDetailsExpanded)}
+            >
+              {runDetailsExpanded ? "Show more diagram" : "Expand details"}
+            </button>
+          )}
+        </div>
         {runDetailsOpen && (
           <div className="recovery-run-drawer__body">
             {onRun ? (
               <NativeRunPanel
                 reviews={documentReviews}
+                currentSourceDigest={storageDigest}
+                onOpenRunWorkingView={onOpenRunWorkingView}
                 onOpenFile={onOpenFile}
                 pending={presentedPending}
                 result={presentedRun}
@@ -4060,10 +5086,26 @@ function WorkflowRecoveryReadyConcept({
                 partialResults={observed?.results ?? nativePartialResults}
                 runLogPath={presentedRunLogPath}
                 observed={observed}
-                statusPresentation={observedStatus}
+                statusPresentation={presentedStatus}
                 sourceMismatch={observedSourceMismatch}
                 refreshError={observer.error}
                 onRefresh={observer.refresh}
+                onOpenReadiness={() => {
+                  const readiness = runReadinessRef.current;
+                  if (!readiness) return;
+                  readiness.open = true;
+                  readiness.querySelector("summary")?.focus();
+                  readiness.scrollIntoView?.({ block: "nearest" });
+                }}
+                workflow={workflow}
+                onSelectBlock={(id) => {
+                  selectObject(id);
+                  setRunDetailsExpanded(false);
+                }}
+                onApprovalUpdate={(checkpoint) => {
+                  setApprovalOverride(checkpoint);
+                  observer.refresh();
+                }}
               />
             ) : runStage === 0 ? (
               <p>
@@ -4341,24 +5383,28 @@ function WorkflowRecoveryReadyConcept({
               <header>
                 <div>
                   <span>
-                    {modal === "source-compare" || modal === "reload-stored"
-                      ? "WORKSPACE FILE CONFLICT"
-                      : modal === "run-preflight"
-                        ? "RUN CHECK"
-                        : "LOCAL CONCEPT PREVIEW"}
+                    {modal === "instructions"
+                      ? "WORKFLOW SETTINGS"
+                      : modal === "source-compare" || modal === "reload-stored"
+                        ? "WORKSPACE FILE CONFLICT"
+                        : modal === "run-preflight"
+                          ? "RUN CHECK"
+                          : "LOCAL CONCEPT PREVIEW"}
                   </span>
                   <h2 id="recovery-modal-title">
-                    {modal === "port-lab"
-                      ? "Connection style preview"
-                      : modal === "delete"
-                        ? "Delete workflow step"
-                        : modal === "output"
-                          ? "Mounting bracket STEP file"
-                          : modal === "run-preflight"
-                            ? "Process cannot start"
-                            : modal === "source-compare"
-                              ? "Compare workflow sources"
-                              : "Reload stored workflow?"}
+                    {modal === "instructions"
+                      ? "Workflow instructions"
+                      : modal === "port-lab"
+                        ? "Connection style preview"
+                        : modal === "delete"
+                          ? "Delete workflow step"
+                          : modal === "output"
+                            ? "Mounting bracket STEP file"
+                            : modal === "run-preflight"
+                              ? "Process cannot start"
+                              : modal === "source-compare"
+                                ? "Compare workflow sources"
+                                : "Reload stored workflow?"}
                   </h2>
                 </div>
                 <button
@@ -4370,6 +5416,28 @@ function WorkflowRecoveryReadyConcept({
                   ×
                 </button>
               </header>
+              {modal === "instructions" && (
+                <WorkflowInstructionsEditor
+                  instructions={workflow.metadata.instructions}
+                  readOnly={blockEditorReadOnly}
+                  onLoadDefaults={onLoadInstructionDefaults}
+                  onReviewActionIntentUpgrade={
+                    onReviewInstructionProtocolUpgrade
+                  }
+                  onExport={onExportSource}
+                  exportReady={
+                    !semanticDirty &&
+                    !sourceDirty &&
+                    !saveConflict &&
+                    saveState !== "saving"
+                  }
+                  onApply={(value) =>
+                    applyCommands("form", [
+                      { kind: "set_workflow_instructions", value },
+                    ])
+                  }
+                />
+              )}
               {modal === "port-lab" && (
                 <div data-testid="workflow-port-lab">
                   <p className="recovery-modal__lead">
@@ -4670,7 +5738,7 @@ function WorkflowRecoveryReadyConcept({
   );
 }
 
-function RelationshipInspector({
+export function RelationshipInspector({
   relationshipId,
   workflow,
   readOnly,
@@ -4708,8 +5776,8 @@ function RelationshipInspector({
       ? findBlock(workflow, endpointPort.ownerBlockId)
       : null;
     return endpointPort
-      ? `${owner?.title ?? "Workflow step"}: ${endpointPort.name}`
-      : semanticId;
+      ? (owner?.title ?? "Workflow step")
+      : "Unavailable step";
   };
   const relationshipKind =
     relationship.kind === "data"
@@ -4721,6 +5789,38 @@ function RelationshipInspector({
           : "Step order";
   return (
     <section>
+      <section
+        className="recovery-step-context"
+        data-testid="workflow-engineering-connection-context"
+      >
+        <h3>What this connection means</h3>
+        <p>
+          {relationship.kind === "data"
+            ? `Information from “${endpointName(relationship.sourceId)}” is supplied to “${endpointName(relationship.targetId)}”.`
+            : relationship.kind === "decision"
+              ? `The reviewed outcome from “${endpointName(relationship.sourceId)}” determines whether “${endpointName(relationship.targetId)}” can proceed.`
+              : relationship.kind === "feedback"
+                ? `Feedback from “${endpointName(relationship.sourceId)}” returns to “${endpointName(relationship.targetId)}” for revision.`
+                : `“${endpointName(relationship.targetId)}” follows “${endpointName(relationship.sourceId)}” in the workflow order. This line does not carry an input file.`}
+        </p>
+        {relationship.kind === "data" && (
+          <p>
+            <b>Information carried:</b>{" "}
+            {findPort(workflow, relationship.sourceId)?.description ||
+              relationship.label ||
+              "No description provided."}
+          </p>
+        )}
+        {relationship.condition && (
+          <p>
+            <b>When:</b> {relationship.condition}
+          </p>
+        )}
+        <small>
+          This describes the connection, not whether information has passed
+          along it in this run.
+        </small>
+      </section>
       <div className="recovery-fact">
         <span>Connection type</span>
         <b>{relationshipKind}</b>

@@ -1,0 +1,9 @@
+{
+  "operation": "authoring-capabilities",
+  "available": true,
+  "role": "process-ui-author/1",
+  "adapter": "hermes",
+  "model": "gpt-5.6-sol",
+  "compiler_available": true,
+  "compiler_reason_code": null
+}

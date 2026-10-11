@@ -1,0 +1,12 @@
+{
+  "status": "source_callers_retired",
+  "api_history_tests": 14,
+  "component_tests": 14,
+  "typescript": "passed",
+  "served_installed_candidate_contains_retirement": false,
+  "remaining_vendor_modules_scripts": true,
+  "review_response": false,
+  "external_action": false,
+  "original_private_archive": ".local-run\\process-interfaces-083\\t048-retirement-preserved-001",
+  "initial_fixture_failure": "Router mounted at wrong test prefix; eight 404 failures, product code unchanged by fixture correction"
+}

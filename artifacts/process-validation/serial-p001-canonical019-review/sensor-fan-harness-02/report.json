@@ -1,0 +1,2470 @@
+{
+  "schema_version": "wright.process-validation-report/1",
+  "assessment_digest": "3935b0e61475c92ab0c550a4023437c14908c20c5b6d1e16be62766a53b08e18",
+  "currentness": {
+    "as_of": "2026-09-18T00:14:21.591347+00:00",
+    "selected_assessment_id": "assessment-e097a0ff64dc46818e20b9d28a22a368",
+    "selected_attempt_id": "052f60b540074c378863cc1548986931",
+    "selected_subject_ids": [
+      "netlist",
+      "voltage-drop",
+      "shield",
+      "basis",
+      "plan",
+      "pin-schedule",
+      "cut-list",
+      "bom",
+      "assembly",
+      "handoff"
+    ],
+    "latest_attempt_id": "052f60b540074c378863cc1548986931",
+    "latest_assessment_id": "assessment-e097a0ff64dc46818e20b9d28a22a368",
+    "superseded_by": [],
+    "is_current": true,
+    "stale_reason": null
+  },
+  "scope": {
+    "requirement_ids": [
+      "HARNESS02-TOPOLOGY",
+      "HARNESS02-CURRENTS",
+      "HARNESS02-DROP",
+      "HARNESS02-CUT-LENGTHS",
+      "HARNESS02-CONNECTORS",
+      "HARNESS02-SERVICE",
+      "HARNESS02-SIGNALS",
+      "HARNESS02-VIEWS",
+      "HARNESS02-DELIVERABLES",
+      "HARNESS02-ACTION-SCOPE"
+    ],
+    "excluded_scope": [],
+    "limitations": [
+      "Physical fabrication, energizing, purchasing and production certification remain outside this digital validation gate."
+    ],
+    "physical_validation": "not_assessed"
+  },
+  "reader_identities": [
+    {
+      "id": "harness",
+      "version": "1",
+      "config_digest": "8d02cfeb950ba6690e31bd3a8a521c280b20f5469095991fe9bc322ae899731b",
+      "method": "independent_measurement",
+      "tool_identity": "wright bounded harness reader v1",
+      "formats": [
+        "csv",
+        "json"
+      ]
+    },
+    {
+      "id": "structured",
+      "version": "1",
+      "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+      "method": "structured_value",
+      "tool_identity": null,
+      "formats": [
+        "json",
+        "csv",
+        "text",
+        "markdown",
+        "html",
+        "svg",
+        "dxf",
+        "kicad_sch"
+      ]
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "HARNESS02-TOPOLOGY",
+      "requirement_text": "The harness preserves all declared pins/nets, separate +24V and POWER_GND splices at B0, continuous SIGNAL_RETURN to J0 pin 6, and a controller-only star-point connection.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+          "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Route and nets"
+        }
+      ],
+      "check_id": "net-topology",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "harness",
+      "evidence_method": "independent_measurement",
+      "selector": "harness/topology",
+      "expected": {
+        "operator": "equals",
+        "expected": 11,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        11
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:netlist@3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8#topology"
+      ],
+      "subject_id": "netlist",
+      "subject_sha256": "3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "netlist"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-SIGNALS",
+      "requirement_text": "FAN_A_TACH, FAN_B_TACH, HUM_SIGNAL and SIGNAL_RETURN remain on their declared pins, and open-collector tach compatibility is recorded as an assumption requiring selection verification.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+          "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+          "locator": "signal rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Route and nets"
+        }
+      ],
+      "check_id": "net-topology",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "harness",
+      "evidence_method": "independent_measurement",
+      "selector": "harness/topology",
+      "expected": {
+        "operator": "equals",
+        "expected": 11,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        11
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:netlist@3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8#topology"
+      ],
+      "subject_id": "netlist",
+      "subject_sha256": "3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "netlist"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-CUT-LENGTHS",
+      "requirement_text": "The cut list uses each unique centerline route, 50 mm service length at each connector termination plus documented strip/crimp allowance, and never double-counts shared trunks.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+          "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+          "locator": "route_mm"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Fabrication capability and policies"
+        }
+      ],
+      "check_id": "cut-lengths",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "harness",
+      "evidence_method": "independent_measurement",
+      "selector": "harness/cut_lengths",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": 1.0,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": "1",
+      "expected_frame": null,
+      "observed": [
+        11
+      ],
+      "observed_units": [
+        "1"
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:cut-list@adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26#cut_lengths"
+      ],
+      "subject_id": "cut-list",
+      "subject_sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "cut_list"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-DROP",
+      "requirement_text": "Every loaded branch, including the farthest fan, remains at or below 0.72 V in separate continuous and simultaneous-start cases using both shared and branch supply/return paths at 45 °C.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/allowed-wire.csv",
+          "sha256": "dc791d7c6604503f1921ccf5bc2a882a1c95c923ae3abb5a249176ce696f8461",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+          "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+          "locator": "all power rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Fabrication capability and policies"
+        }
+      ],
+      "check_id": "voltage-drop",
+      "check_version": "1",
+      "check_state": "fail",
+      "reader": "harness",
+      "evidence_method": "independent_measurement",
+      "selector": "harness/maximum_total_drop",
+      "expected": {
+        "operator": "range",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": 0.72,
+        "inclusive": true
+      },
+      "expected_unit": "V",
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [
+        "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#harness/maximum_total_drop"
+      ],
+      "subject_id": "voltage-drop",
+      "subject_sha256": "0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "voltage_drop"
+      },
+      "finding_ids": [
+        "f-8ac0dc8f87c143c49f862be0e44c4bed"
+      ],
+      "action": "revise_output"
+    },
+    {
+      "requirement_id": "HARNESS02-CURRENTS",
+      "requirement_text": "Shared-trunk sizing uses simultaneous startup of both fans and transmitter: 4.025 A on +24V and 4.0 A on POWER_GND; each branch retains its declared continuous/start current.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+          "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+          "locator": "current_cont_A,current_start_A"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Operating conditions; Route and nets"
+        }
+      ],
+      "check_id": "basis-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "eeb5a46b472559a9f9bf7a98fdfbb660713bc99a6b807f075cd21c8e3ec1a193",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-946a71f90cdc48f385631f6fefb4a141"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "HARNESS02-CONNECTORS",
+      "requirement_text": "Selected sourced connector/splice parts and tools meet declared pin counts, 30 V, 45 °C derating, at least 5 A at J0/B0, 3 A at fan connectors and 0.1 A at signal contacts.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/connector-requirements.csv",
+          "sha256": "f405c94811aa7304495089bfe17b4ba6324704c70ed5de8f5b3f77296e25fb75",
+          "locator": "all rows"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Assembly and procurement needs; Fabrication capability and policies"
+        }
+      ],
+      "check_id": "basis-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "basis",
+      "subject_sha256": "eeb5a46b472559a9f9bf7a98fdfbb660713bc99a6b807f075cd21c8e3ec1a193",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "basis"
+      },
+      "finding_ids": [
+        "f-946a71f90cdc48f385631f6fefb4a141"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "HARNESS02-SERVICE",
+      "requirement_text": "Fans unplug independently, the common trunk has abrasion sleeve and clips at no more than 300 mm spacing, and the harness remains at least 50 mm from irrigation tubing.",
+      "requirement_scope": "design",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Assembly and procurement needs"
+        }
+      ],
+      "check_id": "plan-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "plan",
+      "subject_sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "plan"
+      },
+      "finding_ids": [
+        "f-9d5fa5bb989c4e909b072159fff04f2b"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "HARNESS02-VIEWS",
+      "requirement_text": "Connector views are explicitly mating-face or wire-entry and match the exact pin schedule without mirroring.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "plan-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "plan",
+      "subject_sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "plan"
+      },
+      "finding_ids": [
+        "f-9d5fa5bb989c4e909b072159fff04f2b"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "HARNESS02-ACTION-SCOPE",
+      "requirement_text": "The result does not claim sealed certification or production qualification and does not perform live connection, fabrication, machine modification, or purchasing.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": true,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Operating conditions; Assembly and procurement needs; Fabrication capability and policies"
+        }
+      ],
+      "check_id": "handoff-review",
+      "check_version": "1",
+      "check_state": "blocked",
+      "reader": "structured",
+      "evidence_method": "human_review",
+      "selector": "",
+      "expected": {
+        "operator": "review",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [],
+      "observed_units": [],
+      "observed_frames": [],
+      "evidence_refs": [],
+      "subject_id": "handoff",
+      "subject_sha256": "c233fcfa140171780af2556128ecda19415cdd81d9f9abbc928198257e698688",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "handoff"
+      },
+      "finding_ids": [
+        "f-6ffba9be19ce44a1a6fc8f4f6503b842"
+      ],
+      "action": "request_review"
+    },
+    {
+      "requirement_id": "HARNESS02-DELIVERABLES",
+      "requirement_text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+          "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "deliverable-plan",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 59456,
+          "present": true,
+          "sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:plan@fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125#"
+      ],
+      "subject_id": "plan",
+      "subject_sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "plan"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-DELIVERABLES",
+      "requirement_text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+          "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "deliverable-pin_schedule",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1233,
+          "present": true,
+          "sha256": "4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:pin-schedule@4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02#"
+      ],
+      "subject_id": "pin-schedule",
+      "subject_sha256": "4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "pin_schedule"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-DELIVERABLES",
+      "requirement_text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+          "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "deliverable-cut_list",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 1246,
+          "present": true,
+          "sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:cut-list@adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26#"
+      ],
+      "subject_id": "cut-list",
+      "subject_sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "cut_list"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-DELIVERABLES",
+      "requirement_text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+          "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "deliverable-bom",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 2179,
+          "present": true,
+          "sha256": "fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:bom@fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea#"
+      ],
+      "subject_id": "bom",
+      "subject_sha256": "fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "bom"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-DELIVERABLES",
+      "requirement_text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+          "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "deliverable-assembly",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 2644,
+          "present": true,
+          "sha256": "82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:assembly@82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0#"
+      ],
+      "subject_id": "assembly",
+      "subject_sha256": "82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "assembly"
+      },
+      "finding_ids": [],
+      "action": null
+    },
+    {
+      "requirement_id": "HARNESS02-DELIVERABLES",
+      "requirement_text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+      "requirement_scope": "content",
+      "mandatory": true,
+      "review_required": false,
+      "source_refs": [
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+          "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+          "locator": "requested outputs"
+        },
+        {
+          "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+          "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+          "locator": "Outputs"
+        }
+      ],
+      "check_id": "deliverable-voltage_drop",
+      "check_version": "1",
+      "check_state": "pass",
+      "reader": "structured",
+      "evidence_method": "structured_value",
+      "selector": "",
+      "expected": {
+        "operator": "exists",
+        "expected": null,
+        "target": null,
+        "tolerance": null,
+        "minimum": null,
+        "maximum": null,
+        "inclusive": true
+      },
+      "expected_unit": null,
+      "expected_frame": null,
+      "observed": [
+        {
+          "bytes": 6229,
+          "present": true,
+          "sha256": "0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56"
+        }
+      ],
+      "observed_units": [
+        null
+      ],
+      "observed_frames": [
+        null
+      ],
+      "evidence_refs": [
+        "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#"
+      ],
+      "subject_id": "voltage-drop",
+      "subject_sha256": "0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56",
+      "producer": {
+        "run_id": "retained-successor-sensor-fan-harness-02",
+        "step_id": "deterministic-correction",
+        "attempt": 1,
+        "output_port": "voltage_drop"
+      },
+      "finding_ids": [],
+      "action": null
+    }
+  ],
+  "assessment": {
+    "schema_version": "wright.process-validation/1",
+    "id": "assessment-e097a0ff64dc46818e20b9d28a22a368",
+    "attempt_id": "052f60b540074c378863cc1548986931",
+    "request": {
+      "schema_version": "wright.process-validation/1",
+      "trace_id": "retained-successor-inspection",
+      "workspace_id": "retained-successor-inspection",
+      "invocation_id": "sensor-fan-harness-02",
+      "run_id": null,
+      "check_step_id": null,
+      "subjects": [
+        {
+          "id": "netlist",
+          "role": "netlist",
+          "result_id": "retained-successor:sensor-fan-harness-02:netlist",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "netlist"
+          },
+          "kind": "file",
+          "sha256": "3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8",
+          "value": null,
+          "locator": "verified/independent-netlist.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "voltage-drop",
+          "role": "voltage_drop",
+          "result_id": "retained-successor:sensor-fan-harness-02:voltage_drop",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "voltage_drop"
+          },
+          "kind": "file",
+          "sha256": "0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56",
+          "value": null,
+          "locator": "verified/voltage-drop.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "shield",
+          "role": "shield",
+          "result_id": "retained-successor:sensor-fan-harness-02:shield",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "shield"
+          },
+          "kind": "file",
+          "sha256": "7038537e23b3c7459842aec0adf7ed91ecd18c07bd8047b90f38cadfe0ac8813",
+          "value": null,
+          "locator": "generated/shield-termination.json",
+          "format": "json",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "basis",
+          "role": "basis",
+          "result_id": "retained-successor:sensor-fan-harness-02:basis",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "basis"
+          },
+          "kind": "file",
+          "sha256": "eeb5a46b472559a9f9bf7a98fdfbb660713bc99a6b807f075cd21c8e3ec1a193",
+          "value": null,
+          "locator": "research-and-design-basis.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "plan",
+          "role": "plan",
+          "result_id": "retained-successor:sensor-fan-harness-02:plan",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "plan"
+          },
+          "kind": "file",
+          "sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125",
+          "value": null,
+          "locator": "generated/harness-plan.svg",
+          "format": "svg",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "pin-schedule",
+          "role": "pin_schedule",
+          "result_id": "retained-successor:sensor-fan-harness-02:pin_schedule",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "pin_schedule"
+          },
+          "kind": "file",
+          "sha256": "4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02",
+          "value": null,
+          "locator": "generated/pin-schedule.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "cut-list",
+          "role": "cut_list",
+          "result_id": "retained-successor:sensor-fan-harness-02:cut_list",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "cut_list"
+          },
+          "kind": "file",
+          "sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26",
+          "value": null,
+          "locator": "generated/cut-list.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "bom",
+          "role": "bom",
+          "result_id": "retained-successor:sensor-fan-harness-02:bom",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "bom"
+          },
+          "kind": "file",
+          "sha256": "fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea",
+          "value": null,
+          "locator": "generated/bom.csv",
+          "format": "csv",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "assembly",
+          "role": "assembly",
+          "result_id": "retained-successor:sensor-fan-harness-02:assembly",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "assembly"
+          },
+          "kind": "file",
+          "sha256": "82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0",
+          "value": null,
+          "locator": "generated/assembly.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        },
+        {
+          "id": "handoff",
+          "role": "handoff",
+          "result_id": "retained-successor:sensor-fan-harness-02:handoff",
+          "producer": {
+            "run_id": "retained-successor-sensor-fan-harness-02",
+            "step_id": "deterministic-correction",
+            "attempt": 1,
+            "output_port": "handoff"
+          },
+          "kind": "file",
+          "sha256": "c233fcfa140171780af2556128ecda19415cdd81d9f9abbc928198257e698688",
+          "value": null,
+          "locator": "harness-handoff.md",
+          "format": "markdown",
+          "provider_id": null,
+          "resource_id": null,
+          "revision": null,
+          "input_digests": [],
+          "encoding": "raw-bytes"
+        }
+      ],
+      "profile_ref": {
+        "id": "sensor-fan-harness-02-full",
+        "version": "1",
+        "sha256": "c69a16f21c8186de0c9d5d2ae00f1a2b8ef7e8624584be7e61372874eebbd547"
+      },
+      "baseline_ref": {
+        "id": "sensor-fan-harness-02-basis",
+        "version": "1",
+        "sha256": "f2d5bbbddc28104471bd5ee9da4434fe18288e082f3f3ed145c0549cef091c6c"
+      },
+      "idempotency_key": "sensor-fan-harness-02",
+      "budget": {
+        "max_bytes": 67108864,
+        "max_entities": 100000,
+        "timeout_seconds": 120,
+        "memory_limit_mb": 512
+      }
+    },
+    "profile": {
+      "schema_version": "wright.process-validation/1",
+      "id": "sensor-fan-harness-02-full",
+      "version": "1",
+      "baseline": {
+        "id": "sensor-fan-harness-02-basis",
+        "version": "1",
+        "requirements": [
+          {
+            "id": "HARNESS02-TOPOLOGY",
+            "text": "The harness preserves all declared pins/nets, separate +24V and POWER_GND splices at B0, continuous SIGNAL_RETURN to J0 pin 6, and a controller-only star-point connection.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+                "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Route and nets"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "HARNESS02-CURRENTS",
+            "text": "Shared-trunk sizing uses simultaneous startup of both fans and transmitter: 4.025 A on +24V and 4.0 A on POWER_GND; each branch retains its declared continuous/start current.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+                "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+                "locator": "current_cont_A,current_start_A"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Operating conditions; Route and nets"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "HARNESS02-DROP",
+            "text": "Every loaded branch, including the farthest fan, remains at or below 0.72 V in separate continuous and simultaneous-start cases using both shared and branch supply/return paths at 45 °C.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/allowed-wire.csv",
+                "sha256": "dc791d7c6604503f1921ccf5bc2a882a1c95c923ae3abb5a249176ce696f8461",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+                "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+                "locator": "all power rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Fabrication capability and policies"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "HARNESS02-CUT-LENGTHS",
+            "text": "The cut list uses each unique centerline route, 50 mm service length at each connector termination plus documented strip/crimp allowance, and never double-counts shared trunks.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+                "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+                "locator": "route_mm"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Fabrication capability and policies"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "HARNESS02-CONNECTORS",
+            "text": "Selected sourced connector/splice parts and tools meet declared pin counts, 30 V, 45 °C derating, at least 5 A at J0/B0, 3 A at fan connectors and 0.1 A at signal contacts.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/connector-requirements.csv",
+                "sha256": "f405c94811aa7304495089bfe17b4ba6324704c70ed5de8f5b3f77296e25fb75",
+                "locator": "all rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Assembly and procurement needs; Fabrication capability and policies"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "HARNESS02-SERVICE",
+            "text": "Fans unplug independently, the common trunk has abrasion sleeve and clips at no more than 300 mm spacing, and the harness remains at least 50 mm from irrigation tubing.",
+            "scope": "design",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Assembly and procurement needs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "HARNESS02-SIGNALS",
+            "text": "FAN_A_TACH, FAN_B_TACH, HUM_SIGNAL and SIGNAL_RETURN remain on their declared pins, and open-collector tach compatibility is recorded as an assumption requiring selection verification.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+                "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+                "locator": "signal rows"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Route and nets"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "HARNESS02-VIEWS",
+            "text": "Connector views are explicitly mating-face or wire-entry and match the exact pin schedule without mirroring.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Outputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          },
+          {
+            "id": "HARNESS02-DELIVERABLES",
+            "text": "The output set contains harness plan, exact pin schedule, cut list, BOM, assembly instructions and voltage-drop evidence.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/prompt.txt",
+                "sha256": "fb51b5502834c6e27b9eabfef3760151bdbeff4ab265ad8a5bf64e21c3fcac5a",
+                "locator": "requested outputs"
+              },
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Outputs"
+              }
+            ],
+            "mandatory": true,
+            "review_required": false
+          },
+          {
+            "id": "HARNESS02-ACTION-SCOPE",
+            "text": "The result does not claim sealed certification or production qualification and does not perform live connection, fabrication, machine modification, or purchasing.",
+            "scope": "content",
+            "sources": [
+              {
+                "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+                "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+                "locator": "Operating conditions; Assembly and procurement needs; Fabrication capability and policies"
+              }
+            ],
+            "mandatory": true,
+            "review_required": true
+          }
+        ],
+        "unresolved_decisions": [],
+        "amendments": []
+      },
+      "checks": [
+        {
+          "id": "net-topology",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-TOPOLOGY",
+            "HARNESS02-SIGNALS"
+          ],
+          "subject_role": "netlist",
+          "reader": "harness",
+          "selector": "harness/topology",
+          "constraint": {
+            "operator": "equals",
+            "expected": 11,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "expected_connections": [
+              {
+                "from": "J0:1",
+                "net": "24V",
+                "to": "B0:PLUS"
+              },
+              {
+                "from": "J0:2",
+                "net": "POWER_GND",
+                "to": "B0:RETURN"
+              },
+              {
+                "from": "B0:PLUS",
+                "net": "24V",
+                "to": "JA:1"
+              },
+              {
+                "from": "B0:RETURN",
+                "net": "POWER_GND",
+                "to": "JA:2"
+              },
+              {
+                "from": "B0:PLUS",
+                "net": "24V",
+                "to": "JB:1"
+              },
+              {
+                "from": "B0:RETURN",
+                "net": "POWER_GND",
+                "to": "JB:2"
+              },
+              {
+                "from": "B0:PLUS",
+                "net": "24V",
+                "to": "JH:1"
+              },
+              {
+                "from": "JA:3",
+                "net": "FAN_A_TACH",
+                "to": "J0:3"
+              },
+              {
+                "from": "JB:3",
+                "net": "FAN_B_TACH",
+                "to": "J0:4"
+              },
+              {
+                "from": "JH:3",
+                "net": "HUM_SIGNAL",
+                "to": "J0:5"
+              },
+              {
+                "from": "J0:6",
+                "net": "SIGNAL_RETURN",
+                "to": "JH:2"
+              }
+            ],
+            "operation": "topology"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "cut-lengths",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-CUT-LENGTHS"
+          ],
+          "subject_role": "cut_list",
+          "reader": "harness",
+          "selector": "harness/cut_lengths",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": 1.0,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": "1",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "cut_lengths"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "voltage-drop",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DROP"
+          ],
+          "subject_role": "voltage_drop",
+          "reader": "harness",
+          "selector": "harness/maximum_total_drop",
+          "constraint": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.72,
+            "inclusive": true
+          },
+          "unit": "V",
+          "frame": null,
+          "evidence_method": "independent_measurement",
+          "parameters": {
+            "operation": "voltage_drop"
+          },
+          "applicability_reason": null
+        },
+        {
+          "id": "basis-review",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-CURRENTS",
+            "HARNESS02-CONNECTORS"
+          ],
+          "subject_role": "basis",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "plan-review",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-SERVICE",
+            "HARNESS02-VIEWS"
+          ],
+          "subject_role": "plan",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "handoff-review",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-ACTION-SCOPE"
+          ],
+          "subject_role": "handoff",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "review",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "human_review",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-plan",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DELIVERABLES"
+          ],
+          "subject_role": "plan",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-pin_schedule",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DELIVERABLES"
+          ],
+          "subject_role": "pin_schedule",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-cut_list",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DELIVERABLES"
+          ],
+          "subject_role": "cut_list",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-bom",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DELIVERABLES"
+          ],
+          "subject_role": "bom",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-assembly",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DELIVERABLES"
+          ],
+          "subject_role": "assembly",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        },
+        {
+          "id": "deliverable-voltage_drop",
+          "version": "1",
+          "requirement_ids": [
+            "HARNESS02-DELIVERABLES"
+          ],
+          "subject_role": "voltage_drop",
+          "reader": "structured",
+          "selector": "",
+          "constraint": {
+            "operator": "exists",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "unit": null,
+          "frame": null,
+          "evidence_method": "structured_value",
+          "parameters": {},
+          "applicability_reason": null
+        }
+      ],
+      "excluded_scope": [],
+      "limitations": [
+        "Physical fabrication, energizing, purchasing and production certification remain outside this digital validation gate."
+      ],
+      "supported_kinds": [
+        "file",
+        "value"
+      ]
+    },
+    "created_at": "2026-09-18T00:14:21.511754+00:00",
+    "measurements": [
+      {
+        "id": "m-b8ed0e0a73d454ef7f153106b3a0c69f64da14bd8b9ed881574084ea5b621a0c",
+        "subject_id": "netlist",
+        "subject_sha256": "3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8",
+        "selector": "harness/topology",
+        "value": 11,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "harness",
+          "version": "1",
+          "config_digest": "8d02cfeb950ba6690e31bd3a8a521c280b20f5469095991fe9bc322ae899731b",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded harness reader v1",
+          "formats": [
+            "csv",
+            "json"
+          ]
+        },
+        "evidence_refs": [
+          "subject:netlist@3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8#topology"
+        ]
+      },
+      {
+        "id": "m-4223fd3fd4fd7d26702a3103e17eb9302a6c0514c799e092358cd18e6d1b4981",
+        "subject_id": "cut-list",
+        "subject_sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26",
+        "selector": "harness/cut_lengths",
+        "value": 11,
+        "unit": "1",
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "harness",
+          "version": "1",
+          "config_digest": "8d02cfeb950ba6690e31bd3a8a521c280b20f5469095991fe9bc322ae899731b",
+          "method": "independent_measurement",
+          "tool_identity": "wright bounded harness reader v1",
+          "formats": [
+            "csv",
+            "json"
+          ]
+        },
+        "evidence_refs": [
+          "subject:cut-list@adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26#cut_lengths"
+        ]
+      },
+      {
+        "id": "m-e994fbb72ed30e91a04778380c63771d81ae61c82f241820e71bbea2939ced49",
+        "subject_id": "plan",
+        "subject_sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125",
+        "selector": "",
+        "value": {
+          "bytes": 59456,
+          "present": true,
+          "sha256": "fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:plan@fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125#"
+        ]
+      },
+      {
+        "id": "m-f2053b1d8355b4e9a9242699c80479243c7be27373580cabc6f4809efbc2f989",
+        "subject_id": "pin-schedule",
+        "subject_sha256": "4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02",
+        "selector": "",
+        "value": {
+          "bytes": 1233,
+          "present": true,
+          "sha256": "4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:pin-schedule@4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02#"
+        ]
+      },
+      {
+        "id": "m-09ae01970d6ff32314603b8ce58aef314faf5ae0d835fb58b0ff8fdcf19d6a68",
+        "subject_id": "cut-list",
+        "subject_sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26",
+        "selector": "",
+        "value": {
+          "bytes": 1246,
+          "present": true,
+          "sha256": "adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:cut-list@adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26#"
+        ]
+      },
+      {
+        "id": "m-4d300f27cfdaf5ed9a92fe2164c80ce150d9aadf4a08c7fe08efa77c14eaba7d",
+        "subject_id": "bom",
+        "subject_sha256": "fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea",
+        "selector": "",
+        "value": {
+          "bytes": 2179,
+          "present": true,
+          "sha256": "fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:bom@fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea#"
+        ]
+      },
+      {
+        "id": "m-116c6571c62f58b16ca6546373a02264cf84a9b68d805e34466a7e9a0b4a4610",
+        "subject_id": "assembly",
+        "subject_sha256": "82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0",
+        "selector": "",
+        "value": {
+          "bytes": 2644,
+          "present": true,
+          "sha256": "82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:assembly@82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0#"
+        ]
+      },
+      {
+        "id": "m-d04f87525703cb8522d456338af1121ab70a4e92ba443a424ec4c61acffcc2f6",
+        "subject_id": "voltage-drop",
+        "subject_sha256": "0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56",
+        "selector": "",
+        "value": {
+          "bytes": 6229,
+          "present": true,
+          "sha256": "0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56"
+        },
+        "unit": null,
+        "frame": null,
+        "uncertainty": 0.0,
+        "reader": {
+          "id": "structured",
+          "version": "1",
+          "config_digest": "67e404e3fb205c359e283391beecd3897e9cb20fe42066d0a9b3c169cc0ccfd5",
+          "method": "structured_value",
+          "tool_identity": null,
+          "formats": [
+            "json",
+            "csv",
+            "text",
+            "markdown",
+            "html",
+            "svg",
+            "dxf",
+            "kicad_sch"
+          ]
+        },
+        "evidence_refs": [
+          "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#"
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "check_id": "net-topology",
+        "requirement_ids": [
+          "HARNESS02-TOPOLOGY",
+          "HARNESS02-SIGNALS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-b8ed0e0a73d454ef7f153106b3a0c69f64da14bd8b9ed881574084ea5b621a0c"
+        ],
+        "evidence_refs": [
+          "subject:netlist@3078e6f32503acf576db7487d11a87a91de6c74c4ddaad8eceff99554c01dfc8#topology"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "cut-lengths",
+        "requirement_ids": [
+          "HARNESS02-CUT-LENGTHS"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4223fd3fd4fd7d26702a3103e17eb9302a6c0514c799e092358cd18e6d1b4981"
+        ],
+        "evidence_refs": [
+          "subject:cut-list@adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26#cut_lengths"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "voltage-drop",
+        "requirement_ids": [
+          "HARNESS02-DROP"
+        ],
+        "state": "fail",
+        "measurement_ids": [],
+        "evidence_refs": [
+          "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#harness/maximum_total_drop"
+        ],
+        "finding_ids": [
+          "f-8ac0dc8f87c143c49f862be0e44c4bed"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "basis-review",
+        "requirement_ids": [
+          "HARNESS02-CURRENTS",
+          "HARNESS02-CONNECTORS"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-946a71f90cdc48f385631f6fefb4a141"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "plan-review",
+        "requirement_ids": [
+          "HARNESS02-SERVICE",
+          "HARNESS02-VIEWS"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-9d5fa5bb989c4e909b072159fff04f2b"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "handoff-review",
+        "requirement_ids": [
+          "HARNESS02-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "measurement_ids": [],
+        "evidence_refs": [],
+        "finding_ids": [
+          "f-6ffba9be19ce44a1a6fc8f4f6503b842"
+        ],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-plan",
+        "requirement_ids": [
+          "HARNESS02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-e994fbb72ed30e91a04778380c63771d81ae61c82f241820e71bbea2939ced49"
+        ],
+        "evidence_refs": [
+          "subject:plan@fac61fae6a76beb4ce5a7063f142b8c77f7796e8009321149738c504b4741125#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-pin_schedule",
+        "requirement_ids": [
+          "HARNESS02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-f2053b1d8355b4e9a9242699c80479243c7be27373580cabc6f4809efbc2f989"
+        ],
+        "evidence_refs": [
+          "subject:pin-schedule@4499a68ccb1ff0c581d46e461ced1a7ab8ef357000a50b126852429b59e54e02#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-cut_list",
+        "requirement_ids": [
+          "HARNESS02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-09ae01970d6ff32314603b8ce58aef314faf5ae0d835fb58b0ff8fdcf19d6a68"
+        ],
+        "evidence_refs": [
+          "subject:cut-list@adbcecd631a594e8a6c9f2f799f9a56624889e90d86edd772a2d807a8d245c26#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-bom",
+        "requirement_ids": [
+          "HARNESS02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-4d300f27cfdaf5ed9a92fe2164c80ce150d9aadf4a08c7fe08efa77c14eaba7d"
+        ],
+        "evidence_refs": [
+          "subject:bom@fba91eab543af782bf612bba235887b43797e50f0ed8f8e6abaf00952c4565ea#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-assembly",
+        "requirement_ids": [
+          "HARNESS02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-116c6571c62f58b16ca6546373a02264cf84a9b68d805e34466a7e9a0b4a4610"
+        ],
+        "evidence_refs": [
+          "subject:assembly@82d9cae4eefa6b85272a6b3861e745cb8301775ea9e98b21930afd75cec51ca0#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      },
+      {
+        "check_id": "deliverable-voltage_drop",
+        "requirement_ids": [
+          "HARNESS02-DELIVERABLES"
+        ],
+        "state": "pass",
+        "measurement_ids": [
+          "m-d04f87525703cb8522d456338af1121ab70a4e92ba443a424ec4c61acffcc2f6"
+        ],
+        "evidence_refs": [
+          "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#"
+        ],
+        "finding_ids": [],
+        "applicability_reason": null
+      }
+    ],
+    "findings": [
+      {
+        "id": "f-8ac0dc8f87c143c49f862be0e44c4bed",
+        "code": "harness.invalid_number",
+        "check_id": "voltage-drop",
+        "requirement_ids": [
+          "HARNESS02-DROP"
+        ],
+        "state": "fail",
+        "severity": "error",
+        "category": "output_defect",
+        "subject_id": "voltage-drop",
+        "owner": {
+          "run_id": "retained-successor-sensor-fan-harness-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "voltage_drop"
+        },
+        "selector": "harness/maximum_total_drop",
+        "expected": {
+          "operator": "range",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": 0.72,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": "V",
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [
+          "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#harness/maximum_total_drop"
+        ],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/allowed-wire.csv",
+            "sha256": "dc791d7c6604503f1921ccf5bc2a882a1c95c923ae3abb5a249176ce696f8461",
+            "locator": "all rows"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+            "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+            "locator": "all power rows"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+            "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+            "locator": "Fabrication capability and policies"
+          }
+        ],
+        "summary": "Harness total voltage drop must be numeric.",
+        "explanation": "Harness total voltage drop must be numeric.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "revise_output",
+          "target_step_id": "deterministic-correction",
+          "target": "Satisfy HARNESS02-DROP at harness/maximum_total_drop: {'operator': 'range', 'maximum': 0.72, 'inclusive': True}.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "net-topology",
+            "cut-lengths",
+            "voltage-drop",
+            "basis-review",
+            "plan-review",
+            "handoff-review",
+            "deliverable-plan",
+            "deliverable-pin_schedule",
+            "deliverable-cut_list",
+            "deliverable-bom",
+            "deliverable-assembly",
+            "deliverable-voltage_drop"
+          ]
+        }
+      },
+      {
+        "id": "f-946a71f90cdc48f385631f6fefb4a141",
+        "code": "review.required",
+        "check_id": "basis-review",
+        "requirement_ids": [
+          "HARNESS02-CURRENTS",
+          "HARNESS02-CONNECTORS"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "basis",
+        "owner": {
+          "run_id": "retained-successor-sensor-fan-harness-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "basis"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/wiring-schedule.csv",
+            "sha256": "b5a8acef1aa6a4cfff02e0701e1461e05fc2d618b7138ece9c9df40268da0473",
+            "locator": "current_cont_A,current_start_A"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+            "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+            "locator": "Operating conditions; Route and nets"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/connector-requirements.csv",
+            "sha256": "f405c94811aa7304495089bfe17b4ba6324704c70ed5de8f5b3f77296e25fb75",
+            "locator": "all rows"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+            "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+            "locator": "Assembly and procurement needs; Fabrication capability and policies"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "net-topology",
+            "cut-lengths",
+            "voltage-drop",
+            "basis-review",
+            "plan-review",
+            "handoff-review",
+            "deliverable-plan",
+            "deliverable-pin_schedule",
+            "deliverable-cut_list",
+            "deliverable-bom",
+            "deliverable-assembly",
+            "deliverable-voltage_drop"
+          ]
+        }
+      },
+      {
+        "id": "f-9d5fa5bb989c4e909b072159fff04f2b",
+        "code": "review.required",
+        "check_id": "plan-review",
+        "requirement_ids": [
+          "HARNESS02-SERVICE",
+          "HARNESS02-VIEWS"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "plan",
+        "owner": {
+          "run_id": "retained-successor-sensor-fan-harness-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "plan"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+            "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+            "locator": "Assembly and procurement needs"
+          },
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+            "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+            "locator": "Outputs"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "net-topology",
+            "cut-lengths",
+            "voltage-drop",
+            "basis-review",
+            "plan-review",
+            "handoff-review",
+            "deliverable-plan",
+            "deliverable-pin_schedule",
+            "deliverable-cut_list",
+            "deliverable-bom",
+            "deliverable-assembly",
+            "deliverable-voltage_drop"
+          ]
+        }
+      },
+      {
+        "id": "f-6ffba9be19ce44a1a6fc8f4f6503b842",
+        "code": "review.required",
+        "check_id": "handoff-review",
+        "requirement_ids": [
+          "HARNESS02-ACTION-SCOPE"
+        ],
+        "state": "blocked",
+        "severity": "error",
+        "category": "review_required",
+        "subject_id": "handoff",
+        "owner": {
+          "run_id": "retained-successor-sensor-fan-harness-02",
+          "step_id": "deterministic-correction",
+          "attempt": 1,
+          "output_port": "handoff"
+        },
+        "selector": "",
+        "expected": {
+          "operator": "review",
+          "expected": null,
+          "target": null,
+          "tolerance": null,
+          "minimum": null,
+          "maximum": null,
+          "inclusive": true
+        },
+        "observed": null,
+        "unit": null,
+        "frame": null,
+        "observed_unit": null,
+        "observed_frame": null,
+        "evidence_refs": [],
+        "source_refs": [
+          {
+            "artifact_ref": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/context.md",
+            "sha256": "a78fcff0ffde1813b725873c9565e1f60236c9e78dcddd2ebc3164d9a5a7caf7",
+            "locator": "Operating conditions; Assembly and procurement needs; Fabrication capability and policies"
+          }
+        ],
+        "summary": "An authenticated human review is required for this requirement.",
+        "explanation": "An authenticated human review is required for this requirement.",
+        "suggested_cause": null,
+        "correction": {
+          "action": "request_review",
+          "target_step_id": null,
+          "target": "An authenticated human review is required for this requirement.",
+          "preserve_requirement_ids": [],
+          "recheck_ids": [
+            "net-topology",
+            "cut-lengths",
+            "voltage-drop",
+            "basis-review",
+            "plan-review",
+            "handoff-review",
+            "deliverable-plan",
+            "deliverable-pin_schedule",
+            "deliverable-cut_list",
+            "deliverable-bom",
+            "deliverable-assembly",
+            "deliverable-voltage_drop"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "content_verified": null,
+      "requirements_compliant": false,
+      "evaluation_complete": false,
+      "release_eligible": false,
+      "physical_validation": "not_assessed",
+      "counts": {
+        "blocked": 3,
+        "error": 0,
+        "fail": 1,
+        "inconclusive": 0,
+        "not_applicable": 0,
+        "pass": 8
+      }
+    },
+    "subject_current": true,
+    "review_ids": [],
+    "supersedes": null
+  }
+}

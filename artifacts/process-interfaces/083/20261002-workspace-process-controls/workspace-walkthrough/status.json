@@ -1,0 +1,106 @@
+{
+  "title": "Workspace process controls at desktop and narrow widths",
+  "summary": "Saved actual-model interface and existing waiting run; no generation, start or review response.",
+  "overall": "pass",
+  "updated": "2026-10-02T15:42:21.431Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the proof workspace and click Workflows."
+    },
+    {
+      "label": "Saved interface",
+      "instruction": "Open the saved wheel interface link attached to the existing run."
+    },
+    {
+      "label": "Resize",
+      "instruction": "Resize to desktop, tablet and narrow widths; inspect navigation controls and Tab focus."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace entry",
+      "summary": "Normal workspace entry is available.",
+      "purpose": "Preserve existing authoring entry.",
+      "action": "Open proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workflows visible.",
+      "actual": "Workflows visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Existing editor",
+      "summary": "The established diagram and file controls remain available.",
+      "purpose": "Check the actual workspace authoring entry.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflow files"
+      ],
+      "expected": "Editor file controls visible.",
+      "actual": "Editor file controls visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Controls at 1440 pixels",
+      "summary": "Navigation and embedded-view controls remain styled, reachable and keyboard focusable.",
+      "purpose": "Check actual served responsive controls.",
+      "action": "Resize and press Tab from Open workflow.",
+      "controls": [
+        "Open workflow",
+        "Create or choose interface",
+        "Focus interface",
+        "Close interface view"
+      ],
+      "expected": "44px controls, no horizontal overflow, visible Tab focus.",
+      "actual": "Styled controls and 3px focus ring verified; no outer horizontal overflow.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Controls at 1024 pixels",
+      "summary": "Navigation and embedded-view controls remain styled, reachable and keyboard focusable.",
+      "purpose": "Check actual served responsive controls.",
+      "action": "Resize and press Tab from Open workflow.",
+      "controls": [
+        "Open workflow",
+        "Create or choose interface",
+        "Focus interface",
+        "Close interface view"
+      ],
+      "expected": "44px controls, no horizontal overflow, visible Tab focus.",
+      "actual": "Styled controls and 3px focus ring verified; no outer horizontal overflow.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Controls at 480 pixels",
+      "summary": "Navigation and embedded-view controls remain styled, reachable and keyboard focusable.",
+      "purpose": "Check actual served responsive controls.",
+      "action": "Resize and press Tab from Open workflow.",
+      "controls": [
+        "Open workflow",
+        "Create or choose interface",
+        "Focus interface",
+        "Close interface view"
+      ],
+      "expected": "44px controls, no horizontal overflow, visible Tab focus.",
+      "actual": "Styled controls and 3px focus ring verified; no outer horizontal overflow.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    }
+  ]
+}

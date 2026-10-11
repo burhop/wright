@@ -1,0 +1,228 @@
+{
+  "title": "Heat-spreader results and exact evidence in Wright",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "pass",
+  "updated": "2026-10-02T03:48:32.330Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Heat-spreader comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved heat-spreader workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Inspect outputs",
+      "instruction": "Inspect Results and checks, then open the revision 60 fine-temperature CSV."
+    },
+    {
+      "label": "Inspect samples",
+      "instruction": "Expand View numerical samples. Choose x_m, y_m and temperature_c as the horizontal, vertical and value columns."
+    },
+    {
+      "label": "Inspect assessment",
+      "instruction": "Close representation, then click Open assessment on that same field result."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Heat-spreader comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Workflows opens the editor",
+      "summary": "The established workflow editor is available inside the workspace.",
+      "purpose": "Verify actual workspace entry without mocking.",
+      "action": "Click Workflows.",
+      "controls": [
+        "Workflows",
+        "Use saved process"
+      ],
+      "expected": "Editor and working-view action appear.",
+      "actual": "Editor and working-view action visible.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Workflow file controls",
+      "summary": "The workspace offers named saved workflows.",
+      "purpose": "Use the existing saved file chooser.",
+      "action": "Click Workflow files.",
+      "controls": [
+        "Workflow files",
+        "Open workflow"
+      ],
+      "expected": "Open workflow is offered.",
+      "actual": "Existing file actions are visible.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Choose the heat workflow",
+      "summary": "The exact accepted heat workflow appears in the saved files.",
+      "purpose": "Choose the engineering process by its saved file.",
+      "action": "Click Open workflow.",
+      "controls": [
+        "Open workflow",
+        "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow"
+      ],
+      "expected": "The accepted heat workflow is listed.",
+      "actual": "Exact accepted workflow choice visible.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Heat workflow diagram",
+      "summary": "The original heat assignment opens with its connected review, CAD and analysis stages.",
+      "purpose": "Keep authoring and working views on the accepted source.",
+      "action": "Choose the accepted heat workflow file.",
+      "controls": [
+        "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+        "Use saved process"
+      ],
+      "expected": "Accepted heat diagram and working view action available.",
+      "actual": "Exact saved heat source is open.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "S06",
+      "state": "pass",
+      "label": "Shared working view",
+      "summary": "The process working interface opens in another Wright workspace tab.",
+      "purpose": "Verify shared inputs and readiness without creating another executor.",
+      "action": "Click Use saved process.",
+      "controls": [
+        "Use saved process"
+      ],
+      "expected": "Common working view in a workspace tab.",
+      "actual": "Common working view visible.",
+      "raw": "screenshots/raw/S06.png",
+      "annotated": "screenshots/annotated/S06.png"
+    },
+    {
+      "id": "S07",
+      "state": "pass",
+      "label": "Attach the actual heat run",
+      "summary": "The working view reads the same isolated backend run.",
+      "purpose": "Use actual process state for interface composition.",
+      "action": "Reopen the recorded heat run link.",
+      "controls": [
+        "Create or choose interface"
+      ],
+      "expected": "The common working view attaches without starting another run.",
+      "actual": "Existing heat run attached.",
+      "raw": "screenshots/raw/S07.png",
+      "annotated": "screenshots/annotated/S07.png"
+    },
+    {
+      "id": "S07a",
+      "state": "pass",
+      "label": "Actual CAD and solver outputs",
+      "summary": "The working view exposes all eighteen recorded engineering outputs and the held assessment.",
+      "purpose": "Verify resumed results survive the earlier review checkpoint.",
+      "action": "Inspect Results and checks.",
+      "controls": [
+        "Open representation"
+      ],
+      "expected": "Eighteen actual CAD, solver and assessment outputs.",
+      "actual": "All eighteen exact results are visible.",
+      "raw": "screenshots/raw/S07a.png",
+      "annotated": "screenshots/annotated/S07a.png"
+    },
+    {
+      "id": "S07b",
+      "state": "pass",
+      "label": "Actual numerical field table",
+      "summary": "The fine-grid temperature field opens as the exact CSV table.",
+      "purpose": "Verify actual solver data is inspectable.",
+      "action": "Open the revision 60 fine-temperature representation.",
+      "controls": [
+        "Open representation",
+        "Close representation",
+        "Download exact file"
+      ],
+      "expected": "Actual numerical rows and temperature column.",
+      "actual": "The exact CSV numerical table is rendered.",
+      "raw": "screenshots/raw/S07b.png",
+      "annotated": "screenshots/annotated/S07b.png"
+    },
+    {
+      "id": "S08",
+      "state": "pass",
+      "label": "Actual field samples",
+      "summary": "The numerical view projects all 765 supplied fine-grid samples on explicitly selected axes.",
+      "purpose": "Present actual numerical field data without inventing geometry.",
+      "action": "Expand View numerical samples and choose x_m, y_m and temperature_c.",
+      "controls": [
+        "View numerical samples",
+        "Horizontal column",
+        "Vertical column",
+        "Value column"
+      ],
+      "expected": "All 765 supplied samples with numerical evidence and projection limitation.",
+      "actual": "The exact field samples are rendered; other coordinates remain in the table.",
+      "raw": "screenshots/raw/S08.png",
+      "annotated": "screenshots/annotated/S08.png"
+    },
+    {
+      "id": "S09",
+      "state": "pass",
+      "label": "Current assessment evidence",
+      "summary": "The exact current validator assessment opens from its actual field result.",
+      "purpose": "Inspect the checked requirements and held human review.",
+      "action": "Click Open assessment on the revision 60 fine-grid result.",
+      "controls": [
+        "Open assessment",
+        "Close representation"
+      ],
+      "expected": "Exact full assessment evidence, including 25 passed checks and one held review.",
+      "actual": "The actual recorded assessment is open.",
+      "raw": "screenshots/raw/S09.png",
+      "annotated": "screenshots/annotated/S09.png"
+    },
+    {
+      "id": "S10",
+      "state": "pass",
+      "label": "Exact assessment focus",
+      "summary": "Evidence navigation retains the specific producing result even when one assessment checks several outputs.",
+      "purpose": "Verify exact-subject navigation.",
+      "action": "Inspect the focused field result after opening its assessment.",
+      "controls": [
+        "Open assessment"
+      ],
+      "expected": "Focus remains on the revision 60 fine-grid result.",
+      "actual": "Exact field result retains focus.",
+      "raw": "screenshots/raw/S10.png",
+      "annotated": "screenshots/annotated/S10.png"
+    }
+  ]
+}

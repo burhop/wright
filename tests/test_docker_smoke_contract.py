@@ -8,6 +8,19 @@ def read_text(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
 
 
+def test_container_build_enables_the_qualified_workspace_ui() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+    build_stage = dockerfile.split("# Stage 2:", 1)[0]
+    for flag in (
+        "VITE_WRIGHT_PROCESS_DEFINITION_VIEW",
+        "VITE_WRIGHT_WORKFLOW_COMPOSER",
+        "VITE_WRIGHT_WORKFLOW_RECOVERY",
+        "VITE_WORKSPACE_SURFACES_ENABLED",
+    ):
+        assert f"ARG {flag}=1" in build_stage
+        assert f'{flag}="${{{flag}}}"' in build_stage
+
+
 def test_docker_smoke_script_matches_entrypoint_llm_contract() -> None:
     script = read_text("scripts/docker-smoke-test.sh")
     entrypoint = read_text("docker/entrypoint.sh")
@@ -98,7 +111,7 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
     assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
     assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
-    assert "ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=0" in dockerfile
+    assert "ARG VITE_WRIGHT_PROCESS_DEFINITION_VIEW=1" in dockerfile
     assert (
         'VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}"'
         in dockerfile
@@ -160,7 +173,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"cryptography==50.0.0"' in dockerfile
     assert '"pillow==12.3.0"' in dockerfile
     assert '"msgpack==1.2.1"' in dockerfile
-    assert '"tornado==6.5.8"' in dockerfile
+    assert '"tornado==6.5.9"' in dockerfile
     assert (
         "debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258"
         in dockerfile
@@ -168,7 +181,15 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"setuptools==84.0.0"' in dockerfile
     assert "pip/_vendor" in dockerfile
     assert "setuptools@78.1.1" in dockerfile
-    assert "brace-expansion@5.0.9" in dockerfile
+    assert "brace-expansion@5.0.11" in dockerfile
+    assert "undici@6.28.1" in dockerfile
+    assert (
+        "cp -a node_modules/undici /usr/local/lib/node_modules/npm/node_modules/undici;"
+        in dockerfile
+    )
+    assert '"pyjwt==2.15.1"' in dockerfile
+    assert '"urllib3==2.8.0"' in dockerfile
+    assert "urllib3@2.8.0" in dockerfile
     assert "ip-address@10.3.1" in dockerfile
     assert "tar@7.5.22" in dockerfile
     assert "unexpected npm tar override" in dockerfile
@@ -178,6 +199,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "openssl-provider-legacy" in dockerfile
     assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
     assert "reconcile_hermes_pip_check.py" in smoke
+    assert "scripts/check-hermes-jwt-compatibility.py" in smoke
 
 
 def test_docker_smoke_checks_offline_rivet_first_run_runtime() -> None:
@@ -218,6 +240,14 @@ def test_dockerfile_copies_root_package_files_before_workspace_install() -> None
     assert src_copy in dockerfile
     assert dockerfile.index(readme_copy) < dockerfile.index(workspace_install)
     assert dockerfile.index(src_copy) < dockerfile.index(workspace_install)
+
+
+def test_dockerfile_copies_local_frontend_packages_before_npm_install() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+    for package in ("process_client", "ui_kit"):
+        package_copy = f"COPY packages/{package}/ packages/{package}/"
+        assert package_copy in dockerfile
+        assert dockerfile.index(package_copy) < dockerfile.index("RUN npm ci")
 
 
 def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> None:

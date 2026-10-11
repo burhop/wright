@@ -1,0 +1,183 @@
+{
+  "status": "passed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+  "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "fresh_selected_install": true,
+  "physical_dispatch": false,
+  "printer_tools_called": [],
+  "public_catalog_promotion": false,
+  "source_archive_sha256": "afeba0b70cc654f11317ed8ba8f5b7d82eb7de14d9c9ef2e27ec23bcda33f47a",
+  "official_asset_reused_after_hash_verification": true,
+  "release_asset_sha256": "69426a59682574591590f51c913d3889baa19252d1c8e9fcae2497eb0ed6bf92",
+  "install_container": "18e8bd1ce18bc876b8588ade85148023a5b9e08ace702d9c09650af92d37fd32",
+  "clean_base_preflight": {
+    "provider": false,
+    "host": null,
+    "gateway": true,
+    "os": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.6\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n"
+  },
+  "installation_exit_code": 0,
+  "resolved_packages": [
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "bambu-p1s-mcp",
+      "version": "0.1.0"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1"
+    },
+    {
+      "name": "click",
+      "version": "8.5.0"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "httpx-sse",
+      "version": "0.4.3"
+    },
+    {
+      "name": "idna",
+      "version": "3.20"
+    },
+    {
+      "name": "jsonschema",
+      "version": "4.26.0"
+    },
+    {
+      "name": "jsonschema-specifications",
+      "version": "2025.9.1"
+    },
+    {
+      "name": "mcp",
+      "version": "1.28.1"
+    },
+    {
+      "name": "paho-mqtt",
+      "version": "2.1.0"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.5"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0"
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.15.1"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.4"
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32"
+    },
+    {
+      "name": "referencing",
+      "version": "0.37.0"
+    },
+    {
+      "name": "rpds-py",
+      "version": "2026.6.3"
+    },
+    {
+      "name": "sse-starlette",
+      "version": "3.5.0"
+    },
+    {
+      "name": "starlette",
+      "version": "1.7.0"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0"
+    }
+  ],
+  "host_help": "[2026-10-03 12:27:14.795180] [0x000075fb3767c600] [trace]   Initializing StaticPrintConfigs\nBambuStudio-02.08.02.61:\nUsage: bambu-studio [ OPTIONS ] [ file.3mf/file.stl ... ]\n\nOPTIONS:\n --allow-mix-temp option\n                     Allow filaments with high/low temperature to be printed together\n --allow-multicolor-oneplate\n                     If enabled, the arrange will allow multiple color on one plate\n --allow-newer-file option\n                     Allow 3mf with newer version to be sliced\n --allow-rotations   If enabled, the arrange will allow rotations when place object\n --avoid-extrusion-cali-region\n                     If enabled, the arrange will avoid extrusion calibrate region when place object\n --camera-view angle Camera view angle for exporting png: 0-Iso, 1-Top_Front, 2-Left, 3-Right,\n                     10-Iso_1, 11-Iso_2, 12-Iso_3\n --check-preset      If enabled, check whether the externally loaded filament presets are compatible\n                     with the target printer\n --clone-objects \"1,3,1,10\"\n                     Clone objects in the load list\n --datadir dir       Use and store all program settings at the given directory instead of the default\n                     location.\n --debug level       Sets debug logging level. 0:fatal, 1:error, 2:warning, 3:info, 4:debug, 5:trace\n --downward-check    if enabled, check whether current machine downward compatible with the machines\n                     in the list\n --downward-settings \"machine1.json;machine2.json;...\"\n                     the machine settings list need to do downward checking\n --enable-timelapse  If enabled, this slicing will be considered using timelapse\n --estimate-mode     When enabled, automatically fill filament presets and extruder state for machine\n                     estimation after machine switch\n --load-assemble-list assemble_list.json\n                     Load assemble object list from config file\n --load-custom-gcodes custom_gcode_toolchange.json\n                     Load custom gcode from json\n --load-filament-ids \"1,2,3,1\"\n                     Load filament ids for each object\n --load-filaments \"filament1.json;filament2.json;...\"\n                     Load filament settings from the specified file list\n --load-settings \"setting1.json;setting2.json\"\n                     Load process/machine settings from the specified file\n --makerlab-name name\n                     MakerLab name to generate this 3mf\n --makerlab-version version\n                     MakerLab version to generate this 3mf\n --metadata-name \"name1;name2;...\"\n                     matadata name list added into 3mf\n --metadata-value \"value1;value2;...\"\n                     matadata value list added into 3mf\n --outputdir dir     Output directory for the exported files.\n --skip-modified-gcodes option\n                     Skip the modified gcodes in 3mf from Printer or filament Presets\n --skip-objects \"3,5,10,77\"\n                     Skip some objects in this print\n --skip-useless-pick option\n                     Skip generating useless pick/top images into 3mf\n --uptodate-filaments \"filament1.json;filament2.json;...\"\n                     load uptodate filament settings from the specified file when using uptodate\n --uptodate-settings \"setting1.json;setting2.json\"\n                     load uptodate process/machine settings from the specified file when using\n                     uptodate\n --arrange option    Arrange options: 0-disable, 1-enable, others-auto\n --assemble          Arrange the supplied models in a plate and merge them in a single model in order\n                     to perform actions once.\n --convert-unit      Convert the units of model\n --ensure-on-bed     Lift the object above the bed when it is partially below. Disabled by default\n --orient            Orient options: 0-disable, 1-enable, others-auto\n --repetitions count Repetition count of the whole model\n --rotate            Rotation angle around the Z axis in degrees.\n --rotate-x          Rotation angle around the X axis in degrees.\n --rotate-y          Rotation angle around the Y axis in degrees.\n --scale factor      Scale the model by a float factor\n --export-3mf filename.3mf\n                     Export project as 3MF.\n --export-png option Export png of plate: 0-all plates, i-plate i, others-invalid\n --export-settings settings.json\n                     Export settings to a file.\n --export-slicedata slicing_data_directory\n                     Export slicing data to a folder.\n --export-stl        Export the objects as single STL.\n --export-stls       Export the objects as multiple stls to directory\n --help, -h          Show command help.\n --info              Output the model's information.\n --load-defaultfila option\n                     Load first filament as default for those not loaded\n --load-slicedata slicing_data_directory\n                     Load cached slicing data from directory\n --min-save option   export 3mf with minimum size.\n --mstpp time        max slicing time per plate in seconds.\n --mtcpp count       max triangle count per plate for slicing.\n --no-check          Do not run any validity checks, such as gcode path conflicts check.\n --normative-check option\n                     Check the normative items.\n --pipe pipename     Send progress to pipe.\n --slice option      Slice the plates: 0-all plates, i-plate i, others-invalid\n --uptodate          Update the configs values of 3mf to latest.\n\nPrint settings priorites:\n\t1) setting values from the command line (highest priority)\n\t2) setting values loaded with --load_settings and --load_filaments\n\t3) setting values loaded from 3mf(lowest priority)",
+  "selected_image": "sha256:07fb28ce80858f2d9dfba83d00d8b1917a7edf1f0bda2b9dde10471dd58ec2d1",
+  "install_container_stopped": true,
+  "profile_sha256": {
+    "machine": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+    "process": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+    "filament": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db"
+  },
+  "source_stl_sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+  "runtime_container": "45cb9f66d8bf9f53526f9bdc2c5b73e263acbe9322522ae48a1a6d0188e0be5a",
+  "runtime_network": "none",
+  "direct_protocol": {
+    "initialized": true,
+    "tools_listed": 11
+  },
+  "direct_owner_stopped": true,
+  "gateway_return_code": 0,
+  "native_output": {
+    "bytes": 30054,
+    "sha256": "b4aa238f0d44fc71f169b321e7a5ce00ee30df31ec23d874657430e6b96091f6",
+    "gcode_member": "Metadata/plate_1.gcode",
+    "gcode_bytes": 103622,
+    "gcode_sha256": "01183471b19d55e6818e6e0e22bf0ff2d87d943cf3365d656ac90f402c3cdc7b",
+    "actual_settings": {
+      "filament_type": "PETG",
+      "filament_density": "1.28",
+      "enable_support": "1",
+      "wall_loops": "4",
+      "sparse_infill_density": "35%",
+      "layer_height": "0.2",
+      "printer_model": "Bambu Lab P1S"
+    }
+  },
+  "base_image_unchanged": true,
+  "runtime_container_stopped": true
+}

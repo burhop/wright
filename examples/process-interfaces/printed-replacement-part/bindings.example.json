@@ -1,0 +1,18 @@
+{
+  "run_path_template": "wright.run-path/1",
+  "geometry_operation_mode": "ai_task",
+  "geometry_server": "your-enabled-geometry-server",
+  "files_server": "wright-workspace-files",
+  "slicer_server": "your-enabled-offline-slicer-server",
+  "inspection_server": "your-enabled-engineering-python-server",
+  "inspection_workspace": "/workspace",
+  "inspection_backend": "skfem",
+  "geometry_guidance": "RECORD_THE_SELECTED_APPLICATION_VERSION_AND_ACTUALLY_QUALIFIED_MODELLING_IMPORT_EXPORT_LIMITS",
+  "slice_success_contract": "RECORD_THE_QUALIFIED_PROVIDER_SUCCESS_SEMANTICS_AND_VERSION",
+  "simulator_destination": "test://YOUR_PRIVATE_TEST_CAMPAIGN/printer/printed-replacement-part-01",
+  "profiles": {
+    "machine": {"path": "ACTUAL_CONFIGURED_MACHINE_JSON", "sha256": "ACTUAL_SHA256"},
+    "process": {"path": "ACTUAL_CONFIGURED_PROCESS_JSON", "sha256": "ACTUAL_SHA256"},
+    "filament": {"path": "ACTUAL_CONFIGURED_FILAMENT_JSON", "sha256": "ACTUAL_SHA256"}
+  }
+}

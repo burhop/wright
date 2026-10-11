@@ -72,3 +72,26 @@ def test_stage_frontend_preserves_runtime_generated_license(tmp_path: Path) -> N
     assert "third-party-licenses-api.txt" in {
         entry["path"] for entry in manifest["files"]
     }
+
+
+def test_native_frontend_build_enables_workspace_workflow_surfaces(
+    monkeypatch,
+) -> None:
+    namespace = runpy.run_path(str(BUILD_SCRIPT))
+    build_frontend = namespace["build_frontend"]
+    calls: list[dict[str, object]] = []
+
+    monkeypatch.setattr(namespace["shutil"], "which", lambda command: command)
+
+    def capture(command, *, cwd, env=None) -> None:
+        calls.append({"command": command, "cwd": cwd, "env": env})
+
+    build_frontend.__globals__["_run"] = capture
+    build_frontend()
+
+    build = calls[1]
+    assert build["command"] == ["npm", "run", "build"]
+    assert build["env"]["VITE_WRIGHT_PROCESS_DEFINITION_VIEW"] == "1"
+    assert build["env"]["VITE_WRIGHT_WORKFLOW_COMPOSER"] == "1"
+    assert build["env"]["VITE_WRIGHT_WORKFLOW_RECOVERY"] == "1"
+    assert build["env"]["VITE_WORKSPACE_SURFACES_ENABLED"] == "1"

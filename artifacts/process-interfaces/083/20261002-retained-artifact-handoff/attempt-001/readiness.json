@@ -1,0 +1,68 @@
+{
+  "status": 200,
+  "body": {
+    "state": "ready",
+    "assessment_id": "readiness-f708c1ea358b4feb9430e05d70a9d831",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-handoff-001.workflow.wflow",
+      "source_digest": "3cc48d6fd830ee6db4bc5ef83edb27954a34023f8b56d4cd7a6cb2b286274d05",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "input_digest": "1267a72308046b609653a9c0d61e88ff6d8bd17a56b0ed18a978ecb4a5a9106e",
+    "assessed_at": "2026-10-02T16:28:21.529020+00:00",
+    "expires_at": null,
+    "dependencies": [
+      {
+        "binding_id": "input_slice_package_gcode_3mf_retained_handoff_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_source_report_json_retained_handoff_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_machine_profile_json_retained_handoff_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_process_profile_json_retained_handoff_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_filament_profile_json_retained_handoff_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "input_producer_origin_json_retained_handoff_001",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      }
+    ],
+    "reasons": []
+  }
+}

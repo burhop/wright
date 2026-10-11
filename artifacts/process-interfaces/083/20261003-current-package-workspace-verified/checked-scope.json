@@ -1,0 +1,211 @@
+{
+  "scope": "Current installed006 normal-workspace editor, both saved/common/read-only interfaces, exact evidence/producer navigation, preview reopening, keyboard/accessibility and measured native 200% browser zoom",
+  "source_commit_before_changes": "b9ce9a1417086f940c0b771744b7807a5a53296a",
+  "source_sha256": {},
+  "protected_file_hashes": {
+    "AGENTS.md": "5486cb2a04408829d9488e19d917571bf422f44a6e488a9c9742637799ee7b6b",
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": "fb4b6290834a3a968052e7cf7bdf61300d71b87a00638d5688728ec1ce84e791",
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": "63ab709e08d5ec19491f6388d9a80fde379edda1f2d05ff8f642eee050f35b1e",
+    "tests/datasets/engineering-workflows/bindings/parametric-drill-jig.json": "818777640a5189da5cc6139e1c46d0d25113685f115e07c0c96ddd70f7ab8a92",
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": "a9fd6386a7ba2f2bdfb0aad03c011c6cd81e9fdd4078f9131333c6105dbc6cd2"
+  },
+  "fixtures": [
+    {
+      "fixture": "014",
+      "original_and_copied_files_checked": 135,
+      "copied_context_and_host_locator_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary copied-workspace context materialization"
+        },
+        {
+          "path": ".wright/apps/process.ui-512d6109b37f4c0f89b86d86a34827b2.revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0.surface.json",
+          "scope": "Only exact installed interpreter and copied immutable UI-vault locator"
+        }
+      ],
+      "protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    },
+    {
+      "fixture": "015",
+      "original_and_copied_files_checked": 155,
+      "copied_context_and_host_locator_changes": [
+        {
+          "path": ".hermes.md",
+          "scope": "Ordinary copied-workspace context materialization"
+        },
+        {
+          "path": ".wright/apps/process.ui-0a09766ccdd94bfdb3dab1f5519d1628.revision-d38d8f51a4674fe7816f9b00ca43ad73.surface.json",
+          "scope": "Only exact installed interpreter and copied immutable UI-vault locator"
+        }
+      ],
+      "protected_tables_unchanged": [
+        "workflow_continuation_checkpoints",
+        "process_uis",
+        "process_ui_revisions",
+        "process_ui_authoring_jobs",
+        "process_ui_authoring_records"
+      ],
+      "active_presentations": 0
+    }
+  ],
+  "reports": [
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-editor-010/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 12,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-installed-019/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 5,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-installed-019/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 5,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-installed-018/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 4,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-installed-012/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 4,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-025/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 9,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-024/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 9,
+      "primary_current_acceptance": true,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-020/workspace-walkthrough/report.html",
+      "overall": "blocked",
+      "steps": 6,
+      "primary_current_acceptance": false,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-020/workspace-walkthrough/report.html",
+      "overall": "blocked",
+      "steps": 6,
+      "primary_current_acceptance": false,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-022/workspace-walkthrough/report.html",
+      "overall": "blocked",
+      "steps": 8,
+      "primary_current_acceptance": false,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-022/workspace-walkthrough/report.html",
+      "overall": "blocked",
+      "steps": 8,
+      "primary_current_acceptance": false,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-023/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 9,
+      "primary_current_acceptance": false,
+      "limitation": "023 proves measured native zoom but full-page screenshots crop the device viewport;024 supplies primary usable visual evidence",
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-printed-zoom-installed-023/workspace-walkthrough/report.html",
+      "overall": "pass",
+      "steps": 9,
+      "primary_current_acceptance": false,
+      "limitation": "023 proves measured native zoom but full-page screenshots crop the device viewport;024 supplies primary usable visual evidence",
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-021/workspace-walkthrough/report.html",
+      "overall": "blocked",
+      "steps": 6,
+      "primary_current_acceptance": false,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    },
+    {
+      "report": "artifacts/process-interfaces/083/20261003-current-heat-zoom-installed-024/workspace-walkthrough/report.html",
+      "overall": "blocked",
+      "steps": 7,
+      "primary_current_acceptance": false,
+      "limitation": null,
+      "structure_validation": "Walkthrough artifact structure is valid."
+    }
+  ],
+  "primary_checks": 48,
+  "report_structures_validated": 15,
+  "retained_actual_engineering_ui_proofs": [
+    {
+      "root": "20261003-configured-preparation-and-saved-reuse-verified",
+      "files": 282,
+      "inventory_sha256": "5a24c7592b8f07a627b541d3b1b39d19114eccd59f213f3ce6e2008cd7de3f6f"
+    },
+    {
+      "root": "20261003-heat-repeat-and-saved-ui-verified",
+      "files": 268,
+      "inventory_sha256": "85fae47b4ac309055fefc65743f97eeb03c1ec33fd452c628cea1982409e21ea"
+    }
+  ],
+  "new_model_provider_process_execution": false,
+  "review_responses": 0,
+  "physical_effects": false,
+  "human_acceptance": false,
+  "original_zoom_failures": [
+    "020/021: transient connection banner replaced by observation connection status; stable shared read-only notice remains",
+    "022: Playwright :visible pseudo-selector is not standard CSS for axe; corrected active aria-hidden=false scope",
+    "023: measured behavior passed; full-page screenshot sizing crops native zoom;024/025 capture actual device viewport",
+    "heat024: retryable SURFACE_READINESS_TIMEOUT; failed runtime retained; fresh025 is a new presentation, no engineering replay"
+  ],
+  "trace_retention_limit": "Earlier zoom harnesses reused the019 private trace/DOM filename; per-attempt public status, screenshots and diagnostics remain, but distinct original private traces were not preserved.025 uses distinct trace/DOM/cleanup names. No authenticated trace or bootstrap geometry is published.",
+  "task_ledger": "53 checked / 4 open: T043,T053,T056,T057",
+  "new_owned_services": [
+    "installed006 thermal fixture014",
+    "installed006 preparation fixture015"
+  ],
+  "closed_task": "T052: current served normal-workspace acceptance with retained reviewed-editor obligations and exact recorded engineering results"
+}

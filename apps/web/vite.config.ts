@@ -3,13 +3,14 @@ import react from "@vitejs/plugin-react";
 import license from "rollup-plugin-license";
 import path from "path";
 import { request as httpRequest } from "node:http";
+import { request as httpsRequest } from "node:https";
 import type {
   ClientRequest,
   IncomingHttpHeaders,
   IncomingMessage,
   ServerResponse,
 } from "node:http";
-import type { Plugin } from "vite";
+import type { Plugin, ViteDevServer } from "vite";
 
 const surfacePreviewHost =
   /^(?:s-[a-z0-9-]+|r-[a-f0-9]+|mcp-sandbox)\.localhost(?::\d+)?$/i;
@@ -19,7 +20,17 @@ const extraAllowedHosts = (process.env.WRIGHT_WEB_ALLOWED_HOSTS ?? "")
   .filter((host) => host.length > 0);
 const apiProxyTarget =
   process.env.WRIGHT_WEB_API_PROXY_TARGET ?? "http://127.0.0.1:8000";
-const apiProxyPort = new URL(apiProxyTarget).port || "80";
+export function surfaceProxyConnection(target = apiProxyTarget) {
+  const endpoint = new URL(target);
+  return {
+    protocol: endpoint.protocol,
+    hostname: endpoint.hostname,
+    port: endpoint.port || (endpoint.protocol === "https:" ? "443" : "80"),
+  };
+}
+
+const apiProxyConnection = surfaceProxyConnection();
+const apiProxyPort = apiProxyConnection.port;
 
 function surfacePreviewHostHeader(host: string): string {
   return `${host.replace(/:\d+$/, "")}:${apiProxyPort}`;
@@ -142,6 +153,21 @@ export function surfaceProxyHeaders(
 ): IncomingHttpHeaders {
   const headers = { ...source };
   headers.host = authority;
+  // The browser sees this exact isolated preview at Vite's port; the backend
+  // authorizes its original issued origin. Translate only that same-origin
+  // request. Foreign/control/null origins stay unchanged and are denied there.
+  if (
+    typeof source.origin === "string" &&
+    typeof source.host === "string" &&
+    normalizedPreviewAuthority(source.host) === authority.toLowerCase()
+  ) {
+    for (const scheme of ["http:", "https:"]) {
+      if (source.origin === `${scheme}//${source.host}`) {
+        headers.origin = `${new URL(apiProxyTarget).protocol}//${authority}`;
+        break;
+      }
+    }
+  }
   headers["accept-encoding"] = "identity";
   delete headers.connection;
   const cookies = String(headers.cookie ?? "")
@@ -205,106 +231,122 @@ export function rewriteSurfaceSetCookies(
   return rewritten;
 }
 
-function surfaceDevProxyPlugin(): Plugin {
+export function surfaceProxyResponseBody(
+  body: Buffer,
+  headers: IncomingHttpHeaders,
+  encoded: string,
+): Buffer {
+  // Recorded evidence keeps its owning reader's exact bytes and declared size.
+  // JSON evidence may contain URLs; rewriting it would invalidate its digest.
+  if (headers["x-wright-artifact-sha256"] !== undefined) return body;
+  const contentType = String(headers["content-type"] ?? "");
+  if (
+    contentType.includes("text/html") ||
+    contentType.includes("text/css") ||
+    contentType.includes("javascript") ||
+    contentType.includes("application/json")
+  ) {
+    body = Buffer.from(
+      rewriteSurfaceText(body.toString("utf-8"), encoded),
+      "utf-8",
+    );
+    delete headers["content-security-policy"];
+  }
+  // The development proxy buffers finite responses; rewritten text needs its
+  // actual UTF-8 size and must not advertise both length and chunked framing.
+  delete headers["transfer-encoding"];
+  headers["content-length"] = String(body.byteLength);
+  return body;
+}
+
+export function surfaceDevProxyPlugin(): Plugin {
   const surfaceSessions = new Map<string, string>();
+  const install = (server: Pick<ViteDevServer, "middlewares">) => {
+    server.middlewares.use(
+      (req: IncomingMessage, res: ServerResponse, next) => {
+        const match = surfaceProxyMatch(
+          req.url,
+          typeof req.headers.referer === "string"
+            ? req.headers.referer
+            : undefined,
+          req.headers.host,
+        );
+        if (!match) {
+          next();
+          return;
+        }
+        if (!validSurfaceAuthority(match.authority)) {
+          res.statusCode = 400;
+          res.end("Invalid surface preview host");
+          return;
+        }
+
+        const headers = surfaceProxyHeaders(
+          req.headers,
+          match.authority,
+          surfaceSessions.get(match.authority),
+        );
+
+        const request =
+          apiProxyConnection.protocol === "https:" ? httpsRequest : httpRequest;
+        const proxyReq = request(
+          {
+            ...apiProxyConnection,
+            method: req.method,
+            path: match.targetPath,
+            headers,
+          },
+          (proxyRes) => {
+            const chunks: Buffer[] = [];
+            proxyRes.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+            proxyRes.on("end", () => {
+              let body: Buffer = Buffer.concat(chunks);
+              const outgoing = { ...proxyRes.headers };
+              const surfaceSession = extractSurfaceSessionCookie(
+                outgoing["set-cookie"],
+              );
+              if (surfaceSession) {
+                if (surfaceSessions.size >= 256) {
+                  const oldest = surfaceSessions.keys().next().value;
+                  if (oldest) surfaceSessions.delete(oldest);
+                }
+                surfaceSessions.set(match.authority, surfaceSession);
+              } else if (proxyRes.statusCode === 401) {
+                surfaceSessions.delete(match.authority);
+              }
+              const scopedCookies = rewriteSurfaceSetCookies(
+                outgoing["set-cookie"],
+                match.encoded,
+              );
+              if (scopedCookies === undefined || scopedCookies.length === 0) {
+                delete outgoing["set-cookie"];
+              } else {
+                outgoing["set-cookie"] = scopedCookies;
+              }
+              if (
+                typeof outgoing.location === "string" &&
+                outgoing.location.startsWith("/")
+              ) {
+                outgoing.location = `${surfaceProxyPrefix}${match.encoded}${outgoing.location}`;
+              }
+              body = surfaceProxyResponseBody(body, outgoing, match.encoded);
+              res.writeHead(proxyRes.statusCode ?? 502, outgoing);
+              res.end(body);
+            });
+          },
+        );
+        proxyReq.on("error", (error) => {
+          res.statusCode = 502;
+          res.end(`Surface preview proxy failed: ${error.message}`);
+        });
+        req.pipe(proxyReq);
+      },
+    );
+  };
   return {
     name: "wright-surface-dev-proxy",
-    configureServer(server) {
-      server.middlewares.use(
-        (req: IncomingMessage, res: ServerResponse, next) => {
-          const match = surfaceProxyMatch(
-            req.url,
-            typeof req.headers.referer === "string"
-              ? req.headers.referer
-              : undefined,
-            req.headers.host,
-          );
-          if (!match) {
-            next();
-            return;
-          }
-          if (!validSurfaceAuthority(match.authority)) {
-            res.statusCode = 400;
-            res.end("Invalid surface preview host");
-            return;
-          }
-
-          const headers = surfaceProxyHeaders(
-            req.headers,
-            match.authority,
-            surfaceSessions.get(match.authority),
-          );
-
-          const proxyReq = httpRequest(
-            {
-              hostname: "127.0.0.1",
-              port: 8000,
-              method: req.method,
-              path: match.targetPath,
-              headers,
-            },
-            (proxyRes) => {
-              const chunks: Buffer[] = [];
-              proxyRes.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
-              proxyRes.on("end", () => {
-                const contentType = String(
-                  proxyRes.headers["content-type"] ?? "",
-                );
-                const textLike =
-                  contentType.includes("text/html") ||
-                  contentType.includes("text/css") ||
-                  contentType.includes("javascript") ||
-                  contentType.includes("application/json");
-                let body = Buffer.concat(chunks);
-                const outgoing = { ...proxyRes.headers };
-                delete outgoing["content-length"];
-                const surfaceSession = extractSurfaceSessionCookie(
-                  outgoing["set-cookie"],
-                );
-                if (surfaceSession) {
-                  if (surfaceSessions.size >= 256) {
-                    const oldest = surfaceSessions.keys().next().value;
-                    if (oldest) surfaceSessions.delete(oldest);
-                  }
-                  surfaceSessions.set(match.authority, surfaceSession);
-                } else if (proxyRes.statusCode === 401) {
-                  surfaceSessions.delete(match.authority);
-                }
-                const scopedCookies = rewriteSurfaceSetCookies(
-                  outgoing["set-cookie"],
-                  match.encoded,
-                );
-                if (scopedCookies === undefined || scopedCookies.length === 0) {
-                  delete outgoing["set-cookie"];
-                } else {
-                  outgoing["set-cookie"] = scopedCookies;
-                }
-                if (
-                  typeof outgoing.location === "string" &&
-                  outgoing.location.startsWith("/")
-                ) {
-                  outgoing.location = `${surfaceProxyPrefix}${match.encoded}${outgoing.location}`;
-                }
-                if (textLike) {
-                  body = Buffer.from(
-                    rewriteSurfaceText(body.toString("utf-8"), match.encoded),
-                    "utf-8",
-                  );
-                  delete outgoing["content-security-policy"];
-                }
-                res.writeHead(proxyRes.statusCode ?? 502, outgoing);
-                res.end(body);
-              });
-            },
-          );
-          proxyReq.on("error", (error) => {
-            res.statusCode = 502;
-            res.end(`Surface preview proxy failed: ${error.message}`);
-          });
-          req.pipe(proxyReq);
-        },
-      );
-    },
+    configureServer: install,
+    configurePreviewServer: install,
   };
 }
 
@@ -313,27 +355,31 @@ export default defineConfig(({ command, mode }) => {
   const isBuild = command === "build";
   const isDesktop =
     process.env.BUILD_TARGET === "desktop" || mode === "desktop";
+  // Resolve after Vite applies CLI overrides so isolated verification builds
+  // write their license artifact beside their own bundle, not into served dist.
+  const licenseOutput = {
+    file: "third-party-licenses-web.txt",
+    encoding: "utf-8",
+  };
+  const licenseOutputResolver: Plugin = {
+    name: "wright-web-license-output",
+    configResolved(config) {
+      licenseOutput.file = path.resolve(
+        isBuild
+          ? path.resolve(config.root, config.build.outDir)
+          : config.publicDir,
+        "third-party-licenses-web.txt",
+      );
+    },
+  };
 
   return {
     base: isDesktop ? "./" : "/",
     plugins: [
       react(),
       surfaceDevProxyPlugin(),
-      license({
-        thirdParty: {
-          output: {
-            file: isBuild
-              ? path.resolve(
-                  __dirname,
-                  isDesktop
-                    ? "dist-desktop/third-party-licenses-web.txt"
-                    : "dist/third-party-licenses-web.txt",
-                )
-              : path.resolve(__dirname, "public/third-party-licenses-web.txt"),
-            encoding: "utf-8",
-          },
-        },
-      }),
+      licenseOutputResolver,
+      license({ thirdParty: { output: licenseOutput } }),
     ],
     build: {
       outDir: isDesktop ? "dist-desktop" : "dist",
@@ -378,6 +424,9 @@ export default defineConfig(({ command, mode }) => {
       // user-event sequences. Keep the timeout bounded but realistic on
       // shared and Windows CI runners where JSDOM workers contend for CPU.
       testTimeout: 30_000,
+      // Bound JSDOM concurrency: unrestricted workers cause CPU starvation and
+      // delayed effects on the same shared hosts used by local and CI gates.
+      maxWorkers: 2,
       environmentOptions: {
         jsdom: {
           url: "http://localhost/",

@@ -1,0 +1,10 @@
+{
+  "scope": "Exact-path local commit guard stopped before staging or commit",
+  "error": "Historical printed proof links had one excess parent directory",
+  "first_exit_code": 1,
+  "first_bad_target": "../../../../artifacts/process-interfaces/083/20261003-wheel-shared-viewer-verified/historical-claim-audit.json",
+  "corrected_links": 4,
+  "correction": "Resolve artifact links from specs/083-process-working-interfaces/evidence using three parent directories; preserve target evidence bytes",
+  "original_public_evidence_files_preserved": 8,
+  "provider_model_review_or_replay_effects": false
+}

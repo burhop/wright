@@ -70,7 +70,7 @@ class WorkflowArtifactReviewRepository:
                     previous = json.loads(row["decision_json"])
                     if any(
                         previous.get(key) != decision.get(key)
-                        for key in ("state", "actor", "reason")
+                        for key in ("state", "actor", "reason", "request_id")
                     ):
                         raise ArtifactReviewConflict(
                             "A different decision was already recorded"

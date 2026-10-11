@@ -1,0 +1,10 @@
+{
+  "runtime_baseline": "f55c1eacac44b1b57ae5519dff6db4bdb01ca16f",
+  "type_failure": "Four actual preparations accepted boolean/number substitutions under a broad JSON schema; canonical JSON comparison corrects the provider value check.",
+  "navigation_failure": "Two INPUT_REQUIRED reasons had binding identities but no block navigation target.",
+  "frontend_first_failure": "Navigation was intentionally disabled because the test host omitted canNavigate. The corrected fixture opts into the existing navigation capability; no production component change.",
+  "first_collection_attempt": "System Python lacked the installed core package and failed before collection; use the recorded .venv interpreter.",
+  "first_wheel_attempt": "Wheel build succeeded; parent fixture-data import failed because the helper script path omitted the repo. The corrected parent imports the fixture; the child remains isolated with -I and loads Wright modules only from its fresh wheel.",
+  "failed_test_source_hashes": "Not captured at the first-failure instant. Raw records retain the exact then-current line references; final source/function hashes are not relabelled as failed-attempt hashes.",
+  "unknown_hardware_or_protected_review_replay": false
+}

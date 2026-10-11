@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "source_url": "https://github.com/marctheshark3/bambu-p1s-mcp",
+  "source_revision": "7b50d0288fb7b91af8af422b96c4df4db0f1110c",
+  "fresh_selected_install": false,
+  "physical_dispatch": false,
+  "printer_tools_called": [],
+  "public_catalog_promotion": false,
+  "source_archive_sha256": "afeba0b70cc654f11317ed8ba8f5b7d82eb7de14d9c9ef2e27ec23bcda33f47a",
+  "release_asset_sha256": "69426a59682574591590f51c913d3889baa19252d1c8e9fcae2497eb0ed6bf92",
+  "install_container": "b5f57eebf838e5b8acc9dd2f9cbe296857cc0bf28cfa762c1ece760c3f02efe3",
+  "clean_base_preflight": {
+    "provider": false,
+    "host": null,
+    "gateway": true,
+    "os": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.6\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n"
+  },
+  "error_type": "AttributeError",
+  "diagnostic": "'list' object has no attribute 'items'",
+  "install_container_stopped": true
+}

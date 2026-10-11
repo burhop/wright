@@ -1,0 +1,21 @@
+{
+  "diagnostics": {
+    "console": [],
+    "pageErrors": [],
+    "failedResponses": []
+  },
+  "posts": [
+    {
+      "path": "/api/workspace/activate",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/navigation",
+      "method": "POST"
+    },
+    {
+      "path": "/api/workspace/process-interfaces/representations/read",
+      "method": "POST"
+    }
+  ]
+}

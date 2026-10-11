@@ -1,0 +1,22 @@
+{
+  "status": 202,
+  "seconds": 2.665154499998607,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-heat-repeat-013",
+      "source_path": "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow",
+      "source_digest": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "heat-repeat-third-013",
+    "payload_digest": "8b12188a154c2adabf4f125d780ad7d80c5198a08e84a182a0b3a512a2fcaba8",
+    "input_snapshot_id": "inputs-1f882622af934f839e1b7f2a54bb8b93",
+    "input_digest": "348876719f2c86aeaa672aae8bec1b1fb769123db2c936081110e688ef6cbb7d",
+    "run_id": "63b639c7a8f446cd90a9285921ab9072",
+    "run_log_path": "runs/heat-spreader-sizing-repeatable-default-013/63b639c7a8f446cd90a9285921ab9072.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-03T05:48:24.518602+00:00"
+  }
+}

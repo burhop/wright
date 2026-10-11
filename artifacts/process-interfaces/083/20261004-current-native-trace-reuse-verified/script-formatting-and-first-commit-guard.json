@@ -1,0 +1,21 @@
+{
+  "first_commit_guard": "Git diff --cached --check rejected one line-end space and extra EOF blank lines in each inherited walkthrough helper.",
+  "no_commit_or_product_change_in_first_attempt": true,
+  "exact_executed_sources_preserved": [
+    {
+      "published_path": "artifacts/process-interfaces/083/20261004-final-printed-installed-035/workspace-walkthrough/playwright/workspace-entry.mjs",
+      "exact_executed_archive_member": "t056-final-native-browser-035.mjs",
+      "exact_executed_sha256": "a67d5639eb5d8bb30b60999d0131d90ae68e1f8cf8b520871e6b2a67e6968eae",
+      "formatted_reusable_copy_sha256": "1fb649cfe62bb921be71e94439a1cb38396223274a7714f6405ab4b9bc8abcaa",
+      "change": "Remove line-end spaces and extra blank lines at EOF only; exact executed source retained byte-for-byte."
+    },
+    {
+      "published_path": "artifacts/process-interfaces/083/20261004-trace-visible-printed-installed-036/workspace-walkthrough/playwright/workspace-entry.mjs",
+      "exact_executed_archive_member": "t056-final-trace-visible-036.mjs",
+      "exact_executed_sha256": "0541fb1db804d0ad9610c45a257040fd10c81e8eb3af6d3510c707341d5281b6",
+      "formatted_reusable_copy_sha256": "aa1409ba9dd3ed54b301b067e943d6b857628a7b13e81676920eb4c4a60e4e5a",
+      "change": "Remove line-end spaces and extra blank lines at EOF only; exact executed source retained byte-for-byte."
+    }
+  ],
+  "original_guard_log_sha256": "ab8cb55a2484af01e32b727871a2cb6c71045563866fb9a2733192f17bffdd88"
+}

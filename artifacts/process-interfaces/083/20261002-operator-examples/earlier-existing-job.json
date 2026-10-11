@@ -1,0 +1,9 @@
+{
+  "operation": "job-status",
+  "job_id": "job-97f5219a3d74414685cc3f30347a8345",
+  "state": "saved",
+  "revision_id": "revision-415f9e4911f0447199dd6fbd4bbc46c0",
+  "adapter": "hermes",
+  "model": "gpt-5.6-sol",
+  "diagnostic_codes": []
+}

@@ -309,6 +309,44 @@ ci_failures.md
 
 # Stale logs and local runtime databases
 .local-run/
+# Local package caches and isolated validation scratch (preserve on disk).
+/.pnpm-store/
+/.pytest-*/
+/.tmp-*/
+/.tmp-*.py
+# Generated campaign working data stays local; commit curated receipts instead.
+/artifacts/engineering-workflow-datasets/output/
+/artifacts/engineering-workflow-datasets/diagnostics/
+/artifacts/engineering-workflow-datasets/visuals/
+/artifacts/engineering-workflow-datasets/status.json
+/artifacts/engineering-workflow-datasets/recovery-state.json
+/artifacts/engineering-workflow-datasets/reliability-episodes.json
+/artifacts/engineering-workflow-datasets/retained-validation.json
+/artifacts/engineering-workflow-datasets/completion-audit-current.*
+/artifacts/engineering-workflow-datasets/inventory-082-*.json
+/artifacts/engineering-workflow-datasets/preflight-082-*.json
+/artifacts/process-validation/retained-*/
+/artifacts/process-validation/cfd-boundary-energy-qualification-20260917/
+/artifacts/process-validation/dashboard-validator-082-20260918/
+/artifacts/process-validation/pi01-continuation-1000-20260918/
+/artifacts/process-validation/pi01-numerics-probes-20260918/
+/artifacts/process-validation/robot-source-refresh*/
+/artifacts/process-validation/engineering/20260916T212402Z/
+/artifacts/process-validation/engineering/20260916T213217Z/
+/artifacts/process-validation/engineering/20260916T213534Z/
+/artifacts/process-validation/engineering/20260916T213725Z/
+/artifacts/process-validation/engineering/native-probe.step
+/artifacts/pytest-*/
+/artifacts/test-temp/
+/artifacts/dashboard-image-redesign-verification/
+/artifacts/robot-tracking-plot/
+/artifacts/mcp-curation-agentcad/
+/artifacts/mcp-discovery-2026-09-11/
+/artifacts/ui-redesign/
+# Historical local handoff bundles and the slicer's working report.
+/epp-f01b-*.bundle
+/epp-f01b-*-current.json
+/result.json
 phase*.log
 ps_debug.log
 test-*-output.log

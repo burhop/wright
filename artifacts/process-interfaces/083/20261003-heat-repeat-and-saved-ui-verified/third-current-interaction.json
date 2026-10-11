@@ -1,0 +1,963 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "083-heat-repeat-013",
+      "source_path": "workflows/heat-spreader-sizing-repeatable-default-013.workflow.wflow",
+      "source_digest": "d941977f20b6ec345f0ec8959fddaa76833b9546278c2af5d9f0d71fede5536b",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "63b639c7a8f446cd90a9285921ab9072",
+    "input_snapshot_id": "inputs-1f882622af934f839e1b7f2a54bb8b93",
+    "input_digest": "348876719f2c86aeaa672aae8bec1b1fb769123db2c936081110e688ef6cbb7d",
+    "cursor": 116,
+    "generated_at": "2026-10-03T05:58:21.822721+00:00"
+  },
+  "state": "failed",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+      "step_id": "define_thermal_case_repeatable_default_013",
+      "port_id": "define_thermal_case_repeatable_default_013_result",
+      "role": "deliverable",
+      "title": "Define geometry, material, load, and boundaries",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/thermal-basis.md",
+          "sha256": "a0a9145019911034bf10e25dd1c75bc5587bbf2972ac162af62e905392fdc65c",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "da8931e5fc4d82c911364a6ad5f412144a4aef224f7b5ca80799377daf76515b",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:author_cad_repeatable_default_013:cad_source",
+      "step_id": "author_cad_repeatable_default_013",
+      "port_id": "cad_source",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/plate-source.py",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/plate-source.py",
+          "sha256": "890d3130caf2969098e62c1d3df82c5609a89953c0a2fd57cca08cacfda8202b",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:author_cad_repeatable_default_013:cad_source",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+      "step_id": "create_plate_geometry_repeatable_default_013",
+      "port_id": "baseline_40_geometry",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40.step",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40.step",
+          "sha256": "58e7e019326e09faf0d0b8011b385e6216f970595b93a0f24c94ebb8f90fb4dc",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "c5dfbf3541bbcb8bf37d70faa096f6fddf3a5f5689c6a52e7300e8aa42d5b9d9",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+      "step_id": "create_plate_geometry_repeatable_default_013",
+      "port_id": "revision_60_geometry",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60.step",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60.step",
+          "sha256": "a98b1700811f78a73700843a79b1088accb5a5d7f6bcdc7630c20964de59422b",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "f410bded90065b6efe3a31444c6942fe9a026100bc6e67d83dc8fa8b7bb3b358",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:geometry_measurements",
+      "step_id": "create_plate_geometry_repeatable_default_013",
+      "port_id": "geometry_measurements",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/geometry-measurements.json",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/geometry-measurements.json",
+          "sha256": "406bc559c4b72bbeb8ec3698ecea4a826cee619134f4974e2642205f0ea81018",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:geometry_measurements",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "baseline_40_coarse",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.csv",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.csv",
+          "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "3110e02364906f5fab2da6d1b4979c3dbce2f67f5c93a6463adcab7c4d3d7c54",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+          "sha256": "c02be52b9e78e6a06234e3f560984934f546da0754c9bb28a15d1c353b6fd2e6",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "baseline_40_fine",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.csv",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.csv",
+          "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "d02cce38ee514cfc54b1e9b095dfd002d77e801942bdf4da546308ce0c42ae2c",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+          "sha256": "a65a7e08a01f96e86a9ed1274ee396e510d832bcddb79cf84b9ebc186c670797",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "revision_60_coarse",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.csv",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.csv",
+          "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "e1522dfdfb5387ee65b6534b3008562e378bbab04e46c2de76540293fe4a146b",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+          "sha256": "c127479729f46f66ca5b1f9ace7412535f4e86ab01fb024f42281258524d6fea",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "revision_60_fine",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.csv",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.csv",
+          "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "88c83979fca3798dc9e6651848533e63f8085b315603e0b17200c97f9dc93cb8",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+          "sha256": "4674660d7ccf117959521c2ab5fc59e61dc4f8edfecbc1b326247ca144813d07",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+          "sha256": "3546d01ac9dce5b96a9f18aa4117150a0b7ef2e7b3709b967fb2dcb8dcb5c3f9",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+          "sha256": "f16059631f50c9e72220eaa35f3b1fa218fa69ed195b307f680a73d21b694160",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "decision",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/sizing-decision.json",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/sizing-decision.json",
+          "sha256": "dde239668cd822ccceaaf9c5d9ae76b48c50f21d08e498da75ad53797de73816",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "b80bd94a424a9dc4a12ead69076fba41caefc70c7acbb69b1cfa249097440a8c",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+      "step_id": "compute_fields_repeatable_default_013",
+      "port_id": "correspondence",
+      "role": "deliverable",
+      "title": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/geometry-analysis-correspondence.json",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/geometry-analysis-correspondence.json",
+          "sha256": "1803efa53f8166af7074ad9eef54ba18b24b4ca9cac3e60dc3faabb25f2d7c71",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+          "representation_id": null
+        }
+      ],
+      "assessments": [
+        {
+          "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+          "subject_digest": "d8ea3ddf3c2276e32b19f28686757b6141de96fedbfd12a1fc97d8224c67a7a2",
+          "outcome": "blocked",
+          "currentness": "current"
+        }
+      ],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:validate_outputs_repeatable_default_013:diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json",
+      "step_id": "validate_outputs_repeatable_default_013",
+      "port_id": "diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json",
+      "role": "diagnostic",
+      "title": "Check exact current engineering outputs \u2014 validation evidence",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "validation/assessment-bbf9456439054f0daf732974293e9c43.json",
+          "sha256": "d6c833a6106119a204a509a3248a4542ec4a64a69802256f97c623117067df3b",
+          "media_type": null,
+          "result_id": "63b639c7a8f446cd90a9285921ab9072:validate_outputs_repeatable_default_013:diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [
+    {
+      "checkpoint_id": "checkpoint-04d560b09bb1246a696fe630",
+      "step_id": "review_basis_repeatable_default_013",
+      "kind": "action",
+      "subject_digest": "b0c1982bbcbb15407908115f89167d6fe22ea05c7a783a40bef67ce30976843a",
+      "instructions": "Review the exact process action and its evidence before continuing.",
+      "response_schema": null,
+      "decisions": [
+        "approved",
+        "changes_requested"
+      ],
+      "evidence": [],
+      "state": "consumed",
+      "decision": {
+        "decision": "approved",
+        "actor": "integration_test:083-private-digital-heat-repeat-013",
+        "reason": "Integration campaign 083-private-digital-heat-repeat-013 policy 31a6e6abaf238cf2194b437a3854b5c14bf0de4f6cf82382910e79d9d77eb84c",
+        "request_id": "synthetic-third-basis-review-001",
+        "integration_test": true
+      },
+      "action_receipt": {
+        "request_id": "heat-repeat-third-basis-continuation-013",
+        "principal_id": "local-control-plane",
+        "submission": "accepted",
+        "delivery_completed": true,
+        "observed_outcome": null,
+        "provider_reference": null,
+        "cancellation_requested": false,
+        "cancellation_outcome": null
+      }
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "review-checkpoint-04d560b09bb1246a696fe630",
+      "operation": "review",
+      "title": "Review action",
+      "enabled": false,
+      "subject_digest": "b0c1982bbcbb15407908115f89167d6fe22ea05c7a783a40bef67ce30976843a",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not awaiting a review decision.",
+          "correction": "Inspect its recorded decision or prepare a new exact subject.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-04d560b09bb1246a696fe630",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "continue-checkpoint-04d560b09bb1246a696fe630",
+      "operation": "action",
+      "title": "Continue process",
+      "enabled": false,
+      "subject_digest": "b0c1982bbcbb15407908115f89167d6fe22ea05c7a783a40bef67ce30976843a",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This checkpoint is not ready to continue.",
+          "correction": "Complete its required review; an already consumed action cannot be submitted again.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": "checkpoint-04d560b09bb1246a696fe630",
+      "idempotency_required": true
+    },
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "b969bba7670fd30274185d71785d5b7b6706928ad1ed120bdec465ae7bdd293f",
+      "reasons": [
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+          "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "failed",
+      "observed_at": "2026-10-03T05:58:21.822721+00:00",
+      "stale_after": null,
+      "operation_id": "63b639c7a8f446cd90a9285921ab9072",
+      "activity": null,
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 116,
+        "completed_steps": 9
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "PROCESS_VALIDATION_NEEDS_INPUT",
+      "message": "Check exact current engineering outputs: validation needs additional evidence, capability or review.",
+      "correction": "An authenticated human review is required for this requirement.",
+      "binding_id": null,
+      "step_id": null,
+      "navigation": {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "63b639c7a8f446cd90a9285921ab9072",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      "technical_details_ref": "runs/heat-spreader-sizing-repeatable-default-013/63b639c7a8f446cd90a9285921ab9072.json"
+    }
+  ],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:define_thermal_case_repeatable_default_013:define_thermal_case_repeatable_default_013_result",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/thermal-basis.md"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:author_cad_repeatable_default_013:cad_source",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:author_cad_repeatable_default_013:cad_source",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/plate-source.py"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:baseline_40_geometry",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40.step"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:revision_60_geometry",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60.step"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:geometry_measurements",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:create_plate_geometry_repeatable_default_013:geometry_measurements",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/geometry-measurements.json"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_coarse",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.csv"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-coarse-temperature.vtu"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:baseline_40_fine",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.csv"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/baseline_40-fine-temperature.vtu"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_coarse",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.csv"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-coarse-temperature.vtu"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:revision_60_fine",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.csv"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/revision_60-fine-temperature.vtu"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/heat-balance.json"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/mesh-comparison.json"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:decision",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/sizing-decision.json"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "assessment",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+      "assessment_id": "assessment-bbf9456439054f0daf732974293e9c43",
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:compute_fields_repeatable_default_013:correspondence",
+      "assessment_id": null,
+      "artifact_ref": "process-proofs/heat-spreader-sizing/repeatable-default-013/outputs/63b639c7a8f446cd90a9285921ab9072/geometry-analysis-correspondence.json"
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:validate_outputs_repeatable_default_013:diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": "63b639c7a8f446cd90a9285921ab9072:validate_outputs_repeatable_default_013:diagnostic:validation/assessment-bbf9456439054f0daf732974293e9c43.json",
+      "assessment_id": null,
+      "artifact_ref": "validation/assessment-bbf9456439054f0daf732974293e9c43.json"
+    },
+    {
+      "kind": "block",
+      "block_id": "review_basis_repeatable_default_013",
+      "run_id": "63b639c7a8f446cd90a9285921ab9072",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    }
+  ],
+  "next_page": null
+}

@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "upstream_unreleased_revision": true,
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+  "fresh_selected_install": true,
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "install_container": "5661e8328956f0ec14128728a45dd1c1eee7b9bfb25a520fa7bc818a4e35afbe",
+  "clean_base_preflight": {
+    "packages": {
+      "tool_registry": true,
+      "mcp": true,
+      "agentcad": false,
+      "build123d": false,
+      "OCP": false,
+      "skfem": false
+    },
+    "hosts": {
+      "blender": null,
+      "FreeCAD": null,
+      "openscad": null
+    }
+  },
+  "installation_seconds": 54.4358121999976,
+  "installation_exit_code": 0,
+  "selected_image": "sha256:d8b9cd78f929bf4e2705127e09f8b69b0bdf339682a6d79c2fdbf9f0c7b3077f",
+  "install_container_stopped": true,
+  "runtime_container": "d97c4afc94b1a01b085a3590dea482a09c29fb63bcdd8685c23dc0f6735b7cab",
+  "direct_protocol": {
+    "initialized": true,
+    "tools_listed": 11
+  },
+  "installed_provider_source": {
+    "server_sha256": "3c263c3e47a6112cec7144fc073bd916070849f128257f8c7159b025882c3caf",
+    "agentcad_version": "0.6.0",
+    "mcp_version": "1.28.1",
+    "build123d_version": "0.10.0"
+  },
+  "creation_gateway_return_code": 0,
+  "native_step_present": true,
+  "native_meta_present": true,
+  "native_status": "success",
+  "step_sha256": "f0ef048e50b45d63348e4186dba10e0013f210a27092e4e835ba8c6034e91341",
+  "native_files_frozen": {
+    "project/AGENTS.md": "acf6824e30902ee0d17057c4b84d8a35913c19ff80535120439a9c56a024dd5e",
+    "project/tiny.py": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47",
+    "project/build/agentcad.json": "05d04eb9b0a672c36b7b52da1297fe7080eee91df67ce82086a383d74e52bfd9",
+    "project/build/.agentcad/session.jsonl": "cc4287acfecdd44a4e61de7491a802e314af7740e80b7e27d380bd7da6a01174",
+    "project/build/v1_clean-probe/meta.json": "94d111f7b71a9d39ac9f8fc56f63aac9754d6c63f8a5a6273e3e9108f03c86a7",
+    "project/build/v1_clean-probe/output.step": "f0ef048e50b45d63348e4186dba10e0013f210a27092e4e835ba8c6034e91341",
+    "project/build/v1_clean-probe/script.py": "c8a857325c3a2ebc9ce24808c65cb680163b3398ef04e54acea9012809a01c47",
+    "project/.claude/skills/agentcad/SKILL.md": "af663101ad32b4b8bd7a39e135ccdbe163820b711ead35698ff0c30b4d1d3b8f"
+  },
+  "readback_gateway_return_code": 0,
+  "creation_retried": false,
+  "runtime_container_stopped": true
+}

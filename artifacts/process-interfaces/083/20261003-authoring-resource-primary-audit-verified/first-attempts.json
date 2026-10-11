@@ -1,0 +1,7 @@
+{
+  "envelope_tests": "Both actual runs pass 50 cases; one formatting-only line wrap separates them. The initial source remains private and byte-preserved.",
+  "first_audit_publisher": "Attempt 001 verified cases/resources/provenance, then rejected a guessed actual-model-generation report path. No public directory or checkpoint doc existed or changed from that attempt. The original helper remains intact.",
+  "corrected_report_path": "The actual retained report is actual-model-authoring. Attempt 002 checks that status and all eight actual-model/reuse report statuses before publishing.",
+  "helper_preparation": "One PowerShell inline quoting failure prevented helper preparation; the following missing-file command executed no audit. A file-backed UTF-8 preparer then completed normally.",
+  "effects": "No new browser, inference, engineering dispatch, user decision, provider, device or supplier effect occurred."
+}

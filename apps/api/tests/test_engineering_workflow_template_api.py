@@ -13,6 +13,9 @@ from workspace_service.workflow_sources import WorkspaceWorkflowSourceUseCases
 
 class _Service:
     def __init__(self, root):
+        from apps.api.tests.process_interface_fixtures import bind_process_interfaces
+
+        bind_process_interfaces(self, root, "workspace-1")
         self.workflow_sources = WorkspaceWorkflowSourceUseCases(BoundedExecutor())
         self.engineering_workflow_templates = EngineeringWorkflowTemplateService(
             self.workflow_sources

@@ -1,0 +1,41 @@
+{
+  "ui_id": "ui-8858f2ec2bc24bc588ce5042626503ab",
+  "closed": [
+    {
+      "presentation_id": "6643dd34-39b3-4260-bd72-7c5d0d24f4f2",
+      "surface_id": "60256dee-3b2b-4c72-a13d-9258577a824f",
+      "status": 204
+    },
+    {
+      "presentation_id": "0381daeb-6469-4f9e-96d8-4c8dcf547791",
+      "surface_id": "448bb1da-920d-4688-bfe0-0d88decbaa65",
+      "status": 204
+    },
+    {
+      "presentation_id": "6009468a-70b2-45ee-9ea6-8e5c2c905937",
+      "surface_id": "90e4b744-1b6b-4d47-9062-3ed831371575",
+      "status": 204
+    },
+    {
+      "presentation_id": "cac8414e-b645-4996-bfbf-183076e5028d",
+      "surface_id": "cafcdb70-2ece-4756-83e0-db4c762a613c",
+      "status": 204
+    },
+    {
+      "presentation_id": "bd52f005-c1d0-4313-85d0-7898a6819ad3",
+      "surface_id": "f7895284-60b0-418d-9e64-ea83559f7941",
+      "status": 204
+    }
+  ],
+  "before_run_sha256": {
+    "67abaa021ee44972a94e3c9cbaa3dbbe": "85ff3f221d252a075a4f0f62ababe4280c19ecf98f58883e6a4b70f2b99bd639",
+    "9cfe133164bd4e70b97be9a058d0feb8": "beff563c34dac9befb7809a8a6f8f8fd0a7c0d0927a2fde629a865db6186e737"
+  },
+  "after_run_sha256": {
+    "67abaa021ee44972a94e3c9cbaa3dbbe": "85ff3f221d252a075a4f0f62ababe4280c19ecf98f58883e6a4b70f2b99bd639",
+    "9cfe133164bd4e70b97be9a058d0feb8": "beff563c34dac9befb7809a8a6f8f8fd0a7c0d0927a2fde629a865db6186e737"
+  },
+  "run_bytes_unchanged": true,
+  "engineering_review_or_action": false,
+  "other_ui_presentations_touched": false
+}

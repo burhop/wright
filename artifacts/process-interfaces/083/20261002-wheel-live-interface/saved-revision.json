@@ -1,0 +1,137 @@
+{
+  "manifest": {
+    "schema_version": "wright.process-ui/1",
+    "ui_id": "ui-1e7b6edb71e74b19a754b7fd2b88633a",
+    "revision_id": "revision-2bf6d4d49c224290a0416503a627d0e7",
+    "parent_revision": null,
+    "title": "Focus-wheel preparation review",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+      "source_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "interaction_version": "wright.process-interaction/1",
+    "client_version": "1.0.0",
+    "kit_version": "1.0.0",
+    "bindings": [],
+    "capabilities": [
+      "process.read",
+      "process.inputs",
+      "process.start",
+      "process.respond",
+      "process.review",
+      "process.action",
+      "process.cancel",
+      "process.results",
+      "process.navigate"
+    ],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "define_geometry_basis_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "repair_measure_orient_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "supports_and_slice_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "retain_slice_response_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "inspect_slice_handoff_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "summarize_preparation_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "validate_outputs_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "authorize_transfer_retained_consumer_001",
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "viewers": []
+  },
+  "source_digest": "e9078bff217b0a43361a4479e9456d912c41eba85dac0e77ed7aaa051e43f36b",
+  "build": {
+    "build_id": "build-fa3e280d5427487183e99027255d19eb",
+    "source_digest": "e9078bff217b0a43361a4479e9456d912c41eba85dac0e77ed7aaa051e43f36b",
+    "manifest_digest": "bf4e209f94517ca804e875e9372e563f263b4cb296693d24ebddc5990c102a3c",
+    "toolchain_digest": "70dc340f2298792f09f966929e06fa69582c78f269e97134b7f922bc280b5a64",
+    "bundle_digest": "71d8e727c537a4335a1a1463d3f67ffdfb1ae8562a74c7b49a252479058d3d34",
+    "state": "built",
+    "created_at": "2026-10-02T14:43:16.673749+00:00",
+    "diagnostics": [],
+    "bundled_bytes": 385991
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "421aec9c92fd15b3397e289c29168759fa5a4edbfc4372d3acc021d64e88ffe1",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "421aec9c92fd15b3397e289c29168759fa5a4edbfc4372d3acc021d64e88ffe1",
+    "capability_scope": []
+  },
+  "generation_request_digest": "2b6349bd07ef4889c3293cde98f013cc77a2f51b2e5e74a840db1ea31e52a120",
+  "created_at": "2026-10-02T14:43:16.673749+00:00",
+  "previewed_at": "2026-10-02T14:47:29.895474+00:00"
+}

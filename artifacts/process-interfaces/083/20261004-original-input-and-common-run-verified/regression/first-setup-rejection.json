@@ -1,0 +1,9 @@
+{
+  "command": ".venv/Scripts/python.exe -m pytest tests/test_process_interface_examples.py -q",
+  "exit_code": 1,
+  "passed": 2,
+  "setup_errors": 53,
+  "first_failure": "PermissionError: [WinError 5] Access is denied: D:/TEMP/pytest-of-markb",
+  "scope": "Test temporary-directory setup failed before example execution; no implementation assertion failed.",
+  "raw_output": "Retained in the Codex tool transcript; not rerun to manufacture a log."
+}

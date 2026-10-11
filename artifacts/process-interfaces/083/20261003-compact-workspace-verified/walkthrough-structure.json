@@ -1,0 +1,63 @@
+[
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-001/workspace-walkthrough",
+    "exit_code": 1,
+    "output": "ERROR: report.html has no recognizable full-size image interaction\nERROR: report.html has no manual repeat section",
+    "scope": "Pre-navigation launch record; no screenshot/image interaction could exist. Not counted as a UI walkthrough."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-003/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-004/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-005/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-006/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-007/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-heat-installed-008/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-004/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-005/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-006/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-007/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  },
+  {
+    "report": "artifacts/process-interfaces/083/20261003-compact-printed-installed-008/workspace-walkthrough",
+    "exit_code": 0,
+    "output": "Walkthrough artifact structure is valid."
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "path": "/api/workspace/process-interfaces/uis/ui-1e7b6edb71e74b19a754b7fd2b88633a/present",
+    "status": 503,
+    "body": {
+      "error_code": "CAPABILITY_UNAVAILABLE",
+      "message": "Wright could not open the managed process interface.",
+      "trace_id": "8cd5ddc47b2c58484d5d0fec274646ca",
+      "details": {
+        "correction": "Use the common view and inspect its managed runtime diagnostics before reopening.",
+        "reason": {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "message": "Wright could not open the managed process interface.",
+          "correction": "Use the common view and inspect its managed runtime diagnostics before reopening.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        },
+        "diagnostic": {
+          "runtime_code": "SURFACE_READINESS_TIMEOUT",
+          "retryable": true
+        }
+      }
+    }
+  }
+]

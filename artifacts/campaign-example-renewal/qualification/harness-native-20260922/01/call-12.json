@@ -1,0 +1,17 @@
+{
+  "arguments": {
+    "operation": "connect_pins_with_labels",
+    "comp1_ref": "J0",
+    "pin1": "6",
+    "comp2_ref": "JS",
+    "pin2": "2",
+    "net_name": "SIGNAL_RETURN"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"net_name\":\"SIGNAL_RETURN\",\"labels_created\":2,\"label_uuids\":[\"78bdaaf3-602b-4ce2-a515-4b2d9f136afe\",\"6cba1466-df7b-45ca-a43b-c38918b8d0ef\"]}"
+    }
+  ]
+}

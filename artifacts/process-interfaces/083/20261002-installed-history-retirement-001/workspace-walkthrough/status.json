@@ -1,0 +1,25 @@
+{
+  "title": "Historical wheel result through the workspace",
+  "summary": "Exact retained failed native run, saved outputs and file tabs; no active vendor panel or process replay.",
+  "overall": "pending",
+  "updated": "2026-10-02T22:03:10.067Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the proof workspace and click Workflows."
+    },
+    {
+      "label": "History",
+      "instruction": "Open its saved workflow link with printDemoRun identifying the retained failed run."
+    },
+    {
+      "label": "Return",
+      "instruction": "Click Back to workflow, then View saved result."
+    },
+    {
+      "label": "Saved record",
+      "instruction": "Click Open saved run record and inspect its workspace file tab."
+    }
+  ],
+  "steps": []
+}

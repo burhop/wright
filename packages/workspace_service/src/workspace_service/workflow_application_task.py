@@ -465,11 +465,21 @@ class ApplicationResourceTask:
         return self.context()
 
     def context(self):
+        from agent_adapters.workflow_instructions import (
+            embedded_asset,
+            embedded_instruction_set,
+        )
+
         return "\n\nSelected application resource (authoritative):\n" + json.dumps(
             {
                 "resource": self.resource,
                 "mode": self.config["source"],
-                "instructions": "Work only on this resource. Wright manages selection, copying, exports and result verification.",
+                "instructions": embedded_asset(
+                    embedded_instruction_set(
+                        getattr(self.step, "instruction_set", None)
+                    ),
+                    "context.application",
+                ).body,
             }
         )
 

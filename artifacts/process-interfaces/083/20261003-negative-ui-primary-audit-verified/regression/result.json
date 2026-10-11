@@ -1,0 +1,13 @@
+{
+  "exit_code": 0,
+  "modules": 14,
+  "counts": {
+    "tests": 259,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "passed": 259
+  },
+  "scope": "Actual validation/review/action/preparation owners; controlled provider responses and isolated nonphysical unit decisions.",
+  "live_model_mcp_engineering_hardware_or_user_acceptance": false
+}

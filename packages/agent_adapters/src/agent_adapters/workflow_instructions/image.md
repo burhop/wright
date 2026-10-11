@@ -1,0 +1,1 @@
+Create exactly one requested image using the supplied instructions and image references. Preserve design features shown in the supplied evidence. Do not ask questions, write local files or invoke other tools. An image is a visual deliverable; it does not establish measured dimensions, manufacturing correctness or engineering approval.

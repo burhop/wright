@@ -13,6 +13,7 @@ import html
 import importlib.metadata
 import io
 import json
+import math
 from pathlib import Path
 import re
 import shutil
@@ -132,6 +133,57 @@ def logical_edges(schedule):
              "net": row["net"], "route_mm": float(row["route_mm"]), "continuous_a": float(row["current_cont_A"]),
              "startup_a": float(row["current_start_A"]), "color": row["color_requirement"], "original_row": i+2}
             for i, row in enumerate(schedule)]
+
+
+def resistance_assumption(design):
+    """Return a bounded, explicitly reviewed resistance assumption when supplied."""
+    value = design.get("resistance_assumption")
+    if value is None:
+        return None
+    required = {
+        "contact_ohm_each",
+        "splice_port_ohm_each",
+        "basis",
+        "status",
+    }
+    if not isinstance(value, dict) or set(value) != required:
+        raise ValueError("Resistance assumption requires the closed reviewed schema")
+    if value["status"] != "reviewed_engineering_assumption":
+        raise ValueError("Resistance assumption must be explicitly review-approved")
+    if not isinstance(value["basis"], str) or not value["basis"].strip() or len(value["basis"]) > 1000:
+        raise ValueError("Resistance assumption requires a concise engineering basis")
+    for key in ("contact_ohm_each", "splice_port_ohm_each"):
+        candidate = value[key]
+        if (
+            isinstance(candidate, bool)
+            or not isinstance(candidate, (int, float))
+            or not math.isfinite(candidate)
+            or not 0 < candidate <= 0.1
+        ):
+            raise ValueError("Resistance assumptions must be finite positive values at most 0.1 ohm")
+    return value
+
+
+def resistance_terms(path, physical, solved, assumption):
+    terms = []
+    for index in path:
+        edge = physical[index]
+        for endpoint in (edge["from"], edge["to"]):
+            kind = "splice_port" if endpoint.split(":")[0].startswith("S_") else "contact"
+            resistance = assumption[
+                "splice_port_ohm_each" if kind == "splice_port" else "contact_ohm_each"
+            ]
+            terms.append(
+                {
+                    "wire_id": edge["id"],
+                    "endpoint": endpoint,
+                    "kind": kind,
+                    "current_a": solved[index],
+                    "resistance_ohm": resistance,
+                    "drop_v": solved[index] * resistance,
+                }
+            )
+    return terms
 
 
 def synthesize(input_directory, design_document, research_directory, output_directory):
@@ -271,11 +323,12 @@ def synthesize(input_directory, design_document, research_directory, output_dire
             method = "controller chassis bond; hardware geometry unresolved" if endpoint=="J0" else "separate insulated WAGO221-413 drain service link" if endpoint.startswith("Z") else "insulated unconnected load-end drain"
             shields.append(dict(cable_id=cable_id,endpoint=endpoint,termination=method,load_return=False,reserved_pin_used=False))
     save(output/"shield-termination.json",{"shield_ends":shields,"chassis_termination_hardware_selected":False,"physical_test_performed":False})
+    assumption = resistance_assumption(design)
     package = {**provenance(output, [source/"wiring-schedule.csv", source/"connector-requirements.csv", source/"allowed-wire.csv", Path(design_document), Path(research_directory)/"component-records.json"]),
                "original_logical_edges": original, "physical_edges": edges, "connector_requirements": connector_reqs, "design": design,
                "generated_source_sha256": sha(yaml_path), "wireviz_version": importlib.metadata.version("wireviz"), "graphviz_version": subprocess.run(["dot","-V"],capture_output=True,text=True).stderr.strip(),
                "native_command": command, "native_stdout": completed.stdout, "native_stderr": completed.stderr, "mating_views": views, "shield_schedule":shields,
-               "release_status":"HOLD: application derating, contact/splice resistance, exact interfaces and installation details require evidence"}
+               "release_status":"HOLD: application derating, production contact/splice resistance, exact interfaces and installation details require evidence"}
     save(output/"harness-plan.json", package)
     assembly = "# Prototype harness assembly\n\nWireViz/Graphviz generated this package from the original uploaded schedule. This is an explicit Splice alternative, not Splice output.\n\n"
     assembly += "Preserve logical pin IDs and use the attached manufacturer mating-face drawings; the wire-entry view is mirrored and must not be substituted. Confirm the customer devices accept the selected mating housings before fabrication.\n\n"
@@ -284,7 +337,12 @@ def synthesize(input_directory, design_document, research_directory, output_dire
     assembly += f"Maintain at least {design['minimum_bend_radius_mm']} mm route bend radius and any larger cable manufacturer requirement. Retain all supplied hot-wall, irrigation/motor separation, sleeve, clip and label requirements. {design['physical_cross_connection_control']}.\n\n"
     if design["shield_pairs"]:
         assembly += "Use Belden 8719 twisted pairs for pressure/sensor return. Clear conductor gets white signal markers; black gets gray return markers. Join each zone's cable drain segments through its separate insulated WAGO service link, leave load-end shield/drain insulated, and bond only at the controller chassis. Shield drain never uses reserved pin6, signal return, fan ground or protective-earth function. Customer chassis stud/termination and cable-end breakout hardware remain unselected; do not fabricate that termination until resolved.\n\n"
-    assembly += "Keep fan return and each sensor return separate throughout; only the external controller implements the documented star point. Seal reserved cavities and leave them electrically open. With power isolated, continuity-check every pin row, all disconnected reserves, cross-net isolation and shield-to-chassis/signal isolation; review against independent verification.json. No energizing, purchasing or controller changes authorized.\n\nRelease HOLD: ambient loaded-contact current derating, contact/splice resistance and exact fan/transmitter PWM/tach/analog compatibility remain unresolved. See voltage-drop.json for copper-only budgets, never claim total loaded drop was verified.\n\n## Manufacturer mating-face views\n\n"
+    assembly += "Keep fan return and each sensor return separate throughout; only the external controller implements the documented star point. Seal reserved cavities and leave them electrically open. With power isolated, continuity-check every pin row, all disconnected reserves, cross-net isolation and shield-to-chassis/signal isolation; review against independent verification.json. No energizing, purchasing or controller changes authorized.\n\n"
+    if assumption:
+        assembly += "Release HOLD: ambient loaded-contact current derating, measured production contact/splice resistance and exact fan/transmitter PWM/tach/analog compatibility remain unresolved. See voltage-drop.json for the total calculated using the explicitly reviewed engineering resistance assumption; do not describe it as measured production resistance.\n\n"
+    else:
+        assembly += "Release HOLD: ambient loaded-contact current derating, contact/splice resistance and exact fan/transmitter PWM/tach/analog compatibility remain unresolved. See voltage-drop.json for copper-only budgets; total loaded drop remains unverified.\n\n"
+    assembly += "## Manufacturer mating-face views\n\n"
     assembly += "\n".join(f"![Unmodified manufacturer drawing {name}]({name})" for name in views)
     (output/"assembly.md").write_text(assembly, encoding="utf-8")
     return package
@@ -294,6 +352,7 @@ def independent_verify(input_directory, research_directory, generated_directory,
     import yaml
     source, generated, output = Path(input_directory), Path(generated_directory), fresh(output_directory)
     package = load(generated/"harness-plan.json")
+    assumption = resistance_assumption(package["design"])
     basis = verify_evidence(research_directory)["component_basis"]
     native = yaml.safe_load((generated/"harness-source.yml").read_text())
     expected = logical_edges(read_csv(source/"wiring-schedule.csv"))
@@ -387,8 +446,23 @@ def independent_verify(input_directory, research_directory, generated_directory,
             limit = package["design"]["drop_limit_v"]
             if copper > limit:
                 failures.append("Copper-only voltage budget exceeded: "+connector+" "+mode)
+            resistance_rows = (
+                resistance_terms(path, physical, solved, assumption)
+                if assumption
+                else []
+            )
+            contact_drop = (
+                sum(item["drop_v"] for item in resistance_rows)
+                if assumption
+                else None
+            )
+            total_drop = copper + contact_drop if contact_drop is not None else None
+            if total_drop is not None and total_drop > limit:
+                failures.append("Total assumed voltage budget exceeded: "+connector+" "+mode)
             drops.append(dict(load=connector,case=mode,copper_only_drop_v=copper,limit_v=limit,remaining_contact_budget_v=limit-copper,
-                              supplied_initial_design_copper_drop_v=initial_design_drop,contact_and_splice_drop_v=None,total_drop_v=None,status="total_unverified_contact_resistance_unknown",terms=terms))
+                              supplied_initial_design_copper_drop_v=initial_design_drop,contact_and_splice_drop_v=contact_drop,total_drop_v=total_drop,
+                              status="total_computed_with_reviewed_resistance_assumption" if assumption else "total_unverified_contact_resistance_unknown",
+                              terms=terms, resistance_terms=resistance_rows))
     ratings = []
     for connector, req in requirements(source/"connector-requirements.csv").items():
         if req["is_splice"]:
@@ -403,10 +477,14 @@ def independent_verify(input_directory, research_directory, generated_directory,
         ratings.append(dict(connector=connector,nominal_limits_meet_customer_minimum=nominal_ok,application_current_derating_verified=False,source="component-records.json source_mapping; exact housing drawings and contacts",release="hold"))
     result = {**provenance(output,[source/"wiring-schedule.csv",generated/"harness-source.yml",generated/"harness-plan.json",Path(research_directory)/"component-records.json"]),
               "netlist_and_numeric_failures": failures, "observed_native_connections": len(observed), "customer_edges":len(expected), "physical_wires":len(physical),
-              "ratings":ratings,"voltage_drop":drops,"release":"rejected" if failures else "hold_for_missing_application_evidence",
+              "ratings":ratings,"voltage_drop":drops,"resistance_assumption":assumption,
+              "release":"rejected" if failures else "hold_for_missing_application_evidence",
               "engineering_validation_complete":False,"physical_continuity_test_performed":False,
-              "limitations":["Nominal source ratings do not prove derating at loaded-contact ambient","Contact/splice resistances remain unknown; computed drop is copper-only","Fan/transmitter interface datasheets absent","Chassis shield termination and installation reach/environment need confirmation"]}
+              "limitations":["Nominal source ratings do not prove derating at loaded-contact ambient",
+                             "Contact/splice resistance uses an explicit reviewed engineering assumption, not measured production data" if assumption else "Contact/splice resistances remain unknown; computed drop is copper-only",
+                             "Fan/transmitter interface datasheets absent","Chassis shield termination and installation reach/environment need confirmation"]}
     save(output/"verification.json",result)
-    save(output/"voltage-drop.json",{"branches":drops,"contact_resistance_not_assumed_zero":True})
+    save(output/"voltage-drop.json",{"branches":drops,"contact_resistance_not_assumed_zero":True,
+                                     "resistance_assumption":assumption})
     csv_file(output/"independent-netlist.csv",[dict(from_endpoint=a,to_endpoint=b,cable=c,conductor=d) for a,b,c,d in observed])
     return result

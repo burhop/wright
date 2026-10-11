@@ -221,8 +221,12 @@ class WorkspaceService:
         executor: BoundedExecutor | None = None,
         repository: WorkspaceRepository | None = None,
         notifier: WorkspaceNotifier | None = None,
+        workflow_image_capabilities=None,
+        workflow_model_capabilities=None,
     ) -> None:
         self.db_path = db_path
+        self.workflow_image_capabilities = workflow_image_capabilities
+        self.workflow_model_capabilities = workflow_model_capabilities
         self.parent_dir_provider = parent_dir_provider
         self.protected_roots_provider = protected_roots_provider
         self.executor = executor or BoundedExecutor()
@@ -238,7 +242,12 @@ class WorkspaceService:
         self.workflows = WorkspaceWorkflowUseCases(
             self.executor, WorkflowRepository(db_path)
         )
-        self.workflow_sources = WorkspaceWorkflowSourceUseCases(self.executor)
+        from .workflow_instruction_settings import WorkflowInstructionSettings
+
+        self.workflow_instruction_settings = WorkflowInstructionSettings(db_path)
+        self.workflow_sources = WorkspaceWorkflowSourceUseCases(
+            self.executor, instruction_defaults=self.workflow_instruction_defaults
+        )
         self.engineering_workflow_templates = EngineeringWorkflowTemplateService(
             self.workflow_sources
         )
@@ -246,6 +255,12 @@ class WorkspaceService:
             WorkflowContinuationRepository(db_path)
         )
         self.workflow_integration_policies = WorkflowIntegrationPolicyService(db_path)
+        from .process_interfaces import ProcessInterfaceService
+
+        self.process_interfaces = ProcessInterfaceService(self)
+        from .workflow_bundles import WorkflowBundleService
+
+        self.workflow_bundles = WorkflowBundleService(self)
         from .workflow_demo_capture import WorkflowDemoCaptureService
 
         self.workflow_demo_captures = WorkflowDemoCaptureService(self.files)
@@ -488,8 +503,13 @@ class WorkspaceService:
         return candidate
 
     async def close(self) -> None:
-        await self.workflow_runner.shutdown()
-        await self.executor.close()
+        try:
+            await self.process_interfaces.close()
+        finally:
+            try:
+                await self.workflow_runner.shutdown()
+            finally:
+                await self.executor.close()
 
     async def reconcile_runtime(
         self, session_id: str, *, mcp_engine: Any | None, sync_manager: Any | None
@@ -583,6 +603,12 @@ class WorkspaceService:
             session_id=active_session_id,
             workspace_path=workspace_path,
             context=refreshed,
+        )
+
+    def workflow_instruction_defaults(self, workspace_dir: str) -> dict:
+        workspace = self.repository.get_by_path(workspace_dir) or {}
+        return self.workflow_instruction_settings.for_workspace(
+            workspace.get("workspace_prompt")
         )
 
     @traced("workspace.config.update")

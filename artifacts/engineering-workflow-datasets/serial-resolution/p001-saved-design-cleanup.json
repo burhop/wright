@@ -1,0 +1,219 @@
+{
+  "scope": "Reconcile exact owned native document Save As paths using previously recorded output hashes; retain original blocked cleanup receipts and close only these two P001 sessions through the normal lifecycle.",
+  "sessions": [
+    {
+      "attempt": "qualification-p001-009",
+      "session_id": "blender-3f75a68ed6f04b73a0339beb05c42f91",
+      "identity": {
+        "creation_time": "2026-09-22T22:52:20.925412+00:00",
+        "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+        "pid": 30776
+      },
+      "original_blocked_cleanup": {
+        "application_receipt": null,
+        "attempt": "qualification-p001-009",
+        "blocker": "Owned document presence is unresolved",
+        "case_id": "printed-replacement-part-02",
+        "cleanup_id": "printing02-qualification-p001-009-terminal-cleanup",
+        "completed_at": "2026-09-22T22:52:42.657300+00:00",
+        "document_receipts": [],
+        "identity": {
+          "creation_time": "2026-09-22T22:52:20.925412+00:00",
+          "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+          "pid": 30776
+        },
+        "ownership": "owned",
+        "reason": "canonical_workflow_terminal",
+        "session_id": "blender-3f75a68ed6f04b73a0339beb05c42f91",
+        "status": "cleanup_blocked",
+        "trace_id": "printing02-canonical-runtime-qualification-p001-009"
+      },
+      "verified_saved_design": {
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\native-design.blend",
+        "sha256": "08f432e8df1b43320f8b9480508daf8280d2611712ca7bb5c66d858556a87cdb",
+        "prior_evidence": "D:\\repos\\wright\\artifacts\\engineering-workflow-datasets\\serial-resolution\\p001-feature-repair-qualification.json"
+      },
+      "observation": {
+        "native_session_id": "blender-3f75a68ed6f04b73a0339beb05c42f91",
+        "version": "4.5.10 LTS",
+        "healthy": true,
+        "modal": false,
+        "document_state_known": true,
+        "active_operation": false,
+        "documents": [
+          {
+            "native_id": "printing02-qualification-p001-009",
+            "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\native-design.blend",
+            "dirty": true
+          }
+        ],
+        "identity": {
+          "pid": 30776,
+          "creation_time": "2026-09-22T22:52:20.925412+00:00",
+          "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe"
+        },
+        "alive": true,
+        "endpoint_alive": true,
+        "endpoint_matches": true
+      },
+      "reconciled_cleanup": {
+        "application_receipt": {
+          "exited": true,
+          "forced": false,
+          "quit_requested": true
+        },
+        "attempt": "qualification-p001-009",
+        "case_id": "printed-replacement-part-02",
+        "cleanup_id": "p001-qualification-p001-009-cleanup-after-verified-save-as",
+        "completed_at": "2026-09-22T23:16:52.629779+00:00",
+        "document_receipts": [
+          {
+            "attempt": "qualification-p001-009",
+            "case_id": "printed-replacement-part-02",
+            "close_receipt": {
+              "closed": true
+            },
+            "closed": true,
+            "creation_evidence": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-qualification-p001-009\\owned-blender\\creation.json",
+            "current_path": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-qualification-p001-009\\owned-blender\\recovery.blend",
+            "dirty": false,
+            "native_id": "printing02-qualification-p001-009",
+            "ownership": "owned",
+            "path": null,
+            "preexisted": false,
+            "recovery_path": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-qualification-p001-009\\owned-blender\\recovery.blend",
+            "recovery_receipt": {
+              "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-qualification-p001-009\\owned-blender\\recovery.blend",
+              "saved": true,
+              "sha256": "23e511b563787f64c5decde4f9712afb1385740d437d067dae923a42b55f7e6b"
+            },
+            "save_as_observation": {
+              "evidence_reference": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-qualification-p001-009\\saved-design-reconciliation.json",
+              "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\native-design.blend",
+              "sha256": "08f432e8df1b43320f8b9480508daf8280d2611712ca7bb5c66d858556a87cdb"
+            }
+          }
+        ],
+        "identity": {
+          "creation_time": "2026-09-22T22:52:20.925412+00:00",
+          "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+          "pid": 30776
+        },
+        "ownership": "owned",
+        "reason": "terminal_workflow_saved_design_reconciled",
+        "session_id": "blender-3f75a68ed6f04b73a0339beb05c42f91",
+        "status": "completed",
+        "trace_id": "p001-verified-save-as-reconciliation"
+      },
+      "post_cleanup_identity": null,
+      "saved_artifact_unchanged": true
+    },
+    {
+      "attempt": "attempt-018",
+      "session_id": "blender-cea653bcdb554d61bd91c9cd76e387ec",
+      "identity": {
+        "creation_time": "2026-09-22T22:55:00.651855+00:00",
+        "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+        "pid": 8488
+      },
+      "original_blocked_cleanup": {
+        "application_receipt": null,
+        "attempt": "attempt-018",
+        "blocker": "Owned document presence is unresolved",
+        "case_id": "printed-replacement-part-02",
+        "cleanup_id": "printing02-attempt-018-terminal-cleanup",
+        "completed_at": "2026-09-22T23:08:20.001419+00:00",
+        "document_receipts": [],
+        "identity": {
+          "creation_time": "2026-09-22T22:55:00.651855+00:00",
+          "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+          "pid": 8488
+        },
+        "ownership": "owned",
+        "reason": "canonical_workflow_terminal",
+        "session_id": "blender-cea653bcdb554d61bd91c9cd76e387ec",
+        "status": "cleanup_blocked",
+        "trace_id": "printing02-canonical-runtime-attempt-018"
+      },
+      "verified_saved_design": {
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\attempt-018\\artifacts\\native-design.blend",
+        "sha256": "836252bb436f802cf6b894ad57af4a6c38c0b2584b852b52de71010bf31a82f0",
+        "prior_evidence": "D:\\repos\\wright\\artifacts\\engineering-workflow-datasets\\serial-resolution\\p001-canonical018-review\\assessment.json"
+      },
+      "observation": {
+        "native_session_id": "blender-cea653bcdb554d61bd91c9cd76e387ec",
+        "version": "4.5.10 LTS",
+        "healthy": true,
+        "modal": false,
+        "document_state_known": true,
+        "active_operation": false,
+        "documents": [
+          {
+            "native_id": "printing02-attempt-018",
+            "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\attempt-018\\artifacts\\native-design.blend",
+            "dirty": true
+          }
+        ],
+        "identity": {
+          "pid": 8488,
+          "creation_time": "2026-09-22T22:55:00.651855+00:00",
+          "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe"
+        },
+        "alive": true,
+        "endpoint_alive": true,
+        "endpoint_matches": true
+      },
+      "reconciled_cleanup": {
+        "application_receipt": {
+          "exited": true,
+          "forced": false,
+          "quit_requested": true
+        },
+        "attempt": "attempt-018",
+        "case_id": "printed-replacement-part-02",
+        "cleanup_id": "p001-attempt-018-cleanup-after-verified-save-as",
+        "completed_at": "2026-09-22T23:16:54.970923+00:00",
+        "document_receipts": [
+          {
+            "attempt": "attempt-018",
+            "case_id": "printed-replacement-part-02",
+            "close_receipt": {
+              "closed": true
+            },
+            "closed": true,
+            "creation_evidence": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-attempt-018\\owned-blender\\creation.json",
+            "current_path": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-attempt-018\\owned-blender\\recovery.blend",
+            "dirty": false,
+            "native_id": "printing02-attempt-018",
+            "ownership": "owned",
+            "path": null,
+            "preexisted": false,
+            "recovery_path": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-attempt-018\\owned-blender\\recovery.blend",
+            "recovery_receipt": {
+              "path": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-attempt-018\\owned-blender\\recovery.blend",
+              "saved": true,
+              "sha256": "ce48215ed979e8c0a045291247c844949774fe5521f1caa3fa465317f69a6a10"
+            },
+            "save_as_observation": {
+              "evidence_reference": "D:\\repos\\wright\\.local-run\\feature-081-live\\printing02-runtime-attempt-018\\saved-design-reconciliation.json",
+              "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\attempt-018\\artifacts\\native-design.blend",
+              "sha256": "836252bb436f802cf6b894ad57af4a6c38c0b2584b852b52de71010bf31a82f0"
+            }
+          }
+        ],
+        "identity": {
+          "creation_time": "2026-09-22T22:55:00.651855+00:00",
+          "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe",
+          "pid": 8488
+        },
+        "ownership": "owned",
+        "reason": "terminal_workflow_saved_design_reconciled",
+        "session_id": "blender-cea653bcdb554d61bd91c9cd76e387ec",
+        "status": "completed",
+        "trace_id": "p001-verified-save-as-reconciliation"
+      },
+      "post_cleanup_identity": null,
+      "saved_artifact_unchanged": true
+    }
+  ]
+}

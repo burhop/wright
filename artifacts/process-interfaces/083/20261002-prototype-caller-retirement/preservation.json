@@ -1,0 +1,30 @@
+{
+  "archived_exact_bytes": 15,
+  "protected_hashes": {
+    "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+    "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+    "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+  },
+  "nonretired_prototype_hashes": {
+    "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+    "scripts/configure_print_demo_offline.py": true,
+    "scripts/print_demo_p1s_mcp.py": true,
+    "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+    "scripts/configure_print_demo_studio.py": true,
+    "scripts/print_demo_studio.py": true,
+    "scripts/windows/inspect-bambu-studio.ps1": true,
+    "scripts/windows/studio-desktop.ps1": true
+  },
+  "authorized_retirement_paths": [
+    "apps/api/src/api/main.py",
+    "apps/api/src/api/routers/workspace.py",
+    "apps/api/src/api/schemas/workspace.py",
+    "apps/web/src/components/pages/PrintPartDemoPage.css",
+    "apps/web/src/components/pages/PrintPartDemoPage.tsx",
+    "apps/web/src/services/workspace-service.ts"
+  ],
+  "context_matches_head": {
+    "AGENTS.md": true,
+    ".specify/feature.json": true
+  }
+}

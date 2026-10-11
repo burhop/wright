@@ -1,0 +1,1076 @@
+{
+  "tasks": [
+    "T027",
+    "T028"
+  ],
+  "parent_commit": "a820e9814bc18b11beaf14d32ade84901504c831",
+  "source_server": "http://127.0.0.1:5242",
+  "reports": {
+    "t028-ui-serial.json": {
+      "sha256": "8b830027f97a33b26494dc6d0c08f5b2779d45609f7f2eb011f6d36e55cdb4c2",
+      "stats": {
+        "startTime": "2026-10-01T15:49:41.811Z",
+        "duration": 104602.175,
+        "expected": 16,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": null,
+      "passed": null
+    },
+    "t028-ui-qualified.json": {
+      "sha256": "9a8e3801ca59e916fa06a72b2828533c6a566097c5effe30416effb33e1eae1c",
+      "stats": {
+        "startTime": "2026-10-01T15:33:25.119Z",
+        "duration": 169513.178,
+        "expected": 14,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "tests": null,
+      "passed": null
+    },
+    "t028-failed-paths-diagnostic.json": {
+      "sha256": "0032ed31660626525db1d268b1be5910f89344c2b804f122fe1e554b433c6999",
+      "stats": {
+        "startTime": "2026-10-01T15:43:49.572Z",
+        "duration": 49632.25,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": null,
+      "passed": null
+    },
+    "t027-inspector-components-qualified.json": {
+      "sha256": "d8eeffe52eab8b06c0fa32856b8aaae9144d10c58a00b5b5080952a366076813",
+      "stats": null,
+      "tests": 146,
+      "passed": 146
+    }
+  },
+  "logs": {
+    "t028-recovery-backend-qualified.log": {
+      "sha256": "c32267510b18230cff225f8c62804acd3da19856c364007754e40687fc3cd9cc",
+      "tail": [
+        ".venv\\Lib\\site-packages\\starlette\\testclient.py:53",
+        "  D:\\repos\\wright\\.venv\\Lib\\site-packages\\starlette\\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.",
+        "    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]",
+        "",
+        "-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html",
+        "141 passed, 2 warnings in 144.34s (0:02:24)"
+      ]
+    },
+    "t028-ui-serial.log": {
+      "sha256": "258feb862c1022aab5bbe4ecb5164e26d51a5571f407712ae1db69dfd9747af2",
+      "tail": [
+        "[12/16] [chromium] › tests\\ui-integration\\process-review-actions.spec.ts:25:7 › reviews then explicitly submits an exact action in the normal workspace (unknown lost acknowledgement)",
+        "[13/16] [chromium] › tests\\ui-integration\\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (accepted)",
+        "[14/16] [chromium] › tests\\ui-integration\\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (lost)",
+        "[15/16] [chromium] › tests\\ui-integration\\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (schema)",
+        "[16/16] [chromium] › tests\\ui-integration\\process-two-input-recovery.spec.ts:24:7 › two declared inputs preserve one workspace run (stale)",
+        "  16 passed (1.7m)"
+      ]
+    }
+  },
+  "source_interoperability": {
+    "source_sha256": "ad91dad8c2ca77b59be680592b6960fe4e5fcd317f928d92c94439a36eda22b4",
+    "browser_scope": {
+      "browser": "154.0.8037.58",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical",
+      "saved_source_sha256": "ad91dad8c2ca77b59be680592b6960fe4e5fcd317f928d92c94439a36eda22b4",
+      "accepted_revision": 3,
+      "editor_starts": 0,
+      "normal_workspace_entry": true,
+      "inspector_apply_undo_redo_save_reopen": true,
+      "controlled_http_contracts": true,
+      "live_backend": false,
+      "live_model": false,
+      "live_mcp": false
+    },
+    "actual_browser_saved_source": true,
+    "actual_python_compiler": true,
+    "real_source_store_create_read": true,
+    "input_snapshot_id": "inputs-c26d12f5383343fcafd8a34c3bfecbd5",
+    "input_digest": "7070eca23ba2e2b8ab883be1dd0bb88c2483fa90d8a8125c6d5c8ca27c1d6ab9",
+    "prepared_values": {
+      "brief": "Compare a and b after editing."
+    },
+    "dependencies": [
+      {
+        "binding_id": "brief",
+        "classification": "explicit_default",
+        "producer_step": null,
+        "producer_port": null,
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "choice.choice_evidence",
+        "classification": "upstream_produced",
+        "producer_step": "first",
+        "producer_port": "first_out",
+        "interaction_step": null,
+        "reasons": []
+      },
+      {
+        "binding_id": "second.second_input",
+        "classification": "declared_human_response",
+        "producer_step": "choice",
+        "producer_port": "choice_response",
+        "interaction_step": "choice",
+        "reasons": []
+      }
+    ],
+    "draft_rejection": {
+      "code": "WORKFLOW_DISCONNECTED_PROCESS",
+      "message": "This workflow contains 2 disconnected groups of blocks. Run is blocked; one workflow must describe one connected process.",
+      "correction": "Connect the groups into one process, or move each independent process to its own workflow. Groups: “First” (4 blocks); “User input step” (1 block)."
+    },
+    "derived_connected_draft_rejection": {
+      "code": "WORKFLOW_NOT_READY",
+      "message": "User input step: the declared human input is invalid.",
+      "correction": "Declare version 1 input instructions, a bounded object response_schema and exactly one structured response output_port."
+    },
+    "live_model": false,
+    "live_mcp": false,
+    "hardware": false
+  },
+  "browser_scopes": [
+    {
+      "name": "checked-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=55947b3a-6de1-4b4f-9737-ee69215aa93d&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "served_frontend": true,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow&processView=99d360da-ac1c-4dbd-9c56-427252844d79&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "served_frontend": true,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=636d1a56-c099-477e-9a90-ce745e5be879&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "served_frontend": true,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical",
+        "original_source_sha256": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+        "saved_source_sha256": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d",
+        "saved_definition_revision": 3,
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d"
+        },
+        "controlled_run_start_count": 0,
+        "served_frontend": true,
+        "controlled_http_contracts": true,
+        "source_edit_save_reopen": true,
+        "runtime_checkpoint_consumption": false,
+        "live_api": false,
+        "live_model": false,
+        "live_mcp": false,
+        "engineering_acceptance": false
+      }
+    },
+    {
+      "name": "checked-response-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=26ba161b-f8b2-4f3a-8cec-b75dececc07f&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4&processRun=common-browser-run",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4"
+        },
+        "run_id": "common-browser-run",
+        "checkpoint_id": "browser-input-checkpoint",
+        "subject_digest": "580ad2b6f17d96d7ba1b08d9cd76689bde87b23557f8695d18eefb1a82382535",
+        "start_count": 1,
+        "response_request_count": 1,
+        "same_request_retry": false,
+        "close_without_cancel": true,
+        "served_frontend": true,
+        "controlled_http_contracts": true,
+        "live_api": false,
+        "live_model": false,
+        "live_mcp": false,
+        "engineering_acceptance": false
+      }
+    },
+    {
+      "name": "checked-response-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=5f10a0ba-1ab4-484f-bbb9-f3c2a8771bd0&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4&processRun=common-browser-run",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4"
+        },
+        "run_id": "common-browser-run",
+        "checkpoint_id": "browser-input-checkpoint",
+        "subject_digest": "580ad2b6f17d96d7ba1b08d9cd76689bde87b23557f8695d18eefb1a82382535",
+        "start_count": 1,
+        "response_request_count": 2,
+        "same_request_retry": true,
+        "close_without_cancel": true,
+        "served_frontend": true,
+        "controlled_http_contracts": true,
+        "live_api": false,
+        "live_model": false,
+        "live_mcp": false,
+        "engineering_acceptance": false
+      }
+    },
+    {
+      "name": "checked-inspector-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical",
+        "saved_source_sha256": "ad91dad8c2ca77b59be680592b6960fe4e5fcd317f928d92c94439a36eda22b4",
+        "accepted_revision": 3,
+        "editor_starts": 0,
+        "normal_workspace_entry": true,
+        "inspector_apply_undo_redo_save_reopen": true,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false
+      }
+    },
+    {
+      "name": "checked-action-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=cc05442b-b31e-4cc3-a1da-d22815273fac&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+        },
+        "run_id": "common-browser-run",
+        "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "reviews": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "decision": "approved",
+            "reason": "Controlled review of the exact document",
+            "request_id": "50d76e75-d67c-428f-9797-db1ff8533023"
+          }
+        ],
+        "actions": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "request_id": "0c476de3-782c-4f85-9c1f-43ecc74ee492"
+          }
+        ],
+        "starts": 1,
+        "decision": {
+          "decision": "approved",
+          "actor": "controlled-test-actor",
+          "reason": "Controlled review of the exact document",
+          "request_id": "50d76e75-d67c-428f-9797-db1ff8533023",
+          "integration_test": false
+        },
+        "action": {
+          "request_id": "0c476de3-782c-4f85-9c1f-43ecc74ee492",
+          "principal_id": "controlled-test-actor",
+          "submission": "accepted",
+          "observed_outcome": "completed",
+          "delivery_completed": true,
+          "cancellation_requested": false,
+          "provider_reference": "browser-operation-one"
+        },
+        "served_workspace": true,
+        "controlled_http": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "engineering_acceptance": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-action-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=5d9fc124-3c43-4b3d-80c5-a5cf73e4e074&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+        },
+        "run_id": "common-browser-run",
+        "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "reviews": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "decision": "approved",
+            "reason": "Controlled review of the exact document",
+            "request_id": "8f137efe-0e0d-4dd6-863e-5a7981edf584"
+          },
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "decision": "approved",
+            "reason": "Controlled review of the exact document",
+            "request_id": "8f137efe-0e0d-4dd6-863e-5a7981edf584"
+          }
+        ],
+        "actions": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "request_id": "167c7119-1be0-4ab3-9935-80993ea9ed5a"
+          }
+        ],
+        "starts": 1,
+        "decision": {
+          "decision": "approved",
+          "actor": "controlled-test-actor",
+          "reason": "Controlled review of the exact document",
+          "request_id": "8f137efe-0e0d-4dd6-863e-5a7981edf584",
+          "integration_test": false
+        },
+        "action": {
+          "request_id": "167c7119-1be0-4ab3-9935-80993ea9ed5a",
+          "principal_id": "controlled-test-actor",
+          "submission": "accepted",
+          "observed_outcome": "completed",
+          "delivery_completed": true,
+          "cancellation_requested": false,
+          "provider_reference": "browser-operation-one"
+        },
+        "served_workspace": true,
+        "controlled_http": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "engineering_acceptance": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-action-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=c5ca20b3-b1bc-441b-b2b3-14a40dc8c4d7&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+        },
+        "run_id": "common-browser-run",
+        "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "reviews": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "decision": "approved",
+            "reason": "Controlled review of the exact document",
+            "request_id": "6b757a6b-972e-49da-9f7d-20ee82e237a0"
+          }
+        ],
+        "actions": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "request_id": "76ea297e-b683-4fd5-a210-e526555fcebb"
+          },
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "request_id": "76ea297e-b683-4fd5-a210-e526555fcebb"
+          }
+        ],
+        "starts": 1,
+        "decision": {
+          "decision": "approved",
+          "actor": "controlled-test-actor",
+          "reason": "Controlled review of the exact document",
+          "request_id": "6b757a6b-972e-49da-9f7d-20ee82e237a0",
+          "integration_test": false
+        },
+        "action": {
+          "request_id": "76ea297e-b683-4fd5-a210-e526555fcebb",
+          "principal_id": "controlled-test-actor",
+          "submission": "accepted",
+          "observed_outcome": "completed",
+          "delivery_completed": true,
+          "cancellation_requested": false,
+          "provider_reference": "browser-operation-one"
+        },
+        "served_workspace": true,
+        "controlled_http": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "engineering_acceptance": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-action-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=13e06111-25d6-43ff-873b-e05277ca95ea&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e&processRun=common-browser-run",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e"
+        },
+        "run_id": "common-browser-run",
+        "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "reviews": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "decision": "approved",
+            "reason": "Controlled review of the exact document",
+            "request_id": "bd27209d-81c0-4f11-ab6c-f2d4e8a44f59"
+          }
+        ],
+        "actions": [
+          {
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "2853e66fa07ca1324fd32bd91561e860b4ca5497603f4a159ff136c4dd15fb1e",
+            "subject_digest": "887cfe8d2bf316c59e9e17ff5f190ca110f8948fc19f0a161bbdabafa3d9ab15",
+            "request_id": "fccec06a-bff6-4c44-bec9-8b598bc4d3cf"
+          }
+        ],
+        "starts": 1,
+        "decision": {
+          "decision": "approved",
+          "actor": "controlled-test-actor",
+          "reason": "Controlled review of the exact document",
+          "request_id": "bd27209d-81c0-4f11-ab6c-f2d4e8a44f59",
+          "integration_test": false
+        },
+        "action": {
+          "request_id": "fccec06a-bff6-4c44-bec9-8b598bc4d3cf",
+          "principal_id": "controlled-test-actor",
+          "submission": "unknown",
+          "observed_outcome": "unknown",
+          "delivery_completed": false,
+          "cancellation_requested": false
+        },
+        "served_workspace": true,
+        "controlled_http": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "physical_operation": false,
+        "engineering_acceptance": false,
+        "user_acceptance": false
+      }
+    },
+    {
+      "name": "checked-two-input-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=08c0f801-a590-4987-b2bf-240d9dc302fe&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4&processRun=common-browser-run",
+        "scenario": "accepted",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4"
+        },
+        "run_id": "common-browser-run",
+        "starts": 1,
+        "cancellations": 0,
+        "requests": [
+          {
+            "checkpoint_id": "two-input-1",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "6da6dff9-2879-4f03-9c3b-e89e35c723f7"
+          },
+          {
+            "checkpoint_id": "two-input-2",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "value": {
+              "selection": "a"
+            },
+            "request_id": "4660aa5a-56d6-4917-8bf4-0b4e3ef4ac9a"
+          }
+        ],
+        "retained_responses": [
+          {
+            "response_id": "controlled-answer-0",
+            "workspace_id": "ws-recovery",
+            "run_id": "common-browser-run",
+            "checkpoint_id": "two-input-1",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "schema_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "input_digest": "9177b41c19243db2a8059b10044dd574ce1a4d2910c7b326a7c3131a0c70440d",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "6da6dff9-2879-4f03-9c3b-e89e35c723f7",
+            "actor": "controlled-test-actor",
+            "reason": "Response to declared process input",
+            "created_at": "2026-10-01T15:50:56.818Z",
+            "digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497"
+          },
+          {
+            "response_id": "controlled-answer-1",
+            "workspace_id": "ws-recovery",
+            "run_id": "common-browser-run",
+            "checkpoint_id": "two-input-2",
+            "subject_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "schema_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "input_digest": "9177b41c19243db2a8059b10044dd574ce1a4d2910c7b326a7c3131a0c70440d",
+            "value": {
+              "selection": "a"
+            },
+            "request_id": "4660aa5a-56d6-4917-8bf4-0b4e3ef4ac9a",
+            "actor": "controlled-test-actor",
+            "reason": "Response to declared process input",
+            "created_at": "2026-10-01T15:50:58.854Z",
+            "digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d"
+          }
+        ],
+        "final_stage": 2,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "hardware": false
+      }
+    },
+    {
+      "name": "checked-two-input-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=ae05faec-fffd-4aee-97bc-54a3941a72f8&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4&processRun=common-browser-run",
+        "scenario": "lost",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4"
+        },
+        "run_id": "common-browser-run",
+        "starts": 1,
+        "cancellations": 0,
+        "requests": [
+          {
+            "checkpoint_id": "two-input-1",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "e8605e70-8ee6-4b69-aca3-fe96a3a61239"
+          },
+          {
+            "checkpoint_id": "two-input-1",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "e8605e70-8ee6-4b69-aca3-fe96a3a61239"
+          },
+          {
+            "checkpoint_id": "two-input-2",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "value": {
+              "selection": "a"
+            },
+            "request_id": "07287108-fa5d-4e54-93e0-9081b221ad1d"
+          }
+        ],
+        "retained_responses": [
+          {
+            "response_id": "controlled-answer-0",
+            "workspace_id": "ws-recovery",
+            "run_id": "common-browser-run",
+            "checkpoint_id": "two-input-1",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "schema_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "input_digest": "9177b41c19243db2a8059b10044dd574ce1a4d2910c7b326a7c3131a0c70440d",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "e8605e70-8ee6-4b69-aca3-fe96a3a61239",
+            "actor": "controlled-test-actor",
+            "reason": "Response to declared process input",
+            "created_at": "2026-10-01T15:51:06.131Z",
+            "digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497"
+          },
+          {
+            "response_id": "controlled-answer-1",
+            "workspace_id": "ws-recovery",
+            "run_id": "common-browser-run",
+            "checkpoint_id": "two-input-2",
+            "subject_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "schema_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "input_digest": "9177b41c19243db2a8059b10044dd574ce1a4d2910c7b326a7c3131a0c70440d",
+            "value": {
+              "selection": "a"
+            },
+            "request_id": "07287108-fa5d-4e54-93e0-9081b221ad1d",
+            "actor": "controlled-test-actor",
+            "reason": "Response to declared process input",
+            "created_at": "2026-10-01T15:51:09.945Z",
+            "digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d"
+          }
+        ],
+        "final_stage": 2,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "hardware": false
+      }
+    },
+    {
+      "name": "checked-two-input-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=aebabc22-ab9a-41b3-9518-7b8263893147&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4&processRun=common-browser-run",
+        "scenario": "schema",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4"
+        },
+        "run_id": "common-browser-run",
+        "starts": 1,
+        "cancellations": 0,
+        "requests": [
+          {
+            "checkpoint_id": "two-input-1",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "a0dfd175-2cb1-48f7-a6bf-e3327b4ba7fd"
+          },
+          {
+            "checkpoint_id": "two-input-1",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "68b7fc99-a72d-4724-9e68-b6822fb48739"
+          },
+          {
+            "checkpoint_id": "two-input-2",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "value": {
+              "selection": "a"
+            },
+            "request_id": "90b0a236-7a45-4911-ac88-1ce59b3dd57b"
+          }
+        ],
+        "retained_responses": [
+          {
+            "response_id": "controlled-answer-0",
+            "workspace_id": "ws-recovery",
+            "run_id": "common-browser-run",
+            "checkpoint_id": "two-input-1",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "schema_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "input_digest": "9177b41c19243db2a8059b10044dd574ce1a4d2910c7b326a7c3131a0c70440d",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "68b7fc99-a72d-4724-9e68-b6822fb48739",
+            "actor": "controlled-test-actor",
+            "reason": "Response to declared process input",
+            "created_at": "2026-10-01T15:51:16.566Z",
+            "digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497"
+          },
+          {
+            "response_id": "controlled-answer-1",
+            "workspace_id": "ws-recovery",
+            "run_id": "common-browser-run",
+            "checkpoint_id": "two-input-2",
+            "subject_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "schema_digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d",
+            "input_digest": "9177b41c19243db2a8059b10044dd574ce1a4d2910c7b326a7c3131a0c70440d",
+            "value": {
+              "selection": "a"
+            },
+            "request_id": "90b0a236-7a45-4911-ac88-1ce59b3dd57b",
+            "actor": "controlled-test-actor",
+            "reason": "Response to declared process input",
+            "created_at": "2026-10-01T15:51:18.418Z",
+            "digest": "038f4c9f712431b1782ea24967bea606359606cfe8b91a6b5150479d2bf18d3d"
+          }
+        ],
+        "final_stage": 2,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "hardware": false
+      }
+    },
+    {
+      "name": "checked-two-input-scope.json",
+      "value": {
+        "browser": "154.0.8037.58",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "url": "http://127.0.0.1:5242/workspace/ws-recovery?workflow=canonical&processView=1fab329e-51e1-4554-b811-cc4fec5ca7dd&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4&processRun=common-browser-run",
+        "scenario": "stale",
+        "process": {
+          "workspace_id": "ws-recovery",
+          "source_path": "workflows/mounting-bracket.workflow.wflow",
+          "source_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4"
+        },
+        "run_id": "common-browser-run",
+        "starts": 1,
+        "cancellations": 0,
+        "requests": [
+          {
+            "checkpoint_id": "two-input-1",
+            "session_id": "session-recovery",
+            "path": "workflows/mounting-bracket.workflow.wflow",
+            "expected_storage_digest": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+            "subject_digest": "a7e614228f8a7041dc5676659ca69bfc34945f762c9c4128e88f67109f723497",
+            "value": {
+              "selection": "b"
+            },
+            "request_id": "aeb3816a-d9b4-4ce2-910a-bd4a9a88bc7f"
+          }
+        ],
+        "retained_responses": [],
+        "final_stage": 0,
+        "controlled_http_contracts": true,
+        "live_backend": false,
+        "live_model": false,
+        "live_mcp": false,
+        "hardware": false
+      }
+    }
+  ],
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "code_hashes": {
+    "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx": "af7cc46ca32b65a3f66f065447f1eb1c9111165698bf08fa80d44ca29f522689",
+    "packages/workspace_service/tests/test_process_human_input_source.py": "081a970091d8846773f50991a1f348869e55d6682a3fbafa1a90dc9f5adbce55",
+    "packages/workspace_service/tests/test_process_interface_continuation.py": "777054285531ba767588e9affa6b79610705f3fd217fcb36343aeb694a8251c4",
+    "tests/ui-integration/process-input-inspector.spec.ts": "e2da6b1490cf45f04392d53527d23834d5ce63fa62d70884541ebade3b3bb9ad",
+    "tests/ui-integration/process-two-input-recovery.spec.ts": "3f279893aa95f487918f90169877bc8ca689aad71c7252794b66e4db8aca72df",
+    "tests/ui-integration/process-review-actions.spec.ts": "737e2493dca52cc09e1e9d03217dba9f7d65d38a0065d73132089d417bfd614a",
+    "specs/083-process-working-interfaces/fixtures/inspector-edited-human-input.workflow.wflow": "ad91dad8c2ca77b59be680592b6960fe4e5fcd317f928d92c94439a36eda22b4",
+    "specs/083-process-working-interfaces/fixtures/two-declared-human-inputs.workflow.wflow": "43a244a114d1497075014c1d2bc2746bf0d50cf29cad616fe13936207556b6c4",
+    "specs/083-process-working-interfaces/tasks.md": "6a2adc6afea10890047f978b35ea04df600c72d49d2d4c4fb2346aaa925fb2e7",
+    "specs/083-process-working-interfaces/progress.md": "a670c7dc33f8ced11c6fdee02fdcc89129beb21ed56dbee940f9492e52fb7d7d",
+    "specs/083-process-working-interfaces/evidence/input-inspector.md": "e948a7e03951c82886690267c9c675f847a4673e337a1ad470e458463f5dd7c5",
+    "specs/083-process-working-interfaces/evidence/interactions.md": "aaba231140ce6259a2191f77c360c0a5194d84c7c4bcdeac3bc2f120f1dd1e2d"
+  },
+  "screenshots": [
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-reconc-bdce2-e-original-request-identity-chromium/reconciled-start.png",
+      "sha256": "432c5048e2798a582c99a3c906851fe0cbb14a1d09fd6672de73e46cc648271a"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-reconc-bdce2-e-original-request-identity-chromium/workspace-final-state.png",
+      "sha256": "06be99ea04846c3add4eec59038391058c2adce7df7acfa1376d6d2b48bac5a5"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-shows--bb95c-reopens-the-same-failed-run-chromium/undeclared-input-diagnostic.png",
+      "sha256": "7f94cb7c6e625e914f8b598c66b7d5613a0bba782265e7282a5415f96ef0f1ef"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-shows--bb95c-reopens-the-same-failed-run-chromium/workspace-final-state.png",
+      "sha256": "af94fb59687a5d06240c13aa8cb2d72757eefeef72bb758e041a9a161f20c6a6"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/exact-assessment.png",
+      "sha256": "2b0d3ae4c65d237ccf718cbf273a6ad65b8de0f44c149dc339205bf12f437f71"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/reopened-exact-run.png",
+      "sha256": "5398bb25b5b1d142a2c225c3be77e9694b5be223e6e291a746ef2255bf363b01"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/retained-editor-draft.png",
+      "sha256": "ec9d6bf747b0dd79c3ff94c74a818bbd6069138d9f542457c531ac1d18722c01"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-common-view-uses-t-c4ce1-hile-retaining-source-edits-chromium/workspace-final-state.png",
+      "sha256": "c69c8b16162ab2b6e886561c593ec805896c94107165533269a9456808bd3df3"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-declared-interacti-24a49-diting-saving-and-reopening-chromium/declared-input-source.png",
+      "sha256": "0d953ce5bdbb14c8dee5c418a4f6695c022567028d23d84aa247675f3af17ef9"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-declared-interacti-65f4a-cit-lost-ack-reconciliation-chromium/reopened-input-form.png",
+      "sha256": "a2e11d3b3c6ebeae532d82959c906e052d97d94e4e3bd44373b77f449feb88c2"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-declared-interacti-65f4a-cit-lost-ack-reconciliation-chromium/same-run-response-completed.png",
+      "sha256": "b4e1612814319412c4fa9335d60989b14ec98702ab8511a2059cc561b0a82ecc"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-declared-interacti-91469-osing-and-reopening-its-tab-chromium/reopened-input-form.png",
+      "sha256": "e30114366a4682eaaccaf2af828a5023aaea156038d37b1327106d338c7e5e02"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-declared-interacti-91469-osing-and-reopening-its-tab-chromium/same-run-response-completed.png",
+      "sha256": "20cbaa0130694a4eaceb204cb39241cf36c72583c2f027deb9d07fff127ad2a8"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-input-inspector-cr-b0e31-ting-a-question-or-response-chromium/reopened-draft-user-step.png",
+      "sha256": "01ee565298025c5195a0d8d0a083e33a4f5b17763c5634c49b0121d1662b8034"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-input-inspector-ed-7ddce-serves-undo-save-and-reopen-chromium/human-response-inspector.png",
+      "sha256": "2def841394a6e615c0197b4da6319a2cc4bb6bfee1cbf8e20a51f7cfe9d51ad6"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-input-inspector-ed-7ddce-serves-undo-save-and-reopen-chromium/input-schema-inspector.png",
+      "sha256": "ba47a7f540675e64e93b057db7d5e7934c3bea1aa7330d04a62282c4b6bd6c63"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-2e2ce-eview-lost-acknowledgement--chromium/authorized-awaiting-observation.png",
+      "sha256": "f20b642d87a5609d9eb56a3b5ddfb6b59e513336a97413192514449082aef9a2"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-2e2ce-eview-lost-acknowledgement--chromium/declared-review-controls.png",
+      "sha256": "c2e393d24a88d976d869b31bb2f6be4ffe383f2050e505cfb53a3f15e0451ab4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-2e2ce-eview-lost-acknowledgement--chromium/reopened-observed-completion.png",
+      "sha256": "5442d0544945b46925bbf40e87501184856a50059e5338491409f439914929f6"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-5cdc4--none-lost-acknowledgement--chromium/authorized-awaiting-observation.png",
+      "sha256": "dbc600bbe934b3b34f283df28ddd89a041bdfdc6bdb8ba6d712d00ec6d85803e"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-5cdc4--none-lost-acknowledgement--chromium/declared-review-controls.png",
+      "sha256": "ee58183c176a0cc94143bea82f21b8a3b082c8bcb5585f69ab2010764207dc4a"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-5cdc4--none-lost-acknowledgement--chromium/reopened-observed-completion.png",
+      "sha256": "fe882946e06246bc63fc93633dd8ad4c434f15993dabae4f2212693137d0a3b9"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-7c9a7-known-lost-acknowledgement--chromium/authorized-awaiting-observation.png",
+      "sha256": "fc22774568a8a5d55faf90413d5f377d0c62a4111eb90468c54f6607e427c253"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-7c9a7-known-lost-acknowledgement--chromium/declared-review-controls.png",
+      "sha256": "3960c4ccc7e75aa2d54a86cdb809af505f017843eddc0967a0d1edbc7d7d1482"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-7c9a7-known-lost-acknowledgement--chromium/reopened-observed-completion.png",
+      "sha256": "ade7b4bbf9abe2f4263875c6f85f03d3877ff3b9b1913424716530106d908827"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-fc5d5-ction-lost-acknowledgement--chromium/authorized-awaiting-observation.png",
+      "sha256": "fac83d523591c7982bfc171275b9b7410c459c8cf98059b020768875037d02eb"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-fc5d5-ction-lost-acknowledgement--chromium/declared-review-controls.png",
+      "sha256": "885371f2391e75e5548848e8520d13b1d8f68e5fa4cbfe995c43e79409968c70"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-review-actions-rev-fc5d5-ction-lost-acknowledgement--chromium/reopened-observed-completion.png",
+      "sha256": "a63780d8afe9490813efd63fa2f18cfe4427671a44874902802abc2bb26cb81f"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-two-input-recovery-4e538-ve-one-workspace-run-stale--chromium/two-input-stale.png",
+      "sha256": "162656cce6a7f11cfef41858f4e44b99226d099914a843f1a4e26202cd688613"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-two-input-recovery-5d175-e-one-workspace-run-schema--chromium/two-input-schema.png",
+      "sha256": "40dd136568b1d23837a4b2617a9b30e204528fb5dfb2d1e86cf9ea34b708dcde"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-two-input-recovery-ccf79-rve-one-workspace-run-lost--chromium/two-input-lost.png",
+      "sha256": "3817d6a8616305142cd40c49ed61397961cfe15c5a91fbc020db4c0cba24b8a6"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-t028-ui-serial/process-two-input-recovery-f2a7a-one-workspace-run-accepted--chromium/two-input-accepted.png",
+      "sha256": "f3c4a217dbb5d95b53ed2e72c094ee4e5a073fc0469d8ebbc3228be4587cfa96"
+    }
+  ],
+  "live_model": false,
+  "live_mcp": false,
+  "physical_dispatch": false,
+  "engineering_acceptance": false,
+  "user_acceptance": false,
+  "limitations": [
+    "Preliminary 14/16 group had two browser timeouts; diagnostic and final serial 16/16 pass without timeout increases.",
+    "HTTP browser contracts and model/reviewer responses are synthetic; backend compiler/storage/continuation use actual services.",
+    "T021 editor regressions and M3-M5 remain pending."
+  ]
+}

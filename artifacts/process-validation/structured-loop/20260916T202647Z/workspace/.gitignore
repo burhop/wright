@@ -1,0 +1,5 @@
+# Auto-generated .gitignore for Engineering Workspace
+*.log
+*.tmp
+tmp/
+/tmp/

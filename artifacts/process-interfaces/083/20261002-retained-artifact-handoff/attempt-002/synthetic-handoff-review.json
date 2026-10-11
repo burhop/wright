@@ -1,0 +1,11 @@
+{
+  "checkpoint_id": "checkpoint-a2c74f14e3b229aa570bb14f",
+  "run_id": "b513166fb7014f23a7187a34be6e7710",
+  "subject_digest": "5ea91a10c13dedd8dfd76da0988b881feb687ebd605a7004b6077e977f50b230",
+  "state": "approved",
+  "actor": "integration_test:083-private-digital-wheel-retained-handoff-002",
+  "integration_test": true,
+  "human_engineering_acceptance": false,
+  "physical_dispatch": false,
+  "continuation_executed": false
+}

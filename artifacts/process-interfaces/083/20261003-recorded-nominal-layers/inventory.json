@@ -1,0 +1,153 @@
+{
+  "credential_values_scanned": true,
+  "files": {
+    "affected-tests.txt": {
+      "bytes": 1035,
+      "sha256": "aec7f39cbe965d9c520b64af603c9d5915d3291d1e2ccc1ae988451fad30d222"
+    },
+    "checked-scope.json": {
+      "bytes": 4073,
+      "sha256": "422e1a85ff2c4d7c7dff9cac4b2793cfac2ed55c6daab0b7783849e941f79770"
+    },
+    "focused-tests.txt": {
+      "bytes": 1032,
+      "sha256": "382d4d1a840beef30886c356f7f98bb97a8389a6c6b233eeae966c5f69fcecd8"
+    },
+    "recorded-toolpaths.json": {
+      "bytes": 4493731,
+      "sha256": "c98e830b06c910c63b8ea3d25618b833039903e998933e9b0b43793dcc229a44"
+    },
+    "retained-first-test-failure.txt": {
+      "bytes": 2746,
+      "sha256": "f3a0737144c04fd9847fd3828634fe424d111fe9c583f63b5a88684ddfae2728"
+    },
+    "retained-typecheck-failure.txt": {
+      "bytes": 465,
+      "sha256": "78554fd6ff125e3e7cc49af769a3fbaba9a283a57083bbdf689f70090fe85fb2"
+    },
+    "typecheck-result.json": {
+      "bytes": 137,
+      "sha256": "9473f756195aaf69ba0d6e812ff706719823f308ef1a65b3a8eff756b44ec0d8"
+    },
+    "typecheck-stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "typecheck-stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "common-workspace-walkthrough/browser-diagnostics.json": {
+      "bytes": 64,
+      "sha256": "5e3ef932fc74883e99f19d74797bc46c754257cd57ecb9161715d605c9cef9ff"
+    },
+    "common-workspace-walkthrough/progress.md": {
+      "bytes": 7221,
+      "sha256": "995630fd89a0356a0c2f57df3dd49f2e459979695e1a0b69bc8288f4f59ceae6"
+    },
+    "common-workspace-walkthrough/report.html": {
+      "bytes": 10987,
+      "sha256": "7702da1465e8f2fb51c97849670d32aec9a9ccea6c6ba96c5e2db0abb320f2fe"
+    },
+    "common-workspace-walkthrough/status.json": {
+      "bytes": 8265,
+      "sha256": "a4a8e6de438018fcae775f7f8a7ed5f5669faf68a646bd2b7470ee4009d9cee1"
+    },
+    "common-workspace-walkthrough/playwright/workspace-entry.mjs": {
+      "bytes": 18261,
+      "sha256": "d1bd856ba3e7015c4af793c59410289ffab1b2c6b2fc337d0e94bbc4ba9f8790"
+    },
+    "common-workspace-walkthrough/trace/README.md": {
+      "bytes": 78,
+      "sha256": "318bf35cc29eafc7246e5e009deee789b77b86c7cc7d13e1fc58a93e42f7d615"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S01.png": {
+      "bytes": 47755,
+      "sha256": "4c80f278b777714bd8d03f06f2328dd681a6277aac7f2ca3e8edb09d75e07489"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S02.png": {
+      "bytes": 351853,
+      "sha256": "2b08da842e5957e67b69fa8a7bc42ca7d5373df56367a2a0e8e49b40292a2f72"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S03.png": {
+      "bytes": 353920,
+      "sha256": "70e18f64fbb0f7209be6a4ad7e69ce6e45cf4ed5e97ef2d8ef295c04e2e73b43"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S04.png": {
+      "bytes": 321904,
+      "sha256": "307d29d48927b6675eb41586a2a496f4985c60c2a8ca784e7b6189546ce51b2a"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S05.png": {
+      "bytes": 481376,
+      "sha256": "6a92d288ac9bba4372b3bd2993ead295f792f50eb68475e932a8c5f02957f5a9"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S06.png": {
+      "bytes": 58265,
+      "sha256": "e0803c418640480dc02f19334c083e6e7b0a83abb6e97babdc2307237f6dad12"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S07.png": {
+      "bytes": 58601,
+      "sha256": "d8bcf1b73a111c688b57f3f55b263f943188bab98be637073dc64056b63cfb69"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S08.png": {
+      "bytes": 101538,
+      "sha256": "d9322675a0955b65d99754c3e3495114c8bae25cadd814f964a2fc962358c13e"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S09.png": {
+      "bytes": 87637,
+      "sha256": "7ffe5d6fc114127bb50491614227348bfc59f62e068b58567f3250d1ae8d8f77"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S10.png": {
+      "bytes": 97339,
+      "sha256": "5b971e2c58ff7a155127b5dbce80ff69945305d2e894b0b27b6e60c7710c9f91"
+    },
+    "common-workspace-walkthrough/screenshots/annotated/S11.png": {
+      "bytes": 103980,
+      "sha256": "9748ccb4042797fa0deb6a0de6c8e68cddd9aa48652d467d0ef8b708c1a16b09"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S01.png": {
+      "bytes": 42234,
+      "sha256": "48c484fa42db82d4ccd25b6ee872fa7b4a3ebdc40e2b7d4700097b2df7e40ee7"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S02.png": {
+      "bytes": 325337,
+      "sha256": "9a1de1c4db425f7b67f16a3c0c104ac79bb7edca8d05e6fd8e99d888dd001360"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S03.png": {
+      "bytes": 328452,
+      "sha256": "5321004cc270af42e136c3c89a07475319b35988de7a8e57b607b4a3df7d243c"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S04.png": {
+      "bytes": 261130,
+      "sha256": "e68aceb06fe275f29b45c6656e86aa6eda15004cebd4987aac810d29b271fc38"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S05.png": {
+      "bytes": 446680,
+      "sha256": "2452de6ff93a297c59ae39b09d990e7011d5ff4a97a3b62e4ac377e1045f1732"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S06.png": {
+      "bytes": 44880,
+      "sha256": "9e5735c834b6a1e3a33d144e5efd49628953fbd4eb31ff35f17d1afe384f5c37"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S07.png": {
+      "bytes": 45718,
+      "sha256": "1f93bd170ade9e0e4c5682c05a65567202130c75e76a43f992bde2ebbcd38453"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S08.png": {
+      "bytes": 84470,
+      "sha256": "ea28de9638bdbf2dedf55ef239f605744cb82d4d39b4221a715ee2d696008075"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S09.png": {
+      "bytes": 78408,
+      "sha256": "fc2e329b7431bc9ac045d286cd4b88fa13eb6d0509da8a1bd9aefce300b1d11f"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S10.png": {
+      "bytes": 86262,
+      "sha256": "86cd70b4b846639c055e869452dc8fcae5d73bf868a5faa082282b605fbde2bb"
+    },
+    "common-workspace-walkthrough/screenshots/raw/S11.png": {
+      "bytes": 83534,
+      "sha256": "c693c224ae6d38f49d46737d179d18e4aa116a7ceb86a2027085a4b630e0d228"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "status": "failed_before_tests",
+  "reason": "private runner NameError: base undefined",
+  "tests_run": 0
+}

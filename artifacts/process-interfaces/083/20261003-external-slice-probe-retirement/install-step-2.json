@@ -1,0 +1,14 @@
+{
+  "command": [
+    "D:/Users/markb/miniconda3/Scripts/uv.exe",
+    "pip",
+    "install",
+    "--python",
+    "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\python.exe",
+    "D:\\repos\\wright\\.local-run\\feature-081-live\\sources\\bambu-p1s-mcp",
+    "mcp==1.28.1"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "Using Python 3.13.5 environment at: .local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\nResolved 32 packages in 633ms\n   Building bambu-p1s-mcp @ file:///D:/repos/wright/.local-run/feature-081-live/sources/bambu-p1s-mcp\nDownloading pydantic-core (1.9MiB)\nDownloading cryptography (3.6MiB)\nDownloading pywin32 (6.6MiB)\n Downloaded pydantic-core\n Downloaded cryptography\n Downloaded pywin32\n      Built bambu-p1s-mcp @ file:///D:/repos/wright/.local-run/feature-081-live/sources/bambu-p1s-mcp\nPrepared 32 packages in 2.45s\nInstalled 32 packages in 867ms\n + annotated-types==0.8.0\n + anyio==4.15.1\n + attrs==26.1.0\n + bambu-p1s-mcp==0.1.0 (from file:///D:/repos/wright/.local-run/feature-081-live/sources/bambu-p1s-mcp)\n + certifi==2026.7.22\n + cffi==2.1.1\n + click==8.5.0\n + cryptography==50.0.2\n + h11==0.16.0\n + httpcore==1.0.9\n + httpx==0.28.1\n + httpx-sse==0.4.3\n + idna==3.20\n + jsonschema==4.26.0\n + jsonschema-specifications==2025.9.1\n + mcp==1.28.1\n + paho-mqtt==2.1.0\n + pycparser==3.0\n + pydantic==2.13.5\n + pydantic-core==2.46.5\n + pydantic-settings==2.15.0\n + pyjwt==2.15.1\n + python-dotenv==1.2.4\n + python-multipart==0.0.32\n + pywin32==312\n + referencing==0.37.0\n + rpds-py==2026.6.3\n + sse-starlette==3.5.0\n + starlette==1.7.0\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + uvicorn==0.54.0\n"
+}

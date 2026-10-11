@@ -1,0 +1,152 @@
+workflow retained_handoff_001
+  name: "Retained focus-wheel simulated handoff"
+  purpose: "Consume exact retained digital preparation files through Wright approval and simulator; original failed gate remains unchanged."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+task authorize_transfer_retained_handoff_001
+  name: "Authorize exact package transfer"
+  purpose: "Pause before transfer and bind the engineer decision to the package, printer, material, and process profile."
+  step_type: "review"
+  group: null
+  performed_by: "engineer"
+  inputs: [{"key":"authorize_transfer_retained_handoff_001_exact_package","name":"authorize transfer retained handoff 001 exact package","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_handoff_001_preparation_review","name":"authorize transfer retained handoff 001 preparation review","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_handoff_001_machine_profile","name":"authorize transfer retained handoff 001 machine profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_handoff_001_process_profile","name":"authorize transfer retained handoff 001 process profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_handoff_001_filament_profile","name":"authorize transfer retained handoff 001 filament profile","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"authorize_transfer_retained_handoff_001_producer_origin","name":"authorize transfer retained handoff 001 producer origin","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"receipt","name":"receipt","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Integration-test simulation only. Bind exact retained package, original PETG profiles and independent report. No printer/supplier operation and no engineering acceptance. Keep original failed producer and report lineage."
+  settings: {"authoring_template":"external-action-approval","action_kind":"printer_transfer","approval_binding":{"server":"wright","tool":"test_handoff","schema":"f46532036f28b3b052a279f083d505363af9805b95e836aff0092f6ae0fd459d"},"approval_destination":{"kind":"integration_test","id":"test://083-private-digital-wheel-retained-handoff-001/printer/printed-replacement-part-01"},"approval_settings":{"material":"PETG","nozzle_mm":"0.4","package_path":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/slice_package.gcode.3mf","receipt_path":"process-proofs/printed-replacement-part/retained-handoff-001/outputs/simulated-transfer-receipt.json","simulation":true},"approval_action":{"kind":"printer_transfer","mode":"transfer_only","simulation":true}}
+  tool: null
+  reusable_step: null
+end
+
+input input_slice_package_gcode_3mf_retained_handoff_001
+  name: "slice_package.gcode.3mf"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_slice_package_gcode_3mf_retained_handoff_001_out","name":"input slice package gcode 3mf retained handoff 001 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/slice_package.gcode.3mf"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_authorize_transfer_retained_handoff_001_exact_package
+  type: "item"
+  from: "input_slice_package_gcode_3mf_retained_handoff_001.input_slice_package_gcode_3mf_retained_handoff_001_out"
+  to: "authorize_transfer_retained_handoff_001.authorize_transfer_retained_handoff_001_exact_package"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_source_report_json_retained_handoff_001
+  name: "source-report.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_source_report_json_retained_handoff_001_out","name":"input source report json retained handoff 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/source-report.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_authorize_transfer_retained_handoff_001_preparation_review
+  type: "item"
+  from: "input_source_report_json_retained_handoff_001.input_source_report_json_retained_handoff_001_out"
+  to: "authorize_transfer_retained_handoff_001.authorize_transfer_retained_handoff_001_preparation_review"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_machine_profile_json_retained_handoff_001
+  name: "machine-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_machine_profile_json_retained_handoff_001_out","name":"input machine profile json retained handoff 001 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/machine-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_authorize_transfer_retained_handoff_001_machine_profile
+  type: "item"
+  from: "input_machine_profile_json_retained_handoff_001.input_machine_profile_json_retained_handoff_001_out"
+  to: "authorize_transfer_retained_handoff_001.authorize_transfer_retained_handoff_001_machine_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_process_profile_json_retained_handoff_001
+  name: "process-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_process_profile_json_retained_handoff_001_out","name":"input process profile json retained handoff 001 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/process-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_authorize_transfer_retained_handoff_001_process_profile
+  type: "item"
+  from: "input_process_profile_json_retained_handoff_001.input_process_profile_json_retained_handoff_001_out"
+  to: "authorize_transfer_retained_handoff_001.authorize_transfer_retained_handoff_001_process_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_filament_profile_json_retained_handoff_001
+  name: "filament-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_filament_profile_json_retained_handoff_001_out","name":"input filament profile json retained handoff 001 out","kind":"workspace_file","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/filament-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_authorize_transfer_retained_handoff_001_filament_profile
+  type: "item"
+  from: "input_filament_profile_json_retained_handoff_001.input_filament_profile_json_retained_handoff_001_out"
+  to: "authorize_transfer_retained_handoff_001.authorize_transfer_retained_handoff_001_filament_profile"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_producer_origin_json_retained_handoff_001
+  name: "producer-origin.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_producer_origin_json_retained_handoff_001_out","name":"input producer origin json retained handoff 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-handoff-001/inputs/producer-origin.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_authorize_transfer_retained_handoff_001_producer_origin
+  type: "item"
+  from: "input_producer_origin_json_retained_handoff_001.input_producer_origin_json_retained_handoff_001_out"
+  to: "authorize_transfer_retained_handoff_001.authorize_transfer_retained_handoff_001_producer_origin"
+  label: "exact input or upstream evidence"
+  when: null
+end

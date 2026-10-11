@@ -1,0 +1,2 @@
+From apps/web: node ../../node_modules/vitest/vitest.mjs run src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx src/services/process-ui-authoring.spec.ts src/services/process-ui-authoring-recovery.spec.ts src/services/process-presentation-host.spec.ts --reporter=json
+From repository: node node_modules/typescript/bin/tsc -p apps/web/tsconfig.app.json

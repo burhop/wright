@@ -1,0 +1,21 @@
+{
+  "status": 202,
+  "body": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-consumer-001.workflow.wflow",
+      "source_digest": "7323f6ae36f36383fa9da09520c4f785255f46179e07de0331b44ca7af72549f",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "printed-retained-consumer-saved-reuse-002",
+    "payload_digest": "7c085914ae0fd5b9f8836c7db3dbfb6893f1bc465235d3126234fc05cf1a3746",
+    "input_snapshot_id": "inputs-c755f3fee880428e9fc1c1ff17b20110",
+    "input_digest": "c5dde9f70d18b222e977a4bbfbdb4ccbdc7de4b746322ea89900f00dced03aa2",
+    "run_id": "00201b136bff4e4e91f097891d96e8e2",
+    "run_log_path": "runs/printed-replacement-part-retained-consumer-001/00201b136bff4e4e91f097891d96e8e2.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-02T14:52:23.323521+00:00"
+  }
+}

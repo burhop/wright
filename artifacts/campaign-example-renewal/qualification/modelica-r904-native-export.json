@@ -1,0 +1,15 @@
+{
+  "schema": "wright.modelica-native-export-proof/1",
+  "scope": "Selected 904 runtime qualification; no canonical campaign credit",
+  "status": "passed",
+  "container": "wright-082-modelica-r904",
+  "container_id": "1912d9df7d10113d2649b64e3356d86123d883cbca23aee86326bbfc8f5735af",
+  "image": "sha256:b0d440001684993a8c754e738bbe633bba41f078c67cda441f8aff2b219f5a1a",
+  "tool_count": 15,
+  "export_verified": true,
+  "export_idempotence_verified": true,
+  "verified_file_count": 10,
+  "server_id": "2a1008b4-9345-4dbc-b04f-5e2d1be27f30",
+  "evidence_path": ".local-run/renewal-qualification/modelica-runtime-904/production-stdio-gateway.json",
+  "evidence_sha256": "629df0c970ab008f914b8b99449dbe565a3d0978cc7cc3d744f18e8183afd365"
+}

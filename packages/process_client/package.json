@@ -1,0 +1,13 @@
+{
+  "name": "@wright/process-client",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": { "types": "./src/index.ts", "default": "./src/index.ts" },
+    "./contracts": { "types": "./src/contracts.generated.ts", "default": "./src/contracts.generated.ts" }
+  },
+  "files": ["src", "README.md"]
+}

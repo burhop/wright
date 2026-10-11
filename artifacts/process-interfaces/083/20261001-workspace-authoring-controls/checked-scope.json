@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "parent": "7074ca495f3503ee1e68d29e236289f6fd6e1f2f",
+  "environment": {
+    "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "node": "v25.2.0"
+  },
+  "owned_source_hashes": {
+    "apps/api/src/api/routers/process_surface.py": "afb400695f1a399ad7890829cabdf9d7764c419e5057c44ed949fc21b55b09b7",
+    "apps/api/src/api/routers/process_ui_authoring.py": "ee9aeea772e37f0f4150d1ec08269f34f6ed2f72253a2aa0f7ef87c907cb0d22",
+    "apps/api/src/api/schemas/process_interfaces.py": "42d476536c7a39ddadab68c681b8dcb5161061a7218e93102cc987d0e28fece5",
+    "apps/api/tests/test_process_ui_authoring_api.py": "6a9b3c28b84e9d30889c2b14fa448961ea077719f65b262ae37174ab22142bcc",
+    "apps/web/src/components/chat/WorkspacePanel.tsx": "d259fc12faf16495d8c21f39388a238635d2d43e8677393b48f67388bc357195",
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.tsx": "078235234e7da1db0c90274591c00b308cebe322114cf21eb459f77440156e48",
+    "apps/web/src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx": "a251d6115ecf24fc4b87c821c58f2709057591f091afc400ef0784ef6138dbef",
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.tsx": "aada394906a4838de5ec92f4a60c6a4ecfcf81e7dabe3d261bae61d952157077",
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx": "33d4af642458bdb3dd06721c9d2565c520e9eebe2bb1d97fd62c2fb6ff1437e2",
+    "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.tsx": "140913ca9bc2a3a8f0a0fe135bdd72487a06e39f1e7a2d184db05325acdf52b9",
+    "apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx": "089c2ac7dc30c712016bffc7cb18ddd5cb840a8176a7a4203d53efc4bce09868",
+    "apps/web/src/components/surfaces/LiveAppSurface.tsx": "6ed3b00b10a9ecd5fa41828fb70ec45e64c7bc092bf1718e80dc21a67a7e7412",
+    "apps/web/src/components/surfaces/LiveAppSurface.spec.tsx": "6f3199cc00f63d5c85a04ff6aec23cae2498cd545ff16cad2e8a99f8cce56c71",
+    "apps/web/src/services/process-ui-authoring.ts": "513f5fb578a284c04cf5aad12b76820af13237f8758f9e8fce45130d2e665664",
+    "apps/web/src/services/process-ui-authoring.spec.ts": "38c607e7bc14548cee2563690b1b3108993e07383ff7550698848e23254a8ac5",
+    "apps/web/src/services/process-ui-authoring-recovery.ts": "cbba18771de752f4bf7881eaa7fb363eba46581d668698e8c1e11ae060ec1d17",
+    "apps/web/src/services/process-ui-authoring-recovery.spec.ts": "96e5268f6a5ed0d717bd6b0e022f47243eeae3d8e93052f68d4b8495d34af649",
+    "apps/web/src/services/process-presentation-host.ts": "a8e7cf3cc6240a9330210763a3907b827d7140979fdfcc8a8180cbd83132c480",
+    "apps/web/src/services/process-presentation-host.spec.ts": "0e769a6a339af6b36260050db23f99119277ccca539e4924ee70358393527c6c",
+    "apps/web/src/services/process-workspace-tabs.ts": "2759e9763aa75585a0e05330800cfef78b72b6e74673079bb5e6888a30df23b6",
+    "apps/web/src/services/process-workspace-tabs.spec.ts": "df23e6a997d9df94207f117bc32a5a7d997a2d077702912e8da76a14be5646af",
+    "apps/web/src/services/surfaces/surface-client.ts": "110b7e2bf1e459c0abc26cdbaed27919f6047a9e538db4336d9963fe4a695402",
+    "apps/web/src/services/surfaces/presenters/live-app-presenter.ts": "337eadce5ac66a833884075eb8036bf2b51515eae8db9cb3666482c3490ecdd9",
+    "apps/web/src/services/surfaces/presenters/live-app-presenter.spec.ts": "fbe28bed3e3a3d25658f6056101274c4833b7861289f3d9af0d152634699db86",
+    "apps/web/src/store/viewer-process-tabs.spec.tsx": "afb1b2146d83586d08a47014bc3a7565ccaa3ca4fe6dfa80d51788653371cbdf",
+    "apps/web/tests/fixtures/process-ui-authoring.ts": "51d9731dd8a747a990267fc8870ef798d362ea8b4c19d396cadc69cc83cc3937",
+    "packages/core/src/core/process_interfaces.py": "b74fe4c44ebd7beff6fdb1e89189ae668feeac5188c6862af49e482ba12bbbd0",
+    "packages/core/src/core/process_schemas/contracts-v1.json": "7fd6e29220f8fb528ceea9ad71bcea836a6e09963924710de4b4f9d1b8b957b1",
+    "packages/process_client/src/contracts.generated.ts": "823ddb839496f1672bbdebf9601cda05bf7576cf6f3dc8738fe02d08eda8d021",
+    "packages/process_client/src/schemas.generated.ts": "cf542237942d98c56d6e01c4eb5876b19c4558d608e29b7aa3eb1253496cec2a",
+    "packages/data_vault/src/data_vault/process_interface_repository.py": "ea7c769799abc0b2dd674b9348c15a6782435242edaaca43b5482a510d3d1bfd",
+    "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py": "c516d1d2666262b55b8abc2389e083251d7252b6f115f621d38a56d97ecccac4",
+    "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py": "9943a01928009484e7900d19893d5c0288406b08e834894bb0d928adab40b738",
+    "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py": "1af7770da48592fbe7db387bf21ea1f3643296e042f7c10b83edf4829d6009e8",
+    "packages/workspace_service/tests/test_process_ui_start_association.py": "af6fca16d79247d2bb471ff9e42f471ca88854b92ce673b928174329fef4bda8",
+    "specs/083-process-working-interfaces/tasks.md": "18dadbf95757723df1ea8722af91b9cb2d6990a0ea5c7da132d13bed9ef13e8d",
+    "specs/083-process-working-interfaces/progress.md": "81bb3465291106094e69e94b2708ec0e25e44cbda34143df4b19e20bb8a5bb83",
+    "specs/083-process-working-interfaces/evidence/workspace-authoring-controls.md": "02aa34dfe339d6486522c68287d632f131301fa7faca4649d42b9735585db04a"
+  },
+  "commands": "from pathlib import Path\nimport subprocess\nimport sys\n\nroot = Path(\"D:/repos/wright\")\nlocal = root / \".local-run/process-interfaces-083\"\nlabel = sys.argv[1]\nif label == \"backend\":\n    paths = [\"apps/api/tests/test_process_ui_authoring_api.py\", \"apps/api/tests/test_process_ui_surface_authority.py\",\n        \"packages/workspace_service/tests/surfaces/test_process_ui_static.py\", \"packages/workspace_service/tests/test_process_ui_presentations.py\",\n        \"packages/workspace_service/tests/test_process_ui_start_association.py\", \"packages/data_vault/tests/test_process_interface_migrations.py\",\n        \"packages/core/tests/test_process_interface_contracts.py\", \"packages/core/tests/test_process_client_contracts.py\"]\n    argv = [sys.executable, \"-m\", \"pytest\", *paths, \"-q\", \"--tb=short\", \"-p\", \"no:cacheprovider\", \"--basetemp\", str(local / \"t039-backend-final\")]\n    cwd = root\nelif label == \"frontend\":\n    paths = [\"src/services/process-presentation-host.spec.ts\", \"src/services/process-ui-authoring.spec.ts\",\n        \"src/services/process-ui-authoring-recovery.spec.ts\", \"src/services/process-workspace-tabs.spec.ts\",\n        \"src/store/viewer-process-tabs.spec.tsx\", \"src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx\",\n        \"src/components/process-interfaces/ProcessInterfaceView.spec.tsx\", \"src/components/process-interfaces/InterfaceAuthoringPanel.spec.tsx\",\n        \"src/components/surfaces/LiveAppSurface.spec.tsx\", \"src/services/surfaces/presenters/live-app-presenter.spec.ts\"]\n    argv = [\"node\", \"../../node_modules/vitest/vitest.mjs\", \"run\", *paths]\n    cwd = root / \"apps/web\"\nelse:\n    raise ValueError(\"Unknown owned check group\")\nwith (local / f\"t039-{label}-final.log\").open(\"w\", encoding=\"utf-8\") as log:\n    log.write(\"argv=\" + repr(argv) + \"\\n\")\n    child = subprocess.Popen(argv, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding=\"utf-8\", errors=\"replace\")\n    for line in child.stdout:\n        log.write(line); log.flush(); print(line, end=\"\", flush=True)\n    code = child.wait(); log.write(f\"\\nowned_exit_code={code}\\n\")\nsys.exit(code)\n",
+  "checks": {
+    "ruff": {
+      "argv": [
+        "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "apps/api/src/api/routers/process_surface.py",
+        "apps/api/src/api/routers/process_ui_authoring.py",
+        "apps/api/src/api/schemas/process_interfaces.py",
+        "apps/api/tests/test_process_ui_authoring_api.py",
+        "packages/core/src/core/process_interfaces.py",
+        "packages/data_vault/src/data_vault/process_interface_repository.py",
+        "packages/workspace_service/src/workspace_service/process_interfaces/presentation.py",
+        "packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py",
+        "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py",
+        "packages/workspace_service/tests/test_process_ui_start_association.py"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    "schema-generator": {
+      "argv": [
+        "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+        "packages/process_client/scripts/generate_contracts.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": "Public client contract schemas match core.\n"
+    },
+    "whitespace": {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": "warning: in the working copy of 'apps/api/src/api/main.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/api/routers/process_surface.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/api/routers/process_ui_authoring.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/api/routers/workspace.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/src/api/schemas/process_interfaces.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/api/tests/test_process_ui_authoring_api.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/components/chat/WorkspacePanel.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/components/pages/PrintPartDemoPage.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/components/process-interfaces/ProcessWorkspaceTab.spec.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/components/process-interfaces/ProcessWorkspaceTab.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/components/surfaces/LiveAppSurface.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/process-workspace-tabs.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/process-workspace-tabs.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/surfaces/presenters/live-app-presenter.spec.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/surfaces/presenters/live-app-presenter.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/surfaces/surface-client.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/services/workspace-service.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/web/src/store/viewer-process-tabs.spec.tsx', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/core/src/core/process_interfaces.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/data_vault/src/data_vault/process_interface_repository.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/process_client/src/contracts.generated.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/process_client/src/schemas.generated.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/workspace_service/src/workspace_service/print_part_demo_printer.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/workspace_service/src/workspace_service/process_interfaces/presentation.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/workspace_service/src/workspace_service/process_interfaces/surface_bridge.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/configure_print_demo_offline.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'scripts/print_demo_p1s_mcp.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'specs/083-process-working-interfaces/progress.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'specs/083-process-working-interfaces/tasks.md', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    "typescript": {
+      "argv": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false",
+        "--project",
+        "apps/web/tsconfig.app.json"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    "eslint": {
+      "argv": [
+        "node",
+        "../../node_modules/eslint/bin/eslint.js",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\chat\\WorkspacePanel.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\process-interfaces\\InterfaceAuthoringPanel.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\process-interfaces\\InterfaceAuthoringPanel.spec.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\process-interfaces\\ProcessInterfaceView.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\process-interfaces\\ProcessInterfaceView.spec.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\process-interfaces\\ProcessWorkspaceTab.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\process-interfaces\\ProcessWorkspaceTab.spec.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\surfaces\\LiveAppSurface.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\components\\surfaces\\LiveAppSurface.spec.tsx",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-ui-authoring.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-ui-authoring.spec.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-ui-authoring-recovery.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-ui-authoring-recovery.spec.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-presentation-host.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-presentation-host.spec.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-workspace-tabs.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\process-workspace-tabs.spec.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\surfaces\\surface-client.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\surfaces\\presenters\\live-app-presenter.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\services\\surfaces\\presenters\\live-app-presenter.spec.ts",
+        "D:\\repos\\wright\\apps\\web\\src\\store\\viewer-process-tabs.spec.tsx",
+        "D:\\repos\\wright\\apps\\web\\tests\\fixtures\\process-ui-authoring.ts"
+      ],
+      "exit_code": 0,
+      "output": "\nD:\\repos\\wright\\apps\\web\\src\\components\\chat\\WorkspacePanel.tsx\n  328:9  warning  The 'activeSessionStreamActivity' logical expression could make the dependencies of useEffect Hook (at line 2005) change on every render. To fix this, wrap the initialization of 'activeSessionStreamActivity' in its own useMemo() Hook  react-hooks/exhaustive-deps\n\nD:\\repos\\wright\\apps\\web\\src\\components\\surfaces\\LiveAppSurface.tsx\n  253:6  warning  React Hook useEffect has a missing dependency: 'open'. Either include it or remove the dependency array  react-hooks/exhaustive-deps\n\n\u00e2\u0153\u2013 2 problems (0 errors, 2 warnings)\n\n"
+    },
+    "fixed-runtime-syntax": {
+      "argv": [
+        "node",
+        "--check",
+        "--input-type=module"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  },
+  "logs": {
+    "t039-backend-final.log": {
+      "sha256": "a2bb90757f84c2c0b4de34ead2be522e26cbd5d219eefc315db746a8bbbafce1",
+      "exit_code": 0,
+      "summaries": [
+        "127 passed, 2 warnings in 68.06s (0:01:08)"
+      ]
+    },
+    "t039-frontend-final.log": {
+      "sha256": "9384bf889139fd3c34772ee3c33db3ba0691c04ad9dcdd589f9d81989c657e33",
+      "exit_code": 0,
+      "summaries": [
+        "      Tests  120 passed (120)"
+      ]
+    }
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "mixed_deltas": {
+      "apps/api/src/api/main.py": true,
+      "apps/api/src/api/routers/workspace.py": true
+    },
+    "approved_context_matches_head": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    }
+  },
+  "scope": {
+    "T039": "implemented/component checked",
+    "T037": "host connection and verified receipt attachment implemented; actual managed browser pending"
+  },
+  "claims": {
+    "controlled_service_API": true,
+    "component_DOM": true,
+    "actual_managed_worker_browser": false,
+    "served_workspace_acceptance": false,
+    "live_model_this_checkpoint": false,
+    "live_MCP": false,
+    "engineering_acceptance": false,
+    "physical_dispatch": false,
+    "installed_distribution": false,
+    "user_acceptance": false,
+    "complete_feature": false
+  }
+}

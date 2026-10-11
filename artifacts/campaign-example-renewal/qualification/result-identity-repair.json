@@ -1,0 +1,75 @@
+{
+  "at": "2026-09-22T18:12:21.467756+00:00",
+  "status": "pass",
+  "scope": "Offline registration of retained actual native file evidence into an isolated validation database; no producer replay, approval, campaign completion or engineering acceptance",
+  "failed_run_id": "61a39518aefe46f5beb7983b39660f43",
+  "retained_run_log_sha256": "7c51fbf3578166b35e28bb67fcce479e269272ce471887b641458b7d4117e518",
+  "actual_native_files": [
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/request.json",
+      "sha256": "d70539b94e0c741be6129702e85517975375a4ef5d50c26547e8377faaa07803",
+      "bytes": 985
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/resolved-parameters.json",
+      "sha256": "378078f34230e46ab6b4e441d6b897917e59353bd11ce0181c93d975bbbf1e93",
+      "bytes": 594
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/WrightWaterHeater.mo",
+      "sha256": "172bc5f3eb26679d2905eea4e9e70788703c04be863568d292d9698c90a2bda4",
+      "bytes": 3032
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/scenario.json",
+      "sha256": "63db7d159a461da3f67d169abcf66fd9aa4e890b4830531a43b01480c2848cad",
+      "bytes": 376
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/parameter-schema.json",
+      "sha256": "c14899df5a69b228963b14c15a113fe23cfcb01c5b559e07cd30433fb2a0f9f4",
+      "bytes": 2102
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/run.mos",
+      "sha256": "213c34290db0176bf17f913c6e19aeae35fd50c85e7fc4f8df8757c39c499891",
+      "bytes": 551
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/omc.log",
+      "sha256": "97b234d1ef91c97f82620a936176e1ff87b5ef03cf3ae2df7bc7a1ad7f6fe4ae",
+      "bytes": 1045
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/result.csv",
+      "sha256": "66172c33da3bfaaa8f80e2b17fb88d50f0779831a7fefc9176cad6bd8e58e2d7",
+      "bytes": 108061
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/evidence.json",
+      "sha256": "b29ee2a25e019856c94cce19beced78659cba31ab15a6ee2cf7ff7f26ca464e9",
+      "bytes": 1774
+    },
+    {
+      "path": "campaign/water-heater-sizing-01/attempt-903/artifacts/water-heater-sizing-01-attempt-903-p350-nominal-baseline/run.json",
+      "sha256": "7f08f5ae790243dfe48446d0e52e94e7325fdde08590fd4a10d2b31e5605b267",
+      "bytes": 13504
+    }
+  ],
+  "registered_subjects": [
+    {
+      "result_id": "61a39518aefe46f5beb7983b39660f43:export_native_p350_nominal_water_heater_sizing_01_attempt_903:export_native_p350_nominal_water_heater_sizing_01_attempt_903_computed_evidence",
+      "result_id_length": 174,
+      "subject_sha256": "b29ee2a25e019856c94cce19beced78659cba31ab15a6ee2cf7ff7f26ca464e9",
+      "producer": {
+        "run_id": "61a39518aefe46f5beb7983b39660f43",
+        "step_id": "export_native_p350_nominal_water_heater_sizing_01_attempt_903",
+        "attempt": 1,
+        "output_port": "export_native_p350_nominal_water_heater_sizing_01_attempt_903_computed_evidence"
+      }
+    }
+  ],
+  "workflow_dispatches": 0,
+  "live_database_modified": false,
+  "source_evidence": ".local-run/renewal-qualification/water01-result-identity-repair/proof.json"
+}

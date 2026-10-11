@@ -5,6 +5,7 @@ import {
   mockRecoveryWorkspace,
   openRecoveryEditor,
   publicWorkflowSource,
+  type RecoveryWorkspaceMock,
 } from "./fixtures/workflow-recovery";
 
 async function selectObject(page: Page, id: string): Promise<void> {
@@ -29,6 +30,23 @@ async function editThickness(page: Page): Promise<void> {
 async function closeInspector(page: Page): Promise<void> {
   const close = page.getByTestId("workflow-recovery-inspector-close");
   if (await close.isVisible()) await close.click();
+}
+
+async function expectReadinessBlocksDispatch(
+  page: Page,
+  state: RecoveryWorkspaceMock,
+): Promise<void> {
+  await expect(page.getByTestId("workflow-recovery-run-readiness")).toContainText(
+    "Connect and qualify the required engineering tools.",
+  );
+  await page.getByTestId("workflow-recovery-run-start").click();
+  await expect(page.getByTestId("workflow-recovery-run-drawer")).toContainText(
+    "Run blocked before prompt dispatch.",
+  );
+  expect(state.runRequestCount()).toBe(0);
+  expect(state.runCount()).toBe(0);
+  await expect(page.getByTestId("workflow-recovery-run-mode")).toHaveCount(0);
+  await expect(page.getByTestId("workflow-recovery-run-advance")).toHaveCount(0);
 }
 
 test("automatically creates the default workflow when Workflows is opened", async ({
@@ -196,7 +214,10 @@ test("persists authored input text and a scoped workspace file reference across 
   await expect(
     page.getByTestId("workflow-recovery-inputs-toggle"),
   ).toContainText("1/3 configured");
-  await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+  // Native Run is a preflight affordance, not the former simulation switch.
+  await expect(page.getByTestId("workflow-recovery-run-start")).toBeEnabled();
+  expect(state.runRequestCount()).toBe(0);
+  expect(state.runCount()).toBe(0);
 
   await page.getByTestId("workflow-recovery-inputs-toggle").click();
   await page
@@ -230,7 +251,16 @@ test("persists authored input text and a scoped workspace file reference across 
   await expect(page.getByTestId("workflow-recovery-input-select")).toHaveValue(
     "references/bracket.png",
   );
-  await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+  await expect(page.getByTestId("workflow-recovery-run-start")).toBeEnabled();
+  await page.getByTestId("workflow-recovery-run-readiness-toggle").click();
+  await expect(page.getByTestId("workflow-recovery-run-readiness")).toContainText(
+    "2/3 configured",
+  );
+  await expect(page.getByTestId("workflow-recovery-run-readiness")).toContainText(
+    "Connected · preflight required",
+  );
+  expect(state.runRequestCount()).toBe(0);
+  expect(state.runCount()).toBe(0);
 });
 
 test("keeps the canvas-first editor bounded with an optional inspector at 1070 by 791", async ({
@@ -695,7 +725,7 @@ test("uses real typed handles and preserves source across a layout save", async 
 test("promotes valid source and reviewed AI commands while production execution remains fail-closed", async ({
   page,
 }) => {
-  await mockRecoveryWorkspace(page);
+  const state = await mockRecoveryWorkspace(page, { readiness: "setup_required" });
   await openRecoveryEditor(page);
   const concept = page.getByTestId("workflow-recovery-concept");
 
@@ -750,16 +780,12 @@ test("promotes valid source and reviewed AI commands while production execution 
     page.getByTestId("workflow-recovery-block-block.generate-geometry"),
   ).toContainText("Create bracket CAD model");
 
-  await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
-  await expect(page.getByTestId("workflow-recovery-run-mode")).toHaveCount(0);
-  await expect(page.getByTestId("workflow-recovery-run-advance")).toHaveCount(
-    0,
-  );
+  await expectReadinessBlocksDispatch(page, state);
 });
 test("keeps paired diagram and source edits inside the local one-second feedback bound", async ({
   page,
 }) => {
-  await mockRecoveryWorkspace(page);
+  const state = await mockRecoveryWorkspace(page);
   await openRecoveryEditor(page);
   await editThickness(page);
   await page.getByTestId("workflow-recovery-view-split").click();
@@ -788,7 +814,9 @@ test("keeps paired diagram and source edits inside the local one-second feedback
   const textToGraphMs = Date.now() - textStarted;
   expect(textToGraphMs).toBeLessThan(1000);
 
-  await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+  await expect(page.getByTestId("workflow-recovery-run-start")).toBeEnabled();
+  expect(state.runRequestCount()).toBe(0);
+  expect(state.runCount()).toBe(0);
 
   test.info().annotations.push({
     type: "latency",
@@ -799,7 +827,7 @@ test("keeps production readiness accessible, reduced-motion legible, and mobile-
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await mockRecoveryWorkspace(page);
+  const state = await mockRecoveryWorkspace(page, { readiness: "setup_required" });
   await openRecoveryEditor(page);
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
 
@@ -819,8 +847,8 @@ test("keeps production readiness accessible, reduced-motion legible, and mobile-
       }));
   expect(await serious()).toEqual([]);
 
-  await expect(page.getByTestId("workflow-recovery-run-start")).toBeDisabled();
-  await expect(page.getByTestId("workflow-recovery-run-mode")).toHaveCount(0);
+  await expectReadinessBlocksDispatch(page, state);
+  expect(await serious()).toEqual([]);
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
@@ -842,4 +870,6 @@ test("keeps production readiness accessible, reduced-motion legible, and mobile-
     page.getByTestId("workflow-recovery-inspector-close"),
   ).toBeVisible();
   expect(await serious()).toEqual([]);
+  expect(state.runRequestCount()).toBe(0);
+  expect(state.runCount()).toBe(0);
 });

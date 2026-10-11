@@ -1,0 +1,1829 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-09-23T00:02:30.237200+00:00",
+  "goal_authority": "campaign-serial-resolution-goal.md",
+  "active_problem": "P001",
+  "initial_metrics": {
+    "datasets_created": 30,
+    "combinations_run": 30,
+    "processes_with_outputs": 24,
+    "valid_data": 0
+  },
+  "initial_current_metrics": {
+    "combinations_run": 1,
+    "processes_with_outputs": 0,
+    "valid_data": 0
+  },
+  "retained_automated_passes": 17,
+  "original_missing_outputs": [
+    "lightweight-equipment-bracket-01",
+    "lightweight-equipment-bracket-03",
+    "lightweight-equipment-bracket-02",
+    "sheet-metal-supplier-handoff-02",
+    "sheet-metal-supplier-handoff-01",
+    "sheet-metal-supplier-handoff-03"
+  ],
+  "original_nonpassing_validation": [
+    "printed-replacement-part-02",
+    "sensor-fan-harness-01",
+    "sensor-fan-harness-02",
+    "sensor-fan-harness-03",
+    "raspberry-pi-enclosure-01",
+    "raspberry-pi-enclosure-03",
+    "raspberry-pi-enclosure-02",
+    "lightweight-equipment-bracket-01",
+    "lightweight-equipment-bracket-03",
+    "lightweight-equipment-bracket-02",
+    "sheet-metal-supplier-handoff-02",
+    "sheet-metal-supplier-handoff-01",
+    "sheet-metal-supplier-handoff-03"
+  ],
+  "ranking_note": "Initial relative technical effort and uncertainty; external blocks ranked last. Original thirteen plus seventeen current-revision gaps. Adjust remaining ranks only with recorded new evidence; never abandon the active problem.",
+  "problems": [
+    {
+      "id": "P001",
+      "rank": 1,
+      "scenario_id": "printed-replacement-part-02",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "easy",
+      "status": "in_progress",
+      "diagnosis": "Current 019 passes 17 automated checks and fixes grip, but pad/bore radii measure 0.969205 mm versus required 1 mm.",
+      "hypothesis": "The qualified construction plus explicit final triangulation resolves the grip and export defects; current canonical execution remains to be proven.",
+      "smallest_repair": "Execute qualified 1.01 mm pad-round fix through canonical attempt 020, then inspect exact outputs and obtain human review.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "blocked": 5,
+        "pass": 12
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-002",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/printed-replacement-part-02/report.md",
+      "retained_findings": [
+        {
+          "check_id": "repaired-envelope-x",
+          "requirement_ids": [
+            "PRINT02-ENVELOPE"
+          ],
+          "code": "reader.entity_limit",
+          "state": "blocked",
+          "summary": "The output exceeds this reader's entity limit.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 118.0,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:repaired-mesh@896dd18f569f96cf97bfa2bf2fb5114785eded3b84a3ab4967c50302682c818a#mesh/x_span_mm"
+          ]
+        },
+        {
+          "check_id": "repaired-envelope-y",
+          "requirement_ids": [
+            "PRINT02-ENVELOPE"
+          ],
+          "code": "reader.entity_limit",
+          "state": "blocked",
+          "summary": "The output exceeds this reader's entity limit.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 28.0,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:repaired-mesh@896dd18f569f96cf97bfa2bf2fb5114785eded3b84a3ab4967c50302682c818a#mesh/y_span_mm"
+          ]
+        },
+        {
+          "check_id": "repaired-envelope-z",
+          "requirement_ids": [
+            "PRINT02-ENVELOPE"
+          ],
+          "code": "reader.entity_limit",
+          "state": "blocked",
+          "summary": "The output exceeds this reader's entity limit.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 34.0,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:repaired-mesh@896dd18f569f96cf97bfa2bf2fb5114785eded3b84a3ab4967c50302682c818a#mesh/z_span_mm"
+          ]
+        },
+        {
+          "check_id": "repaired-mesh-integrity",
+          "requirement_ids": [
+            "PRINT02-MESH-LINEAGE",
+            "PRINT02-DELIVERABLES"
+          ],
+          "code": "reader.entity_limit",
+          "state": "blocked",
+          "summary": "The output exceeds this reader's entity limit.",
+          "observed": null,
+          "expected": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:repaired-mesh@896dd18f569f96cf97bfa2bf2fb5114785eded3b84a3ab4967c50302682c818a#mesh/integrity"
+          ]
+        },
+        {
+          "check_id": "distinct-mesh-lineage",
+          "requirement_ids": [
+            "PRINT02-MESH-LINEAGE"
+          ],
+          "code": "reader.entity_limit",
+          "state": "blocked",
+          "summary": "The output exceeds this reader's entity limit.",
+          "observed": null,
+          "expected": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:repaired-mesh@896dd18f569f96cf97bfa2bf2fb5114785eded3b84a3ab4967c50302682c818a#mesh/lineage"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-002",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [
+        {
+          "at": "2026-09-22T22:29:11.169170+00:00",
+          "kind": "reader_fix_and_detached_reinspection",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-before.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-after.json"
+          ],
+          "tests": "7 printing reader tests passed; exact/over-budget boundaries included.",
+          "result": {
+            "pass": 16,
+            "fail": 1
+          },
+          "new_defect": "repaired-envelope-z: 34.000003814697266 mm > 34.0 mm",
+          "canonical_run": false,
+          "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T22:33:41.332968+00:00",
+          "kind": "isolated_actual_native_repair_and_reslice",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-native-successor.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-native-validation.json"
+          ],
+          "automated_checks": {
+            "pass": 17
+          },
+          "review_checks": {
+            "blocked": 1
+          },
+          "native_cleanup": "cleaned",
+          "canonical_run": false,
+          "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T22:47:20.840358+00:00",
+          "kind": "canonical_human_changes_requested",
+          "attempt_id": "attempt-017",
+          "run_id": "1f472a8acb4a430a816895f1ed85f5cc",
+          "checkpoint_id": "checkpoint-8e310e7cc440f53f219c9ebe",
+          "subject_digest": "f35423d9cd6951dc046efc2b10867e5eb9941aea4273bda2bf9fb6a142ad0eed",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-017.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-clearance.json"
+          ],
+          "native_cleanup": "cleaned",
+          "canonical_run": true,
+          "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T22:54:24.360881+00:00",
+          "kind": "isolated_native_feature_repair",
+          "attempt_id": "qualification-p001-009",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-feature-repair-qualification.json"
+          ],
+          "native_cleanup": "cleaned",
+          "canonical_run": false,
+          "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T23:07:00.953885+00:00",
+          "kind": "canonical_successor_at_human_review",
+          "attempt_id": "attempt-018",
+          "run_id": "a93d7c564c7544c7afcacaf22808c31c",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical018-review/assessment.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-018-grip-review-v2.json"
+          ],
+          "automated_checks": {
+            "pass": 17
+          },
+          "review_checks": {
+            "blocked": 1
+          },
+          "canonical_run": true,
+          "campaign_credit": false,
+          "native_cleanup": "retained at pending human review"
+        },
+        {
+          "at": "2026-09-22T23:08:16.025079+00:00",
+          "kind": "canonical_human_changes_requested",
+          "attempt_id": "attempt-018",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-018.json"
+          ],
+          "native_cleanup": "cleaned",
+          "campaign_credit": false
+        },
+        {
+          "at": "2026-09-22T23:22:08.524588+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification.json"
+          ],
+          "result": "Fixed repair MCP failed: Error executing tool repair_model_file: Communication error with Blender: Code execution error: Repair did not satisfy normals or triangle limit: {\"vertices\": 12855, \"edges\": 37155, \"faces\": 24298, \"triangles\": 25714, \"boundary_edges\": 0, \"nonmanifold_edges\": 0, \"degenerate_faces\": 0, \"connected_components\": 1, \"signed_volume_mm3\": 11270.43776}",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-density-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:24:45.068775+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v2.json"
+          ],
+          "result": "P001 Printed 02: reduced mesh passes repair (22,642 triangles), but global bevel distorts mounting pads: height 34.454 > 34 mm and no flat bed contact. Restrict rounding to bow roots; no canonical dispatch or credit.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-pad-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:26:51.593394+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v3.json"
+          ],
+          "result": "P001 Printed 02: root-only geometry precheck stopped before export; 112.78-degree junction needs a wider offset to preserve at least 1 mm radius. Derive round size from actual angles; no canonical dispatch or credit.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-radius-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:31:06.286764+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v4.json"
+          ],
+          "result": "P001 Printed 02: envelope and clearance pass isolated repair, but independent triangle inspection finds folded root faces. Reject bevel candidate; construct tangent roots and perpendicular shoulder sections. No canonical credit.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-fold-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:34:19.709391+00:00",
+          "kind": "isolated_grip_correction_qualification",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v5.json"
+          ],
+          "result": "P001 Printed 02: actual mesh confirms 1.05 mm roots, >=3.69 mm inner shoulders and full 40 mm recess. Planar export leaves 3 collinear triangles; correct final triangulation on unchanged source before canonical correction 2.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-export-finding-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:37:40.219776+00:00",
+          "kind": "qualified_same_case_grip_correction",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v6.json"
+          ],
+          "result": "P001 Printed 02: isolated correction verified at 25 mm clearance, 1.05 mm roots, >=3.69 mm inner shoulders, full 40 mm recess, zero degenerate triangles. Prepare canonical correction 2; no approval or credit yet.",
+          "native_cleanup_verified": true,
+          "canonical_run": false,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-final-grip-qualified-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:41:13.605086+00:00",
+          "kind": "canonical_correction_2_started",
+          "attempt_id": "attempt-019",
+          "run_id": "4a16015946e94f898727b0a49b256dc1",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-start.json"
+          ],
+          "canonical_run": true,
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-start-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:45:11.830933+00:00",
+          "kind": "pad_radius_finding_and_isolated_correction",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-019-source-pad-rounds.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-grip-repair-qualification-v7.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-pad-corrected-round-measurements.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-pad-corrected-grip-measurements.json"
+          ],
+          "canonical_run": false,
+          "campaign_credit": false,
+          "retry_budget_extended": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-pad-correction-qualified-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:47:31.813160+00:00",
+          "kind": "canonical_successor_at_human_review",
+          "attempt_id": "attempt-019",
+          "run_id": "4a16015946e94f898727b0a49b256dc1",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review/assessment.json",
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-019-final-pad-rounds.json"
+          ],
+          "automated_checks": {
+            "pass": 17
+          },
+          "review_checks": {
+            "blocked": 1
+          },
+          "canonical_run": true,
+          "campaign_credit": false,
+          "native_cleanup": "retained at pending human review",
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical019-review-dashboard.json"
+        },
+        {
+          "at": "2026-09-22T23:59:18.648457+00:00",
+          "kind": "human_decision_and_budget_extension",
+          "attempt_id": "attempt-019",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-approved-extra-correction.json"
+          ],
+          "result": "P001 Printed 02/019: human requested changes; native session cleaned. User authorized correction 3 in the same episode. Qualified 1.01 mm pad fix ready for attempt 020. P001 reopened; no canonical credit.",
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-user-approved-extra-correction-dashboard.json"
+        },
+        {
+          "at": "2026-09-23T00:02:30.237200+00:00",
+          "kind": "canonical_correction_3_started",
+          "attempt_id": "attempt-020",
+          "run_id": "81f485cf945747ada524dc575c2178b6",
+          "evidence": [
+            "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start.json"
+          ],
+          "campaign_credit": false,
+          "dashboard_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start-dashboard.json"
+        }
+      ],
+      "latest_result": "P001 Printed 02/020: correction 3 started after exact preflight; real Blender authoring uses qualified 1.01 mm pad rounds. Observe this one run through repair, slicing and human review; no canonical credit yet.",
+      "dashboard_verification": {
+        "status": "verified",
+        "at": "2026-09-23T00:02:32.150Z",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-canonical020-start-dashboard.json",
+        "displayed_counts": {
+          "datasets_created": 30,
+          "combinations_run": 30,
+          "processes_with_outputs": 24,
+          "valid_data": 18
+        },
+        "current_counts": [
+          30,
+          2,
+          0,
+          0
+        ]
+      },
+      "canonical_attempt": {
+        "observed_at": "2026-09-22T22:38:11.007216+00:00",
+        "problem_id": "P001",
+        "scenario_id": "printed-replacement-part-02",
+        "attempt_id": "attempt-017",
+        "run_id": "1f472a8acb4a430a816895f1ed85f5cc",
+        "state": "running_source_authoring",
+        "manifest": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-017-pilot.json",
+        "preflight": ".local-run/feature-081-live/campaign-execution/printing-02-attempt-017-preflight.json",
+        "runner_state": ".local-run/feature-081-live/campaign-runner-state/validator082-printing02-attempt-017/printed-replacement-part-02/attempt-017.json",
+        "runner_session": 60164,
+        "native_receipt": ".local-run/feature-081-live/printing02-runtime-attempt-017/lifecycle.json",
+        "local_commit": "f98bec1f",
+        "next": "Observe this exact owned run; do not dispatch duplicate. Preserve mandatory review. P001 remains active."
+      },
+      "canonical_successor": {
+        "at": "2026-09-23T00:02:30.237200+00:00",
+        "scenario_id": "printed-replacement-part-02",
+        "attempt_id": "attempt-020",
+        "run_id": "81f485cf945747ada524dc575c2178b6",
+        "run_log_path": "runs/campaign-printed-replacement-part-02-attempt-020/20260923T000203Z-97037aa8ed97.json",
+        "source_sha256": "71cd02610e007a9bda310aa33e5e981bf59e06fa8c611a4532f3783ddf1d4301",
+        "retry_episode": {
+          "episode_id": "printed02-final-feature-review",
+          "failure_key": "review_changes_requested:clearance-native-orientation",
+          "boundary": "printed-replacement-part-02:engineering-review",
+          "max_corrections": 2,
+          "baseline_attempt_ids": [
+            "attempt-017"
+          ],
+          "correction": {
+            "id": "unclamped-pad-and-bore-rounds-r3",
+            "evidence": [
+              {
+                "id": "user-decision-and-native-qualified-repair",
+                "path": "retry-evidence/printed02-review-correction-020.json",
+                "sha256": "049d9dcef9ea45799f7aaa66cdd5a5aec81ce7052e183eb6103e00fb270e405b"
+              }
+            ]
+          }
+        },
+        "runner_session": 19375,
+        "native_receipt": ".local-run\\feature-081-live\\printing02-runtime-attempt-020\\lifecycle.json",
+        "local_commit": "8f9b22fb",
+        "status": "running_source_authoring",
+        "campaign_credit": false
+      },
+      "pending_decision": {
+        "checkpoint_id": "checkpoint-d7c7df4719b1fdaa3993d32c",
+        "requested_decision": "changes_requested",
+        "proposed_budget_change": {
+          "episode_id": "printed02-final-feature-review",
+          "from": 2,
+          "to": 3,
+          "preserve_history": true
+        },
+        "budget_change_authorized": true,
+        "review_brief": "specs/082-output-content-validation/printed02-attempt019-engineering-review.md",
+        "status": "answered",
+        "decision_evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-human-decision-019.json"
+      },
+      "disposition": {
+        "category": "external_dependency_or_authority",
+        "temporary": true,
+        "permanent_infeasibility": false,
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/p001-authority-block-current.json",
+        "technical_fix_available": true,
+        "reopening_condition": "Exact current review decision and explicit authority for one additional correction in the preserved episode.",
+        "unmet_counters": [
+          "current_complete_output_packages",
+          "current_fully_validated_outputs"
+        ],
+        "at": "2026-09-22T23:50:45.531554+00:00",
+        "status": "reopened",
+        "reopened_at": "2026-09-22T23:59:18.648457+00:00",
+        "reopened_by": "User approved exact 019 changes-requested decision and one additional correction."
+      }
+    },
+    {
+      "id": "P002",
+      "rank": 2,
+      "scenario_id": "printed-replacement-part-01",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "easy-medium",
+      "status": "queued",
+      "diagnosis": "Renewed attempt 901 has 17 automated passes but open edge-round/tolerance findings and a mandatory human decision.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve the exact review findings through a linked correction and downstream revalidation after the required decision.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 17
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/printed-replacement-part-01/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-003",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Read-only 901 checkpoint and artifacts reconciled; findings saved in p002-before.json. Requeued when user authorized P001 continuation; no P002 repair or successor started.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P003",
+      "rank": 3,
+      "scenario_id": "printed-replacement-part-03",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "easy-medium",
+      "status": "queued",
+      "diagnosis": "Retained automated checks pass; renewed canonical package and review are unproven.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Check current bindings and reuse qualified printing stages for one canonical case with actual review.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 17
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-016",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/printed-replacement-part-03/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-016",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P004",
+      "rank": 4,
+      "scenario_id": "sensor-interface-pcb-01",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained native artifacts and ten automated passes exist; current canonical full-scope receipt is absent.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Inspect whether retained artifacts can be validly bound; otherwise run only the required current case and obtain review.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 10
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-007",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/sensor-interface-pcb-01/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-007",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P005",
+      "rank": 5,
+      "scenario_id": "sensor-interface-pcb-02",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Ten retained checks pass after prior placement repairs; current canonical receipt and review remain absent.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Preserve qualified placement fixes and verify one current native/fabrication package.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 10
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-021",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/sensor-interface-pcb-02/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-021",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P006",
+      "rank": 6,
+      "scenario_id": "sensor-interface-pcb-03",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Eleven retained checks pass; current canonical receipt and review remain absent.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Verify current native/fabrication correspondence and full canonical validation.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 11
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-015",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/sensor-interface-pcb-03/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-015",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P007",
+      "rank": 7,
+      "scenario_id": "heat-spreader-sizing-01",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained numerical checks pass; renewed attempt 902 contradicts the fixed 2% refinement criterion and awaits human review.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Use the already implemented pinned-criteria prompt repair only through the preserved review/correction boundary.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 23
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-008",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/heat-spreader-sizing-01/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-008",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P008",
+      "rank": 8,
+      "scenario_id": "heat-spreader-sizing-02",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained checks pass; approved renewal requires current geometry-analysis correspondence and review.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Use case-specific qualified thermal chain and prove the current complete package.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 33
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-010",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/heat-spreader-sizing-02/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-010",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P009",
+      "rank": 9,
+      "scenario_id": "heat-spreader-sizing-03",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained checks pass; current geometry-analysis correspondence and review are absent.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Verify the current case-specific thermal chain without copying another case assumptions.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 34
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-008",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/heat-spreader-sizing-03/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-008",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P010",
+      "rank": 10,
+      "scenario_id": "parametric-drill-jig-01",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained geometry passes; renewed CAD-to-slicer handoff and current approval are unproven.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Qualify the exact current handoff and run the single case through full review/validation.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 10
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-012",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/parametric-drill-jig-01/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-012",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P011",
+      "rank": 11,
+      "scenario_id": "parametric-drill-jig-02",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained geometry passes; current production-preparation handoff and approval are unproven.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Reuse the qualified jig handoff after case-specific preflight.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 18
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-012",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/parametric-drill-jig-02/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-012",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P012",
+      "rank": 12,
+      "scenario_id": "parametric-drill-jig-03",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "medium",
+      "status": "queued",
+      "diagnosis": "Retained geometry passes; more complex keepouts and current manufacturing package need proof.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Verify protected geometry and the current package with its complete profile.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 26
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-011",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/parametric-drill-jig-03/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-011",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P013",
+      "rank": 13,
+      "scenario_id": "sensor-fan-harness-01",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "medium; input dependency",
+      "status": "queued",
+      "diagnosis": "Total voltage drop is nonnumeric; contact/splice resistance basis remains unapproved. Native correspondence 01 has retained proof.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve the source-owned resistance basis, then calculate all traversed copper/contact/splice drops and revalidate native correspondence.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 8,
+        "fail": 1
+      },
+      "retained_review": {
+        "blocked": 3
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/sensor-fan-harness-01/report.md",
+      "retained_findings": [
+        {
+          "check_id": "voltage-drop",
+          "requirement_ids": [
+            "HARNESS01-DROP"
+          ],
+          "code": "harness.invalid_number",
+          "state": "fail",
+          "summary": "Harness total voltage drop must be numeric.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.72,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:voltage-drop@6c99ee0772eb771e43913150108574150f32e539aca99f94f4546a0a469aacad#harness/maximum_total_drop"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-003",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P014",
+      "rank": 14,
+      "scenario_id": "sensor-fan-harness-02",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "medium; input dependency",
+      "status": "queued",
+      "diagnosis": "Same missing numeric total-drop/input basis; longer wiring and startup currents need case-specific calculation.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Apply an approved resistance basis to actual branch/trunk currents and preserve native correspondence.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 8,
+        "fail": 1
+      },
+      "retained_review": {
+        "blocked": 3
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/sensor-fan-harness-02/report.md",
+      "retained_findings": [
+        {
+          "check_id": "voltage-drop",
+          "requirement_ids": [
+            "HARNESS02-DROP"
+          ],
+          "code": "harness.invalid_number",
+          "state": "fail",
+          "summary": "Harness total voltage drop must be numeric.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.72,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:voltage-drop@0762f1c41de82a197db7107954bf19b21e514e737db2771a76991bb50e8f7d56#harness/maximum_total_drop"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-003",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P015",
+      "rank": 15,
+      "scenario_id": "sensor-fan-harness-03",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "medium-hard; input dependency",
+      "status": "queued",
+      "diagnosis": "Missing numeric total drop plus isolated KiCad rejection of S_ZX; basis unapproved.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve the input authority and prove an exact native reference mapping without dropping a splice or net.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 9,
+        "fail": 1
+      },
+      "retained_review": {
+        "blocked": 5
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/sensor-fan-harness-03/report.md",
+      "retained_findings": [
+        {
+          "check_id": "voltage-drop",
+          "requirement_ids": [
+            "HARNESS03-DROP"
+          ],
+          "code": "harness.invalid_number",
+          "state": "fail",
+          "summary": "Harness total voltage drop must be numeric.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.72,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:voltage-drop@364744242ced79bf500a2edcd026691a3948579eef31ee1310972d0869c807f5#harness/maximum_total_drop"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-003",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P016",
+      "rank": 16,
+      "scenario_id": "water-heater-sizing-01",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "hard; input dependency",
+      "status": "queued",
+      "diagnosis": "Retained Modelica checks pass, but renewed attempt 905 stopped on unspecified insulation density and outer-shell material.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Obtain the outstanding mass-basis decision, then finish actual CAD and thermal package from the retained qualified native-study path.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 10
+      },
+      "retained_review": {
+        "blocked": 3
+      },
+      "retained_attempt": "attempt-005",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/water-heater-sizing-01/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-005",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P017",
+      "rank": 17,
+      "scenario_id": "water-heater-sizing-02",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "hard; input dependency",
+      "status": "queued",
+      "diagnosis": "Retained study passes; approved renewed physical package lacks authoritative material mass inputs and end-to-end proof.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve mass inputs and verify the case-specific battery/thermal package through canonical execution.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 10
+      },
+      "retained_review": {
+        "blocked": 3
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/water-heater-sizing-02/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-003",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P018",
+      "rank": 18,
+      "scenario_id": "water-heater-sizing-03",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "hard; input dependency",
+      "status": "queued",
+      "diagnosis": "Retained study passes; renewed nine-case study/package and mass basis need complete proof.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve mass inputs and complete the case-specific study, CAD, thermal screen and review.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 10
+      },
+      "retained_review": {
+        "blocked": 3
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/water-heater-sizing-03/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-003",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P019",
+      "rank": 19,
+      "scenario_id": "robot-tracking-diagnosis-01",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Retained diagnosis passes; protected Robot 010 awaits review and the approved corrective CAD/CalculiX extension lacks proof.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Preserve Robot 010; use a separate approved successor and verify real corrective hardware/analysis handoffs.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 25
+      },
+      "retained_review": {
+        "blocked": 2
+      },
+      "retained_attempt": "attempt-003",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/robot-tracking-diagnosis-01/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-010",
+      "historical_error": null,
+      "current_attempt": "attempt-010",
+      "current_status": "awaiting_approval",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P020",
+      "rank": 20,
+      "scenario_id": "robot-tracking-diagnosis-02",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Retained diagnosis passes; approved corrective hardware chain has no current complete package.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Qualify only the exact required corrective CAD/FEA path and execute this case.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 25
+      },
+      "retained_review": {
+        "blocked": 2
+      },
+      "retained_attempt": "attempt-004",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/robot-tracking-diagnosis-02/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-004",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P021",
+      "rank": 21,
+      "scenario_id": "robot-tracking-diagnosis-03",
+      "original_requested_gap": false,
+      "missing_historical_output": false,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Retained diagnosis passes; current corrective hardware/commissioning package unproven.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Verify real CAD/FEA artifacts against this case approved engineering inputs.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 26
+      },
+      "retained_review": {
+        "blocked": 2
+      },
+      "retained_attempt": "attempt-005",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/robot-tracking-diagnosis-03/report.md",
+      "retained_findings": [],
+      "historical_latest": "attempt-005",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P022",
+      "rank": 22,
+      "scenario_id": "raspberry-pi-enclosure-01",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "CFD convergence fails and field-derived heat-balance evidence is missing for both alternatives.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Restore/continue the exact solver models until fixed convergence and field-derived energy balance can be assessed.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 18,
+        "fail": 1,
+        "blocked": 1
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-032",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/raspberry-pi-enclosure-01/report.md",
+      "retained_findings": [
+        {
+          "check_id": "convergence-evidence",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "code": "cfd.convergence_failed",
+          "state": "fail",
+          "summary": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0142, final residual 2.02e-05, relative temperature change 1.8e-05; variant-b: initial residual 0.014, final residual 2.23e-05, relative temperature change 0.000429.",
+          "observed": null,
+          "expected": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/convergence"
+          ]
+        },
+        {
+          "check_id": "heat-balance-evidence",
+          "requirement_ids": [
+            "PI01-CFD"
+          ],
+          "code": "cfd.heat_balance_missing",
+          "state": "blocked",
+          "summary": "Both alternatives need field-derived heat-balance evidence.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.01,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:comparison@31eb74ba363d266e3b9c49333a5ba818821b550d00e6c1118c1ce5ab261b24b8#cfd/heat_balance_relative"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-032",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P023",
+      "rank": 23,
+      "scenario_id": "raspberry-pi-enclosure-03",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Both CFD alternatives fail convergence and omit energy-balance evidence; fan curves must remain matched.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve convergence and field-derived energy balance while preserving geometry, fan and load identities.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 20,
+        "fail": 1,
+        "blocked": 1
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-046",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/raspberry-pi-enclosure-03/report.md",
+      "retained_findings": [
+        {
+          "check_id": "convergence-evidence",
+          "requirement_ids": [
+            "PI03-CFD"
+          ],
+          "code": "cfd.convergence_failed",
+          "state": "fail",
+          "summary": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0161, final residual 0.000152, relative temperature change 1.91e-05; variant-b: initial residual 0.0211, final residual 0.000207, relative temperature change 1.91e-05.",
+          "observed": null,
+          "expected": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:comparison@7aa3f9bc4b0425f0f4e76fb3ad6f4239263049119850a8b91167715e8559d6bf#cfd/convergence"
+          ]
+        },
+        {
+          "check_id": "heat-balance-evidence",
+          "requirement_ids": [
+            "PI03-CFD"
+          ],
+          "code": "cfd.heat_balance_missing",
+          "state": "blocked",
+          "summary": "Both alternatives need field-derived heat-balance evidence.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.01,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:comparison@7aa3f9bc4b0425f0f4e76fb3ad6f4239263049119850a8b91167715e8559d6bf#cfd/heat_balance_relative"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-046",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P024",
+      "rank": 24,
+      "scenario_id": "raspberry-pi-enclosure-02",
+      "original_requested_gap": true,
+      "missing_historical_output": false,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Alternative B violates its height limit in addition to convergence and heat-balance gaps.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Correct the actual geometry within fixed requirements, invalidate and rerun its dependent CFD, and verify both alternatives.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": {
+        "pass": 13,
+        "fail": 2,
+        "blocked": 1
+      },
+      "retained_review": {
+        "blocked": 1
+      },
+      "retained_attempt": "attempt-031",
+      "retained_report": "artifacts/process-validation/retained-successors-20260918T001417Z/raspberry-pi-enclosure-02/report.md",
+      "retained_findings": [
+        {
+          "check_id": "enclosure-b-z",
+          "requirement_ids": [
+            "PI02-ENCLOSURE"
+          ],
+          "code": "requirement.out_of_bounds",
+          "state": "fail",
+          "summary": "Observed output does not meet the requirement.",
+          "observed": 68.0,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 60.0,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:enclosure-b@ada69742ecaeb6172ab5b14df4d52fb2338098af65968ca1a28ab75ab660272a#solid-vertex-envelope"
+          ]
+        },
+        {
+          "check_id": "convergence-evidence",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "code": "cfd.convergence_failed",
+          "state": "fail",
+          "summary": "Continue the steady solve until the fixed convergence criteria pass. variant-a: initial residual 0.0374, final residual 2.73e-05, relative temperature change 7.32e-06; variant-b: initial residual 0.0366, final residual 2.33e-05, relative temperature change 7.32e-06.",
+          "observed": null,
+          "expected": {
+            "operator": "equals",
+            "expected": true,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": null,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/convergence"
+          ]
+        },
+        {
+          "check_id": "heat-balance-evidence",
+          "requirement_ids": [
+            "PI02-CFD"
+          ],
+          "code": "cfd.heat_balance_missing",
+          "state": "blocked",
+          "summary": "Both alternatives need field-derived heat-balance evidence.",
+          "observed": null,
+          "expected": {
+            "operator": "range",
+            "expected": null,
+            "target": null,
+            "tolerance": null,
+            "minimum": null,
+            "maximum": 0.01,
+            "inclusive": true
+          },
+          "evidence_refs": [
+            "subject:comparison@9d695e527bf9690831cf52945788b7446e0020ca29d4e7f35ab870a57487fda2#cfd/heat_balance_relative"
+          ]
+        }
+      ],
+      "historical_latest": "attempt-031",
+      "historical_error": null,
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P025",
+      "rank": 25,
+      "scenario_id": "lightweight-equipment-bracket-01",
+      "original_requested_gap": true,
+      "missing_historical_output": true,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Historical CAD definition was underdetermined; renewed attempt 901 status needs direct reconciliation.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Inspect 901 before any replay; preserve deterministic reviewed geometry and prove actual CAD, mass and FEA output set.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": null,
+      "retained_review": null,
+      "retained_attempt": null,
+      "retained_report": null,
+      "retained_findings": [],
+      "historical_latest": "attempt-006",
+      "historical_error": "Author baseline and lightweight revision CAD: The reviewed basis does not uniquely define operation 11, so bracket-source.py cannot implement the exact approved revision without inventing geometry. The cutter-access treatment specifies only \u2018R3 minimum\u2019 and \u2018tangent planar blends\u2019 where each R10 keepout meets y = \u00b122; it does not fix the exact blend radius, construction side, centers/tangent endpoints, or another deterministic profile rule. Because this operation changes the pocket boundary and retained mass, selecting those values during source authoring would constitute an unreviewed pocket-design substitution. Revise and approve the basis with an exact blend definition for all affected intersections (or explicitly delete operation 11 and approve the unblended operation-9 profile), then source authoring can proceed.",
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P026",
+      "rank": 26,
+      "scenario_id": "lightweight-equipment-bracket-03",
+      "original_requested_gap": true,
+      "missing_historical_output": true,
+      "difficulty": "hard",
+      "status": "queued",
+      "diagnosis": "Historical CalculiX child_unavailable and exhausted correction episode; current native solve capability unproven.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Prove a material CalculiX fix in isolation before an eligible linked canonical successor.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": null,
+      "retained_review": null,
+      "retained_attempt": null,
+      "retained_report": null,
+      "retained_findings": [],
+      "historical_latest": "attempt-012",
+      "historical_error": "Run both revisions and mesh levels through recorded CalculiX: MCP call failed (child_unavailable).",
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P027",
+      "rank": 27,
+      "scenario_id": "lightweight-equipment-bracket-02",
+      "original_requested_gap": true,
+      "missing_historical_output": true,
+      "difficulty": "hard; engineering decision",
+      "status": "queued",
+      "diagnosis": "Reviewed pocket/removal/fillet geometry and bolt-bore keepout interpretation were unresolved.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Determine approved design freedom and obtain a complete reviewed geometric definition before source authoring.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": null,
+      "retained_review": null,
+      "retained_attempt": null,
+      "retained_report": null,
+      "retained_findings": [],
+      "historical_latest": "attempt-005",
+      "historical_error": "Author baseline and lightweight revision CAD: {\"reason\":\"The exact revised lightweight geometry is not defined by the supplied inputs. The reviewed basis explicitly leaves the rib-pocket coordinates/profile, scope of plate removal, manufacturing-fillet definitions, and interpretation of the 8 mm bolt-bore material rule unresolved, and prohibits inferring them from the schematic concept image. Authoring executable source for a legitimate revised STEP, measured mass comparison, STEP hashes, and four exact FEA request objects would therefore require inventing engineering requirements or claiming artifacts that do not yet exist. Provide a fully dimensioned and approved lightweighting definition, including pocket/removal geometry, cutter-radius/fillet treatment, and bolt-bore keepout interpretation.\"}",
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P028",
+      "rank": 28,
+      "scenario_id": "sheet-metal-supplier-handoff-02",
+      "original_requested_gap": true,
+      "missing_historical_output": true,
+      "difficulty": "external block; high uncertainty",
+      "status": "queued",
+      "diagnosis": "Historical Solid Edge left_wall E_POINTER; explicit current prohibition on touching provider or running its cases.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Wait for explicit updated-provider handoff, then prove native flange/flat capability before a linked case.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review",
+        "Explicit release of Solid Edge restriction"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": null,
+      "retained_review": null,
+      "retained_attempt": null,
+      "retained_report": null,
+      "retained_findings": [],
+      "historical_latest": "attempt-006",
+      "historical_error": "Create native Solid Edge sheet-metal CAD: the MCP tool reported an error. solid_edge_create_sheet_metal_failed None Solid Edge failed while creating native Sheet Metal flange 'left_wall': Solid Edge Flanges.AddFlangeByFace invocation failed: Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) --> Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) | solid_edge_create_sheet_metal_failed None Solid Edge failed while creating native Sheet Metal flange 'left_wall': Solid Edge Flanges.AddFlangeByFace invocation failed: Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) --> Exception has been thrown by the target of an invocation. --> Invalid pointer (0x80004003 (E_POINTER)) Check Sheet Metal dimensions and edge targets, close modal dialogs, and retry the validated recipe in a responsive Solid Edge session.",
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P029",
+      "rank": 29,
+      "scenario_id": "sheet-metal-supplier-handoff-01",
+      "original_requested_gap": true,
+      "missing_historical_output": true,
+      "difficulty": "external block; high uncertainty",
+      "status": "queued",
+      "diagnosis": "Forming sequence, tool access and bend-development discrepancy unresolved; Solid Edge is off limits.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Obtain provider handoff and exact engineering/tooling authority, then verify native folded/flat correspondence.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review",
+        "Explicit release of Solid Edge restriction"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": null,
+      "retained_review": null,
+      "retained_attempt": null,
+      "retained_report": null,
+      "retained_findings": [],
+      "historical_latest": "attempt-006",
+      "historical_error": "Create native Solid Edge sheet-metal CAD: Native CAD creation is blocked by the approved manufacturing intent. Before cad.create_sheet_metal_from_recipe may be called, supplier/tooling evidence must establish a supported complete forming sequence and tool access for the interrupted front bend, and approve or resolve the cable-notch/relief geometry within the 5.9944 mm half-die-width caution region. The 0.0879 mm-per-bend discrepancy between the controlling K-factor development and the supplier-listed bend deduction also requires supplier confirmation. No CAD document was created or modified.",
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    },
+    {
+      "id": "P030",
+      "rank": 30,
+      "scenario_id": "sheet-metal-supplier-handoff-03",
+      "original_requested_gap": true,
+      "missing_historical_output": true,
+      "difficulty": "external block; high uncertainty",
+      "status": "queued",
+      "diagnosis": "Four-bend tooling/access and protected cut-feature limits unresolved; multipart native production also deferred.",
+      "hypothesis": "Initial repair hypothesis; validate against exact current artifacts before implementation.",
+      "smallest_repair": "Resolve provider restriction and mandatory DFM inputs before actual base/lid production and full validation.",
+      "dependencies": [
+        "Exact current source/profile/artifact identity",
+        "Mandatory engineering review",
+        "Explicit release of Solid Edge restriction"
+      ],
+      "closure_evidence": "Complete canonical required process/output set for the approved current case, exact artifact hashes, current full-profile mandatory checks and reviews satisfied; dashboard and ledger independently reconciled.",
+      "retained_automated": null,
+      "retained_review": null,
+      "retained_attempt": null,
+      "retained_report": null,
+      "retained_findings": [],
+      "historical_latest": "attempt-005",
+      "historical_error": "Create native Solid Edge sheet-metal CAD: Base-tray creation was not performed. The approved manufacturing intent explicitly sets CAD release to BLOCKED_PENDING_MANDATORY_DFM_INPUT because the complete four-bend tooling sequence for the protected 80 mm walls is unsupported by the retrieved thin-sheet exception, supplier-compatible cut-feature/web limits for the protected vent and \u00d83.4 mm hole geometry were not established, and mandatory native developed-geometry checks cannot exist before creation. The supplied policy requires failure rather than substituting geometry or treating manufacturing_release=HOLD as a waiver. Resolve these mandatory DFM inputs and issue revised approved intent before native CAD mutation.",
+      "current_attempt": null,
+      "current_status": "not_run",
+      "current_complete": false,
+      "attempts_this_goal": [],
+      "latest_result": "Initial read-only reconciliation; no repair or pass claimed.",
+      "dashboard_verification": {
+        "status": "baseline API snapshots captured; browser check pending",
+        "at": "2026-09-22T22:24:52.379188+00:00",
+        "evidence": "artifacts/engineering-workflow-datasets/serial-resolution/initial-status.json"
+      }
+    }
+  ]
+}

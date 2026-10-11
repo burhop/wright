@@ -1,0 +1,15 @@
+{
+  "files": {
+    ".wright/process-uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/revisions/revision-35cac9bd65794c36a408135a71ac0a65/4e53fc10-dd6d-49da-9c9b-da1a09cb303c.json": "2d5c7c53cb6b0a72dce17e0fc42ad2864865374aaef3c27e94cb82adf026e211",
+    ".wright/process-uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/revisions/revision-35cac9bd65794c36a408135a71ac0a65/56c203a8-ce5e-427b-82d8-05ec0e2f3c2f.css": "bce95dce03565d5fa0bd0f65e7cd790f606a1081949ccc11e8e2cc0253d18050",
+    ".wright/process-uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/revisions/revision-35cac9bd65794c36a408135a71ac0a65/69e0b469-72f0-449c-a32b-059471a83adc.json": "2ef7f61b02b58271b698603b51fda39c2db975dccbb29cea9498f4868de95ffb",
+    ".wright/process-uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/revisions/revision-35cac9bd65794c36a408135a71ac0a65/e90d7a2d-b469-43d1-89b0-eb14821bdea2.json": "8bd3b66a43a3b3eabd7452ef888bc84720542177b74e026550d87c6c84adef2a",
+    ".wright/process-uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/revisions/revision-35cac9bd65794c36a408135a71ac0a65/ee3f62e5-8e46-4468-8505-03cdb01f9fd4.js": "9eb8a7669be291716071cc0553a0d7d56f3f3f2a0d4bd9c62495220b8062fe79",
+    ".wright/process-uis/ui-ee4c80bbdfad4b2d9468b37a4dbc0451/revisions/revision-35cac9bd65794c36a408135a71ac0a65/inventory.json": "5954b7a5341e23617bb64590e4a24732df1202a6b842bf5bf386ad4be8b29b81"
+  },
+  "authoring_tables_sha256": {
+    "process_ui_authoring_jobs": "d836196b19e69988977f9022739dbe5db74d9aaa3e55366072de7184919e64cc",
+    "process_ui_authoring_records": "c278d03296888c527c88e3f2fb6de01d395b97ad1ea19918c8ec75ea1968d844"
+  },
+  "generation_or_compilation_repeated_for_reuse": false
+}

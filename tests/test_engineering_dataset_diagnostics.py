@@ -80,7 +80,12 @@ def test_historical_orphan_and_explicit_fixes_do_not_create_running_progress(tmp
     write_json(runners / "family-01/attempt-001.json", {
         "phase": "outcome_unknown", "reason_code": "runtime_owner_missing",
     })
-    runners.joinpath("pause-after-current").touch()
+    write_json(runners / "pause-after-current", {
+        "reason": "selected_model_usage_limit",
+        "model": "openai-codex::gpt-5.6-sol",
+        "provider_reset_at": "2026-09-19T11:09:44Z",
+        "created_at": "2026-09-13T02:45:00Z",
+    })
     journal = tmp_path / "recovery.json"
     write_json(journal, {"families": {"family": {
         "readiness": "failed probe", "queued_at": "2026-09-13T00:00:00Z",
@@ -91,6 +96,9 @@ def test_historical_orphan_and_explicit_fixes_do_not_create_running_progress(tmp
     assert result["accepted_attempts"] == 2
     assert result["runner"]["paused"]
     assert result["runner"]["worker_health"] == "unknown"
+    assert result["runner"]["pause_reason"] == "selected_model_usage_limit"
+    assert result["runner"]["pause_model"] == "openai-codex::gpt-5.6-sol"
+    assert result["runner"]["provider_reset_at"] == "2026-09-19T11:09:44Z"
     assert len(result["unresolved_attempts"]) == 1
     assert result["unresolved_attempts"][0]["reason"] == "runtime_owner_missing"
     row = result["scenarios"][0]
@@ -110,6 +118,29 @@ def test_completed_current_revision_and_last_completion_are_independent_of_clean
     assert result["scenarios"][0]["readiness"] == "complete"
     assert result["scenarios"][0]["duration_seconds"] == 600
     assert result["native"]["available"] is False
+
+
+def test_case_disposition_does_not_replace_sibling_family_fallback(tmp_path):
+    ledger = campaign(tmp_path, [receipt()])
+    with sqlite3.connect(ledger.db) as db:
+        db.execute("INSERT INTO datasets VALUES (?,?)", ("family-02", json.dumps({
+            "scenario_id": "family-02", "template_id": "family",
+            "digest": "current", "template_digest": "template",
+        })))
+    before = ledger.db.read_bytes()
+    journal = tmp_path / "recovery.json"
+    write_json(journal, {
+        "families": {"family": {"readiness": "queued", "next_action": "Inspect remaining cases"}},
+        "scenarios": {"family-01": {"readiness": "temporary authority block", "next_action": "Await exact human decision"}},
+    })
+    result = build_diagnostics(ledger, recovery_path=journal)
+    first, second = result["scenarios"]
+    assert first["readiness"] == "temporary authority block"
+    assert first["next_action"] == "Await exact human decision"
+    assert second["readiness"] == "queued"
+    assert second["next_action"] == "Inspect remaining cases"
+    assert result["families"][0]["readiness"] == "queued"
+    assert ledger.db.read_bytes() == before
 
 
 def test_native_read_only_projection_filters_private_fields(tmp_path):

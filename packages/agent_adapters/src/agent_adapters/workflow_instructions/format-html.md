@@ -1,0 +1,1 @@
+Return only a complete standalone HTML document starting with <!doctype html>, with a title and readable headings. Use inline CSS, no scripts, external assets or forms. Do not wrap it in a code fence.

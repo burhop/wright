@@ -1,0 +1,29 @@
+{
+  "cause": "Fixture copied source bytes without their committed source journals; integrity checks correctly refused reads",
+  "original_source_metadata_copied": [
+    ".wright/workflow-sources/prompt-to-print-ce662210b77a/head.json",
+    ".wright/workflow-sources/prompt-to-print-ce662210b77a/revisions/00000000000000000001.json",
+    ".wright/workflow-sources/prompt-to-print-fb6b5af2a978/head.json",
+    ".wright/workflow-sources/prompt-to-print-fb6b5af2a978/revisions/00000000000000000001.json",
+    ".wright/workflow-sources/prompt-to-print-93fa4cb77499/head.json",
+    ".wright/workflow-sources/prompt-to-print-93fa4cb77499/revisions/00000000000000000001.json"
+  ],
+  "source_readbacks": [
+    {
+      "path": "workflows/prompt-to-print-ce662210b77a.workflow.wflow",
+      "http": 200
+    },
+    {
+      "path": "workflows/prompt-to-print-fb6b5af2a978.workflow.wflow",
+      "http": 200
+    },
+    {
+      "path": "workflows/prompt-to-print-93fa4cb77499.workflow.wflow",
+      "http": 200
+    }
+  ],
+  "database_changes": false,
+  "original_and_copy_baseline_files": 48,
+  "product_changes": false,
+  "prior_reports_preserved": true
+}

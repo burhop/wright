@@ -1,0 +1,505 @@
+"""Real authenticated routes own runs independently from request observers."""
+
+import asyncio
+import json
+import threading
+from contextlib import asynccontextmanager
+from types import SimpleNamespace
+from urllib.parse import urlencode
+
+import pytest
+from fastapi.testclient import TestClient
+
+from api.main import app
+from api.routers import process_interfaces as routes
+from api.routers.workspace import get_workspace_service
+from packages.workspace_service.tests.test_process_preparation_service import owner
+from packages.workspace_service.tests.test_process_input_readiness import (
+    source,
+    process,
+)
+
+PREFIX = "/api/workspace/process-interfaces"
+
+
+@pytest.mark.parametrize("operation", ["run", "resume"])
+def test_legacy_run_denies_viewer_before_resolving_workspace(operation):
+    from fastapi import FastAPI, Request
+    from api.routers.workspace import router
+
+    probe = FastAPI()
+    probe.state.security_settings = SimpleNamespace(enforced=True)
+
+    @probe.middleware("http")
+    async def identity(request: Request, call_next):
+        request.state.principal_role = "viewer"
+        return await call_next(request)
+
+    probe.dependency_overrides[get_workspace_service] = lambda: (_ for _ in ()).throw(
+        AssertionError("Denied callers must not resolve a workspace")
+    )
+    probe.include_router(router, prefix="/api/workspace")
+    with TestClient(probe) as client:
+        response = client.post(
+            "/api/workspace/workflow-sources/run"
+            if operation == "run"
+            else "/api/workspace/workflow-runs/other-run/resume",
+            json={
+                "session_id": "other",
+                "path": "workflows/test.workflow.wflow",
+                "expected_storage_digest": "0" * 64,
+            }
+            if operation == "run"
+            else {
+                "session_id": "other",
+                "checkpoint_id": "other-checkpoint",
+                "subject_digest": "0" * 64,
+                "request_id": "unauthorized-resume",
+            },
+        )
+    assert response.status_code == 403
+
+
+@pytest.fixture
+def lifecycle_case(tmp_path, monkeypatch):
+    text = source(default="Frozen requirements")
+    reference = process(text)
+    path = tmp_path / reference.source_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    application = owner(tmp_path, text)
+    workspace = application.workspace
+    workspace.process_interfaces = application
+    workspace.lifecycle = SimpleNamespace(
+        get_by_session=lambda key: (
+            {
+                "workspace_id": "workspace",
+                "local_path": str(tmp_path),
+            }
+            if key == "owned-session"
+            else None
+        )
+    )
+    entered, release = threading.Event(), threading.Event()
+    calls = []
+
+    async def generate(prompt, fmt):
+        calls.append(prompt)
+        entered.set()
+        while not release.is_set():
+            await asyncio.sleep(0.01)
+        return "Actual controlled API artifact"
+
+    @asynccontextmanager
+    async def lifespan(_):
+        yield
+        await application.close()
+
+    monkeypatch.setattr(app.router, "lifespan_context", lifespan)
+    monkeypatch.setattr(routes, "generate_workflow_response", generate, raising=False)
+    monkeypatch.setattr("api.routers.workspace.generate_workflow_response", generate)
+    app.dependency_overrides[get_workspace_service] = lambda: workspace
+    try:
+        with TestClient(app) as client:
+            query = {
+                "session_id": "owned-session",
+                "path": reference.source_path,
+                "expected_storage_digest": reference.source_digest,
+            }
+            prepared = client.post(f"{PREFIX}/inputs", json=query)
+            assert prepared.status_code == 200
+            frozen = prepared.json()
+            yield SimpleNamespace(
+                client=client,
+                owner=application,
+                root=tmp_path,
+                query=query,
+                frozen=frozen,
+                calls=calls,
+                entered=entered,
+                release=release,
+                reference=reference,
+            )
+    finally:
+        release.set()
+        app.dependency_overrides.pop(get_workspace_service, None)
+
+
+def begin(case, request_id="start-one"):
+    return case.client.post(
+        f"{PREFIX}/runs",
+        json={
+            **case.query,
+            "input_snapshot_id": case.frozen["snapshot_id"],
+            "expected_input_digest": case.frozen["digest"],
+            "request_id": request_id,
+        },
+    )
+
+
+def wait(case, run_id):
+    from workspace_service.process_interfaces.service import ProcessScope
+
+    return case.client.portal.call(
+        case.owner.runs.wait,
+        ProcessScope("local-control-plane", "workspace", frozenset({"process.read"})),
+        case.reference,
+        run_id,
+    )
+
+
+def test_start_returns_before_work_finishes_and_retry_reattaches(lifecycle_case):
+    case = lifecycle_case
+    response = begin(case)
+    assert response.status_code == 202
+    receipt = response.json()
+    assert receipt["principal_id"] == "local-control-plane"
+    assert response.headers["cache-control"] == "no-store"
+    assert case.entered.wait(2)
+    assert begin(case).json() == receipt
+    active = case.client.get(f"{PREFIX}/runs/{receipt['run_id']}", params=case.query)
+    assert active.status_code == 200
+    assert active.json()["state"] == "running"
+    case.release.set()
+    assert wait(case, receipt["run_id"])["status"] == "completed"
+    attached = case.client.get(f"{PREFIX}/runs/{receipt['run_id']}", params=case.query)
+    assert attached.json()["state"] == "completed"
+    assert len(case.calls) == 1
+
+
+def test_changed_source_reopens_exact_historical_run_without_permission(
+    lifecycle_case, request
+):
+    from workspace_service.executor import BoundedExecutor
+    from workspace_service.workflow_sources import WorkspaceWorkflowSourceUseCases
+
+    case = lifecycle_case
+    executor = BoundedExecutor(max_workers=1)
+    request.addfinalizer(lambda: case.client.portal.call(executor.close))
+    case.owner.workspace.workflow_sources = WorkspaceWorkflowSourceUseCases(executor)
+    case.owner.workspace.ensure_workspace_path_safe = lambda path: path
+    owned_source = case.root / case.reference.source_path
+    original_source = owned_source.read_text(encoding="utf-8")
+    owned_source.unlink()
+    created = case.client.post(
+        "/api/workspace/workflow-sources",
+        json={
+            "session_id": case.query["session_id"],
+            "path": case.reference.source_path,
+            "source": original_source,
+        },
+    )
+    assert created.status_code == 201
+    response = begin(case)
+    assert response.status_code == 202, response.json()
+    run_id = response.json()["run_id"]
+    assert case.entered.wait(2)
+    case.release.set()
+    assert wait(case, run_id)["status"] == "completed"
+    head = case.client.get(
+        "/api/workspace/workflow-sources",
+        params={
+            "session_id": case.query["session_id"],
+            "path": case.reference.source_path,
+        },
+    ).json()
+    updated = case.client.put(
+        "/api/workspace/workflow-sources",
+        json={
+            "session_id": case.query["session_id"],
+            "path": case.reference.source_path,
+            "source": head["source"] + "\n",
+            "semantic_change_validated": True,
+            "expected_storage_revision": head["storage_revision"],
+            "expected_storage_digest": head["storage_digest"],
+        },
+    )
+    assert updated.status_code == 200
+    recorded = case.root / response.json()["run_log_path"]
+    before = recorded.read_bytes()
+    attached = case.client.get(f"{PREFIX}/runs/{run_id}", params=case.query)
+    assert attached.status_code == 200
+    body = attached.json()
+    assert body["context"]["process"]["source_digest"] == case.reference.source_digest
+    assert body["context"]["run_id"] == run_id and body["state"] == "completed"
+    assert body["outputs"] and all(not action["enabled"] for action in body["actions"])
+    assert (
+        case.client.get(f"{PREFIX}/interaction", params=case.query).status_code == 409
+    )
+    forged = {**case.query, "expected_storage_digest": "0" * 64}
+    assert case.client.get(f"{PREFIX}/runs/{run_id}", params=forged).status_code == 403
+    assert begin(case, "changed-source-new-start").status_code == 409
+    assert recorded.read_bytes() == before and len(case.calls) == 1
+
+
+def test_actual_sse_disconnect_leaves_backend_running(lifecycle_case):
+    case = lifecycle_case
+    response = begin(case)
+    assert response.status_code == 202
+    run_id = response.json()["run_id"]
+    assert case.entered.wait(2)
+
+    async def disconnected_request():
+        disconnect = asyncio.Event()
+        request_sent = False
+        bodies = []
+
+        async def receive():
+            nonlocal request_sent
+            if not request_sent:
+                request_sent = True
+                return {"type": "http.request", "body": b"", "more_body": False}
+            await disconnect.wait()
+            return {"type": "http.disconnect"}
+
+        async def send(message):
+            if message["type"] == "http.response.body" and message.get("body"):
+                bodies.append(message["body"])
+                disconnect.set()
+
+        path = f"{PREFIX}/runs/{run_id}/events"
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0", "spec_version": "2.0"},
+            "http_version": "1.1",
+            "method": "GET",
+            "scheme": "http",
+            "path": path,
+            "raw_path": path.encode(),
+            "root_path": "",
+            "query_string": urlencode(case.query).encode(),
+            "headers": [],
+            "client": ("127.0.0.1", 50001),
+            "server": ("127.0.0.1", 5190),
+        }
+        await asyncio.wait_for(app(scope, receive, send), 3)
+        assert bodies and b'"cursor"' in bodies[0]
+        assert case.owner.runs.is_live(run_id)
+
+    case.client.portal.call(disconnected_request)
+    case.release.set()
+    assert wait(case, run_id)["status"] == "completed"
+    assert len(case.calls) == 1
+
+
+def test_explicit_cancel_and_terminal_event_replay_are_durable(lifecycle_case):
+    case = lifecycle_case
+    response = begin(case)
+    assert response.status_code == 202
+    run_id = response.json()["run_id"]
+    assert case.entered.wait(2)
+    body = {**case.query, "request_id": "cancel-one"}
+    cancelled = case.client.post(f"{PREFIX}/runs/{run_id}/cancel", json=body)
+    assert cancelled.status_code == 200
+    assert cancelled.json()["state"] == "cancellation_requested"
+    assert wait(case, run_id)["status"] == "cancelled"
+    assert (
+        case.client.post(f"{PREFIX}/runs/{run_id}/cancel", json=body).json()
+        == cancelled.json()
+    )
+    stream = case.client.get(f"{PREFIX}/runs/{run_id}/events", params=case.query)
+    assert stream.status_code == 200
+    frame = json.loads(
+        next(line[6:] for line in stream.text.splitlines() if line.startswith("data: "))
+    )
+    assert frame["state"] == "cancelled"
+    resumed = case.client.get(
+        f"{PREFIX}/runs/{run_id}/events",
+        params={**case.query, "cursor": frame["cursor"]},
+    )
+    final = json.loads(
+        next(
+            line[6:] for line in resumed.text.splitlines() if line.startswith("data: ")
+        )
+    )
+    assert final["events"] == []
+    assert len(case.calls) == 1
+
+
+def test_run_scope_input_identity_and_request_conflicts(lifecycle_case):
+    case = lifecycle_case
+    response = begin(case)
+    assert response.status_code == 202
+    run_id = response.json()["run_id"]
+    assert case.entered.wait(2)
+    foreign = case.client.get(f"{PREFIX}/runs/not-this-run", params=case.query)
+    assert foreign.status_code == 403
+    changed = case.client.post(
+        f"{PREFIX}/runs",
+        json={
+            **case.query,
+            "input_snapshot_id": case.frozen["snapshot_id"],
+            "expected_input_digest": "0" * 64,
+            "request_id": "start-one",
+        },
+    )
+    assert changed.status_code == 409
+    assert changed.json()["error_code"] == "REQUEST_CONFLICT"
+    for field in ("principal_id", "capabilities", "workspace_id"):
+        invalid = case.client.post(
+            f"{PREFIX}/runs/{run_id}/cancel",
+            json={
+                **case.query,
+                "request_id": "cancel-injected",
+                field: "private-not-echoed",
+            },
+        )
+        assert invalid.status_code == 422
+        assert "private-not-echoed" not in invalid.text
+    case.release.set()
+    wait(case, run_id)
+
+
+def test_reopened_api_reconciles_interruption_without_restarting(lifecycle_case):
+    from workspace_service.process_interfaces.runs import ProcessRunSupervisor
+
+    case = lifecycle_case
+    response = begin(case)
+    assert response.status_code == 202
+    receipt = response.json()
+    assert case.entered.wait(2)
+    case.client.portal.call(case.owner.close)
+    case.owner.__dict__["runs"] = ProcessRunSupervisor(case.owner)
+    assert begin(case).json() == receipt
+    attached = case.client.get(f"{PREFIX}/runs/{receipt['run_id']}", params=case.query)
+    assert attached.status_code == 200
+    assert attached.json()["state"] == "reconciliation_required"
+    assert not case.owner.runs.is_live(receipt["run_id"])
+    assert len(case.calls) == 1
+
+
+def test_missing_log_returns_unknown_without_repeating_work(lifecycle_case):
+    case = lifecycle_case
+    response = begin(case)
+    assert response.status_code == 202
+    receipt = response.json()
+    case.release.set()
+    wait(case, receipt["run_id"])
+    (case.root / receipt["run_log_path"]).unlink()
+    retry = begin(case)
+    assert retry.status_code == 202
+    assert retry.json() == receipt
+    read = case.client.get(
+        f"{PREFIX}/runs/{receipt['run_id']}/events", params=case.query
+    )
+    assert read.status_code == 503
+    assert read.json()["error_code"] == "OUTCOME_UNKNOWN"
+    assert len(case.calls) == 1
+
+
+def test_legacy_json_retry_uses_same_durable_run(lifecycle_case):
+    case = lifecycle_case
+    case.release.set()
+    body = {**case.query, "request_id": "legacy-one"}
+    first = case.client.post("/api/workspace/workflow-sources/run", json=body)
+    assert first.status_code == 200
+    result = first.json()
+    retry = case.client.post("/api/workspace/workflow-sources/run", json=body)
+    assert retry.status_code == 200
+    assert retry.json() == result
+    assert len(case.calls) == 1
+    # This legacy controlled adapter emits no instruction capture. Do not
+    # reconstruct a historical format prompt from today's packaged defaults.
+    assert result["steps"][0]["response"] == "Actual controlled API artifact"
+    assert "instructions" not in result["steps"][0]
+    assert "format_instructions" not in result["steps"][0]
+
+
+def test_legacy_actual_ndjson_disconnect_detaches_observer(lifecycle_case):
+    case = lifecycle_case
+    body = {**case.query, "request_id": "legacy-disconnect"}
+
+    async def disconnected_request():
+        disconnect = asyncio.Event()
+        request_sent = False
+        bodies = []
+
+        async def receive():
+            nonlocal request_sent
+            if not request_sent:
+                request_sent = True
+                return {
+                    "type": "http.request",
+                    "body": json.dumps(body).encode(),
+                    "more_body": False,
+                }
+            await disconnect.wait()
+            return {"type": "http.disconnect"}
+
+        async def send(message):
+            if message["type"] == "http.response.start":
+                assert message["status"] == 200
+            if message["type"] == "http.response.body" and message.get("body"):
+                bodies.append(message["body"])
+                disconnect.set()
+
+        path = "/api/workspace/workflow-sources/run"
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0", "spec_version": "2.0"},
+            "http_version": "1.1",
+            "method": "POST",
+            "scheme": "http",
+            "path": path,
+            "raw_path": path.encode(),
+            "root_path": "",
+            "query_string": b"",
+            "headers": [
+                (b"content-type", b"application/json"),
+                (b"accept", b"application/x-ndjson"),
+            ],
+            "client": ("127.0.0.1", 50001),
+            "server": ("127.0.0.1", 5190),
+        }
+        await asyncio.wait_for(app(scope, receive, send), 3)
+        assert bodies and b'"kind"' in bodies[0]
+        receipt = case.owner.inputs.start_receipt(
+            "local-control-plane", case.reference, "legacy-disconnect"
+        )
+        assert case.owner.runs.is_live(receipt.run_id)
+        return receipt.run_id
+
+    run_id = case.client.portal.call(disconnected_request)
+    case.release.set()
+    assert wait(case, run_id)["status"] == "completed"
+    assert len(case.calls) == 1
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_legacy_failure_replays_recorded_diagnostic_without_retrying_model(
+    lifecycle_case, monkeypatch, stream
+):
+    from workspace_service.workflow_source_execution import WorkflowSourceExecutionError
+
+    case = lifecycle_case
+    calls = []
+
+    async def unavailable(prompt, fmt):
+        calls.append(prompt)
+        raise WorkflowSourceExecutionError(
+            "MODEL_UNAVAILABLE",
+            "Controlled model failure",
+            "Reconnect the configured model.",
+        )
+
+    monkeypatch.setattr("api.routers.workspace.generate_workflow_response", unavailable)
+    body = {**case.query, "request_id": "legacy-failed"}
+    headers = {"Accept": "application/x-ndjson"} if stream else {}
+    first = case.client.post(
+        "/api/workspace/workflow-sources/run", json=body, headers=headers
+    )
+    retry = case.client.post(
+        "/api/workspace/workflow-sources/run", json=body, headers=headers
+    )
+    if stream:
+        assert first.status_code == retry.status_code == 200
+        diagnostic = json.loads(first.text.splitlines()[-1])
+        assert diagnostic["kind"] == "failed"
+        assert diagnostic["code"] == "model_unavailable"
+        assert json.loads(retry.text.splitlines()[-1]) == diagnostic
+    else:
+        assert first.status_code == retry.status_code == 503
+        diagnostic = first.json()
+        assert diagnostic["error_code"] == "model_unavailable"
+    assert "Reconnect the configured model" in json.dumps(diagnostic)
+    assert len(calls) == 1

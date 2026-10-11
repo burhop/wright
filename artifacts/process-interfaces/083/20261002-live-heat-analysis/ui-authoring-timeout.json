@@ -1,0 +1,44 @@
+{
+  "job_id": "job-1e57996ccecf4f61af7f2cf16a263d80",
+  "process": {
+    "workspace_id": "083-heat-live-005",
+    "source_path": "workflows/heat-spreader-sizing-live-default-model-002.workflow.wflow",
+    "source_digest": "e1ddaf65a1890060ad546ccc9604ea6f2a3ebfcdb9f0de7d1183bdeaadf20bf9",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "role_resolution": {
+    "profile": {
+      "role": "process-ui-author",
+      "version": "1",
+      "instructions_version": "process-ui-author-1",
+      "instructions_digest": "4234294d9fab8a5ff738f11a8e7ad45a56b9a51a23dd78eac847aa9a9a73773d",
+      "model_policy": "inherit_default",
+      "allowed_tools": [],
+      "max_repairs": 2
+    },
+    "adapter": "hermes",
+    "model_reference": "gpt-5.6-sol",
+    "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+    "effective_instructions_digest": "4234294d9fab8a5ff738f11a8e7ad45a56b9a51a23dd78eac847aa9a9a73773d",
+    "capability_scope": []
+  },
+  "state": "failed",
+  "repair_attempt": 0,
+  "revision_id": null,
+  "created_at": "2026-10-02T03:37:09.155734+00:00",
+  "updated_at": "2026-10-02T03:39:14.394603+00:00",
+  "diagnostics": [
+    {
+      "code": "UI_MODEL_TIMEOUT",
+      "message": "The configured model did not finish this interface within the time limit.",
+      "correction": "Try a smaller interface request explicitly. The failed job is retained; the common view remains available.",
+      "binding_id": null,
+      "step_id": null,
+      "navigation": null,
+      "technical_details_ref": null
+    }
+  ],
+  "scope": "Actual configured-model interface generation through Wright, failed before preview/build; no process/provider replay",
+  "complete_tailored_ui": false
+}

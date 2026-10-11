@@ -1,0 +1,24 @@
+{
+  "source_checkpoint": "105f98fde7c9207862c52ae9af401aa13218d28f",
+  "branch": "codex/083-process-working-interfaces",
+  "source_sha256": {
+    "examples/process-interfaces/definition.py": "9648dd24c482de129df19c9d086b5f56e02241cbcf3d4e3dc84dc0e73404f98b",
+    "examples/process-interfaces/heat-spreader-sizing/prepare.py": "e0fb4aeb98135f332eabc535cac34c4c1ec8be89f3bad19e3684608887c47a0d",
+    "examples/process-interfaces/heat-spreader-sizing/bindings.example.json": "064eaab609cf04017227d9ec8a9c0473c6e9f1c8bb3193fe4f58df7068ab8eec",
+    "tests/test_process_interface_examples.py": "bbfde57b51c0dc8051aba6b6443f62e21ee1afe05e2fa81d796ccf70ac340cdf"
+  },
+  "passed": 85,
+  "seconds": 5.04,
+  "skipped": 0,
+  "test_scope": "controlled declarative preparation/operator plus 29 canonical run-path cases",
+  "example_new_cases": 5,
+  "actual_default_model": false,
+  "actual_engineering_provider": false,
+  "browser_verified": false,
+  "installed_build_verified": false,
+  "human_acceptance": false,
+  "task_closed": null,
+  "protected_review_answered": false,
+  "namespace_option": "explicit wright.run-path/1, legacy absent version unchanged",
+  "native_resource_limit": "CAD project/build remains shared; separate exports alone do not qualify concurrent native writes"
+}

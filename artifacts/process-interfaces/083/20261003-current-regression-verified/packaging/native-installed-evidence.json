@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "create",
+    "pid": 25232,
+    "installed": "D:\\TEMP\\wright-083-t053-package-009\\test_built_wheel_contains_publ0\\installed",
+    "wright_modules_checked": 369,
+    "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+    "run_id": "ccaa49b2-669b-474e-ba35-6afd09e3544c",
+    "offline": true,
+    "native_span_count": 30
+  },
+  {
+    "phase": "restart",
+    "pid": 49536,
+    "installed": "D:\\TEMP\\wright-083-t053-package-009\\test_built_wheel_contains_publ0\\installed",
+    "wright_modules_checked": 369,
+    "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+    "run_id": "ccaa49b2-669b-474e-ba35-6afd09e3544c",
+    "offline": true,
+    "native_span_count": 12
+  },
+  {
+    "phase": "package-replacement",
+    "pid": 33768,
+    "installed": "D:\\TEMP\\wright-083-t053-package-009\\test_built_wheel_contains_publ0\\native-process-lifecycle\\replacement-package",
+    "wright_modules_checked": 369,
+    "artifact_sha256": "2c850c6f4cad3b097315265fae1f7ad7cfb87ab30ebb65909d07aea23f9d5407",
+    "run_id": "ccaa49b2-669b-474e-ba35-6afd09e3544c",
+    "offline": true,
+    "native_span_count": 12
+  }
+]

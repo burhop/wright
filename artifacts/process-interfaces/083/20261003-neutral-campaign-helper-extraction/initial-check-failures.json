@@ -1,0 +1,16 @@
+{
+  "direct_launch": {
+    "exit_code": 1,
+    "diagnostic": "ModuleNotFoundError: No module named 'scripts.engineering_campaign_binding_helpers'",
+    "correction": "Load the exact repository helper file as existing campaign scripts do; no sys.path/installed namespace assumption"
+  },
+  "regressions": {
+    "passed": 5,
+    "setup_errors": 24,
+    "cause": "PermissionError: [WinError 5] Access is denied: D:/TEMP/pytest-of-markb",
+    "original_xml": "regressions.xml",
+    "correction": "Fresh explicit test temp directory inside the approved workspace"
+  },
+  "engineering_execution": false,
+  "campaign_files_changed": false
+}

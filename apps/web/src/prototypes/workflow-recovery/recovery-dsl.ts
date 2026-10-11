@@ -9,6 +9,7 @@ import type {
   RecoveryRelationship,
   RecoveryWorkflow,
 } from "./model";
+import { normalizeWorkflowInstructions } from "./workflow-instructions";
 
 type SectionKind =
   | "workflow"
@@ -52,6 +53,7 @@ const fieldSets: Record<SectionKind, readonly string[]> = {
     "purpose",
     "domain",
     "authorship",
+    "instructions",
   ],
   phase: ["name", "purpose", "order", "blocks"],
   block: [
@@ -152,6 +154,14 @@ export function formatRecoveryDsl(workflow: RecoveryWorkflow): {
     ["purpose", workflow.metadata.purpose],
     ["domain", workflow.metadata.engineeringDomain],
     ["authorship", workflow.metadata.authorship],
+    ...(workflow.metadata.instructions === undefined
+      ? []
+      : ([
+          [
+            "instructions",
+            normalizeWorkflowInstructions(workflow.metadata.instructions),
+          ],
+        ] as [string, unknown][])),
   ]);
   for (const phase of workflow.phases)
     section(lines, "phase", phase.id, [
@@ -476,6 +486,7 @@ function exactFields(sectionValue: Section): void {
       throw new Error(`WFR-TEXT-FIELD-UNKNOWN:${field}`);
   }
   for (const field of expected) {
+    if (sectionValue.kind === "workflow" && field === "instructions") continue;
     if (!(field in sectionValue.fields))
       throw new Error(`WFR-TEXT-FIELD-MISSING:${field}`);
   }
@@ -789,14 +800,16 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
     { target: string; relationshipId: string }[]
   >();
   for (const relationship of workflow.relationships) {
-    const endpointKey = `${relationship.sourceId}\u0000${relationship.targetId}`;
+    // Execution order and approval are distinct relationships, even when they
+    // connect the same blocks. Keep duplicate detection within each kind.
+    const endpointKey = `${relationship.kind}\u0000${relationship.sourceId}\u0000${relationship.targetId}`;
     const priorEndpoint = endpointPairs.get(endpointKey);
     if (priorEndpoint)
       diagnostics.push(
         diagnostic(
           "WFR-RELATIONSHIP-DUPLICATE",
-          `${relationship.id} duplicates the endpoints of ${priorEndpoint}.`,
-          "Keep one relationship for an endpoint pair or introduce a distinct semantic target.",
+          `${relationship.id} repeats the ${relationship.kind} connection of ${priorEndpoint}.`,
+          "Keep one relationship of each kind for an endpoint pair.",
           relationship.id,
         ),
       );
@@ -858,8 +871,9 @@ function validateModel(workflow: RecoveryWorkflow): RecoveryDiagnostic[] {
         sourceBlock?.kind === "component" &&
         sourceBlock.componentRef?.componentId === "component.review-cell";
       const isDesignCheck =
-        sourceBlock?.configuration.authoring_template === "mcp-task" &&
-        sourceBlock.configuration.design_check === true;
+        (sourceBlock?.configuration.authoring_template === "mcp-task" &&
+          sourceBlock.configuration.design_check === true) ||
+        sourceBlock?.configuration.authoring_template === "process-validator";
       if (
         (relationship.kind === "decision" ||
           relationship.kind === "feedback") &&
@@ -1290,6 +1304,13 @@ export function parseRecoveryDsl(text: string): RecoveryParseResult {
           ["human", "human_with_ai_proposal"] as const,
           "authorship",
         ),
+        ...(root.fields.instructions === undefined
+          ? {}
+          : {
+              instructions: normalizeWorkflowInstructions(
+                root.fields.instructions,
+              ),
+            }),
       },
       phases: sections.filter((item) => item.kind === "phase").map(phase),
       blocks: sections.filter((item) => item.kind === "block").map(block),

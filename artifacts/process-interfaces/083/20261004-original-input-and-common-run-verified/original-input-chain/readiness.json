@@ -1,0 +1,387 @@
+{
+  "state": "blocked",
+  "assessment_id": "readiness-9df353a1d5b74376989275d8e4a9dab0",
+  "process": {
+    "workspace_id": "083-fresh-prompt-055",
+    "source_path": "workflows/printed-replacement-part-mixed-default-071.workflow.wflow",
+    "source_digest": "2ce1aa5f19a5f10a4f989828bdb11748ec922b5b952f87b36ece5d6bcdce6589",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "01f54dbb9014fc70e96ee0ea5256c87edcc728b29e00a0ad3963fcb056061700",
+  "assessed_at": "2026-10-04T01:35:52.408936+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "image_and_scale_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_concept_png_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_concept_svg_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_context_md_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_prompt_txt_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_scenario_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_user_profile_md_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_requirements_md_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_geometry_capability_guidance_md_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_machine_profile_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_process_profile_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_filament_profile_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_configured_geometry_basis_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_construction_provider_arguments_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_repair_provider_arguments_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_repair_operation_review_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_slice_call_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_passive_representations_py_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_inspect_manufacturing_package_py_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "input_inspection_call_json_mixed_default_071",
+      "classification": "explicit_default",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "review_basis_mixed_default_071.review_basis_mixed_default_071_basis",
+      "classification": "upstream_produced",
+      "producer_step": "define_geometry_basis_mixed_default_071",
+      "producer_port": "define_geometry_basis_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "create_mesh_mixed_default_071.create_mesh_mixed_default_071_reviewed_basis",
+      "classification": "upstream_produced",
+      "producer_step": "define_geometry_basis_mixed_default_071",
+      "producer_port": "define_geometry_basis_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "repair_measure_orient_mixed_default_071.repair_measure_orient_mixed_default_071_actual_source",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_mixed_default_071",
+      "producer_port": "source_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "supports_and_slice_mixed_default_071.supports_and_slice_mixed_default_071_selected_geometry",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_mixed_default_071",
+      "producer_port": "repaired_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "retain_slice_response_mixed_default_071.retain_slice_response_mixed_default_071_actual_response",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_mixed_default_071",
+      "producer_port": "supports_and_slice_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_slice_package",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_mixed_default_071",
+      "producer_port": "slice_package",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_provider_response",
+      "classification": "upstream_produced",
+      "producer_step": "retain_slice_response_mixed_default_071",
+      "producer_port": "provider_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "inspect_slice_handoff_mixed_default_071.inspect_slice_handoff_mixed_default_071_slice_source",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_mixed_default_071",
+      "producer_port": "repaired_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_construction",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_mixed_default_071",
+      "producer_port": "create_mesh_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_repair",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_mixed_default_071",
+      "producer_port": "repair_measure_orient_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_slice_evidence",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "slice_evidence",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "summarize_preparation_mixed_default_071.summarize_preparation_mixed_default_071_toolpath_summary",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "toolpath_summary",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_exact_package",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_mixed_default_071",
+      "producer_port": "slice_package",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "authorize_transfer_mixed_default_071.authorize_transfer_mixed_default_071_preparation_review",
+      "classification": "upstream_produced",
+      "producer_step": "summarize_preparation_mixed_default_071",
+      "producer_port": "summarize_preparation_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_source_mesh",
+      "classification": "upstream_produced",
+      "producer_step": "create_mesh_mixed_default_071",
+      "producer_port": "source_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_repaired_mesh",
+      "classification": "upstream_produced",
+      "producer_step": "repair_measure_orient_mixed_default_071",
+      "producer_port": "repaired_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_slice_package",
+      "classification": "upstream_produced",
+      "producer_step": "supports_and_slice_mixed_default_071",
+      "producer_port": "slice_package",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_slice_evidence",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "slice_evidence",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_support_preview",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "support_preview",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_machine_profile",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "machine_profile",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_process_profile",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "process_profile",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_filament_profile",
+      "classification": "upstream_produced",
+      "producer_step": "inspect_slice_handoff_mixed_default_071",
+      "producer_port": "filament_profile",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_source_report",
+      "classification": "upstream_produced",
+      "producer_step": "summarize_preparation_mixed_default_071",
+      "producer_port": "summarize_preparation_mixed_default_071_result",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_outputs_mixed_default_071.validate_transfer_receipt",
+      "classification": "upstream_produced",
+      "producer_step": "authorize_transfer_mixed_default_071",
+      "producer_port": "receipt",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "review_preparation_mixed_default_071.review_preparation_mixed_default_071_assessment",
+      "classification": "upstream_produced",
+      "producer_step": "validate_outputs_mixed_default_071",
+      "producer_port": "assessment",
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": [
+    {
+      "code": "CAPABILITY_UNAVAILABLE",
+      "message": "Retain the actual slicer response for package inspection: the selected tool needs workspace authorization before this process can run.",
+      "correction": "Configure the required reviewed operation or choose an authorized provider before starting.",
+      "binding_id": null,
+      "step_id": null,
+      "navigation": null,
+      "technical_details_ref": null
+    }
+  ]
+}

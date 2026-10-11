@@ -1,0 +1,37 @@
+{
+  "title": "New workflow authoring through the installed workspace",
+  "summary": "Continue the newly saved scratch workflow through type rejection, layout persistence, zoom and concurrent-save protection. No process execution or engineering review.",
+  "overall": "blocked",
+  "updated": "2026-10-02T22:36:00.424Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "New workflow",
+      "instruction": "Choose Workflow files, then New workflow."
+    },
+    {
+      "label": "Author",
+      "instruction": "Read the creation instructions, provide a name and create the verification workflow."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Editor continuation stopped at Type mismatch rejection",
+      "summary": "First unexpected state retained; no execution or review submitted.",
+      "purpose": "Preserve real failure.",
+      "action": "Type mismatch rejection",
+      "controls": [
+        "Type mismatch rejection"
+      ],
+      "expected": "Editor action succeeds without guesses or workarounds.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"retained-workspace-workflow-panel\"][aria-hidden=\"false\"]').getByRole('status').filter({ hasText: /type|accept|compatible/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for locator('[data-testid=\"retained-workspace-workflow-panel\"][aria-hidden=\"false\"]').getByRole('status').filter({ hasText: /type|accept|compatible/i })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "installed_checkpoint": "2af72d9faa88a28663f70ae33672a6581b19e85f",
+  "committed_product_and_test_delta": [
+    "tests/test_process_interface_examples.py"
+  ],
+  "runtime_test_bodies_byte_verified": 35,
+  "source_sha256": {
+    "apps/web/src/components/process-interfaces/ProcessInterfaceView.spec.tsx": "05374d56e57597526f46ca949ccf5a14e36f73ef09c8fb66b63774a9d93b10b3",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx": "1c078dd122402ff99a335696f3efba71ee3a0e595f988e92be99e2bf2ec7a242",
+    "apps/web/src/services/process-workspace-tabs.spec.ts": "6aa34a3e81c058403a474cb1ef3d80f258e66decce16f77f094b840f8334141a",
+    "packages/data_vault/tests/test_process_interface_migrations.py": "479128494363d3108c7b159cc1767c4b007b30b5fed98ee12ea76112322b4965",
+    "packages/workspace_service/tests/test_workflow_run_paths.py": "171fbf921d2145f7c5495f8d7085f0fd4c60acf74fecf0309982b322904c8fe8",
+    "packages/workspace_service/tests/test_workflow_ai_file_dependencies.py": "db8b3bbce1a13be6f49a2ece572272b7414674e7b2ef07903f6647ac885c1c66",
+    "packages/workspace_service/tests/test_workflow_approval_execution.py": "c6085a78cb5d836fb66c66e0ded4acd8dbc91191ff17923795e7957a10b1d967"
+  },
+  "implementation_changed_in_this_batch": false
+}

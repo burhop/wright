@@ -1,0 +1,72 @@
+{
+  "title": "Heat-spreader interface authoring through Wright",
+  "summary": "Normal Wright workspace and actual isolated engineering run. No mocked routes or physical action.",
+  "overall": "blocked",
+  "updated": "2026-10-03T05:14:26.465Z",
+  "manualSteps": [
+    {
+      "label": "Open workspace",
+      "instruction": "Open the isolated Heat-spreader comparison proof workspace."
+    },
+    {
+      "label": "Open workflows",
+      "instruction": "Click Workflows in the workspace activity bar."
+    },
+    {
+      "label": "Choose process",
+      "instruction": "Click Workflow files, then Open workflow. Select the saved heat-spreader workflow."
+    },
+    {
+      "label": "Use process",
+      "instruction": "Click Use saved process. Reopen the recorded run from its workspace link."
+    },
+    {
+      "label": "Create an interface",
+      "instruction": "Click Create or choose interface. Enter Heat-spreader candidate comparison as the Interface title and request a reusable comparison with shared inputs, results, findings and review controls. Click Create interface."
+    },
+    {
+      "label": "Preview",
+      "instruction": "Wait for Preview ready, then click Open preview and inspect the read-only interface."
+    },
+    {
+      "label": "Save",
+      "instruction": "Return to the common working tab and click Save interface."
+    },
+    {
+      "label": "Open saved interface",
+      "instruction": "Click Open saved interface. Confirm it opens in a Wright workspace tab on the existing run."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Workspace offers Workflows",
+      "summary": "Entered the normal authenticated workspace.",
+      "purpose": "Verify the normal workspace route with real API owners.",
+      "action": "Open Heat-spreader comparison proof workspace.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "The workspace loads and offers Workflows.",
+      "actual": "Normal workspace and Workflows control visible.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "Entry stopped",
+      "summary": "The normal workspace entry did not meet the expected state.",
+      "purpose": "Retain the first stopping point.",
+      "action": "Stop at the unexpected entry state.",
+      "controls": [
+        "Workflows"
+      ],
+      "expected": "Workspace and established editor available.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: getByTestId('workflow-file-menu')\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for getByTestId('workflow-file-menu')\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

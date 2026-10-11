@@ -1,0 +1,22 @@
+{
+  "current_value": "custom::ci-model",
+  "current_provider": "custom",
+  "current_model": "ci-model",
+  "groups": [
+    {
+      "provider": "custom",
+      "label": "custom",
+      "options": [
+        {
+          "value": "custom::ci-model",
+          "label": "ci-model",
+          "provider": "custom",
+          "model": "ci-model",
+          "is_current": true
+        }
+      ]
+    }
+  ],
+  "selection_supported": false,
+  "selection_message": "Using the configured model. Change it in Model Setup before starting a new run."
+}

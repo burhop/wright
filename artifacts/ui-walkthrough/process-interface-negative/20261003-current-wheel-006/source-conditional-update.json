@@ -1,0 +1,12 @@
+{
+  "before": {
+    "storage_revision": 1,
+    "storage_digest": "93289359a42dd8ec077255622aa337b5361686875f77579494eeeb48feec2cb7"
+  },
+  "after": {
+    "storage_revision": 2,
+    "storage_digest": "a51fc954d54cd7bede392f3210f6b0d80551cc7d26602a80ea994f04896f098a"
+  },
+  "conditional_update": true,
+  "no_decision_or_execution": true
+}

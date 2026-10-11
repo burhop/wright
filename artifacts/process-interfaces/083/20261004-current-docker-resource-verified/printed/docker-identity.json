@@ -1,0 +1,44 @@
+{
+  "Id": "7463ed27fee81d3f26a96f72b22a4ec07bb0ec9ea131daaf6cbda004a93fdb7e",
+  "Image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "State": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 3693228,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-04T00:41:05.634654152Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t056-final-docker-043-printed",
+      "Destination": "/proof-input",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "limits": {
+    "Memory": 2147483648,
+    "NanoCpus": 2000000000,
+    "PidsLimit": 256,
+    "ReadonlyRootfs": true,
+    "PortBindings": {
+      "8062/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8062"
+        }
+      ]
+    },
+    "Tmpfs": {
+      "/tmp": "rw,size=1073741824,mode=1777"
+    }
+  }
+}

@@ -1,0 +1,522 @@
+{
+  "dispositions": {
+    "FR-009": {
+      "group": "authority",
+      "primary_behaviors": [
+        "Server-derived principal/workspace/session/runtime generation/UI/revision/process/run constraints are checked through native grant, immutable bundle and exact receipt owners. Identity drift, revoked grants, foreign/ambiguous run selectors and corrupted bytes deny reads or mutations.",
+        "Preview grants contain only process.read/results/navigate. Every mutation is rejected before the native owner; invokeTool, authoring and native-token substitution do not provide presentation authority. Streams revalidate current grants per chunk. Existing provider/MCP declarations cannot adopt the reserved process bridge.",
+        "The generated process UI calls the existing native owners; process, review/action and uncertainty authority remain unchanged. Static CSP and isolated local runtime complement the closed client and source checks; those checks alone are not the enforcement boundary."
+      ],
+      "evidence": []
+    },
+    "T035": {
+      "group": "authority",
+      "primary_behaviors": [
+        "Server-derived principal/workspace/session/runtime generation/UI/revision/process/run constraints are checked through native grant, immutable bundle and exact receipt owners. Identity drift, revoked grants, foreign/ambiguous run selectors and corrupted bytes deny reads or mutations.",
+        "Preview grants contain only process.read/results/navigate. Every mutation is rejected before the native owner; invokeTool, authoring and native-token substitution do not provide presentation authority. Streams revalidate current grants per chunk. Existing provider/MCP declarations cannot adopt the reserved process bridge.",
+        "The generated process UI calls the existing native owners; process, review/action and uncertainty authority remain unchanged. Static CSP and isolated local runtime complement the closed client and source checks; those checks alone are not the enforcement boundary."
+      ],
+      "evidence": []
+    },
+    "T036": {
+      "group": "authority",
+      "primary_behaviors": [
+        "Server-derived principal/workspace/session/runtime generation/UI/revision/process/run constraints are checked through native grant, immutable bundle and exact receipt owners. Identity drift, revoked grants, foreign/ambiguous run selectors and corrupted bytes deny reads or mutations.",
+        "Preview grants contain only process.read/results/navigate. Every mutation is rejected before the native owner; invokeTool, authoring and native-token substitution do not provide presentation authority. Streams revalidate current grants per chunk. Existing provider/MCP declarations cannot adopt the reserved process bridge.",
+        "The generated process UI calls the existing native owners; process, review/action and uncertainty authority remain unchanged. Static CSP and isolated local runtime complement the closed client and source checks; those checks alone are not the enforcement boundary."
+      ],
+      "evidence": []
+    },
+    "CONTRACT-ui-authoring-and-hosting-05": {
+      "group": "authority",
+      "primary_behaviors": [
+        "Server-derived principal/workspace/session/runtime generation/UI/revision/process/run constraints are checked through native grant, immutable bundle and exact receipt owners. Identity drift, revoked grants, foreign/ambiguous run selectors and corrupted bytes deny reads or mutations.",
+        "Preview grants contain only process.read/results/navigate. Every mutation is rejected before the native owner; invokeTool, authoring and native-token substitution do not provide presentation authority. Streams revalidate current grants per chunk. Existing provider/MCP declarations cannot adopt the reserved process bridge.",
+        "The generated process UI calls the existing native owners; process, review/action and uncertainty authority remain unchanged. Static CSP and isolated local runtime complement the closed client and source checks; those checks alone are not the enforcement boundary."
+      ],
+      "evidence": []
+    },
+    "FR-010": {
+      "group": "coding_role",
+      "primary_behaviors": [
+        "The additive BaseAgentEngine context pins process-ui-author/1, immutable versioned instructions, inherited default model and an empty executable-tool scope. Unqualified adapters and model/configuration drift fail before broad chat/workspace activation; ordinary chat remains unchanged.",
+        "Hermes model-only SDK calls preserve prepared system instructions on every turn, tools=[]/tool_choice=none and resolver identities. Tool requests, absent or changed attestations and unsupported overrides cannot silently activate tools or change global configuration.",
+        "Both actual engineering interfaces have generation and focused-update revisions recording Hermes, the then-configured gpt-5.6-sol default, instruction/configuration/build hashes and empty authoring capabilities. These are historical actual-model proofs, not fresh inference or qualification of future platforms."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/README.md",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    },
+    "US3-AC1": {
+      "group": "coding_role",
+      "primary_behaviors": [
+        "The additive BaseAgentEngine context pins process-ui-author/1, immutable versioned instructions, inherited default model and an empty executable-tool scope. Unqualified adapters and model/configuration drift fail before broad chat/workspace activation; ordinary chat remains unchanged.",
+        "Hermes model-only SDK calls preserve prepared system instructions on every turn, tools=[]/tool_choice=none and resolver identities. Tool requests, absent or changed attestations and unsupported overrides cannot silently activate tools or change global configuration.",
+        "Both actual engineering interfaces have generation and focused-update revisions recording Hermes, the then-configured gpt-5.6-sol default, instruction/configuration/build hashes and empty authoring capabilities. These are historical actual-model proofs, not fresh inference or qualification of future platforms."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/README.md",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    },
+    "US3-AC6": {
+      "group": "coding_role",
+      "primary_behaviors": [
+        "The additive BaseAgentEngine context pins process-ui-author/1, immutable versioned instructions, inherited default model and an empty executable-tool scope. Unqualified adapters and model/configuration drift fail before broad chat/workspace activation; ordinary chat remains unchanged.",
+        "Hermes model-only SDK calls preserve prepared system instructions on every turn, tools=[]/tool_choice=none and resolver identities. Tool requests, absent or changed attestations and unsupported overrides cannot silently activate tools or change global configuration.",
+        "Both actual engineering interfaces have generation and focused-update revisions recording Hermes, the then-configured gpt-5.6-sol default, instruction/configuration/build hashes and empty authoring capabilities. These are historical actual-model proofs, not fresh inference or qualification of future platforms."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/README.md",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    },
+    "T029": {
+      "group": "coding_role",
+      "primary_behaviors": [
+        "The additive BaseAgentEngine context pins process-ui-author/1, immutable versioned instructions, inherited default model and an empty executable-tool scope. Unqualified adapters and model/configuration drift fail before broad chat/workspace activation; ordinary chat remains unchanged.",
+        "Hermes model-only SDK calls preserve prepared system instructions on every turn, tools=[]/tool_choice=none and resolver identities. Tool requests, absent or changed attestations and unsupported overrides cannot silently activate tools or change global configuration.",
+        "Both actual engineering interfaces have generation and focused-update revisions recording Hermes, the then-configured gpt-5.6-sol default, instruction/configuration/build hashes and empty authoring capabilities. These are historical actual-model proofs, not fresh inference or qualification of future platforms."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/README.md",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    },
+    "T030": {
+      "group": "coding_role",
+      "primary_behaviors": [
+        "The additive BaseAgentEngine context pins process-ui-author/1, immutable versioned instructions, inherited default model and an empty executable-tool scope. Unqualified adapters and model/configuration drift fail before broad chat/workspace activation; ordinary chat remains unchanged.",
+        "Hermes model-only SDK calls preserve prepared system instructions on every turn, tools=[]/tool_choice=none and resolver identities. Tool requests, absent or changed attestations and unsupported overrides cannot silently activate tools or change global configuration.",
+        "Both actual engineering interfaces have generation and focused-update revisions recording Hermes, the then-configured gpt-5.6-sol default, instruction/configuration/build hashes and empty authoring capabilities. These are historical actual-model proofs, not fresh inference or qualification of future platforms."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/README.md",
+        "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/README.md"
+      ]
+    },
+    "FR-011": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "US3-AC2": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "EDGE-06": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "NEG-13": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "T031": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "T032": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "T033": {
+      "group": "build_and_job",
+      "primary_behaviors": [
+        "Fixed source/asset envelopes exclude backend/package/build scripts, arbitrary launch/environment and private/dynamic/network imports. The actual fixed compiler checks bindings, schemas and pinned package versions, builds the public reference and rejects invalid source. Installed geometry aliases are trusted toolchain dependencies; direct generated three imports remain forbidden.",
+        "Current primary boundary checks accept exactly 1 MiB text, 10 MiB raster/aggregate assets and 32 source+asset files, then reject the next byte/file. Timeout, oversized child output and cancellation dispose only the owned compiler child. Source/build diagnostics remain bounded and redact private locations.",
+        "Durable authoring requests and attempts retain role/provenance/trace. At most two diagnostic repairs reuse exact instructions/default model. Exhaustion, cancellation or interrupted owner state is recorded without automatic generation replay.",
+        "Vault source/manifest/build/dist inventories are immutable and hash-verified. Save requires the exact observed preview and current source/hash CAS; corruption/overwrite and unsaved working mode are denied. Revised source preserves parent provenance and compatible rollback uses existing revision selection."
+      ],
+      "evidence": []
+    },
+    "FR-012": {
+      "group": "saved_revisions",
+      "primary_behaviors": [
+        "Actual Wright workspace generation/preview/save and focused update occurred for both engineering processes; later distinct digital runs reused the same compiled revisions with unchanged authoring records/assets and no model call or build.",
+        "Current owner/API tests verify save/rollback/hash CAS and focused update after an actual source revision change. Compatible current bindings reuse only immutable saved origin bytes under current grants; incompatible required bindings deny presentation and incompatible rollback, without replacing the active revision.",
+        "Current installed normal workspace reports prove reopen without authoring resources, meaningful accepted-default agreement, containment of required incompatibility, focused-update availability reasons and visibly usable common fallback. Old run/output/review authority does not transfer.",
+        "An earlier actual-model native managed-browser continuation proves compatible revision rollback. Controlled owner/API repairs and current unavailable-resource browser checks are not described as new live-model source-change generation."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/live-ui-authoring.md"
+      ]
+    },
+    "US3-independent": {
+      "group": "saved_revisions",
+      "primary_behaviors": [
+        "Actual Wright workspace generation/preview/save and focused update occurred for both engineering processes; later distinct digital runs reused the same compiled revisions with unchanged authoring records/assets and no model call or build.",
+        "Current owner/API tests verify save/rollback/hash CAS and focused update after an actual source revision change. Compatible current bindings reuse only immutable saved origin bytes under current grants; incompatible required bindings deny presentation and incompatible rollback, without replacing the active revision.",
+        "Current installed normal workspace reports prove reopen without authoring resources, meaningful accepted-default agreement, containment of required incompatibility, focused-update availability reasons and visibly usable common fallback. Old run/output/review authority does not transfer.",
+        "An earlier actual-model native managed-browser continuation proves compatible revision rollback. Controlled owner/API repairs and current unavailable-resource browser checks are not described as new live-model source-change generation."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/live-ui-authoring.md"
+      ]
+    },
+    "NEG-11": {
+      "group": "saved_revisions",
+      "primary_behaviors": [
+        "Actual Wright workspace generation/preview/save and focused update occurred for both engineering processes; later distinct digital runs reused the same compiled revisions with unchanged authoring records/assets and no model call or build.",
+        "Current owner/API tests verify save/rollback/hash CAS and focused update after an actual source revision change. Compatible current bindings reuse only immutable saved origin bytes under current grants; incompatible required bindings deny presentation and incompatible rollback, without replacing the active revision.",
+        "Current installed normal workspace reports prove reopen without authoring resources, meaningful accepted-default agreement, containment of required incompatibility, focused-update availability reasons and visibly usable common fallback. Old run/output/review authority does not transfer.",
+        "An earlier actual-model native managed-browser continuation proves compatible revision rollback. Controlled owner/API repairs and current unavailable-resource browser checks are not described as new live-model source-change generation."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/live-ui-authoring.md"
+      ]
+    },
+    "T038": {
+      "group": "saved_revisions",
+      "primary_behaviors": [
+        "Actual Wright workspace generation/preview/save and focused update occurred for both engineering processes; later distinct digital runs reused the same compiled revisions with unchanged authoring records/assets and no model call or build.",
+        "Current owner/API tests verify save/rollback/hash CAS and focused update after an actual source revision change. Compatible current bindings reuse only immutable saved origin bytes under current grants; incompatible required bindings deny presentation and incompatible rollback, without replacing the active revision.",
+        "Current installed normal workspace reports prove reopen without authoring resources, meaningful accepted-default agreement, containment of required incompatibility, focused-update availability reasons and visibly usable common fallback. Old run/output/review authority does not transfer.",
+        "An earlier actual-model native managed-browser continuation proves compatible revision rollback. Controlled owner/API repairs and current unavailable-resource browser checks are not described as new live-model source-change generation."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/live-ui-authoring.md"
+      ]
+    },
+    "T042": {
+      "group": "saved_revisions",
+      "primary_behaviors": [
+        "Actual Wright workspace generation/preview/save and focused update occurred for both engineering processes; later distinct digital runs reused the same compiled revisions with unchanged authoring records/assets and no model call or build.",
+        "Current owner/API tests verify save/rollback/hash CAS and focused update after an actual source revision change. Compatible current bindings reuse only immutable saved origin bytes under current grants; incompatible required bindings deny presentation and incompatible rollback, without replacing the active revision.",
+        "Current installed normal workspace reports prove reopen without authoring resources, meaningful accepted-default agreement, containment of required incompatibility, focused-update availability reasons and visibly usable common fallback. Old run/output/review authority does not transfer.",
+        "An earlier actual-model native managed-browser continuation proves compatible revision rollback. Controlled owner/API repairs and current unavailable-resource browser checks are not described as new live-model source-change generation."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/live-ui-authoring.md"
+      ]
+    },
+    "FR-018": {
+      "group": "installed_resources",
+      "primary_behaviors": [
+        "The current installed wheel contains byte-identical public client/kit sources/styles/manifests, authoring instructions/schema/template/fixed builder and generic static runtime. Distribution tests independently rebuild root/service wheels and service sdist, then compile shipped reference/result-reader sources with an explicitly qualified native dependency root.",
+        "Installed static HTTP serves only verified dist and health with restrictive headers, rejects alternate/private paths and changed launch/authority during relocation, and needs no compiler/model subprocess. Discovery does not guess an ancestor checkout or borrow missing public sources.",
+        "Current detached native browser proofs open exact saved/common interfaces with unavailable compiler/model and no checkout imports, generation, download, compilation or engineering mutation. Earlier clean Docker proofs retain their original wheel and host scope; they are not relabelled as the current wheel."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/distribution.md"
+      ]
+    },
+    "T034": {
+      "group": "installed_resources",
+      "primary_behaviors": [
+        "The current installed wheel contains byte-identical public client/kit sources/styles/manifests, authoring instructions/schema/template/fixed builder and generic static runtime. Distribution tests independently rebuild root/service wheels and service sdist, then compile shipped reference/result-reader sources with an explicitly qualified native dependency root.",
+        "Installed static HTTP serves only verified dist and health with restrictive headers, rejects alternate/private paths and changed launch/authority during relocation, and needs no compiler/model subprocess. Discovery does not guess an ancestor checkout or borrow missing public sources.",
+        "Current detached native browser proofs open exact saved/common interfaces with unavailable compiler/model and no checkout imports, generation, download, compilation or engineering mutation. Earlier clean Docker proofs retain their original wheel and host scope; they are not relabelled as the current wheel."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/distribution.md"
+      ]
+    },
+    "T050": {
+      "group": "installed_resources",
+      "primary_behaviors": [
+        "The current installed wheel contains byte-identical public client/kit sources/styles/manifests, authoring instructions/schema/template/fixed builder and generic static runtime. Distribution tests independently rebuild root/service wheels and service sdist, then compile shipped reference/result-reader sources with an explicitly qualified native dependency root.",
+        "Installed static HTTP serves only verified dist and health with restrictive headers, rejects alternate/private paths and changed launch/authority during relocation, and needs no compiler/model subprocess. Discovery does not guess an ancestor checkout or borrow missing public sources.",
+        "Current detached native browser proofs open exact saved/common interfaces with unavailable compiler/model and no checkout imports, generation, download, compilation or engineering mutation. Earlier clean Docker proofs retain their original wheel and host scope; they are not relabelled as the current wheel."
+      ],
+      "evidence": [
+        "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/README.md",
+        "specs/083-process-working-interfaces/evidence/distribution.md"
+      ]
+    }
+  },
+  "historical_actual_model_provenance": [
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/printed-ui-configured-001-saved-revision.json",
+      "sha256": "3efe3fa00ed90759451d1e4e7714230b7dc51ab9ed95b1728ef4ab8d034bbd64",
+      "ui": "ui-0a09766ccdd94bfdb3dab1f5519d1628",
+      "revision": "revision-1c498bcb93884514bb6f2c838ed48fb4",
+      "parent": null,
+      "role_resolution": {
+        "profile": {
+          "role": "process-ui-author",
+          "version": "1",
+          "instructions_version": "process-ui-author-1",
+          "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+          "model_policy": "inherit_default",
+          "allowed_tools": [],
+          "max_repairs": 2
+        },
+        "adapter": "hermes",
+        "model_reference": "gpt-5.6-sol",
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+        "capability_scope": []
+      },
+      "build": {
+        "build_id": "build-7ae0e0abf2404b9985a217d578d4dc0f",
+        "source_digest": "dcccfe23ae0c0ee2b98ff4db7192ef4d70215c6f68ddb808c4e42fd8bf40537c",
+        "manifest_digest": "4af9d796c11c7b2e92620ccc5fd7124c2f734acec696fec16b8d9e4abe3b944f",
+        "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+        "bundle_digest": "21793b735acd16a7b920839c8c8e89f3fd2944dbaec5f0a7590014e8da76bbd1",
+        "state": "built",
+        "created_at": "2026-10-03T07:23:29.407059+00:00",
+        "diagnostics": [],
+        "bundled_bytes": 1066756
+      },
+      "previewed_at": "2026-10-03T07:23:42.178502+00:00"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/printed-ui-configured-update-001-saved-revision.json",
+      "sha256": "ad8bdea4ef21df16b1475bcbe75c9766f51907e00c64283d1c60bb919f65a672",
+      "ui": "ui-0a09766ccdd94bfdb3dab1f5519d1628",
+      "revision": "revision-d38d8f51a4674fe7816f9b00ca43ad73",
+      "parent": "revision-1c498bcb93884514bb6f2c838ed48fb4",
+      "role_resolution": {
+        "profile": {
+          "role": "process-ui-author",
+          "version": "1",
+          "instructions_version": "process-ui-author-1",
+          "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+          "model_policy": "inherit_default",
+          "allowed_tools": [],
+          "max_repairs": 2
+        },
+        "adapter": "hermes",
+        "model_reference": "gpt-5.6-sol",
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+        "capability_scope": []
+      },
+      "build": {
+        "build_id": "build-fc750bba25d94870839d05a08a3c39db",
+        "source_digest": "8481cf2cbf530246a5a84b716a293b5b0ac9baa918ff6c89781bedd8ac89f653",
+        "manifest_digest": "6ceb6198af05f5f3387312ad2a8db0e38b7cc6359a0f206a0018a77f746a1798",
+        "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+        "bundle_digest": "7d6c559fe009a6fe3aa5cfc3fdd28244e9ad9b600cfd5cd3251c07faceb814f9",
+        "state": "built",
+        "created_at": "2026-10-03T07:31:24.017439+00:00",
+        "diagnostics": [],
+        "bundled_bytes": 1067019
+      },
+      "previewed_at": "2026-10-03T07:31:32.424884+00:00"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/heat-ui-repeat-003-saved-revision.json",
+      "sha256": "21fa7e3451b91b19f91458a73192f48c9fb8321724a6ea71f4ebe5622d5cc884",
+      "ui": "ui-512d6109b37f4c0f89b86d86a34827b2",
+      "revision": "revision-1307d9f0c2ad4bc78d204efd64c4da91",
+      "parent": null,
+      "role_resolution": {
+        "profile": {
+          "role": "process-ui-author",
+          "version": "1",
+          "instructions_version": "process-ui-author-1",
+          "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+          "model_policy": "inherit_default",
+          "allowed_tools": [],
+          "max_repairs": 2
+        },
+        "adapter": "hermes",
+        "model_reference": "gpt-5.6-sol",
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+        "capability_scope": []
+      },
+      "build": {
+        "build_id": "build-713d01b618804bfd8e4ee7ea1005e630",
+        "source_digest": "041152775b64e890d3b908fc00f757a2869f2e0053dd894fe4275f34278bd9af",
+        "manifest_digest": "3b318068374a7a71ee20156ed35831ff71629e163741fd0190b318b7dfcf4ccf",
+        "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+        "bundle_digest": "72c747a810a578fde8067cd94a0022b57e60e9972dd01043c9c69e00b50e1f04",
+        "state": "built",
+        "created_at": "2026-10-03T05:24:41.532948+00:00",
+        "diagnostics": [],
+        "bundled_bytes": 1064233
+      },
+      "previewed_at": "2026-10-03T05:24:47.650317+00:00"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/heat-ui-focused-update-013-saved-revision.json",
+      "sha256": "16f4429e027ce13bcd172700cb22ba5ea67cce1d4a32d490106b98e561d290c6",
+      "ui": "ui-512d6109b37f4c0f89b86d86a34827b2",
+      "revision": "revision-c4ac3eb3c1fb487aa14ac04c0b0cbda0",
+      "parent": "revision-1307d9f0c2ad4bc78d204efd64c4da91",
+      "role_resolution": {
+        "profile": {
+          "role": "process-ui-author",
+          "version": "1",
+          "instructions_version": "process-ui-author-1",
+          "instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+          "model_policy": "inherit_default",
+          "allowed_tools": [],
+          "max_repairs": 2
+        },
+        "adapter": "hermes",
+        "model_reference": "gpt-5.6-sol",
+        "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+        "effective_instructions_digest": "be846897e2b6589bec744ddeac39d8d6b93175d0c62135fad5ed2f6264567832",
+        "capability_scope": []
+      },
+      "build": {
+        "build_id": "build-bce4ec0f76e74fde8a0cb1ec9d39d18a",
+        "source_digest": "d16a99a3f964d58777b2bc9d0285aa6aa7cc111daf585b2cca328cb11b62f84b",
+        "manifest_digest": "bd0915cc38722d00d1db3fd896ff986fd3dac6c74f9ee696d408ae78ad2caf6f",
+        "toolchain_digest": "d18cac667a3cd203d276bc2b2a965e12a7c7d418c20c86d3f4ad612857ec2ede",
+        "bundle_digest": "821d0048e57345064d1e2779804cf71603467b1adb174feb256be81578b08a3f",
+        "state": "built",
+        "created_at": "2026-10-03T05:32:53.967909+00:00",
+        "diagnostics": [],
+        "bundled_bytes": 1066554
+      },
+      "previewed_at": "2026-10-03T05:33:02.453474+00:00"
+    }
+  ],
+  "historical_actual_reports": [
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/actual-model-authoring/status.json",
+      "sha256": "a1855dde8b2632a5dc6e13604ec57191926c9898761f7b3dff5a2e4265b5d7ba",
+      "steps": 13,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/actual-model-focused-update/status.json",
+      "sha256": "77b8c7a7de17fba68f4a55d072a00d4185b6b2adfa9cf957a159ddc83e56a4fb",
+      "steps": 13,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/saved-second-run-waiting-reuse/status.json",
+      "sha256": "d320c3ff1a687e975d07b1cf3f1b4e140300af3d7e1fc05cacd6192b43c7b1be",
+      "steps": 10,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-configured-preparation-and-saved-reuse-verified/second-run-exact-output-parity/status.json",
+      "sha256": "0291b56b47022bdbd9729d0de00f1083aac48010e08c3aba30b012f5648a9354",
+      "steps": 15,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/actual-generation/status.json",
+      "sha256": "e9ca84204c40dd84468a89af9cd68548672e881a311756293fd87aa4c6bdbaa5",
+      "steps": 13,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/focused-update/status.json",
+      "sha256": "a568fc5d08bf56a8b762cabf0ed9111f499b6a2fcc0953776e1d94962d4b91d6",
+      "steps": 13,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/saved-waiting-reuse/status.json",
+      "sha256": "a4edd74dbac446307bae87d7b392221c7d291633f5151f91a4d8f7c97b3fb265",
+      "steps": 10,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-heat-repeat-and-saved-ui-verified/complete-repeat-reuse/status.json",
+      "sha256": "06468361d0b58010a7acb08486eb6a2c8c097308cfdee5c67f00083252b02416",
+      "steps": 13,
+      "scope": "Existing actual model/native engineering workspace proof; original recorded build/run scope retained."
+    }
+  ],
+  "current_code_comparison": {
+    "unchanged_from_qualified_backend": [
+      "packages/agent_adapters/src/agent_adapters/base.py",
+      "packages/agent_adapters/src/agent_adapters/hermes.py",
+      "packages/agent_adapters/src/agent_adapters/hermes_role.py",
+      "packages/agent_adapters/src/agent_adapters/hermes_role_worker.py",
+      "packages/agent_adapters/tests/test_process_ui_author_role.py",
+      "packages/agent_adapters/tests/test_hermes_role_worker.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/authoring.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/toolchain.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/resources/__init__.py",
+      "packages/workspace_service/src/workspace_service/process_interfaces/resources/instructions.md",
+      "packages/workspace_service/src/workspace_service/surfaces/process_ui_static.py",
+      "packages/workspace_service/src/workspace_service/surfaces/process_ui_manifest.py"
+    ],
+    "source_revision_sensitive_owners_checked_at_current_242_case_scope": true
+  },
+  "current_packaged_resources": {
+    "wheel_sha256": "3d80a075de99d39e250837a55367f1aab3843f91bfc880a2dc2e7b26e9ef547f",
+    "files": {
+      "workspace_service/process_interfaces/resources/public/process_client/package.json": "0636ea22f7cc9513f222186d75f8bf3115ef0f70a4097b5d70ee43788eb55f47",
+      "workspace_service/process_interfaces/resources/public/process_client/README.md": "d1ca7f21ad39480d4fdecc4aba487b3a5ddbc326ec30726e49459bb7b2e504f9",
+      "workspace_service/process_interfaces/resources/public/process_client/src/client.ts": "eda1a10d00dd9c1db39bf75f083a013c6aca507412e548b1b6cd28d5f1207c5c",
+      "workspace_service/process_interfaces/resources/public/process_client/src/contracts.generated.ts": "823ddb839496f1672bbdebf9601cda05bf7576cf6f3dc8738fe02d08eda8d021",
+      "workspace_service/process_interfaces/resources/public/process_client/src/errors.ts": "e85ba2e50e7a2b9d6323ae441410682ee3674cbc227254c1946410bc9b85e553",
+      "workspace_service/process_interfaces/resources/public/process_client/src/index.ts": "86176c6b4ae5646d64dfb099d9a958218a5d57c5db1adbe218c8f82b4a9b2882",
+      "workspace_service/process_interfaces/resources/public/process_client/src/presentation.ts": "6e236bcfd02d5c7bec0406ae7b30c949442e0efaf2f48db1d1123f6a4353d16b",
+      "workspace_service/process_interfaces/resources/public/process_client/src/schemas.generated.ts": "cf542237942d98c56d6e01c4eb5876b19c4558d608e29b7aa3eb1253496cec2a",
+      "workspace_service/process_interfaces/resources/public/process_client/src/sse.ts": "c5dd4c60d8b0e6c7fc049ef3b55c7673cb92e2cfc1db8c1756c2beca351f1482",
+      "workspace_service/process_interfaces/resources/public/process_client/src/validation.ts": "522b3d6349e003e4de1bf3f15aa5703a501b4272e1b4c891321565c5a56c2877",
+      "workspace_service/process_interfaces/resources/public/ui_kit/package.json": "d9ed62c6b1968debfdc4065186faed1ab448f5eefec2f5856c215baef4c850ab",
+      "workspace_service/process_interfaces/resources/public/ui_kit/README.md": "4dfab85d753fba029a6425df9e5b6689cad412c74c44dbc08a25d66c04e6e7bd",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/geometry.tsx": "c6cd10de12fb9721b84b15dc06dab3fd3392d821aa242c4a8413d057afe57ef7",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/index.ts": "a217909d076b528d39deb15df186d764ded31d65a1a46e4d75b43921ad98bf50",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/inputs.tsx": "2b3c0da072037b9d5f24e702e02b2cd83c50b6dda6bd67d0a81849ea31ca9fad",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/patterns.tsx": "805adb0858a2194e0fc1ce0267646954b43282afad0f4451c5a472fe8f73c2b9",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/representations.tsx": "90969e1db0afc8d7904bced3e1a174939e6e9058465980f8c535b002c8d7056a",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/result-representation.tsx": "67ee22799b76f8e2f4a661dc7e6d3adf8eae535654086428b67ec81e57f95dfc",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/styles.css": "035426e200bd5f8e681d76b556e0d485734a04fa1a0ac41f139e3e68d7a5725d",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/styles.d.ts": "35d26ea66c86da9701e4f4b467913481ffeae910761cea34c775c5dacb7f8eaa",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/tokens.css": "cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/toolpaths.ts": "1cca5244f9d4eabf538fd0172d0525468f8f43478bc8846b878b4235809011db",
+      "workspace_service/process_interfaces/resources/public/ui_kit/src/working-controls.tsx": "1e012d4a5dc2a34c63a215d5e65e9adae1497f1387dfa3202b613de03ea7ae1d",
+      "workspace_service/process_interfaces/resources/fixed-builder.mjs": "bb340ae294fece8f77adb056916324726d4eeaa2d19f783f697e9f170e5f55ff",
+      "workspace_service/process_interfaces/resources/instructions.md": "558f0845b75297e2b861dc1f5c52af9f56b9f03737cf60a13b7f6387755ba0ef",
+      "workspace_service/process_interfaces/resources/public-api.md": "1380ab0b46ce8622a31bf4da29463c268e88ace5d892b3f5f4c07ef46e04f4c5",
+      "workspace_service/process_interfaces/resources/reference.tsx": "4b36616bb51361db7dd0dd39ebb15c6c9e8abe5eed1b5ee6f52792fc436c56cf",
+      "workspace_service/process_interfaces/resources/toolchain.json": "5fbc509bea25c56a462bed8f77af855510a29db625d6e46183a3863f4a9122df",
+      "workspace_service/process_interfaces/resources/__init__.py": "f160cda97b2d0d841a8cd98fd49775c8c4e88ffad2c0041d62d3ee12229368a0",
+      "workspace_service/surfaces/process_ui_static.py": "9b3ce94b1b06ba2f2907bc80302c491cafbfffc5669dd02ed9c9ce5bd775bd06",
+      "workspace_service/surfaces/process_ui_manifest.py": "43b6046db0632e777835a5dbb7faf62c3e5fda83b82947be2282e0b24b42156f"
+    }
+  },
+  "not_claimed": [
+    "new live model/MCP engineering execution",
+    "new current-wheel Docker browser proof",
+    "new broad style/accessibility signoff",
+    "physical or human engineering acceptance"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "1ed6c2e1302a4eb18ff7575a3fbe5be0",
+  "run_sha256": "f80750c1d2f9d91750552f9a22a114421e727929c85214a408388afb52cd2457",
+  "review_id": "f7c6ad74c0f84f998b25f373338f5952",
+  "review_subject_digest": "07083eb756fa009da14b3a54aa359ba851590f0f11036c749761a5c429cf019e",
+  "review_state": "pending",
+  "decision": null,
+  "engineering_decisions": 0,
+  "external_effects": 0,
+  "source_restored_exactly": true,
+  "reviewed_artifact_restored_exactly": true,
+  "closed_owned_presentations": [
+    {
+      "presentation_id": "d20733a4-d14a-4ee7-b1ce-d5b489dff674",
+      "status": 204
+    }
+  ],
+  "remaining_owned_presentations": 0,
+  "cleanup_run_bytes_unchanged": true,
+  "owned_host_session": 96544,
+  "stop_requested": true
+}

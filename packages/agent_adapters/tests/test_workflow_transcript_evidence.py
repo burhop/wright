@@ -535,7 +535,11 @@ async def test_schema_repair_identifies_nested_missing_field():
         payload = json.loads(request.content)
         sent.append(payload)
         if len(sent) == 2:
-            correction = payload["messages"][-1]["content"]
+            # The repair is part of the self-contained transcript, so decode
+            # its JSON envelope before checking the literal validation detail.
+            correction = json.loads(transcript_text(payload).split("\n", 1)[1])[
+                "translation_repair"
+            ]["instructions"]
             assert '"path":["recipe"]' in correction
             assert '"missing":["height"]' in correction
         arguments = {"recipe": {} if len(sent) == 1 else {"height": 60}}

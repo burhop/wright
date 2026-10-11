@@ -1,0 +1,293 @@
+{
+  "scope": "Isolated native qualification from the exact retained AI-authored design with explicit central-span endpoint rings. No canonical dispatch, approval, or campaign credit.",
+  "attempt": "qualification-p001-009",
+  "source_code_before_sha256": "9466cb4e674b41b6c28218c4c63bb39327d8cf0fa4b3f2bb69aabc08e9f392d7",
+  "source_code_after_sha256": "6bc4ef5295ded318ab0db482b103e8c34ef9ed250265b197c60a8f37c1299dc1",
+  "operation_sha256": "95dcb6b22a69fd94a90b665c115d47e36bf809b855c6badb0327dc5845b70f80",
+  "campaign_credit": false,
+  "launch": {
+    "status": "ready",
+    "server_id": "c45f9577-4848-4871-9991-5aed9f6be08b",
+    "repair_server_id": "a2504f42-1317-4998-9091-81425a853c81",
+    "session_id": "blender-3f75a68ed6f04b73a0339beb05c42f91",
+    "pid": 30776,
+    "post_cleanup_identity": null
+  },
+  "author_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Code executed successfully: Info: File exported successfully\nWRIGHT_RESULT {'object': 'Wright_Handle_QualificationP001009_SourceMesh', 'output': 'C:\\\\Users\\\\markb\\\\wright-feature-081\\\\engineering-workflow-demos\\\\campaign\\\\printed-replacement-part-02\\\\qualification-p001-009\\\\artifacts\\\\source_mesh.stl', 'bounds_min_mm': (-9.0, -12.0, 0.0), 'bounds_max_mm': (105.0, 12.0, 34.0), 'dimensions_mm': (114.0, 24.0, 34.0), 'bolt_centers_mm': ((0.0, 0.0), (96.0, 0.0)), 'hole_diameter_mm': 4.5, 'pad_nominal_mm': (18.0, 24.0, 5.0), 'central_back_clearance_mm': 25.0, 'thumb_recess_depth_mm': 1.5, 'boundary_edges': 0, 'non_manifold_edges': 0, 'vertices': 1830, 'faces': 1676, 'stl_unit_convention': 'millimetres'}\nInfo: Saved as \"native-design.blend\"\n"
+      }
+    ],
+    "structuredContent": {
+      "result": "Code executed successfully: Info: File exported successfully\nWRIGHT_RESULT {'object': 'Wright_Handle_QualificationP001009_SourceMesh', 'output': 'C:\\\\Users\\\\markb\\\\wright-feature-081\\\\engineering-workflow-demos\\\\campaign\\\\printed-replacement-part-02\\\\qualification-p001-009\\\\artifacts\\\\source_mesh.stl', 'bounds_min_mm': (-9.0, -12.0, 0.0), 'bounds_max_mm': (105.0, 12.0, 34.0), 'dimensions_mm': (114.0, 24.0, 34.0), 'bolt_centers_mm': ((0.0, 0.0), (96.0, 0.0)), 'hole_diameter_mm': 4.5, 'pad_nominal_mm': (18.0, 24.0, 5.0), 'central_back_clearance_mm': 25.0, 'thumb_recess_depth_mm': 1.5, 'boundary_edges': 0, 'non_manifold_edges': 0, 'vertices': 1830, 'faces': 1676, 'stl_unit_convention': 'millimetres'}\nInfo: Saved as \"native-design.blend\"\n"
+    },
+    "isError": false
+  },
+  "repair": {
+    "operation": "fixed_native_blender_mesh_repair",
+    "source_preserved": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\source_mesh.stl",
+    "artifacts": [
+      "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\repaired_mesh.stl",
+      "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\mesh-preview.png"
+    ],
+    "before": {
+      "dimensions_mm": [
+        114.0,
+        24.0,
+        34.0
+      ],
+      "mesh": {
+        "vertices": 1830,
+        "edges": 5496,
+        "faces": 3664,
+        "triangles": 3664,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_faces": 0,
+        "connected_components": 1,
+        "signed_volume_mm3": 11039.805048
+      }
+    },
+    "after": {
+      "dimensions_mm": [
+        114.0,
+        24.0,
+        34.0
+      ],
+      "mesh": {
+        "vertices": 1830,
+        "edges": 5247,
+        "faces": 3415,
+        "triangles": 3664,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_faces": 0,
+        "connected_components": 1,
+        "signed_volume_mm3": 11039.805274
+      }
+    },
+    "repair": {
+      "merge_tolerance_mm": 0.001,
+      "degenerate_tolerance_mm": 1e-06,
+      "force_voxel_remesh": false,
+      "envelope_margin_mm": 0.0,
+      "voxel_remesh_used": false,
+      "voxel_size_mm": null,
+      "voxel_iterations": 0,
+      "discarded_components": 0,
+      "decimation_used": false,
+      "triangle_limit": 24000,
+      "planar_cleanup": {
+        "enabled": true,
+        "faces_before": 3664,
+        "faces_after": 3415,
+        "angle_limit_radians": 1e-06
+      }
+    },
+    "orientation": {
+      "action": "preserved_model_axes_and_translated_minimum_z_to_build_plate",
+      "supports": "assigned by the pinned slicer operation"
+    },
+    "checks": {
+      "closed_manifold": true,
+      "outward_normals": true,
+      "single_component": true,
+      "within_triangle_limit": true,
+      "fits_p1s_256mm_cube": true
+    },
+    "content_validated": false,
+    "produced_files": [
+      {
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\repaired_mesh.stl",
+        "size_bytes": 183284,
+        "sha256": "7d94bf4aab2aba14a654a601248d24510cb984506e6f7447714583e894e7d289"
+      },
+      {
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\mesh-preview.png",
+        "size_bytes": 224658,
+        "sha256": "4e4bb770801806747983783174d7d004ee649c5f4153efc9fe3c539ca34f9757"
+      }
+    ],
+    "final_feature_measurements": {
+      "source_sha256": "7d94bf4aab2aba14a654a601248d24510cb984506e6f7447714583e894e7d289",
+      "triangles": 3664,
+      "method": "Actual binary-STL triangles: exact X-slab clipping, bore plane sections, and oriented surface areas.",
+      "bounds_mm": [
+        [
+          -9.0,
+          -12.0,
+          0.0
+        ],
+        [
+          105.0,
+          12.0,
+          34.0
+        ]
+      ],
+      "central_span_x_mm": [
+        15.5,
+        80.5
+      ],
+      "minimum_clearance_mm": 25.0,
+      "minimum_at_mm": [
+        22.91666603088379,
+        3.043807029724121,
+        25.0
+      ],
+      "required_clearance_mm": 25.0,
+      "clearance_pass": true,
+      "bore_sections": [
+        {
+          "z_mm": 1.5,
+          "holes": [
+            {
+              "center_xy_mm": [
+                0.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.49457942699016,
+              "maximum_centered_diameter_mm": 4.5,
+              "section_segments": 128
+            },
+            {
+              "center_xy_mm": [
+                96.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.494575569087953,
+              "maximum_centered_diameter_mm": 4.500003101712807,
+              "section_segments": 128
+            }
+          ],
+          "center_spacing_mm": 96.0
+        },
+        {
+          "z_mm": 2.5,
+          "holes": [
+            {
+              "center_xy_mm": [
+                0.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.49457942699016,
+              "maximum_centered_diameter_mm": 4.5,
+              "section_segments": 128
+            },
+            {
+              "center_xy_mm": [
+                96.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.494575569087962,
+              "maximum_centered_diameter_mm": 4.500003101712807,
+              "section_segments": 128
+            }
+          ],
+          "center_spacing_mm": 96.0
+        },
+        {
+          "z_mm": 3.5,
+          "holes": [
+            {
+              "center_xy_mm": [
+                0.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.49457942699016,
+              "maximum_centered_diameter_mm": 4.5,
+              "section_segments": 128
+            },
+            {
+              "center_xy_mm": [
+                96.0,
+                0.0
+              ],
+              "diameter_xy_mm": [
+                4.5,
+                4.5
+              ],
+              "minimum_centered_clearance_diameter_mm": 4.494575569087953,
+              "maximum_centered_diameter_mm": 4.500003101712807,
+              "section_segments": 128
+            }
+          ],
+          "center_spacing_mm": 96.0
+        }
+      ],
+      "orientation_comparison": [
+        {
+          "orientation": "pads_down",
+          "build_height_mm": 34.0,
+          "flat_bed_contact_area_mm2": 672.2424581238918,
+          "downward_surface_area_beyond_45_degrees_mm2": 847.770174204663
+        },
+        {
+          "orientation": "side",
+          "build_height_mm": 24.0,
+          "flat_bed_contact_area_mm2": 96.0,
+          "downward_surface_area_beyond_45_degrees_mm2": 566.1666007373716
+        }
+      ],
+      "orientation_selection": "pads_down",
+      "orientation_reason": "Pads-down keeps both mounting faces on the bed and bolt bores vertical; supports may contact the rear/underside of the raised bow. Side orientation makes the bores horizontal and places the grip flank/edges at support or bed contact. Inspect the actual selected slice support preview before acceptance.",
+      "limitations": "The 45-degree surface-area measure is a geometric comparison indicator, not a slicer support prediction or acceptance threshold. Bore sections do not replace full engineering review. No physical fit, strength or printing claim."
+    }
+  },
+  "outputs": [
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\mesh-preview.png",
+      "sha256": "4e4bb770801806747983783174d7d004ee649c5f4153efc9fe3c539ca34f9757",
+      "size_bytes": 224658
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\native-design.blend",
+      "sha256": "08f432e8df1b43320f8b9480508daf8280d2611712ca7bb5c66d858556a87cdb",
+      "size_bytes": 603742
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\repaired_mesh.stl",
+      "sha256": "7d94bf4aab2aba14a654a601248d24510cb984506e6f7447714583e894e7d289",
+      "size_bytes": 183284
+    },
+    {
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\printed-replacement-part-02\\qualification-p001-009\\artifacts\\source_mesh.stl",
+      "sha256": "ba8cff41a8f7e3cf351dac741602b24b226753f5d67b2d9d3fe864c57cab816b",
+      "size_bytes": 183284
+    }
+  ],
+  "status": "qualified",
+  "cleanup": {
+    "status": "cleaned",
+    "server_id": "c45f9577-4848-4871-9991-5aed9f6be08b",
+    "repair_server_id": "a2504f42-1317-4998-9091-81425a853c81",
+    "session_id": "blender-3f75a68ed6f04b73a0339beb05c42f91",
+    "pid": 30776,
+    "post_cleanup_identity": {
+      "pid": 30776,
+      "creation_time": "2026-09-22T22:52:20.925412+00:00",
+      "executable": "D:\\repos\\wright\\.local-run\\feature-081-live\\tools\\blender-4.5.10\\blender-4.5.10-windows-x64\\blender.exe"
+    }
+  }
+}

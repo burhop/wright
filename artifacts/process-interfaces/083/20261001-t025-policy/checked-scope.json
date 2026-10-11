@@ -1,0 +1,277 @@
+{
+  "feature": "083-process-working-interfaces",
+  "task": "T025",
+  "date": "2026-10-01",
+  "parent_commit": "7d4c4a115b737f3e86923332bd951e4c0ffa3aa5",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.5",
+    "node": "v25.2.0"
+  },
+  "checks": {
+    "backend_passed": 444,
+    "additional_validator_run_passed": 73,
+    "policy_cases_overlap": true,
+    "components_passed": 136,
+    "browser_stats": {
+      "startTime": "2026-10-01T09:35:02.932Z",
+      "duration": 31295.128999999997,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "production_modules": 927,
+    "generated_schema_check": true,
+    "typecheck": true,
+    "focused_ruff": true,
+    "focused_eslint": true
+  },
+  "private_report_refs": {
+    "backend": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t025-backend-final.log",
+      "sha256": "018f7de0e36033df52688df53d5b56e392f3c3c848ee1363d426ec1ce009455e"
+    },
+    "validation": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t025-validator-final.log",
+      "sha256": "afcc400e3e324c145fecd1a707b3888aa9d50f0fec0a5bba86c6fe381e67b8c6"
+    },
+    "components": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t025-components-checked.json",
+      "sha256": "bb8cafb727229930e97b168e25700e3bb5ea9fc81cba1d1446cd9b368f674a4f"
+    },
+    "browser": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t025-browser-final.json",
+      "sha256": "bc941411023873834db2ccf9f6a3c95b8bd8023fe9a64ca5abfba580227fb66e"
+    },
+    "production": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t025-production-final.log",
+      "sha256": "de3dca5c99d0c99bb70f884b81eeac576ce9ef90be61e70c442425b4004669b4"
+    },
+    "preservation": {
+      "path": "D:\\repos\\wright\\.local-run\\process-interfaces-083\\t025-preservation.json",
+      "sha256": "8f2bc0d11da243a90c0c217b1c8901466f2039ba9861ecbf5e2b9e5f461a1d32"
+    }
+  },
+  "code_hashes": {
+    "packages/core/src/core/workflow_step_outcomes.py": "f93cc1f0a7959293c7f9ca4bd2e75630b7952f73bf12cd642642216a3fc180b8",
+    "packages/core/src/core/process_interactions.py": "07adcb79dfb2b87481ffda813f29c9363165817f60dec3a94bd7f8941b93cc89",
+    "packages/core/src/core/process_schemas/contracts-v1.json": "1187793254310974321ade3aaf0181d474f35047150c7221ede26e1a5e8f7540",
+    "packages/process_client/src/contracts.generated.ts": "acf1bef200c1e64f1834aefc86c949acc7d8cad3a7f64a8906cf87fa505bf5d0",
+    "packages/process_client/src/schemas.generated.ts": "90048d553ed5c628f447dd9deb358bc3bff473e2d1d17565ac05c0eb331a5ccb",
+    "packages/agent_adapters/src/agent_adapters/report_generation.py": "90c9788e18f752642cd25c446948c49b21d70121a0c0d8395f0f77cea8e9b0c6",
+    "packages/agent_adapters/tests/test_workflow_unattended_outcomes.py": "08129040e098bad1aa537dd8e9899716f2d9d630865d18d7edc993632bd8a7f9",
+    "packages/workspace_service/src/workspace_service/workflow_mcp_execution.py": "3864a4ebf71ba07e3dca94fe93b2f5435c5ce8a3be5690399491d63dded3eb4c",
+    "packages/workspace_service/src/workspace_service/workflow_source_execution.py": "86361f40917f6ed1680961a3f0a330fde1b0511c1a9d12a2f9da36d7b9fa1270",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "9b6c9058e739a4e6943d47334d0aef1c1eeb46e2d17bc5a4f3219f9826003926",
+    "packages/workspace_service/src/workspace_service/process_interfaces/owners.py": "4d757198969835f1f0be384be09c1cba7cd5b878e2d9f21174b9b119d24c9159",
+    "packages/workspace_service/src/workspace_service/process_interfaces/projection.py": "3acd0410f123f66367b2eaba2e05cfc7f2a71b7699e541d81cecde1a40e60c4b",
+    "packages/workspace_service/tests/test_workflow_unattended_policy.py": "45ff808a1f9ee732e2dd4bf68bd19954cfbd96f8696486ba33184dc927a3c679",
+    "apps/api/tests/test_process_interface_checkpoints.py": "b0d00bd655e5dd617e958254e77d968f453d892c93a9334ac695cb88fe8aac87",
+    "apps/web/src/components/process-interfaces/CommonProcessView.tsx": "2328d1e766fb9bd3ab2750c6df47d705004750592c3fa305ff12ecc261a3fabf",
+    "apps/web/src/components/process-interfaces/CommonProcessView.spec.tsx": "e357da51c1433f1b124d62ed01b367f112e57dd58d9d153919402ed450616088",
+    "tests/ui-integration/process-common-view.spec.ts": "307d1ddf47b3f6b618fb8af0c00ce51996747bed19dd5df89a49b5dfdeb0ee85",
+    "tests/ui-integration/fixtures/process-common-view.ts": "c1e4f66be39b385e1aeaf5f5996a684c6eb902df769068ac3d01596d2e778d78"
+  },
+  "controlled_api_runs": [
+    {
+      "run_id": "3f05ecb5d1a24d8cbede2a4edab0d944",
+      "source_path": "workflows/test.workflow.wflow",
+      "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+      "status": "failed",
+      "code": "INTERACTION_NOT_DECLARED",
+      "correction": "Supply the missing requirement before starting, connect an upstream producer, or declare a human-input step before this task. Inspect completed operations before another run; they have not been replayed.",
+      "checkpoint_id": "checkpoint-7e52ec8a03f1f50fcb2d02b8",
+      "resume_segments": {
+        "checkpoint-7e52ec8a03f1f50fcb2d02b8": {
+          "state": "outcome_unknown",
+          "subject_digest": "275d409911a0a6a1242020c768158ee2dfaefeaafeca36f2d660170441e92ab2",
+          "started_at": "2026-10-01T09:32:56.824895+00:00"
+        }
+      },
+      "record_sha256": "58448cef4ea07418c4a3fa1a982ed865790e9e49fcd6cd2e66f0d293fcea9f05",
+      "recorded_diagnostics": [
+        {
+          "kind": "step_diagnostic",
+          "at": "2026-10-01T09:32:57.053904+00:00",
+          "task_id": "second",
+          "task_title": "Use selection",
+          "code": "INTERACTION_NOT_DECLARED",
+          "message": "Use selection: additional user input was requested in an unattended step.",
+          "correction": "Supply the missing requirement before starting, connect an upstream producer, or declare a human-input step before this task. Inspect completed operations before another run; they have not been replayed.",
+          "diagnostic": "The allowable load is missing"
+        }
+      ],
+      "partial_result_ids": [
+        "3f05ecb5d1a24d8cbede2a4edab0d944:first:first_out",
+        "3f05ecb5d1a24d8cbede2a4edab0d944:choice:choice_response"
+      ],
+      "actual_model_transport": true,
+      "controlled_model_http": true,
+      "live_model": false,
+      "engineering_acceptance": false
+    },
+    {
+      "run_id": "3610563301f240359659d2754df3d5b2",
+      "source_path": "workflows/test.workflow.wflow",
+      "source_digest": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+      "status": "failed",
+      "code": "MODEL_OUTCOME_INVALID",
+      "correction": "Inspect the prepared instructions and model response. No user interaction or output was accepted; completed operations have not been replayed.",
+      "checkpoint_id": "checkpoint-4f11821edbfec7b5acf8f5cf",
+      "resume_segments": {
+        "checkpoint-4f11821edbfec7b5acf8f5cf": {
+          "state": "outcome_unknown",
+          "subject_digest": "59c287819781b1d9bcae5beba10944eb400c2fdae532322779e56123b26ad320",
+          "started_at": "2026-10-01T09:32:58.558983+00:00"
+        }
+      },
+      "record_sha256": "dc6c114926c4e3a5a95f840927aa2a6e066f8c6c5d898bd3ce3583fd8834faf9",
+      "recorded_diagnostics": [],
+      "partial_result_ids": [
+        "3610563301f240359659d2754df3d5b2:first:first_out",
+        "3610563301f240359659d2754df3d5b2:choice:choice_response"
+      ],
+      "actual_model_transport": true,
+      "controlled_model_http": true,
+      "live_model": false,
+      "engineering_acceptance": false
+    }
+  ],
+  "browser_scopes": [
+    {
+      "browser": "154.0.8037.58",
+      "url": "http://127.0.0.1:5240/workspace/ws-recovery?workflow=canonical&processView=fe2ba551-0b0b-4c39-b034-00d8f9173f6f&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "served_frontend": true,
+      "controlled_http_contracts": true,
+      "live_backend": false,
+      "live_model": false,
+      "live_mcp": false,
+      "physical_operation": false,
+      "user_acceptance": false
+    },
+    {
+      "browser": "154.0.8037.58",
+      "url": "http://127.0.0.1:5240/workspace/ws-recovery?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow&processView=d2b1c1b9-9f0c-4c0e-b86a-bb7f7dc29423&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "served_frontend": true,
+      "controlled_http_contracts": true,
+      "live_backend": false,
+      "live_model": false,
+      "live_mcp": false,
+      "physical_operation": false,
+      "user_acceptance": false
+    },
+    {
+      "browser": "154.0.8037.58",
+      "url": "http://127.0.0.1:5240/workspace/ws-recovery?workflow=canonical&processView=e058a548-617e-44f3-8698-b9e36405afe7&processPath=workflows%2Fmounting-bracket.workflow.wflow&processDigest=5ee7ed546b21cceb2762d8c102ab2fab81a5495d8327b49b4cc0c0df67fa397f&processRun=common-browser-run",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "served_frontend": true,
+      "controlled_http_contracts": true,
+      "live_backend": false,
+      "live_model": false,
+      "live_mcp": false,
+      "physical_operation": false,
+      "user_acceptance": false
+    },
+    {
+      "browser": "154.0.8037.58",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "url": "http://127.0.0.1:5240/workspace/ws-recovery?workflow=canonical",
+      "original_source_sha256": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+      "saved_source_sha256": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d",
+      "saved_definition_revision": 3,
+      "process": {
+        "workspace_id": "ws-recovery",
+        "source_path": "workflows/mounting-bracket.workflow.wflow",
+        "source_digest": "f9c22d9916fc6f2e2500266baaaad0fe47ccaf9f44f90d62e78758cbe3c9aa6d"
+      },
+      "controlled_run_start_count": 0,
+      "served_frontend": true,
+      "controlled_http_contracts": true,
+      "source_edit_save_reopen": true,
+      "runtime_checkpoint_consumption": false,
+      "live_api": false,
+      "live_model": false,
+      "live_mcp": false,
+      "engineering_acceptance": false
+    }
+  ],
+  "browser": {
+    "base_url": "http://127.0.0.1:5240",
+    "browser_executable": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "flags": {
+      "VITE_WRIGHT_PROCESS_DEFINITION_VIEW": "1",
+      "VITE_WRIGHT_WORKFLOW_COMPOSER": "1",
+      "VITE_WRIGHT_WORKFLOW_RECOVERY": "1"
+    },
+    "workspace_entry": true,
+    "served_vite_sources": true,
+    "production_assets_served": false,
+    "screenshots_visually_inspected": [
+      "process-common-view-shows--bb95c-reopens-the-same-failed-run-chromium/undeclared-input-diagnostic.png"
+    ],
+    "observed_host_notices": [
+      "ResizeObserver loop completed with undelivered notifications (existing editor host).",
+      "Unmocked background /api/workspace/surfaces/events proxy encountered unavailable local API port 8000; this browser lane uses controlled HTTP contracts.",
+      "Existing React Flow attribution configuration warning."
+    ]
+  },
+  "production_assets": {
+    ".local-run\\process-interfaces-083\\t025-production-final\\assets\\index-DmrbrhrH.js": "3cd4607a9135b4ee7f1d253993efc5d0c3f276981a2902053c7516fbd62f1173",
+    ".local-run\\process-interfaces-083\\t025-production-final\\assets\\index-Dr397Mav.css": "b5fccbafd6cb25b7c7bf9e11082c40c77ae49b96f27397f0dc4344433ec21bc3",
+    ".local-run\\process-interfaces-083\\t025-production-final\\assets\\NativeProcessPage-5ZsrkqfC.js": "33e8113abef6f1bf92a7199a7e30bdec5c66e609462b60ac777fe489bf12e47b",
+    ".local-run\\process-interfaces-083\\t025-production-final\\assets\\NativeProcessPage-BR3Y0gMw.css": "cbd1e90b1f97d6c435e588bb02f95d93a61f0e15b6ea72177ee1a0ed4eb216fc",
+    ".local-run\\process-interfaces-083\\t025-production-final\\assets\\plotly.min-dkCWgMZq.js": "caec8938c038746eff0681cdd6b9649fbad06633bc06c70a1454511563fcce2c",
+    ".local-run\\process-interfaces-083\\t025-production-final\\assets\\rolldown-runtime-Dd_uD5pT.js": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+  },
+  "preservation": {
+    "prototype_hashes": {
+      "apps/web/src/components/pages/PrintPartDemoPage.tsx": true,
+      "apps/web/src/services/workspace-service.ts": true,
+      "packages/workspace_service/src/workspace_service/print_part_demo_printer.py": true,
+      "scripts/configure_print_demo_offline.py": true,
+      "scripts/print_demo_p1s_mcp.py": true,
+      "docs/demos/prompt-to-printed-part-studio-automation.md": true,
+      "scripts/configure_print_demo_studio.py": true,
+      "scripts/print_demo_studio.py": true,
+      "scripts/windows/inspect-bambu-studio.ps1": true,
+      "scripts/windows/studio-desktop.ps1": true
+    },
+    "protected_hashes": {
+      "specs/082-output-content-validation/heat01-attempt902-engineering-review.md": true,
+      "tests/datasets/engineering-workflows/bindings/printed-replacement-part.json": true,
+      "tests/datasets/engineering-workflows/bindings/heat-spreader-sizing.json": true
+    },
+    "approved_context_equals_HEAD": {
+      "AGENTS.md": true,
+      ".specify/feature.json": true
+    },
+    "original_mixed_deltas_preserved": {
+      "main": true,
+      "workspace": true
+    }
+  },
+  "limitations": {
+    "live_model": false,
+    "live_mcp": false,
+    "physical_operation": false,
+    "human_engineering_acceptance": false,
+    "full_goal_complete": false,
+    "legacy_injected_callbacks_remain_trusted_strings": true,
+    "failed_claim_replay_remains_blocked": true
+  }
+}

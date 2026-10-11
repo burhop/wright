@@ -1,0 +1,375 @@
+{
+  "workflow_path": "workflows/external-slice-qualification.workflow.wflow",
+  "source_digest": "838fe94be88d49987bcce5563bc9fd769dc04cba7441b74863430f18c40b03ee",
+  "owner": {
+    "host": "Work17",
+    "lease": "workflow-run:workspace-083-external-slice-006:76baa59a1ee24762908af38bf125b542"
+  },
+  "started_at": "2026-10-03T09:27:17.771192+00:00",
+  "status": "failed",
+  "events": [
+    {
+      "kind": "run_started",
+      "run_id": "76baa59a1ee24762908af38bf125b542",
+      "at": "2026-10-03T09:27:17.771192+00:00",
+      "task_id": "",
+      "task_title": "external-slice-qualification",
+      "run_log_path": "runs/external-slice-qualification/76baa59a1ee24762908af38bf125b542.json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T09:27:18.104566+00:00",
+      "task_id": "qualified_geometry",
+      "task_title": "Create isolated qualification geometry",
+      "execution_kind": "mcp",
+      "tool": "qualification-083-runtime-geometry__execute_blender_code",
+      "arguments": {
+        "code": "import bpy\nbpy.ops.mesh.primitive_cube_add(size=1)\nobj=bpy.context.object\nobj.name='RuntimeQualificationCube'\nobj.dimensions=(10,8,6)\nbpy.ops.object.transform_apply(location=False,rotation=False,scale=True)\nbpy.ops.wm.stl_export(filepath='/workspace/qualification/artifacts/source_mesh.stl',export_selected_objects=True)\nprint('Actual qualification geometry exported: 10 x 8 x 6 model units')\n",
+        "user_prompt": "resume"
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T09:27:19.983347+00:00",
+      "task_id": "qualified_geometry",
+      "task_title": "Create isolated qualification geometry",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "76baa59a1ee24762908af38bf125b542:qualified_geometry:source_mesh",
+        "kind": "file",
+        "name": "qualification/artifacts/source_mesh.stl",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/source_mesh.stl",
+            "format": "stl",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+            "size_bytes": 684
+          }
+        ],
+        "provenance": {
+          "run_id": "76baa59a1ee24762908af38bf125b542",
+          "task_id": "qualified_geometry",
+          "output_port": "source_mesh",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T09:27:20.013550+00:00",
+      "task_id": "qualified_geometry",
+      "task_title": "Create isolated qualification geometry",
+      "response": "{\n  \"result\": \"Code executed successfully: Actual qualification geometry exported: 10 x 8 x 6 model units\\n\"\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T09:27:20.307588+00:00",
+      "task_id": "invoke_external_slice_inspect_actual_package",
+      "task_title": "Slice the actual upstream geometry with the selected independent provider",
+      "execution_kind": "mcp",
+      "tool": "qualification-083-runtime-slicer__slice_model_file",
+      "arguments": {
+        "source": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-slice-runtime-006\\qualification\\artifacts\\source_mesh.stl",
+        "output": "C:\\Users\\markb\\.codex\\visualizations\\2026\\09\\24\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\external-slice-runtime-006\\qualification\\artifacts\\slice_package.gcode.3mf",
+        "plate": 1,
+        "orient": false,
+        "arrange": true,
+        "confirm": true
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T09:27:22.696511+00:00",
+      "task_id": "invoke_external_slice_inspect_actual_package",
+      "task_title": "Slice the actual upstream geometry with the selected independent provider",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "76baa59a1ee24762908af38bf125b542:invoke_external_slice_inspect_actual_package:external_slice_package",
+        "kind": "file",
+        "name": "qualification/artifacts/slice_package.gcode.3mf",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/slice_package.gcode.3mf",
+            "format": "3mf",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "d152d288510c7e52762f2c887d26be9973eadbe5ae0aa3ddbee83550c3705ec3",
+            "size_bytes": 41968
+          }
+        ],
+        "provenance": {
+          "run_id": "76baa59a1ee24762908af38bf125b542",
+          "task_id": "invoke_external_slice_inspect_actual_package",
+          "output_port": "external_slice_package",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T09:27:22.717574+00:00",
+      "task_id": "invoke_external_slice_inspect_actual_package",
+      "task_title": "Slice the actual upstream geometry with the selected independent provider",
+      "response": "{\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{\\n  \\\"ok\\\": true,\\n  \\\"source\\\": \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\source_mesh.stl\\\",\\n  \\\"output\\\": \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\slice_package.gcode.3mf\\\",\\n  \\\"plate\\\": 1,\\n  \\\"slicer\\\": \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\feature-081-live\\\\\\\\tools\\\\\\\\bambu-studio-2.8.2.61\\\\\\\\bambu-studio.exe\\\",\\n  \\\"bytes\\\": 41968,\\n  \\\"argv\\\": [\\n    \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\feature-081-live\\\\\\\\tools\\\\\\\\bambu-studio-2.8.2.61\\\\\\\\bambu-studio.exe\\\",\\n    \\\"--slice\\\",\\n    \\\"1\\\",\\n    \\\"--debug\\\",\\n    \\\"1\\\",\\n    \\\"--export-3mf\\\",\\n    \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\slice_package.gcode.3mf\\\",\\n    \\\"--load-settings\\\",\\n    \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\process-interfaces-083\\\\\\\\t043-slicer-003\\\\\\\\configured-provider-presets\\\\\\\\machine-profile.json;D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\process-interfaces-083\\\\\\\\t043-slicer-003\\\\\\\\configured-provider-presets\\\\\\\\process-profile.json\\\",\\n    \\\"--load-filaments\\\",\\n    \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\process-interfaces-083\\\\\\\\t043-slicer-003\\\\\\\\configured-provider-presets\\\\\\\\filament-profile.json\\\",\\n    \\\"--arrange\\\",\\n    \\\"1\\\",\\n    \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\source_mesh.stl\\\"\\n  ]\\n}\"\n    }\n  ]\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T09:27:22.846236+00:00",
+      "task_id": "retain_slice_response_inspect_actual_package",
+      "task_title": "Retain the actual external provider response",
+      "execution_kind": "mcp",
+      "tool": "wright-workspace-files__write_text_document",
+      "arguments": {
+        "relativePath": "qualification/artifacts/slice-provider-response.json",
+        "mediaType": "application/json",
+        "overwrite": false,
+        "content": "{\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"{\\n  \\\"ok\\\": true,\\n  \\\"source\\\": \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\source_mesh.stl\\\",\\n  \\\"output\\\": \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\slice_package.gcode.3mf\\\",\\n  \\\"plate\\\": 1,\\n  \\\"slicer\\\": \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\feature-081-live\\\\\\\\tools\\\\\\\\bambu-studio-2.8.2.61\\\\\\\\bambu-studio.exe\\\",\\n  \\\"bytes\\\": 41968,\\n  \\\"argv\\\": [\\n    \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\feature-081-live\\\\\\\\tools\\\\\\\\bambu-studio-2.8.2.61\\\\\\\\bambu-studio.exe\\\",\\n    \\\"--slice\\\",\\n    \\\"1\\\",\\n    \\\"--debug\\\",\\n    \\\"1\\\",\\n    \\\"--export-3mf\\\",\\n    \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\slice_package.gcode.3mf\\\",\\n    \\\"--load-settings\\\",\\n    \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\process-interfaces-083\\\\\\\\t043-slicer-003\\\\\\\\configured-provider-presets\\\\\\\\machine-profile.json;D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\process-interfaces-083\\\\\\\\t043-slicer-003\\\\\\\\configured-provider-presets\\\\\\\\process-profile.json\\\",\\n    \\\"--load-filaments\\\",\\n    \\\"D:\\\\\\\\repos\\\\\\\\wright\\\\\\\\.local-run\\\\\\\\process-interfaces-083\\\\\\\\t043-slicer-003\\\\\\\\configured-provider-presets\\\\\\\\filament-profile.json\\\",\\n    \\\"--arrange\\\",\\n    \\\"1\\\",\\n    \\\"C:\\\\\\\\Users\\\\\\\\markb\\\\\\\\.codex\\\\\\\\visualizations\\\\\\\\2026\\\\\\\\09\\\\\\\\24\\\\\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\\\\\external-slice-runtime-006\\\\\\\\qualification\\\\\\\\artifacts\\\\\\\\source_mesh.stl\\\"\\n  ]\\n}\"\n    }\n  ]\n}"
+      },
+      "output_format": "json"
+    },
+    {
+      "kind": "integration_document_write_authorized",
+      "at": "2026-10-03T09:27:23.324179+00:00",
+      "run_id": "76baa59a1ee24762908af38bf125b542",
+      "task_id": "retain_slice_response_inspect_actual_package",
+      "actor": "integration_test:083-external-slice-runtime-006",
+      "integration_policy_digest": "f164604073cc73ebe457fe546f407cac6ae56aeb0e5ec63ac6a302c17bd7cfea",
+      "source_digest": "838fe94be88d49987bcce5563bc9fd769dc04cba7441b74863430f18c40b03ee",
+      "dataset_digest": "f49a5f72c1a742b613e30b018e78e0f8b0a909bb6d0c1cc024772deec08926dc",
+      "tool": "wright-workspace-files__write_text_document",
+      "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12",
+      "request_id": "c2c3f236c4924de7bf3f1353418b70fb",
+      "approval": "workspace_write_approval",
+      "relative_path": "qualification/artifacts/slice-provider-response.json",
+      "arguments_digest": "64f964ae27aef94408bf4da41c62e4bdff0d01cff0793d2a6b51ea80b5368fa9",
+      "content_sha256": "1b1bbe81f07d84d13ccc7ef6b977d07d64a8a52577fe0ab2953ae6d1fbd0efb9",
+      "content_bytes": 1826,
+      "media_type": "application/json"
+    },
+    {
+      "kind": "result_ready",
+      "at": "2026-10-03T09:27:23.541497+00:00",
+      "task_id": "retain_slice_response_inspect_actual_package",
+      "task_title": "Retain the actual external provider response",
+      "engineering_result": {
+        "schema_version": 1,
+        "id": "76baa59a1ee24762908af38bf125b542:retain_slice_response_inspect_actual_package:provider_response",
+        "kind": "file",
+        "name": "qualification/artifacts/slice-provider-response.json",
+        "representations": [
+          {
+            "kind": "workspace_file",
+            "location": "qualification/artifacts/slice-provider-response.json",
+            "format": "json",
+            "provider_id": "",
+            "resource_id": "",
+            "revision": null,
+            "durability": "persistent",
+            "sha256": "1b1bbe81f07d84d13ccc7ef6b977d07d64a8a52577fe0ab2953ae6d1fbd0efb9",
+            "size_bytes": 1826
+          }
+        ],
+        "provenance": {
+          "run_id": "76baa59a1ee24762908af38bf125b542",
+          "task_id": "retain_slice_response_inspect_actual_package",
+          "output_port": "provider_response",
+          "input_revisions": [],
+          "definition_digest": null,
+          "binding_digest": null
+        },
+        "exports": [],
+        "artifact_role": "deliverable"
+      }
+    },
+    {
+      "kind": "step_completed",
+      "at": "2026-10-03T09:27:23.560413+00:00",
+      "task_id": "retain_slice_response_inspect_actual_package",
+      "task_title": "Retain the actual external provider response",
+      "response": "{\n  \"artifactId\": \"artifact-fe0f303e95b94b479893ccedc23fc7a8\",\n  \"relativePath\": \"qualification/artifacts/slice-provider-response.json\",\n  \"mediaType\": \"application/json\",\n  \"sha256\": \"1b1bbe81f07d84d13ccc7ef6b977d07d64a8a52577fe0ab2953ae6d1fbd0efb9\",\n  \"bytes\": 1826\n}",
+      "output_format": "json"
+    },
+    {
+      "kind": "step_started",
+      "at": "2026-10-03T09:27:23.721724+00:00",
+      "task_id": "inspect_actual_package",
+      "task_title": "Inspect actual package",
+      "execution_kind": "mcp",
+      "tool": "qualification-083-runtime-inspection__run_simulation",
+      "arguments": {
+        "solver": "skfem",
+        "input_content": "import hashlib\nfrom pathlib import Path\nreader=Path('/workspace/qualification/inputs/passive-representations.py').read_bytes()\nassert hashlib.sha256(reader).hexdigest()=='c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38'\noperation=Path('/workspace/qualification/inputs/inspect_manufacturing_package.py').read_bytes()\nassert hashlib.sha256(operation).hexdigest()=='7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568'\nreader_namespace={'__name__':'passive_reader'}\noperation_namespace={'__name__':'package_inspection'}\nexec(compile(reader,'passive-representations.py','exec'),reader_namespace)\nexec(compile(operation,'inspect_manufacturing_package.py','exec'),operation_namespace)\nprint(operation_namespace['run']({'workspace_root': '/workspace', 'source_mesh': 'qualification/artifacts/source_mesh.stl', 'slice_package': 'qualification/artifacts/slice_package.gcode.3mf', 'provider_response': 'qualification/artifacts/slice-provider-response.json', 'output_root': 'qualification/artifacts', 'profiles': {'machine': 'qualification/inputs/machine-profile.json', 'process': 'qualification/inputs/process-profile.json', 'filament': 'qualification/inputs/filament-profile.json'}, 'gcode_entry': 'Metadata/plate_1.gcode', 'success_field': 'ok', 'success_contract': 'Selected independent slicer revision 7b50d0288fb7b91af8af422b96c4df4db0f1110c reports ok=true only after offline CLI return code zero; the original provider response and package are retained. This is provider-contract evidence, not an independently observed exit code.', 'expected_response_fields': {'source': 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\external-slice-runtime-006\\\\qualification\\\\artifacts\\\\source_mesh.stl', 'output': 'C:\\\\Users\\\\markb\\\\.codex\\\\visualizations\\\\2026\\\\09\\\\24\\\\01a0d4b8-b5fa-79d0-8e8b-fc78c3dfd056\\\\external-slice-runtime-006\\\\qualification\\\\artifacts\\\\slice_package.gcode.3mf', 'plate': 1}, 'operation_label': 'actual_local_bambu_slice', 'legacy_previews': True, 'nominal_layer_section': {'start_marker': '; MACHINE_START_GCODE_END', 'end_marker': '; MACHINE_END_GCODE_START'}},reader_namespace['read_3mf_toolpaths']))\n",
+        "job_name": "/workspace/qualification/artifacts/package-inspection",
+        "critic_approved": false
+      },
+      "output_format": "json"
+    }
+  ],
+  "execution_context": {
+    "allowed_tools": [
+      {
+        "name": "qualification-083-runtime-geometry__execute_blender_code",
+        "schema_digest": "6f5adf25d256d147855b8dfa921ba45a30830967b8e52a47b376c523ed32069c",
+        "server_id": "qualification-083-runtime-geometry"
+      },
+      {
+        "name": "qualification-083-runtime-inspection__run_simulation",
+        "schema_digest": "28a1112293f919903728dbae33dda9477ffa0ff7128558aa526d20fdf801bdf5",
+        "server_id": "qualification-083-runtime-inspection"
+      },
+      {
+        "name": "qualification-083-runtime-slicer__slice_model_file",
+        "schema_digest": "487457d564ee40aed5ade8edc46fb64d319e542309624991c2f7031d5802cec1",
+        "server_id": "qualification-083-runtime-slicer"
+      },
+      {
+        "name": "wright-workspace-files__write_text_document",
+        "schema_digest": "66c045c726240dd539b71339450e63e3056b4cf2c8d30954d407c027a17b0b12",
+        "server_id": "wright-workspace-files"
+      }
+    ],
+    "approval_mode": "auto",
+    "campaign_id": "083-external-slice-runtime-006",
+    "created_at": 1791019632,
+    "dataset_digest": "f49a5f72c1a742b613e30b018e78e0f8b0a909bb6d0c1cc024772deec08926dc",
+    "dataset_id": "isolated-stage-integration-006",
+    "expires_at": 1791023232,
+    "input_files": {
+      "qualification/inputs/filament-profile.json": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "qualification/inputs/inspect_manufacturing_package.py": "7035a1f2418b10171e31d57faccc62e14d6b4d92bfeb62073f1c1b90ab1e2568",
+      "qualification/inputs/machine-profile.json": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "qualification/inputs/passive-representations.py": "c0c9a6780ddc44b879ad1d5830dd29c39cceb2b9e0af2c25a0f2e55ff2269b38",
+      "qualification/inputs/process-profile.json": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3"
+    },
+    "output_root": "qualification/artifacts",
+    "schema_version": 1,
+    "source_digest": "838fe94be88d49987bcce5563bc9fd769dc04cba7441b74863430f18c40b03ee",
+    "source_path": "workflows/external-slice-qualification.workflow.wflow",
+    "test_destinations": [],
+    "workspace_id": "workspace-083-external-slice-006",
+    "integration_policy_digest": "f164604073cc73ebe457fe546f407cac6ae56aeb0e5ec63ac6a302c17bd7cfea",
+    "actor": "integration_test:083-external-slice-runtime-006",
+    "execution_kind": "integration"
+  },
+  "run_id": "76baa59a1ee24762908af38bf125b542",
+  "required_step_ids": [
+    "qualified_geometry",
+    "invoke_external_slice_inspect_actual_package",
+    "retain_slice_response_inspect_actual_package",
+    "inspect_actual_package"
+  ],
+  "partial_results": {
+    "76baa59a1ee24762908af38bf125b542:qualified_geometry:source_mesh": {
+      "schema_version": 1,
+      "id": "76baa59a1ee24762908af38bf125b542:qualified_geometry:source_mesh",
+      "kind": "file",
+      "name": "qualification/artifacts/source_mesh.stl",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/source_mesh.stl",
+          "format": "stl",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+          "size_bytes": 684
+        }
+      ],
+      "provenance": {
+        "run_id": "76baa59a1ee24762908af38bf125b542",
+        "task_id": "qualified_geometry",
+        "output_port": "source_mesh",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "76baa59a1ee24762908af38bf125b542:invoke_external_slice_inspect_actual_package:external_slice_package": {
+      "schema_version": 1,
+      "id": "76baa59a1ee24762908af38bf125b542:invoke_external_slice_inspect_actual_package:external_slice_package",
+      "kind": "file",
+      "name": "qualification/artifacts/slice_package.gcode.3mf",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/slice_package.gcode.3mf",
+          "format": "3mf",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "d152d288510c7e52762f2c887d26be9973eadbe5ae0aa3ddbee83550c3705ec3",
+          "size_bytes": 41968
+        }
+      ],
+      "provenance": {
+        "run_id": "76baa59a1ee24762908af38bf125b542",
+        "task_id": "invoke_external_slice_inspect_actual_package",
+        "output_port": "external_slice_package",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    },
+    "76baa59a1ee24762908af38bf125b542:retain_slice_response_inspect_actual_package:provider_response": {
+      "schema_version": 1,
+      "id": "76baa59a1ee24762908af38bf125b542:retain_slice_response_inspect_actual_package:provider_response",
+      "kind": "file",
+      "name": "qualification/artifacts/slice-provider-response.json",
+      "representations": [
+        {
+          "kind": "workspace_file",
+          "location": "qualification/artifacts/slice-provider-response.json",
+          "format": "json",
+          "provider_id": "",
+          "resource_id": "",
+          "revision": null,
+          "durability": "persistent",
+          "sha256": "1b1bbe81f07d84d13ccc7ef6b977d07d64a8a52577fe0ab2953ae6d1fbd0efb9",
+          "size_bytes": 1826
+        }
+      ],
+      "provenance": {
+        "run_id": "76baa59a1ee24762908af38bf125b542",
+        "task_id": "retain_slice_response_inspect_actual_package",
+        "output_port": "provider_response",
+        "input_revisions": [],
+        "definition_digest": null,
+        "binding_digest": null
+      },
+      "exports": [],
+      "artifact_role": "deliverable"
+    }
+  },
+  "error": "The task did not produce the expected file: qualification/artifacts/slice_package.gcode.3mf.",
+  "code": "WORKFLOW_NOT_READY",
+  "correction": "Inspect the tool results and correct the task or expected filename.",
+  "execution_ended_at": "2026-10-03T09:27:25.763622+00:00",
+  "completed_at": "2026-10-03T09:27:25.763622+00:00"
+}

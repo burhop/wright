@@ -1,0 +1,19 @@
+{
+  "arguments": {
+    "operation": "add_component",
+    "lib_id": "Connector_Generic:Conn_01x06",
+    "position": [
+      125,
+      50
+    ],
+    "reference": "J0",
+    "value": "J0 interconnect representation"
+  },
+  "is_error": false,
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"ok\",\"reference\":\"J0\",\"lib_id\":\"Connector_Generic:Conn_01x06\",\"value\":\"J0 interconnect representation\",\"position\":[124.46,49.53]}"
+    }
+  ]
+}

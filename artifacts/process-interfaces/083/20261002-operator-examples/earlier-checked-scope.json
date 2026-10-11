@@ -1,0 +1,13 @@
+{
+  "cli_real_authenticated_GETs": 2,
+  "same_process_checked": true,
+  "existing_job_state": "saved",
+  "authoring_available": true,
+  "authoring_and_interface_rows_unchanged": true,
+  "no_generation_build_process_or_action_submission": true,
+  "physical_dispatch": false,
+  "unit_tests": 12,
+  "api_url": "http://127.0.0.1:8030",
+  "frontend_url": "http://127.0.0.1:5243",
+  "full_feature_complete": false
+}

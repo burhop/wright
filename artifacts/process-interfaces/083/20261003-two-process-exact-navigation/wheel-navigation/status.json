@@ -1,0 +1,71 @@
+{
+  "title": "Exact assessment and producing-step navigation from the saved wheel view",
+  "summary": "A focused continuation of the verified normal-workspace journey on the same actual isolated run. No engineering decisions or physical actions.",
+  "overall": "pass",
+  "updated": "2026-10-03T03:10:49.537Z",
+  "manualSteps": [
+    {
+      "label": "Open saved view",
+      "instruction": "Open the saved wheel working-interface link."
+    },
+    {
+      "label": "Inspect assessment",
+      "instruction": "On repaired_mesh.stl, click Open assessment. Inspect the held assessment in the common view."
+    },
+    {
+      "label": "Inspect producer",
+      "instruction": "Reopen the saved interface link. On repaired_mesh.stl, click Open producing step. Inspect the selected repair block."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Saved exact wheel working view",
+      "summary": "The saved interface reads the original results and held assessment.",
+      "purpose": "Use the verified saved working URL, not the preview.",
+      "action": "Open the saved wheel working-interface link.",
+      "controls": [
+        "Open assessment",
+        "Open producing step"
+      ],
+      "expected": "Nineteen results and exact repaired-mesh navigation in a working context.",
+      "actual": "Actual working context and both scoped navigation controls available.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Exact held assessment and result focus",
+      "summary": "The saved interface opens the original eighteen-check assessment in Wright’s common evidence view.",
+      "purpose": "Verify exact output-to-assessment identity without answering a review.",
+      "action": "Click Open assessment on repaired_mesh.stl.",
+      "controls": [
+        "Open assessment",
+        "Representation"
+      ],
+      "expected": "Seventeen passes, one blocked human review, exact repaired-mesh result focus.",
+      "actual": "Full held assessment opened with exact result focus; no review response submitted.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Exact producing repair block selected",
+      "summary": "The working interface returns to the accepted repair step and its inspector.",
+      "purpose": "Verify selected producer, not just that some diagram opened.",
+      "action": "Reopen the saved interface and click Open producing step on repaired_mesh.stl.",
+      "controls": [
+        "Open producing step",
+        "Inspector",
+        "Workflow files"
+      ],
+      "expected": "Exact accepted repair block selected with inspector and no stale-source warning.",
+      "actual": "Exact repair block selected in the established editor; accepted source and run remain unchanged.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    }
+  ]
+}

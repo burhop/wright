@@ -1,0 +1,81 @@
+{
+  "status": "retirement_and_native_diagnostic_passed",
+  "source_commit_before_changes": "369993bee0eb750681da0fc31a7f8fd4643087ca",
+  "source_sha256": {
+    "scripts/probe_printed_blender_binding.py": "2b3fa5cd2b516afb742a1538e21c7d8352332b4a638ad7d6078400938873efd4",
+    "tests/test_independent_slice_diagnostic.py": "179ab8495572d1ad5a6d5aeece32f959288a391e945b9708483abfef631bcc01",
+    "tests/test_embedded_slice_retirement.py": "98860f20c3737082503e2a75ac4d175db2c658c1816173ee31c95a7e37a5e774"
+  },
+  "retired_paths": [
+    "scripts/engineering_dataset_slice.py",
+    "scripts/engineering_dataset_slice_mcp.py",
+    "scripts/engineering_jig_slice_mcp.py",
+    "tests/test_engineering_jig_slice_mcp.py"
+  ],
+  "original_archives": {
+    "scripts/engineering_dataset_slice.py": {
+      "retained_file": "archive-engineering_dataset_slice.py.txt",
+      "bytes": 17555,
+      "sha256": "27f281429a018b9dc2db969d8ce84209ceaa3cbf33955f417ba43a9cabdcaf45"
+    },
+    "scripts/engineering_dataset_slice_mcp.py": {
+      "retained_file": "archive-engineering_dataset_slice_mcp.py.txt",
+      "bytes": 2697,
+      "sha256": "99852ba477a4495b255af8f2be2031e5810d2a49459effdf41003512d354e4da"
+    },
+    "scripts/engineering_jig_slice_mcp.py": {
+      "retained_file": "archive-engineering_jig_slice_mcp.py.txt",
+      "bytes": 2646,
+      "sha256": "9943053f566993263f6e93fc5563962dce9cc56e0e97eb5fae88bddc8e605f79"
+    },
+    "tests/test_engineering_jig_slice_mcp.py": {
+      "retained_file": "archive-test_engineering_jig_slice_mcp.py.txt",
+      "bytes": 2582,
+      "sha256": "06c01febb978d4a71cc2787abb389da5d3716d7575cf3b8397c256b912a5588d"
+    }
+  },
+  "fresh_final_passes": 175,
+  "ruff": "three owning files pass",
+  "native_calls": 1,
+  "native_layers": 30,
+  "native_path_segments": {
+    "model": 1016,
+    "support": 0,
+    "unclassified": 14
+  },
+  "package_sha256": "40fa9808a6755c1c1d890949ed516a862755b7a47fd4fb2efe453dc7cf6dff71",
+  "direct_input_schema_matches_pin": true,
+  "selected_provider_environment_fresh": true,
+  "selected_provider_cache_fresh": true,
+  "native_host_application_reused": true,
+  "clean_linux_catalog_qualification": false,
+  "resolved_python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+  "resolved_mcp": "1.28.1",
+  "native_receipt_metadata_limit": "fresh_selected_install=false was inherited in the native helper; separate installation.json proves fresh provider environment/cache, with reused existing native host and Python base",
+  "owned_mcp_cleanup": [
+    {
+      "pid": 40404,
+      "returncode": 0,
+      "stopped": true
+    }
+  ],
+  "physical_dispatch": false,
+  "human_engineering_acceptance": false,
+  "workflow_dispatched": false,
+  "new_provider_implementation": false,
+  "public_promotion": false,
+  "pending": [
+    "live canonical-runtime qualification of the new preparer bindings",
+    "remaining selected clean-container/host/gateway qualification",
+    "existing mesh-repair wrapper and other active implementation audit",
+    "current UI/editor/installed/a11y/regression and full requirement audit"
+  ],
+  "T043_T048_T049_complete": false,
+  "task_ledger": "49 checked / 8 open",
+  "commands": [
+    ".venv/Scripts/python.exe .local-run/process-interfaces-083/t048-native-independent-slice-probe-002.py (terminal once-only helper; do not replay)",
+    ".venv/Scripts/python.exe -m pytest tests/test_embedded_slice_retirement.py tests/test_independent_slice_diagnostic.py tests/test_engineering_external_slice_binding.py tests/test_printed_dataset_bindings.py tests/test_drill_jig_source_paths.py tests/test_manufacturing_package_inspection.py tests/test_engineering_campaign_binding_helpers.py tests/test_engineering_dataset_input_bindings.py -q --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t048-external-slice-probe-retirement-001/pytest-003 --junitxml=.local-run/process-interfaces-083/t048-external-slice-probe-retirement-001/retired-caller-checks-002.xml",
+    ".venv/Scripts/python.exe -m pytest tests/external/process_validation/test_printing.py tests/external/process_validation/test_printed_profiles.py tests/test_campaign_example_renewal.py tests/test_campaign_example_renewal_revision.py tests/test_process_interface_examples.py tests/test_printed_validator_campaign_wrapper.py tests/test_printed_handle_measurements.py -q --tb=short -p no:cacheprovider --basetemp=.local-run/process-interfaces-083/t048-external-slice-probe-retirement-001/pytest-004 --junitxml=.local-run/process-interfaces-083/t048-external-slice-probe-retirement-001/affected-retirement-checks.xml",
+    ".venv/Scripts/python.exe -m ruff check --no-cache scripts/probe_printed_blender_binding.py tests/test_independent_slice_diagnostic.py tests/test_embedded_slice_retirement.py"
+  ]
+}

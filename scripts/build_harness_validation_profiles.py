@@ -1,0 +1,295 @@
+"""Build full-scope sensor-fan harness profiles from frozen source schedules."""
+
+from __future__ import annotations
+
+import csv
+import hashlib
+from pathlib import Path
+
+from core.process_validation import ValidationProfile, canonical_json
+from workspace_service.process_validation.baselines import load_baseline
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DESTINATION = (
+    ROOT
+    / "packages/workspace_service/src/workspace_service/process_validation/profiles"
+)
+SOURCES = {
+    "sensor-fan-harness-01": "01-desktop-incubator",
+    "sensor-fan-harness-02": "02-growth-rack-long-run",
+    "sensor-fan-harness-03": "03-dual-zone-air-sampler",
+}
+
+
+def check(
+    identifier,
+    requirement_ids,
+    role,
+    reader="structured",
+    selector="",
+    constraint=None,
+    unit=None,
+    method="structured_value",
+    parameters=None,
+):
+    return {
+        "id": identifier,
+        "version": "1",
+        "requirement_ids": requirement_ids,
+        "subject_role": role,
+        "reader": reader,
+        "selector": selector,
+        "constraint": constraint or {"operator": "exists"},
+        "unit": unit,
+        "frame": None,
+        "evidence_method": method,
+        "parameters": parameters or {},
+        "applicability_reason": None,
+    }
+
+
+def expected_connections(directory):
+    path = (
+        ROOT
+        / "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness"
+        / directory
+        / "wiring-schedule.csv"
+    )
+    with path.open(encoding="utf-8", newline="") as handle:
+        return [
+            {
+                "from": f"{row['from_connector']}:{row['from_pin']}",
+                "to": f"{row['to_connector']}:{row['to_pin']}",
+                "net": row["net"],
+            }
+            for row in csv.DictReader(handle)
+        ]
+
+
+def native_interconnect_contract(directory):
+    """Freeze the released representation independently of generated artifacts.
+
+    Named splice potentials use numbered schematic terminals, not claims about
+    supplier cavity positions. Numeric connector pins retain their exact IDs.
+    The already-declared zone pigtails preserve the original electrical nets.
+    """
+    connections = expected_connections(directory)
+    path = ROOT / "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness" / directory / "connector-requirements.csv"
+    connector_pins = set()
+    with path.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            for reference in row["connector"].split(";"):
+                if not reference.endswith("_power_splices"):
+                    connector_pins.update(f"{reference}:{number}" for number in range(1, int(row["pins"]) + 1))
+    if directory == SOURCES["sensor-fan-harness-03"]:
+        for reference in ("ZX", "ZY"):
+            original, splice = reference + ":1", "S_" + reference + ":POWER"
+            outgoing = [row for row in connections if row["from"] == original and row["net"] == "24V"]
+            if len(outgoing) != 2:
+                raise ValueError("The frozen zone fork no longer has its two declared branches")
+            for row in outgoing:
+                row["from"] = splice
+            connections.append({"from": original, "to": splice, "net": "24V"})
+    connected = {row[key] for row in connections for key in ("from", "to")}
+    endpoints = connected | connector_pins
+    mapping = {endpoint: endpoint for endpoint in sorted(endpoints) if endpoint.split(":")[1].isdigit()}
+    for reference in sorted({endpoint.split(":")[0] for endpoint in endpoints}):
+        labels = sorted(endpoint for endpoint in endpoints if endpoint.startswith(reference + ":") and not endpoint.split(":")[1].isdigit())
+        for number, endpoint in enumerate(labels, 1):
+            mapping[endpoint] = f"{reference}:{number}"
+    if len(set(mapping.values())) != len(mapping):
+        raise ValueError("Native schematic terminal mapping is not one-to-one")
+    return {"expected_connections": connections, "native_pin_map": mapping,
+            "reserved_endpoints": sorted(connector_pins - connected)}
+
+
+def build(scenario_id, directory):
+    baseline = load_baseline(scenario_id).model_dump(mode="json")
+    prefix = "HARNESS" + scenario_id[-2:]
+    approved = ROOT / "specs/082-output-content-validation/campaign-example-renewal-lineup.json"
+    source = {
+        "artifact_ref": approved.relative_to(ROOT).as_posix(),
+        "locator": "cases/" + scenario_id + "/final_deliverable",
+        "sha256": hashlib.sha256(approved.read_bytes()).hexdigest(),
+    }
+    baseline["requirements"].append(
+        {
+            "id": prefix + "-INDEPENDENT-ECAD",
+            "text": "The released pin/net schedule is represented in a native KiCad interconnect schematic and independently checked for exact schedule/netlist correspondence and zero native ERC errors.",
+            "mandatory": True,
+            "scope": "content",
+            "sources": [source],
+            "review_required": False,
+        }
+    )
+    baseline["amendments"].append(source)
+    known = {item["id"] for item in baseline["requirements"]}
+
+    def rid(suffix):
+        value = prefix + "-" + suffix
+        if value not in known:
+            raise ValueError(value)
+        return value
+
+    topology_requirements = [rid("TOPOLOGY")]
+    if scenario_id.endswith("02"):
+        topology_requirements.append(rid("SIGNALS"))
+    checks = [
+        check(
+            "net-topology",
+            topology_requirements,
+            "netlist",
+            reader="harness",
+            selector="harness/topology",
+            constraint={
+                "operator": "equals",
+                "expected": len(expected_connections(directory)),
+            },
+            unit="1",
+            method="independent_measurement",
+            parameters={
+                "operation": "topology",
+                "expected_connections": expected_connections(directory),
+            },
+        ),
+        check(
+            "cut-lengths",
+            [rid("CUT-LENGTHS")],
+            "cut_list",
+            reader="harness",
+            selector="harness/cut_lengths",
+            constraint={"operator": "range", "minimum": 1},
+            unit="1",
+            method="independent_measurement",
+            parameters={"operation": "cut_lengths"},
+        ),
+        check(
+            "voltage-drop",
+            [rid("DROP")],
+            "voltage_drop",
+            reader="harness",
+            selector="harness/maximum_total_drop",
+            constraint={"operator": "range", "maximum": 0.72},
+            unit="V",
+            method="independent_measurement",
+            parameters={"operation": "voltage_drop"},
+        ),
+        check(
+            "kicad-correspondence",
+            [rid("INDEPENDENT-ECAD"), rid("DELIVERABLES")],
+            "net_correspondence",
+            reader="harness",
+            selector="harness/kicad-correspondence",
+            constraint={"operator": "equals", "expected": True},
+            method="independent_measurement",
+            parameters={
+                "operation": "kicad_correspondence",
+                **native_interconnect_contract(directory),
+                "related_roles": [
+                    "kicad_schematic",
+                    "pin_schedule",
+                    "netlist",
+                    "kicad_erc",
+                    "kicad_native_netlist",
+                    "kicad_native_inspection",
+                ],
+            },
+        ),
+    ]
+    next(item for item in checks if item["id"] == "kicad-correspondence")["version"] = "2"
+    if scenario_id.endswith("03"):
+        checks.extend(
+            [
+                check(
+                    "reserve-pins",
+                    [rid("RESERVE")],
+                    "netlist",
+                    reader="harness",
+                    selector="harness/reserve",
+                    constraint={"operator": "equals", "expected": 2},
+                    unit="1",
+                    method="independent_measurement",
+                    parameters={
+                        "operation": "reserve_unconnected",
+                        "reserved_endpoints": ["ZX:6", "ZY:6"],
+                    },
+                ),
+                check(
+                    "shield-review",
+                    [rid("SHIELDS")],
+                    "shield",
+                    constraint={"operator": "review"},
+                    method="human_review",
+                ),
+            ]
+        )
+    automated = {
+        requirement for item in checks for requirement in item["requirement_ids"]
+    }
+    review_roles = {"basis": [], "plan": [], "assembly": [], "bom": [], "handoff": []}
+    preferred = {
+        "CURRENTS": "basis",
+        "CONNECTORS": "basis",
+        "PACKAGING": "plan",
+        "INTERFACES": "basis",
+        "VIEWS": "plan",
+        "SERVICE": "plan",
+        "SPLICES": "plan",
+        "TEST-INSTRUCTIONS": "assembly",
+        "ACTION-SCOPE": "handoff",
+    }
+    for requirement in baseline["requirements"]:
+        if requirement["id"] in automated or requirement["id"].endswith("-DELIVERABLES"):
+            continue
+        suffix = requirement["id"].removeprefix(prefix + "-")
+        review_roles[preferred.get(suffix, "basis")].append(requirement["id"])
+    for role, requirement_ids in review_roles.items():
+        if requirement_ids:
+            checks.append(
+                check(
+                    role + "-review",
+                    requirement_ids,
+                    role,
+                    constraint={"operator": "review"},
+                    method="human_review",
+                )
+            )
+    for role in ("plan", "pin_schedule", "cut_list", "bom", "assembly", "voltage_drop"):
+        checks.append(check("deliverable-" + role, [rid("DELIVERABLES")], role))
+    review_ids = {
+        requirement_id
+        for item in checks
+        if item["constraint"]["operator"] == "review"
+        for requirement_id in item["requirement_ids"]
+    }
+    for requirement in baseline["requirements"]:
+        requirement["review_required"] = requirement["id"] in review_ids
+    return ValidationProfile.model_validate(
+        {
+            "id": scenario_id + "-full",
+            "version": "2",
+            "baseline": baseline,
+            "checks": checks,
+            "excluded_scope": [],
+            "limitations": [
+                "Physical fabrication, energizing, purchasing and production certification remain outside this digital validation gate."
+            ],
+            "supported_kinds": ["file", "value"],
+        }
+    )
+
+
+def render():
+    return {
+        DESTINATION / (scenario_id + ".json"): (
+            canonical_json(build(scenario_id, directory)) + "\n"
+        ).encode()
+        for scenario_id, directory in SOURCES.items()
+    }
+
+
+if __name__ == "__main__":
+    for path, data in render().items():
+        path.write_bytes(data)
+    print(f"Wrote {len(SOURCES)} harness profiles")

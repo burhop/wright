@@ -1,0 +1,240 @@
+{
+  "status": "passed",
+  "scope": "actual api.gateway_stdio/official MCP framing/database catalog/workspace/engine lifecycle; no LLM invocation or public qualification",
+  "definition_sha256": "6f90a9597b1854e3f246846f034a62971e2a049dbf247890c333567840cfc525",
+  "schema_file_sha256": "4c2ca28fd5c6dff0544953c21bbf99a8b26601f3de225d29f78b4da984f7caea",
+  "production_gateway_command": [
+    "D:\\repos\\wright\\.venv\\Scripts\\python.exe",
+    "-m",
+    "api.gateway_stdio",
+    "--session-id",
+    "session-083-qualification",
+    "--workspace-id",
+    "workspace-083-qualification",
+    "--principal-id",
+    "private-provider-probe"
+  ],
+  "server_id": "qualification-083-agentcad-clean-measure-001",
+  "source_url": "https://github.com/jdilla1277/agentcad",
+  "source_revision": "0.6.0",
+  "physical_dispatch": false,
+  "campaign_runs": 0,
+  "selected_tool_count": 11,
+  "tool": "qualification-083-agentcad-clean-measure-001__measure",
+  "response_sha256": "65c6e454acd8f1e5634966abf56b00c0de740a3ee3f4e66c3b98f4ccfe3f4990",
+  "audit": [
+    {
+      "operation": "tool.list",
+      "target": "check_spec",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "context",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "diff",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "docs",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "export",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "inspect",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "measure",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "recover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "render",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "view",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "check_spec",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "context",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "diff",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "docs",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "export",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "inspect",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "measure",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "recover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "render",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "view",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "check_spec",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "context",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "diff",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "docs",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "export",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "inspect",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "measure",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "recover",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "render",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "run",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.list",
+      "target": "view",
+      "outcome": "listed",
+      "reason": "workspace_authorized"
+    },
+    {
+      "operation": "tool.call",
+      "target": "measure",
+      "outcome": "started",
+      "reason": "policy_allowed"
+    },
+    {
+      "operation": "tool.call",
+      "target": "measure",
+      "outcome": "succeeded",
+      "reason": "policy_allowed"
+    }
+  ],
+  "cleanup": {
+    "gateway_runner_stopped": true
+  }
+}

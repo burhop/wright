@@ -86,6 +86,13 @@ export class LiveAppPresenter implements SurfacePresenter {
     this.frame?.focus();
   }
 
+  /** Called only by the native owner's exact origin/window/generation handshake. */
+  confirmReady(): void {
+    if (this.disposed) return;
+    if (this.statusTimer !== undefined) clearTimeout(this.statusTimer);
+    this.onStatus("ready");
+  }
+
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;

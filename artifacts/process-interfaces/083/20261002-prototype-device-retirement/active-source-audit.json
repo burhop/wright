@@ -1,0 +1,25 @@
+{
+  "command": [
+    "rg",
+    "-n",
+    "print_part_demo|print_demo_p1s|print_demo_studio|configure_print_demo|inspect-bambu-studio|studio-desktop",
+    "apps/api/src",
+    "apps/web/src",
+    "packages",
+    "scripts",
+    "-g",
+    "*.py",
+    "-g",
+    "*.ts",
+    "-g",
+    "*.tsx",
+    "-g",
+    "*.ps1",
+    "-g",
+    "*.toml"
+  ],
+  "exit_code": 1,
+  "matches": [],
+  "scope": "Operational prototype identifiers in application/shared-owner/script source; catalog/history metadata and separately inventoried slicing wrappers are outside this claim",
+  "head_before_checkpoint_commit": "fa784cf34ed9aae3d313efe1ecbec9c33323d170"
+}

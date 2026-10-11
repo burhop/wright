@@ -1,0 +1,6 @@
+{
+  "state": "terminal",
+  "exit_code": 1,
+  "tests_run": 0,
+  "reason": "Initial command looked for apps/web/node_modules/vitest/vitest.mjs; dependency is owned by root node_modules. Corrected command used ../../node_modules/vitest/vitest.mjs."
+}

@@ -953,6 +953,24 @@ class WorkspaceWorkflowSourceStore:
             if descriptor is not None:
                 os.close(descriptor)
 
+    def read_artifact_bytes(self, relative_path: str, *, max_bytes: int) -> bytes:
+        """Read an output through the existing pinned-directory capability.
+
+        Shared by process validation; this neither creates source history nor
+        acquires a writer lock or modifies the artifact.
+        """
+        if type(max_bytes) is not int or not 0 < max_bytes <= 256 * 1024 * 1024:
+            raise ValueError("Artifact read limit must be between 1 byte and 256 MiB")
+        path = self._paths.resolve(relative_path, must_exist=True)
+        return self._read_bounded_file(
+            path,
+            max_bytes=max_bytes,
+            label="artifact",
+            invalid_code="artifact_path_invalid",
+            too_large_code="artifact_too_large",
+            too_large_message="Artifact exceeds the configured read limit",
+        )
+
     @staticmethod
     def _validate_bounded_read_stat(
         file_stat: os.stat_result,
@@ -1762,9 +1780,29 @@ class WorkspaceWorkflowSourceUseCases:
         store_factory: Callable[[str], WorkspaceWorkflowSourceStore] = (
             WorkspaceWorkflowSourceStore
         ),
+        *,
+        instruction_defaults: Callable[[str], dict] | None = None,
     ) -> None:
         self._executor = executor
         self._store_factory = store_factory
+        self._instruction_defaults = instruction_defaults
+
+    def _new_source(self, workspace_dir: str, source: str) -> str:
+        if self._instruction_defaults is None:
+            return source
+        from core.workflow_instructions import WorkflowInstructionSet
+        from .workflow_instruction_settings import materialize_new_workflow_instructions
+
+        try:
+            defaults = self._instruction_defaults(workspace_dir)
+            return materialize_new_workflow_instructions(
+                source, WorkflowInstructionSet.model_validate(defaults["instructions"])
+            )
+        except ValueError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_instructions_invalid",
+                "Workflow instruction defaults or embedded instructions are invalid. Inspect settings before saving.",
+            ) from error
 
     async def create(
         self,
@@ -1780,13 +1818,50 @@ class WorkspaceWorkflowSourceUseCases:
                 "workspace.workflow_sources.create",
                 lambda: self._store_factory(workspace_dir).create(
                     path,
-                    source,
+                    self._new_source(workspace_dir, source),
                     **(
                         {"layout": layout, "origin": origin}
                         if layout is not None or origin is not None
                         else {}
                     ),
                 ),
+            )
+        except WorkflowSourceStorageError:
+            raise
+        except RuntimeError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_source_unavailable",
+                "Workflow source storage is unavailable",
+            ) from error
+
+    async def copy(
+        self,
+        workspace_dir: str,
+        source_path: str,
+        destination_path: str,
+        expected_storage_digest: str,
+    ) -> WorkflowSourceDocument:
+        """Copy the pinned saved definition; preserve legacy absence of instructions.
+
+        Read authority is the exact digest requested, not current installation
+        defaults. The destination begins its own source/layout revision history;
+        no run, approval, template lineage or interface authority is copied.
+        """
+
+        def copy_definition():
+            store = self._store_factory(workspace_dir)
+            saved = store.read(source_path)
+            if saved.storage_digest != expected_storage_digest:
+                raise WorkflowSourceConflictError(
+                    saved.storage_revision, saved.storage_digest
+                )
+            layout = saved.layout if saved.layout_status == "current" else None
+            return store.create(destination_path, saved.source, layout=layout)
+
+        try:
+            return await self._executor.run_to_completion(
+                "workspace.workflow_sources.copy",
+                copy_definition,
             )
         except WorkflowSourceStorageError:
             raise

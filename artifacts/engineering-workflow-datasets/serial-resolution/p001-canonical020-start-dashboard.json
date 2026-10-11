@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-23T00:02:32.150Z",
+  "url": "http://127.0.0.1:8771/?view=recovery",
+  "row": "⌄\nReplace a repair-cart drawer handle that clears gloved fingers\nprinted-replacement-part-02\n\t3D printed replacement\tintermediate\t\nrunning\nAutomated validation · Passed\n6",
+  "detail": "EXECUTION OBSERVATIONS\n\nReadiness: P001 correction 3 running · Accepted attempts: 6 · Runner: unknown\n\nLast successful stage: Unknown\n\nCurrent / failed stage: create_mesh_t1ac11d90952426bddfc4aaae\n\nRun duration: Unknown · Native: Unknown · Model: Unknown · Tokens: Unknown\n\nQueue age: Unknown · Last fix age: Unknown · Accepted attempts since fix: Unknown\n\nNext action: P001 Printed 02/020: correction 3 started after exact preflight; real Blender authoring uses qualified 1.01 mm pad rounds. Observe this one run through repair, slicing and human review; no canonical credit yet.",
+  "counts": {
+    "datasets_created": 30,
+    "combinations_run": 30,
+    "processes_with_outputs": 24,
+    "valid_data": 18
+  },
+  "current": [
+    "2",
+    "0",
+    "0"
+  ],
+  "reports": [
+    {
+      "text": "Validation findings",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-canonical019-review/printed-replacement-part-02/report.md"
+    },
+    {
+      "text": "Validation JSON",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-canonical019-review/printed-replacement-part-02/report.json"
+    },
+    {
+      "text": "Requirements matrix",
+      "href": "http://127.0.0.1:8771/validation-reports/serial-p001-canonical019-review/printed-replacement-part-02/rtm.csv"
+    }
+  ],
+  "errors": [],
+  "scope": "Read-only actual browser verification; no approval/run controls used."
+}

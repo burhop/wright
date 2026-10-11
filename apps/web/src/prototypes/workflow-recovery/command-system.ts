@@ -1,7 +1,14 @@
 import { validateOutputChanges } from "./output-contracts";
 import {
+  normalizeWorkflowInstructions,
+  normalizeWorkflowInstructionOverride,
+  type WorkflowInstructionSet,
+} from "./workflow-instructions";
+import {
   cloneLayout,
   cloneWorkflow,
+  recoveryAuthoringSectionKind,
+  RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY,
   validateRecoveryLayoutDocument,
   type RecoveryBlock,
   type RecoveryDiagnostic,
@@ -24,6 +31,7 @@ import {
 
 export type RecoveryCommand =
   | { kind: "move_block"; blockId: string; x: number; y: number }
+  | { kind: "set_workflow_instructions"; value: WorkflowInstructionSet | null }
   | {
       kind: "set_workflow_metadata";
       patch: Partial<
@@ -45,6 +53,12 @@ export type RecoveryCommand =
       blockId: string;
       key: string;
       value: string | number | boolean;
+    }
+  | {
+      kind: "set_block_object_configuration";
+      blockId: string;
+      key: "interaction_input" | "human_interaction" | "instruction_override";
+      value: Record<string, unknown> | null;
     }
   | {
       kind: "set_artifact_definition";
@@ -195,6 +209,22 @@ function applyCommand(
     );
     return;
   }
+  if (command.kind === "set_workflow_instructions") {
+    if (command.value === null) delete workflow.metadata.instructions;
+    else {
+      try {
+        workflow.metadata.instructions = normalizeWorkflowInstructions(
+          command.value,
+        );
+      } catch (error) {
+        throw new Error(
+          `WFR-COMMAND-INSTRUCTIONS-INVALID:${error instanceof Error ? error.message : "Invalid instruction collection"}`,
+          { cause: error },
+        );
+      }
+    }
+    return;
+  }
   if (command.kind === "set_phase_name") {
     const phase = workflow.phases.find((item) => item.id === command.phaseId);
     if (!phase || !command.name.trim())
@@ -232,6 +262,47 @@ function applyCommand(
   }
   if (command.kind === "set_block_configuration") {
     block(workflow, command.blockId).configuration[command.key] = command.value;
+    return;
+  }
+  if (command.kind === "set_block_object_configuration") {
+    const target = block(workflow, command.blockId);
+    if (
+      ![
+        "interaction_input",
+        "human_interaction",
+        "instruction_override",
+      ].includes(command.key) ||
+      (command.key === "interaction_input" &&
+        recoveryAuthoringSectionKind(target) !== "input") ||
+      (command.key === "human_interaction" &&
+        target.configuration.authoring_template !== "human-input") ||
+      (command.key === "instruction_override" &&
+        (target.executionKind !== "ai_capable" ||
+          !workflow.metadata.instructions))
+    )
+      throw new Error("This declaration does not belong to the selected step.");
+    const retained =
+      target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
+    const objects = typeof retained === "string" ? JSON.parse(retained) : {};
+    if (!objects || typeof objects !== "object" || Array.isArray(objects))
+      throw new Error(
+        "Inspect the stored declaration object before editing it.",
+      );
+    if (
+      command.value !== null &&
+      (typeof command.value !== "object" || Array.isArray(command.value))
+    )
+      throw new Error("Use an object for the declaration.");
+    if (command.value === null) delete objects[command.key];
+    else
+      objects[command.key] =
+        command.key === "instruction_override"
+          ? normalizeWorkflowInstructionOverride(command.value)
+          : command.value;
+    if (Object.keys(objects).length)
+      target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY] =
+        stableValue(objects);
+    else delete target.configuration[RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY];
     return;
   }
   if (command.kind === "set_port_type" || command.kind === "delete_port") {
@@ -694,6 +765,14 @@ export function textEditCommands(
     metadataPatch.engineeringDomain = after.metadata.engineeringDomain;
   if (Object.keys(metadataPatch).length > 0)
     edits.push({ kind: "set_workflow_metadata", patch: metadataPatch });
+  if (
+    stableValue(before.metadata.instructions) !==
+    stableValue(after.metadata.instructions)
+  )
+    edits.push({
+      kind: "set_workflow_instructions",
+      value: after.metadata.instructions ?? null,
+    });
   const afterPhases = new Map(after.phases.map((item) => [item.id, item]));
   for (const current of before.phases) {
     const edited = afterPhases.get(current.id);
@@ -748,6 +827,22 @@ export function textEditCommands(
       ...Object.keys(edited.configuration),
     ]);
     for (const key of keys) {
+      if (
+        edited.configuration[key] === undefined &&
+        key === RECOVERY_AUTHORING_APPROVAL_OBJECTS_KEY &&
+        recoveryAuthoringSectionKind(current) === "input" &&
+        Object.keys(JSON.parse(String(current.configuration[key]))).every(
+          (item) => item === "interaction_input",
+        )
+      ) {
+        edits.push({
+          kind: "set_block_object_configuration",
+          blockId: current.id,
+          key: "interaction_input",
+          value: null,
+        });
+        continue;
+      }
       if (edited.configuration[key] === undefined)
         return [
           {

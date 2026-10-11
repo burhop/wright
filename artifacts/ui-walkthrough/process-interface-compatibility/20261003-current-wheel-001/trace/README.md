@@ -1,0 +1,1 @@
+Tracing begins before navigation. The authenticated trace is retained in the private fixture root; it is not published because it contains local authorization headers. Sanitized console/page/network diagnostics accompany this report.

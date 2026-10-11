@@ -1,0 +1,51 @@
+{
+  "reports": [
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261003-002-heat/status.json",
+      "sha256": "8e5601fae1689d3385f7c8c59210a082ca80e1205053b22881b9bc7e8f2f837f",
+      "passed": 13,
+      "stops": 1,
+      "overall": "blocked"
+    },
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261003-001-printed/status.json",
+      "sha256": "c85a392fe36d11550b6be3d41b5685007a178715a4c593015823fe4f83c2489c",
+      "passed": 15,
+      "stops": 0,
+      "overall": "pass"
+    },
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261003-003-heat/status.json",
+      "sha256": "718caf18736fd32531ced1566f9c116ac9ce70029f3c2f874720111aeb8af00b",
+      "passed": 4,
+      "stops": 1,
+      "overall": "blocked"
+    },
+    {
+      "status": "artifacts/ui-walkthrough/process-interface-current-docker/20261003-004-heat/status.json",
+      "sha256": "1e98c8b8e353337b2801e3fff3ea4230a2b3a80f9b193f0479d29cfab28e7805",
+      "passed": 4,
+      "stops": 0,
+      "overall": "pass"
+    }
+  ],
+  "primary_passes": 36,
+  "browser_stops": 2,
+  "launch_stops": 1,
+  "obligations": [
+    "T051",
+    "SC-001",
+    "SC-008"
+  ],
+  "semantic_total": 182,
+  "proved_cumulative": 67,
+  "remaining": 115,
+  "fresh_containers": 2,
+  "current_wheel_sha256": "3d80a075de99d39e250837a55367f1aab3843f91bfc880a2dc2e7b26e9ef547f",
+  "frontend_manifest_sha256": "44317815b2bf8bdfcb7620db0b3f2582984e6e1029ca9d0274d51330e730924e",
+  "visual_inspection": [
+    "Printed S10T: exact toolpath canvas and all-layer/support controls.",
+    "Heat preview STOP and S15: actual read-only text and saved comparison."
+  ],
+  "user_acceptance": false
+}

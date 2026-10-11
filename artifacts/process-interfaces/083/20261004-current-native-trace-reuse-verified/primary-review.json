@@ -1,0 +1,55 @@
+{
+  "source_commit": "2af72d9faa88a28663f70ae33672a6581b19e85f",
+  "reports": [
+    {
+      "status": "artifacts/process-interfaces/083/20261004-final-printed-installed-035/workspace-walkthrough/status.json",
+      "sha256": "5ed14ff668838e7dc60906a7f89c6277850566eeae805d9610d191498351cdb3",
+      "passed": 8
+    },
+    {
+      "status": "artifacts/process-interfaces/083/20261004-trace-visible-printed-installed-036/workspace-walkthrough/status.json",
+      "sha256": "02045cf66ec4ee0ce0ac069e197b2db761e25b4e99925a7a31cf0d876d87e43b",
+      "passed": 3
+    }
+  ],
+  "browser_checks": 11,
+  "wheel_sha256": "314009cea82c1eb6da44c0069dacd1bf80d4540b5bb4d5369d4572357c90fcf2",
+  "frontend_manifest_sha256": "f1fd7ae74f7c6cadeea1c2f9b22b36b107f060623b8a46166dcd78a687031e35",
+  "installed_entries_byte_verified": 953,
+  "exact_output_ids": [
+    "5c3a84a335854e88aa8bbe48a591ce0d:authorize_transfer_configured_default_016:receipt",
+    "5c3a84a335854e88aa8bbe48a591ce0d:create_mesh_configured_default_016:create_mesh_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:create_mesh_configured_default_016:source_mesh",
+    "5c3a84a335854e88aa8bbe48a591ce0d:define_geometry_basis_configured_default_016:define_geometry_basis_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:filament_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:inspect_slice_handoff_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:machine_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:process_profile",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:slice_evidence",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:support_preview",
+    "5c3a84a335854e88aa8bbe48a591ce0d:inspect_slice_handoff_configured_default_016:toolpath_summary",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:mesh_preview",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repair_measure_orient_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:repair_measure_orient_configured_default_016:repaired_mesh",
+    "5c3a84a335854e88aa8bbe48a591ce0d:retain_slice_response_configured_default_016:provider_response",
+    "5c3a84a335854e88aa8bbe48a591ce0d:retain_slice_response_configured_default_016:retain_slice_response_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:summarize_preparation_configured_default_016:summarize_preparation_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:supports_and_slice_configured_default_016:slice_package",
+    "5c3a84a335854e88aa8bbe48a591ce0d:supports_and_slice_configured_default_016:supports_and_slice_configured_default_016_result",
+    "5c3a84a335854e88aa8bbe48a591ce0d:validate_outputs_configured_default_016:diagnostic:validation/assessment-5f34914203794f148d653c47e99f98d4.json"
+  ],
+  "original_files_unchanged": 155,
+  "other_copied_files_unchanged": 153,
+  "copied_and_original_business_tables_unchanged": 5,
+  "own_presentations_closed": 7,
+  "native_host_stopped_normally": true,
+  "new_semantic_dispositions": 0,
+  "model_compiler_and_provider_startup_unavailable": true,
+  "retained_human_reviews_not_answered": true,
+  "engineering_or_authoring_execution_replayed": false,
+  "visual_review": [
+    "035 S12 proves expanded DOM identities; its compact framing cuts off the trace paragraph.",
+    "036 S03 shows model, adapter, job, revision, request and trace together inside the viewport."
+  ],
+  "fresh_docker_or_new_engineering_or_physical_or_user_acceptance": false
+}

@@ -15,11 +15,13 @@ class IntegrationFileCopyAuthority(IntegrationDocumentWriteAuthority):
         from .workflow_mcp_execution import schema_digest
 
         current = self.policies.get(self.context["integration_policy_digest"])
-        expected = {
-            **current,
-            "actor": "integration_test:" + current["campaign_id"],
-            "execution_kind": "integration",
-        }
+        expected = self._with_frozen_routing(
+            {
+                **current,
+                "actor": "integration_test:" + current["campaign_id"],
+                "execution_kind": "integration",
+            }
+        )
         if (
             expected != self.context
             or current["workspace_id"] != self.workspace_id
@@ -142,6 +144,7 @@ class IntegrationFileCopyAuthority(IntegrationDocumentWriteAuthority):
             tool_runtime=self.runtime,
             files=self.files,
         )
+        context = self._with_frozen_routing(context)
         if context != self.context:
             _fail("Integration working-copy context changed after run preparation.")
         digest = argument_digest(arguments)

@@ -1,0 +1,152 @@
+workflow retained_report_001
+  name: "Retained focus-wheel preparation report"
+  purpose: "Independent report of actual retained tool outputs; no construction, repair, slice, acceptance or transfer."
+  discipline: "additive.manufacturing"
+  reviewed_ai_suggestions: true
+end
+
+task summarize_retained_preparation_retained_report_001
+  name: "Explain actual focus-wheel preparation and remaining checks"
+  purpose: "Explain actual focus-wheel preparation and remaining checks"
+  step_type: "work"
+  group: null
+  performed_by: "ai_assisted"
+  inputs: [{"key":"summarize_retained_preparation_retained_report_001_actual_artifact_facts_json","name":"summarize retained preparation retained report 001 actual artifact facts json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_retained_preparation_retained_report_001_actual_native_responses_json","name":"summarize retained preparation retained report 001 actual native responses json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_retained_preparation_retained_report_001_original_requirements_md","name":"summarize retained preparation retained report 001 original requirements md","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_retained_preparation_retained_report_001_machine_profile_json","name":"summarize retained preparation retained report 001 machine profile json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_retained_preparation_retained_report_001_process_profile_json","name":"summarize retained preparation retained report 001 process profile json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"},{"key":"summarize_retained_preparation_retained_report_001_filament_profile_json","name":"summarize retained preparation retained report 001 filament profile json","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  outputs: [{"key":"summarize_retained_preparation_retained_report_001_result","name":"summarize retained preparation retained report 001 result","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  settings: {"output_format":"json","save_output":true,"output_filename":"process-proofs/printed-replacement-part/retained-report-001/outputs/source-report.json","file_policy":"overwrite"}
+  tool: null
+  reusable_step: null
+  prompt: "Produce a compact valid JSON engineering preparation report, not a new model or an acceptance verdict. Use the supplied original requirements, actual native responses, frozen profiles, exact artifact facts and assessment findings. Describe source/repair topology and bounds, mating-feature observations and their measurement limits, orientation, actual nominal model/support paths, original PETG/.4/.2/four-wall/35% settings, package/source identity and the retained producer failure. A successful tool call is not engineering acceptance. Preserve unverified hub-root rounds, mating fit, strength, tolerance and physical outcomes. Do not infer feature compliance beyond actual measurements. Report required authenticated review and absent simulated transfer explicitly. The isolated assessment did not execute the failed producer gate. This report is an independent consumer; do not claim the failed producer succeeded. Ask no runtime questions and invoke no tools. Return only one JSON object under 6000 characters with keys geometry_observations, preparation_observations, artifact_lineage, outstanding_requirements, limitations, engineering_acceptance:false, physical_dispatch:false."
+end
+
+input input_actual_artifact_facts_json_retained_report_001
+  name: "actual-artifact-facts.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_actual_artifact_facts_json_retained_report_001_out","name":"input actual artifact facts json retained report 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-report-001/inputs/actual-artifact-facts.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_summarize_retained_preparation_retained_report_001_actual_artifact_facts_json
+  type: "item"
+  from: "input_actual_artifact_facts_json_retained_report_001.input_actual_artifact_facts_json_retained_report_001_out"
+  to: "summarize_retained_preparation_retained_report_001.summarize_retained_preparation_retained_report_001_actual_artifact_facts_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_actual_native_responses_json_retained_report_001
+  name: "actual-native-responses.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_actual_native_responses_json_retained_report_001_out","name":"input actual native responses json retained report 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-report-001/inputs/actual-native-responses.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_summarize_retained_preparation_retained_report_001_actual_native_responses_json
+  type: "item"
+  from: "input_actual_native_responses_json_retained_report_001.input_actual_native_responses_json_retained_report_001_out"
+  to: "summarize_retained_preparation_retained_report_001.summarize_retained_preparation_retained_report_001_actual_native_responses_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_original_requirements_md_retained_report_001
+  name: "original-requirements.md"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_original_requirements_md_retained_report_001_out","name":"input original requirements md retained report 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-report-001/inputs/original-requirements.md"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_summarize_retained_preparation_retained_report_001_original_requirements_md
+  type: "item"
+  from: "input_original_requirements_md_retained_report_001.input_original_requirements_md_retained_report_001_out"
+  to: "summarize_retained_preparation_retained_report_001.summarize_retained_preparation_retained_report_001_original_requirements_md"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_machine_profile_json_retained_report_001
+  name: "machine-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_machine_profile_json_retained_report_001_out","name":"input machine profile json retained report 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-report-001/inputs/machine-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_summarize_retained_preparation_retained_report_001_machine_profile_json
+  type: "item"
+  from: "input_machine_profile_json_retained_report_001.input_machine_profile_json_retained_report_001_out"
+  to: "summarize_retained_preparation_retained_report_001.summarize_retained_preparation_retained_report_001_machine_profile_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_process_profile_json_retained_report_001
+  name: "process-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_process_profile_json_retained_report_001_out","name":"input process profile json retained report 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-report-001/inputs/process-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_summarize_retained_preparation_retained_report_001_process_profile_json
+  type: "item"
+  from: "input_process_profile_json_retained_report_001.input_process_profile_json_retained_report_001_out"
+  to: "summarize_retained_preparation_retained_report_001.summarize_retained_preparation_retained_report_001_process_profile_json"
+  label: "exact input or upstream evidence"
+  when: null
+end
+
+input input_filament_profile_json_retained_report_001
+  name: "filament-profile.json"
+  purpose: "Original supplied requirements or explicitly configured operation"
+  step_type: "work"
+  group: null
+  provided_by: "engineer"
+  inputs: []
+  outputs: [{"key":"input_filament_profile_json_retained_report_001_out","name":"input filament profile json retained report 001 out","kind":"engineering_document","item":null,"required":true,"quantity":"one","description":"Original input or exact same-run evidence"}]
+  instructions: "Preserve exact supplied bytes and their stated scope."
+  settings: {"input_mode":"workspace-file","workspace_file":"process-proofs/printed-replacement-part/retained-report-001/inputs/filament-profile.json"}
+  tool: null
+  reusable_step: null
+end
+
+connection bind_summarize_retained_preparation_retained_report_001_filament_profile_json
+  type: "item"
+  from: "input_filament_profile_json_retained_report_001.input_filament_profile_json_retained_report_001_out"
+  to: "summarize_retained_preparation_retained_report_001.summarize_retained_preparation_retained_report_001_filament_profile_json"
+  label: "exact input or upstream evidence"
+  when: null
+end

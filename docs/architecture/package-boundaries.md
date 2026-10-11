@@ -30,6 +30,21 @@ Ports are defined by the lowest-level consumer that needs the capability. Concre
 
 ## Changing the graph
 
+Before allocating new workflow, review, validation, or external-action behaviour,
+apply the [workflow platform vision](../design/workflow-platform-vision.md).
+Vendor-specific application/device implementation belongs in an independent,
+installed integration reached through public capability contracts. Catalog
+metadata and example bindings can name a vendor without implementing its
+protocol. Generic engineering-format readers and evaluators can remain in their
+existing Wright ownership; vendor-specific native readers belong externally.
+Existing vendor adapters require explicit migration plans rather than copying
+their coupling into new features. The
+[workflow platform refactoring plan](workflow-platform-refactoring-plan.md) maps
+the shared process interaction/UI foundation and supporting prototype migration
+without changing the package manifest or claiming migration is complete. Prefer
+existing providers; the [process UI design](../design/process-apps.md) keeps
+generated views on public contracts and existing execution services.
+
 1. Decide which package owns the behavior and why the dependency points inward.
 2. Update the manifest and the consuming package metadata together.
 3. Add a seeded fitness test if the new edge introduces an import form not already covered.

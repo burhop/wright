@@ -1,0 +1,84 @@
+{
+  "job": {
+    "job_id": "job-58a9e56254fb4d299c09270980dc4017",
+    "request_id": "083-wheel-tailored-ui-update-005",
+    "request_digest": "4ba79bd4cde2339c11834998c102932f7d48cfcdeb63ac8be933ae8d6462b439",
+    "process": {
+      "workspace_id": "083-heat-live-005",
+      "source_path": "workflows/printed-replacement-part-retained-consumer-003.workflow.wflow",
+      "source_digest": "8bb09ab66acc856bf1b9a8310606422a37a16882c6c2db3dec67645aafd00ca5",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "base_revision": "revision-e699e31782df459986a1c795f9c2bf65",
+    "role_resolution": {
+      "profile": {
+        "role": "process-ui-author",
+        "version": "1",
+        "instructions_version": "process-ui-author-1",
+        "instructions_digest": "f6c2caf11bae43fba8bf5baaf012d3471ee3dc7c1c66dc7c5e8fcb82faabeb9a",
+        "model_policy": "inherit_default",
+        "allowed_tools": [],
+        "max_repairs": 2
+      },
+      "adapter": "hermes",
+      "model_reference": "gpt-5.6-sol",
+      "configuration_digest": "e860ef3c11119c417cbdb0d7925df0c969edb483e4b12b504b2a1e5611c4054a",
+      "effective_instructions_digest": "f6c2caf11bae43fba8bf5baaf012d3471ee3dc7c1c66dc7c5e8fcb82faabeb9a",
+      "capability_scope": []
+    },
+    "state": "failed",
+    "repair_attempt": 2,
+    "revision_id": null,
+    "created_at": "2026-10-03T02:20:36.231927+00:00",
+    "updated_at": "2026-10-03T02:25:14.939936+00:00",
+    "diagnostics": [
+      {
+        "code": "UI_BUILD_FAILED",
+        "message": "App.tsx:50:11: Argument of type '{ run_id: string; signal: AbortSignal; preview: \"toolpaths\"; } | { run_id: string; signal: AbortSignal; }' is not assignable to parameter of type 'RepresentationOptions | undefined'.\n  Object literal may only specify known properties, but 'run_id' does not exist in type 'RepresentationOptions'. Did you mean to write 'runId'?",
+        "correction": "Correct the bounded compiler diagnostic and rebuild through Wright.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      },
+      {
+        "code": "UI_BUILD_FAILED",
+        "message": "App.tsx:53:11: Argument of type '{ input_snapshot_id: string; signal: AbortSignal; preview: \"toolpaths\"; } | { input_snapshot_id: string; signal: AbortSignal; }' is not assignable to parameter of type 'RepresentationOptions | undefined'.\n  Object literal may only specify known properties, but 'input_snapshot_id' does not exist in type 'RepresentationOptions'. Did you mean to write 'inputSnapshotId'?",
+        "correction": "Correct the bounded compiler diagnostic and rebuild through Wright.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      },
+      {
+        "code": "UI_BUILD_FAILED",
+        "message": "App.tsx:67:86: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | undefined'.\n  Type 'null' is not assignable to type 'string | undefined'.",
+        "correction": "Correct the bounded compiler diagnostic and rebuild through Wright.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      },
+      {
+        "code": "UI_BUILD_FAILED",
+        "message": "App.tsx:69:38: Type 'string | null | undefined' is not assignable to type 'string | undefined'.\n  Type 'null' is not assignable to type 'string | undefined'.",
+        "correction": "Correct the bounded compiler diagnostic and rebuild through Wright.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      },
+      {
+        "code": "UI_BUILD_FAILED",
+        "message": "App.tsx:69:45: Type 'string | null | undefined' is not assignable to type 'string | undefined'.\n  Type 'null' is not assignable to type 'string | undefined'.",
+        "correction": "Correct the bounded compiler diagnostic and rebuild through Wright.",
+        "binding_id": null,
+        "step_id": null,
+        "navigation": null,
+        "technical_details_ref": null
+      }
+    ]
+  },
+  "preview": null
+}

@@ -1,0 +1,114 @@
+{
+  "title": "Run a saved digital process through the common working view",
+  "summary": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"common-process-view\"]:visible').getByText('Completed', { exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for locator('[data-testid=\"common-process-view\"]:visible').getByText('Completed', { exact: true })\n",
+  "overall": "blocked",
+  "updated": "2026-10-04T02:02:46.413Z",
+  "manualSteps": [
+    {
+      "label": "Workspace",
+      "instruction": "Open the isolated workspace and click Workflows."
+    },
+    {
+      "label": "Saved process",
+      "instruction": "Click Workflow files, Open workflow, then printed-replacement-part-common-digital-083.workflow.wflow."
+    },
+    {
+      "label": "Common view",
+      "instruction": "Click Use saved process. Inspect the original inputs and any readiness reason."
+    },
+    {
+      "label": "Run",
+      "instruction": "Click Prepare and check inputs, then Start process. Inspect the recorded digital results; reload to reconcile the same run."
+    }
+  ],
+  "steps": [
+    {
+      "id": "S01",
+      "state": "pass",
+      "label": "Enter the workspace workflow editor",
+      "summary": "The existing workflow editor opens in the workspace.",
+      "purpose": "Normal workspace entry preserves the workflow editor",
+      "action": "Click Workflows",
+      "controls": [
+        "Click Workflows"
+      ],
+      "expected": "Normal workspace entry preserves the workflow editor",
+      "actual": "The existing workflow editor opens in the workspace.",
+      "raw": "screenshots/raw/S01.png",
+      "annotated": "screenshots/annotated/S01.png"
+    },
+    {
+      "id": "S02",
+      "state": "pass",
+      "label": "Open the supported saved digital process",
+      "summary": "The mesh preparation process is open; its two configured provider operations are preserved.",
+      "purpose": "The exact two-stage accepted source opens",
+      "action": "Open workflow and choose printed-replacement-part-common-digital-083.workflow.wflow",
+      "controls": [
+        "Open workflow and choose printed-replacement-part-common-digital-083.workflow.wflow"
+      ],
+      "expected": "The exact two-stage accepted source opens",
+      "actual": "The mesh preparation process is open; its two configured provider operations are preserved.",
+      "raw": "screenshots/raw/S02.png",
+      "annotated": "screenshots/annotated/S02.png"
+    },
+    {
+      "id": "S03",
+      "state": "pass",
+      "label": "Use the common working view",
+      "summary": "The shared common working view opens in a Wright workspace tab.",
+      "purpose": "No generated interface is needed",
+      "action": "Click Use saved process",
+      "controls": [
+        "Click Use saved process"
+      ],
+      "expected": "No generated interface is needed",
+      "actual": "The shared common working view opens in a Wright workspace tab.",
+      "raw": "screenshots/raw/S03.png",
+      "annotated": "screenshots/annotated/S03.png"
+    },
+    {
+      "id": "S04",
+      "state": "pass",
+      "label": "Check normal readiness",
+      "summary": "The configured native arguments and exact upstream-file dependency pass public readiness. No integration policy is used.",
+      "purpose": "Ordinary public readiness permits this bounded saved process",
+      "action": "Click Prepare and check inputs",
+      "controls": [
+        "Click Prepare and check inputs"
+      ],
+      "expected": "Ordinary public readiness permits this bounded saved process",
+      "actual": "The configured native arguments and exact upstream-file dependency pass public readiness. No integration policy is used.",
+      "raw": "screenshots/raw/S04.png",
+      "annotated": "screenshots/annotated/S04.png"
+    },
+    {
+      "id": "S05",
+      "state": "pass",
+      "label": "Start from the common view",
+      "summary": "The normal UI receives one accepted run 8c042141e6c7422aa58ca1bbab14d86e; the common view follows backend-owned progress without a generated interface.",
+      "purpose": "One durable digital run is accepted by the backend",
+      "action": "Click Start process",
+      "controls": [
+        "Click Start process"
+      ],
+      "expected": "One durable digital run is accepted by the backend",
+      "actual": "The normal UI receives one accepted run 8c042141e6c7422aa58ca1bbab14d86e; the common view follows backend-owned progress without a generated interface.",
+      "raw": "screenshots/raw/S05.png",
+      "annotated": "screenshots/annotated/S05.png"
+    },
+    {
+      "id": "STOP",
+      "state": "blocked",
+      "label": "First unexpected stopping point",
+      "summary": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"common-process-view\"]:visible').getByText('Completed', { exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for locator('[data-testid=\"common-process-view\"]:visible').getByText('Completed', { exact: true })\n",
+      "purpose": "Preserve the first failure",
+      "action": "Stop current walkthrough",
+      "controls": [],
+      "expected": "The declared next behavior",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: locator('[data-testid=\"common-process-view\"]:visible').getByText('Completed', { exact: true })\nExpected: visible\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 45000ms\n  - waiting for locator('[data-testid=\"common-process-view\"]:visible').getByText('Completed', { exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

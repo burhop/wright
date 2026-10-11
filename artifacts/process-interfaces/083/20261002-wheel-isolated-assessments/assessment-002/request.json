@@ -1,0 +1,195 @@
+{
+  "schema_version": "wright.process-validation/1",
+  "trace_id": "083-retained-wheel-isolated-assessment-002",
+  "workspace_id": "083-heat-live-005",
+  "invocation_id": "083-retained-wheel-isolated-assessment-002",
+  "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+  "check_step_id": "isolated_retained_assessment_002",
+  "subjects": [
+    {
+      "id": "output-0d33a8d7d9de11af39bbec91a733d36b900d8c3e590ce7a1e8e58f627c90588b",
+      "role": "source_mesh",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:repair_measure_orient_retained_consumer_001:source_mesh",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "repair_measure_orient_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "source_mesh"
+      },
+      "kind": "file",
+      "sha256": "e10813d68038f7ebf7207f5d5dc1bf3bb9abb848b29b3aa50bb40e0167fefa18",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/source_mesh.stl",
+      "format": "stl",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-47b5f55138f9192661e5c7e85514769787f21ebba9834c7022fde082001a2536",
+      "role": "repaired_mesh",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:repair_measure_orient_retained_consumer_001:repaired_mesh",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "repair_measure_orient_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "repaired_mesh"
+      },
+      "kind": "file",
+      "sha256": "1323ae36a3860b7206d885095da80f1c0cdd8d9707c5e9f464f614467f8a99e8",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/repaired_mesh.stl",
+      "format": "stl",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-e7fa8878bec2af0641654bad2f7235f5c9dd849ab51057622ba870e0f1a1379c",
+      "role": "slice_package",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:supports_and_slice_retained_consumer_001:slice_package",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "supports_and_slice_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "slice_package"
+      },
+      "kind": "file",
+      "sha256": "c97dce1d8c216fb33dd13e3173156cdcbd1c968a767ae940b0d20c5055619ec3",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/slice_package.gcode.3mf",
+      "format": "3mf",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-444c830988b353610b1471378adf77d787f8a0b34fa65427dee3327367e1331e",
+      "role": "slice_evidence",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:inspect_slice_handoff_retained_consumer_001:slice_evidence",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "inspect_slice_handoff_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "slice_evidence"
+      },
+      "kind": "file",
+      "sha256": "4b71500a6c83d0f5d728f0a3bb2d2e3ee188d1b7862187c8e7f698df60f89594",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/slice-evidence.json",
+      "format": "json",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-b139c1d2654c2dce7f4e9676eb8445dd50da799bc12989424588bf741d3360ac",
+      "role": "support_preview",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:inspect_slice_handoff_retained_consumer_001:support_preview",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "inspect_slice_handoff_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "support_preview"
+      },
+      "kind": "file",
+      "sha256": "890ec8d8c551443f87f0e24d123041ec38611fb5d6efd1ee571e172adbef8399",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/support-preview.json",
+      "format": "json",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-1fbe0770ee0560bbbe25d856541413da23635c66b30c00c9a78450a2c19e32d5",
+      "role": "machine_profile",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:inspect_slice_handoff_retained_consumer_001:machine_profile",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "inspect_slice_handoff_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "machine_profile"
+      },
+      "kind": "file",
+      "sha256": "93c5d9cd905ee23483e5c95cf1ea0dfaf220854431219eb2278e9467e8fc4afc",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/machine-profile.json",
+      "format": "json",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-9d414ce3c85ba0fb2f7f3f412b38299a3db640cd2b920428e8dc6a1848309c7f",
+      "role": "process_profile",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:inspect_slice_handoff_retained_consumer_001:process_profile",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "inspect_slice_handoff_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "process_profile"
+      },
+      "kind": "file",
+      "sha256": "0a56adc45830d9e98d8ffe81d242a2dabfde857a6ef32096ba3c1ac219f719a3",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/process-profile.json",
+      "format": "json",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    },
+    {
+      "id": "output-e91454b5abfa764a9df10b7b3502eb70cea049f573c92d653de0b5a619d798fd",
+      "role": "filament_profile",
+      "result_id": "a87d84b40a244bcaa035d9ed8308ac5a:inspect_slice_handoff_retained_consumer_001:filament_profile",
+      "producer": {
+        "run_id": "a87d84b40a244bcaa035d9ed8308ac5a",
+        "step_id": "inspect_slice_handoff_retained_consumer_001",
+        "attempt": 1,
+        "output_port": "filament_profile"
+      },
+      "kind": "file",
+      "sha256": "e991adb4bad9eb9da15a977708a59c30f9b61758e7364f2c2b0303c12cca03db",
+      "value": null,
+      "locator": "process-proofs/printed-replacement-part/retained-consumer-001/outputs/filament-profile.json",
+      "format": "json",
+      "provider_id": null,
+      "resource_id": null,
+      "revision": null,
+      "input_digests": [],
+      "encoding": "raw-bytes"
+    }
+  ],
+  "profile_ref": {
+    "id": "printed-replacement-part-01-full",
+    "version": "1",
+    "sha256": "d9b26a909119befd6746e68b448587187104a9d44b46b11081a7ce233e97bfb4"
+  },
+  "baseline_ref": {
+    "id": "printed-replacement-part-01-basis",
+    "version": "1",
+    "sha256": "26392cf7ca2ad1dcec0edd56f29d466aaac53cfc2a6c2111895d16aa3019854e"
+  },
+  "idempotency_key": "isolated-assessment-002",
+  "budget": {
+    "max_bytes": 16777216,
+    "max_entities": 1000000,
+    "timeout_seconds": 120,
+    "memory_limit_mb": 512
+  }
+}

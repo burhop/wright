@@ -1,0 +1,45 @@
+{
+  "title": "Installed Wright: common and saved process interfaces",
+  "summary": "Genuine local wheel installation, cached dependencies, copied isolated engineering workspace; no model/compiler or engineering dispatch.",
+  "overall": "blocked",
+  "updated": "2026-10-02T20:09:54.000Z",
+  "manualSteps": [
+    {
+      "label": "Open installed Wright",
+      "instruction": "Open the installed native Wright home page, then the isolated proof workspace."
+    },
+    {
+      "label": "Open process",
+      "instruction": "Click Workflows, Workflow files, Open workflow, then choose the saved wheel workflow."
+    },
+    {
+      "label": "Use working view",
+      "instruction": "Click Use saved process and open the second recorded run link."
+    },
+    {
+      "label": "Reuse interface",
+      "instruction": "Click Create or choose interface, choose the saved focus-wheel interface and current revision, then Open saved interface."
+    },
+    {
+      "label": "Reload",
+      "instruction": "Reload the working tab and inspect the same waiting review. Leave the review unanswered."
+    }
+  ],
+  "steps": [
+    {
+      "id": "STOP",
+      "label": "Installed journey stopped",
+      "action": "Stop at first unexpected state.",
+      "controls": [
+        "Current workspace control"
+      ],
+      "expected": "Installed common/saved journey remains usable.",
+      "actual": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('button', { name: 'Workflows', exact: true })\nExpected: visible\nTimeout: 120000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 120000ms\n  - waiting for getByRole('button', { name: 'Workflows', exact: true })\n",
+      "state": "blocked",
+      "purpose": "Installed journey stopped",
+      "summary": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('button', { name: 'Workflows', exact: true })\nExpected: visible\nTimeout: 120000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 120000ms\n  - waiting for getByRole('button', { name: 'Workflows', exact: true })\n",
+      "raw": "screenshots/raw/STOP.png",
+      "annotated": "screenshots/annotated/STOP.png"
+    }
+  ]
+}

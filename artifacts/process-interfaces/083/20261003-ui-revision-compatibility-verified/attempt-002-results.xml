@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="3.060" timestamp="2026-10-03T16:36:16.196866-04:00" hostname="Work17"><testcase classname="packages.workspace_service.tests.test_process_ui_revision_compatibility" name="test_compatible_source_revision_reuses_exact_saved_build_and_current_grants" time="1.218"><failure message="AssertionError: Compatibility(ui_id='ui-2991e6c2b0b744349a8abeeb8a713bfd', revision_id='revision-50a998648e6c43e08ba63644c14f9723', cu...plied by Wright.', binding_id=None, step_id=None, navigation=None, technical_details_ref=None),), optional_absences=())&#10;assert 'incompatible' == 'compatible'&#10;  &#10;  - compatible&#10;  + incompatible&#10;  ? ++">packages\workspace_service\tests\test_process_ui_revision_compatibility.py:80: in test_compatible_source_revision_reuses_exact_saved_build_and_current_grants
+    assert compatibility.state == "compatible", compatibility
+E   AssertionError: Compatibility(ui_id='ui-2991e6c2b0b744349a8abeeb8a713bfd', revision_id='revision-50a998648e6c43e08ba63644c14f9723', cu...plied by Wright.', binding_id=None, step_id=None, navigation=None, technical_details_ref=None),), optional_absences=())
+E   assert 'incompatible' == 'compatible'
+E
+E     - compatible
+E     + incompatible
+E     ? ++</failure></testcase><testcase classname="packages.workspace_service.tests.test_process_ui_revision_compatibility" name="test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source" time="1.092"><failure message="AssertionError: assert 'READINESS_UNSUPPORTED' == 'UI_INCOMPATIBLE'&#10;  &#10;  - UI_INCOMPATIBLE&#10;  + READINESS_UNSUPPORTED">packages\workspace_service\tests\test_process_ui_revision_compatibility.py:116: in test_required_binding_change_denies_saved_open_but_focused_update_uses_current_source
+    assert compatibility.reasons[0].code == "UI_INCOMPATIBLE"
+E   AssertionError: assert 'READINESS_UNSUPPORTED' == 'UI_INCOMPATIBLE'
+E
+E     - UI_INCOMPATIBLE
+E     + READINESS_UNSUPPORTED</failure></testcase></testsuite></testsuites>

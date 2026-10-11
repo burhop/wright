@@ -1,0 +1,43 @@
+{
+  "status": "preliminary_evidence_index",
+  "source_commit": "5323a6d63f740aa36d1aac0eb7e8340b944e7ab3",
+  "current_head": "5323a6d63f740aa36d1aac0eb7e8340b944e7ab3",
+  "obligation_count": 182,
+  "counts_by_kind": {
+    "contract-section": 18,
+    "edge-case": 9,
+    "engineering-required-artifacts": 2,
+    "engineering-stage": 8,
+    "implementation-task": 57,
+    "independent-story-test": 4,
+    "named-runtime-check": 17,
+    "negative-recovery": 15,
+    "requirement": 28,
+    "user-story-acceptance": 21,
+    "workspace-distribution-acceptance": 3
+  },
+  "required_route_count": 23,
+  "installed_reports_rechecked": 4,
+  "generated_contract_check": 0,
+  "named_task_targets_missing": [],
+  "matched_live_records_missing": [],
+  "automatic_semantic_signoff": false,
+  "T056_complete": false,
+  "T057_complete": false,
+  "goal_complete": false,
+  "counts_overlap_do_not_sum": true,
+  "new_provider_or_model_calls": 0,
+  "review_responses": 0,
+  "hardware_or_supplier_effects": false,
+  "retained_engineering_ui_artifacts_byte_checked": 550,
+  "findings": [
+    "Corrected one documented save-route parameter from revision to implemented revision_id; URL shape and runtime/client unchanged.",
+    "Retained gate-versus-check-count and section-boundary extraction harness failures."
+  ],
+  "remaining_audit": [
+    "Review each primary behavior/assertion and exact real evidence, not merely its family membership.",
+    "Classify every obligation as proved at approved scope, genuinely incomplete, unsupported outside scope, or missing/weak evidence; correct required gaps.",
+    "Replace the historical FR/SC table with final reviewed coverage and explicit limits; audit named artifacts, commands and preserved history.",
+    "Finish exact local commits, protected/unrelated byte checks and owned-service handoff under T057."
+  ]
+}

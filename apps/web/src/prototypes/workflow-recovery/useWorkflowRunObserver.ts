@@ -118,11 +118,15 @@ export function preferObservedRun(
     startedAt: string;
     logPath: string;
     hasResult: boolean;
+    status?: string;
   },
 ) {
   if (!record || owned.pending) return false;
   if (!owned.startedAt) return true;
-  if (record.path === owned.logPath) return !owned.hasResult;
+  // A checkpoint is a pause within the same run. Its answer can resume work
+  // from another tab, so the saved observer remains authoritative after a wait.
+  if (record.path === owned.logPath)
+    return !owned.hasResult || owned.status === "waiting_human";
   // A different run must be demonstrably newer than the locally requested run.
   // Unparseable timestamps or older history cannot erase a local success/error.
   return Date.parse(record.started_at) > Date.parse(owned.startedAt);

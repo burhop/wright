@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 D:/repos/wright/apps/web
+
+
+ Test Files  3 passed (3)
+      Tests  74 passed (74)
+   Start at  22:06:32
+   Duration  14.55s (transform 630ms, setup 896ms, import 914ms, tests 2.11s, environment 9.01s)
+

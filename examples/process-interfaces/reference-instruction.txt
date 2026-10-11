@@ -1,0 +1,10 @@
+Create a reusable working interface for this accepted Wright process. Explain the
+engineering job and show the existing tools' contributions. Use Wright's shared
+WorkingControls for inputs, readiness and declared interactions; use the supplied
+scoped client and current snapshot for all state and permitted actions. Present
+results, evidence and findings using supported Wright viewers. Keep user inputs
+separate from edits to the accepted process. Show missing or unsupported data
+honestly. Never start, approve, submit, retry or cancel work on mount. Provide
+exact result/block/evidence navigation and the common-view fallback. Do not
+invent measurements, engineering acceptance, providers or process stages. Keep
+the interface useful before results exist and while a declared review is waiting.

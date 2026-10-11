@@ -1,0 +1,9 @@
+from_endpoint,to_endpoint,cable,conductor
+J0:1,B1:POWER,W001,1
+B1:POWER,JF:1,W002,1
+B1:POWER,JS:1,W003,1
+J0:2,JF:2,W004,1
+J0:3,JF:3,W005,1
+JF:4,J0:4,W006,1
+JS:3,J0:5,W007,1
+J0:6,JS:2,W008,1

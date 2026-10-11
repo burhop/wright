@@ -1,0 +1,31 @@
+{
+  "status": "failed",
+  "base_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+  "platform": "linux/amd64",
+  "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
+  "source_revision": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "fresh_selected_install": false,
+  "physical_dispatch": false,
+  "public_catalog_promotion": false,
+  "install_container": "492e39f096ce35a8ac7ae170adb7c83930b5f8a2799179feba234c25d388e30b",
+  "clean_base_preflight": {
+    "packages": {
+      "tool_registry": true,
+      "mcp": true,
+      "skfem": false,
+      "gmsh": false,
+      "pyvista": false,
+      "blender_mcp": false
+    },
+    "hosts": {
+      "blender": null,
+      "FreeCAD": null,
+      "openscad": null
+    }
+  },
+  "installation_seconds": 0.29166819999954896,
+  "installation_exit_code": 100,
+  "error_type": "AssertionError",
+  "diagnostic": "Fresh selected-provider install failed; retained installation log",
+  "install_container_stopped": true
+}

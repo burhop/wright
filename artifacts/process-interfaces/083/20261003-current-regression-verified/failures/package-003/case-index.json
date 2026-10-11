@@ -1,0 +1,68 @@
+[
+  {
+    "classname": "tests.packaging.test_process_interfaces_distribution",
+    "name": "test_public_resources_and_static_host_work_without_compiler_or_model",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_interfaces_distribution",
+    "name": "test_installed_compiler_uses_shipped_public_sources_and_explicit_native_dependencies",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_interfaces_distribution",
+    "name": "test_private_service_direct_wheel_and_sdist_rebuild_include_the_same_resources",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_interface_frontend_styles",
+    "name": "test_production_frontend_retains_process_interface_styles",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_prototype_distribution_boundary",
+    "name": "test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_prototype_distribution_boundary",
+    "name": "test_retired_vendor_prototype_is_not_an_importable_workspace_module[print_part_demo_printer]",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_prototype_distribution_boundary",
+    "name": "test_workspace_owner_has_no_imports_of_retired_operational_implementations",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_validation_distribution",
+    "name": "test_wheel_contains_validator_code_profiles_and_console_entrypoint",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_process_validation_distribution",
+    "name": "test_installed_cli_and_gateway_evaluate_offline_without_checkout",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_wheel_contents",
+    "name": "test_workspace_surface_packages_and_assets_are_declared",
+    "skipped": null,
+    "failed": false
+  },
+  {
+    "classname": "tests.packaging.test_wheel_contents",
+    "name": "test_built_wheel_contains_public_helper_contracts_and_renderer_assets",
+    "skipped": null,
+    "failed": true
+  }
+]

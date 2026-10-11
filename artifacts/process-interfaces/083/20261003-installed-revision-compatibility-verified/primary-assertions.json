@@ -1,0 +1,53 @@
+{
+  "dispositions": {
+    "US3-AC4": [
+      "The native workspace opens the exact previously saved immutable interface and its pending original-run review, then reopens it on a compatible current ProcessRef. The original compiled files and revision metadata remain unchanged.",
+      "Current installed host imports the wheel owners, has UnavailableBuildToolchain and a deliberately unavailable isolated model endpoint. Opening, reopening and fallback send no authoring-job, run, decision or action POST and install/download/compile nothing."
+    ],
+    "US3-AC5": [
+      "Real managed-source CAS with stable bindings permits the exact saved build under current native grants and backend snapshots. A meaningful accepted input-default change appears identically in saved/common views; neither attaches old run/output/review authority.",
+      "A required output selector change returns its exact incompatible reason before launching a generated frame. Native authoring exposes the saved revision and focused update; explicit unavailable resources hold creation/update even after title/instructions are supplied. Common fallback visibly exposes current accepted inputs.",
+      "The retained current 242-case owner/API group proves required schema denial, immutable origin/current separation, actual focused update/preview/save with parent provenance, incompatible rollback denial and old-source query rejection. Its coding/compiler/runtime responses are controlled; it is not new live-model source-change generation."
+    ],
+    "EDGE-05": [
+      "Compiler and isolated default-model availability are absent in the current detached host. Saved revision selection/read, actual saved rendering and common inputs/fallback remain usable with explicit availability diagnostics."
+    ],
+    "NEG-12": [
+      "Generation/update are disabled for explicit resource absence after all authoring form requirements are supplied. Saved UI/common views still read exact current backend context. Zero authoring or execution/decision requests occur; observed agent-model503 responses are the intentional unavailable condition."
+    ]
+  },
+  "reports": [
+    {
+      "path": "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-001",
+      "steps": 12,
+      "overall": "pass",
+      "structure_validator": "pass",
+      "scope": "Controlled retained interface/document, current real installed source/revision/presentation/bridge owners; no new model generation or engineering execution"
+    },
+    {
+      "path": "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-002",
+      "steps": 3,
+      "overall": "pass",
+      "structure_validator": "pass",
+      "scope": "Controlled retained interface/document, current real installed source/revision/presentation/bridge owners; no new model generation or engineering execution"
+    },
+    {
+      "path": "artifacts/ui-walkthrough/process-interface-compatibility/20261003-current-wheel-003",
+      "steps": 3,
+      "overall": "pass",
+      "structure_validator": "pass",
+      "scope": "Controlled retained interface/document, current real installed source/revision/presentation/bridge owners; no new model generation or engineering execution"
+    }
+  ],
+  "raw_screenshots_visually_inspected": [
+    "001/S07",
+    "001/S10",
+    "001/S11",
+    "001/S12",
+    "002/C02",
+    "002/C03",
+    "003/D01"
+  ],
+  "broader_style_and_accessibility_signoff": false,
+  "old_review_authority_transferred": false
+}

@@ -24,6 +24,11 @@ from .state_store import connect_state_db
 from .native_application_repository import NATIVE_APPLICATION_SCHEMA
 from .workflow_artifact_review_repository import REVIEW_SCHEMA
 from .workflow_continuation_repository import WORKFLOW_CONTINUATION_SCHEMA
+from .process_input_repository import PROCESS_INPUT_SCHEMA
+from .process_interface_repository import (
+    PROCESS_INTERFACE_SCHEMA,
+    PROCESS_AUTHORING_RECORD_SCHEMA,
+)
 
 PRODUCT_VERSION = "0.1.0"
 LEDGER_TABLE = "wright_schema_migrations"
@@ -1261,6 +1266,23 @@ MIGRATIONS += (
         21,
         "native_application_lifecycle",
         tuple(sql(statement) for statement in NATIVE_APPLICATION_SCHEMA),
+    ),
+)
+
+
+MIGRATIONS += (
+    Migration(
+        22,
+        "process_working_interfaces",
+        tuple(
+            sql(statement)
+            for statement in (*PROCESS_INPUT_SCHEMA, *PROCESS_INTERFACE_SCHEMA)
+        ),
+    ),
+    Migration(
+        23,
+        "process_ui_authoring_provenance",
+        tuple(sql(statement) for statement in PROCESS_AUTHORING_RECORD_SCHEMA),
     ),
 )
 

@@ -1,0 +1,114 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\repos\wright\.venv\Lib\site-packages\pytest\__main__.py", line 9, in <module>
+    raise SystemExit(pytest.console_main())
+                     ~~~~~~~~~~~~~~~~~~~^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 223, in console_main
+    code = main()
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 193, in main
+    config = _prepareconfig(new_args, plugins)
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 361, in _prepareconfig
+    config: Config = pluginmanager.hook.pytest_cmdline_parse(
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        pluginmanager=pluginmanager, args=args
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    raise exception
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    teardown.throw(exception)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\helpconfig.py", line 124, in pytest_cmdline_parse
+    config = yield
+             ^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 1192, in pytest_cmdline_parse
+    self.parse(args)
+    ~~~~~~~~~~^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 1562, in parse
+    self.hook.pytest_load_initial_conftests(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        early_config=self, args=args, parser=self._parser
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 167, in _multicall
+    raise exception
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    teardown.throw(exception)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\warnings.py", line 128, in pytest_load_initial_conftests
+    return (yield)
+            ^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 139, in _multicall
+    teardown.throw(exception)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\capture.py", line 173, in pytest_load_initial_conftests
+    yield
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 1276, in pytest_load_initial_conftests
+    self.pluginmanager._set_initial_conftests(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        args=args,
+        ^^^^^^^^^^
+    ...<8 lines>...
+        ),
+        ^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 602, in _set_initial_conftests
+    self._try_load_conftest(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        anchor,
+        ^^^^^^^
+    ...<2 lines>...
+        consider_namespace_packages=consider_namespace_packages,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 640, in _try_load_conftest
+    self._loadconftestmodules(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        anchor,
+        ^^^^^^^
+    ...<2 lines>...
+        consider_namespace_packages=consider_namespace_packages,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 680, in _loadconftestmodules
+    mod = self._importconftest(
+        conftestpath,
+    ...<2 lines>...
+        consider_namespace_packages=consider_namespace_packages,
+    )
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 756, in _importconftest
+    self.consider_conftest(mod, registration_name=conftestpath_plugin_name)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 843, in consider_conftest
+    self.register(conftestmodule, name=registration_name)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\repos\wright\.venv\Lib\site-packages\_pytest\config\__init__.py", line 522, in register
+    plugin_name = super().register(plugin, name)
+  File "D:\repos\wright\.venv\Lib\site-packages\pluggy\_manager.py", line 146, in register
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Plugin already registered under a different name: D:\repos\wright\tests\conftest.py=<module 'tests.conftest' from 'D:\\repos\\wright\\packages\\workspace_service\\tests\\conftest.py'>
+{'2721238446640': <_pytest.config.PytestPluginManager object at 0x0000027996737230>, 'pytestconfig': <_pytest.config.Config object at 0x0000027997AE0050>, 'stepwise': None, 'pytest_stepwise': None, 'cacheprovider': None, 'pytest_cacheprovider': None, 'mark': <module '_pytest.mark' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\mark\\__init__.py'>, 'main': <module '_pytest.main' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\main.py'>, 'runner': <module '_pytest.runner' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\runner.py'>, 'fixtures': <module '_pytest.fixtures' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\fixtures.py'>, 'helpconfig': <module '_pytest.helpconfig' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\helpconfig.py'>, 'python': <module '_pytest.python' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\python.py'>, 'terminal': <module '_pytest.terminal' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\terminal.py'>, 'debugging': <module '_pytest.debugging' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\debugging.py'>, 'unittest': <module '_pytest.unittest' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\unittest.py'>, 'capture': <module '_pytest.capture' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\capture.py'>, 'skipping': <module '_pytest.skipping' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\skipping.py'>, 'legacypath': <module '_pytest.legacypath' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\legacypath.py'>, 'tmpdir': <module '_pytest.tmpdir' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\tmpdir.py'>, 'monkeypatch': <module '_pytest.monkeypatch' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\monkeypatch.py'>, 'recwarn': <module '_pytest.recwarn' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\recwarn.py'>, 'pastebin': <module '_pytest.pastebin' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\pastebin.py'>, 'assertion': <module '_pytest.assertion' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\assertion\\__init__.py'>, 'junitxml': <module '_pytest.junitxml' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\junitxml.py'>, 'doctest': <module '_pytest.doctest' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\doctest.py'>, 'setuponly': <module '_pytest.setuponly' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\setuponly.py'>, 'setupplan': <module '_pytest.setupplan' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\setupplan.py'>, 'unraisableexception': <module '_pytest.unraisableexception' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\unraisableexception.py'>, 'threadexception': <module '_pytest.threadexception' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\threadexception.py'>, 'warnings': <module '_pytest.warnings' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\warnings.py'>, 'logging': <module '_pytest.logging' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\logging.py'>, 'reports': <module '_pytest.reports' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\reports.py'>, 'faulthandler': <module '_pytest.faulthandler' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\faulthandler.py'>, 'subtests': <module '_pytest.subtests' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\_pytest\\subtests.py'>, 't053_collection_audit': <module 't053_collection_audit' from 'D:\\repos\\wright\\.local-run\\process-interfaces-083\\t053_collection_audit.py'>, 'anyio': <module 'anyio.pytest_plugin' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\anyio\\pytest_plugin.py'>, 'asyncio': <module 'pytest_asyncio.plugin' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\pytest_asyncio\\plugin.py'>, 'respx': <module 'respx.plugin' from 'D:\\repos\\wright\\.venv\\Lib\\site-packages\\respx\\plugin.py'>, 'capturemanager': <CaptureManager _method='fd' _global_capturing=<MultiCapture out=<FDCapture 1 oldfd=5 _state='started' tmpfile=<EncodedFile name='<tempfile._TemporaryFileWrapper object at 0x000002799A352270>' mode='r+' encoding='utf-8'>> err=<FDCapture 2 oldfd=7 _state='started' tmpfile=<EncodedFile name='<tempfile._TemporaryFileWrapper object at 0x000002799A3A47D0>' mode='r+' encoding='utf-8'>> in_=<FDCapture 0 oldfd=3 _state='started' tmpfile=<_io.TextIOWrapper name='nul' mode='r' encoding='utf-8'>> _state='started' _in_suspended=False> _capture_fixture=None>, 'D:\\repos\\wright\\apps\\api\\tests\\conftest.py': <module 'apps.api.tests.conftest' from 'D:\\repos\\wright\\apps\\api\\tests\\conftest.py'>, 'D:\\repos\\wright\\packages\\workspace_service\\tests\\conftest.py': <module 'tests.conftest' from 'D:\\repos\\wright\\packages\\workspace_service\\tests\\conftest.py'>}

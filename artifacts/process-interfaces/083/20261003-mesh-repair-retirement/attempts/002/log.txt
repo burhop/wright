@@ -1,0 +1,65 @@
+2026-10-03 06:30:39 [info     ] mcp_server_spawning            command='docker exec -i -e PYTHONPATH= -e PYVISTA_OFF_SCREEN=true -e UV_CACHE_DIR=/selected/uv-cache -e UV_PYTHON_INSTALL_DIR=/selected/python f0348d1de65302e5d06f85c2ad4d3fd895b1f6850a1e2840062a37d6bfe1e9f4 uv run --offline --isolated --python 3.12 --with git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780 --with mcp[cli]==1.28.1 --with scikit-fem==12.0.2 python -m server' cwd=None
+2026-10-03 06:30:39 [info     ] mcp_request_started            child_pid=40912 method=initialize request_bytes=171 request_id=1 tool_name=None
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output="/selected/uv-cache/archive-v0/1Il1QJecgZbELjbfdXHuX/lib/python3.12/site-packages/pydantic_settings/sources/utils.py:47: IncompleteFieldDefinitionWarning: Field 'lifespan' has an incomplete definition: its annotation contains an unresolved forward reference, so settings sources may fail to correctly resolve its value. Call `model_rebuild()` on the model where the field is defined, once all the referenced types are defined."
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output=warnings.warn(
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,802 [oasis.registry] INFO: Registered backend: 4C Multiphysics (fourc)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,802 [oasis.registry] INFO: Registered backend: FEniCSx (dolfinx) (fenics)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,803 [oasis.registry] INFO: Registered backend: deal.II (dealii)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,806 [oasis.registry] INFO: Registered backend: FEBio (febio)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,808 [oasis.registry] INFO: Registered backend: NGSolve (ngsolve)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,809 [oasis.ngsolve] INFO: NGSolve backend registered'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,811 [oasis.registry] INFO: Registered backend: scikit-fem (skfem)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,811 [oasis.skfem] INFO: scikit-fem backend registered'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,815 [oasis.registry] INFO: Registered backend: Kratos Multiphysics (kratos)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,815 [oasis.kratos] INFO: Kratos Multiphysics backend registered'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,816 [oasis.registry] INFO: Registered backend: DUNE-fem (dune)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,816 [oasis.dune] INFO: DUNE-fem backend registered'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output="2026-10-03 10:30:40,817 [oasis.sparta] WARNING: SPARTA knowledge load failed: [Errno 2] No such file or directory: '/selected/uv-cache/archive-v0/1Il1QJecgZbELjbfdXHuX/lib/python3.12/site-packages/backends/sparta/sparta_knowledge.json'"
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,817 [oasis.registry] INFO: Registered backend: SPARTA (DSMC) (sparta)'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,817 [oasis.sparta] INFO: SPARTA (DSMC) backend registered'
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,817 [oasis] INFO: Starting OASiS MCP server'
+2026-10-03 06:30:40 [debug    ] mcp_protocol_message_received  has_error=False has_id=True method=None
+2026-10-03 06:30:40 [info     ] mcp_request_completed          child_pid=40912 duration_ms=991.94 method=initialize request_bytes=171 request_id=1 response_bytes=5630 tool_name=None
+2026-10-03 06:30:40 [debug    ] mcp_initialize_response_received
+2026-10-03 06:30:40 [info     ] mcp_request_started            child_pid=40912 method=tools/list request_bytes=52 request_id=2 tool_name=None
+2026-10-03 06:30:40 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:40,862 [mcp.server.lowlevel.server] INFO: Processing request of type ListToolsRequest'
+2026-10-03 06:30:40 [debug    ] mcp_protocol_message_received  has_error=False has_id=True method=None
+2026-10-03 06:30:40 [info     ] mcp_request_completed          child_pid=40912 duration_ms=4.87 method=tools/list request_bytes=52 request_id=2 response_bytes=30512 tool_name=None
+2026-10-03 06:30:40 [info     ] mcp_server_stopping            command='docker exec -i -e PYTHONPATH= -e PYVISTA_OFF_SCREEN=true -e UV_CACHE_DIR=/selected/uv-cache -e UV_PYTHON_INSTALL_DIR=/selected/python f0348d1de65302e5d06f85c2ad4d3fd895b1f6850a1e2840062a37d6bfe1e9f4 uv run --offline --isolated --python 3.12 --with git+https://github.com/Hereon-InstituteMS/OASiS.git@7c184d5b7ca5cda6086f3912d1c7923c58307780 --with mcp[cli]==1.28.1 --with scikit-fem==12.0.2 python -m server'
+2026-10-03 06:30:41 [info     ] mcp_server_spawning            command='docker exec -i -e PYTHONPATH= -e BLENDER_HOST=127.0.0.1 -e BLENDER_PORT=19988 -e BLENDER_MCP_SAFE_MODE=true -e BLENDER_MCP_DISABLE_TELEMETRY=true 30882bd97d60f5d6139c93ac7d2f4b7319d6d1410d1e68655c2701fad777316a /selected/venv/bin/python -m blender_mcp.server' cwd=None
+2026-10-03 06:30:41 [info     ] mcp_request_started            child_pid=1004 method=initialize request_bytes=171 request_id=1 tool_name=None
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output="/selected/venv/lib/python3.12/site-packages/pydantic_settings/sources/utils.py:47: IncompleteFieldDefinitionWarning: Field 'lifespan' has an incomplete definition: its annotation contains an unresolved forward reference, so settings sources may fail to correctly resolve its value. Call `model_rebuild()` on the model where the field is defined, once all the referenced types are defined."
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output=warnings.warn(
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output="<frozen runpy>:128: RuntimeWarning: 'blender_mcp.server' found in sys.modules after import of package 'blender_mcp', but prior to execution of 'blender_mcp.server'; this may result in unpredictable behaviour"
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:42,329 - BlenderMCPServer - INFO - BlenderMCP server starting up'
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:42,329 - BlenderMCPServer - WARNING - MCP for Blender addon not found in any Blender addons folder. Run `uvx blender-mcp install-addon` to install it.'
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:42,329 - BlenderMCPServer - INFO - Connected to Blender at 127.0.0.1:19988'
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:42,329 - BlenderMCPServer - INFO - Created new persistent connection to Blender'
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:42,329 - BlenderMCPServer - INFO - Sending command: get_addon_info with params: None'
+2026-10-03 06:30:42 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:42,329 - BlenderMCPServer - INFO - Command sent, waiting for response...'
+2026-10-03 06:30:44 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:44,429 - BlenderMCPServer - INFO - Received complete response (354 bytes)'
+2026-10-03 06:30:44 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:44,429 - BlenderMCPServer - INFO - Received 354 bytes of data'
+2026-10-03 06:30:44 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:44,429 - BlenderMCPServer - INFO - Response parsed, status: success'
+2026-10-03 06:30:44 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:44,429 - BlenderMCPServer - INFO - Blender addon up to date (protocol 5, addon [1, 6], Blender 4.3.2)'
+2026-10-03 06:30:44 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:44,429 - BlenderMCPServer - INFO - Successfully connected to Blender on startup'
+2026-10-03 06:30:44 [debug    ] mcp_protocol_message_received  has_error=False has_id=True method=None
+2026-10-03 06:30:44 [warning  ] mcp_request_slow               child_pid=1004 duration_ms=3349.15 method=initialize request_bytes=171 request_id=1 response_bytes=255 tool_name=None
+2026-10-03 06:30:44 [debug    ] mcp_initialize_response_received
+2026-10-03 06:30:44 [info     ] mcp_request_started            child_pid=1004 method=tools/list request_bytes=52 request_id=2 tool_name=None
+2026-10-03 06:30:44 [warning  ] mcp_server_stderr              output='2026-10-03 10:30:44,435 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest'
+2026-10-03 06:30:44 [debug    ] mcp_protocol_message_received  has_error=False has_id=True method=None
+2026-10-03 06:30:44 [info     ] mcp_request_completed          child_pid=1004 duration_ms=4.5 method=tools/list request_bytes=52 request_id=2 response_bytes=31129 tool_name=None
+2026-10-03 06:30:44 [info     ] mcp_server_stopping            command='docker exec -i -e PYTHONPATH= -e BLENDER_HOST=127.0.0.1 -e BLENDER_PORT=19988 -e BLENDER_MCP_SAFE_MODE=true -e BLENDER_MCP_DISABLE_TELEMETRY=true 30882bd97d60f5d6139c93ac7d2f4b7319d6d1410d1e68655c2701fad777316a /selected/venv/bin/python -m blender_mcp.server'
+2026-10-03 06:30:44 [info     ] mcp_server_spawning            command='D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\python.exe -m bambu_p1s_mcp' cwd=None
+2026-10-03 06:30:44 [info     ] mcp_request_started            child_pid=36100 method=initialize request_bytes=171 request_id=1 tool_name=None
+2026-10-03 06:30:45 [warning  ] mcp_server_stderr              output="D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Lib\\site-packages\\pydantic_settings\\sources\\utils.py:47: IncompleteFieldDefinitionWarning: Field 'lifespan' has an incomplete definition: its annotation contains an unresolved forward reference, so settings sources may fail to correctly resolve its value. Call `model_rebuild()` on the model where the field is defined, once all the referenced types are defined."
+2026-10-03 06:30:45 [warning  ] mcp_server_stderr              output=warnings.warn(
+2026-10-03 06:30:45 [debug    ] mcp_protocol_message_received  has_error=False has_id=True method=None
+2026-10-03 06:30:45 [info     ] mcp_request_completed          child_pid=36100 duration_ms=888.62 method=initialize request_bytes=171 request_id=1 response_bytes=466 tool_name=None
+2026-10-03 06:30:45 [debug    ] mcp_initialize_response_received
+2026-10-03 06:30:45 [info     ] mcp_request_started            child_pid=36100 method=tools/list request_bytes=52 request_id=2 tool_name=None
+2026-10-03 06:30:45 [warning  ] mcp_server_stderr              output='Processing request of type ListToolsRequest'
+2026-10-03 06:30:45 [debug    ] mcp_protocol_message_received  has_error=False has_id=True method=None
+2026-10-03 06:30:45 [info     ] mcp_request_completed          child_pid=36100 duration_ms=4.04 method=tools/list request_bytes=52 request_id=2 response_bytes=4455 tool_name=None
+2026-10-03 06:30:45 [info     ] mcp_server_stopping            command='D:\\repos\\wright\\.local-run\\process-interfaces-083\\t048-external-slice-probe-retirement-001\\selected-provider-install-003\\provider-environment\\Scripts\\python.exe -m bambu_p1s_mcp'
+{"status": "failed", "diagnostic": "", "completed_tool_calls": null, "duplicate_start_reconciles_same_receipt": null, "cleanup": [{"container_id": "f0348d1de65302e5d06f85c2ad4d3fd895b1f6850a1e2840062a37d6bfe1e9f4", "running": false}, {"container_id": "30882bd97d60f5d6139c93ac7d2f4b7319d6d1410d1e68655c2701fad777316a", "running": false}]}
