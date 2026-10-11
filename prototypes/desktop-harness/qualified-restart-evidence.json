@@ -1,0 +1,37 @@
+{
+  "observed_at": "2026-10-11T21:47:11.422307+00:00",
+  "status": "partial qualification; failed late-answer admission",
+  "transport": "SDK MCP protocol; not installed desktop",
+  "fault": "exact isolated API SIGKILL; observed exit 137; unchanged profile reopened",
+  "run_id": "a3367c9c3c92404f899a313ba684d5cd",
+  "qualification": {
+    "same_run_no_replay": "passed",
+    "retained_pending_request": "passed",
+    "late_reply_to_dead_owner": "FAILED: accepted without a live consumer",
+    "automatic_reasoning_restart": "unsupported; requires reconciliation",
+    "installed_desktop_plugin": "unverified"
+  },
+  "before_reply_state": "reconciliation_required",
+  "after_reply_state": "reconciliation_required",
+  "same_start_receipt": true,
+  "late_reply": {
+    "accepted": true,
+    "response_id": "desktop-abrupt-restart-late-answer-control-01"
+  },
+  "handoff_counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 1,
+    "desktop_reasoning_terminal_receipts": 0
+  },
+  "run_artifacts_unchanged": true,
+  "run_count": 1,
+  "outputs_created": [],
+  "regression": {
+    "tests": 110,
+    "seconds": 12.25,
+    "result": "passed; existing canonical recovery, not bridge admission"
+  },
+  "raw_evidence_directory": "/tmp/wright-desktop-mcp-restart-proof-20261011-01",
+  "windows_target_changed": false,
+  "demo_boundary": "Stop and reconcile if API restarts during reasoning; do not submit late answers or create a replacement run."
+}

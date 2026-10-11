@@ -1,0 +1,10 @@
+{
+  "name": "wright-desktop-prototype",
+  "interface": {"displayName": "Wright Desktop Prototype"},
+  "plugins": [{
+    "name": "wright-desktop-prototype",
+    "source": {"source": "local", "path": "./plugins/wright-desktop-prototype"},
+    "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+    "category": "Productivity"
+  }]
+}

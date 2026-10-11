@@ -1,0 +1,19 @@
+workflow desktop_handoff
+  name: "Desktop reasoning handoff"
+  purpose: "Qualify one desktop-supplied digital inspection brief through Wright's source runtime."
+  discipline: "mechanical.inspection"
+  reviewed_ai_suggestions: true
+end
+task brief
+  name: "Prepare a digital inspection brief"
+  purpose: "Separate supplied dimensions from missing inspection criteria without claiming measurement."
+  step_type: work
+  group: null
+  performed_by: ai_assisted
+  inputs: [{"key":"brief_prompt","kind":"engineering_document","name":"Prompt","item":null,"required":false,"quantity":"optional","description":"Optional upstream requirements"}]
+  outputs: [{"key":"brief_response","kind":"engineering_document","name":"Inspection brief","item":null,"required":true,"quantity":"one","description":"Digital inspection brief, not measured evidence"}]
+  prompt: "Prepare a short digital inspection brief for a rectangular plate: length 120 mm, width 80 mm, thickness 6 mm, four mounting holes of diameter 8 mm. Identify the dimensions to check, distinguish supplied requirements from unspecified hole locations, and explain why no manufacturing release can be claimed. This task performs no physical action and no CAD measurement."
+  settings: {"authoring_template":"ai-prompt","output_format":"markdown","output_filename":"inspection-brief.md"}
+  tool: null
+  reusable_step: null
+end

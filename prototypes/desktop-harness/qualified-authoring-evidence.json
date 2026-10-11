@@ -1,0 +1,90 @@
+{
+  "status": "11 current hosted-editor cases verified together; full legacy/installed acceptance separate",
+  "cases": {
+    "desktop-entry": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "The current four-group editor opens without Wright chat or agent API calls."
+    },
+    "desktop-text": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Exact supplied values are authored in the fresh workflow without tool execution."
+    },
+    "desktop-document": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Document authoring remains available; the task is not executed or represented as engineering acceptance."
+    },
+    "desktop-connect": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "One exact typed connection is retained in the accepted source."
+    },
+    "desktop-mismatch": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "The incompatible connection is rejected without changing accepted semantics."
+    },
+    "desktop-drag": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Pointer movement and canvas controls work in the hosted workspace."
+    },
+    "desktop-undo": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Undo restores previous instructions; redo restores the edit without dropping the connection."
+    },
+    "desktop-save": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Exact authored source and layout identity survive; no run is started."
+    },
+    "desktop-invalid-source": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Invalid source remains a draft; accepted semantics and the saved document are retained."
+    },
+    "desktop-cas": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "A real save conflict retains local work; explicit comparison and reload reconcile the newer document."
+    },
+    "desktop-compact": {
+      "status": "passed",
+      "report": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+      "purpose": "Editor controls remain reachable with no Wright chat and no page overflow."
+    }
+  },
+  "complete_continuation": "/tmp/wright-desktop-editor-acceptance-20261011-09",
+  "served_source_snapshots": {
+    "matched_observations": 42,
+    "missing": [],
+    "mismatches": []
+  },
+  "forbidden_agent_or_run_requests": [],
+  "no_engineering_runs": true,
+  "model_calls": "none; authoring checks only",
+  "desktop_right_panel": "unverified; ordinary GB10 browser capture",
+  "retained_failures": {
+    "01": "Legacy harness expected seven groups/prefilled definition; current dev is four groups/empty workflow. No editor change made.",
+    "02": "Legacy helper expected a title field instead of current direct input editor and canvas rename.",
+    "03": "Mismatch correctly appeared in current keyboard status banner; helper expected global diagnostics.",
+    "04": "Fit already reached max zoom; zoom-in was a no-op. Zoom-out-first and actual pan qualified later.",
+    "05": "Save succeeded; helper expected old visible Saved in workspace text, current text Saved has that accessible label. First seven checks pass.",
+    "06": "Current toolbar does not show raw path; continuation now verifies URL plus scoped API source equality.",
+    "07": "Managed-field test regex matched workflow in a comment; malformed draft rejected. Correctly anchored managed-field injection passes in 08."
+  },
+  "scope_limits": [
+    "No actual installed desktop or Windows panel proof",
+    "No model or gateway execution in this editor case",
+    "Legacy full suite and other authoring capabilities remain separate",
+    "Evidence is current working tree, not clean committed acceptance"
+  ],
+  "prior_staged_reports": [
+    "/tmp/wright-desktop-editor-acceptance-20261011-05",
+    "/tmp/wright-desktop-editor-acceptance-20261011-08"
+  ],
+  "api_requests_observed": 60
+}

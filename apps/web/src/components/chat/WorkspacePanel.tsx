@@ -125,6 +125,7 @@ interface WorkspacePanelProps {
   sessionId?: string;
   workspace?: WorkspaceInfo;
   onSessionChange?: (sessionId: string) => void;
+  desktopConversation?: boolean;
 }
 
 function cleanSessionOptionTitle(session: { title?: string | null }): string {
@@ -160,6 +161,7 @@ export function WorkspacePanel({
   sessionId: propSessionId,
   workspace: initialWorkspace,
   onSessionChange,
+  desktopConversation = false,
 }: WorkspacePanelProps) {
   const {
     state,
@@ -221,7 +223,9 @@ export function WorkspacePanel({
   const [error, setError] = useState<string | null>(null);
 
   const routeSessionId = propSessionId || workspaceInfo?.session_id || null;
-  const activeSessionId = state.activeSessionId || routeSessionId || null;
+  const activeSessionId = desktopConversation
+    ? routeSessionId
+    : state.activeSessionId || routeSessionId || null;
   const workspaceFileSessionId = routeSessionId || activeSessionId;
   const sessionOptionLabels = useMemo(
     () => getSessionOptionLabels(state.sessions),
@@ -242,8 +246,8 @@ export function WorkspacePanel({
 
   // Refresh sessions when workspace changes
   useEffect(() => {
-    refreshSessions(_workspaceId);
-  }, [_workspaceId, refreshSessions]);
+    if (!desktopConversation) refreshSessions(_workspaceId);
+  }, [_workspaceId, refreshSessions, desktopConversation]);
 
   // Fetch workspace details when workspace changes
   useEffect(() => {
@@ -275,13 +279,13 @@ export function WorkspacePanel({
 
   // Sync the route workspace session into global chat state on mount or when it changes.
   useEffect(() => {
-    if (routeSessionId) {
+    if (routeSessionId && !desktopConversation) {
       selectSession(routeSessionId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [routeSessionId]);
+  }, [routeSessionId, desktopConversation]);
 
-  const statuses = useHealthStatus();
+  const statuses = useHealthStatus(15000, !desktopConversation);
   const agentServiceStatus = statuses.find(
     (s) => s.serviceId === "hermes-agent",
   );
@@ -331,6 +335,7 @@ export function WorkspacePanel({
 
   // Load active agent and model catalog on mount
   useEffect(() => {
+    if (desktopConversation) return;
     const initializeAgent = async () => {
       try {
         const active = await agentService.getActiveAgent();
@@ -343,7 +348,7 @@ export function WorkspacePanel({
       await loadHermesModels();
     };
     initializeAgent();
-  }, [loadHermesModels]);
+  }, [loadHermesModels, desktopConversation]);
 
   const handleModelChange = async (newModel: string) => {
     const option = modelGroups
@@ -446,9 +451,11 @@ export function WorkspacePanel({
   );
   // Workflow authoring owns the canvas by default. Keep this preference
   // separate so entering/leaving Workflows does not change ordinary chat.
-  const isAgentCollapsed = canonicalWorkflowAvailable
-    ? workflowAgentCollapsed
-    : ordinaryAgentCollapsed;
+  const isAgentCollapsed =
+    desktopConversation ||
+    (canonicalWorkflowAvailable
+      ? workflowAgentCollapsed
+      : ordinaryAgentCollapsed);
   const setIsAgentCollapsed = canonicalWorkflowAvailable
     ? setWorkflowAgentCollapsed
     : setOrdinaryAgentCollapsed;
@@ -624,10 +631,14 @@ export function WorkspacePanel({
       (dockedSidebarCollapsed ? 0 : leftSidebarWidth) -
       (dockedSidebarCollapsed ? 0 : 4),
   );
-  const [surfaceLayout, surfaceLayoutDispatch] = usePersistentSurfaceLayout(
-    _workspaceId ?? "unbound-workspace",
-    normalSurfacePaneWidth,
-  );
+  const [savedSurfaceLayout, surfaceLayoutDispatch] =
+    usePersistentSurfaceLayout(
+      _workspaceId ?? "unbound-workspace",
+      normalSurfacePaneWidth,
+    );
+  const surfaceLayout = desktopConversation
+    ? { ...savedSurfaceLayout, narrowPane: "surface" as const }
+    : savedSurfaceLayout;
   const surfacePaneContainerWidth =
     surfaceLayout.wideMode === "focus" ? panelWidth : normalSurfacePaneWidth;
   const resolvedSurfaceLayout = resolveWorkspaceLayout(
@@ -1157,7 +1168,7 @@ export function WorkspacePanel({
         void openWorkspaceFileRef.current(path);
         return;
       }
-      if (type === "create-prompt" && content) {
+      if (type === "create-prompt" && content && !desktopConversation) {
         // Viewer actions belong to this workspace's bound conversation even
         // when the global session list has not refreshed yet.
         sendMessageRef.current(
@@ -1181,7 +1192,7 @@ export function WorkspacePanel({
       container?.removeEventListener("viewer-message", handleViewerMessage);
       container?.replaceChildren();
     };
-  }, [activeTabPath, workspaceFileSessionId, getDocument, getProvider]);
+  }, [activeTabPath, workspaceFileSessionId, getDocument, getProvider, desktopConversation]);
 
   const fetchGitData = useCallback(async () => {
     setGitRefreshVersion((version) => version + 1);
@@ -2079,7 +2090,7 @@ export function WorkspacePanel({
     if (activeWorkspaceWorkflow) setIsSidebarCollapsed(true);
   }, [activeWorkspaceWorkflow]);
 
-  if (isThin) {
+  if (isThin && !desktopConversation) {
     return (
       <div
         ref={attachContainerRef}
@@ -2366,16 +2377,20 @@ export function WorkspacePanel({
       adaptive={surfacesEnabled}
       resizing={isLeftDragging || isRightDragging}
     >
-      {surfacesEnabled && surfaceLayout.mode === "narrow" && (
-        <ResponsivePaneSwitcher
-          controlsOnly
-          activePane={surfaceLayout.narrowPane}
-          onChange={(pane) =>
-            surfaceLayoutDispatch({ type: "select_narrow_pane", pane })
-          }
-          hiddenChatUpdate={activeSessionStreamedText ? "Chat updated." : null}
-        />
-      )}
+      {!desktopConversation &&
+        surfacesEnabled &&
+        surfaceLayout.mode === "narrow" && (
+          <ResponsivePaneSwitcher
+            controlsOnly
+            activePane={surfaceLayout.narrowPane}
+            onChange={(pane) =>
+              surfaceLayoutDispatch({ type: "select_narrow_pane", pane })
+            }
+            hiddenChatUpdate={
+              activeSessionStreamedText ? "Chat updated." : null
+            }
+          />
+        )}
       {!surfaceChromeHidden && (
         <WorkspaceActivityBar
           activeSidebar={activeSidebar}
@@ -3068,7 +3083,7 @@ export function WorkspacePanel({
                 </div>
               ))}
 
-              <div
+              {!desktopConversation && <div
                 style={{
                   borderBottom: "1px solid var(--color-border)",
                   paddingBottom: "var(--space-sm)",
@@ -3144,7 +3159,7 @@ export function WorkspacePanel({
                     </button>
                   ))}
                 </div>
-              </div>
+              </div>}
 
               <div>
                 <h4
@@ -3165,9 +3180,9 @@ export function WorkspacePanel({
                     lineHeight: "1.4",
                   }}
                 >
-                  Workspace Settings can add persistent context for Hermes. MCP
-                  tools can be enabled from the MCP Tools Selector and are then
-                  exposed to the active Hermes session.
+                  {desktopConversation
+                    ? "Use the desktop conversation for agent requests. This view retains workspace files, workflow editing, and saved results."
+                    : "Workspace Settings can add persistent context for Hermes. MCP tools can be enabled from the MCP Tools Selector and are then exposed to the active Hermes session."}
                 </p>
               </div>
             </div>
@@ -3291,6 +3306,7 @@ export function WorkspacePanel({
               </button>
             )}
             {activeWorkspaceWorkflow &&
+              !desktopConversation &&
               isAgentCollapsed &&
               (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
               (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
@@ -3794,282 +3810,289 @@ export function WorkspacePanel({
         ))}
 
       {/* 4. Right Sidebar Drawer (Agent chat) */}
-      <div
-        data-testid="agent-sidebar"
-        data-focus-region="chat"
-        style={{
-          backgroundColor: "var(--color-surface)",
-          borderLeft: "1px solid var(--color-border)",
-          gridColumn:
-            surfacesEnabled && surfaceLayout.mode === "narrow" ? "1" : "6",
-          display:
-            surfacesEnabled && surfaceLayout.mode === "narrow"
-              ? surfaceLayout.narrowPane === "chat"
-                ? "flex"
-                : "none"
-              : isAgentCollapsed
-                ? "none"
-                : "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        {/* Agent Tools Window Header */}
+      {!desktopConversation && (
         <div
-          data-testid="agent-tools-window"
+          data-testid="agent-sidebar"
+          data-focus-region="chat"
           style={{
-            padding: "var(--space-sm) var(--space-md)",
-            borderBottom: "1px solid var(--color-border)",
-            backgroundColor: "var(--color-surface-subtle)",
-            display: "flex",
+            backgroundColor: "var(--color-surface)",
+            borderLeft: "1px solid var(--color-border)",
+            gridColumn:
+              surfacesEnabled && surfaceLayout.mode === "narrow" ? "1" : "6",
+            display:
+              surfacesEnabled && surfaceLayout.mode === "narrow"
+                ? surfaceLayout.narrowPane === "chat"
+                  ? "flex"
+                  : "none"
+                : isAgentCollapsed
+                  ? "none"
+                  : "flex",
             flexDirection: "column",
-            gap: "var(--space-xs)",
+            overflow: "hidden",
+            position: "relative",
           }}
         >
-          {/* Row 1: Title and Collapse */}
+          {/* Agent Tools Window Header */}
           <div
+            data-testid="agent-tools-window"
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: "bold",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                color: "#969696",
-              }}
-            >
-              Agent Control Pane
-            </span>
-            <button
-              onClick={() => setIsAgentCollapsed(true)}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#858585",
-                cursor: "pointer",
-                fontSize: "0.8rem",
-              }}
-              title="Collapse Agent Console"
-            >
-              ▶
-            </button>
-          </div>
-
-          {/* Row 2: Model and Session Selector + New Session Button */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-xs)",
-              width: "100%",
-            }}
-          >
-            {/* Model Select */}
-            <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
-              Model
-            </label>
-            <select
-              id="llm-model-select"
-              data-testid="llm-model-select"
-              value={selectedModel}
-              onChange={(e) => handleModelChange(e.target.value)}
-              disabled={
-                isLoadingModels ||
-                modelGroups.length === 0 ||
-                !modelSelectionSupported
-              }
-              style={{
-                flex: 1,
-                backgroundColor: "var(--color-surface-subtle)",
-                color: "var(--color-primary)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                padding: "6px",
-                fontSize: "0.75rem",
-                outline: "none",
-                cursor: "pointer",
-                transition: "border-color var(--transition-fast)",
-              }}
-              title={modelError || modelSelectionMessage || "Select LLM Model"}
-            >
-              {renderModelOptions()}
-            </select>
-            {modelSelectionMessage && (
-              <small title={modelSelectionMessage}>Model Setup</small>
-            )}
-            {modelError ? (
-              <span
-                style={{
-                  color: "var(--color-warning)",
-                  fontSize: "0.65rem",
-                }}
-                title={modelError}
-              >
-                !
-              </span>
-            ) : null}
-
-            <label
-              htmlFor="workspace-session-select"
-              style={{ fontSize: "0.65rem" }}
-            >
-              Session
-            </label>
-            <select
-              id="workspace-session-select"
-              data-testid="sessions-sidebar"
-              value={activeSessionId || ""}
-              onChange={async (e) => {
-                const newSessId = e.target.value;
-                if (newSessId) {
-                  await selectChatSession(newSessId);
-                }
-              }}
-              style={{
-                flex: 1.5,
-                backgroundColor: "var(--color-surface-subtle)",
-                color: "var(--color-primary)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                padding: "6px",
-                fontSize: "0.75rem",
-                outline: "none",
-                cursor: "pointer",
-                textOverflow: "ellipsis",
-                transition: "border-color var(--transition-fast)",
-              }}
-              title="Select Session Context"
-            >
-              {state.sessions.length === 0 ? (
-                <option value="" data-testid="session-none">
-                  No sessions
-                </option>
-              ) : (
-                state.sessions.map((session) => (
-                  <option
-                    key={session.sessionId}
-                    value={session.sessionId}
-                    data-testid={`session-${session.sessionId}`}
-                  >
-                    {sessionOptionLabels.get(session.sessionId) ||
-                      "Untitled Session"}
-                  </option>
-                ))
-              )}
-            </select>
-
-            {/* New Session Button */}
-            <button
-              data-testid="create-session-btn"
-              onClick={async () => {
-                const newId = await createSession(workspacePath, _workspaceId);
-                if (newId) {
-                  await bindSessionToWorkspace(newId);
-                }
-              }}
-              style={{
-                backgroundColor: "var(--color-secondary)",
-                color: "var(--color-surface-subtle)",
-                border: "none",
-                borderRadius: "var(--radius-md)",
-                width: "28px",
-                height: "28px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                transition:
-                  "background-color var(--transition-fast), box-shadow var(--transition-fast)",
-                boxShadow: "var(--shadow-glow)",
-              }}
-              title="Create New Session"
-            >
-              ＋
-            </button>
-          </div>
-        </div>
-
-        {isAgentDisconnected && (
-          <div
-            data-testid="health-banner-hermes"
-            style={{
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              borderBottom: "1px solid rgba(239, 68, 68, 0.2)",
-              color: "var(--color-error, #f87171)",
               padding: "var(--space-sm) var(--space-md)",
-              fontSize: "0.75rem",
+              borderBottom: "1px solid var(--color-border)",
+              backgroundColor: "var(--color-surface-subtle)",
               display: "flex",
-              alignItems: "center",
+              flexDirection: "column",
               gap: "var(--space-xs)",
-              fontFamily: "var(--font-ui)",
             }}
           >
-            <span
-              title={agentError || undefined}
-              style={{ lineHeight: 1.35, overflowWrap: "anywhere" }}
-            >
-              Hermes agent is not available.
-              {agentError
-                ? ` ${agentError}`
-                : " Check that the wright profile WebUI is running."}
-            </span>
-          </div>
-        )}
-
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <div style={{ flex: 1, overflowY: "auto" }}>
-            <ChatTranscript
-              session={activeSession}
-              isStreaming={isActiveSessionStreaming}
-              streamStartedAt={activeSessionStreamState?.startedAt ?? null}
-              streamedText={activeSessionStreamedText}
-              activeTool={activeSessionTool}
-              streamActivity={activeSessionStreamActivity}
-              onOpenFile={handleFileClick}
-              activeSessionId={activeSessionId || undefined}
-              workspacePath={workspacePath || undefined}
-            />
-          </div>
-
-          {activeSession && (
+            {/* Row 1: Title and Collapse */}
             <div
               style={{
-                padding: "var(--space-md)",
-                borderTop: "1px solid var(--color-border)",
-                backgroundColor: "var(--color-surface-subtle)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <MessageComposer
-                onSend={sendMessageWithSurfaceContext}
-                onSteer={steerMessageWithSurfaceContext}
-                isStreaming={isActiveSessionStreaming}
-                onCancel={cancelActiveStream}
-                sessionId={activeSessionId || undefined}
-                workspaceId={_workspaceId}
-                queuedPrompts={activeSessionQueuedPrompts}
-              />
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  color: "#969696",
+                }}
+              >
+                Agent Control Pane
+              </span>
+              <button
+                onClick={() => setIsAgentCollapsed(true)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#858585",
+                  cursor: "pointer",
+                  fontSize: "0.8rem",
+                }}
+                title="Collapse Agent Console"
+              >
+                ▶
+              </button>
+            </div>
+
+            {/* Row 2: Model and Session Selector + New Session Button */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-xs)",
+                width: "100%",
+              }}
+            >
+              {/* Model Select */}
+              <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
+                Model
+              </label>
+              <select
+                id="llm-model-select"
+                data-testid="llm-model-select"
+                value={selectedModel}
+                onChange={(e) => handleModelChange(e.target.value)}
+                disabled={
+                  isLoadingModels ||
+                  modelGroups.length === 0 ||
+                  !modelSelectionSupported
+                }
+                style={{
+                  flex: 1,
+                  backgroundColor: "var(--color-surface-subtle)",
+                  color: "var(--color-primary)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "6px",
+                  fontSize: "0.75rem",
+                  outline: "none",
+                  cursor: "pointer",
+                  transition: "border-color var(--transition-fast)",
+                }}
+                title={
+                  modelError || modelSelectionMessage || "Select LLM Model"
+                }
+              >
+                {renderModelOptions()}
+              </select>
+              {modelSelectionMessage && (
+                <small title={modelSelectionMessage}>Model Setup</small>
+              )}
+              {modelError ? (
+                <span
+                  style={{
+                    color: "var(--color-warning)",
+                    fontSize: "0.65rem",
+                  }}
+                  title={modelError}
+                >
+                  !
+                </span>
+              ) : null}
+
+              <label
+                htmlFor="workspace-session-select"
+                style={{ fontSize: "0.65rem" }}
+              >
+                Session
+              </label>
+              <select
+                id="workspace-session-select"
+                data-testid="sessions-sidebar"
+                value={activeSessionId || ""}
+                onChange={async (e) => {
+                  const newSessId = e.target.value;
+                  if (newSessId) {
+                    await selectChatSession(newSessId);
+                  }
+                }}
+                style={{
+                  flex: 1.5,
+                  backgroundColor: "var(--color-surface-subtle)",
+                  color: "var(--color-primary)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "6px",
+                  fontSize: "0.75rem",
+                  outline: "none",
+                  cursor: "pointer",
+                  textOverflow: "ellipsis",
+                  transition: "border-color var(--transition-fast)",
+                }}
+                title="Select Session Context"
+              >
+                {state.sessions.length === 0 ? (
+                  <option value="" data-testid="session-none">
+                    No sessions
+                  </option>
+                ) : (
+                  state.sessions.map((session) => (
+                    <option
+                      key={session.sessionId}
+                      value={session.sessionId}
+                      data-testid={`session-${session.sessionId}`}
+                    >
+                      {sessionOptionLabels.get(session.sessionId) ||
+                        "Untitled Session"}
+                    </option>
+                  ))
+                )}
+              </select>
+
+              {/* New Session Button */}
+              <button
+                data-testid="create-session-btn"
+                onClick={async () => {
+                  const newId = await createSession(
+                    workspacePath,
+                    _workspaceId,
+                  );
+                  if (newId) {
+                    await bindSessionToWorkspace(newId);
+                  }
+                }}
+                style={{
+                  backgroundColor: "var(--color-secondary)",
+                  color: "var(--color-surface-subtle)",
+                  border: "none",
+                  borderRadius: "var(--radius-md)",
+                  width: "28px",
+                  height: "28px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  transition:
+                    "background-color var(--transition-fast), box-shadow var(--transition-fast)",
+                  boxShadow: "var(--shadow-glow)",
+                }}
+                title="Create New Session"
+              >
+                ＋
+              </button>
+            </div>
+          </div>
+
+          {isAgentDisconnected && (
+            <div
+              data-testid="health-banner-hermes"
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                borderBottom: "1px solid rgba(239, 68, 68, 0.2)",
+                color: "var(--color-error, #f87171)",
+                padding: "var(--space-sm) var(--space-md)",
+                fontSize: "0.75rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-xs)",
+                fontFamily: "var(--font-ui)",
+              }}
+            >
+              <span
+                title={agentError || undefined}
+                style={{ lineHeight: 1.35, overflowWrap: "anywhere" }}
+              >
+                Hermes agent is not available.
+                {agentError
+                  ? ` ${agentError}`
+                  : " Check that the wright profile WebUI is running."}
+              </span>
             </div>
           )}
-        </div>
-      </div>
 
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div style={{ flex: 1, overflowY: "auto" }}>
+              <ChatTranscript
+                session={activeSession}
+                isStreaming={isActiveSessionStreaming}
+                streamStartedAt={activeSessionStreamState?.startedAt ?? null}
+                streamedText={activeSessionStreamedText}
+                activeTool={activeSessionTool}
+                streamActivity={activeSessionStreamActivity}
+                onOpenFile={handleFileClick}
+                activeSessionId={activeSessionId || undefined}
+                workspacePath={workspacePath || undefined}
+              />
+            </div>
+
+            {activeSession && (
+              <div
+                style={{
+                  padding: "var(--space-md)",
+                  borderTop: "1px solid var(--color-border)",
+                  backgroundColor: "var(--color-surface-subtle)",
+                }}
+              >
+                <MessageComposer
+                  onSend={sendMessageWithSurfaceContext}
+                  onSteer={steerMessageWithSurfaceContext}
+                  isStreaming={isActiveSessionStreaming}
+                  onCancel={cancelActiveStream}
+                  sessionId={activeSessionId || undefined}
+                  workspaceId={_workspaceId}
+                  queuedPrompts={activeSessionQueuedPrompts}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {/* Floating Expand button for Right Agent Drawer if collapsed */}
-      {!activeWorkspaceWorkflow &&
+      {!desktopConversation &&
+        !activeWorkspaceWorkflow &&
         isAgentCollapsed &&
         (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
         (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (

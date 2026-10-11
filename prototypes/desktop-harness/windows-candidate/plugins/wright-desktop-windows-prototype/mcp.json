@@ -1,0 +1,24 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "wright-desktop": {
+      "type": "stdio",
+      "command": "WRIGHT_WINDOWS_SSH_EXECUTABLE_NOT_CONFIGURED",
+      "args": [
+        "-T",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ForwardAgent=no",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "ServerAliveInterval=30",
+        "-o",
+        "ServerAliveCountMax=3",
+        "WRIGHT_APPROVED_GB10_ALIAS_NOT_CONFIGURED",
+        "/tmp/wright-openai-desktop-harness-prototype/.venv/bin/python /tmp/wright-openai-desktop-harness-prototype/prototypes/desktop-harness/mcp_bridge.py --state-dir /tmp/wright-desktop-mcp-proof-20261011-05"
+      ]
+    }
+  }
+}

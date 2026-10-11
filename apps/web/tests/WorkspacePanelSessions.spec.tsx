@@ -385,6 +385,30 @@ describe("WorkspacePanel session selection", () => {
     });
   });
 
+  it("keeps workspace navigation without mounting chat or selecting a model in desktop-hosted mode", async () => {
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel
+            workspaceId="workspace-1"
+            sessionId="desktop-binding"
+            desktopConversation
+          />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByTestId("activity-bar-explorer-btn")).toBeVisible();
+    expect(screen.queryByTestId("agent-sidebar")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("agent-sidebar-toggle"),
+    ).not.toBeInTheDocument();
+    expect(mockSelectSession).not.toHaveBeenCalled();
+    expect(mockListHermesModels).not.toHaveBeenCalled();
+    expect(
+      mockUseChat.mock.results.at(-1)?.value.refreshSessions,
+    ).not.toHaveBeenCalled();
+  });
+
   it.each([10485760, 26738688, 1, null])(
     "round trips a byte threshold of %s through workspace settings",
     async (bytes) => {

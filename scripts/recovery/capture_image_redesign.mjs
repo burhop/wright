@@ -1,6 +1,6 @@
 // Real-browser, human-repeatable image-led authoring acceptance. No route mocks.
 import { createRequire } from "node:module";
-import { appendFileSync, mkdirSync, writeFileSync, readFileSync, copyFileSync, readdirSync, mkdtempSync } from "node:fs";
+import { appendFileSync, mkdirSync, writeFileSync, readFileSync, copyFileSync, readdirSync, mkdtempSync, lstatSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
@@ -15,9 +15,21 @@ const mode = args.mode ?? "shell";
 const full = mode === "functional" || mode === "final";
 const needsZoom = full || mode === "zoom";
 const label = args.label ?? `${mode}-continuation`;
+const desktopHosted = args["hosted-desktop"] === "true";
+let privateToken;
+if (args["auth-token-file"]) {
+  const target = new URL(args.url);
+  if (target.protocol !== "http:" || target.hostname !== "127.0.0.1") throw new Error("Private prototype auth is restricted to the explicit loopback test host");
+  const file = lstatSync(args["auth-token-file"]);
+  if (!file.isFile() || (file.mode & 0o077)) throw new Error("The prototype auth file must be a private regular file");
+  privateToken = readFileSync(args["auth-token-file"], "utf8");
+  if (!args["evidence-root"]) throw new Error("Authenticated prototype evidence requires an explicit private evidence root");
+}
 const started = new Date().toISOString();
 const stamp = started.replace(/[-:]/g, "").replace(/\.\d+Z/, "Z");
-const root = path.join(repo, "artifacts/ui-walkthrough/image-redesign", `${stamp}-${label}`);
+const root = args["evidence-root"] ? path.resolve(args["evidence-root"]) : path.join(repo, "artifacts/ui-walkthrough/image-redesign", `${stamp}-${label}`);
+if (existsSync(root)) throw new Error("Retain existing walkthrough evidence; use a fresh root");
+mkdirSync(root, { recursive: true, mode: 0o700 });
 for (const dir of ["playwright", "screenshots/raw", "screenshots/annotated", "trace"]) mkdirSync(path.join(root, dir), { recursive: true });
 copyFileSync(fileURLToPath(import.meta.url), path.join(root, "playwright/capture_image_redesign.mjs"));
 const git = (...values) => execFileSync("git", values, { cwd: repo, encoding: "utf8" }).trim();
@@ -51,7 +63,7 @@ async function verifyServedSubject() {
 }
 writeFileSync(path.join(root, "subject.json"), JSON.stringify(subject, null, 2));
 writeFileSync(path.join(root, "progress.md"), `# Image-led authoring — ${label}\n\nStarted ${started} (UTC).\nCommit ${subject.commit}; tracked changes: ${subject.dirty ? "yes — working-tree verification, not exact-subject acceptance" : "none"}.\n\nNo route mocks. No unrelated user files deleted. ${full ? `A new evidence-only workflow will be created through the normal workspace UI: ${workflowPath}.` : "Shell-only review."}\n`);
-const diagnostics = { console: [], pageErrors: [], failedRequests: [], httpErrors: [] };
+const diagnostics = { console: [], pageErrors: [], failedRequests: [], httpErrors: [], apiRequests: [] };
 const expectedHttp = new Set();
 const status = { title: `Wright image-led authoring — ${label}`, summary: "Browser review in progress.", overall: "pending", updated: started, manualSteps: [], steps: [] };
 const esc = (text) => String(text ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -169,11 +181,35 @@ add("01-shell", "Open the approved native editor", "Open the workspace workflow 
   if (!args.url) throw new Error("Provide --url=the-exact-workspace-editor-URL");
   if (mode === "final" && (subject.dirty || subject.untrackedImplementation.length)) throw new Error("Final acceptance requires a clean committed subject, including all implementation files.");
   await page.goto(args.url); logAction("Open workspace workflow", args.url);
+  if (privateToken) {
+    const unlock = page.getByRole("button", { name: "Unlock", exact: true });
+    await unlock.or(tid("workspace-panel")).waitFor({ timeout: 30000 });
+    if (await unlock.isVisible()) {
+      await page.getByLabel("Access Token", { exact: true }).fill(privateToken);
+      await unlock.click();
+    }
+  }
+  if (desktopHosted) {
+    if (new URL(args.url).searchParams.get("host") !== "openai-desktop") throw new Error("Hosted qualification requires the explicit desktop URL mode");
+    await expect(tid("workspace-panel")).toBeVisible({ timeout: 30000 });
+    await expect(tid("agent-sidebar")).toHaveCount(0);
+    await page.getByRole("button", { name: /^Workflows?$/ }).click();
+    logAction("Enter through the ordinary workspace Workflows control");
+    args.url = page.url();
+  }
   await expect(tid("workflow-recovery-palette")).toBeVisible({ timeout: 30000 });
   await expect(page.locator(".workflow-recovery--redesign")).toBeVisible(); await expect(page.locator(".recovery-create-group")).toHaveCount(7); await expect(page.locator(".recovery-palette")).toHaveCount(0); await expect(tid("workflow-recovery-inspector")).toHaveCount(0); await page.evaluate(() => document.fonts.ready);
   await verifyServedSubject();
 }, [{ testId: "workflow-recovery-palette", label: "Compact Create rail" }, { testId: "workflow-recovery-canvas", label: "Native workflow canvas" }]);
 add("01-workspace-controls", "Use independent workspace controls", "Open Agent Console, collapse it, maximize the active tab, and restore the workspace layout.", "The Console and maximize controls have separate unobscured pointer targets and both actions work without moving the workflow out of its workspace.", async () => {
+  if (desktopHosted) {
+    await expect(tid("agent-sidebar-toggle")).toHaveCount(0);
+    await expect(tid("agent-sidebar")).toHaveCount(0);
+    await click("workspace-tab-focus"); await expect(tid("workspace-tab-focus")).toHaveAttribute("aria-label", "Restore workspace layout");
+    await click("workspace-tab-focus"); await expect(tid("workspace-tab-focus")).toHaveAttribute("aria-label", "Maximize active tab");
+    active.expected = "Hosted Wright omits its chat controls; maximize and restore retain the editor in its workspace.";
+    return;
+  }
   const targets = {};
   for (const id of ["workspace-tab-focus", "agent-sidebar-toggle"]) {
     const control = tid(id); await expect(control).toBeVisible();
@@ -331,6 +367,30 @@ if (needsZoom) add("browser-zoom-200", "Actual browser zoom at 200%", "Set brows
   await zoomWorker.evaluate(async (url) => { const tab = (await chrome.tabs.query({})).find((item) => item.url === url); await chrome.tabs.setZoom(tab.id, 1); }, page.url());
 });
 
+if (mode === "desktop-authoring") {
+  if (!desktopHosted) throw new Error("Desktop authoring qualification requires hosted-desktop=true");
+  plans.length = 0; status.steps.length = 0; status.manualSteps.length = 0;
+  copyFileSync(path.join(repo, "prototypes/desktop-harness/authoring_acceptance.mjs"), path.join(root, "playwright/authoring_acceptance.mjs"));
+  const { registerDesktopAuthoring } = await import("../../prototypes/desktop-harness/authoring_acceptance.mjs");
+  registerDesktopAuthoring({ add, getPage: () => page, tid, click, fill, capture, expect, args, root, create, connect, sourceText, selectSettings, diagnostics, unlock: async () => {
+    const button = page.getByRole("button", { name: "Unlock", exact: true });
+    await button.or(tid("workspace-panel")).waitFor({ timeout: 30000 });
+    if (await button.isVisible()) {
+      if (!privateToken) throw new Error("Private browser credential unavailable");
+      await page.getByLabel("Access Token", { exact: true }).fill(privateToken);
+      await button.click();
+    }
+  }});
+  if (args.only) {
+    const selectedIds = new Set(args.only.split(","));
+    const selected = plans.filter(plan => selectedIds.has(plan.record.id));
+    if (selected.length !== selectedIds.size) throw new Error("An explicit hosted check is unknown; do not silently omit it");
+    plans.splice(0, plans.length, ...selected);
+    status.steps = selected.map(plan => plan.record);
+    status.manualSteps = status.manualSteps.filter(step => selected.some(plan => plan.record.label === step.label));
+  }
+  status.title = "Wright hosted desktop editor — current authoring checks";
+}
 if (mode === "blocks") {
   plans.length = 0; status.steps.length = 0; status.manualSteps.length = 0;
   const { registerBlockAcceptance } = await import("./block_acceptance.mjs");
@@ -355,11 +415,17 @@ try {
     context = await chromium.launchPersistentContext(mkdtempSync(path.join(tmpdir(), "wright-evidence-browser-")), { channel: "chromium", headless: true, viewport: { width: 1537, height: 791 }, reducedMotion: "reduce", args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`] });
     zoomWorker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker", { timeout: 15000 });
   } else { browser = await chromium.launch({ headless: true }); context = await browser.newContext({ viewport: { width: 1537, height: 791 }, reducedMotion: "reduce" }); }
-  await context.tracing.start({ screenshots: true, snapshots: true, sources: true }); tracing = true;
+  if (privateToken) {
+    await context.setExtraHTTPHeaders({ Authorization: `Bearer ${privateToken}` });
+    writeFileSync(path.join(root, "auth-evidence-boundary.txt"), "Private authenticated prototype. Full trace omitted to keep credential headers and unlock values out of exportable evidence. Screenshots start after unlock. No credential is included in commands or reports.\n");
+  } else {
+    await context.tracing.start({ screenshots: true, snapshots: true, sources: true }); tracing = true;
+  }
   context.on("page", attachDiagnostics);
   page = context.pages()[0] ?? await context.newPage(); attachDiagnostics(page);
   function attachDiagnostics(target) {
     if (target.__wrightDiagnostics) return; target.__wrightDiagnostics = true;
+    target.on("request", (request) => { const pathname = new URL(request.url()).pathname; if (pathname.startsWith("/api/")) diagnostics.apiRequests.push({ method: request.method(), path: pathname }); });
     target.on("console", (message) => { if (message.type() === "error") diagnostics.console.push({ message: message.text(), url: message.location().url }); });
     target.on("pageerror", (error) => diagnostics.pageErrors.push(String(error)));
     target.on("requestfailed", (request) => diagnostics.failedRequests.push({ url: request.url(), error: request.failure()?.errorText }));
@@ -368,7 +434,7 @@ try {
       if (response.url().endsWith("/workflow-sources") && ["POST", "PUT"].includes(response.request().method()) && response.status() < 400) {
         const body = response.request().postDataJSON(); mutations.push({ action: response.request().method() === "POST" ? "created" : "updated", path: body.path, via: "normal workspace API from browser UI", responseStatus: response.status(), at: new Date().toISOString() });
       }
-      if (response.status() >= 400) { const entry = { status: response.status(), url: response.url() }; if ((entry.status === 404 && entry.url.includes("/workflow-sources?") && entry.url.includes("image-redesign-acceptance-")) || (entry.status === 409 && entry.url.endsWith("/workflow-sources") && active?.id === "21-conflict")) expectedHttp.add(`${entry.status}:${entry.url}`); diagnostics.httpErrors.push(entry); }
+      if (response.status() >= 400) { const entry = { status: response.status(), url: response.url() }; if ((entry.status === 404 && entry.url.includes("/workflow-sources?") && (entry.url.includes("image-redesign-acceptance-") || (desktopHosted && active?.id === "01-shell" && entry.url.includes("mounting-bracket.workflow.wflow")))) || (entry.status === 409 && entry.url.endsWith("/workflow-sources") && ["21-conflict", "desktop-cas"].includes(active?.id))) expectedHttp.add(`${entry.status}:${entry.url}`); diagnostics.httpErrors.push(entry); }
     });
   }
   for (const plan of plans) {
@@ -380,7 +446,7 @@ try {
   }
   await verifyServedSubject();
   if (mode === "final" && (git("rev-parse", "HEAD") !== subject.commit || git("status", "--porcelain", "--untracked-files=no") || untrackedImplementation().length)) throw new Error("The exact committed subject changed during final acceptance; preserve this run and capture a new frozen continuation.");
-  status.overall = "pass"; status.summary = mode === "blocks" ? "Individual block authoring and live interoperability checks passed through the workspace UI. Evidence covers the current working tree; CI and user acceptance remain separate." : full ? `${status.steps.length} functional and responsive checks passed against ${subject.dirty || subject.untrackedImplementation.length ? "the recorded working tree" : "the exact clean committed subject"}. Execution remains unavailable; missing inputs are actionable and no manual simulation is offered in the workspace. Created ${workflowPath}; original example preserved.` : "Early integrated shell reviewed in the real browser. Functional and exact-subject acceptance remain separate.";
+  status.overall = "pass"; status.summary = mode === "desktop-authoring" ? `${status.steps.length} current hosted authoring checks passed through Workflows. Browser/working-tree evidence; installed desktop, full legacy acceptance and execution are separate.` : mode === "blocks" ? "Individual block authoring and live interoperability checks passed through the workspace UI. Evidence covers the current working tree; CI and user acceptance remain separate." : full ? `${status.steps.length} functional and responsive checks passed against ${subject.dirty || subject.untrackedImplementation.length ? "the recorded working tree" : "the exact clean committed subject"}. Execution remains unavailable; missing inputs are actionable and no manual simulation is offered in the workspace. Created ${workflowPath}; original example preserved.` : "Early integrated shell reviewed in the real browser. Functional and exact-subject acceptance remain separate.";
 } catch (error) {
   status.overall = "blocked"; status.summary = `Stopped at first failure: ${error.message}`;
   if (!active) { active = { id: "startup", label: "Browser startup", purpose: "Open evidence browser", action: "Launch Chromium and start trace", controls: [], expected: "The evidence browser starts safely" }; status.steps.unshift(active); }

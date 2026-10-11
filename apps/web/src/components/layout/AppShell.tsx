@@ -11,6 +11,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const isWorkspaceView = location.pathname.startsWith("/workspace/");
+  const desktopConversation = new URLSearchParams(location.search).get("host") === "openai-desktop";
 
   const desktop = isDesktop();
 
@@ -29,7 +30,7 @@ export function AppShell({ children }: AppShellProps) {
         paddingTop: desktop ? "var(--titlebar-height, 34px)" : "0px",
       }}
     >
-      <Header />
+      <Header desktopConversation={desktopConversation} />
 
       <div
         className={`app-shell__body${isWorkspaceView ? " app-shell__body--workspace" : ""}`}

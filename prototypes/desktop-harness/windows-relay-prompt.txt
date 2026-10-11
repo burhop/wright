@@ -1,0 +1,72 @@
+Prepare the Windows-side connection for Wright inside the OpenAI desktop harness.
+
+The user confirmed the desktop is on Windows and authorized preparation of this
+handoff, not live installation. This is a small prototype connection experiment.
+Preserve all desktop settings, plugins, chats, repository changes and evidence.
+Do not push, merge, install/upgrade software, restart the whole desktop app, change
+live configuration, perform physical work or resume protected engineering runs.
+
+Use the supplied wright-desktop-windows-handoff archive. Read its README,
+windows-handoff.md, capabilities.md and qualified-gateway-evidence.json. The source
+branch is unpublished; do not assume you can check it out from GitHub.
+
+Wright, its locked dependencies, API and runs stay on GB10, observed hostname
+promaxgb10-9666. Worktree: /tmp/wright-openai-desktop-harness-prototype.
+The current tested target is private state /tmp/wright-desktop-mcp-proof-20261011-05,
+API loopback 8102, web loopback 5202. Check actual liveness and recorded profile
+before use. Preserve /tmp/wright-codex-platform-integration and other workstreams.
+
+Use the OpenAI documentation skill. Inspect the actual Windows desktop build,
+where MCP processes execute, existing ssh.exe, and already-authorized GB10 SSH
+alias/authentication. Do not expose credentials or invent another auth route.
+Prefer the candidate's SSH stdio transport: the pinned Python MCP bridge runs on
+GB10 and reads its Wright credential privately there. No Windows Wright/Python
+installation or separate model worker should be needed. Native remote MCP is
+an experimental alternative; qualify availability before proposing it.
+
+Resolve only the Windows executable and SSH-alias placeholders in the supplied
+candidate. Preserve strict host-key checking, batch authentication, no agent
+forwarding, and the fixed remote command/state. Prepare a loopback SSH forward
+from Windows 5202 to GB10 5202; Vite already proxies API calls on GB10. If the
+local port is occupied, propose an explicit reviewed URL mapping. Do not expose
+public listeners or disable authentication. Keep browser unlock tokens out of
+chat, screenshots, manifests and command lines; request manual unlock if no
+private injection path is available.
+
+Show the concrete resolved package, exact registration/connection commands,
+affected settings and rollback. Then request specific approval before any live
+desktop change. The previous GB10 installation proposal is not the selected route.
+Do not restore an old complete config over concurrent user changes.
+
+After approval, install the one plugin through verified supported desktop controls.
+Use its actual installed tools in a desktop chat to create a fresh workspace,
+author/save a no-tools digital workflow, prepare/start, read its bounded reasoning
+request, reason in the same conversation, submit the answer and inspect the same
+durable run. No Hermes, SDK/app-server worker or other model may supply the AI work.
+Wright retains accepted source, execution, validation, reviews, gateway authority,
+evidence and recovery. A protocol client alone does not prove this installed path.
+
+Open Wright beside chat in the desktop browser/right panel. Enter through
+Workflows; verify editing/saving and results. Capture a clean actual desktop image.
+Next prove a declared input checkpoint and continuation of the same run. Desktop
+permission prompts, engineering reviews and external-action approval stay distinct.
+Never replay an uncertain effect automatically.
+
+GB10 qualification already proved typed desktop action proposals, ungranted-start
+denial, one exact enrolled read-only inspection, and same-run reconnect without
+repeating that inspection. Enrollment is private local test management, never a
+plugin tool or engineering approval. Other tools, CAD/application/external actions
+and generated UI authoring remain gated. Abrupt liveness/uncertain-effect recovery,
+exact model identity and unattended desktop wakeup remain explicitly unverified.
+
+Read qualified-restart-evidence.json before testing recovery. An isolated API
+SIGKILL/reopen retained the same run/request and did not replay or create an
+output, but the bridge incorrectly accepted a late answer without a live
+consumer. If the API restarts during reasoning, stop and report the retained run
+for reconciliation. Do not submit a late answer, start a replacement run or
+claim pending-reasoning restart is supported. The served Windows target and its
+four pinned runtime files were preserved during this separate fault probe.
+
+Return observed build/host/capability evidence, exact setup/rollback, blockers and
+the clean screenshot with a suggested caption. Distinguish documented, tested and
+assumed behavior. Do not publish or send anything externally.

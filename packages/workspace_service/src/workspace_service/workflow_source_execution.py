@@ -2081,6 +2081,17 @@ async def execute_prompt_workflow(
 
         input_runtime_owner(service, plan)
     run_id = run_id or uuid4().hex
+    from .workflow_reasoning_dispatch import resolve_workflow_reasoning_callbacks
+
+    reasoning = resolve_workflow_reasoning_callbacks(
+        service,
+        workspace_dir=workspace_dir,
+        run_id=run_id,
+        execution_context=execution_context,
+        response=response_generator,
+        action=action_generator,
+    )
+    response_generator, action_generator = reasoning.response, reasoning.action
     from .workflow_run_paths import (
         ATTEMPT_VERSION,
         bind_attempt_paths,

@@ -542,6 +542,9 @@ class WorkspaceService:
             )
 
         row = self.repository.create_dashboard(name, workspace_path, session_id)
+        self.repository.associate_session(
+            row["workspace_id"], session_id, agent_id=agent_id, title=name
+        )
         self.refresh_agent_context_for_path(
             workspace_path,
             agent_id=agent_id,

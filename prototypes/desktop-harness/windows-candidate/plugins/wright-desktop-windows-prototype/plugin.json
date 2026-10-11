@@ -1,0 +1,24 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "wright-desktop-windows-prototype",
+  "version": "0.1.0",
+  "description": "Experimental local Wright workspace and desktop reasoning handoff.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Wright Windows Prototype",
+        "shortDescription": "Engineering workflows beside your desktop conversation",
+        "longDescription": "Experimental Windows desktop connection to isolated Wright on GB10. The desktop supplies reasoning; Wright retains execution, permission and evidence. Exact enrolled file inspection is separately qualified; other tool scopes remain unavailable.",
+        "developerName": "Wright",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Create a Wright workspace and prepare a small digital inspection workflow."
+        ]
+      }
+    }
+  }
+}

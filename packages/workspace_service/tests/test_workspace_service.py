@@ -142,6 +142,16 @@ async def test_create_workspace_rejects_existing_path(tmp_path, db_path):
 
 
 @pytest.mark.asyncio
+async def test_create_workspace_retains_each_session_platform(tmp_path, db_path):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    desktop = await service.create_workspace("Desktop", None, engine, agent_id="openai-desktop-harness")
+    hermes = await service.create_workspace("Hermes", None, engine)
+    assert service.repository.list_sessions(desktop.workspace_id)[0]["agent_id"] == "openai-desktop-harness"
+    assert service.repository.list_sessions(hermes.workspace_id)[0]["agent_id"] == "hermes"
+
+
+@pytest.mark.asyncio
 async def test_create_workspace_rejects_nonmanaged_explicit_path(tmp_path, db_path):
     service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
 
