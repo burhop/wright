@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-11",
+  "worktree": "/tmp/wright-openai-desktop-harness-prototype-next",
+  "parent_checkpoint": "a17acb851b8ab978fdb619d318c9a6b67458af3e",
+  "python_suites": [
+    {
+      "label": "preserved Codex-inside-Wright pilot",
+      "artifact": "/tmp/wright-preserved-chat-regression-20261011-01.xml",
+      "sha256": "f00ff72d835df3d1e19fda65dee7bbc8960f661af5a81a2deaf37200cd3a828c",
+      "tests": 40,
+      "failures": 0,
+      "errors": 0,
+      "scope": "controlled local tests; not installed desktop qualification"
+    },
+    {
+      "label": "existing platforms",
+      "artifact": "/tmp/wright-existing-platform-regression-20261011-01.xml",
+      "sha256": "26ace6d64597335aeaced1ac0899218881b9e4f31d5812c0b0bb9814d25075b0",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "scope": "controlled local tests; not installed desktop qualification"
+    },
+    {
+      "label": "controlled recovery contracts",
+      "artifact": "/tmp/wright-recovery-contract-regression-20261011-01.xml",
+      "sha256": "4f01bb46652de57b51f7fc7582497fbf60c56a05118946a535cd3408ab0c2a80",
+      "tests": 69,
+      "failures": 0,
+      "errors": 0,
+      "scope": "controlled local tests; not installed desktop qualification"
+    }
+  ],
+  "frontend": {
+    "focused_tests": 180,
+    "files": 6,
+    "result": "passed",
+    "typescript": "passed",
+    "build": "passed; 941 modules",
+    "eslint": "0 errors, 12 existing warnings",
+    "changed_file_prettier": "passed"
+  },
+  "python_static": {
+    "ruff_check": "passed",
+    "ruff_format": "795 shared Python files already formatted"
+  },
+  "served_editor": {
+    "report": "/tmp/wright-desktop-editor-acceptance-20261011-10",
+    "overall": "pass",
+    "cases": 11,
+    "scope": "current browser authoring; installed desktop and full legacy acceptance separate",
+    "status_sha256": "5632bdc297aa10d82ccbe267f89142c55f911fa032d024ad2a4a98fac3f108b2",
+    "boundary_sha256": "fb31fbd9c22322c8ec21d7e9eab2b455251678a1e9a54de8a69ffb3179b3c7b4",
+    "owned_api_exit": 0,
+    "owned_web_exit": 130
+  },
+  "uncertain_effect": {
+    "error_codes": [
+      "timeout",
+      "internal"
+    ],
+    "observations": [
+      "one private exclusive marker effect",
+      "one dispatch",
+      "one desktop handoff",
+      "MCP_CALL_FAILED terminal execution error",
+      "no retry or repair request",
+      "no output file"
+    ],
+    "limits": "Controlled provider boundary only; no real external provider lost acknowledgement or restart reconciliation qualified."
+  },
+  "integration_gates": {
+    "full_check_dev_merge": "not run; includes non-frozen sync and full release/package/coverage gates beyond this prototype",
+    "push_merge_release": "not performed"
+  },
+  "limits": [
+    "Actual Windows plugin tools, desktop browser/right panel and conversation closure unverified",
+    "Full original manufacturing and Robot workflows not executed",
+    "Current leased profile API restart during pending reasoning still requires a fresh fault probe",
+    "A transport lease is not upstream model or active-chat attestation"
+  ]
+}

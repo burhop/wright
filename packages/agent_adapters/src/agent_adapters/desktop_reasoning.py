@@ -79,7 +79,9 @@ class DesktopWorkflowReasoner:
         )
         self.poll_interval = poll_interval
         if type(initial_ordinal) is not int or not 0 <= initial_ordinal < 10000:
-            raise ValueError("Desktop continuation requires a qualified decision ordinal")
+            raise ValueError(
+                "Desktop continuation requires a qualified decision ordinal"
+            )
         self._ordinal = initial_ordinal
 
     def resolution(self):

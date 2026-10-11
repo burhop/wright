@@ -7,7 +7,11 @@ import pytest
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
 from agent_adapters.workflow_instructions import load_default_workflow_instructions
-from core.desktop_reasoning import DesktopHarnessBinding, DesktopReasoningResponse
+from core.desktop_reasoning import (
+    DesktopActionReply,
+    DesktopHarnessBinding,
+    DesktopReasoningResponse,
+)
 from data_vault.desktop_reasoning_repository import (
     DesktopHandoffConflict,
     DesktopReasoningRepository,
@@ -246,3 +250,128 @@ def test_unqualified_image_capability_is_explicit_and_creates_no_request(tmp_pat
             )
         )
     assert repo.pending("workspace-1", "session-1") == []
+
+
+@pytest.mark.parametrize("error_code", ["timeout", "internal"])
+def test_uncertain_provider_effect_stops_desktop_decision_loop_without_replay(
+    tmp_path, error_code
+):
+    """Controlled effect boundary, not qualification of an installed provider."""
+    from tool_registry.gateway_models import GatewayError, GatewayErrorCode
+    from packages.workspace_service.tests.test_workflow_mcp_execution import runtime
+
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo)
+    gateway, tools = runtime()
+    marker = tmp_path / "private-effect-marker.txt"
+
+    async def effect_then_lose_ack(*args, **kwargs):
+        gateway.calls.append((args, kwargs))
+        # Exclusive creation means an accidental replay cannot quietly pass.
+        with marker.open("x") as stream:
+            stream.write("One controlled digital effect happened")
+        raise GatewayError(
+            GatewayErrorCode(error_code), "Controlled lost acknowledgement"
+        )
+
+    gateway.call_tool = effect_then_lose_ack
+    accepted = materialize_new_workflow_instructions(
+        source(
+            task(
+                "research",
+                fmt="text",
+                prompt="Perform the controlled probe with the exact query controlled probe.",
+                authoring_template="mcp-task",
+                mcp_server="docs",
+                max_tool_calls=2,
+            )
+        ),
+        load_default_workflow_instructions(),
+    )
+    plan = compile_prompt_workflow(accepted)
+    app = service(tmp_path)
+    app.workflow_model_capabilities = desktop.capabilities
+    app.workflow_reasoning_factory = lambda **_: WorkflowReasoningCallbacks(
+        desktop.generate_response, desktop.decide_action
+    )
+    events = []
+
+    async def run():
+        frozen, context = await freeze_workflow_model_routing(app, plan, {})
+
+        async def emit(event):
+            events.append(event)
+
+        running = asyncio.create_task(
+            execute_prompt_workflow(
+                service=app,
+                workspace_dir=str(tmp_path),
+                plan=frozen,
+                input_values={},
+                response_generator=None,
+                action_generator=None,
+                tool_runtime=tools,
+                execution_context=context,
+                run_id="run-1",
+                on_event=emit,
+            )
+        )
+        request = await pending(repo)
+        assert request.kind == "action"
+        assert (
+            request.payload["tools"][0]["function"]["parameters"]["properties"][
+                "schema_version"
+            ]["const"]
+            == "wright.workflow-action-intent/1"
+        )
+        proposal = {
+            "schema_version": "wright.workflow-action-intent/1",
+            "arguments": {"query": "controlled probe"},
+            "assumptions": [],
+            "unresolved_required_information": [],
+        }
+        repo.submit_response(
+            "workspace-1",
+            "session-1",
+            DesktopReasoningResponse(
+                request_id=request.request_id,
+                request_digest=request.digest,
+                binding_digest=request.binding.digest,
+                response_id="uncertain-effect-answer",
+                received_at=datetime.now(timezone.utc).isoformat(),
+                reply=DesktopActionReply(
+                    tool_calls=[
+                        {
+                            "id": "one-effect",
+                            "type": "function",
+                            "function": {
+                                "name": "tool_0",
+                                "arguments": json.dumps(proposal),
+                            },
+                        }
+                    ]
+                ),
+            ),
+        )
+        with pytest.raises(WorkflowSourceExecutionError) as failed:
+            await asyncio.wait_for(running, 10)
+        assert failed.value.code == "MCP_CALL_FAILED"
+
+    asyncio.run(run())
+    assert marker.read_text() == "One controlled digital effect happened"
+    assert len(gateway.calls) == 1
+    assert repo.pending("workspace-1", "session-1") == []
+    # No second handoff is created for retry or format repair after failure.
+    assert (
+        len(
+            [
+                event
+                for event in events
+                if event.get("kind") == "model_invocation"
+                and event.get("invocation", {}).get("capture_scope")
+                == "desktop_handoff_request"
+            ]
+        )
+        == 1
+    )
+    assert not (tmp_path / "research.txt").exists()

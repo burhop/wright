@@ -62,17 +62,27 @@ describe("LiveHealthService", () => {
     service.startPolling(1000, ["wright-api"]);
     try {
       await vi.advanceTimersByTimeAsync(0);
-      expect(fetch.mock.calls.map(([url]) => new URL(String(url), "http://localhost").pathname)).toEqual(["/api/health"]);
+      expect(
+        fetch.mock.calls.map(
+          ([url]) => new URL(String(url), "http://localhost").pathname,
+        ),
+      ).toEqual(["/api/health"]);
       service.startPolling(1000);
       fetch.mockClear();
       await vi.advanceTimersByTimeAsync(1000);
-      expect(fetch.mock.calls.map(([url]) => new URL(String(url), "http://localhost").pathname)).toEqual([
-        "/api/health", "/api/agent/health", "/api/inference/health",
-      ]);
+      expect(
+        fetch.mock.calls.map(
+          ([url]) => new URL(String(url), "http://localhost").pathname,
+        ),
+      ).toEqual(["/api/health", "/api/agent/health", "/api/inference/health"]);
       service.stopPolling();
       fetch.mockClear();
       await vi.advanceTimersByTimeAsync(1000);
-      expect(fetch.mock.calls.map(([url]) => new URL(String(url), "http://localhost").pathname)).toEqual(["/api/health"]);
+      expect(
+        fetch.mock.calls.map(
+          ([url]) => new URL(String(url), "http://localhost").pathname,
+        ),
+      ).toEqual(["/api/health"]);
       service.stopPolling(["wright-api"]);
       fetch.mockClear();
       await vi.advanceTimersByTimeAsync(1000);

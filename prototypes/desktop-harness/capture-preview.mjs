@@ -5,7 +5,9 @@ import path from "node:path";
 
 const state = path.resolve(process.argv[2]);
 const output = path.resolve(process.argv[3]);
-const checkpoint = process.argv[4] === "checkpoint";
+const connectedCheckpoint = process.argv[4] === "checkpoint-connected";
+const completedCheckpoint = process.argv[4] === "checkpoint-completed";
+const checkpoint = process.argv[4] === "checkpoint" || connectedCheckpoint || completedCheckpoint;
 const gateway = process.argv[4] === "gateway";
 let info;
 if (checkpoint) {
@@ -31,6 +33,7 @@ const context = await browser.newContext({
 const page = await context.newPage();
 const requests = [];
 const failures = [];
+let uiContinuation;
 page.on("request", (r) => {
   const url = new URL(r.url());
   if (url.pathname.startsWith("/api/")) requests.push({ method: r.method(), path: url.pathname });
@@ -57,7 +60,29 @@ try {
   url.searchParams.set("workflow", "canonical");
   url.searchParams.set("workflowPath", info.source_path);
   await page.goto(url.toString());
-  if (checkpoint) {
+  if (completedCheckpoint) {
+    const evidence = JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8"));
+    if (evidence.stage !== "completed" || evidence.final_snapshot.context.run_id !== info.run_id) throw new Error("Readback requires the exact recorded completed run");
+    const view = new URL(url);
+    view.searchParams.set("processView", "desktop-checkpoint-completed-readback");
+    view.searchParams.set("processPath", info.source_path);
+    view.searchParams.set("processDigest", evidence.source.storage_digest);
+    view.searchParams.set("processRun", info.run_id);
+    await page.goto(view.toString());
+    await page.getByText("Process completed", { exact: true }).waitFor({ timeout: 30000 });
+    if (new URL(page.url()).searchParams.get("processRun") !== info.run_id) throw new Error("Completed readback changed run identity");
+    await page.screenshot({ path: path.join(output, "03-reopened-completed-run.png") });
+    await page.reload();
+    await page.getByText("Process completed", { exact: true }).waitFor({ timeout: 30000 });
+    await page.screenshot({ path: path.join(output, "04-reloaded-completed-run.png") });
+    const tab = page.getByRole("tab", { selected: true });
+    const identity = await tab.getAttribute("data-testid");
+    if (!identity) throw new Error("Cannot identify the exact common working-view tab for close");
+    await tab.getByRole("button", { name: /^Close / }).click();
+    await page.getByTestId(identity).waitFor({ state: "detached", timeout: 30000 });
+    uiContinuation = { readback_only: true, common_view_closed: true, run_id: info.run_id };
+    await page.screenshot({ path: path.join(output, "05-common-view-closed.png") });
+  } else if (checkpoint) {
     // Reuse the normal wait/reopen controls verified by the existing
     // scripts/recovery/capture_instruction_wait_walkthrough.mjs harness.
     await page.getByTestId("workflow-run-input-wait").waitFor({ timeout: 30000 });
@@ -70,6 +95,42 @@ try {
     await page.getByRole("button", { name: "Submit response", exact: true }).waitFor({ timeout: 30000 });
     if (new URL(page.url()).searchParams.get("processRun") !== info.run_id) throw new Error("Reload changed run identity");
     await page.screenshot({ path: path.join(output, "05-reopened-input-view.png") });
+    if (connectedCheckpoint) {
+      const select = page.getByLabel("selection (required)", { exact: true });
+      await select.waitFor({ timeout: 30000 });
+      if (!(await select.isEnabled())) throw new Error("Connected input editor is unavailable");
+      await select.selectOption({ label: "a" });
+      const submit = page.getByRole("button", { name: "Submit response", exact: true });
+      if (!(await submit.isEnabled())) throw new Error("Validated connected input cannot be submitted");
+      await page.screenshot({ path: path.join(output, "06-connected-choice-ready.png") });
+      const reply = page.waitForResponse(r => r.request().method() === "POST" && /\/process-interfaces\/interactions\/[^/]+\/response$/.test(new URL(r.url()).pathname));
+      await submit.click();
+      const response = await reply;
+      const sent = response.request().postDataJSON();
+      const receipt = await response.json();
+      if (!response.ok() || sent.value?.selection !== "a") throw new Error("The normal UI did not submit the exact declared test selection");
+      if (new URL(page.url()).searchParams.get("processRun") !== info.run_id) throw new Error("UI response changed the durable run");
+      uiContinuation = { status: response.status(), request: sent, receipt, run_id: info.run_id, test_data: "synthetic selection a; no engineering approval" };
+      writeFileSync(path.join(output, "ui-continuation.json"), JSON.stringify(uiContinuation, null, 2));
+      await page.screenshot({ path: path.join(output, "07-same-run-continuing.png") });
+      // The SDK probe relays this desktop's next reply; this browser never
+      // generates a model answer or executes/restarts the process itself.
+      const deadline = Date.now() + 300000;
+      while (JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8")).stage !== "completed") {
+        if (Date.now() > deadline) throw new Error("Awaiting the desktop reply did not reach a recorded completion; reconcile, never restart");
+        await page.waitForTimeout(250);
+      }
+      await page.getByText("Process completed", { exact: true }).waitFor({ timeout: 30000 });
+      if (new URL(page.url()).searchParams.get("processRun") !== info.run_id) throw new Error("Completed view changed run identity");
+      await page.screenshot({ path: path.join(output, "08-completed-same-run.png") });
+      const activeTab = page.getByRole("tab", { selected: true });
+      const identity = await activeTab.getAttribute("data-testid");
+      if (!identity) throw new Error("Cannot identify the exact common working-view tab for close");
+      await activeTab.getByRole("button", { name: /^Close / }).click();
+      await page.getByTestId(identity).waitFor({ state: "detached", timeout: 30000 });
+      uiContinuation.common_view_closed = true;
+      writeFileSync(path.join(output, "ui-continuation.json"), JSON.stringify(uiContinuation, null, 2));
+    }
   } else {
     await page.getByLabel(gateway ? "Desktop confined gateway inspection diagram" : "Desktop reasoning handoff diagram", { exact: true }).waitFor({ timeout: 30000 });
     await page.getByText(gateway ? "Inspect the enrolled requirements" : "Prepare a digital inspection brief", { exact: true }).first().waitFor();
@@ -85,6 +146,7 @@ try {
     url: url.toString(), viewport: { width: 1600, height: 1000 },
     workspace_id: info.workspace_id, source_path: info.source_path,
     preserved_run_id: info.run_id, requests, page_errors: failures,
+    ui_continuation: uiContinuation,
   }, null, 2));
   console.log(JSON.stringify({ status: "passed", output }));
 } catch (error) {

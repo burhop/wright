@@ -13,6 +13,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import uuid4
 from pydantic import TypeAdapter
+import anyio
 from core.desktop_reasoning import DesktopActionReply
 from core.process_validation import Identifier
 
@@ -81,18 +82,49 @@ class WrightDesktopClient:
         )
 
 
+@asynccontextmanager
+async def connection_lifespan(client):
+    payload = {"client_id": client.client_id, "binding": client.binding}
+    established = False
+    try:
+        receipt = await client.call("POST", "/api/desktop/connect", json=payload)
+        established = True
+        interval = receipt.get("heartbeat_interval_seconds")
+        lease = receipt.get("connection_lease_seconds")
+        if (
+            type(interval) is not int
+            or type(lease) is not int
+            or not 0 < interval < lease <= 60
+        ):
+            raise ValueError(
+                "Wright returned an invalid connection lease; no lifecycle defaults were substituted"
+            )
+
+        async def pulse():
+            while True:
+                await anyio.sleep(interval)
+                await client.call("POST", "/api/desktop/heartbeat", json=payload)
+
+        async with anyio.create_task_group() as group:
+            group.start_soon(pulse)
+            try:
+                yield {}
+            finally:
+                group.cancel_scope.cancel()
+    finally:
+        with anyio.CancelScope(shield=True):
+            try:
+                if established:
+                    await client.call("POST", "/api/desktop/disconnect", json=payload)
+            finally:
+                await client.http.aclose()
+
+
 def server(client):
     @asynccontextmanager
     async def lifespan(_):
-        payload = {"client_id": client.client_id, "binding": client.binding}
-        await client.call("POST", "/api/desktop/connect", json=payload)
-        try:
+        async with connection_lifespan(client):
             yield {}
-        finally:
-            try:
-                await client.call("POST", "/api/desktop/disconnect", json=payload)
-            finally:
-                await client.http.aclose()
 
     mcp = FastMCP("wright-desktop-prototype", lifespan=lifespan)
     read = ToolAnnotations(

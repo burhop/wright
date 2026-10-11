@@ -4,6 +4,32 @@ This prototype connects the actual desktop conversation to Wright's existing
 source runtime. It does not start Hermes, another model service, or an SDK agent
 worker. The MCP SDK is a transport library, not the reasoning provider.
 
+Development now continues in `/tmp/wright-openai-desktop-harness-prototype-next`.
+The original worktree stays clean at local checkpoint `a17acb85` for the prepared
+Windows connection experiment; its paths and runtime bytes are unchanged. The
+new checkout applies the tested live-owner admission guard and corrects three
+formatting issues. Its leased response/action profiles are now qualified for the
+specified reconnect/read-only boundaries; API-restart and broader cases remain.
+Do not point an existing connection or retained run at it automatically.
+
+The development MCP lifecycle renews a 30-second lease every 5 seconds. Abrupt
+child loss eventually disables connection readiness/new mutation admission;
+pending Wright requests remain durable. Heartbeat failure stops the bridge,
+without retrying workflow writes. Reconnect uses a new explicit MCP initialization
+and reconciles the same live run. Closing a desktop chat may leave its MCP process
+alive; chat/panel closure and unattended wakeup require installed-host testing.
+Lease liveness does not attest model availability or private conversation state.
+
+`lease_reconcile_probe.py` has separate observation and completion phases. The
+observation phase reads an already recorded, confirmed MCP-child loss, checks
+expired readiness and denied mutation, and retains the pending run/evidence.
+It never initializes a new connection. Completion explicitly initializes MCP,
+reads the exact live run/task and submits `lease-desktop-answer.json` once. The
+file must contain this desktop's actual answer and original request/binding
+digests; no test model or replacement run is supplied. Both phases refuse to
+overwrite previous evidence. Observe and reconcile the original run before any
+retry; this helper is not automatic API-restart recovery.
+
 The hosted Wright UI omits its chat and model controls. Standalone Wright keeps
 them. Existing accepted-source, editor, input, supervisor, recorder and gateway
 owners remain authoritative; the bridge never executes the workflow graph.
@@ -20,7 +46,11 @@ controlled Wright API restart, reconnected, rejected an invalid selection and
 completed the same run. Its previous output bytes were retained. Browser reload
 also retained the checkpoint/common working view. With the connection absent,
 the view correctly blocked continuation; a connected Submit-button walkthrough
-is still required.
+is now qualified separately: the actual common-view form submits the declared
+synthetic choice and the desktop's next task carries it into the same run. Exact
+completed-view reload/close and retained first-output bytes after a durable-wait
+API restart are recorded in qualified-connected-checkpoint-evidence.json. The
+initial capture's final selector failure is retained; it is not a full capture pass.
 
 Installed-plugin loading and display inside the desktop right panel are not yet
 verified. Gateway tasks, CAD/application work, external actions and generated
@@ -133,6 +163,13 @@ connection candidate requiring specific live-configuration approval and host
 verification; updating local package files does not install the plugin.
 
 The checkpoint probe uses the existing Feature 083 synthetic comparison fixture:
+
+For submission through the **normal working view**, use `--phase ui-continue`
+after its start phase reaches a durable wait. That mode keeps MCP live, checks
+invalid-input denial and relays the next desktop task; it does not submit the
+valid choice. `capture-preview.mjs ... checkpoint-connected` exercises the form.
+Use `checkpoint-completed` only for readback of an already-completed exact run;
+it never submits or starts. Preserve failed captures and accepted receipts.
 
 ```bash
 .venv/bin/python prototypes/desktop-harness/checkpoint_probe.py --state-dir /tmp/wright-desktop-experiment-new --phase start

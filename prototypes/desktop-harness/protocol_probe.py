@@ -41,7 +41,9 @@ async def main(state):
 
             async def call(tool_name, **arguments):
                 result = await session.call_tool(tool_name, arguments)
-                evidence["calls"].append({"tool": tool_name, "is_error": result.isError})
+                evidence["calls"].append(
+                    {"tool": tool_name, "is_error": result.isError}
+                )
                 probe_file.write_text(json.dumps(evidence, indent=2))
                 if result.isError:
                     raise RuntimeError(str(result.content))

@@ -397,7 +397,9 @@ describe("WorkspacePanel session selection", () => {
         </ViewerPanelProvider>
       </MemoryRouter>,
     );
-    expect(await screen.findByTestId("activity-bar-explorer-btn")).toBeVisible();
+    expect(
+      await screen.findByTestId("activity-bar-explorer-btn"),
+    ).toBeVisible();
     expect(screen.queryByTestId("agent-sidebar")).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("agent-sidebar-toggle"),

@@ -3,7 +3,10 @@ import healthService from "../services/health-service";
 import useLogger from "./useLogger";
 import type { ServiceStatus } from "../store/types";
 
-export function useHealthStatus(intervalMs: number = 15000, includeAgent = true) {
+export function useHealthStatus(
+  intervalMs: number = 15000,
+  includeAgent = true,
+) {
   const [statuses, setStatuses] = useState<ServiceStatus[]>(
     healthService.getStatuses(),
   );
@@ -26,7 +29,9 @@ export function useHealthStatus(intervalMs: number = 15000, includeAgent = true)
     };
   }, [intervalMs, logger, includeAgent]);
 
-  return includeAgent ? statuses : statuses.filter((svc) => svc.serviceId === "wright-api");
+  return includeAgent
+    ? statuses
+    : statuses.filter((svc) => svc.serviceId === "wright-api");
 }
 
 export default useHealthStatus;

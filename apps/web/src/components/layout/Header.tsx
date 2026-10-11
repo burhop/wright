@@ -4,7 +4,11 @@ import useHealthStatus from "../../hooks/useHealthStatus";
 import telemetry from "../../services/telemetry";
 import type { TraceContext } from "../../store/types";
 
-export function Header({ desktopConversation = false }: { desktopConversation?: boolean }) {
+export function Header({
+  desktopConversation = false,
+}: {
+  desktopConversation?: boolean;
+}) {
   const statuses = useHealthStatus(15000, !desktopConversation);
   const [latestTrace, setLatestTrace] = useState<TraceContext | null>(null);
   useEffect(() => {
@@ -53,7 +57,13 @@ export function Header({ desktopConversation = false }: { desktopConversation?: 
         >
           WRIGHT
         </span>
-        {desktopConversation && <span style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>Desktop prototype</span>}
+        {desktopConversation && (
+          <span
+            style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
+          >
+            Desktop prototype
+          </span>
+        )}
       </div>
 
       <div

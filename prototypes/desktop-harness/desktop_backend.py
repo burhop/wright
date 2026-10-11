@@ -5,6 +5,7 @@ from importlib.metadata import version
 import json
 from pathlib import Path
 from types import SimpleNamespace
+import time
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
@@ -18,6 +19,10 @@ from data_vault.desktop_reasoning_repository import (
     DesktopReasoningRepository,
 )
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
+
+
+CLIENT_LEASE_SECONDS = 30
+HEARTBEAT_INTERVAL_SECONDS = 5
 
 
 class ConnectRequest(BaseModel):
@@ -43,13 +48,16 @@ class DesktopBackend:
         self.service = service
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
-        self.clients = set()
+        self.clients = {}
+        self._now = time.monotonic
         self.confined_inspection = confined_inspection
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
             "files": {},
             "confined_inspection": confined_inspection,
+            "connection_lease_seconds": CLIENT_LEASE_SECONDS,
+            "heartbeat_interval_seconds": HEARTBEAT_INTERVAL_SECONDS,
         }
         import agent_adapters.desktop_reasoning as adapter
         import workspace_service.workflow_reasoning_dispatch as dispatch
@@ -75,7 +83,20 @@ class DesktopBackend:
         return SimpleNamespace(session_id="desktop-" + str(uuid4()))
 
     async def check_health(self):
-        return {"state": "connected" if self.clients else "disconnected"}
+        return {"state": "connected" if self.connected else "disconnected"}
+
+    @property
+    def connected(self):
+        self._expire_clients()
+        return bool(self.clients)
+
+    def _expire_clients(self):
+        now = self._now()
+        self.clients = {
+            client: deadline
+            for client, deadline in self.clients.items()
+            if deadline > now
+        }
 
     def workspace(self, workspace_id, session_id):
         row = self.service.repository.get_by_session(session_id)
@@ -94,11 +115,11 @@ class DesktopBackend:
         return row
 
     def require_connection(self):
-        if not self.clients:
+        if not self.connected:
             raise HTTPException(503, "Desktop MCP connection is not active")
 
     async def capabilities(self):
-        if not self.clients:
+        if not self.connected:
             return {
                 "available": False,
                 "reason": "Desktop MCP connection is not active",
@@ -141,25 +162,44 @@ class DesktopBackend:
         @router.get("/connection")
         async def connection():
             return {
-                "connected": bool(self.clients),
+                "connected": self.connected,
                 "binding": self.binding.model_dump(mode="json"),
                 "model_identity": "unreported; not independently attested",
                 "native_tool_ceiling": "unverified; Wright enforces its own API/gateway authority",
+                "connection_lease_seconds": CLIENT_LEASE_SECONDS,
+                "heartbeat_interval_seconds": HEARTBEAT_INTERVAL_SECONDS,
             }
 
         @router.post("/connect")
         async def connect(body: ConnectRequest):
             if body.binding != self.binding:
                 raise HTTPException(409, "Desktop bridge configuration changed")
-            self.clients.add(body.client_id)
+            self._expire_clients()
+            self.clients[body.client_id] = self._now() + CLIENT_LEASE_SECONDS
+            return {
+                "connected": True,
+                "binding_digest": self.binding.digest,
+                "connection_lease_seconds": CLIENT_LEASE_SECONDS,
+                "heartbeat_interval_seconds": HEARTBEAT_INTERVAL_SECONDS,
+            }
+
+        @router.post("/heartbeat")
+        async def heartbeat(body: ConnectRequest):
+            if body.binding != self.binding:
+                raise HTTPException(409, "Desktop bridge configuration changed")
+            if not self.connected or body.client_id not in self.clients:
+                raise HTTPException(
+                    409, "Desktop connection lease expired; initialize a new connection"
+                )
+            self.clients[body.client_id] = self._now() + CLIENT_LEASE_SECONDS
             return {"connected": True, "binding_digest": self.binding.digest}
 
         @router.post("/disconnect")
         async def disconnect(body: ConnectRequest):
             if body.binding != self.binding:
                 raise HTTPException(409, "Desktop bridge configuration changed")
-            self.clients.discard(body.client_id)
-            return {"connected": bool(self.clients)}
+            self.clients.pop(body.client_id, None)
+            return {"connected": self.connected}
 
         @router.post("/workspaces", status_code=201)
         async def create_workspace(body: CreateWorkspaceRequest):
@@ -210,6 +250,10 @@ class DesktopBackend:
                 if task.binding != self.binding:
                     raise DesktopHandoffConflict(
                         "The task belongs to another frozen connection"
+                    )
+                if not self.service.process_interfaces.runs.is_live(task.run_id):
+                    raise DesktopHandoffConflict(
+                        "The run has no live reasoning consumer; reconcile its retained request"
                     )
                 _, accepted = self.repository.submit_response(
                     body.workspace_id, body.session_id, body.response

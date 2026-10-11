@@ -1192,7 +1192,13 @@ export function WorkspacePanel({
       container?.removeEventListener("viewer-message", handleViewerMessage);
       container?.replaceChildren();
     };
-  }, [activeTabPath, workspaceFileSessionId, getDocument, getProvider, desktopConversation]);
+  }, [
+    activeTabPath,
+    workspaceFileSessionId,
+    getDocument,
+    getProvider,
+    desktopConversation,
+  ]);
 
   const fetchGitData = useCallback(async () => {
     setGitRefreshVersion((version) => version + 1);
@@ -3083,83 +3089,85 @@ export function WorkspacePanel({
                 </div>
               ))}
 
-              {!desktopConversation && <div
-                style={{
-                  borderBottom: "1px solid var(--color-border)",
-                  paddingBottom: "var(--space-sm)",
-                }}
-              >
-                <h4
-                  style={{
-                    margin: 0,
-                    fontWeight: 600,
-                    fontSize: "0.85rem",
-                    color: "var(--color-secondary)",
-                  }}
-                >
-                  Suggested Prompts
-                </h4>
-                <p
-                  style={{
-                    margin: "6px 0",
-                    fontSize: "0.7rem",
-                    color: "var(--color-secondary)",
-                    lineHeight: "1.4",
-                  }}
-                >
-                  Send one of these to Hermes to bootstrap the current workspace
-                  context.
-                </p>
+              {!desktopConversation && (
                 <div
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "6px",
+                    borderBottom: "1px solid var(--color-border)",
+                    paddingBottom: "var(--space-sm)",
                   }}
                 >
-                  {[
-                    [
-                      "Explain this workspace",
-                      "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
-                    ],
-                    [
-                      "Check available CAD tools",
-                      "List the MCP tools available in this session and explain which ones are useful for Onshape CAD creation, inspection, rendering, and export.",
-                    ],
-                    [
-                      "Plan the next CAD step",
-                      "Review the active design/specification files and propose a concise next-step plan before making any CAD changes.",
-                    ],
-                  ].map(([label, prompt]) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={() => sendMessageWithSurfaceContext(prompt)}
-                      disabled={!activeSessionId || isActiveSessionStreaming}
-                      style={{
-                        backgroundColor: "var(--color-surface-subtle)",
-                        color: "var(--color-primary)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "var(--radius-sm)",
-                        padding: "6px 8px",
-                        fontSize: "0.7rem",
-                        fontWeight: 600,
-                        textAlign: "left",
-                        cursor:
-                          !activeSessionId || isActiveSessionStreaming
-                            ? "not-allowed"
-                            : "pointer",
-                        opacity:
-                          !activeSessionId || isActiveSessionStreaming
-                            ? 0.55
-                            : 1,
-                      }}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                  <h4
+                    style={{
+                      margin: 0,
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    Suggested Prompts
+                  </h4>
+                  <p
+                    style={{
+                      margin: "6px 0",
+                      fontSize: "0.7rem",
+                      color: "var(--color-secondary)",
+                      lineHeight: "1.4",
+                    }}
+                  >
+                    Send one of these to Hermes to bootstrap the current
+                    workspace context.
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "6px",
+                    }}
+                  >
+                    {[
+                      [
+                        "Explain this workspace",
+                        "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
+                      ],
+                      [
+                        "Check available CAD tools",
+                        "List the MCP tools available in this session and explain which ones are useful for Onshape CAD creation, inspection, rendering, and export.",
+                      ],
+                      [
+                        "Plan the next CAD step",
+                        "Review the active design/specification files and propose a concise next-step plan before making any CAD changes.",
+                      ],
+                    ].map(([label, prompt]) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => sendMessageWithSurfaceContext(prompt)}
+                        disabled={!activeSessionId || isActiveSessionStreaming}
+                        style={{
+                          backgroundColor: "var(--color-surface-subtle)",
+                          color: "var(--color-primary)",
+                          border: "1px solid var(--color-border)",
+                          borderRadius: "var(--radius-sm)",
+                          padding: "6px 8px",
+                          fontSize: "0.7rem",
+                          fontWeight: 600,
+                          textAlign: "left",
+                          cursor:
+                            !activeSessionId || isActiveSessionStreaming
+                              ? "not-allowed"
+                              : "pointer",
+                          opacity:
+                            !activeSessionId || isActiveSessionStreaming
+                              ? 0.55
+                              : 1,
+                        }}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>}
+              )}
 
               <div>
                 <h4

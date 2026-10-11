@@ -52,7 +52,7 @@ async def await_reply(state, evidence, evidence_file, call, scope, stage):
             pending = await call("wright_reasoning_pending", **scope)
             if pending["tasks"]:
                 break
-            await asyncio.sleep(0.25)
+            await asyncio.sleep(1)
         evidence[stage + "_pending"] = pending
         evidence_file.write_text(json.dumps(evidence, indent=2))
         print(json.dumps({"stage": stage, "pending": pending}, indent=2), flush=True)
@@ -183,14 +183,29 @@ async def main(state, phase):
             after_denial = await call("wright_process_read", **read_args)
             if after_denial["state"] != "waiting_human":
                 raise ValueError("Invalid selection changed the run state")
-            choice = json.loads((state / "checkpoint-test-choice.json").read_text())
-            evidence["test_choice"] = choice
-            evidence["continuation_receipt"] = await call(
-                "wright_process_respond",
-                **respond_args,
-                value=choice,
-                request_id="desktop-checkpoint-selection-01",
-            )
+            if phase == "ui-continue":
+                evidence["stage"] = "connected_waiting_for_ui"
+                evidence_file.write_text(json.dumps(evidence, indent=2))
+                print(
+                    json.dumps(
+                        {
+                            "stage": "connected_waiting_for_ui",
+                            "run_id": receipt["run_id"],
+                        }
+                    ),
+                    flush=True,
+                )
+                # The normal working view owns the declared-input submission.
+                # This helper keeps MCP live and only relays the next model task.
+            else:
+                choice = json.loads((state / "checkpoint-test-choice.json").read_text())
+                evidence["test_choice"] = choice
+                evidence["continuation_receipt"] = await call(
+                    "wright_process_respond",
+                    **respond_args,
+                    value=choice,
+                    request_id="desktop-checkpoint-selection-01",
+                )
             await await_reply(state, evidence, evidence_file, call, scope, "second")
             final = await read_until(
                 call,
@@ -220,6 +235,8 @@ async def main(state, phase):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
-    parser.add_argument("--phase", choices=("start", "continue"), required=True)
+    parser.add_argument(
+        "--phase", choices=("start", "continue", "ui-continue"), required=True
+    )
     args = parser.parse_args()
     asyncio.run(main(args.state_dir.resolve(strict=True), args.phase))

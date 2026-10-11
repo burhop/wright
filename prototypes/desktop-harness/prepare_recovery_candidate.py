@@ -13,8 +13,12 @@ import shutil
 import subprocess
 
 
-def prepare(destination):
-    origin = Path(__file__).resolve().parent
+def prepare(destination, baseline_worktree=None):
+    origin = (
+        baseline_worktree.resolve(strict=True) / "prototypes/desktop-harness"
+        if baseline_worktree is not None
+        else Path(__file__).resolve().parent
+    )
     destination = destination.resolve()
     if destination.is_relative_to(origin) or origin.is_relative_to(destination):
         raise ValueError("Use a separate fresh private candidate directory")
@@ -63,8 +67,9 @@ def prepare(destination):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate-dir", required=True, type=Path)
+    parser.add_argument("--baseline-worktree", type=Path)
     args = parser.parse_args()
-    result = prepare(args.candidate_dir)
+    result = prepare(args.candidate_dir, args.baseline_worktree)
     print(
         json.dumps(
             {

@@ -92,15 +92,23 @@ export class LiveHealthService {
   }
 
   private runChecks(): void {
-    this.statuses.filter((svc) => this.subscriptions.has(svc.serviceId)).forEach((svc) => {
-      void this.checkService(svc);
-    });
+    this.statuses
+      .filter((svc) => this.subscriptions.has(svc.serviceId))
+      .forEach((svc) => {
+        void this.checkService(svc);
+      });
   }
 
-  startPolling(intervalMs: number = 15000, serviceIds?: readonly string[]): void {
+  startPolling(
+    intervalMs: number = 15000,
+    serviceIds?: readonly string[],
+  ): void {
     for (const svc of this.statuses) {
       if (!serviceIds || serviceIds.includes(svc.serviceId)) {
-        this.subscriptions.set(svc.serviceId, (this.subscriptions.get(svc.serviceId) ?? 0) + 1);
+        this.subscriptions.set(
+          svc.serviceId,
+          (this.subscriptions.get(svc.serviceId) ?? 0) + 1,
+        );
       }
     }
     if (this.intervalId) return;

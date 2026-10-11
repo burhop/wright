@@ -4,6 +4,39 @@ These are actual GB10 browser captures of the served hosted Wright UI, not
 concept art or screenshots of the desktop application's chrome. Clean isolated
 demonstration data; no credentials or private chat content appear.
 
+## Connected declared input
+
+![Declared input ready for submission](09-connected-input-ready.png)
+
+Suggested caption: "Wright pauses for declared input and carries your response
+into the same run."
+
+The actual hosted browser enabled this required input and submitted its synthetic
+choice through the normal common view. Wright passed that exact value to the
+desktop's next bounded task and completed the original run, retaining the first
+output after an isolated API restart. Reopening/reloading/closing the completed
+common view was verified separately. The initial capture's final-text selector
+failure remains labelled; no input was resubmitted to obtain the readback pass.
+This is synthetic test data and ordinary GB10 browser proof. It establishes no
+engineering approval, Windows plugin loading, native right panel or attached
+live-event stream. Completed readback: 10-completed-checkpoint-run.png.
+
+## Leased runtime and saved gateway result
+
+![Saved inspection result on the leased development runtime](08-leased-gateway-result.png)
+
+Suggested caption: "Connecting desktop reasoning to Wright’s workflow controls,
+with saved results and clear tool boundaries."
+
+This actual current-worktree browser view shows the completed permitted file
+inspection and retained result. The desktop conversation proposed the read and
+used its observed return; Wright performed the one authorized gateway dispatch.
+A separate no-tools run also survived actual MCP child loss and reconnect, with
+its original request retained and one consumed reply. The screenshot is the
+gateway result, not an image of that separate disconnect event or the Windows
+desktop. Installed plugin, right-panel rendering and actual chat/panel closure
+remain unverified. Capture trace: leased-gateway-capture.json.
+
 ## Current hosted authoring checks
 
 ![Saved inspection requirements and plan](07-hosted-editor-saved.png)

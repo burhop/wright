@@ -39,13 +39,15 @@ chat pilot. No workflow capability is enabled in user configuration.
 
 ## Decisions and boundaries
 
-The prepared Windows baseline will be preserved at its original worktree/startup
-paths as a local checkpoint. Development continues in another worktree of the
-same feature branch after detaching that clean baseline. No source bytes, private
-state or live settings in the Windows target are replaced. This is a local Git
-checkpoint/worktree operation; no merge, push or release is authorized. The
-qualified four-line admission patch is promoted only in the new development
-checkout and receives a fresh frozen runtime profile there.
+The prepared Windows baseline is preserved at its original worktree/startup
+paths, clean and detached at local checkpoint `a17acb851b8ab978fdb619d318c9a6b67458af3e`.
+Development continues on `codex/openai-desktop-harness-prototype` in
+`/tmp/wright-openai-desktop-harness-prototype-next` with its own locked environment.
+No source bytes, private state or live settings in the Windows target were
+replaced. No merge, push or release occurred. The qualified four-line admission
+patch is applied only in the new development checkout; its adapter/probe/test
+formatting is corrected there. Fresh runtime-profile qualification remains
+required before promoting that version to a connected target.
 
 - Wright owns graph execution, state, validation, reviews, gateway permissions and
   recovery. The plugin transports bounded tasks and results; it is not an executor.

@@ -1,0 +1,80 @@
+{
+  "status": "connected UI declared-input submission and same-run completion verified; installed desktop separate",
+  "state": "/tmp/wright-desktop-connected-checkpoint-proof-20261011-01",
+  "profile": "wright-desktop-prototype:7f1e94190c9c8439dfba77fce919adb0ba1bb5ede6a3c89499b43144d84f381a",
+  "run_id": "62778c4607f94b05a34dc6619e8da063",
+  "fixture": {
+    "path": "/tmp/wright-openai-desktop-harness-prototype-next/specs/083-process-working-interfaces/fixtures/declared-human-input.workflow.wflow",
+    "sha256": "bc9138c226242b6a89df3e3ea0d1ea18f35acac568de123ee988628c48baeea4",
+    "scope": "existing synthetic fixture unchanged; no engineering approval"
+  },
+  "restart": {
+    "signal": "SIGTERM to exact owned API at durable input wait; observed terminal exit 143",
+    "binding_unchanged": true,
+    "first_output_hashes_unchanged": {
+      "workspaces/desktop-checkpoint-proof/first.txt": "67f23c1589495cc33a6a798edcc087a72200063c2625ae7395fbf5e7d9194dfb"
+    },
+    "graceful_callbacks": "not claimed"
+  },
+  "ui": {
+    "submission": {
+      "status": 202,
+      "request": {
+        "session_id": "desktop-8d53bcca-6721-46b3-8641-5e2b89e286ec",
+        "path": "workflows/desktop-checkpoint.workflow.wflow",
+        "expected_storage_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+        "subject_digest": "c2f56e79fb0995019651c9ade92ccf790f5dd30ebf545bff88e9dc4505eb4bf4",
+        "value": {
+          "selection": "a"
+        },
+        "request_id": "f27deb1a-74fc-4ab2-a9d0-98181376a4f0"
+      },
+      "receipt": {
+        "response_id": "response-1a08916cd9a425ac77a0dedc",
+        "workspace_id": "f2503637-38a7-4430-b3c3-50bc72635ac7",
+        "run_id": "62778c4607f94b05a34dc6619e8da063",
+        "checkpoint_id": "checkpoint-03c1f1968837ecbead10c494",
+        "subject_digest": "c2f56e79fb0995019651c9ade92ccf790f5dd30ebf545bff88e9dc4505eb4bf4",
+        "schema_digest": "a474a42831a84585dbad3d139585ba095ccd94541122f8f14ef38be85d81b153",
+        "input_digest": "ee92f8788c6331c59b659be57d779abe94d491810a7ab149dd01fc698ab094e1",
+        "value": {
+          "selection": "a"
+        },
+        "actor": "local-control-plane",
+        "reason": "Response to declared process input",
+        "request_id": "f27deb1a-74fc-4ab2-a9d0-98181376a4f0",
+        "created_at": "2026-10-11T23:02:43.336222+00:00",
+        "integration_test": false,
+        "digest": "0ed8d66f30331473f70a1c215f60d25694327e5b618decfbbfd1206bdf61c5aa"
+      },
+      "run_id": "62778c4607f94b05a34dc6619e8da063",
+      "test_data": "synthetic selection a; no engineering approval"
+    },
+    "invalid_choice_denial": "422; run remains waiting",
+    "initial_report": "/tmp/wright-desktop-connected-checkpoint-gallery-20261011-01",
+    "initial_capture_status": "failed",
+    "failure": "final selector expected exact Completed while actual UI showed Process completed; submission and completion succeeded, no replay",
+    "completed_readback_report": "/tmp/wright-desktop-connected-checkpoint-gallery-20261011-02",
+    "readback_status": "passed",
+    "same_run_reload": true,
+    "exact_common_tab_closed": true,
+    "managed_presentations": 0,
+    "live_event_stream": "screenshot reports live updates not attached; snapshot/observed-state readback only"
+  },
+  "counts": {
+    "process_start_receipts": 1,
+    "process_interaction_responses": 1,
+    "desktop_reasoning_requests": 2,
+    "desktop_reasoning_responses": 2,
+    "desktop_reasoning_terminal_receipts": 2,
+    "workspace_surfaces": 0
+  },
+  "final_state": "completed",
+  "native_agent_api_requests": 0,
+  "limits": [
+    "Windows plugin loading/right panel remain unverified",
+    "Synthetic input choice, not engineering review or external-action approval",
+    "Joined submission/runtime/readback evidence; first capture was retained failed",
+    "API restart while pending reasoning and uncertain effects remain separate"
+  ]
+}

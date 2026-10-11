@@ -1,5 +1,164 @@
 # Evidence index
 
+## Latest regression and served-editor pass — 11 October
+
+The current development checkout passes 40 preserved chat-pilot tests, 32
+existing-platform tests (Hermes and OpenClaw stub), and a 69-case controlled
+recovery slice. These suites have overlapping concerns and are not a claimed
+aggregate acceptance count. Pi still raises UnsupportedAgentRuntimeError.
+Two new controlled lost-acknowledgement cases retain the normal action-intent
+contract and a budget of two calls: the provider creates one private marker,
+then raises timeout/internal. Wright fails with MCP_CALL_FAILED after one
+dispatch and one desktop handoff, without another decision, retry or output.
+This proves the bounded loop's behavior, not an installed provider or its
+post-restart effect reconciliation.
+
+Frontend focused checks pass 180 tests across six files. TypeScript and build
+pass; ESLint reports zero errors and 12 existing warnings. The eight changed
+frontend files now pass Prettier. Shared Python Ruff check and the 795-file
+format check pass. Full check-dev-merge was not run: its non-frozen sync and
+release/package/full-coverage gates are outside this prototype, and remain
+required before a later integration claim. Nothing was pushed or merged.
+
+Post-format served report `/tmp/wright-desktop-editor-acceptance-20261011-10`
+passes all 11 current authoring checks through the normal Workflows control.
+This is ordinary authenticated GB10 browser evidence, not Windows desktop
+embedding or execution. Original/saved source, layout, conflicts and failed
+earlier captures remain retained. The two owned preview handles were stopped
+(API exit 0, web exit 130). The frozen Windows target was not redirected.
+Machine-readable scope and JUnit artifact hashes: qualified-regression-evidence.json.
+
+## Connected common-view input and restart continuation
+
+Fresh proof `/tmp/wright-desktop-connected-checkpoint-proof-20261011-01` uses the
+existing Feature 083 declared-human-input fixture unchanged and the qualified
+leased response profile `7f1e94190c9c8439dfba77fce919adb0ba1bb5ede6a3c89499b43144d84f381a`.
+This actual desktop conversation wrote both bounded no-tools replies. The labels
+a/b contain no supplied comparison criteria; the first result explicitly retains
+that limitation instead of inventing engineering properties.
+
+Run `62778c4607f94b05a34dc6619e8da063` reached its declared input and saved first.txt.
+The exact owned API was stopped with SIGTERM, observed terminal exit 143, and
+reopened at the same private state/profile. Callback grace is not claimed.
+The first output remained byte-identical. Explicit MCP reconnect verified the
+same waiting run and denied invalid selection c (422) before the browser test.
+
+The served hosted browser entered through Workflows, opened Answer in working
+view, reloaded the exact run and enabled its required selection/Submit control
+while MCP was live. It submitted synthetic choice a through the normal scoped
+client; the API returned 202 with the exact checkpoint/subject/run receipt. No
+valid response was sent by the helper. Wright's next bounded request contained
+the exact structured selection; the desktop answered it and the same run completed.
+
+The first capture is retained **failed**: its final selector expected exact
+Completed, while the actual UI displayed Process completed. Its screenshot and
+successful UI receipt remain evidence, not a renamed pass. Read-only continuation
+02 re-entered Workflows, reopened/reloaded the exact completed run and closed its
+identified common-view tab normally. It sent no input or start request and passed.
+Database checks show one start receipt, one input response, two model requests/
+responses/consumed receipts and zero managed presentations. Both browser traces
+contain no standalone agent/inference call. This common view uses no custom
+managed presentation, so no presentation-close acknowledgement is inferred.
+
+The UI explicitly reported that live updates were not attached; this proves
+snapshot/observed-state continuation and readback, not an attached event stream.
+Actual Windows plugin/panel and chat closure remain unverified. Synthetic input
+is distinct from engineering review, agent permission and external-action approval.
+Raw captures: `/tmp/wright-desktop-connected-checkpoint-gallery-20261011-01` and
+`/tmp/wright-desktop-connected-checkpoint-gallery-20261011-02`. Reduced data:
+qualified-connected-checkpoint-evidence.json. Clean images:
+gallery/09-connected-input-ready.png and gallery/10-completed-checkpoint-run.png.
+After verification, the two owned checkpoint API/web handles were stopped and
+observed terminal exit 143; their data and captures remain. The Windows baseline's
+four runtime bytes and live desktop config hash were rechecked unchanged. Node
+syntax, the changed helper's Ruff check and diff whitespace checks pass. These
+helper/capture changes require no new shared-runtime regression claim; the
+previous 107-case runtime evidence retains its stated scope.
+
+## Bounded MCP lease and current response/action qualification
+
+The new development runtime replaces indefinite client membership with a
+monotonic 30-second lease, renewed every 5 seconds by the MCP transport lifecycle.
+Both intervals and runtime code hashes are frozen in the connection profile.
+Expiry disables readiness and mutation admission without cancelling/restarting
+a durable workflow. A heartbeat cannot resurrect an expired client. Failed
+heartbeats terminate the bridge lifecycle; no workflow request is automatically
+retried. Five focused lifecycle/API tests pass, and the combined affected suite
+passes 107 tests in 5.88 seconds.
+
+Real protocol proof `/tmp/wright-desktop-lease-proof-20261011-01` uses profile
+`wright-desktop-prototype:7f1e94190c9c8439dfba77fce919adb0ba1bb5ede6a3c89499b43144d84f381a`.
+While canonical run `d26bfe2a22b8493ca6c92da05fdb2243` waited on its first request,
+the exact owned MCP child was inspected and killed with SIGKILL; the API remained
+live. After confirmed process death, readiness was disconnected and an actual
+workspace mutation was denied (503). The original request/digest, one workspace
+and byte-identical run log remained; no response/terminal receipt existed.
+
+The observer initially guessed the old `workspaces` table name and stopped before
+any mutation. That helper failure is retained; inspection identified the actual
+`engineering_workspaces` owner before correction. First post-fault observation
+was delayed by model/tool preparation, so its elapsed value is **not** a measured
+expiry deadline latency. The exact boundary is verified by controlled-clock API
+tests, with real process death/expiry/reconnect checked separately.
+
+Explicit MCP reconnect read the same live run and exact pending task, then
+submitted this actual desktop conversation's answer once. The same run completed
+with one request, response and consumed receipt. The helper contains no start,
+model worker or graph executor. This proves MCP child-loss recovery while the
+Wright owner remains alive, not API-restart continuation or actual desktop
+chat/panel closure. MCP liveness is not upstream model health or an active-chat
+attestation.
+
+Separately opt-in leased gateway proof
+`/tmp/wright-desktop-leased-gateway-proof-20261011-01` uses profile
+`wright-desktop-prototype:a59f068077b81464bc5b4211a7201569b437cfb455265e3f668286fbb1104dd7`.
+Ungranted start was denied 403. Local setup enrolled only the existing exact
+read-only file scope with manual authority; no engineering review or general
+tool permission was granted. This desktop proposed the advertised typed action,
+Wright dispatched one successful inspect_file operation, and the desktop's final
+reply used its actual 267-byte result/SHA-256. Run
+`627b7e77b21842cc871920c121fd5803` completed with one dispatch and unchanged input.
+Other tools, physical actions and generated process-UI authoring remain gated.
+
+The served current-new-worktree capture passed through Workflows and the result
+viewer, with no agent/inference API call. State/trace:
+`/tmp/wright-desktop-leased-gateway-gallery-20261011-01`. Best clean image:
+gallery/08-leased-gateway-result.png. Locked npm ci installed 490 packages only in
+the new worktree; Node 22.22.0's existing jsdom minimum-version warning remains a
+host limitation, without a software upgrade. Reduced qualification data:
+qualified-leased-runtime-evidence.json. The frozen Windows checkpoint is unchanged.
+Both owned proof APIs and the extra web server were stopped after completion and
+capture; their handles returned terminal exit 143. Private states and failures
+remain retained. This is process termination evidence, not graceful-callback
+qualification. The original Windows runtime bytes and live desktop config hash
+were checked unchanged again.
+
+## Frozen Windows checkpoint and continued development
+
+Local checkpoint `a17acb851b8ab978fdb619d318c9a6b67458af3e` preserves all workstream
+code, planning and reduced evidence. The clean original worktree at
+`/tmp/wright-openai-desktop-harness-prototype` is detached at that checkpoint;
+the Windows command, private proof 05, original locked environment and four
+runtime file hashes are unchanged. Original checkout/pilot and MCP-testing
+workstreams remain untouched. No merge, push, release or live config change.
+
+The same feature branch continues in
+`/tmp/wright-openai-desktop-harness-prototype-next`. Frozen uv sync installed
+79 locked packages in its own .venv, using CPython 3.13.12 and MCP 1.28.1.
+Shared adapter/dispatch module origins were checked to resolve to this new root;
+the old environment was not reused. The qualified four-line admission patch is
+applied here and three reported files were formatted. 102 focused tests passed
+in 6.20 seconds, including workspace/session behavior, desktop source execution,
+handoff persistence, MCP scope, routing and recorded reads. Ruff and whitespace
+checks pass on these edits. Runtime hashes changed, so the new profile must be
+requalified with fresh state before any connected-target promotion. This local
+checkpoint/testing does not replace integration gates or prove completion.
+
+For historical candidate reproduction from this new checkout, pass
+`--baseline-worktree /tmp/wright-openai-desktop-harness-prototype` to
+prepare_recovery_candidate.py. The current backend already contains the patch;
+do not mistake a duplicate-patch refusal for a fresh qualification failure.
+
 ## Live-owner admission patch qualified in an isolated candidate
 
 `recovery-admission.patch` adds a four-line deterministic admission check using
