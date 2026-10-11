@@ -4281,3 +4281,30 @@ The 262 earlier wheel files and separately reserved pending human review remain
 untouched. Solid Edge was not closed. No production code or accepted source
 changed. Fresh wheel and thermal evidence now follows 071; the full goal remains
 active for the dock, swim-lane, remaining audit and final presentation scope.
+
+## 10 October delivery follow-up — packaged UI and instruction contracts (090)
+
+The current work order is the user-approved development delivery amendment:
+commit/push through a feature PR into `dev`, update README/docs, and preserve the
+130 mm study at its declared intent review. PPT work is deferred. The full goal
+remains active for native dock outputs, the port-type finding, reviewed swim-lane
+integration and final fresh engineering journeys.
+
+Commit `fa40c677` aligns Docker/native/gate frontend flags and captures complete
+versioned instructions in newly prepared Modelica, drill-jig and sheet-metal
+drafts through the existing materializer. It preserves their strict assumption
+policy, existing embedded instructions and accepted runs. Focused example,
+documentation/scanner, redaction and packaging checks pass. The clean candidate
+passes image security and cold-start checks; merge gate 08 remains running.
+
+Actual packaged browser inspection verifies blank entry, input creation, save and
+same-source reload, then exposes a model-picker failure. Bundled Hermes 0.19.0
+lacks the discovery and session-lock endpoints assumed by Wright's HTTP adapter.
+This capability gap and misleading workspace-not-found diagnostic remain open;
+they must not be hidden or worked around by weakening route confirmation.
+Detailed scope and retained failures are recorded in the
+[delivery checkpoint](dev-delivery-checkpoint-090.md). No real model, CAD,
+supplier or print action was submitted. The earlier presentation requirements
+above retain their historical wording; the current saved goal explicitly defers
+new deck work. Scanner-handling approval, a complete current gate, pre-push
+validation, GitHub CI and dev integration remain pending.

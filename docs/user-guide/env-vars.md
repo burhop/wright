@@ -10,7 +10,7 @@ These variables decouple the agent adapters from static API calls.
 
 | Variable Name | Required | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `LLM_API_URL` | **Yes** | None | Base URL path for chat completions API (e.g. `https://api.openai.com/v1` or `http://localhost:11434/v1`). |
+| `LLM_API_URL` | For an OpenAI-compatible endpoint | None | Base URL for chat completions (e.g. `https://api.openai.com/v1`). Docker can instead use Model Setup, `WRIGHT_LLM_PROVIDER` or `WRIGHT_LLM_CONFIG_FILE`; an endpoint URL alone does not qualify model routing. |
 | `LLM_API_KEY` | No | None | Authentication token required by LLM providers. |
 | `LLM_API_MODEL` | No | `default` in the Docker entrypoint | Default model identifier dispatched for natural language inference. |
 
@@ -26,7 +26,7 @@ container profile, a local Hermes CLI/Desktop install, or an explicit override.
 | `HERMES_API_BASE_URL` | No | Auto-detected from Hermes env files when available | Explicit Hermes API base URL override for non-standard deployments. |
 | `API_SERVER_HOST` | No | `127.0.0.1` | Host written into the generated Hermes API server config in the Docker entrypoint. |
 | `API_SERVER_PORT` | No | `8642` | Hermes API server port written into the generated profile config. |
-| `API_SERVER_KEY` | No | `wright-dev-key` | Bearer key used by Wright to authenticate to the Hermes API server. |
+| `API_SERVER_KEY` | No | Resolved from the running gateway; generated for Docker when neither key is supplied | Bearer key used by Wright to authenticate to the Hermes API server. Docker generates a unique key rather than using a shared development credential. |
 | `HERMES_API_KEY` | No | Falls back to `API_SERVER_KEY` | Compatibility alias for the Hermes API server key in container bootstrap. |
 
 ---
@@ -40,7 +40,7 @@ Configure host binding ports and security parameters for the FastAPI service.
 | `WRIGHT_API_HOST` | No | `127.0.0.1` | Binding address for gateway. |
 | `WRIGHT_API_PORT` | No | `8000` | Target port number. |
 | `PUBLIC_BASE_URL` | No | None | Public URL to advertise in docs, redirects, or reverse-proxy deployments when a local default is not enough. |
-| `CORS_ALLOWED_ORIGINS` | No | Local development origins | Comma-separated origins allowed to call the API from a browser, if configured by the deployment. |
+| `WRIGHT_ALLOWED_ORIGINS` | No | `http://127.0.0.1:5173,http://localhost:5173` | Exact browser origins allowed by control-plane authentication and CORS. Include the actual scheme, host and published port when serving the packaged UI. Docker's example env file includes ports 8000 and 8080; add the exact origin if you choose another port. Wildcards are rejected. |
 | `WRIGHT_API_TOKEN` | When authentication is enforced | Managed for native; required for Docker | Opaque control-plane bearer credential; browser sessions are derived from it. Native lifecycle manages this value; Docker requires a unique installation value from the operator. |
 | `WRIGHT_AUTH_MODE` | No | `enforced` | Require local bearer or browser-session authentication. The `compat` mode is restricted by the local bind/origin policy; tests default to `compat`. |
 

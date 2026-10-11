@@ -580,6 +580,19 @@ async def _hermes_json_request(
             )
             response.raise_for_status()
     except httpx.HTTPStatusError as exc:
+        if path.startswith("/api/model/") and exc.response.status_code in {
+            404,
+            405,
+            501,
+        }:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=(
+                    "The connected Hermes gateway does not expose the required "
+                    f"model service (HTTP {exc.response.status_code}). "
+                    "Check gateway compatibility and Model Setup."
+                ),
+            ) from exc
         detail = exc.response.text or exc.response.reason_phrase
         raise HTTPException(
             status_code=exc.response.status_code,

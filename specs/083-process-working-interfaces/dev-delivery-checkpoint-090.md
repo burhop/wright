@@ -184,3 +184,53 @@ The exact affected checks pass: 48 example/documentation/lightweight-scanner tes
 21 redaction tests and 81 packaging/gate/migration tests. The production frontend
 build with all four flags passes. Native restaging, exact-image verification,
 the packaged browser journey and the full gate remain pending at this checkpoint.
+
+## Exact packaged-browser findings
+
+Local commit `fa40c6771ae5c6eb9940cfdefb7dd0fd7a350d1e` contains the UI alignment
+and new-draft instruction corrections. Its clean archive image builds, passes the
+image security policy, and passes offline cold-start/API/Hermes/JWT checks. Its
+native wheel and source archive validate with UI manifest digest
+`b62a5fa50b82b731af52561b585cfed8637dee41bcab6f4dd7bc24d1eb5ed51c`.
+The full merge gate 08 is running; it is not reported as passed.
+
+The first packaged browser attempt stopped on static-asset HTTP 403 responses.
+The isolated test setup omitted `WRIGHT_ALLOWED_ORIGINS` for its custom port;
+the documented Docker env template already declares its standard ports. A fresh
+setup declares only its exact test origin with enforced authentication unchanged.
+The environment-variable guide now names the actual setting instead of the obsolete
+`CORS_ALLOWED_ORIGINS`. Both failed walkthrough records are retained and validate
+against the walkthrough report contract.
+
+The second attempt proves ordinary Workflows entry opens a blank editor, adding
+one input block works, Save succeeds, and reload restores the same saved source.
+It submits no run/review/dispatch action. It nevertheless stops on repeated model
+picker HTTP 404 errors, so it is **not a successful complete browser journey**.
+The actual response incorrectly classifies the upstream model-service failure as
+`WORKSPACE_NOT_FOUND`. Source inspection of the exact bundled Hermes 0.19.0 confirms
+that `/api/model/options` and the confirmed session-model-lock contract are absent.
+This is a real packaged-adapter capability gap, independent of the synthetic model
+configuration used for the authoring proof. Startup health did not cover it.
+
+Next work must qualify the packaged adapter's real discovery/routing/lock capability
+through an existing supported adapter/provider boundary and correct its unavailable
+diagnostic. Do not synthesize model choices, bypass frozen-route verification, hide
+the error, or treat the successful authoring checks as proof of model execution.
+The operator guide records this qualification limit. No protected engineering
+source or review was changed. Publication and scanner approval remain pending.
+
+The model-service boundary now diagnoses HTTP 404/405/501 from `/api/model/`
+as an unavailable required service (HTTP 503), rather than a nonexistent workspace.
+It returns a bounded compatibility/setup message without echoing the upstream
+response, issuing another request or changing model selection. Authentication
+failures retain their original status. All 23 affected model-service/health tests
+pass. The missing provider capabilities remain unresolved; this correction does
+not claim model execution support.
+
+Gate 08 is deliberately stopped because the corrected candidate needs a fresh
+exact-image check. Its retained partial evidence includes 391 control-plane tests
+(one skip), 192 release tests, 154 native tests (nine skips), and 326 coverage tests
+(nine skips) at 85.46%. Its frontend build and native archive checks pass, and its
+clean wheel and rebuilt-source installations import successfully. These are scoped successes, not
+a completed merge gate. The previous candidate and failed browser records remain
+retained. The full current gate must still complete before publication.

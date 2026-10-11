@@ -39,6 +39,15 @@ They are compiled into its frontend; changing container runtime environment
 variables does not enable a feature omitted during the image build. The native
 builder and merge gate use the same enabled features.
 
+The current development Docker candidate has an open model-service compatibility
+finding: its bundled Hermes 0.19.0 gateway does not expose the model discovery and
+session model-lock endpoints required by the HTTP adapter. The editor can save and
+reopen a process, but gateway health alone does not qualify model execution.
+Readiness must retain this hold; no configured model name substitutes for confirmed
+routing. See the
+[delivery checkpoint](https://github.com/burhop/wright/blob/dev/specs/083-process-working-interfaces/dev-delivery-checkpoint-090.md)
+for its scope. Previously qualified native/provider evidence is separate.
+
 ## Instructions, assumptions and deliberate questions
 
 Choose **Instructions** in the workflow editor to inspect the saved
