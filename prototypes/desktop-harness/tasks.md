@@ -55,6 +55,9 @@ This record tracks verification, not product acceptance or release readiness.
 - [x] Make fresh original manufacturing/Robot template and scenario copies,
       verify hashes, and retain explicit compiler/readiness blocks without runs.
 - [ ] Exercise fresh manufacturing-preparation and Robot Tracking Diagnosis copies.
+      Read-only exact stage/input/provider readiness audit saved; originals
+      unchanged. Missing bindings/providers/image delivery explicit. Manufacturing
+      needs a simulated local receipt, never a physical printer transfer.
 - [ ] Complete appropriate shared-code/platform regressions and local review gates.
       Current scoped regressions pass: preserved pilot 40, platforms 32, recovery
       69, frontend 180; lint/type/build/format and served authoring pass. Full

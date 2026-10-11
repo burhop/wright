@@ -1,5 +1,23 @@
 # Evidence index
 
+## Original assignments: concrete readiness audit
+
+The read-only 11 October audit identifies the exact remaining original-workflow
+prerequisites in original-workflow-qualification.md and hashes its private
+observations in original-workflow-readiness.json. Original/copy scenario hashes
+and accepted source digests remain unchanged. The isolated prototype reports
+zero installed engineering providers, and both catalog copies lack executable
+configured-tool bindings. Host PATH/container observations are explicitly local
+and do not claim absence on Windows or other machines.
+
+A material scope clarification comes directly from the original manufacturing
+prompt/context: the required final receipt is **simulated/local**; no physical
+printer transfer is permitted or necessary. Preserve all other original geometry,
+material, profile, output and review requirements. Robot requires traceable real
+ROS2 bag conversion rather than renamed CSVs. No engineering run or conversion
+was started and no original, catalog, installed provider or protected campaign
+was changed. These are qualification prerequisites, not passing full-workflow proofs.
+
 ## Current leased profile: pending-reasoning API restart
 
 Fresh state `/tmp/wright-desktop-leased-restart-proof-20261011-01` qualifies the
