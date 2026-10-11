@@ -119,6 +119,10 @@ The full gate builds the frontend once with the developer's installed lockfile
 dependencies, then reuses that fresh output for native packaging. It does not
 run `npm ci` against the shared `node_modules`, so an active Wright UI cannot
 lock a native Node binding that the merge gate tries to replace.
+The source archive selects explicit source roots so npm's local package links
+cannot hide the real process-client/UI-kit directories. Archive validation checks
+every declared wheel `force-include` input, and the clean-install gate rebuilds
+the wheel from the source archive. A directly built wheel alone is insufficient.
 Before starting its long checks, the full gate verifies that both configured
 browser-test ports can actually be bound. A conflict fails immediately with
 the environment-variable override instead of surfacing after the test matrix.

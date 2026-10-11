@@ -144,7 +144,13 @@ def test_native_wheel_rejects_private_runtime_dependency(tmp_path: Path) -> None
         validate_native_distribution(wheel)
 
 
-def _complete_native_sdist(path: Path, *, private_dependency: bool = False) -> None:
+def _complete_native_sdist(
+    path: Path,
+    *,
+    private_dependency: bool = False,
+    forced_sources: tuple[str, ...] = (),
+    build_inputs: dict[str, bytes] | None = None,
+) -> None:
     wheel = path.with_suffix(".whl")
     _complete_native_wheel(wheel)
     root = "wright_engineering-0.1.5"
@@ -159,17 +165,28 @@ def _complete_native_sdist(path: Path, *, private_dependency: bool = False) -> N
         dependency = (
             '"wright-core>=0.1"' if private_dependency else '"packaging>=24,<27"'
         )
-        pyproject = (
+        pyproject_text = (
             "[project]\n"
             'name = "wright-engineering"\n'
             'version = "0.1.5"\n'
             f"dependencies = [{dependency}]\n\n"
             "[tool.uv.sources]\n"
             "wright-core = { workspace = true }\n"
-        ).encode()
+        )
+        if forced_sources:
+            pyproject_text += "\n[tool.hatch.build.targets.wheel.force-include]\n"
+            pyproject_text += "\n".join(
+                f'{json.dumps(source)} = "resources/input-{index}"'
+                for index, source in enumerate(forced_sources)
+            )
+        pyproject = pyproject_text.encode()
         info = tarfile.TarInfo(f"{root}/pyproject.toml")
         info.size = len(pyproject)
         archive.addfile(info, io.BytesIO(pyproject))
+        for name, payload in (build_inputs or {}).items():
+            info = tarfile.TarInfo(f"{root}/{name}")
+            info.size = len(payload)
+            archive.addfile(info, io.BytesIO(payload))
     wheel.unlink()
 
 
@@ -188,4 +205,37 @@ def test_native_sdist_rejects_private_runtime_dependency(tmp_path: Path) -> None
     _complete_native_sdist(sdist, private_dependency=True)
 
     with pytest.raises(ArtifactPolicyError, match="wright-core"):
+        validate_native_distribution(sdist)
+
+
+@pytest.mark.parametrize(
+    ("source", "member"),
+    [
+        ("packages/process_client/README.md", "packages/process_client/README.md"),
+        ("packages/ui_kit/src", "packages/ui_kit/src/index.ts"),
+    ],
+)
+def test_native_sdist_requires_actual_wheel_build_inputs(
+    tmp_path: Path, source: str, member: str
+) -> None:
+    sdist = tmp_path / "wright_engineering-0.1.5.tar.gz"
+    _complete_native_sdist(
+        sdist, forced_sources=(source,), build_inputs={member: b"public source"}
+    )
+    assert validate_native_distribution(sdist).artifact_kind == "sdist"
+
+    # A similarly named file cannot satisfy the declared exact input.
+    _complete_native_sdist(
+        sdist,
+        forced_sources=(source,),
+        build_inputs={source + "-backup": b"unrelated source"},
+    )
+    with pytest.raises(ArtifactPolicyError, match="required wheel build input"):
+        validate_native_distribution(sdist)
+
+
+def test_native_sdist_rejects_build_input_outside_its_archive(tmp_path: Path) -> None:
+    sdist = tmp_path / "wright_engineering-0.1.5.tar.gz"
+    _complete_native_sdist(sdist, forced_sources=("../external/README.md",))
+    with pytest.raises(ArtifactPolicyError, match="unsafe"):
         validate_native_distribution(sdist)

@@ -123,3 +123,28 @@ tests and the release suite, then exposes the same independent-provider assumpti
 in `test_public_python_distribution.py`. Both ownership checks are now corrected
 and their four focused tests pass. A complete merge-gate pass is still pending;
 the scanner-configuration approval remains pending and no publication has occurred.
+
+## Native source-archive correction
+
+Gate 06 passed the control-plane, release and native suites, coverage and frontend
+build, then exposed a real installation defect: the source archive omitted the
+shared process-client/UI-kit build inputs. Its direct wheel installed, but rebuilding
+the wheel from the source archive failed. npm's local package links could be visited
+before the real directories during the archive builder's whole-tree walk.
+
+The source archive now selects the same explicit source roots directly. Its validator
+also requires every declared wheel `force-include` source, with negative checks for
+similarly named files and paths outside the archive. The retained failing archive is
+rejected by this new check. The corrected archive validates, builds its wheel and
+installs into a clean environment; both clean installations import successfully.
+The direct and rebuilt wheels are byte-identical. All 192 release tests pass, along
+with the focused packaging checks. These are local artifacts, not a public release.
+
+The broader core, workspace, agent-adapter, registry and API verification passes.
+Two stale storage migration assertions were updated for the already implemented
+schema versions 22 and 23; the vault suite then passes 209 tests with one skip.
+The native distribution now includes the freshly built current UI and runtime lock.
+
+The corrected source needs a fresh clean candidate image and complete merge-gate
+pass. Scanner approval, pre-push validation, GitHub CI and dev integration are still
+pending. The 130 mm engineering run remains at its declared human review.

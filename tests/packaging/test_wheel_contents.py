@@ -45,6 +45,14 @@ def test_workspace_surface_packages_and_assets_are_declared() -> None:
         "/integrations/rivet/editor/dist",
         "/integrations/rivet/runner/dist",
     } <= set(sdist["artifacts"])
+    assert {
+        "packages/process_client/src",
+        "packages/process_client/package.json",
+        "packages/process_client/README.md",
+        "packages/ui_kit/src",
+        "packages/ui_kit/package.json",
+        "packages/ui_kit/README.md",
+    } <= set(sdist["only-include"])
 
 
 def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(

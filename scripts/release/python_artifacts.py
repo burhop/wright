@@ -258,7 +258,26 @@ def validate_native_distribution(path: Path) -> NativeArtifactInspection:
             raise ArtifactPolicyError("sdist pyproject is missing name or version")
         distribution, version = name_match.group(1), version_match.group(1)
         ensure_public_distribution(distribution)
-        parsed_project = tomllib.loads(pyproject).get("project", {})
+        parsed_config = tomllib.loads(pyproject)
+        parsed_project = parsed_config.get("project", {})
+        force_include = (
+            parsed_config.get("tool", {})
+            .get("hatch", {})
+            .get("build", {})
+            .get("targets", {})
+            .get("wheel", {})
+            .get("force-include", {})
+        )
+        source_root = pyproject_name.removesuffix("pyproject.toml")
+        for source in force_include:
+            _validate_name(source)
+            required_source = source_root + source.rstrip("/")
+            if required_source not in names and not any(
+                name.startswith(required_source + "/") for name in names
+            ):
+                raise ArtifactPolicyError(
+                    f"sdist is missing a required wheel build input: {source}"
+                )
         dependencies = list(parsed_project.get("dependencies", []))
         for extra_requirements in parsed_project.get(
             "optional-dependencies", {}
