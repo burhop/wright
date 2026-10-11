@@ -1,5 +1,37 @@
 # Evidence index
 
+## Final combined source profile: live positive and image-negative controls
+
+At local source checkpoint cb0d11a2, fresh private state
+`/tmp/wright-desktop-final-profile-proof-20261011-01` qualifies profile
+`wright-desktop-prototype:94544ecd94c725d808397776d6e8703cc6aa250656da6e7ee3afdb24b57ff522`
+with both image guards, the live-owner check and the lease implementation present.
+The profile is separately opt-in for confined inspection. Its four recorded
+runtime file hashes match the current source bytes.
+
+Real MCP saved a valid connected image-source declaration and preparation was
+denied 503 before any start receipt or reasoning request/response. No image URL
+was fetched and the image task did not execute. A separate fresh ordinary text
+workflow completed with this desktop's no-tools answer. A third fresh workspace
+saved/prepared the enrolled inspection workflow: ungranted start denied 403,
+then one exact privately enrolled read was proposed by this chat and dispatched
+by Wright. Its actual result reached this chat and the same run completed.
+Input bytes stayed unchanged. Authority enrollment remains private fixture
+management, not a model tool, engineering review or external-action approval.
+
+Final database counts: two start receipts, three requests/responses/consumed
+receipts (one text reply and two action decisions); the image negative created
+none. Both protocol controllers exited 0. After qualification, the owned API
+was stopped and observed exit 0; evidence remains. The prepared Windows target
+and live configuration were not replaced or promoted.
+
+Reduced record: qualified-final-profile-evidence.json. This closes the combined
+source/profile positive-control gap stated in qualified-image-gating-evidence.json
+without changing its historical observations. Installed Windows plugin/panel,
+original engineering provider bindings/complete runs and native image delivery
+remain unverified or unavailable. Earlier exact profiles retain their distinct
+restart, lease and checkpoint proofs; this is not a blanket requalification.
+
 ## Explicit image capability gates
 
 Image tracing found an unintended path: the desktop text callback rejected images,

@@ -14,6 +14,12 @@ retains the pending response task and rejects a late answer without its live
 consumer; automatic interrupted-task continuation and broader cases remain.
 Do not point an existing connection or retained run at it automatically.
 
+The final combined source at cb0d11a2 has fresh real-MCP controls for image
+preparation denial, ordinary text completion and one exact permitted inspection;
+see qualified-final-profile-evidence.json. This does not replace installed
+Windows acceptance or the full original engineering runs. completion-audit.md
+records the remaining requirements explicitly.
+
 The development MCP lifecycle renews a 30-second lease every 5 seconds. Abrupt
 child loss eventually disables connection readiness/new mutation admission;
 pending Wright requests remain durable. Heartbeat failure stops the bridge,

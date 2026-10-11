@@ -1,0 +1,71 @@
+{
+  "status": "final combined profile locally qualified for no-tools text, exact permitted read and early image denial; not Windows installation",
+  "source_checkpoint": "cb0d11a2ac68f6bce2fe15e351713eb861ed9a3a",
+  "state_dir": "/tmp/wright-desktop-final-profile-proof-20261011-01",
+  "binding": {
+    "schema_version": "wright.desktop-binding/1",
+    "connection_id": "wright-desktop-prototype:94544ecd94c725d808397776d6e8703cc6aa250656da6e7ee3afdb24b57ff522",
+    "adapter": "openai-desktop-harness",
+    "requested_model": null,
+    "reported_model": null,
+    "model_identity_source": "unreported",
+    "reported_app_build": null,
+    "protocol_version": "wright.desktop-reasoning/1"
+  },
+  "runtime": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "0b137cc5b756600c6f129a0ed723e67f5160ec3a3f65be6a4ae15736851f6d66",
+      "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+    },
+    "confined_inspection": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "image_denial": {
+    "http_status": 503,
+    "scope": "real MCP valid connected image-source preparation",
+    "before_positive_runs_counts": {
+      "process_start_receipts": 0,
+      "desktop_reasoning_requests": 0,
+      "desktop_reasoning_responses": 0
+    }
+  },
+  "no_tools_text": {
+    "run_id": "a083ad86fd9d4b7aaa387a03670a09d8",
+    "state": "completed",
+    "tools": []
+  },
+  "permitted_read": {
+    "run_id": "f7c5d0b4b22b45eb946d4dd6096c5c18",
+    "state": "completed",
+    "ungranted_start_http_status": 403,
+    "successful_dispatches": 1,
+    "input_unchanged": true,
+    "input_sha256": "0a232d5575829b90463ecc78396036894128fdd9f2ed06477a0c7ece8b360fea"
+  },
+  "total_state_counts": {
+    "process_start_receipts": 2,
+    "desktop_reasoning_requests": 3,
+    "desktop_reasoning_responses": 3,
+    "desktop_reasoning_terminal_receipts": 3
+  },
+  "owned_api_exit": 0,
+  "raw_hashes": {
+    "image-readiness-mcp-negative.json": "73a82eead49b81f600ce120d450c12af0ae0e52b7eafa4892772a6cc966ef74c",
+    "protocol-probe.json": "83c12b1d8481776ee79a54c3ba0198ab7ab2cf838ad4954361659d78beba48cb",
+    "mcp-gateway-probe.json": "c75abcaf435f057ee5a328325af330f4687134ef0b78e408aed65536d1b8151b",
+    "mcp-gateway-audit.json": "d8f58c9110374ae4466b5e50542d763148966fd3865457b97b1ca22e49fb71a1"
+  },
+  "reasoning_provider": "This actual desktop conversation authored text and both action decisions; protocol helpers contain no model worker",
+  "limits": [
+    "Installed Windows plugin/right panel/chat closure unverified",
+    "Images remain explicitly unavailable",
+    "Only exact private read-only inspection; other tool scopes and generated process-UI authoring gated",
+    "Original manufacturing/Robot provider bindings and complete engineering executions remain outstanding",
+    "Earlier exact profiles retain separate restart/lease/checkpoint evidence; no blanket final-profile recovery qualification inferred",
+    "No live configuration changed or Windows target promoted"
+  ]
+}
