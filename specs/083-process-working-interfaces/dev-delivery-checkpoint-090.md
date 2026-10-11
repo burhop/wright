@@ -314,3 +314,15 @@ and failed. That record is retained. The corrected read-only diagnostic mount
 passes, without real inference or MCP effects. The silent sandbox test process
 was identified and deliberately closed; the separate authorized focused and full
 adapter test runs above are the passing evidence.
+
+The clean committed `41ec46f5` image now passes the strengthened installed-adapter
+SDK qualification without a source overlay. The normal packaged workspace
+walkthrough 04 passes all five authoring/discovery steps without failed HTTP,
+console or page diagnostics; no run/review/dispatch action is submitted. Its
+structure validates and the model screenshot is visually inspected. The fixture
+inference endpoint is deliberately unreachable, so model health remains red;
+successful discovery does not imply live inference. Exact source/image identities,
+scoped evidence and pictures are in
+[profile repair evidence 092](evidence/mechanical-packaged-model-profile-092.md).
+The full current merge gate, pre-push checks, scanner approval, GitHub CI and dev
+integration remain required. The protected study is not answered or resumed.

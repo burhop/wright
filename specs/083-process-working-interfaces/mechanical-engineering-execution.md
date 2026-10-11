@@ -4356,3 +4356,11 @@ failure evidence and changed-route rejection. Its first incorrect import-path
 mount is retained as a failed diagnostic; the passing mount does not qualify a
 fresh distributed image. The silent sandbox test process was reconciled and
 closed, while the separately authorized focused/full adapter checks passed.
+
+The clean `41ec46f5` image passes the stronger installed SDK proof without an
+adapter overlay. Its ordinary workspace walkthrough passes five steps: blank
+process, input creation, save, same-source reload and actual configured-model
+display. No process action or real inference occurs. Report structure and visual
+inspection pass. See [the illustrated evidence](evidence/mechanical-packaged-model-profile-092.md).
+The full development gate is next; scoped success does not complete delivery or
+the full engineering goal. All protected reviews remain untouched.
