@@ -188,3 +188,37 @@ def test_spec_tasks_record_security_scanner_setup_slice() -> None:
         "[X] T086 Add regression tests for scanner setup",
     ]:
         assert expected in tasks
+
+
+def test_process_evidence_exceptions_pin_exact_rule_path_field_and_value() -> None:
+    import json
+    import re
+    import tomllib
+
+    config = tomllib.loads(read_text(".gitleaks.toml"))
+    entries = json.loads(
+        read_text("tests/fixtures/security/process-interface-public-identities.json")
+    )["entries"]
+    allowances = [
+        item
+        for item in config["allowlists"]
+        if item["description"].startswith(
+            "User-approved Feature 083 public evidence identities"
+        )
+    ]
+    assert len(entries) == 47
+    assert len(allowances) == 32
+    for allowance in allowances:
+        assert allowance["targetRules"] == ["generic-api-key"]
+        assert allowance["condition"] == "AND"
+        assert allowance["regexTarget"] == "match"
+        assert len(allowance["paths"]) == 1
+        expected = [
+            e
+            for e in entries
+            if allowance["paths"] == ["^" + re.escape(e["path"]) + "$"]
+        ]
+        assert expected
+        assert set(allowance["regexes"]) == {
+            "^" + re.escape(e["match"]) + "$" for e in expected
+        }

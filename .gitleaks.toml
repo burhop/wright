@@ -139,3 +139,338 @@ condition = "AND"
 paths = ['''^docs/programs/engineering-process-platform/evidence/reviews/native-docker-40ebc645/live-case-map\.json\.txt$''']
 regexTarget = "match"
 regexes = ['''^auth_addition_lf_sha256": "f62195c547fae4fc4164f3d8d7bb7b7ac924acb4566a7fdb4fb7ae1c28d38277"$''']
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261001\-authoring\-foundation/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^public\-api\.md":\ "aa9f6093e65d69ea42bf09ae6877ff87d07a6a69d826228144010cdf4ddf0277"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261001\-engineering\-readers/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^public\-api\.md":\ "f11f9a1cac5c48f598d3e28990cd442ed66b094c7eb2d7dfb50cd8362a3bee91"$''',
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-authoring\-resource\-primary\-audit\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-authoring\-resource\-primary\-audit\-verified/primary\-review\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^public\-api\.md":\ "1380ab0b46ce8622a31bf4da29463c268e88ace5d892b3f5f4c07ef46e04f4c5"$''',
+  '''^tokens\.css":\ "cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-authority\-primary\-audit\-verified/boundaries/command\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-authority\-primary\-audit\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-current\-docker\-primary\-audit\-008\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-current\-regression\-verified/backend/selection\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_definition_api\.py":\ "a611b3c76911b4c1b9a54b23946c7f8ef7a84926f5774bb8fb20165055ad9180"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-current\-regression\-verified/packaging/selection\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_definition_api\.py":\ "a611b3c76911b4c1b9a54b23946c7f8ef7a84926f5774bb8fb20165055ad9180"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-installed\-revision\-compatibility\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-lifecycle\-primary\-audit\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_workflow_approval_resume_api\.py":\ "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-lifecycle\-primary\-audit\-verified/command\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_workflow_approval_resume_api\.py":\ "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-multihour\-operation\-budget\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_workflow_approval_resume_api\.py":\ "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-multihour\-operation\-budget\-verified/regression/command\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_workflow_approval_resume_api\.py":\ "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-negative\-ui\-primary\-audit\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-negative\-ui\-primary\-audit\-verified/regression/command\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-shared\-ui\-primary\-audit\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^tokens\.css":\ "cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261003\-ui\-revision\-compatibility\-verified/checked\-scope\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^test_process_artifact_access\.py":\ "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f"$''',
+  '''^test_process_interfaces_api\.py":\ "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261004\-original\-input\-and\-common\-run\-verified/actual\-authoring/workspace/\.wright/process\-uis/ui\-f47e26fbcc2e44a2a7c4dc939aef1948/revisions/revision\-b1d66dc13ace45889297568cd38c6ee0/inventory\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^storage_key":"63e56d35\-067e\-4776\-bdfa\-57ceb6569a18\.js"$''',
+  '''^storage_key":"eca0890f\-3c5d\-4868\-b64a\-8c38d649517f\.css"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-interfaces/083/20261004\-original\-input\-and\-common\-run\-verified/actual\-authoring/workspace/\.wright/process\-uis/ui\-f47e26fbcc2e44a2a7c4dc939aef1948/revisions/revision\-fd3eb8640fb4409d8e04a62a2408f503/inventory\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^storage_key":"9a46e88f\-9f87\-4639\-8ae1\-d9dfd6069cf9\.css"$''',
+  '''^storage_key":"b2424459\-ccdf\-413f\-8365\-407d3017b995\.js"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-canonical018\-review/water\-heater\-sizing\-01/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-01"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-canonical018\-review/water\-heater\-sizing\-02/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-02"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-canonical018\-review/water\-heater\-sizing\-03/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-03"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-canonical019\-review/water\-heater\-sizing\-01/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-01"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-canonical019\-review/water\-heater\-sizing\-02/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-02"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-canonical019\-review/water\-heater\-sizing\-03/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-03"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-native\-successor/water\-heater\-sizing\-01/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-01"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-native\-successor/water\-heater\-sizing\-02/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-02"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-native\-successor/water\-heater\-sizing\-03/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-03"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-reader\-accounting/water\-heater\-sizing\-01/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-01"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-reader\-accounting/water\-heater\-sizing\-02/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-02"$''',
+]
+
+[[allowlists]]
+description = "User-approved Feature 083 public evidence identities; exact path, rule, field and value only (11 October 2026)."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^artifacts/process\-validation/serial\-p001\-reader\-accounting/water\-heater\-sizing\-03/report\.json$''']
+regexTarget = "match"
+regexes = [
+  '''^idempotency_key":\ "water\-heater\-sizing\-03"$''',
+]

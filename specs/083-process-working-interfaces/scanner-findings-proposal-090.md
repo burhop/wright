@@ -1,12 +1,23 @@
 # Proposed handling of delivery scanner findings
 
-Approval is pending. No Gitleaks configuration has been changed.
+Approved by the user on 11 October 2026 as part of the explicitly proposed
+development checkpoint exception. The exact allowances are now implemented;
+the earlier rejection and proposal below are retained as history.
 
 The feature-history scan reported 47 generic-api-key matches in retained evidence. Independent inspection classified them as 31 file-integrity hashes, four stored-file UUID filenames, and 12 public idempotency identifiers. Historical file hashes were recomputed from Git blobs with their recorded LF/CRLF or packaged-path form. Storage filenames use FileVault UUID-plus-extension generation; idempotency keys are typed validation request identifiers.
 
 Proposed change: allow only the exact generic-api-key match, field/value and evidence file for these findings. Keep all other fields and paths scanned. Add positive checks and negative checks for a neighboring synthetic API key, a changed value, and the same value at an unapproved path. Preserve evidence files and branch history.
 
-Automatic approval review rejected modifying the scanner configuration because that security configuration change was beyond the existing delivery authorization. User approval is required for this proposed change.
+Automatic approval review originally rejected modifying the scanner configuration
+because that security configuration change was beyond the existing delivery
+authorization. The subsequent explicit user approval resolves that authorization
+requirement; it does not authorize broader exclusions.
+
+The scanner-backed contract now allows all 47 approved entries across 32 exact
+paths and detects 124 negative controls: neighboring synthetic API keys, changed
+values and the approved values at unapproved paths. Eight scanner-configuration
+tests pass. The exact-value fixture retains original observed commits and
+classifications. Full history scanning remains a separate publication check.
 
 No credential values are included here. The raw scanner report is redacted and remains local.
 

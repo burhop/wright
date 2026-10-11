@@ -1,0 +1,381 @@
+{
+  "approval": "User approved the proposed checkpoint and exact scanner exceptions on 11 October 2026.",
+  "entries": [
+    {
+      "path": "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/actual-authoring/workspace/.wright/process-uis/ui-f47e26fbcc2e44a2a7c4dc939aef1948/revisions/revision-b1d66dc13ace45889297568cd38c6ee0/inventory.json",
+      "match": "storage_key\":\"63e56d35-067e-4776-bdfa-57ceb6569a18.js\"",
+      "field": "storage_key",
+      "value": "63e56d35-067e-4776-bdfa-57ceb6569a18.js",
+      "classification": "storage filename",
+      "observed_commit": "793cede68587234b8449aba3d194ded4980bbd5a"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/actual-authoring/workspace/.wright/process-uis/ui-f47e26fbcc2e44a2a7c4dc939aef1948/revisions/revision-b1d66dc13ace45889297568cd38c6ee0/inventory.json",
+      "match": "storage_key\":\"eca0890f-3c5d-4868-b64a-8c38d649517f.css\"",
+      "field": "storage_key",
+      "value": "eca0890f-3c5d-4868-b64a-8c38d649517f.css",
+      "classification": "storage filename",
+      "observed_commit": "793cede68587234b8449aba3d194ded4980bbd5a"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/actual-authoring/workspace/.wright/process-uis/ui-f47e26fbcc2e44a2a7c4dc939aef1948/revisions/revision-fd3eb8640fb4409d8e04a62a2408f503/inventory.json",
+      "match": "storage_key\":\"b2424459-ccdf-413f-8365-407d3017b995.js\"",
+      "field": "storage_key",
+      "value": "b2424459-ccdf-413f-8365-407d3017b995.js",
+      "classification": "storage filename",
+      "observed_commit": "793cede68587234b8449aba3d194ded4980bbd5a"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261004-original-input-and-common-run-verified/actual-authoring/workspace/.wright/process-uis/ui-f47e26fbcc2e44a2a7c4dc939aef1948/revisions/revision-fd3eb8640fb4409d8e04a62a2408f503/inventory.json",
+      "match": "storage_key\":\"9a46e88f-9f87-4639-8ae1-d9dfd6069cf9.css\"",
+      "field": "storage_key",
+      "value": "9a46e88f-9f87-4639-8ae1-d9dfd6069cf9.css",
+      "classification": "storage filename",
+      "observed_commit": "793cede68587234b8449aba3d194ded4980bbd5a"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/checked-scope.json",
+      "match": "tokens.css\": \"cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3\"",
+      "field": "tokens.css",
+      "value": "cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3",
+      "classification": "file integrity hash",
+      "observed_commit": "fab085b45f5ab03c54b427d2ba53c84c218273af"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-shared-ui-primary-audit-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "fab085b45f5ab03c54b427d2ba53c84c218273af"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-docker-primary-audit-008-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "fc233096b5e72a2f4c391cf302ad7364a70d83de"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-docker-primary-audit-008-verified/checked-scope.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "fc233096b5e72a2f4c391cf302ad7364a70d83de"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "5c1e843c0a8ab9e62eecc3940248f5637d0da3d4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/checked-scope.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "5c1e843c0a8ab9e62eecc3940248f5637d0da3d4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "e4ae79e595e0ce742980e262143c0caf098ea358"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-installed-revision-compatibility-verified/checked-scope.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "e4ae79e595e0ce742980e262143c0caf098ea358"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+      "match": "tokens.css\": \"cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3\"",
+      "field": "tokens.css",
+      "value": "cda0c73468f15881112f4ce5a1c2501d6772c947a3528c6e62e2428778a763f3",
+      "classification": "file integrity hash",
+      "observed_commit": "5c1e843c0a8ab9e62eecc3940248f5637d0da3d4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-authoring-resource-primary-audit-verified/primary-review.json",
+      "match": "public-api.md\": \"1380ab0b46ce8622a31bf4da29463c268e88ace5d892b3f5f4c07ef46e04f4c5\"",
+      "field": "public-api.md",
+      "value": "1380ab0b46ce8622a31bf4da29463c268e88ace5d892b3f5f4c07ef46e04f4c5",
+      "classification": "file integrity hash",
+      "observed_commit": "5c1e843c0a8ab9e62eecc3940248f5637d0da3d4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-ui-revision-compatibility-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "632146344cfb294a461f66c95f36906f47e1b6d4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-ui-revision-compatibility-verified/checked-scope.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "632146344cfb294a461f66c95f36906f47e1b6d4"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/regression/command.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "475ecfbae0bee15a266d00686faa935419b44342"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/regression/command.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "475ecfbae0bee15a266d00686faa935419b44342"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "475ecfbae0bee15a266d00686faa935419b44342"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-negative-ui-primary-audit-verified/checked-scope.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "475ecfbae0bee15a266d00686faa935419b44342"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/boundaries/command.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "e155fc71fffad479bd05ac4fab73444d4fcf1824"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-authority-primary-audit-verified/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "e155fc71fffad479bd05ac4fab73444d4fcf1824"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/checked-scope.json",
+      "match": "test_workflow_approval_resume_api.py\": \"ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735\"",
+      "field": "test_workflow_approval_resume_api.py",
+      "value": "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735",
+      "classification": "file integrity hash",
+      "observed_commit": "6d6c611699b51b0f781039f34358e34f218edf8d"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-lifecycle-primary-audit-verified/command.json",
+      "match": "test_workflow_approval_resume_api.py\": \"ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735\"",
+      "field": "test_workflow_approval_resume_api.py",
+      "value": "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735",
+      "classification": "file integrity hash",
+      "observed_commit": "6d6c611699b51b0f781039f34358e34f218edf8d"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-multihour-operation-budget-verified/regression/command.json",
+      "match": "test_workflow_approval_resume_api.py\": \"ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735\"",
+      "field": "test_workflow_approval_resume_api.py",
+      "value": "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735",
+      "classification": "file integrity hash",
+      "observed_commit": "910bd53b3b5d5c13cf480f5a2d84574590068c70"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-multihour-operation-budget-verified/checked-scope.json",
+      "match": "test_workflow_approval_resume_api.py\": \"ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735\"",
+      "field": "test_workflow_approval_resume_api.py",
+      "value": "ce9cb4b11761ca09c8676405f39063f097f2e549b7c3b86f2833ebc3813b5735",
+      "classification": "file integrity hash",
+      "observed_commit": "910bd53b3b5d5c13cf480f5a2d84574590068c70"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+      "match": "test_process_definition_api.py\": \"a611b3c76911b4c1b9a54b23946c7f8ef7a84926f5774bb8fb20165055ad9180\"",
+      "field": "test_process_definition_api.py",
+      "value": "a611b3c76911b4c1b9a54b23946c7f8ef7a84926f5774bb8fb20165055ad9180",
+      "classification": "file integrity hash",
+      "observed_commit": "e26b9229217c0675609715a75bd4da3d60042c92"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "e26b9229217c0675609715a75bd4da3d60042c92"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/backend/selection.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "e26b9229217c0675609715a75bd4da3d60042c92"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+      "match": "test_process_definition_api.py\": \"a611b3c76911b4c1b9a54b23946c7f8ef7a84926f5774bb8fb20165055ad9180\"",
+      "field": "test_process_definition_api.py",
+      "value": "a611b3c76911b4c1b9a54b23946c7f8ef7a84926f5774bb8fb20165055ad9180",
+      "classification": "file integrity hash",
+      "observed_commit": "e26b9229217c0675609715a75bd4da3d60042c92"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+      "match": "test_process_interfaces_api.py\": \"865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69\"",
+      "field": "test_process_interfaces_api.py",
+      "value": "865821b20924cb5630b6cadfa94f92100c2792abee9cc82a4828b70945930b69",
+      "classification": "file integrity hash",
+      "observed_commit": "e26b9229217c0675609715a75bd4da3d60042c92"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261003-current-regression-verified/packaging/selection.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "e26b9229217c0675609715a75bd4da3d60042c92"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-engineering-readers/checked-scope.json",
+      "match": "public-api.md\": \"f11f9a1cac5c48f598d3e28990cd442ed66b094c7eb2d7dfb50cd8362a3bee91\"",
+      "field": "public-api.md",
+      "value": "f11f9a1cac5c48f598d3e28990cd442ed66b094c7eb2d7dfb50cd8362a3bee91",
+      "classification": "file integrity hash",
+      "observed_commit": "02daedc7b50a6018872f3768648d1ff4291865ec"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-engineering-readers/checked-scope.json",
+      "match": "test_process_artifact_access.py\": \"bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f\"",
+      "field": "test_process_artifact_access.py",
+      "value": "bf99e44b3435ae8c7f3a9b92a1eefaf2c51bdd48f0e8915ab7d065b993e2b88f",
+      "classification": "file integrity hash",
+      "observed_commit": "02daedc7b50a6018872f3768648d1ff4291865ec"
+    },
+    {
+      "path": "artifacts/process-interfaces/083/20261001-authoring-foundation/checked-scope.json",
+      "match": "public-api.md\": \"aa9f6093e65d69ea42bf09ae6877ff87d07a6a69d826228144010cdf4ddf0277\"",
+      "field": "public-api.md",
+      "value": "aa9f6093e65d69ea42bf09ae6877ff87d07a6a69d826228144010cdf4ddf0277",
+      "classification": "file integrity hash",
+      "observed_commit": "5534fc0dcea829eefe04e52a331e05d77d17048e"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-canonical018-review/water-heater-sizing-01/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-01\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-01",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-canonical018-review/water-heater-sizing-03/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-03\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-03",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-canonical018-review/water-heater-sizing-02/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-02\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-02",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-canonical019-review/water-heater-sizing-01/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-01\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-01",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-canonical019-review/water-heater-sizing-03/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-03\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-03",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-canonical019-review/water-heater-sizing-02/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-02\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-02",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-native-successor/water-heater-sizing-01/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-01\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-01",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-native-successor/water-heater-sizing-02/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-02\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-02",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-native-successor/water-heater-sizing-03/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-03\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-03",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-reader-accounting/water-heater-sizing-01/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-01\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-01",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-reader-accounting/water-heater-sizing-03/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-03\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-03",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    },
+    {
+      "path": "artifacts/process-validation/serial-p001-reader-accounting/water-heater-sizing-02/report.json",
+      "match": "idempotency_key\": \"water-heater-sizing-02\"",
+      "field": "idempotency_key",
+      "value": "water-heater-sizing-02",
+      "classification": "public idempotency identifier",
+      "observed_commit": "0d2963ab3519fbe8a4da00af0fb90a022a128aa4"
+    }
+  ]
+}

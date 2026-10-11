@@ -4382,3 +4382,16 @@ The guide now distinguishes the verified packaged model-profile walkthrough from
 the unfinished delivery gate. See the [delivery record](dev-delivery-checkpoint-090.md)
 for scope and retained failures. The full engineering objective, scanner approval,
 pre-push checks, CI and dev integration remain open. Protected runs remain unchanged.
+# 11 October 2026 — user-approved development checkpoint exception
+
+The user approved the proposed one-time gate override and exact scanner
+exceptions so new work can start from `dev`. The new clean bf09 image passes its
+security scan and five-step packaged authoring/model-discovery smoke. Scanner
+controls pass 47 approved positives and 124 negative detections. The full browser
+diagnostic was stopped by this scope decision after 14 failures were recorded;
+they remain unresolved follow-up work, not a passing qualification. Repeated full
+local gates and waiting for full pre-merge CI are waived for this checkpoint.
+The standing scripts remain unchanged. PR integration, history scanning and
+eventual CI/deployment results must be recorded separately. See
+[exception 093](dev-checkpoint-exception-093.md). The full engineering goal and
+protected 130 mm intent-review state remain unchanged.
