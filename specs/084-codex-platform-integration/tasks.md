@@ -15,10 +15,13 @@
 - [x] Preserve existing editor and fix observed StrictMode history restoration; add regressions.
 - [x] Verify served chat/history and normal workspace Workflows entry.
 - [x] Complete current reviewed editor manipulation proof (15 served checks) and final regression/gate record.
-- [x] Curate final capability/version/evidence matrix and prepare local candidate commit.
+- [x] Curate final capability/version/evidence matrix and local candidate commits.
+- [x] Correct saved-default startup fixture; pass targeted and full API regression (772 tests).
+- [ ] Rerun complete repository gates with an image bound to the final test/docs descendant; prior whole gate is not green.
 - [x] Preserve manufacturing/Robot contrasting regression evidence and baseline exact-byte failures.
-- [x] Provide precise Windows handoff and record unqualified Linux x64/Docker lanes.
-- [ ] Qualify Linux x64, native Windows and Docker independently.
+- [x] Provide precise Windows handoff and record unqualified Linux x64 and broader Docker lanes.
+- [x] Build clean ARM64 Docker candidate; pass exact-image smoke, scoped optional-worker chat/gateway lifecycle and image security policy.
+- [ ] Qualify Linux x64/native Windows and authenticated/packaged Docker behavior independently.
 
 Deferred by accepted scope, not silently passed:
 

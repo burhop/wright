@@ -16,19 +16,26 @@ Wright's executor, reviews, permitted actions and recovery retain ownership.
 Freeze actual instruction/resolved configuration/tool snapshots and routing identity.
 Record durable dispatch/ACK/terminal/unknown outcomes without automatic replay, and
 capture evidence only at observable SDK and gateway boundaries. Inject storage through
-core contracts rather than relaxing package dependency rules. Preserve the workspace
+core contracts rather than relaxing package dependency rules. Refresh the native runtime lock
+metadata to match the optional-dependency uv lock; retain generated packaging assets
+separately from the source change. Preserve the workspace
 editor and fix the observed StrictMode history restoration bug.
 
 Validation includes real pinned-runtime gateway/denial/restart/cancellation fixtures,
 two bounded authenticated gpt-6.1-sol/high turns with unchanged original auth bytes,
 served workspace chat/history/Workflows entry, current reviewed editor controls,
-1018 foundation tests (18 optional skips), and API/frontend role/routing/security
+1018 foundation tests (18 optional skips), 772 corrected full API tests, 71 frontend
+chat tests, and role/routing/security
 regressions. See the evidence index for exact later counts and retained failures.
 
 This is a locally reviewable experimental pilot, **not production or merge-ready
-qualification**. Full repository gates stop at the required immutable Docker image
-security scan. Native Windows/Linux x64/Docker, external MCP and API-key/cost accounting
-remain unverified. Original manufacturing inputs/manifests retain their independent
+qualification**. ARM64 clean-image smoke, scoped optional-worker gateway/lifecycle
+and Trivy image policy passed. The full gate stops at the old startup fixture; its corrected API suite passes,
+but the whole gate is not rerun/green. Native wheel/sdist validation and earlier
+security/release/control-plane tranches pass; later suites/live gate remain pending.
+Native Windows/Linux x64, authenticated/packaged Docker, external MCP and API-key/cost
+accounting remain unverified. The unchanged npm lock reports 13 inherited audit findings,
+including 5 high and 1 critical; no blanket dependency fix was applied. Original manufacturing inputs/manifests retain their independent
 LF/CRLF exact-byte failures; contrasting Robot regressions do not claim Codex execution.
 
 No push, merge, release, live configuration change, protected campaign or physical

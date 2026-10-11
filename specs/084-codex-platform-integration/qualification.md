@@ -62,16 +62,25 @@ means no local proof; unavailable means Wright deliberately rejects the capabili
 | Usage and dollar cost | Limited / unverified | Protocol usage events may be retained; no qualified accounting, price or billing-cost UI |
 | API-key route and billing | Unverified / gated | Factory rejects it; no billing fallback; stable key identity not qualified |
 | Broader tools, attachments, role substitution | Unavailable | Fixed read descriptor and text-only input; no arbitrary permission grants |
-| Linux x64, native Windows, Docker | Unverified; native Windows gated | ARM64 observations and wheels do not establish those host lanes |
+| Docker Linux ARM64 | Supported scoped fixture / experimental | Clean exact image, offline API/Hermes smoke, private optional SDK worker gateway/denial/cancellation/restart with no external network; image-security policy passed |
+| Docker authenticated/packaged browser and SDK inventory security | Unverified | Credential-free mounted worker proof does not establish live access, packaged browser parity or worker dependency scan |
+| Linux x64 and native Windows | Unverified; native Windows gated | Native ARM64/container observations and wheels do not establish those host lanes |
 | Production support | Unavailable | Experimental runtime and incomplete repository/host gates |
 
 ## Regression and qualification limits
 
 Core/DataVault/adapters pass **1018 tests, 18 optional skips**. Mixed-platform routing,
 workflow denial, role substitution, transport uncertainty and frontend lifecycle
-checks are recorded in the evidence index. Full repository gates have not passed:
-Docker is responsive (27.5.1), but no immutable candidate image is available for its
-required security scan. Manufacturing exact-byte baseline failures remain preserved;
+checks are recorded in the evidence index; the corrected full API suite passes 772 tests.
+Full repository gates have not passed:
+Docker 27.5.1 ARM64 now has an immutable clean-archive candidate: exact-image smoke,
+scoped Codex lifecycle fixture and Trivy 0.70.0 policy scan passed. Earlier missing-image
+failures remain retained. The broader merge gate stopped at the old startup fixture; its correction passes
+the full API suite, but the remaining whole gate has not been rerun. Exact results
+and passed precursor tranches are in the evidence index.
+The unchanged frontend/root npm lock audit reports 13 inherited findings (including
+5 high and 1 critical); those are distinct from the image scanner inventory.
+Manufacturing exact-byte baseline failures remain preserved;
 Robot contrasting regressions are offline shared-mechanism checks, not Codex workflow
 execution. No physical or human engineering acceptance is claimed.
 

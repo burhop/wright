@@ -32,7 +32,8 @@ exception, gateway catalog fix or second workflow executor is introduced.
 4. Run fresh unchanged manufacturing preparation and Robot Tracking Diagnosis copies
    through shared mechanisms. Resolve the independent exact-byte baseline defect first;
    do not assign new campaign work or weaken requirements.
-5. Qualify native Windows ACL/descendant cleanup, Linux x64 and Docker separately.
+5. Qualify native Windows ACL/descendant cleanup, Linux x64 and authenticated/packaged
+   Docker separately; scoped ARM64 Docker lifecycle and image-security proof already passed.
    Extend tools/auth/model/usage only after evidence supports those capabilities.
 
 Developing Wright using Codex, embedding this optional platform in Wright, and

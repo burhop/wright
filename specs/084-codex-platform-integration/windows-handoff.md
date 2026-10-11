@@ -52,7 +52,9 @@ runtime-descendant cleanup are qualified. Do not delete this guard to obtain a p
 
 1. Inspect fresh current dev and candidate ancestry, create an isolated worktree and
    preserve existing installations/configuration/database/workspaces/evidence. If the
-   candidate is not remotely published, request its local git bundle/patch; do not assume
+   candidate is not remotely published, use the local incremental bundle
+   `/tmp/wright-codex-platform-integration.bundle` (prerequisite ba2fad68) or request
+   its patch. Verify the bundle, fetch its feature ref locally and inspect ancestry; do not assume
    the installed command or an old local dev is the source baseline.
 2. Install the exact optional SDK/runtime pair in a separate venv. Verify real executable,
    version and Windows wheel/runtime launch. Keep personal CODEX_HOME and Hermes profiles
@@ -77,9 +79,16 @@ runtime-descendant cleanup are qualified. Do not delete this guard to obtain a p
    pan/zoom, source/invalid drafts, Undo/Redo, save/reopen and CAS conflicts. No Codex model
    UI authoring or workflow execution is authorized under this exception. Close any owned
    presentation through its API before browser disposal.
-8. Run Windows repository gates and report Linux x64/Docker separately. A Docker wheel
+8. Run Windows repository gates and report Linux x64/Docker separately. GB10 scoped
+   ARM64 Docker gateway/lifecycle fixture, offline API/Hermes smoke and image-security
+   policy passed; authenticated/packaged container behavior remains unverified. A Docker wheel
    declaration is not a runtime/cleanup/security-scan pass. Do not normalize manufacturing
    originals or regenerate manifests to hide the independent baseline defect above.
+
+The unchanged baseline npm lock also reports 13 audit findings, including 5 high
+and 1 critical. Preserve the recorded inventory and assign remediation independently;
+do not apply a blanket audit fix or count the passing image scan as npm audit clearance.
+See evidence/baseline-npm-audit.json for package identities and advisories.
 
 Return exact branch/commit, versions, commands, results, sanitized evidence hashes,
 original-state comparisons and remaining blockers. Stop before push/merge/release.

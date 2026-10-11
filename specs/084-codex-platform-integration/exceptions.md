@@ -26,4 +26,5 @@ including restart and continuation, before removing this exception.
 
 Other deferred qualifications are documented in qualification.md: broader models/auth,
 full native MCP gateway compatibility, uncertain native outcomes, x64 Linux,
-Windows and Docker. A documented missing capability is not a successful test.
+Windows and broader authenticated/packaged Docker behavior. The scoped ARM64
+container fixture passed; a documented missing capability is not a successful test.

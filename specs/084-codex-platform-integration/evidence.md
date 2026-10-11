@@ -39,7 +39,7 @@ development jobs are separate uses. Cloud was not exercised.
 
 | Evidence | Observed result and scope |
 | --- | --- |
-| [No-tools negative control](evidence/no-tools-arm64.json), [actual runtime controls](evidence/runtime-controls-and-tool-surface.json) | **FAILED_NO_TOOLS_CONTRACT**: collaboration.list_agents executed despite disable flags/read-only/never/empty environment. No approval callback. No physical or external effect was exercised. Remaining native tools are not qualified. |
+| [No-tools negative control](evidence/no-tools-arm64.json), [actual runtime controls](evidence/runtime-controls-and-tool-surface.json) | **FAILED_EXECUTABLE_TOOL**: collaboration.list_agents executed despite disable flags/read-only/never/empty environment. No approval callback. No physical or external effect was exercised. Remaining native tools are not qualified. |
 | [Early lifecycle](evidence/lifecycle-arm64.json), [bridge lifecycle](evidence/bridge-lifecycle-arm64.json) | Real pinned-runtime fixture history/continuation/cancellation and public SDK bridge observations. Earlier scope retained separately from later pilot. |
 | [Chat/gateway pilot](evidence/chat-gateway-arm64.json) | **PASSED_LOCAL_CHAT_GATEWAY_PILOT**: actual SDK/runtime against a credential-free local Responses fixture, real GatewayService/SQLite audit. Five provider requests; one allowed read, malformed-argument denial, foreign scope/principal drift denied, same native history after restart, durable interrupted cancellation. Native external MCP is explicitly unqualified. |
 | [Authenticated chat](evidence/authenticated-chat-arm64.json) | **PASSED_AUTHENTICATED_CHAT_RESTART**: two bounded real ChatGPT gpt-6.1-sol/high turns, exact same thread after restart, completed native/ durable receipts, source auth unchanged, disposable copy removed. No API-key fallback. |
@@ -111,8 +111,50 @@ candidate image was supplied. Its public failure projection is retained under
 responsive; this is an incomplete prerequisite, **not an unavailable-host waiver**.
 An ARM64 image from clean implementation commit 25476bce built successfully in
 100.69 seconds. Its source is pinned and its reports remain separate; a formatted
-candidate image and further gate results are recorded separately when available.
-No push/merge gate is claimed green.
+candidate image and further gate results are recorded separately below.
+The formatted candidate from clean commit 0d45fbbd built in 23.85 seconds with cache
+reuse. [Container report](evidence/container-arm64.json) identifies immutable image
+sha256:19ec7e09db2d3f43302ec8490e00c01f99e80c7220963a3eb1e2ab013425609e.
+Existing offline exact-image API/Hermes smoke passed. Its separately installed private
+SDK/runtime worker passed the [gateway/lifecycle fixture](evidence/container-chat-gateway-arm64.json)
+inside a read-only-root container with external networking disabled. No credentials,
+new model turns, host ports or protected engineering state were used. Disposable
+containers were removed; candidate images/evidence were preserved.
+
+[Trivy policy evidence](evidence/container-security-arm64.json) passes with fresh
+11 October database, scanner 0.70.0, exact OCI/source binding and no findings.
+This scans the candidate image, not the mounted optional SDK worker inventory.
+The [full gate attempt](evidence/merge-gate-attempt-arm64.json) ran for 844.96 seconds
+and failed only the already-collected startup fixture in its API tranche: **770 passed,
+1 failed**. The fixture assumed engine construction before saved-default resolution.
+The correction strengthens the check for both saved Hermes/Codex defaults and retains
+migration-before-runtime ordering: **13 targeted tests passed** and the separately
+[rerun full API suite](evidence/full-api-corrected-arm64.json) passes **772 tests**,
+12 existing warnings, 358.78 seconds. Original source/failure logs remain indexed.
+
+Before that stop the full gate passed lint/format/TypeScript, strict release/control-plane
+mypy, distribution metadata/policy, **392 control-plane tests**, **192 release tests**,
+**156 native/release tests (7 skips)**, **328 coverage tests (7 skips)**, native wheel/sdist
+validation, security boundary and hardening tranches. Broad warning-mode mypy stopped on
+duplicate existing conftest modules, not a checked Codex type error. Later suites,
+full frontend/docs and managed live browser gate were **not reached**. The gate has not
+been rerun as a whole after the test-fixture correction; it is **not green**.
+The tested image is exactly source commit 0d45fbbd; final test/docs descendants require
+fresh gate input binding. Runtime/UI source bytes are unchanged after that image. Packaging regenerated the
+root runtime-extra-lock uv digest (required by the changed uv.lock) and staged frontend
+assets. [Staging retention](evidence/native-gate-staging.json) preserves all eight
+generated/deleted-file observations before restoring only owned generated static
+source files to their clean baseline. Built wheel/sdist output remains in dist.
+The refreshed runtime lock digest is included as required metadata; compiled staging
+files are retained as artifacts, not added to this feature diff.
+
+The locked frontend tooling was restored only in this worktree, then the four
+chat files passed **71 tests in 7.29 seconds** and the production build passed.
+[Baseline npm audit](evidence/baseline-npm-audit.json) reports 13 inherited package
+findings: 1 low, 6 moderate, 5 high, 1 critical. Root/frontend package manifests and
+lockfile match dev byte-for-byte. No automatic audit fix or version change was made.
+Advisory presence does not prove exposure; image policy and development lock inventory
+are different scopes, and baseline remediation remains independent work.
 
 The existing manufacturing/heat preparation and Robot Tracking Diagnosis regression
 tranche retained **24 failed, 159 passed, 3 skipped**. Eleven baseline manifest hashes
@@ -134,7 +176,8 @@ private native transcripts, account metadata and SQLite contents are not committ
 The two served-repeat JSONs were recovered from their retained console JSON because
 the harness reused a report filename; distinct raw logs retain provenance.
 
-Native Windows startup and API-key auth remain explicitly gated. Linux x64, Docker,
+Native Windows startup and API-key auth remain explicitly gated. Linux x64, broader
+authenticated/packaged Docker,
 external Codex MCP, broader models/tools and usage/cost accounting require separate
 proof. Public enforced zero/gateway-only tool sets are a prerequisite for the deferred
 confined authoring and workflow stages. Full repository/packaged/host gates and baseline

@@ -322,12 +322,143 @@
       "path": "/tmp/wright-codex-container-20261011-01/build.log",
       "sha256": "20368337c164bfd1dafb094798fb0fd0d22bdd901c795cd40ea093a821eb632b",
       "bytes": 124163
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/report.json",
+      "sha256": "dc09979dcce8928a20b677c5b33f49d15c8386639802b1b6e88ef233f6ea3790",
+      "bytes": 1656
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/build.log",
+      "sha256": "6a5961f3c05a596b3630732fd6a65135243cd72b1868aa46575b230a3bd744eb",
+      "bytes": 14217
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/smoke.log",
+      "sha256": "6d524e85bc0992ae8627dc5fe34e77c3dab8d729c655b411947c4d3aaca57404",
+      "bytes": 2953
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/worker-install.log",
+      "sha256": "3f6f2450607ab4a1d178c746af5b7563f34e6eb72d9a5d6f40523aadfe354378",
+      "bytes": 592
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/chat.log",
+      "sha256": "a1b0bb8b4561e4babfbc284e6fb8433ce1c5c581ed2f506f3ad1d0d9e4aa809e",
+      "bytes": 986
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/proof/chat/report.json",
+      "sha256": "a1b0bb8b4561e4babfbc284e6fb8433ce1c5c581ed2f506f3ad1d0d9e4aa809e",
+      "bytes": 986
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/proof/chat/fixture-provider-requests.json",
+      "sha256": "28ecff920411d26a7adca78336f755660f1259baf0b0b7f512327a105b002c70",
+      "bytes": 286281
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/dev-merge-gate.log",
+      "sha256": "f687db8ab6c10ea09fc2cd620c5ed9d34e86b06962f423d036b602ec7798e28f",
+      "bytes": 40105
+    },
+    {
+      "path": "/tmp/wright-codex-container-20261011-02/dev-merge-gate-report.json",
+      "sha256": "d220aaee9353c12c9bdc3e6a581f305884e1cbf54ae0c72f7a3bf25c0d7dcf43",
+      "bytes": 319
+    },
+    {
+      "path": ".local-run/codex-locked-node-install.log",
+      "sha256": "e6a6de7eb770cd14c18cecfb100c988333355958fac387444c7e4a67cf256ead",
+      "bytes": 801
+    },
+    {
+      "path": ".local-run/codex-locked-web-regression.log",
+      "sha256": "cf41f095f2dcdac22c4484512e40a21d9eb3a00f03781198d85c0f22bd7aab92",
+      "bytes": 356
+    },
+    {
+      "path": ".local-run/codex-locked-web-build.log",
+      "sha256": "15988416665b4aa69c90f2946fad105637ffbf6f87c2c0e8d5a432bc7d008073",
+      "bytes": 1035
+    },
+    {
+      "path": ".local-run/codex-locked-npm-audit.json",
+      "sha256": "84ff83a80334dc3fa043a2bc7512c07ffc67f2e8ced37398f74a54fd2b7534a1",
+      "bytes": 22741
+    },
+    {
+      "path": ".local-run/test_database_startup.before-platform-fixture.py",
+      "sha256": "86e6c77098784746a3a54dc28711cd018ae62182e21866f6aefd5734113507f1",
+      "bytes": 3442
+    },
+    {
+      "path": ".local-run/codex-startup-routing-correction.log",
+      "sha256": "c5de0b99f005a79287ee626091fedd3f7897a3242a970c0297327f3692a09cc1",
+      "bytes": 99
+    },
+    {
+      "path": ".local-run/codex-full-api-corrected.log",
+      "sha256": "f8048697e97996435e1f8451618ca203714660476897712a297a347a8966eb1c",
+      "bytes": 3717
+    },
+    {
+      "path": ".local-run/codex-full-api-corrected-report.json",
+      "sha256": "480af0d2220a77710345e9ba3dafabe34caa39f4d36625fb6d64cc1132e36220",
+      "bytes": 286
+    },
+    {
+      "path": "test-results/docker-image-security/20261011T180613Z-9388692d/public/raw-hashes.json",
+      "sha256": "88e35f59bdc98cc3572a804a4243d1342f09ef96a65dd017fc9e397247952274",
+      "bytes": 2200
+    },
+    {
+      "path": "test-results/docker-image-security/20261011T180613Z-9388692d/public/scan.json",
+      "sha256": "cf8ef3f9f1eefe23d55a3e8fc34fe14f010d9366078befad1d139ac1513425aa",
+      "bytes": 988
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/report.json",
+      "sha256": "85c9d191715af707328d4fa8f0a4ba1ac68b6048b0030a06133079a8b5f20326",
+      "bytes": 2863
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/src/wright_engineering/runtime-extra-lock.json",
+      "sha256": "522729cd7ebad3b42d1ece960bc1b5c992b60be1d1b2eca5fe51614a2a79fa58",
+      "bytes": 677
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/src/wright_engineering/static/web/index.html",
+      "sha256": "c2dd48cca92360a29718a5a72bab7d7fcff732b805ecca597e7eb9484a36f78b",
+      "bytes": 1073
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/src/wright_engineering/static/web/asset-manifest.json",
+      "sha256": "10fce0c742ab0baed31ef9caa7e7acc4c797cda4587c4774af9c56240d945498",
+      "bytes": 2627
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/src/wright_engineering/static/web/recovery-concept/mounting-bracket.step",
+      "sha256": "bf316fa511f5e6a3312f03cb5b36184d91109185730defc41542b8805884be83",
+      "bytes": 684
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/src/wright_engineering/static/web/assets/NativeProcessPage-CUjUHA1s.js",
+      "sha256": "22e5065c3f39d3ad9137f000433f58440f8fe81aabc0788b8da3c615bd2397a9",
+      "bytes": 53813
+    },
+    {
+      "path": ".local-run/native-gate-generated-source/src/wright_engineering/static/web/assets/index-BYn9Xh_R.js",
+      "sha256": "3b28438a1cf085d2155cf5b04f6bc5e83e95981569ac86348d40325b9373ea53",
+      "bytes": 2604765
     }
   ],
   "notes": [
     "Historical observations and hashes are retained; later reports do not rewrite failed qualification.",
     "Absolute /tmp paths are local artifacts, not portable bundled evidence. Credential files and raw SQLite/native transcript contents are not committed.",
     "Editor harnesses preserve latest reviewed Feature 083 scenarios; 007 compact-viewport check is proved by stricter 008.",
-    "Repeated served-chat report JSONs were reconstructed from their retained console JSON after the probe reused its report filename; their distinct logs retain provenance."
+    "Repeated served-chat report JSONs were reconstructed from their retained console JSON after the probe reused its report filename; their distinct logs retain provenance.",
+    "The full gate was source-bound to 0d45fbbd at scan time. Its already-collected startup fixture failed; the original fixture source is retained and the corrected full API suite passed separately. Only tests/docs changed afterward; the final whole-gate/image input binding requires a new authorized validation pass."
   ]
 }

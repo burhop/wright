@@ -33,11 +33,19 @@
 - Use the latest reviewed Feature 083 editor cases. Older seven-group image-redesign
   assumptions do not match the current four-group palette/blank workflow creation. Preserve
   stopped attempts, original reviewed cases and their exact authority constraints.
+- Update the startup test fixture to model saved-default resolution before engine
+  construction; verify both Hermes/Codex and keep migrations before every runtime.
+  Retain the old gate failure; the corrected full API suite passes 772 tests.
+- Native packaging stages compiled frontend assets in tracked source paths. Preserve
+  owned generated output before restoring the clean source baseline; keep the required
+  runtime-extra-lock uv digest current. Actual installed/packaged UI proof remains pending.
 - Preserve the baseline exact-byte manufacturing defect: eleven manifest hashes match
   CRLF reconstructions, while committed Linux blobs are LF. Do not normalize protected
   originals, regenerate their hashes or weaken the guard to obtain a pass.
 
 Deferred decisions: released public tool-ceiling support; API-key route/billing; other
 models; native external MCP and broader gateway tool catalogs; cost accounting; uncertain
-native tool effect recovery; Windows descendant cleanup/ACLs; Linux x64 and Docker lanes.
+native tool effect recovery; Windows descendant cleanup/ACLs; Linux x64 and broader
+authenticated/packaged Docker lanes. The scoped ARM64 Docker fixture and exact-image
+security scan passed; they do not erase the baseline npm lock audit findings.
 None changes the accepted chat exception or enables confined authoring/workflows.
