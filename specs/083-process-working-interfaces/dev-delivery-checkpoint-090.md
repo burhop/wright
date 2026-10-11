@@ -279,3 +279,38 @@ The production UI and restaged native distribution validate with UI manifest
 This restaging does not qualify the native host's actual model configuration;
 source/native SDK selection remains explicit. A fresh clean candidate image,
 actual packaged-browser journey and complete delivery gates are still required.
+
+### Normal startup profile defect and repair qualification
+
+The clean `a1cb7218` image builds and passes its image-security scan. Its installed
+SDK check passes with an explicitly prepared temporary profile, but the ordinary
+packaged workspace walkthrough 03 still stops on model discovery HTTP 503. This
+failure is retained separately; it is not a passing user journey. The worker read
+the unconfigured root Hermes home while normal Docker setup saved `ci-model` and
+its credentials in the named `wright` profile. The earlier fixture wrote matching
+root and profile configurations, so it did not expose this difference.
+
+The confined child now uses the stock Hermes profile resolver and environment
+loader before importing its model resolver. Selection follows the existing
+Wright/Hermes profile setting; missing profiles fail without root fallback.
+Credentials remain inside the child and existing SDK. Project/workspace dotenv
+files and the full agent entry point are not loaded. The profile/loader source
+identities join the frozen SDK digest, so an earlier qualified route cannot
+silently continue under the changed bootstrap. The parent service environment,
+backend executor, review authority and shared UI contracts are preserved.
+
+38 focused and 446 complete adapter checks pass. A diagnostic probe of the repair
+against normal Docker setup resolves its actual named model without inference.
+The saved stock-SDK test now deliberately gives the root a different model and
+loads its synthetic key only from the profile's private environment file. Fresh
+exact-image and normal workspace evidence remain required after committing this
+repair; the diagnostic mount is not distributed-build qualification.
+
+The strengthened stock check passes with three explicitly synthetic SDK requests,
+including private profile environment loading and changed-route rejection. The
+first diagnostic mounted the worker at a site-packages path, while this image
+imports its adapters from the installed source tree; it exercised the old worker
+and failed. That record is retained. The corrected read-only diagnostic mount
+passes, without real inference or MCP effects. The silent sandbox test process
+was identified and deliberately closed; the separate authorized focused and full
+adapter test runs above are the passing evidence.

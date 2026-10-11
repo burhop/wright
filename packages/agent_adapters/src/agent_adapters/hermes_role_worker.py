@@ -18,6 +18,24 @@ class WorkflowSdkConfigurationChangedError(ValueError):
     pass
 
 
+def initialize_sdk_profile():
+    """Use the installed CLI's profile and credential loaders before SDK imports.
+
+    The parent process keeps its environment. The confined child must resolve
+    the same named profile used by setup instead of reading the root defaults.
+    No project directory dotenv or agent/CLI entry point is loaded here.
+    """
+    from hermes_cli.profiles import resolve_profile_env
+
+    profile = (
+        os.getenv("WRIGHT_HERMES_PROFILE") or os.getenv("HERMES_PROFILE") or "wright"
+    ).strip() or "wright"
+    os.environ["HERMES_HOME"] = resolve_profile_env(profile)
+    from hermes_cli.env_loader import load_hermes_dotenv
+
+    load_hermes_dotenv(hermes_home=os.environ["HERMES_HOME"])
+
+
 def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
     image_request = request.get("operation") in {"probe-image", "generate-image"}
     allowed = {"operation", "messages", "expected_resolution"}
@@ -62,7 +80,13 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
         ).hexdigest(),
     }
     sdk_hashes = {}
-    sdk_files = ["hermes_cli/runtime_provider.py", "agent/auxiliary_client.py"]
+    sdk_files = [
+        "hermes_cli/runtime_provider.py",
+        "agent/auxiliary_client.py",
+        "hermes_cli/profiles.py",
+        "hermes_cli/env_loader.py",
+        "hermes_constants.py",
+    ]
     if image_request or mode == "codex_responses":
         sdk_files.extend(["agent/codex_runtime.py", "agent/codex_responses_adapter.py"])
     for name in sdk_files:
@@ -284,6 +308,7 @@ def main():
         with contextlib.redirect_stdout(sys.stderr):
             # The qualified worker is launched with -I; permit only our bundled adapter.
             sys.path.insert(0, str(Path(__file__).resolve().parent))
+            initialize_sdk_profile()
             result = invoke(request, root, sdk_observer=capture_sdk)
             for invocation in invocations:
                 invocation["upstream_reported_model"] = result.get("response_model")

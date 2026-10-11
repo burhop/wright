@@ -8,6 +8,7 @@ import pytest
 
 from agent_adapters.hermes_role_worker import (
     failure_code,
+    initialize_sdk_profile,
     invoke,
     WorkflowSdkConfigurationChangedError,
 )
@@ -98,6 +99,9 @@ def sdk(monkeypatch, tmp_path):
         "agent/auxiliary_client.py",
         "agent/codex_runtime.py",
         "agent/codex_responses_adapter.py",
+        "hermes_cli/profiles.py",
+        "hermes_cli/env_loader.py",
+        "hermes_constants.py",
     ):
         path = tmp_path / name
         path.parent.mkdir(exist_ok=True)
@@ -105,6 +109,52 @@ def sdk(monkeypatch, tmp_path):
     return SimpleNamespace(
         root=tmp_path, calls=calls, state=state, runtime=runtime, client=client
     )
+
+
+@pytest.mark.parametrize("explicit", [None, "engineering"])
+def test_worker_loads_selected_profile_credentials_before_model_resolution(
+    sdk, monkeypatch, tmp_path, explicit
+):
+    import os
+
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("HERMES_PROFILE", "wright")
+    monkeypatch.delenv("WRIGHT_HERMES_PROFILE", raising=False)
+    if explicit:
+        monkeypatch.setenv("WRIGHT_HERMES_PROFILE", explicit)
+    selected = explicit or "wright"
+    events = []
+    scoped = tmp_path / "profiles" / selected
+
+    def resolve(profile):
+        events.append(("profile", profile))
+        return str(scoped)
+
+    def load(**kwargs):
+        assert os.environ["HERMES_HOME"] == str(scoped)
+        assert kwargs == {"hermes_home": str(scoped)}
+        events.append(("credentials", str(scoped)))
+
+    monkeypatch.setitem(
+        sys.modules, "hermes_cli.profiles", SimpleNamespace(resolve_profile_env=resolve)
+    )
+    monkeypatch.setitem(
+        sys.modules, "hermes_cli.env_loader", SimpleNamespace(load_hermes_dotenv=load)
+    )
+    initialize_sdk_profile()
+    assert events == [("profile", selected), ("credentials", str(scoped))]
+
+
+def test_worker_never_falls_back_from_a_missing_selected_profile(sdk, monkeypatch):
+    def missing(profile):
+        raise FileNotFoundError("Selected profile is missing")
+
+    monkeypatch.setitem(
+        sys.modules, "hermes_cli.profiles", SimpleNamespace(resolve_profile_env=missing)
+    )
+    with pytest.raises(FileNotFoundError):
+        initialize_sdk_profile()
+    assert not sdk.calls
 
 
 def request(resolution):

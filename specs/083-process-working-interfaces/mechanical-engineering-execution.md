@@ -4328,3 +4328,31 @@ rejection. Strict docs and restaged native packages pass. Fresh exact-image and
 packaged-workspace verification remain pending; scoped checks are not a complete
 gate. The protected 130 mm run is not answered or resumed. The full engineering
 goal, scanner-handling approval and development delivery remain unfinished.
+
+## Delivery follow-up — normal SDK profile initialization (092)
+
+The previous implementation turn made concrete progress through the committed
+SDK transport and stock-package checks; the brief model recommendation was not
+implementation progress. Current-state inspection confirms the exact candidate
+image passes security, but its ordinary browser proof 03 still fails model
+discovery with HTTP 503. The cause is a wrong configuration scope: the SDK worker
+read root defaults instead of Docker setup's named Hermes profile.
+
+The existing confined worker now reuses Hermes's official profile and credential
+loaders before resolving the model. Its bootstrap files participate in frozen SDK
+identity, missing profiles do not fall back, and no model/tool request is issued
+during discovery. 38 focused and 446 complete adapter regressions pass. A normal
+startup diagnostic resolves the configured synthetic model. The strengthened
+stock qualification and fresh exact-image/browser proof are next, followed by
+the full delivery gates. The failed proof is retained, not relabeled successful.
+No protected engineering run is answered or resumed, no engineering acceptance
+is granted, and no publication or security-policy change has occurred. Native
+dock outputs, the editor port finding, swim-lane integration and final engineering
+journeys remain within the full goal. PPT work remains deferred.
+
+The strengthened stock SDK qualification passes: three synthetic requests, named
+profile/private environment selection, multimodal input, proposal validation,
+failure evidence and changed-route rejection. Its first incorrect import-path
+mount is retained as a failed diagnostic; the passing mount does not qualify a
+fresh distributed image. The silent sandbox test process was reconciled and
+closed, while the separately authorized focused/full adapter checks passed.

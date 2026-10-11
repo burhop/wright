@@ -96,9 +96,15 @@ def main():
             HERMES_ROLE_PYTHON=runtime_python,
             HERMES_ROLE_RUNTIME_ROOT=runtime_root,
             WRIGHT_WORKFLOW_MODEL_TRANSPORT="hermes-model-sdk",
-            CUSTOM_API_KEY="fake-offline-test-secret",
         )
-        paths = [Path(home) / "config.yaml", Path(home) / "profiles/wright/config.yaml"]
+        os.environ.pop("CUSTOM_API_KEY", None)
+        # Root defaults deliberately differ: setup owns the named profile.
+        (Path(home) / "config.yaml").write_text("model: root-model-not-selected\n")
+        paths = [Path(home) / "profiles/wright/config.yaml"]
+        paths[0].parent.mkdir(parents=True, exist_ok=True)
+        (paths[0].parent / ".env").write_text(
+            "CUSTOM_API_KEY=fake-offline-test-secret\n"
+        )
 
         def write_config(model):
             text = (
@@ -106,7 +112,7 @@ def main():
                 + model
                 + "\n  provider: custom\n  base_url: http://127.0.0.1:"
                 + str(server.server_port)
-                + "/v1\n  api_key: fake-offline-test-secret\n"
+                + "/v1\n"
             )
             for path in paths:
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -228,6 +234,7 @@ def main():
                         "validated_tool_proposal": True,
                         "failure_evidence": True,
                         "changed_route_held": True,
+                        "named_profile_and_private_env_loaded": True,
                         "private_credentials_exported": False,
                     },
                     indent=2,

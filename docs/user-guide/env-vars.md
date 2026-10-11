@@ -38,6 +38,13 @@ before starting a new run. Resolver qualification establishes the selected route
 not provider reachability, model quality or engineering acceptance. Invalid
 credentials or unavailable inference produce a bounded execution diagnostic.
 
+The confined SDK worker resolves `WRIGHT_HERMES_PROFILE`, then `HERMES_PROFILE`,
+defaulting to `wright`, through the installed Hermes profile resolver. It loads
+that profile's credentials through Hermes's environment loader before resolving
+the model. It does not read a workspace/project dotenv, change the parent service's
+environment or substitute root defaults for a missing named profile. The profile
+and loader implementation are included in the frozen routing qualification.
+
 ---
 
 ## 3. API Gateway Server Settings
