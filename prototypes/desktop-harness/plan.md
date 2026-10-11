@@ -46,8 +46,9 @@ Development continues on `codex/openai-desktop-harness-prototype` in
 No source bytes, private state or live settings in the Windows target were
 replaced. No merge, push or release occurred. The qualified four-line admission
 patch is applied only in the new development checkout; its adapter/probe/test
-formatting is corrected there. Fresh runtime-profile qualification remains
-required before promoting that version to a connected target.
+formatting is corrected there. Fresh leased response/action proofs qualify the recorded local boundaries,
+including response-task API-restart retention and late-answer denial. Installed
+Windows loading and any connected-target promotion require separate explicit setup.
 
 - Wright owns graph execution, state, validation, reviews, gateway permissions and
   recovery. The plugin transports bounded tasks and results; it is not an executor.

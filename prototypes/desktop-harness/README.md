@@ -9,7 +9,9 @@ The original worktree stays clean at local checkpoint `a17acb85` for the prepare
 Windows connection experiment; its paths and runtime bytes are unchanged. The
 new checkout applies the tested live-owner admission guard and corrects three
 formatting issues. Its leased response/action profiles are now qualified for the
-specified reconnect/read-only boundaries; API-restart and broader cases remain.
+specified reconnect/read-only boundaries. A fresh abrupt API-restart probe also
+retains the pending response task and rejects a late answer without its live
+consumer; automatic interrupted-task continuation and broader cases remain.
 Do not point an existing connection or retained run at it automatically.
 
 The development MCP lifecycle renews a 30-second lease every 5 seconds. Abrupt

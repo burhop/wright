@@ -28,10 +28,12 @@ This record tracks verification, not product acceptance or release readiness.
       normal tab close/readback passed. Installed desktop tools remain required.
 - [ ] Handle abrupt MCP disappearance and pending-reasoning restart reconciliation.
       New development lease qualifies actual MCP child loss/expiry and same-live-
-      run reconnect; current-profile API restart and uncertain outcomes remain.
+      run reconnect; current-profile response API restart now retains pending state
+      and denies late answers, with no replay. Uncertain outcomes remain.
       Abrupt API SIGKILL/reopen was observed: same run/request and no replay pass;
       late answer incorrectly accepted with no live consumer. Retained failure
-      blocks automatic reasoning restart; current Windows target preserved.
+      blocks automatic reasoning restart; current Windows target preserved. New leased response runtime now passes the
+      same SIGKILL/reopen denial probe; automatic task resurrection unsupported.
 - [x] Qualify a narrow live-owner admission patch in a separate temporary
       candidate: actual desktop live response completes, post-SIGKILL answer
       receives 409, same pending request/run retained with no output or replay.
@@ -39,8 +41,7 @@ This record tracks verification, not product acceptance or release readiness.
       new runtime profile; keep the prepared Windows baseline stable until its
       connection experiment is reconciled. Requalify action tasks separately.
       Patch applied in the new development worktree after freezing Windows at
-      local checkpoint a17acb85. All 102 focused tests pass; fresh formatted
-      runtime-profile and action-task qualification remain outstanding.
+      local checkpoint a17acb85. All 102 focused tests passed before fresh leased profile qualification.
       Subsequent leased development response/action profiles are now qualified
       for live reconnect and one permitted read; combined suite passes 107.
 - [ ] Verify no automatic replay for lost acknowledgements/uncertain gateway outcomes.

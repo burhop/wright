@@ -1,5 +1,30 @@
 # Evidence index
 
+## Current leased profile: pending-reasoning API restart
+
+Fresh state `/tmp/wright-desktop-leased-restart-proof-20261011-01` qualifies the
+current response profile `7f1e94190c9c8439dfba77fce919adb0ba1bb5ede6a3c89499b43144d84f381a`
+after checkpoint 7d26dc4d. The real MCP client created one workspace/source/run
+and reached one pending bounded request. The positively identified private API
+was killed with SIGKILL, observed exit 137; its old controller was stopped
+(exit 130). The same state was reopened with byte-identical runtime profile.
+The MCP lifecycle's connection-error traceback is retained; no graceful shutdown
+or desktop-chat closure is inferred.
+
+Real MCP read run c12b7de630f94a77ac57a1ba7a37d0c9 as reconciliation_required.
+The exact stable start request returned its original durable receipt, with one
+start receipt and one unchanged run log. A deliberately late answer authored by
+this desktop conversation was rejected HTTP 409 because no live reasoning
+consumer exists. Before/after pending requests are identical: one request, zero
+responses and zero terminal receipts; no output or replacement execution.
+The observer exited 0, then the reopened owned API stopped with exit 0.
+
+This resolves the narrow late-answer admission failure for the current leased
+response runtime, while preserving the old failure and frozen Windows bytes.
+It does **not** implement automatic continuation of an interrupted task or prove
+an uncertain gateway effect safe to repeat. Those remain explicit reconciliation
+cases. Reduced evidence: qualified-leased-restart-evidence.json.
+
 ## Latest regression and served-editor pass — 11 October
 
 The current development checkout passes 40 preserved chat-pilot tests, 32

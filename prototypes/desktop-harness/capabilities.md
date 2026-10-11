@@ -25,8 +25,8 @@ refers only to its specified local boundary, not arbitrary provider compatibilit
 | Declared input / same-run continuation | locally verified | synthetic fixture; invalid selection denied; original run and first output retained |
 | Connected working-view input submission | locally verified in served browser | actual Submit sends one declared choice, next desktop task uses it, same run completes; exact reload/close and preserved first output after API restart; native desktop and event-stream attachment separate |
 | Restart at durable declared input wait | locally verified | controlled isolated API SIGTERM/restart with same observable binding |
-| Abrupt API restart during pending reasoning | partial qualification; late-answer admission failed | same run/request retained, stable start attaches without replay; dead-owner answer incorrectly accepted with no consumer; automatic continuation gated |
-| Live-owner admission patch | isolated candidate qualified; applied in development, not Windows target | live reply completes; post-SIGKILL reply denied 409 with no replay; formatted development profile awaits fresh qualification; frozen Windows target retains its recorded limitation |
+| Abrupt API restart during pending reasoning | current leased response profile locally verified for retention/denial | same run/request retained, stable start attaches without replay, dead-owner answer denied 409 and no output; automatic continuation unsupported. Frozen Windows baseline retains its earlier failed admission |
+| Live-owner admission patch | isolated candidate qualified; applied in development, not Windows target | live reply completes; post-SIGKILL reply denied 409 with no replay; current leased response profile now passes fresh SIGKILL/reopen probe; frozen Windows target retains its recorded limitation |
 | Restart during an uncertain tool effect | unverified; gated | no automatic request/effect replay permitted |
 | Normal MCP disconnect | locally verified | pending reasoning preserved; reconnect/cancel and input continuation checked |
 | Abrupt MCP loss/liveness expiry | new development profiles locally verified | 30-second lease/5-second pulse; actual child death, mutation denial, pending preservation and same-live-run reconnect; exact expiry boundary in controlled-clock tests; frozen Windows checkpoint still has membership-only behavior |
@@ -37,12 +37,12 @@ refers only to its specified local boundary, not arbitrary provider compatibilit
 | Global desktop native-tool ceiling | unverified | prompt guidance is not enforcement; earlier failures/exception retained |
 | Read-only Wright gateway task | locally verified, separately opt-in | exact privately enrolled source/input/schema; one `inspect_file` dispatch; ungranted start 403; other scopes remain gated |
 | Typed action proposals through MCP | locally verified | bounded typed envelope; existing runtime validates and dispatches; reconnect completes same run without repeating inspection |
-| Formatted development response/action profiles | locally verified for specified boundaries | leased response reconnect completes same live run; separately opt-in action profile completes one granted inspection; API restart/uncertain effects and installed host remain separate |
+| Formatted development response/action profiles | locally verified for specified boundaries | leased response reconnect completes same live run; separately opt-in action profile completes one granted inspection; response restart retention/denial separately qualified; uncertain effects and installed host remain separate |
 | Other MCP/CAD/application/external-action tasks | gated | preserve original contracts and explicitly qualify each dependent capability |
 | Confined generated process-UI authoring | gated | distinct from ordinary workflow-source authoring through desktop tools |
 | Manufacturing preparation / Robot Tracking Diagnosis | original fresh copies/readiness verified; execution unqualified | original scenario hashes retained, 20 template tests pass; both catalog drafts block supported execution type/configuration; full bindings, tools, validation/reviews and meaningful runs remain required |
-| Standalone Hermes / OpenClaw stub | focused regressions | full gates and broader installed behavior separate |
-| Earlier Codex-inside-Wright chat pilot | preserved in its separate worktree | not merged, replaced or claimed newly requalified |
+| Standalone Hermes / OpenClaw stub | 32 focused regressions pass | full gates and broader installed behavior separate |
+| Earlier Codex-inside-Wright chat pilot | preserved; 40 controlled regression tests pass | separate worktree, no live model/auth rerun or replacement |
 | Windows desktop → GB10 | proposed, unverified | prepared SSH stdio + loopback web-forward handoff; executable/authorized alias and installed loading require Windows observations |
 | Docker / Linux x64 | unverified | no cross-host compatibility claim; broader product packaging outside this prototype |
 
