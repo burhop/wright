@@ -1,24 +1,19 @@
 {
   "files": [
     {
-      "path": "assets/index-7dO1WQsg.js",
-      "sha256": "de93a2f031cef790a68f35891d7d0fb8612512602393cd7814ffd56b2bec8c5c",
-      "size": 2281523
+      "path": "assets/index-DKFa6jxr.css",
+      "sha256": "9d5319ff33c660042913d216d419e9a94914130eb811455893d1473dbdb87d59",
+      "size": 166863
     },
     {
-      "path": "assets/index-EoxGyPZd.css",
-      "sha256": "9104d239e597f91bbe5b02215c1dd5181923b6cb6d3cdee1e4a88ac7215197ac",
-      "size": 138624
+      "path": "assets/index-PFs5CFoY.js",
+      "sha256": "93ecc0c7d2bb0ac235fb496f102059683f7d61e84ad72e3a95bca5e5d019d931",
+      "size": 2602766
     },
     {
-      "path": "assets/NativeProcessPage-BR3Y0gMw.css",
-      "sha256": "cbd1e90b1f97d6c435e588bb02f95d93a61f0e15b6ea72177ee1a0ed4eb216fc",
-      "size": 7233
-    },
-    {
-      "path": "assets/NativeProcessPage-UWjJwfX1.js",
-      "sha256": "8cfb6909ead6284b91fb4a0a9c56a0b8680898426bc41aed235a879d67a7abe2",
-      "size": 54939
+      "path": "assets/NativeProcessPage-BFuOjSaE.js",
+      "sha256": "b785b9b50837c00c56d0712bff8f68a530b370fedfc9dc5be31f292484005436",
+      "size": 53813
     },
     {
       "path": "assets/plotly.min-dkCWgMZq.js",
@@ -42,7 +37,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "3aee817c90a96a18f90f18e647d2712518371a135c8ba5667d433a3728dfb99c",
+      "sha256": "8ca8b61d81a659982ff9be92382b8217e7218ae69b03f1d6cb7bd987f907f683",
       "size": 1074
     },
     {
@@ -77,7 +72,7 @@
     },
     {
       "path": "third-party-licenses-web.txt",
-      "sha256": "868f66cb252c5700564c2ab5d68a1cf2aa142cd943e3409a47830f3c761e11bd",
+      "sha256": "dd306720cc20174139305d1b40bb7c54dd14cdc31a29e95689620ab8739f2c90",
       "size": 236029
     },
     {

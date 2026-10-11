@@ -207,6 +207,8 @@ def test_migration_retains_verified_predecessor_and_forward_native_work(tmp_path
         {"version": 19, "name": "workspace_document_artifacts"},
         {"version": 20, "name": "workflow_continuation_checkpoints"},
         {"version": 21, "name": "native_application_lifecycle"},
+        {"version": 22, "name": "process_working_interfaces"},
+        {"version": 23, "name": "process_ui_authoring_provenance"},
     )
     assert result.backup_manifest
     native = NativeProcessRepository(str(original))

@@ -1660,6 +1660,41 @@ SOFTWARE.
 
 ---
 
+Name: zod
+Version: 4.4.3
+License: MIT
+Private: false
+Description: TypeScript-first schema declaration and validation library with static type inference
+Repository: git+https://github.com/colinhacks/zod.git
+Homepage: https://zod.dev
+Author: Colin McDonnell <zod@colinhacks.com>
+License Text:
+===
+
+MIT License
+
+Copyright (c) 2025 Colin McDonnell
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 Name: three
 Version: 0.185.1
 License: MIT
@@ -4568,7 +4603,7 @@ THIS SOFTWARE.
 ---
 
 Name: @xyflow/system
-Version: 0.0.80
+Version: 0.0.82
 License: MIT
 Private: false
 Description: xyflow core system that powers React Flow and Svelte Flow.
@@ -4672,7 +4707,7 @@ SOFTWARE.
 ---
 
 Name: @xyflow/react
-Version: 12.11.3
+Version: 12.11.6
 License: MIT
 Private: false
 Description: React Flow - A highly customizable React library for building node-based editors and interactive flow charts.
@@ -4706,7 +4741,7 @@ SOFTWARE.
 ---
 
 Name: dompurify
-Version: 3.4.12
+Version: 3.4.14
 License: (MPL-2.0 OR Apache-2.0)
 Private: false
 Description: DOMPurify is a DOM-only, super-fast, uber-tolerant XSS sanitizer for HTML, MathML and SVG. It runs as JavaScript and works in all modern browsers, as well as in Node.js (via jsdom). DOMPurify is written by security people who have vast background in web attacks and XSS. Fear not.
@@ -4918,41 +4953,6 @@ License Text:
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
----
-
-Name: zod
-Version: 4.4.3
-License: MIT
-Private: false
-Description: TypeScript-first schema declaration and validation library with static type inference
-Repository: git+https://github.com/colinhacks/zod.git
-Homepage: https://zod.dev
-Author: Colin McDonnell <zod@colinhacks.com>
-License Text:
-===
-
-MIT License
-
-Copyright (c) 2025 Colin McDonnell
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ---
 
