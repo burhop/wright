@@ -72,6 +72,55 @@ def observation():
     )
 
 
+@pytest.mark.parametrize(
+    "expected,actual",
+    [
+        (True, 1),
+        (False, 0),
+        ({"enabled": True}, {"enabled": 1}),
+        ([True], [1]),
+    ],
+)
+def test_image_selector_does_not_match_boolean_with_numeric_argument(
+    tmp_path, expected, actual
+):
+    step = compile_prompt_workflow(graph()).steps[0]
+    step.mcp_image_outputs["capture"]["arguments"] = {"frame": expected}
+    returned = observation()
+    returned["arguments"] = {"frame": actual}
+    with pytest.raises(WorkflowSourceExecutionError, match="0 matching"):
+        asyncio.run(
+            publish_image_outputs(service(tmp_path), str(tmp_path), step, [returned])
+        )
+    assert not (tmp_path / "capture.png").exists()
+
+
+def test_image_selector_keeps_identical_nested_boolean_request(tmp_path):
+    step = compile_prompt_workflow(graph()).steps[0]
+    step.mcp_image_outputs["capture"]["arguments"] = {
+        "frame": {"enabled": True, "flags": [False]}
+    }
+    returned = observation()
+    returned["arguments"] = {"frame": {"flags": [False], "enabled": True}}
+    asyncio.run(
+        publish_image_outputs(service(tmp_path), str(tmp_path), step, [returned])
+    )
+    assert (tmp_path / "capture.png").read_bytes() == PNG
+
+
+@pytest.mark.parametrize("actual", [float("nan"), float("inf")])
+def test_image_selector_rejects_nonfinite_observed_argument(tmp_path, actual):
+    step = compile_prompt_workflow(graph()).steps[0]
+    step.mcp_image_outputs["capture"]["arguments"] = {"frame": 0}
+    returned = observation()
+    returned["arguments"] = {"frame": actual}
+    with pytest.raises(WorkflowSourceExecutionError, match="0 matching"):
+        asyncio.run(
+            publish_image_outputs(service(tmp_path), str(tmp_path), step, [returned])
+        )
+    assert not (tmp_path / "capture.png").exists()
+
+
 def test_successful_tool_image_becomes_exact_output_and_retains_provenance(tmp_path):
     plan = compile_prompt_workflow(graph())
     gateway, runner = runtime()

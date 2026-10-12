@@ -65,6 +65,17 @@ def validate_image_output_bindings(
     return raw
 
 
+def _argument_matches(actual, expected):
+    # Python equality conflates JSON booleans and numbers, including nested
+    # values. Literal selectors must not bind evidence from a different request.
+    try:
+        return json.dumps(actual, sort_keys=True, allow_nan=False) == json.dumps(
+            expected, sort_keys=True, allow_nan=False
+        )
+    except (TypeError, ValueError, RecursionError, OverflowError):
+        return False
+
+
 async def publish_image_outputs(service, workspace_dir, step, observations):
     from .workflow_source_execution import _invalid
     from .workflow_mcp_images import _dimensions, MAX_IMAGE_EDGE
@@ -78,7 +89,8 @@ async def publish_image_outputs(service, workspace_dir, step, observations):
             for item in observations
             if item["tool_name"] == selector["tool"]
             and all(
-                key in item["arguments"] and item["arguments"][key] == value
+                key in item["arguments"]
+                and _argument_matches(item["arguments"][key], value)
                 for key, value in selector["arguments"].items()
             )
         ]

@@ -77,3 +77,14 @@ are recorded; provisional servo choices still need actual hardware confirmation.
 Code check-in is distinct from `dev` integration, a production release, public
 marketing publication and human engineering acceptance. Required push/merge
 gates apply before those separately authorized actions.
+
+## Pre-merge image-selector correction
+
+The integration review reproduced a literal-selector mismatch: Python's value
+equality let boolean `true` select a response whose request argument was numeric
+`1`, including nested objects. The corrected matcher compares complete JSON
+representations and rejects unsupported/nonfinite data, preserving boolean and
+numeric distinctions. Negative controls cover both boolean values, nested
+objects and lists; a positive control retains identical nested boolean requests
+with different object-key order. The earlier 275-test checkpoint remains
+historical evidence; current merge/push gate results are recorded separately.
