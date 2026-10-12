@@ -20,6 +20,8 @@ The two UI captures have no engineering result or causal conclusion.
 The temporary source-only preview served compiled build 9fc6ce9a on loopback
 8121 with execution disabled; it was stopped after inspection. Loaded asset
 hashes, request methods/paths, exact source hashes and actual scope are recorded.
-Credential-bearing traces are omitted. The capture scripts are retained for
-reproduction on this local isolated state; paths are host-specific. The normal
+Credential-bearing traces are omitted. The capture helper was corrected after its counter observations; it has not
+been rerun in that corrected form. The separate read-only counter reconciliation
+was executed and is the authority for the graph counts. Both scripts are
+retained for reproduction on this local isolated state; paths are host-specific. The normal
 Workflows action creates an extra blank document, never a substitute run.
