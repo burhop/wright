@@ -1,7 +1,9 @@
 # Native GB10-hosted desktop connection proposal
 
-Prepared for specific review and approval. Nothing is installed and live desktop
-configuration is unchanged. This adds a choice; the delivered Windows SSH-wrapper
+The user approved the scoped GB10 installation. Version 0.1.1 is installed and
+enabled; the existing daemon accepted a queued MCP refresh. This active turn
+still has no Wright connection. See native-host-install-evidence.json. This adds
+a choice; the delivered Windows SSH-wrapper
 archive and its frozen target are retained without modification.
 
 ## Correction to the earlier host assumption
@@ -38,7 +40,7 @@ in this package, command, chat or screenshot. Other tools and original-image
 inputs remain gated; confined inspection requires an exact private enrollment
 that the plugin cannot create.
 
-## Proposed live changes — execute only after approval
+## Approved changes — executed
 
 On GB10, for this existing remote chat's host:
 
@@ -48,14 +50,26 @@ codex plugin add wright-desktop-gb10-prototype@wright-desktop-gb10-prototype
 ```
 
 CLI 0.159.2 help confirms the install form. Marketplace registration, cache
-installation and enablement are proposed, not observed. Preserve a private
+installation and enablement were observed. The initial portable 0.1.0 package
+loaded its skill but omitted bundled MCP. The tested 0.1.1 package uses the
+documented `.codex-plugin/plugin.json` and `.mcp.json` compatibility layout.
+A fresh metadata-only loader discovers 12 tools; the actual active chat still
+reports zero Wright servers after the accepted refresh queue. Preserve a private
 before/after configuration comparison and change only this plugin/marketplace
 in `/home/burhop/.codex/config.toml` and its cache. Inspection found no Wright
-plugin/MCP entries; config SHA-256 remains
-695791b28bbf618adb8d4dd7e7926fa7b5fd71a843b123b446456537310d75fb.
+plugin/MCP entries; before config SHA-256 was
+695791b28bbf618adb8d4dd7e7926fa7b5fd71a843b123b446456537310d75fb; after is
+2056dbaf239dc1f64776e2baa97ce959de6b28bc3dfeeb839a7280fcb13f3da1.
+Only the named marketplace source/type and plugin enablement changed. The
+installer cleaned old cache version 0.1.0; its exact package and failures remain
+in `/tmp/wright-desktop-native-install-20261011-01/source-0.1.0`. Never restore
+a full old configuration over concurrent changes.
 
-Do not quit/restart the desktop or interrupt other chats. Verify supported
-scoped MCP refresh and actual tool discovery first. If new tools cannot attach
+Do not quit/restart the desktop or interrupt other chats. Public
+`config/mcpServer/reload` accepted a refresh queue without a daemon restart.
+Its protocol has no thread filter; this queues loaded-thread refresh, while
+all unrelated settings were verified unchanged. Verify actual tool discovery
+in the next turn; queue acceptance is not tool attachment. If new tools cannot attach
 to this chat without disruptive restart, report that requirement for review.
 A CLI install receipt alone is not proof of installed desktop use.
 

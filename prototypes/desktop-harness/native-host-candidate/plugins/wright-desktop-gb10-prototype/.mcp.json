@@ -1,8 +1,6 @@
 {
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
     "wright-desktop-gb10": {
-      "type": "stdio",
       "command": "/tmp/wright-openai-desktop-harness-prototype-next/.venv/bin/python",
       "args": [
         "/tmp/wright-openai-desktop-harness-prototype-next/prototypes/desktop-harness/mcp_bridge.py",

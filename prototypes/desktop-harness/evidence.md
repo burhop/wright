@@ -1,5 +1,27 @@
 # Evidence index
 
+## Approved native GB10 installation and compatibility qualification
+
+The user approved only the prepared GB10 plugin. Version 0.1.1 is installed and
+enabled with only three named semantic configuration fields changed. Portable
+0.1.0 and two portable/overlay attempts loaded skills but exposed no bundled
+MCP. The documented compatibility-only layout loads the intended server; the
+installed fresh metadata process initialized all 12 tools without model turns
+or workflow execution. Failed probes and exact 0.1.0 package remain private.
+The installer removed the old cache version; this is recorded, not hidden.
+
+Read-only metadata over the existing daemon’s documented WebSocket Unix socket
+confirms installed/enabled status. Public MCP reload accepted a refresh queue;
+this active chat still reports zero Wright servers and its tool inventory has
+no Wright entry. No restart, model worker or unrelated settings change. Queued
+refresh is not installed-chat acceptance. Next proof starts with actual tools
+in this chat after the turn boundary. Windows rendering remains independent.
+
+Current record: native-host-install-evidence.json. Exact approved commands and
+rollback: native-host-connection.md. Private raw observations and backups:
+`/tmp/wright-desktop-native-install-20261011-01`. The following native-candidate
+section records the historical pre-approval state rather than current config.
+
 ## Desktop execution-host correction and native candidate
 
 The app's read-only chat listing reports this integration chat on

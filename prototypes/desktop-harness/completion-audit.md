@@ -6,7 +6,7 @@ cannot replace installed Windows acceptance. It is not a product release audit.
 
 | Requirement | Authoritative observation | Status and next proof |
 |---|---|---|
-| Preserve baseline/worktrees/evidence | Frozen Windows checkout a17acb85; separate current branch; plan/evidence record old dev/pilot and fetched base; no push/merge/live configuration change | Local work preserved; do not replace existing targets/runs |
+| Preserve baseline/worktrees/evidence | Frozen Windows checkout a17acb85; separate current branch; plan/evidence record old dev/pilot and fetched base; no push/merge; only approved named native plugin configuration changed | Local work preserved; do not replace existing targets/runs |
 | Inspect architecture and use official documentation | plan.md, architectural owners, instruction assets, capability matrix and fetched official source links | Investigation recorded; actual Windows build/access must be observed |
 | Desktop creates workspace | Real MCP protocol invokes existing WorkspaceService; final combined profile proof includes fresh workspaces | Local transport verified; actual installed desktop tool call missing |
 | Desktop authors/saves workflow | Accepted source owner receives source over real MCP; served authoring report 10 verifies saving, layout, invalid drafts and CAS | Local owners/browser verified; same installed Windows conversation still required |
@@ -20,7 +20,7 @@ cannot replace installed Windows acceptance. It is not a product release audit.
 | Robot Tracking Diagnosis | Fresh original CSV/context copies/hashes; required real bag conversion and numerical binding audit | Not executed: real bag/numeric providers and complete accepted-source bindings absent; no fake bag/diagnosis/controller changes |
 | Platform/model/session/instructions evidence | Frozen observable adapter/runtime/instruction/tool identities; task scope and request/reply receipts | Requested/displayed/confirmed distinguished; model/app build and private prompts unreported, never fabricated |
 | Existing platforms and prior chat pilot | qualified-regression-evidence.json: pilot 40, existing platforms 32, controlled recovery 69, UI 180; scoped lint/type/build/format and served checks | Scope recorded, no aggregate count or full repository-gate claim; retained Hermes/OpenClaw/Pi behavior |
-| Reproducibility/connection/rollback | README, prepared Windows package/relay prompt, state/profile evidence and local commits | Windows executable/authorized SSH alias/live setup approval unresolved; no installation performed |
+| Reproducibility/connection/rollback | README, prepared Windows package/relay prompt, state/profile evidence and local commits | Windows executable/authorized SSH alias/live setup approval unresolved; GB10 plugin 0.1.1 installed; actual chat attachment and Windows rendering pending |
 | Shareable evidence | gallery/README with real browser screenshots, captions and limitations | GB10 browser gallery available; requested actual desktop chat-and-Wright screenshot still missing |
 | Keep experimental/stop before publishing | Local commits only, no push/merge/release/social posting | Preserved; full packaging/cross-platform release qualification outside prototype |
 
@@ -28,8 +28,11 @@ cannot replace installed Windows acceptance. It is not a product release audit.
 
 The app now exposes this integration chat on the existing GB10 SSH execution
 host. Prefer the prepared native GB10-hosted plugin in native-host-connection.md
-for this chat, subject to specific live-change approval and actual installed-tool
-qualification. This avoids assuming that a Windows GUI forces MCP onto Windows.
+for this chat. Specific approval was received; version 0.1.1 is installed and
+enabled. Its fresh metadata-only loader exposes 12 tools, and the existing
+daemon accepted a queued refresh. This active chat still reports zero Wright
+servers; actual installed-tool qualification remains pending. See
+native-host-install-evidence.json. This avoids assuming that a Windows GUI forces MCP onto Windows.
 The exact native candidate command is protocol-tested against fresh empty state.
 
 Windows app build/browser routing and rendered Workflows still require observed
