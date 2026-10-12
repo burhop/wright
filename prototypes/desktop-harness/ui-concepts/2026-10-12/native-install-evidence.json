@@ -1,0 +1,29 @@
+{
+  "plugin": "wright-desktop-gb10-prototype",
+  "version": "0.2.0",
+  "configuration_changed_keys": [
+    "marketplaces.wright-desktop-gb10-prototype.source"
+  ],
+  "unrelated_configuration_unchanged": true,
+  "old_target_unanswered_requests": 0,
+  "old_target_requests_responses_terminal_receipts": [
+    4,
+    4,
+    4
+  ],
+  "installed_files_sha256": {
+    ".mcp.json": "654f1423f847770df021fdf6d1f87ce088cc9042ba1990518901438064aeceb8",
+    ".codex-plugin/plugin.json": "604287f8e6df883eb33318c8be7c0a7a63c5f7ea90a31fb53bfb863293bead48",
+    "skills/wright-workflows/SKILL.md": "29022eb2fc40b5ad76f95a6013ac9ed76c8d150f25f6aa062b63bd067a31bb2f"
+  },
+  "configuration_after_sha256": "124576ac8c9366e0f27e16ebef20fc9dbacd902a776d20d7154b918fe6fe86d8",
+  "native_rendering": "not yet verified",
+  "desktop_restart": false,
+  "existing_chat_discovery": {
+    "server": "wright-desktop-gb10",
+    "runtime_status": "failed",
+    "tools": 0,
+    "resources": 0,
+    "observation": "initialize handshake closed; no refresh or restart attempted"
+  }
+}

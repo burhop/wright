@@ -1,0 +1,111 @@
+{
+  "boundary": "real Python MCP SDK stdio client; not installed desktop UI",
+  "tool_count": 13,
+  "tool": {
+    "name": "wright_workspace_panel",
+    "title": "Wright Workflows",
+    "description": "Open a read-only Wright panel for an exact workspace, or show connection status before selecting one.",
+    "inputSchema": {
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Id"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        }
+      },
+      "title": "wright_workspace_panelArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "title": "wright_workspace_panelDictOutput",
+      "type": "object"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "_meta": {
+      "ui": {
+        "resourceUri": "ui://wright/workspace/ef529c6bc58d5a2addcf9b967f31a75d79ab6f044e981a58f09fbb3193448319.html",
+        "visibility": [
+          "model",
+          "app"
+        ]
+      },
+      "openai/ui": {
+        "entrypoints": [
+          {
+            "type": "thread"
+          }
+        ]
+      }
+    },
+    "execution": null
+  },
+  "workspace": {
+    "workspace_id": "aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9",
+    "workspace_name": "UI panel qualification",
+    "session_id": "desktop-a9c0ddc7-4356-43d6-b82e-66d72124aac9",
+    "url": "http://127.0.0.1:5220/workspace/aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9?host=openai-desktop"
+  },
+  "result": {
+    "connection": {
+      "connected": true,
+      "binding": {
+        "schema_version": "wright.desktop-binding/1",
+        "connection_id": "wright-desktop-prototype:d07f7af02a49b63b131d21139645ec127e254c791012ce4070f8b2f7124d3298",
+        "adapter": "openai-desktop-harness",
+        "requested_model": null,
+        "reported_model": null,
+        "model_identity_source": "unreported",
+        "reported_app_build": null,
+        "protocol_version": "wright.desktop-reasoning/1"
+      },
+      "model_identity": "unreported; not independently attested",
+      "native_tool_ceiling": "unverified; Wright enforces its own API/gateway authority",
+      "connection_lease_seconds": 30,
+      "heartbeat_interval_seconds": 5
+    },
+    "workspace": {
+      "workspace_id": "aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9",
+      "session_id": "desktop-a9c0ddc7-4356-43d6-b82e-66d72124aac9",
+      "workspace_name": "UI panel qualification",
+      "url": "http://127.0.0.1:5220/workspace/aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9?host=openai-desktop"
+    }
+  },
+  "resource_uri": "ui://wright/workspace/ef529c6bc58d5a2addcf9b967f31a75d79ab6f044e981a58f09fbb3193448319.html",
+  "resource_mime": "text/html;profile=mcp-app",
+  "resource_meta": {
+    "ui": {
+      "csp": {
+        "connectDomains": [],
+        "resourceDomains": []
+      }
+    }
+  },
+  "run_started": false
+}
