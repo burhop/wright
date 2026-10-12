@@ -415,9 +415,9 @@ try {
     context = await chromium.launchPersistentContext(mkdtempSync(path.join(tmpdir(), "wright-evidence-browser-")), { channel: "chromium", headless: true, viewport: { width: 1537, height: 791 }, reducedMotion: "reduce", args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`] });
     zoomWorker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker", { timeout: 15000 });
   } else { browser = await chromium.launch({ headless: true }); context = await browser.newContext({ viewport: { width: 1537, height: 791 }, reducedMotion: "reduce" }); }
-  if (privateToken) {
-    await context.setExtraHTTPHeaders({ Authorization: `Bearer ${privateToken}` });
-    writeFileSync(path.join(root, "auth-evidence-boundary.txt"), "Private authenticated prototype. Full trace omitted to keep credential headers and unlock values out of exportable evidence. Screenshots start after unlock. No credential is included in commands or reports.\n");
+  if (privateToken || args["authenticated-entry"] === "true") {
+    if (privateToken) await context.setExtraHTTPHeaders({ Authorization: `Bearer ${privateToken}` });
+    writeFileSync(path.join(root, "auth-evidence-boundary.txt"), "Private authenticated prototype. Full trace omitted to keep credential headers, browser sessions and unlock values out of exportable evidence. Screenshots start after unlock. No credential is included in commands or reports.\n");
   } else {
     await context.tracing.start({ screenshots: true, snapshots: true, sources: true }); tracing = true;
   }

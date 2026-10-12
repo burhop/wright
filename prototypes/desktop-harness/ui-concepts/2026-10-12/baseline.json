@@ -1,0 +1,118 @@
+{
+  "source": "/tmp/wright-openai-desktop-harness-prototype-next",
+  "head": "c076931997becbf1e38e4d106150670aaf81c7a9",
+  "branch": "codex/openai-desktop-harness-prototype",
+  "patch_sha256": "e2292c24d41fd9ecaa76991f7621e7784fd1f4b5e3549a1b5ad744e6ce06935a",
+  "files": [
+    {
+      "path": "apps/web/desktop-private-lan.spec.ts",
+      "sha256": "9157593d3092e67c383917d8542b6ae85443164e86b27e261453b144e58db455",
+      "kind": "untracked"
+    },
+    {
+      "path": "apps/web/src/components/pages/WorkflowRecoveryPage.tsx",
+      "sha256": "ba24571e362dde6ae68d01c9a7c77f03cfe9a5aa948cafa6ba7c53f06339972b",
+      "kind": "tracked"
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.spec.tsx",
+      "sha256": "5fa6757f7b43f2e9b7773f13f15b1e67a70531aced65d18dd3b8d717862bc6bd",
+      "kind": "tracked"
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/WorkflowRecoveryConcept.tsx",
+      "sha256": "0a6302a3054aa2bddf2ac3229efcbd2eeb0b80b2bce8447bff140e620f4a8312",
+      "kind": "tracked"
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/useWorkflowReasoningStatus.spec.tsx",
+      "sha256": "987aaa50ab79229a9b55c54335a99cc70079acab53516b3a132f0fb8b536caf2",
+      "kind": "untracked"
+    },
+    {
+      "path": "apps/web/src/prototypes/workflow-recovery/useWorkflowReasoningStatus.ts",
+      "sha256": "8a6625f0a104382b34fada2ccacbb2f6f92e99b2366ced5d8ed5d07586c292d9",
+      "kind": "untracked"
+    },
+    {
+      "path": "apps/web/src/services/desktop-reasoning-status.ts",
+      "sha256": "b80daad7a4284d106dc3308871f17e0024c58e1cbbf9e7f496e307c7e32eede4",
+      "kind": "untracked"
+    },
+    {
+      "path": "apps/web/tests/desktop-reasoning-status.spec.ts",
+      "sha256": "a6667c19d66a2a7d8102dee053b08e5d3e1f0c57a1f5a8567110c1acabcf897a",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/README.md",
+      "sha256": "c41c89c7283507117d08de6d8c2bfa8ef9a1fb6c575ff289c6b3d55737abe880",
+      "kind": "tracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/authoring_acceptance.mjs",
+      "sha256": "b84f2033bc042e67b73e60446343a712f73c7f72c6ce6f0729e8b8723b9a4c4a",
+      "kind": "tracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/private-lan-access.md",
+      "sha256": "c101aa73ff37b831dc2c12d3b71dd87d1d2617864a88f4ae249de22d83f7028d",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/private-lan.vite.config.ts",
+      "sha256": "9e155d2d923641cc84d43029714037a1bc97170362442791e7e32e598be00a43",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/reasoning-progress.md",
+      "sha256": "692642a8485412da4054350173b38b556c5e9d675dfdd904e3f75d199b0c76dd",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/01-conversation-and-canvas.png",
+      "sha256": "750e5c47ae676e3f96a166507b8936efbc5c94728c47376b1a3fafe1dbc60239",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/02-focused-authoring.png",
+      "sha256": "c08413908c9c4515b67b97af1bc1b9434d0cf70eeaeb0501e52ddece5cefb37d",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/03-run-and-review.png",
+      "sha256": "cf8513a035d75128d18363aaaf99a007622b46ad51703ec15fc065b3406f10ff",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/README.md",
+      "sha256": "fb9d43a3f2af3a97ed137ed1d92686c139dc22f3d11909efab956486feef42ed",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/integration-experience-research.md",
+      "sha256": "b487fa3ad8bf2154ef967e0fdb621f9746602b5b4cdb77b88f300e927236f221",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/integration-plan.md",
+      "sha256": "36640ad6d1484943ec4787cd461ef7e5d0c1eec4119c31caf4158983d919ef5d",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/manifest.json",
+      "sha256": "43c03c17da8560252d2c946a19afe7235e3540d1fabf6b97fe4163e283bb498a",
+      "kind": "untracked"
+    },
+    {
+      "path": "prototypes/desktop-harness/ui-concepts/2026-10-12/prompts.json",
+      "sha256": "ca0fb792c9491f39ad79b16dc3a5fc149439a95d5ea698bf7c893d1f8020e53d",
+      "kind": "untracked"
+    },
+    {
+      "path": "scripts/recovery/capture_image_redesign.mjs",
+      "sha256": "fe0b766bae0076e6d4cec1d7409c9019769bbb14f489160a6569947bc4eb708b",
+      "kind": "tracked"
+    }
+  ]
+}

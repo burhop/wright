@@ -11,6 +11,7 @@ import { EngineeringTemplateDialog } from "../../prototypes/workflow-recovery/En
 import { WorkflowBundleDialog } from "../../prototypes/workflow-recovery/WorkflowBundleDialog";
 import { type RecoveryLayout } from "../../prototypes/workflow-recovery/model";
 import { blankWorkflowSource } from "../../services/blank-workflow";
+import { readDesktopReasoningWait } from "../../services/desktop-reasoning-status";
 import {
   workspaceService,
   WorkspaceWorkflowSourceNotFoundError,
@@ -74,6 +75,14 @@ export function WorkflowRecoveryPage({
   );
   const [newWorkflowName, setNewWorkflowName] = useState("");
   const historicalQuery = new URLSearchParams(window.location.search);
+  // This selects a read-only presentation adapter, never execution authority.
+  const desktopConversation = historicalQuery.get("host") === "openai-desktop";
+  const readReasoningStatus = useCallback(
+    (runId: string, signal: AbortSignal) => readDesktopReasoningWait(
+      { workspaceId, sessionId, runId, workspaceName }, signal,
+    ),
+    [workspaceId, sessionId, workspaceName],
+  );
   const historicalWorkflow = historicalQuery
     .get("workflowPath")
     ?.replace(/^\/+/, "");
@@ -933,6 +942,7 @@ export function WorkflowRecoveryPage({
                 onReadStoredSource={readStoredWorkflow}
                 onReloadStoredSource={reloadStoredWorkflow}
                 onRun={runWorkflow}
+                onReadReasoningStatus={desktopConversation ? readReasoningStatus : undefined}
                 templateReadiness={templateReadiness}
                 onRefreshTemplateReadiness={refreshTemplateReadiness}
                 onOpenFile={onOpenFile}

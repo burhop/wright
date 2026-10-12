@@ -5,6 +5,7 @@ import path from "node:path";
 
 export function registerDesktopAuthoring({ add, getPage, tid, click, fill, capture, expect, args, root, connect, sourceText, diagnostics, unlock }) {
   let savedSource, savedLayout, originalSource, url, page;
+  let progressRunId = args["progress-run"];
   const input = "block.text-input-1";
   const document = "block.document-1";
   async function addObject(group, template, id) {
@@ -41,6 +42,58 @@ export function registerDesktopAuthoring({ add, getPage, tid, click, fill, captu
     url = page.url(); originalSource = await sourceText();
     savedSource = originalSource;
     writeFileSync(path.join(root, "original-editor-source.wflow"), originalSource);
+  });
+  add("desktop-reasoning-start", "Start the isolated digital proof through Run", "Click Run once on the explicitly scoped digital proof workflow.", "The normal Run control queues one AI task and shows its exact backend run identity.", async () => {
+    if (args["progress-ui-start"] !== "true" || !args["progress-workspace"] ||
+        new URL(page.url()).pathname !== `/workspace/${args["progress-workspace"]}` ||
+        args["continue-workflow"] !== "workflows/desktop-progress-proof.workflow.wflow")
+      throw new Error("UI start requires the explicit isolated digital proof scope");
+    await expect(tid("workflow-recovery-run-start")).toBeEnabled();
+    await tid("workflow-recovery-run-start").click();
+    const banner = tid("workflow-run-reasoning-wait");
+    await expect(banner).toBeVisible({ timeout: 30000 });
+    progressRunId = await banner.getAttribute("data-run-id");
+    if (!progressRunId) throw new Error("The UI did not expose its actual queued run identity");
+    writeFileSync(path.join(root, "progress-start-ui.json"), JSON.stringify({
+      run_id: progressRunId, workspace_id: args["progress-workspace"],
+      source_path: args["continue-workflow"], started_once_through_normal_control: true,
+    }, null, 2));
+  });
+  add("desktop-reasoning-wait", "Explain a queued desktop AI task", "Inspect the active run, reload it, and open its waiting task.", "The exact queued request remains visible with its time and chat continuation instruction, without another run or approval.", async () => {
+    if (!progressRunId) throw new Error("Provide the exact pre-existing progress proof run");
+    const banner = tid("workflow-run-reasoning-wait");
+    await expect(banner).toBeVisible({ timeout: 30000 });
+    await expect(banner).toContainText("Waiting for desktop chat");
+    await expect(banner).toContainText(progressRunId);
+    await expect(banner).toContainText("Queued at");
+    await expect(banner).toContainText("does not automatically start a chat turn");
+    await expect(tid("workflow-recovery-run-start")).toHaveText("Waiting for chat");
+    await expect(tid("workflow-recovery-run-start")).toBeDisabled();
+    await expect(tid("workflow-run-input-wait")).toHaveCount(0);
+    await page.reload();
+    await expect(banner).toBeVisible({ timeout: 30000 });
+    await expect(banner).toContainText(progressRunId);
+    await page.getByRole("button", { name: "Show waiting task", exact: true }).click();
+    await expect(tid("workflow-recovery-inspector")).toBeVisible();
+    await capture("desktop-reasoning-wait");
+    writeFileSync(path.join(root, "progress-wait-ui.json"), JSON.stringify({
+      scope: "actual served browser; no supplied token or model worker",
+      run_id: progressRunId, source_path: args["continue-workflow"],
+      url: page.url(), observation: await banner.textContent(),
+      no_ui_execution: true, no_human_checkpoint_invented: true,
+    }, null, 2));
+  });
+  add("desktop-reasoning-complete", "Follow the same run after the desktop reply", "Wait for the actual desktop conversation to answer through native Wright tools.", "The same run finishes and its waiting banner disappears; the original source is unchanged.", async () => {
+    if (!progressRunId) throw new Error("Provide the exact pre-existing progress proof run");
+    await expect(tid("workflow-recovery-run-details-toggle")).toContainText("Completed", { timeout: 90000 });
+    await expect(tid("workflow-run-reasoning-wait")).toHaveCount(0);
+    await expect(tid("workflow-recovery-run-start")).toBeEnabled();
+    expect(await sourceText()).toBe(originalSource);
+    writeFileSync(path.join(root, "progress-completed-ui.json"), JSON.stringify({
+      run_id: progressRunId, source_path: args["continue-workflow"],
+      url: page.url(), original_source_unchanged: true, waiting_banner_removed: true,
+      requests: diagnostics.apiRequests,
+    }, null, 2));
   });
   add("desktop-text", "Configure a supplied text input", "Create a Text input and enter the supplied inspection dimensions.", "Exact supplied values are authored in the fresh workflow without tool execution.", async () => {
     await addObject("input", "text-input", input);

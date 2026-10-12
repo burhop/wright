@@ -1,5 +1,17 @@
 # Wright inside the desktop harness — local prototype
 
+Current native-chat private-network viewing evidence is recorded in
+[private-lan-access.md](private-lan-access.md). Workspace `dave` and its completed
+welcome workflow now open through an automatically established browser session
+for the observed Windows device, using the existing Wright UI and authentication
+owner. Fresh GB10 browser verification passed; post-change Windows user acceptance
+remains separate. Earlier qualification checkpoints below retain their scopes.
+
+The editor now explains queued desktop AI tasks instead of only saying Running.
+[Reasoning progress evidence](reasoning-progress.md) records actual native replies,
+normal editor Run/reload/completion checks, and the remaining manual chat-turn
+boundary. Automatic same-conversation wakeup is not yet qualified.
+
 This prototype connects the actual desktop conversation to Wright's existing
 source runtime. It does not start Hermes, another model service, or an SDK agent
 worker. The MCP SDK is a transport library, not the reasoning provider.
