@@ -151,6 +151,7 @@ import { BlockNameHeading, WorkflowNameHeading } from "./BlockNameHeading";
 import { cadOutputPresentation } from "./cad-output-presentation";
 import { workspaceContentUrl } from "../../services/viewer-panel/providers/workspace-content-url";
 import "./workflow-recovery.css";
+import "../../styles/workflow-canvas-theme.css";
 
 type ViewMode = "diagram" | "code" | "split";
 type InspectorTab =
@@ -3937,6 +3938,36 @@ function WorkflowRecoveryReadyConcept({
           </div>
         )}
         <div className="recovery-toolbar">
+          <AuthoringCreateRail
+            onCreateServer={(server) => {
+              const commands = createMcpServerBlock(
+                server,
+                workflow,
+                layout,
+                selectedOwner?.id,
+              );
+              const add = commands[0];
+              if (add?.kind === "add_block" && applyCommands("graph", commands))
+                selectObject(add.block.id, "definition");
+            }}
+            sessionId={workspaceSessionId}
+            disabled={
+              proposal !== null ||
+              workflowRunPending ||
+              runStage > 0 ||
+              sourceDirty
+            }
+            onCreate={(templateId) => {
+              const command = createAuthoringObject(
+                templateId,
+                workflow,
+                layout,
+                { selectedBlockId: selectedOwner?.id },
+              );
+              if (applyCommands("graph", [command]))
+                selectObject(command.block.id, "definition");
+            }}
+          />
           <select
             className="recovery-view-select"
             data-testid="workflow-recovery-view-select"
@@ -4306,36 +4337,7 @@ function WorkflowRecoveryReadyConcept({
       <div
         className={`recovery-workbench ${hasInspection ? "recovery-workbench--inspecting" : ""}${hasInspection && selectedResult ? " recovery-workbench--result-viewing" : ""}`}
       >
-        <AuthoringCreateRail
-          onCreateServer={(server) => {
-            const commands = createMcpServerBlock(
-              server,
-              workflow,
-              layout,
-              selectedOwner?.id,
-            );
-            const add = commands[0];
-            if (add?.kind === "add_block" && applyCommands("graph", commands))
-              selectObject(add.block.id, "definition");
-          }}
-          sessionId={workspaceSessionId}
-          disabled={
-            proposal !== null ||
-            workflowRunPending ||
-            runStage > 0 ||
-            sourceDirty
-          }
-          onCreate={(templateId) => {
-            const command = createAuthoringObject(
-              templateId,
-              workflow,
-              layout,
-              { selectedBlockId: selectedOwner?.id },
-            );
-            if (applyCommands("graph", [command]))
-              selectObject(command.block.id, "definition");
-          }}
-        />
+
 
         <div className={`recovery-stage recovery-stage--${view}`}>
           {view !== "code" && (

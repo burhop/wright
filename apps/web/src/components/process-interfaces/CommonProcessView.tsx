@@ -42,6 +42,8 @@ import {
   type ProcessViewRecoveryStore,
   type ProcessViewMutation,
 } from "../../services/process-view-recovery";
+import type { WorkflowReasoningStatusReader } from "../../services/desktop-reasoning-status";
+import { useWorkflowReasoningStatus } from "../../prototypes/workflow-recovery/useWorkflowReasoningStatus";
 
 export interface CommonProcessViewProps {
   readonly client: ProcessClient;
@@ -60,6 +62,7 @@ export interface CommonProcessViewProps {
   readonly onRunAttached?: (runId: string, receipt?: StartReceipt) => void;
   readonly onPrepareAnother?: () => void;
   readonly navigation?: ProcessNavigationRequest;
+  readonly readReasoningStatus?: WorkflowReasoningStatusReader;
 }
 
 const terminal = (state: InteractionSnapshot["state"]) =>
@@ -164,6 +167,7 @@ function CommonProcessController({
   onRunAttached,
   onPrepareAnother,
   navigation,
+  readReasoningStatus,
 }: CommonProcessViewProps) {
   const store = useMemo(
     () =>
@@ -190,6 +194,10 @@ function CommonProcessController({
   const [recovery, setRecovery] = useState<ProcessViewRecovery | null>(null);
   const recoveryRef = useRef<ProcessViewRecovery | null>(null);
   const [activeRun, setActiveRun] = useState<string | undefined>(runId);
+  const reasoning = useWorkflowReasoningStatus(
+    snapshot?.state === "running" ? activeRun : undefined,
+    readReasoningStatus,
+  );
   const activeRunRef = useRef(runId);
   const [busy, setBusy] = useState("");
   const [uploadCount, setUploadCount] = useState(0);
@@ -1296,6 +1304,18 @@ function CommonProcessController({
                 </Section>
               )}
               <Section title="Progress" focusId="progress">
+                {(reasoning.wait || reasoning.error) && (
+                  <div role="status" data-testid="process-desktop-reasoning-wait">
+                    <b>{reasoning.wait?.label ?? "AI handoff status unavailable"}</b>
+                    <p>{reasoning.wait?.detail ?? `${reasoning.error} Refresh the saved run before taking another action.`}</p>
+                    {reasoning.wait && (
+                      <>
+                        <small>Queued at <time dateTime={reasoning.wait.queuedAt}>{new Date(reasoning.wait.queuedAt).toLocaleTimeString()}</time></small>
+                        <details><summary>Handoff details</summary><div>Run: {reasoning.wait.runId}</div><div>Request: {reasoning.wait.requestId}</div></details>
+                      </>
+                    )}
+                  </div>
+                )}
                 {(snapshot.diagnostics ?? []).map((diagnostic, index) => (
                   <ReasonNotice
                     key={`${diagnostic.code}:${diagnostic.step_id ?? "run"}:${index}`}

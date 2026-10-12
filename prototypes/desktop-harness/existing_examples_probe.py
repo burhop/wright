@@ -10,6 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+from types import SimpleNamespace
 
 from data_vault import WorkspaceRepository, upgrade_database
 from data_vault.secret_provider import FileSecretProvider
@@ -19,8 +20,12 @@ from workspace_service.workflow_source_execution import compile_prompt_workflow
 from reasoning_probe import DesktopConnectionMetadata
 
 
-async def main(state):
-    state.mkdir(mode=0o700, parents=True, exist_ok=False)
+async def main(state, *, resume=False):
+    state.mkdir(mode=0o700, parents=True, exist_ok=resume)
+    if (state / "existing-examples.json").exists():
+        raise RuntimeError(
+            "Completed evidence exists; inspect it rather than repeat the probe"
+        )
     database = state / "wright.sqlite"
     upgrade_database(database)
     service = WorkspaceService(
@@ -38,12 +43,25 @@ async def main(state):
             ("printed-replacement-part", "01-observatory-focus-wheel"),
             ("robot-tracking-diagnosis", "01-aisle-floor-seam"),
         ):
-            workspace = await service.create_workspace(
-                "Desktop original " + template,
-                None,
-                DesktopConnectionMetadata(),
-                agent_id="openai-desktop-harness",
-            )
+            name = "Desktop original " + template
+            existing = service.repository.get_by_name(name) if resume else None
+            if existing:
+                root = Path(existing["local_path"]).resolve()
+                assert root.is_relative_to((state / "workspaces").resolve())
+                assert (
+                    service.repository.list_sessions(existing["workspace_id"])[0][
+                        "agent_id"
+                    ]
+                    == "openai-desktop-harness"
+                )
+                workspace = SimpleNamespace(**existing)
+            else:
+                workspace = await service.create_workspace(
+                    name,
+                    None,
+                    DesktopConnectionMetadata(),
+                    agent_id="openai-desktop-harness",
+                )
             detail = service.engineering_workflow_templates.detail(template)
             instance = await service.engineering_workflow_templates.instantiate(
                 workspace_id=workspace.workspace_id,
@@ -57,7 +75,15 @@ async def main(state):
             )
             original = datasets / "scenarios" / template / scenario
             copied = Path(workspace.local_path) / "inputs/original-scenario"
-            shutil.copytree(original, copied)
+            if not copied.exists():
+                shutil.copytree(original, copied)
+            else:
+                assert resume
+                assert {
+                    p.relative_to(copied) for p in copied.rglob("*") if p.is_file()
+                } == {
+                    p.relative_to(original) for p in original.rglob("*") if p.is_file()
+                }
             hashes = {}
             for item in sorted(original.rglob("*")):
                 if item.is_file():
@@ -69,9 +95,13 @@ async def main(state):
                     )
                     hashes[str(relative)] = digest
             bindings = datasets / "bindings" / f"{template}.json"
-            shutil.copyfile(
-                bindings, Path(workspace.local_path) / "inputs/original-bindings.json"
+            copied_bindings = (
+                Path(workspace.local_path) / "inputs/original-bindings.json"
             )
+            if copied_bindings.exists():
+                assert resume and copied_bindings.read_bytes() == bindings.read_bytes()
+            else:
+                shutil.copyfile(bindings, copied_bindings)
             try:
                 compile_prompt_workflow(instance.document.source)
                 compilation = "accepted by compiler; runtime capabilities not qualified"
@@ -132,5 +162,10 @@ async def main(state):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Reconcile a partial isolated copy using its existing template request identities",
+    )
     options = parser.parse_args()
-    asyncio.run(main(options.state_dir.resolve()))
+    asyncio.run(main(options.state_dir.resolve(), resume=options.resume))

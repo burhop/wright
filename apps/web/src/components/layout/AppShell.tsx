@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { isDesktop } from "../../services/host-adapter";
+import { presentationForSearch } from "../../services/host-adapter/presentation";
+import "../../styles/presentation-controls.css";
 
 interface AppShellProps {
   children: ReactNode;
@@ -11,8 +13,8 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const isWorkspaceView = location.pathname.startsWith("/workspace/");
-  const desktopConversation =
-    new URLSearchParams(location.search).get("host") === "openai-desktop";
+  const presentation = presentationForSearch(location.search);
+  const desktopConversation = presentation.chat === "host";
 
   const desktop = isDesktop();
 
@@ -20,6 +22,8 @@ export function AppShell({ children }: AppShellProps) {
     <div
       data-testid="app-shell"
       data-desktop={desktop}
+      data-presentation={presentation.mode}
+      data-control-style={presentation.controlStyle}
       style={{
         display: "flex",
         flexDirection: "column",

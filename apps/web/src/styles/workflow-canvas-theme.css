@@ -1,0 +1,259 @@
+/* One Wright graph palette across hosts. Surrounding controls keep host tokens. */
+.workflow-recovery,
+.workflow-recovery-modal-theme {
+  --workflow-canvas-bg: #1c1c1c;
+  --workflow-node-bg: #282828;
+  --workflow-node-border: #464646;
+  --workflow-canvas-ink: #eeeeee;
+  --workflow-canvas-muted: #b5b5b5;
+  --workflow-selection: #67d5cb;
+  --workflow-success: #61c89c;
+  --workflow-warning: #e8b65c;
+  --workflow-error: #ef8585;
+  --workflow-accent: #b2a0ef;
+  --recovery-teal: var(--workflow-selection);
+  --recovery-green: var(--workflow-success);
+  --recovery-amber: var(--workflow-warning);
+  --recovery-red: var(--workflow-error);
+  --recovery-violet: var(--workflow-accent);
+}
+
+[data-theme="light"] .workflow-recovery,
+[data-theme="light"] .workflow-recovery-modal-theme {
+  --workflow-canvas-bg: #f5f5f5;
+  --workflow-node-bg: #ffffff;
+  --workflow-node-border: #c6c6c6;
+  --workflow-canvas-ink: #242424;
+  --workflow-canvas-muted: #595959;
+  --workflow-selection: #167a70;
+  --workflow-success: #23794f;
+  --workflow-warning: #805700;
+  --workflow-error: #b53333;
+  --workflow-accent: #7153b3;
+}
+
+.workflow-recovery--redesign .recovery-canvas {
+  --font-body: system-ui, sans-serif;
+  --font-heading: system-ui, sans-serif;
+  --color-neutral: var(--workflow-canvas-bg);
+  --color-surface: var(--workflow-node-bg);
+  --color-surface-subtle: var(--workflow-node-bg);
+  --color-surface-elevated: var(--workflow-node-bg);
+  --color-border: var(--workflow-node-border);
+  --color-primary: var(--workflow-canvas-ink);
+  --color-text-muted: var(--workflow-canvas-muted);
+  --color-border-glow: color-mix(in srgb, var(--workflow-selection) 20%, transparent);
+  --recovery-ink: var(--workflow-canvas-ink);
+  --recovery-muted: var(--workflow-canvas-muted);
+  --recovery-grid: var(--workflow-node-border);
+  --recovery-shadow-color: rgb(0 0 0 / 16%);
+  background: var(--workflow-canvas-bg);
+  font-family: system-ui, sans-serif;
+}
+
+.workflow-recovery--redesign .recovery-block {
+  background: var(--workflow-node-bg);
+  border-radius: 10px;
+  box-shadow: 0 3px 10px var(--recovery-shadow-color);
+}
+
+/* Size the editor by its panel, independently of the host's window width. */
+.workflow-recovery--redesign {
+  container-name: workflow-editor;
+  container-type: inline-size;
+}
+
+.workflow-recovery--redesign .recovery-workbench {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.workflow-recovery--redesign .recovery-workbench--inspecting {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+
+.recovery-add-step {
+  position: relative;
+  z-index: 30;
+}
+
+.recovery-add-step-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: min(340px, calc(100vw - 72px));
+  max-height: min(480px, calc(100vh - 180px));
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid var(--recovery-line);
+  border-radius: 10px;
+  background: var(--color-surface-subtle);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+}
+
+.recovery-add-step .recovery-create-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  scrollbar-gutter: auto;
+}
+
+.recovery-add-step .recovery-create-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  height: auto;
+  min-height: 54px;
+}
+
+.recovery-add-step .recovery-create-group > b {
+  display: block;
+  font-size: 11px;
+}
+
+.recovery-add-step .recovery-create-popover {
+  position: static;
+  width: auto;
+  max-height: none;
+  padding: 10px 0 0;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+@container workflow-editor (max-width: 900px) {
+  .workflow-recovery--redesign .recovery-filebar {
+    position: relative;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .workflow-recovery--redesign .recovery-filebar__identity {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding-right: 36px;
+  }
+
+  .workflow-recovery--redesign .recovery-file-menu {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+  }
+
+  .workflow-recovery--redesign .recovery-toolbar {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    min-width: 0;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .workflow-recovery--redesign .recovery-toolbar__actions {
+    flex: 1 0 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .workflow-recovery--redesign .recovery-toolbar__actions button,
+  .workflow-recovery--redesign .recovery-add-step > button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .workflow-recovery--redesign .recovery-run-readiness > summary span {
+    display: none;
+  }
+
+  .workflow-recovery--redesign .recovery-run-readiness > summary {
+    white-space: nowrap;
+  }
+
+  .workflow-recovery--redesign .recovery-workbench--inspecting {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(100px, 1fr) minmax(160px, 42%);
+  }
+
+  .workflow-recovery--redesign .recovery-workbench--inspecting .recovery-inspector {
+    position: static;
+    width: auto;
+    min-height: 0;
+    border-left: 0;
+    border-top: 1px solid var(--recovery-line);
+    box-shadow: none;
+  }
+
+  .workflow-recovery--redesign .recovery-inspector__titlebar {
+    padding: 8px 12px;
+  }
+
+  .workflow-recovery--redesign .recovery-inspector__titlebar h2 {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 600px) {
+  @container workflow-editor (max-width: 900px) {
+    /* A temporary sheet keeps forms usable when a bottom dock would crowd them. */
+    .workflow-recovery--redesign .recovery-workbench--inspecting {
+      grid-template-rows: minmax(0, 1fr);
+    }
+
+    .workflow-recovery--redesign .recovery-workbench--inspecting .recovery-inspector {
+      position: absolute;
+      inset: 0;
+      z-index: 22;
+      border-top: 0;
+    }
+  }
+}
+
+@media (min-height: 601px) {
+  @container workflow-editor (min-width: 650px) and (max-width: 900px) {
+    .workflow-recovery--redesign .recovery-inspector {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      grid-template-rows: auto auto minmax(0, 1fr);
+      grid-template-areas: "title title" "notice notice" "context fields";
+    }
+
+    .workflow-recovery--redesign .recovery-inspector__titlebar {
+      grid-area: title;
+    }
+
+    .workflow-recovery--redesign .recovery-inspector > [role="alert"] {
+      grid-area: notice;
+    }
+
+    .workflow-recovery--redesign .recovery-inspector .recovery-panel-heading {
+      grid-area: context;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .workflow-recovery--redesign .recovery-inspector__body {
+      grid-area: fields;
+      border-left: 1px solid var(--recovery-line);
+      padding: 10px 12px;
+    }
+  }
+}
+
+.workflow-recovery--redesign .recovery-block.is-selected {
+  box-shadow: 0 0 0 1px var(--workflow-selection);
+}
+
+.workflow-recovery--redesign .recovery-block.is-active {
+  /* Activity remains distinct from selection through its label and indicators. */
+  box-shadow: 0 0 0 2px var(--workflow-selection);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workflow-recovery--redesign .recovery-block.is-active {
+    animation: none;
+  }
+}

@@ -192,6 +192,7 @@ it("explains that input blocks alone do not make a runnable process", async () =
       onRun={onRun}
     />,
   );
+  fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
   fireEvent.click(screen.getByTestId("workflow-recovery-create-group-input"));
   fireEvent.click(
     screen.getByTestId("workflow-recovery-create-template-text-input"),
@@ -715,6 +716,7 @@ describe("WorkflowRecoveryConcept component states", () => {
         onRun={onRun}
       />,
     );
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     fireEvent.click(
       screen.getByTestId("workflow-recovery-create-group-document"),
     );
@@ -2064,6 +2066,7 @@ end`;
         storageDigest={"b".repeat(64)}
       />,
     );
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-document"),
     );
@@ -2211,6 +2214,7 @@ end`;
         onSave={onSave}
       />,
     );
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -2271,6 +2275,7 @@ end`;
       return { source, definition_revision: 8, storage_digest: "a".repeat(64) };
     });
     const first = render(<WorkflowRecoveryConcept onSave={onSave} />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     screen.getByTestId("workflow-recovery-create-group-input").focus();
     await userEvent.keyboard("{Enter}");
     screen.getByTestId("workflow-recovery-create-template-text-input").focus();
@@ -2291,6 +2296,7 @@ end`;
     expect(
       screen.getByTestId("workflow-recovery-inputs-toggle"),
     ).toHaveTextContent("1/4 configured");
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -2331,6 +2337,7 @@ end`;
   it("stores a workspace-relative file path and treats a bare filename as the workspace root", async () => {
     const onOpenFile = vi.fn();
     render(<WorkflowRecoveryConcept onOpenFile={onOpenFile} />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -2367,6 +2374,7 @@ end`;
 
   it("edits unbound prompts and parameters, confirms deletion, and restores the full object with undo", async () => {
     render(<WorkflowRecoveryConcept />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-document"),
     );
@@ -2427,7 +2435,7 @@ end`;
     );
   });
 
-  it("renders the compact Create rail, transient Inputs and contextual Inspector with stable controls", async () => {
+  it("renders the compact Add step menu, transient Inputs and contextual Inspector with stable controls", async () => {
     const { container } = render(<WorkflowRecoveryConcept />);
     expect(screen.getByTestId("workflow-recovery-canvas")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-authority")).toHaveAttribute(
@@ -2443,6 +2451,8 @@ end`;
     expect(
       screen.queryByRole("heading", { name: "Three source inputs" }),
     ).not.toBeInTheDocument();
+    expect(screen.queryAllByTestId(/workflow-recovery-create-group-/)).toHaveLength(0);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     expect(
       screen.getAllByTestId(/workflow-recovery-create-group-/),
     ).toHaveLength(4);

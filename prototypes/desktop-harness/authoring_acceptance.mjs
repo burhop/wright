@@ -9,6 +9,7 @@ export function registerDesktopAuthoring({ add, getPage, tid, click, fill, captu
   const input = "block.text-input-1";
   const document = "block.document-1";
   async function addObject(group, template, id) {
+    await click("workflow-recovery-add-step");
     await click(`workflow-recovery-create-group-${group}`);
     await click(`workflow-recovery-create-template-${template}`);
     await expect(tid(`workflow-recovery-block-${id}`)).toBeVisible();
@@ -36,8 +37,11 @@ export function registerDesktopAuthoring({ add, getPage, tid, click, fill, captu
       expect(await sourceText()).toBe(stored.source);
       writeFileSync(path.join(root, "selected-source-readback.json"), JSON.stringify(stored, null, 2));
     }
+    await click("workflow-recovery-add-step");
     await expect(page.locator(".recovery-create-group")).toHaveCount(4);
     for (const group of ["input", "document", "tool", "more"]) await expect(tid(`workflow-recovery-create-group-${group}`)).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tid("workflow-recovery-add-step")).toBeFocused();
     await expect(tid("agent-sidebar")).toHaveCount(0); await expect(tid("agent-sidebar-toggle")).toHaveCount(0);
     url = page.url(); originalSource = await sourceText();
     savedSource = originalSource;
@@ -152,6 +156,7 @@ export function registerDesktopAuthoring({ add, getPage, tid, click, fill, captu
     savedSource = await sourceText();
     if (await tid("workflow-recovery-save").isEnabled()) await click("workflow-recovery-save");
     await expect(tid("workflow-recovery-save-status")).toHaveAttribute("aria-label", "Saved in workspace");
+    await expect(tid("workflow-recovery-concept")).toHaveAttribute("data-layout-digest", /^sha256:[a-f0-9]{64}$/);
     savedLayout = await tid("workflow-recovery-concept").getAttribute("data-layout-digest");
     await page.reload(); await expect(tid("workflow-recovery-canvas")).toBeVisible({ timeout: 30000 });
     expect(await sourceText()).toBe(savedSource);
@@ -193,7 +198,35 @@ export function registerDesktopAuthoring({ add, getPage, tid, click, fill, captu
   });
   add("desktop-compact", "Inspect compact hosted layout", "Resize to 768 by 512 and open/close the Create menu.", "Editor controls remain reachable with no Wright chat and no page overflow.", async () => {
     await page.setViewportSize({ width: 768, height: 512 });
-    await click("workflow-recovery-create-group-input"); await expect(page.locator(".recovery-create-popover")).toBeVisible(); await page.keyboard.press("Escape");
+    for (const id of ["workflow-recovery-add-step", "workflow-recovery-save", "workflow-recovery-run-start", "workflow-recovery-run-readiness-toggle"])
+      await expect(tid(id)).toBeInViewport({ ratio: 1 });
+    await click("workflow-recovery-add-step"); await click("workflow-recovery-create-group-input"); await expect(page.locator(".recovery-create-popover")).toBeVisible(); await page.keyboard.press("Escape");
+    await page.keyboard.press("Escape");
+    await expect(tid("workflow-recovery-add-step")).toBeFocused();
+    await expect(page.locator(".recovery-add-step-menu")).toHaveCount(0);
+    await page.setViewportSize({ width: 900, height: 800 });
+    await click(`workflow-recovery-block-${input}`);
+    await click("workflow-recovery-canvas-fit");
+    const canvasBox = await tid("workflow-recovery-canvas").boundingBox();
+    const inspectorBox = await tid("workflow-recovery-inspector").boundingBox();
+    expect(inspectorBox.width).toBeGreaterThan(600);
+    expect(inspectorBox.y).toBeGreaterThanOrEqual(canvasBox.y + canvasBox.height - 1);
+    expect(canvasBox.height).toBeGreaterThanOrEqual(100);
+    await expect(tid(`workflow-recovery-input-text-${input}`)).toBeInViewport();
+    await capture("desktop-bottom-inspector");
+    await page.evaluate(() => document.documentElement.dataset.theme = "light");
+    await expect.poll(() => tid("workflow-recovery-canvas").evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgb(245, 245, 245)");
+    await expect.poll(() => tid("activity-bar-workflows-btn").evaluate(el => getComputedStyle(el).color)).toBe("rgb(36, 36, 36)");
+    await capture("desktop-light-bottom-inspector");
+    await page.evaluate(() => document.documentElement.dataset.theme = "dark");
+    await page.setViewportSize({ width: 768, height: 512 });
+    const sheet = tid("workflow-recovery-inspector");
+    await expect(sheet).toBeInViewport({ ratio: 1 });
+    await expect.poll(() => sheet.evaluate(el => getComputedStyle(el).position)).toBe("absolute");
+    await capture("desktop-short-inspector-sheet");
+    await click("workflow-recovery-inspector-close");
+    for (const id of ["workflow-recovery-add-step", "workflow-recovery-save", "workflow-recovery-run-start", "workflow-recovery-run-readiness-toggle"])
+      await expect(tid(id)).toBeInViewport({ ratio: 1 });
     const size = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, scrollWidth: document.documentElement.scrollWidth, scrollHeight: document.documentElement.scrollHeight }));
     expect(size.scrollWidth).toBeLessThanOrEqual(size.width + 1); expect(size.scrollHeight).toBeLessThanOrEqual(size.height + 1);
     await page.setViewportSize({ width: 1537, height: 791 });

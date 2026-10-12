@@ -447,10 +447,10 @@ export function WorkspacePanel({
     savedLayout?.isAgentCollapsed ?? false,
   );
   const [workflowAgentCollapsed, setWorkflowAgentCollapsed] = useState<boolean>(
-    savedLayout?.workflowAgentCollapsed ?? true,
+    savedLayout?.workflowAgentCollapsed ?? false,
   );
-  // Workflow authoring owns the canvas by default. Keep this preference
-  // separate so entering/leaving Workflows does not change ordinary chat.
+  // Start beside Wright's own conversation; retain each saved layout preference.
+  // External-host presentation still supplies its single conversation.
   const isAgentCollapsed =
     desktopConversation ||
     (canonicalWorkflowAvailable
@@ -3488,6 +3488,7 @@ export function WorkspacePanel({
                 <ProcessWorkspaceTab
                   tab={tab}
                   sessionId={workspaceFileSessionId}
+                  desktopWorkspaceName={desktopConversation ? workspaceInfo?.workspace_name || "this workspace" : undefined}
                   onRunAttached={attachProcessTabRun}
                   onOpenInterface={openProcessInterface}
                   onPrepareAnother={openProcessView}

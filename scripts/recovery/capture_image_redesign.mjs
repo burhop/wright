@@ -37,6 +37,7 @@ const workflowPath = args.path ?? `workflows/image-redesign-acceptance-${stamp.t
 const untrackedImplementation = () => git("ls-files", "--others", "--exclude-standard").split("\n").filter((file) => /^(apps|packages|scripts|src|tests)\//.test(file));
 const subject = { commit: git("rev-parse", "HEAD"), tree: git("show", "-s", "--format=%T", "HEAD"), dirty: git("status", "--porcelain", "--untracked-files=no"), untrackedImplementation: untrackedImplementation(), label, mode, url: args.url, workflowPath: full ? workflowPath : null, started };
 const servedPaths = [
+  "components/layout/AppShell.tsx", "services/host-adapter/presentation.ts", "styles/presentation-controls.css", "styles/workflow-canvas-theme.css",
   "components/chat/WorkspacePanel.tsx", "components/pages/WorkflowRecoveryPage.tsx", "services/workspace-service.ts",
   ...["WorkflowRecoveryConcept.tsx", "ReactFlowRecoveryCanvas.tsx", "AuthoringControls.tsx", "WorkflowObjectIcon.tsx", "authoring-objects.ts", "authoring-positioning.ts", "recovery-authoring.ts", "command-system.ts", "model.ts", "canonical-wire.ts", "workflow-recovery.css"].map((file) => `prototypes/workflow-recovery/${file}`),
 ];

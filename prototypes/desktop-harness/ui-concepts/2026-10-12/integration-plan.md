@@ -1,7 +1,27 @@
 # Shared Wright UI in agent desktop hosts
 
-12 October 2026 — proposed implementation plan, following the user's positive
-review of the three [UI concepts](README.md). Planning only in this turn.
+12 October 2026 — implementation in progress under the submitted goal, following
+the user's review of the three [UI concepts](README.md).
+
+## Current tasks and evidence
+
+| Task | Current state | Next boundary |
+| --- | --- | --- |
+| R0 bounded research | Complete; six source-backed comparisons, five findings, three experiments and an uncoached task script | Actual user walkthrough remains pending |
+| Native read-only panel | Implemented; SDK/resource and browser protocol checks pass; named 0.2.0 update explicitly approved and installed | Actual Windows rendering/build/theme/resize; user is testing a fresh GB10 conversation |
+| Shared presentation and canvas | Implemented; one neutral graph palette, scoped controls, distinct Wright-shell accent; URL mode is explicitly browser presentation with Wright document tabs | Native binding only after observed host capabilities |
+| Compact authoring | Toolbar Add step popover, contextual bottom/right inspector, existing focus control and saved preferences retained | Final browser checks pass; native editing remains gated by the surface probe |
+| Run + review | Existing common process view reused; adds read-only exact-run chat-wait observation; observer close does not cancel execution | Actual same-conversation reasoning/checkpoint/result journey in new target |
+| Wright/Hermes shell | Same shared controls/canvas; its own single chat visible by default; explicit saved collapse preferences retained | Live Hermes acceptance not claimed from mock regressions |
+| Original examples | Fresh isolated template/scenario/binding copies, byte hashes verified; no engineering runs | Image/slicer/printer and numeric analysis provider gates remain unmet |
+| Candidate qualification | Focused frontend/backend/pilot checks, build and browser Workflows evidence recorded | Native lifecycle, actual zoom, usability and full end-to-end remain open |
+
+See [implementation-evidence.md](implementation-evidence.md) for exact boundaries,
+versions, reproducible commands, failures, images and remaining gaps. The native
+panel probe is experimental and read-only; no native editor, tabs, file handler
+or automatic chat wakeup is claimed. Use the existing browser experience only
+with an explicit browser label. Do not add its source/process transport or
+remove duplicate outer chrome until the native surface is qualified.
 
 ## Outcome and scope
 
@@ -272,10 +292,12 @@ separately. Preserve failed evidence alongside repaired continuations.
 
 ## Practical boundaries and delivery management
 
-The feature worktree is based at `c0769319` and contains concurrent desktop
-reasoning-progress/private-LAN changes. This plan does not edit or commit them.
-Before implementation, record the then-current state and coordinate ownership
-of `WorkflowRecoveryConcept`, `WorkflowRecoveryPage` and `WorkspacePanel` to
+The isolated feature worktree is `/tmp/wright-host-adaptive-ui-prototype` on
+`codex/host-adaptive-ui-prototype`, based at `c0769319`. The original worktree and
+its dirty reasoning-progress/private-LAN work were preserved. Exact inherited
+bytes were frozen privately and committed only in this isolated worktree as
+`2d1e6c02`; `baseline.json` records the provenance. Keep subsequent changes small
+in `WorkflowRecoveryConcept`, `WorkflowRecoveryPage` and `WorkspacePanel` to
 avoid parallel rewrites. Reuse their completed work; keep the independent MCP
 catalog/testing workstream separate. Use small milestone commits in the
 prototype feature workstream; do not reset shared files or treat installed

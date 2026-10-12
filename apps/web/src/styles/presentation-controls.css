@@ -1,0 +1,47 @@
+/* Shared restrained controls; Wright owns its shell accent and host chat stays separate. */
+[data-control-style="neutral"],
+[data-control-style="wright"] {
+  --color-neutral: #1c1c1c;
+  --color-surface: #272727;
+  --color-surface-elevated: #303030;
+  --color-surface-subtle: #222222;
+  --color-surface-hover: #363636;
+  --color-primary: #eeeeee;
+  --color-text-muted: #b5b5b5;
+  --color-text-dim: #929292;
+  --color-secondary: #67d5cb;
+  --color-accent: #b2a0ef;
+  --color-border: #414141;
+  --color-border-hover: #626262;
+  --font-body: system-ui, sans-serif;
+  --font-ui: system-ui, sans-serif;
+  --shadow-glow: none;
+  --shadow-glow-active: none;
+  font-family: var(--font-ui);
+}
+
+[data-theme="light"] [data-control-style="neutral"],
+[data-theme="light"] [data-control-style="wright"] {
+  --color-neutral: #f5f5f5;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-subtle: #eeeeee;
+  --color-surface-hover: #e8e8e8;
+  --color-primary: #242424;
+  --color-text-muted: #595959;
+  --color-text-dim: #666666;
+  --color-secondary: #167a70;
+  --color-accent: #7153b3;
+  --color-border: #c6c6c6;
+  --color-border-hover: #777777;
+}
+
+[data-presentation="wright"] {
+  --color-secondary: #78b9ed;
+  --color-accent: #78b9ed;
+}
+
+[data-theme="light"] [data-presentation="wright"] {
+  --color-secondary: #286fa5;
+  --color-accent: #286fa5;
+}
