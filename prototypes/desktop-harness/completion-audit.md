@@ -26,11 +26,16 @@ cannot replace installed Windows acceptance. It is not a product release audit.
 
 ## Concrete next action
 
-The Windows agent must relay its actual app build, plugin transport/execution
-host and resolved authorized SSH route. The prepared package cannot be installed
-using unresolved placeholders. Prepare its exact minimal commands/configuration
-diff and rollback there, obtain specific live-change approval, then run the
-installed-tools/same-chat/Workflows-panel/checkpoint journey with fresh state.
+The app now exposes this integration chat on the existing GB10 SSH execution
+host. Prefer the prepared native GB10-hosted plugin in native-host-connection.md
+for this chat, subject to specific live-change approval and actual installed-tool
+qualification. This avoids assuming that a Windows GUI forces MCP onto Windows.
+The exact native candidate command is protocol-tested against fresh empty state.
+
+Windows app build/browser routing and rendered Workflows still require observed
+Windows-side evidence. The preserved SSH-wrapper remains the alternative for a
+Windows-local executor; unresolved placeholders cannot be installed. No installed
+plugin or target promotion is inferred from the host listing or CLI protocol test.
 
 The frozen handoff still names the original a17acb85 target and records its
 pending-reasoning restart limitation. Current development has qualified fixes

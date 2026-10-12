@@ -1,5 +1,32 @@
 # Evidence index
 
+## Desktop execution-host correction and native candidate
+
+The app's read-only chat listing reports this integration chat on
+remote-ssh-discovered:promaxgb10-9666, with its GB10 workspace. The Windows UI
+does not by itself determine where its MCP commands execute. Fetched official
+remote-connection/MCP docs describe remote-host execution and configuration
+shared by clients on the same Codex host. Earlier handoff wording implying GB10
+paths cannot serve a Windows desktop was too broad; host-route-addendum.md
+records the correction without replacing the delivered Windows-wrapper archive.
+
+A separate uniquely named native-host-candidate package is now prepared for the
+existing remote chat. Its exact manifest command initialized real MCP, listed
+12 tools and read authenticated connection metadata against fresh empty state
+/tmp/wright-desktop-native-host-target-20261011-01 (API 8116, web 5216). Profile
+94544ecd94c725d808397776d6e8703cc6aa250656da6e7ee3afdb24b57ff522 matches the
+qualified combined runtime. Zero workspaces/start receipts/reasoning requests
+were created. This is an exact-command protocol check, not installed tools.
+
+The prepared named marketplace/plugin commands and scoped rollback are in
+native-host-connection.md. Live config hash remains 695791b28bbf618adb8d4dd7e7926fa7b5fd71a843b123b446456537310d75fb; no Wright entries were present.
+No install, enablement, target migration or desktop restart occurred. The old
+Windows package/target and other workstream remain untouched. The native route
+still requires specific live-change approval, actual tool discovery and a
+separately observed Windows browser route/rendering. CLI 0.159.2 help verified
+the proposed install syntax; its read-only PATH-alias warning did not alter
+configuration. Reduced observations: native-host-candidate-evidence.json.
+
 ## Final combined source profile: live positive and image-negative controls
 
 At local source checkpoint cb0d11a2, fresh private state

@@ -1,0 +1,80 @@
+{
+  "status": "prepared and exact command protocol-tested; not installed; specific live-change approval required",
+  "app_observation": {
+    "source": "codex_app.list_threads",
+    "current_thread_id": "01a12b7b-8589-7690-926f-7eaf2f959085",
+    "host_id": "remote-ssh-discovered:promaxgb10-9666",
+    "cwd": "/home/burhop/repos/wright",
+    "classification": "remote GB10 execution host exposed by the app; GUI build and browser forwarding still unverified"
+  },
+  "official_docs": [
+    "https://learn.chatgpt.com/docs/remote-connections",
+    "https://learn.chatgpt.com/docs/extend/mcp"
+  ],
+  "interpretation": "The desktop UI operating system alone does not determine MCP execution host. Prefer native GB10-hosted plugin configuration for this existing remote chat, pending real installation qualification.",
+  "target": {
+    "state_dir": "/tmp/wright-desktop-native-host-target-20261011-01",
+    "api_loopback_port": 8116,
+    "web_loopback_port": 5216,
+    "binding": {
+      "schema_version": "wright.desktop-binding/1",
+      "connection_id": "wright-desktop-prototype:94544ecd94c725d808397776d6e8703cc6aa250656da6e7ee3afdb24b57ff522",
+      "adapter": "openai-desktop-harness",
+      "requested_model": null,
+      "reported_model": null,
+      "model_identity_source": "unreported",
+      "reported_app_build": null,
+      "protocol_version": "wright.desktop-reasoning/1"
+    },
+    "runtime": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "0b137cc5b756600c6f129a0ed723e67f5160ec3a3f65be6a4ae15736851f6d66",
+        "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+      },
+      "confined_inspection": true,
+      "connection_lease_seconds": 30,
+      "heartbeat_interval_seconds": 5
+    },
+    "counts": {
+      "engineering_workspaces": 0,
+      "process_start_receipts": 0,
+      "desktop_reasoning_requests": 0
+    }
+  },
+  "candidate": {
+    "name": "wright-desktop-gb10-prototype",
+    "path": "/tmp/wright-openai-desktop-harness-prototype-next/prototypes/desktop-harness/native-host-candidate",
+    "file_hashes": {
+      "README.md": "bc8eb42b3b48660022e8887ccc0cd66dc80bd66616b3586a49034466f0ae4fec",
+      ".agents/plugins/marketplace.json": "f597b763083b273cca355d511ba91ea12c719677510c872150b4a8ef32baa262",
+      "plugins/wright-desktop-gb10-prototype/plugin.json": "63eb0d2042519c5926ba78ae668e82c3314d5e86ceda604142dc6d00141649af",
+      "plugins/wright-desktop-gb10-prototype/mcp.json": "64ff1c56ce54e5b24c275d83d04ca31a68123f64c481b00da2a1d33c7610e96c",
+      "plugins/wright-desktop-gb10-prototype/skills/wright-workflows/SKILL.md": "75eb2633a00c2b12fddee1720523688a70046235ed406346ab4fa6501c27e8c8"
+    }
+  },
+  "observed_cli": "0.159.2",
+  "exact_command_protocol": "2025-11-25",
+  "listed_tools": 12,
+  "live_config_sha256_before": "695791b28bbf618adb8d4dd7e7926fa7b5fd71a843b123b446456537310d75fb",
+  "affected_live_state_if_approved": [
+    "GB10 ~/.codex/config.toml named marketplace/plugin entries",
+    "GB10 plugin cache for this one uniquely named plugin",
+    "one MCP process initialized by the remote desktop harness"
+  ],
+  "unchanged": [
+    "frozen Windows-wrapper archive04",
+    "old Windows target and runs",
+    "standalone Wright/Hermes settings",
+    "other marketplaces/plugins/MCP entries"
+  ],
+  "limitations": [
+    "Installed-host tool discovery not yet qualified",
+    "Browser Windows-to-GB10 loopback route remains separate and unverified",
+    "No full desktop restart authorized",
+    "No model/app-build attestation",
+    "Other engineering tools, original-image support and generated process-UI authoring gated"
+  ]
+}
