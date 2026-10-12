@@ -203,11 +203,14 @@ helper or replay an uncertain write blindly.
 
 ## Installed-plugin journey to verify next
 
-Read [connection.md](connection.md) for the exact prepared live changes, host
-constraints and rollback. Approval is pending. The package currently points at
-the retained proof's GB10 paths. For a fresh experiment, prepare a separate local
-package with its exact approved state/paths; don't redirect an installed plugin
-or existing session silently.
+The approved GB10 plugin 0.1.1 is installed. A fresh native desktop chat,
+**Wright desktop prototype on GB10**, completed its actual connection-status
+tool with `connected: true`. Read [native-host-connection.md](native-host-connection.md),
+[native-fresh-chat-evidence.json](native-fresh-chat-evidence.json) and
+[fresh-chat-handoff.md](fresh-chat-handoff.md). The original chat still lacks
+tools despite refresh; further journey proof belongs to the fresh chat.
+The earlier Windows-wrapper proposal/target remains separate and unchanged.
+Never redirect an installed plugin or existing session silently.
 
 After approved installation and actual tool discovery, the desktop agent should:
 

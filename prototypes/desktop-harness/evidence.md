@@ -1,5 +1,36 @@
 # Evidence index
 
+## Fresh native desktop chat: first actual installed-tool call
+
+The user explicitly requested a fresh GB10 prototype chat. The app’s creation
+tool was unavailable on this host, so public thread/start and turn/start used
+the already-running desktop daemon. No separate app-server/SDK model worker
+was started. The app lists the materialized chat **Wright desktop prototype on
+GB10**, thread `01a12d8c-6bd8-79e1-9cfa-97383b0018de`, on the existing GB10 host.
+Its bounded initial turn completed a native `wright_connection_status` MCP
+call; the actual structured tool result contains `connected: true`. App wait
+metadata independently confirms the completed MCP marker and completed turn.
+No workspaces, sessions, start receipts or reasoning requests/responses exist
+in this target. The conversation awaits the user’s continuation there.
+
+Current model catalog supports requested Astra/xhigh, and fresh thread/start
+reports those settings with provider openai. Wright still reports model/app
+identity unobserved. Original thread metadata separately reports Sol 6.1;
+metadata is not independent reply-model attestation. No historical claim was
+rewritten. The original chat still lacks Wright tools after refresh/follow-up.
+
+The first empty API-created chat was not materialized when its connection
+closed: app read diagnosed this, first-message request returned thread not
+found, resume returned no rollout, and its rollout file did not exist. Those
+failures remain. Creating and sending the first message on one connection
+produced the one persisted chat; no uncertain handoff/workflow effect was
+replayed. No global settings changed during this turn.
+
+Records: native-fresh-chat-evidence.json, fresh-chat-handoff.md; private raw
+observations under `/tmp/wright-desktop-native-install-20261011-01`. Shareable
+gallery image 11 is an explicitly labelled evidence graphic, not a screenshot
+or completed-workflow/UI claim. Next proof stays in the fresh conversation.
+
 ## Approved native GB10 installation and compatibility qualification
 
 The user approved only the prepared GB10 plugin. Version 0.1.1 is installed and

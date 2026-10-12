@@ -1,0 +1,80 @@
+{
+  "status": "fresh native desktop chat visible in app; actual native Wright connection tool completed successfully",
+  "user_authorization": "Create a fresh GB10 prototype chat",
+  "chat": {
+    "thread_id": "01a12d8c-6bd8-79e1-9cfa-97383b0018de",
+    "host_id": "remote-ssh-discovered:promaxgb10-9666",
+    "title": "Wright desktop prototype on GB10",
+    "cwd": "/tmp/wright-openai-desktop-harness-prototype-next",
+    "creation_boundary": "Public thread/start plus turn/start on the already-running desktop daemon; app chat-creation tool unavailable; app listing/read/wait verifies native user-owned chat",
+    "separate_model_worker": false,
+    "parent_chat_preserved": true,
+    "initial_turn_id": "01a12d8c-6c24-7721-a352-40ee0bfbc4cb",
+    "initial_turn_status": "completed",
+    "scope": "Read handoff/full goal and call native wright_connection_status, then stop"
+  },
+  "model_evidence": {
+    "requested": "gpt-6-astra",
+    "requested_effort": "xhigh",
+    "catalog_support": "current daemon model/list includes Astra and xhigh",
+    "thread_start_reported_model": "gpt-6-astra",
+    "thread_start_reported_effort": "xhigh",
+    "provider": "openai",
+    "wright_model_identity": "unreported",
+    "wright_app_build": "unreported",
+    "independent_reply_model_attestation": false,
+    "original_thread_metadata_reported_model": "gpt-6.1-sol",
+    "original_thread_metadata_not_reply_attestation": true
+  },
+  "connection_evidence": {
+    "plugin": "wright-desktop-gb10-prototype",
+    "version": "0.1.1",
+    "server": "wright-desktop-gb10",
+    "configured_tool_count": 12,
+    "native_tool": "wright_connection_status",
+    "native_tool_status": "completed",
+    "connected": true,
+    "not_shell_http_sdk_proxy": true,
+    "current_old_chat_tools": "still missing after refresh and follow-up turn",
+    "connected_verified_from_native_tool_structured_result": true,
+    "app_tool_marker_verified": true
+  },
+  "materialization_failure_preserved": {
+    "first_empty_thread": "01a12d8a-44fc-78a1-9293-642d2cdaff26",
+    "app_read": "not materialized before first user message",
+    "turn_start": "rejected thread not found",
+    "resume": "rejected no rollout found",
+    "rollout_file_exists": false,
+    "recovery": "New creation and first message in one transport; only one materialized chat; no uncertain model/workflow effect replay"
+  },
+  "target_counts_after_first_turn": {
+    "engineering_workspaces": 0,
+    "workspace_agent_sessions": 0,
+    "process_start_receipts": 0,
+    "desktop_reasoning_requests": 0,
+    "desktop_reasoning_responses": 0
+  },
+  "unchanged_configuration_sha256": "2056dbaf239dc1f64776e2baa97ce959de6b28bc3dfeeb839a7280fcb13f3da1",
+  "handoff_path": "/tmp/wright-openai-desktop-harness-prototype-next/prototypes/desktop-harness/fresh-chat-handoff.md",
+  "handoff_sha256": "64edf33fed00815f8271f8a71b047657f7b8e95990d8984362fb201f1086f5a1",
+  "limitations": [
+    "No workspace/source/run started in fresh chat",
+    "Right-panel rendering on Windows not yet observed",
+    "Model/app identity remains unreported to Wright",
+    "Native tool ceiling not qualified; Wright API/gateway authority retained",
+    "Generated authoring, broad tools and original image tasks gated"
+  ],
+  "private_raw_evidence": "/tmp/wright-desktop-native-install-20261011-01",
+  "sources": [
+    "https://learn.chatgpt.com/docs/plugins",
+    "https://learn.chatgpt.com/docs/app-server"
+  ],
+  "next_user_action": "Open Wright desktop prototype on GB10 and continue the bounded journey from its handoff",
+  "gallery": {
+    "png": "/tmp/wright-openai-desktop-harness-prototype-next/prototypes/desktop-harness/gallery/11-native-plugin-connected.png",
+    "svg": "/tmp/wright-openai-desktop-harness-prototype-next/prototypes/desktop-harness/gallery/11-native-plugin-connected.svg",
+    "kind": "Evidence graphic; not desktop screenshot",
+    "caption": "First native connection: Wright tools are now callable from a fresh OpenAI desktop chat on GB10. Workflow and UI qualification comes next.",
+    "sha256": "77ff7bbeaa4c530612384d697818aa783fffa0373c1a5e4b7ffec69b5ad24031"
+  }
+}

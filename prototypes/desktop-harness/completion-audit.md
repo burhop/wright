@@ -24,7 +24,19 @@ cannot replace installed Windows acceptance. It is not a product release audit.
 | Shareable evidence | gallery/README with real browser screenshots, captions and limitations | GB10 browser gallery available; requested actual desktop chat-and-Wright screenshot still missing |
 | Keep experimental/stop before publishing | Local commits only, no push/merge/release/social posting | Preserved; full packaging/cross-platform release qualification outside prototype |
 
-## Concrete next action
+## Fresh native chat checkpoint
+
+The user approved a fresh GB10 prototype chat. **Wright desktop prototype on
+GB10** (`01a12d8c-6bd8-79e1-9cfa-97383b0018de`) is materialized, app-visible and
+awaits continuation. Its first turn completed the actual installed native
+`wright_connection_status` tool with `connected: true`. Twelve tools are
+configured. Native-fresh-chat-evidence.json records exact method boundaries,
+first-empty-chat materialization failure, requested/reported Astra/xhigh and
+remaining unknowns. The initial scope deliberately created no workspace/source/
+run or gateway action. No right-panel GUI proof is inferred. The full five-step
+journey remains incomplete; continue from fresh-chat-handoff.md in that chat.
+
+## Earlier concrete next action (preserved context)
 
 The app now exposes this integration chat on the existing GB10 SSH execution
 host. Prefer the prepared native GB10-hosted plugin in native-host-connection.md

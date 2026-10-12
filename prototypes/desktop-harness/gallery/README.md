@@ -1,8 +1,24 @@
 # Working prototype gallery
 
-These are actual GB10 browser captures of the served hosted Wright UI, not
-concept art or screenshots of the desktop application's chrome. Clean isolated
-demonstration data; no credentials or private chat content appear.
+Image 11 is a labelled evidence graphic for a verified native tool call. The
+other images are actual GB10 browser captures of served Wright, rather than
+desktop chrome. No image establishes Windows right-panel acceptance. Clean
+isolated data; no credentials or unrelated private conversation content appear.
+
+## Native desktop plugin connection
+
+![Verified native plugin connection](11-native-plugin-connected.png)
+
+Suggested caption: "First native connection: Wright tools are now callable from
+a fresh OpenAI desktop chat on GB10. Workflow and UI qualification comes next."
+
+The fresh app-visible desktop chat completed the actual installed MCP connection
+tool with `connected: true`; twelve tools loaded. This is an evidence graphic,
+not a screenshot of the desktop. No workspace/run was created during the initial
+check. Model identity/app build remain unreported to Wright. Native source:
+11-native-plugin-connected.svg; reduced record: ../native-fresh-chat-evidence.json.
+Next preferred image: the fresh desktop chat beside Wright after actual workflow
+authoring/rendering, excluding unrelated chat content and all credentials.
 
 ## Connected declared input
 
