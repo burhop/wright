@@ -395,6 +395,7 @@ def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
     attributes = _read(".gitattributes")
 
     for pattern in (
+        "uv.lock",
         "tests/fixtures/blender_mcp_5f8ddaf6/src/blender_mcp/safe_mode.py",
         "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.csv",
         "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.json",
