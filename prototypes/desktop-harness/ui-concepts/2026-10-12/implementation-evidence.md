@@ -13,8 +13,8 @@ configurations and runs are preserved. No push, merge, release or physical run.
 | GB10 host | Linux aarch64; Python 3.13.12; Node 22.22.0 | Actual local processes; Windows GUI is a separate subject |
 | Dependency subject | Existing frozen uv/npm locks; Python MCP 1.28.1; JS MCP SDK 1.30.0; ext-apps 1.7.5 | Installed only in feature worktree; no lock/global upgrades. npm warned about jsdom's Node patch minimum; focused tests passed |
 | Desktop host runtime | GB10 Codex CLI/daemon 0.159.2 | Existing runtime, not an independent model worker. Actual Windows app build still unreported |
-| Wright native prototype | `wright-desktop-gb10-prototype` 0.2.0; same named MCP server | Approved installed update; only marketplace source changed. Old 0.1.1 package/private settings backed up. Existing chat still reports initialize-handshake failure, zero tools/resources |
-| Read-only MCP panel | MCP Apps resource, thread entry, protocol 2026-01-26 | Official documented pattern; actual SDK discovers 13 tools and reads scoped resource. Browser simulated-host checks pass. Actual Windows rendering, tabs, lifecycle and native context remain unverified |
+| Wright native prototype | `wright-desktop-gb10-prototype` 0.2.0; same named MCP server | Approved installed update; only marketplace source changed. Old 0.1.1 package/private settings backed up. Original chat still reports initialize-handshake failure; the fresh user-tested chat is connected with 13 tools and one resource |
+| Read-only MCP panel | MCP Apps resource, thread entry, protocol 2026-01-26 | Official documented pattern; actual SDK discovers 13 tools and reads scoped resource. Browser simulated-host checks pass. Fresh native call passed and the user reports the panel visible/working. Independent desktop capture, app build, theme/resize observations, tabs and lifecycle remain unverified |
 | Shared editor | Same command/model/source/layout owners | Neutral canvas once across hosts, Add step toolbar, panel-sized bottom/right inspector. Actual browser Workflows authoring verified; no claim of native editing |
 | Common working view | Existing process client, reviews/actions/recovery retained | Exact-run chat wait is read-only; closing aborts its status read, never cancels or replays a run. Mock component qualification, not an actual new-target desktop workflow completion |
 | Hermes / prior chat pilot | Existing source/adapters retained | Focused regressions; no live Hermes or independent model substituted. Prior Codex-inside-Wright worktree untouched |
@@ -36,7 +36,7 @@ capability does not prove background wakeup or automatic workflow continuation.
 | [panel-protocol-evidence.json](panel-protocol-evidence.json), [panel.html](panel.html) | Real SDK calls/read resource and recorded scoped data; not native desktop |
 | [panel-browser-evidence/report.json](panel-browser-evidence/report.json) | Six browser simulated-host checks; screenshots visibly labelled as fixture |
 | [panel-candidate-evidence.json](panel-candidate-evidence.json), [native-install-evidence.json](native-install-evidence.json) | Prepared/installed package hashes and scoped configuration comparison |
-| [native-panel-update.md](native-panel-update.md), [native-panel-walkthrough.md](native-panel-walkthrough.md) | User-approved exact update and rollback; pending native walkthrough |
+| [native-panel-update.md](native-panel-update.md), [native-panel-user-observation.json](native-panel-user-observation.json) | Approved update; actual fresh native tool call and user-reported visible/working panel; specific UI checks still open |
 | `/tmp/wright-host-ui-authoring-20261012-04` | 11 actual browser Workflows checks after toolbar/inspector change; source inventory includes added presentation modules/CSS |
 | `/tmp/wright-host-ui-authoring-20261012-05` | 11 structural checks plus bottom inspector/light theme; visual review subsequently found clipped compact actions |
 | `/tmp/wright-host-ui-authoring-20261012-06` | Intermediate wrapping repair; still visibly clipped. Superseded; do not use as proof of compact completion |
@@ -102,8 +102,11 @@ their initial byte hashes; original checkout and pilot notes are preserved.
 
 ## Remaining work / next decisions
 
-Native walkthrough first: actual Windows build, rendering, resize, theme,
-close/reopen and available document hooks. The user is testing a fresh GB10 chat.
+The fresh chat `Verify GB10 native panel rendering` successfully called the
+native tool for the exact workspace. The user confirmed the native panel
+appeared and subsequently said it seemed to work fine. This supports the next
+prototype editing spike; it is not formal qualification of app build, resize,
+theme, close/reopen or document hooks. See `native-panel-user-observation.json`.
 Native scoped editing transport and outer-chrome rearrangement depend on that
 result. Keep single-panel/browser fallbacks explicitly labelled; never draw
 counterfeit native tabs. No automatic background chat wakeup is qualified.

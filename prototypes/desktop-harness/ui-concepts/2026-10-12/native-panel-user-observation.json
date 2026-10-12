@@ -1,0 +1,119 @@
+{
+  "schema_version": "wright.native-panel-check/1",
+  "date": "2026-10-12",
+  "chat_id": "01a13256-4075-7cd3-a7da-29cad69aaaa2",
+  "chat_title": "Verify GB10 native panel rendering",
+  "execution_host": "remote-ssh-discovered:promaxgb10-9666",
+  "project_path": "/home/burhop/repos/wright",
+  "plugin": {
+    "name": "wright-desktop-gb10-prototype",
+    "version": "0.2.0"
+  },
+  "requested_tool": "wright_workspace_panel",
+  "arguments": {
+    "workspace_id": "aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9",
+    "session_id": "desktop-a9c0ddc7-4356-43d6-b82e-66d72124aac9"
+  },
+  "tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"connection\": {\n    \"connected\": true,\n    \"binding\": {\n      \"schema_version\": \"wright.desktop-binding/1\",\n      \"connection_id\": \"wright-desktop-prototype:d07f7af02a49b63b131d21139645ec127e254c791012ce4070f8b2f7124d3298\",\n      \"adapter\": \"openai-desktop-harness\",\n      \"requested_model\": null,\n      \"reported_model\": null,\n      \"model_identity_source\": \"unreported\",\n      \"reported_app_build\": null,\n      \"protocol_version\": \"wright.desktop-reasoning/1\"\n    },\n    \"model_identity\": \"unreported; not independently attested\",\n    \"native_tool_ceiling\": \"unverified; Wright enforces its own API/gateway authority\",\n    \"connection_lease_seconds\": 30,\n    \"heartbeat_interval_seconds\": 5\n  },\n  \"workspace\": {\n    \"workspace_id\": \"aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9\",\n    \"session_id\": \"desktop-a9c0ddc7-4356-43d6-b82e-66d72124aac9\",\n    \"workspace_name\": \"UI panel qualification\",\n    \"url\": \"http://127.0.0.1:5220/workspace/aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9?host=openai-desktop\"\n  }\n}"
+      }
+    ],
+    "structuredContent": {
+      "connection": {
+        "connected": true,
+        "binding": {
+          "schema_version": "wright.desktop-binding/1",
+          "connection_id": "wright-desktop-prototype:d07f7af02a49b63b131d21139645ec127e254c791012ce4070f8b2f7124d3298",
+          "adapter": "openai-desktop-harness",
+          "requested_model": null,
+          "reported_model": null,
+          "model_identity_source": "unreported",
+          "reported_app_build": null,
+          "protocol_version": "wright.desktop-reasoning/1"
+        },
+        "model_identity": "unreported; not independently attested",
+        "native_tool_ceiling": "unverified; Wright enforces its own API/gateway authority",
+        "connection_lease_seconds": 30,
+        "heartbeat_interval_seconds": 5
+      },
+      "workspace": {
+        "workspace_id": "aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9",
+        "session_id": "desktop-a9c0ddc7-4356-43d6-b82e-66d72124aac9",
+        "workspace_name": "UI panel qualification",
+        "url": "http://127.0.0.1:5220/workspace/aec8d7db-e77b-4c48-a8cb-f4b3b7e87ad9?host=openai-desktop"
+      }
+    },
+    "isError": false
+  },
+  "observations": {
+    "native_discovery": "passed; native Wright tools exposed in this GB10 chat",
+    "native_tool_call": "passed; isError=false; connected=true; exact workspace/session returned",
+    "native_rendering": {
+      "status": "user_reported_visible_and_working",
+      "user_statement": "Panel appeared; I’ll provide the observations",
+      "independent_desktop_capture": false
+    },
+    "heading": {
+      "status": "pending_visual_confirmation",
+      "tool_result_workspace_name": "UI panel qualification"
+    },
+    "refresh_status": "pending",
+    "narrow_wide_resize": "pending",
+    "light_dark_change": "pending",
+    "desktop_app_build": {
+      "value": null,
+      "status": "unreported by tool; awaiting About observation"
+    },
+    "desktop_screenshot": {
+      "path": null,
+      "status": "not available; no permitted desktop screenshot/control tool in this text chat"
+    },
+    "open_close_restoration_hooks": "unobserved; source declarations are not runtime evidence",
+    "overall_user_feedback": {
+      "statement": "Seemed to work fine.",
+      "assessment": "User reports the native panel worked; specific refresh, resize, theme, and lifecycle observations were not supplied."
+    }
+  },
+  "separate_versions": {
+    "gb10_cli": "0.159.2 (provided handoff; not the Windows desktop build)",
+    "resource_app_info": "0.1.0 (source-declared panel appInfo; not the plugin or desktop build)"
+  },
+  "acceptance": "user-reported working; formal qualification incomplete because desktop screenshot, exact desktop app build, and individual UI observations are not recorded",
+  "scope_record": {
+    "workflow_started": false,
+    "replacement_workspace_created": false,
+    "package_installed": false,
+    "model_auth_permission_changes": false,
+    "desktop_or_services_restarted": false,
+    "other_chat_created": false,
+    "separate_model_worker_used": false,
+    "browser_url_opened": false,
+    "existing_state_migrated_or_deleted": false
+  },
+  "excluded_checks": [
+    "native tabs",
+    "file handlers",
+    "automatic conversation continuation"
+  ],
+  "recorded_at_utc": "2026-10-12T22:59:46.424064+00:00",
+  "installed_source_declaration": {
+    "source": "/tmp/wright-host-adaptive-ui-prototype/prototypes/desktop-harness/mcp_bridge.py",
+    "source_sha256": "815909a2fcc9ca5d34b79e0928f8e64ce71a1a41041afcc3da94da5589870753",
+    "resource_uri": "ui://wright/workspace/ef529c6bc58d5a2addcf9b967f31a75d79ab6f044e981a58f09fbb3193448319.html",
+    "mime_type": "text/html;profile=mcp-app",
+    "ui_visibility": [
+      "model",
+      "app"
+    ],
+    "openai_ui_entrypoints": [
+      {
+        "type": "thread"
+      }
+    ],
+    "evidence_type": "read-only source inspection; not rendering proof"
+  },
+  "updated_at_utc": "2026-10-12T23:00:10.334578+00:00"
+}

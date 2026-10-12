@@ -8,9 +8,9 @@ the user's review of the three [UI concepts](README.md).
 | Task | Current state | Next boundary |
 | --- | --- | --- |
 | R0 bounded research | Complete; six source-backed comparisons, five findings, three experiments and an uncoached task script | Actual user walkthrough remains pending |
-| Native read-only panel | Implemented; SDK/resource and browser protocol checks pass; named 0.2.0 update explicitly approved and installed | Actual Windows rendering/build/theme/resize; user is testing a fresh GB10 conversation |
+| Native read-only panel | Implemented; SDK/resource and browser protocol checks pass; named 0.2.0 update explicitly approved and installed | Native rendering user-confirmed in fresh chat; next confined editing spike. Build/theme/resize/lifecycle remain open |
 | Shared presentation and canvas | Implemented; one neutral graph palette, scoped controls, distinct Wright-shell accent; URL mode is explicitly browser presentation with Wright document tabs | Native binding only after observed host capabilities |
-| Compact authoring | Toolbar Add step popover, contextual bottom/right inspector, existing focus control and saved preferences retained | Final browser checks pass; native editing remains gated by the surface probe |
+| Compact authoring | Toolbar Add step popover, contextual bottom/right inspector, existing focus control and saved preferences retained | Final browser checks pass; native editing prototype can now be prepared; live write-tool update requires its specific approval |
 | Run + review | Existing common process view reused; adds read-only exact-run chat-wait observation; observer close does not cancel execution | Actual same-conversation reasoning/checkpoint/result journey in new target |
 | Wright/Hermes shell | Same shared controls/canvas; its own single chat visible by default; explicit saved collapse preferences retained | Live Hermes acceptance not claimed from mock regressions |
 | Original examples | Fresh isolated copies and byte hashes verified; both original starter sources display/reopen through Workflows; no engineering runs | Image/slicer/printer and numeric analysis provider gates remain unmet |
