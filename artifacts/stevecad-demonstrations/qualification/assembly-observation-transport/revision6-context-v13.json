@@ -1,0 +1,12 @@
+{
+  "scope": "Offline transformation of exact recorded failed context; no HTTP/model/tool request or provider outcome.",
+  "run_id": "cd808aafd9514ec1b6a8d634e72491ee",
+  "prior_context_budget_bytes": 400000,
+  "prospective_budget_bytes": 1048576,
+  "raw_messages_json_bytes": 926195,
+  "transport_parts": 7,
+  "maximum_part_chars": 65536,
+  "transport_bytes": 411321,
+  "prompt_sha256": "228b22a34e549b8d934173a9055d2ffc4403dc839be79ad78b127d2a4e92b768",
+  "passed": true
+}

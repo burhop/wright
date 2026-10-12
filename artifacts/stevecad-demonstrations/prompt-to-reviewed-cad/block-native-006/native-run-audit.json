@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "run_id": "15a0b7ad27374a0e9375923cc4dc2725",
+  "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+  "elapsed_seconds": 617.248,
+  "document_id": "d442c37d-9692-4e14-9313-50816612e22a",
+  "revision": 1,
+  "inspection_build_id": "fece0b2c-58b4-4c3c-b66c-ff9986ed0879",
+  "export_build_id": "fece0b2c-58b4-4c3c-b66c-ff9986ed0879",
+  "native_body_matches": 1,
+  "maximum_mesh_extent_error_mm": 2.8312206268310547e-06,
+  "images": [
+    {
+      "filename": "cad-isometric.png",
+      "size": [
+        800,
+        640
+      ],
+      "sha256": "660ab79de420de3c365c75b56c1bfa42cabeb1fd59d9627eb348393b6899dcd0"
+    },
+    {
+      "filename": "render_isometric.png",
+      "size": [
+        1000,
+        720
+      ],
+      "sha256": "833f5158ebf712044a1cffaf6789eefee317e3f1879862e1562918e04213953f"
+    },
+    {
+      "filename": "cad-top.png",
+      "size": [
+        800,
+        640
+      ],
+      "sha256": "893a2487466d3adda514a4311fd1ec9be405e4a7ad3de9ffd0cbc895cbf58d22"
+    },
+    {
+      "filename": "render_top.png",
+      "size": [
+        1000,
+        720
+      ],
+      "sha256": "fd93ba6d566b69fa5fc3dabce5a5bd08731814389601af84f45a3326a94aecdf"
+    },
+    {
+      "filename": "cad-front.png",
+      "size": [
+        800,
+        640
+      ],
+      "sha256": "f0f03fe9077c5345b7869f1e401aa5d2aa4be459fbb793c73f80331013fe1d07"
+    },
+    {
+      "filename": "render_front.png",
+      "size": [
+        1000,
+        720
+      ],
+      "sha256": "033f49254aae5b7dbb3991267f6d1c41219e2a464570b417d2f1070d761b852b"
+    }
+  ],
+  "all_file_hashes_verified": true,
+  "credential_bearing_artifacts_saved": false,
+  "original_CAD_test_status_counts": {
+    "PASS": 8
+  },
+  "review_references_all_six_images": true,
+  "independent_geometry_checks": {
+    "one_solid": true,
+    "dimensions": true,
+    "hole_count": true,
+    "hole_positions": true,
+    "diameter_depth_axes": true,
+    "analytical_volume": true,
+    "capture_identities": true
+  },
+  "scope": "Digital runtime, native geometry and presentation handoffs. Visual review, UI usability and physical acceptance are separately assessed.",
+  "provider_internal_directories_not_deliverables": [
+    "handoff/.agentcad"
+  ]
+}

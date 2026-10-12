@@ -1,0 +1,35 @@
+{
+  "operation": "Passive read-only independent geometry audit",
+  "selected_image": "wright-083-agentcad-head-selected:002",
+  "image_id": "sha256:d8b9cd78f929bf4e2705127e09f8b69b0bdf339682a6d79c2fdbf9f0c7b3077f",
+  "python_entrypoint": "/selected/uv-cache/archive-v0/JENql-Gvo7B4jt6kbPvLe/bin/python",
+  "container_name": "wright-robot-clearance-audit-001",
+  "completed_exit_code": 0,
+  "runtime_seconds_reported": 583.623,
+  "isolation": {
+    "network": "none",
+    "root_filesystem": "read-only",
+    "capabilities": "all dropped",
+    "no_new_privileges": true,
+    "memory_limit_gib": 3,
+    "cpu_limit": 2,
+    "temporary_filesystem_mib": 256,
+    "source_and_design_mounts": "read-only",
+    "writable_output": "only this fresh qualification directory",
+    "container_removal": "--rm after exit"
+  },
+  "verification": {
+    "original_step_hash_unchanged": true,
+    "audit_source_matches_reported_hash": true,
+    "mapped_step_instances": 110,
+    "printed_instances": 28,
+    "total_pair_samples": 14364,
+    "nonseat_pair_samples": 13414,
+    "declared_seat_pair_samples": 950,
+    "maximum_measured_overlap_mm3": 0.0,
+    "minimum_nonseat_distance_mm": 0.40000000000000036
+  },
+  "mcp_call": false,
+  "original_workflow_verdicts_modified": false,
+  "limitations": "Sampled geometry with declared kernel tolerances; no continuous-motion, physical-fit or powered-operation acceptance. The audit does not qualify a new MCP provider or replace the durable main workflow."
+}

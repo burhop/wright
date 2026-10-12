@@ -6,11 +6,11 @@ import path from 'node:path';
 const root = path.resolve(process.argv[2]);
 const base = 'http://wright.localhost:8891';
 const workspace = '225aca34-3ae9-4557-85d6-0d8defd90a86';
-const workflow = 'workflows/stevecad-heat-spreader-native-003.workflow.wflow';
+const workflow = process.argv[3] || 'workflows/stevecad-heat-spreader-native-003.workflow.wflow';
 for (const dir of ['playwright','screenshots/raw','screenshots/annotated','trace']) fs.mkdirSync(path.join(root,dir),{recursive:true});
 fs.copyFileSync(new URL(import.meta.url),path.join(root,'playwright/capture.mjs'));
 fs.writeFileSync(path.join(root,'progress.md'),'# SteveCAD saved process in Wright\n\nActual isolated workspace; inspection only. No engineering acceptance.\n');
-const status = {title:'SteveCAD comparison in Wright',summary:'Opening the saved thermal process through the workspace.',overall:'pending',updated:new Date().toISOString(),manualSteps:[],steps:[]};
+const status = {title:'Saved SteveCAD process in Wright',summary:'Opening the requested saved process through the workspace.',overall:'pending',updated:new Date().toISOString(),manualSteps:[],steps:[]};
 const diagnostics = [];
 let authenticationPhase = true;
 let page;
@@ -81,14 +81,59 @@ try {
   await step('03','Open the workflow editor','Click Workflows.',[{selector:'[data-testid="activity-bar-workflows-btn"]',label:'Workflows'},{selector:'[data-testid="workflow-file-menu"]',label:'Workflow file menu'}],'The preserved workflow editor opens in the workspace',async()=>{
     await page.getByTestId('activity-bar-workflows-btn').click();await page.getByTestId('workflow-file-menu').waitFor();
   });
-  await step('04','Choose an existing saved workflow','Open the workflow file menu, then click Open workflow.',[{selector:'[data-testid="workflow-file-menu"]',label:'Workflow file menu'},{selector:'[data-testid="workflow-file-open"]',label:'Open workflow'}],'The saved thermal process is listed',async()=>{
+  await step('04','Choose an existing saved workflow','Open the workflow file menu, then click Open workflow.',[{selector:'[data-testid="workflow-file-menu"]',label:'Workflow file menu'},{selector:'[data-testid="workflow-file-open"]',label:'Open workflow'}],'The requested saved process is listed',async()=>{
     await page.getByTestId('workflow-file-menu').click();await page.getByTestId('workflow-file-open').click();await page.getByTestId('workflow-file-choice-'+workflow).waitFor();
   });
-  await step('05','Inspect the saved thermal process','Click stevecad-heat-spreader-native-003.workflow.wflow.',[{selector:'[data-testid="workflow-working-view-open"]',label:'Open working view'},{selector:'[data-testid="workflow-workspace-context"]',label:'Saved process context'}],'The exact saved heat-spreader process opens with its authoring and working-view controls',async()=>{
+  await step('05','Inspect the saved process','Click '+workflow+'.',[{selector:'[data-testid="workflow-working-view-open"]',label:'Open working view'},{selector:'[data-testid="workflow-workspace-context"]',label:'Saved process context'}],'The exact saved process opens with a diagram and its working-view control',async()=>{
     await page.getByTestId('workflow-file-choice-'+workflow).click();await page.getByTestId('workflow-working-view-open').filter({visible:true}).waitFor();
     if(!page.url().includes(encodeURIComponent(workflow))) throw Error('Expected exact saved workflow locator');
+    if(await page.getByText('Workflow file needs correction.',{exact:true}).isVisible()) throw Error('The saved workflow has a source correction banner.');
+    await page.locator('.react-flow').filter({visible:true}).waitFor();
+    if(await page.getByText('Workflow file needs correction.',{exact:true}).isVisible()) throw Error('The saved workflow has a source correction banner.');
   });
-  status.overall='pass';status.summary='The saved SteveCAD heat-spreader process opened through the normal workspace Workflows control. This proves saved-process navigation, not engineering compliance or run completion.';
+  await step('06','Fit the process into view','Click Fit workflow to view.',[{selector:'[data-testid="workflow-recovery-canvas-fit"]',label:'Fit workflow to view'}],'The complete saved process fits in the diagram viewport',async()=>{
+    await page.getByTestId('workflow-recovery-canvas-fit').filter({visible:true}).click();
+    await page.waitForTimeout(400);
+  });
+  if(process.argv.includes('--completed-run')) {
+    const requestedRunId=process.argv[process.argv.indexOf('--completed-run')+1];
+    await step('07','Inspect the completed run','Expand Run details, expand Previous runs, then expand the completed run whose output tooltips contain '+requestedRunId+'.',[{selector:'[data-testid="workflow-run-history"]',label:'Previous runs'}],'The exact completed run is identified by its result paths',async()=>{
+      await page.getByTestId('workflow-recovery-run-details-toggle').filter({visible:true}).click();
+      const history=page.getByTestId('workflow-run-history').filter({visible:true});
+      await history.locator(':scope > summary').click();
+      const completed=history.locator(':scope > details').filter({has:page.locator('[data-testid="workflow-recovery-native-run-output-link"][title*="'+requestedRunId+'"]')});
+      await completed.waitFor();
+      if(await completed.count()!==1) throw Error('Expected one unambiguous exact run.');
+      if(!(await completed.locator(':scope > summary').innerText()).startsWith('Completed')) throw Error('Requested run is not completed.');
+      await completed.locator(':scope > summary').click();
+    });
+    await step('08','Open the completed run working view','Click Open run in working view inside the completed run.',[{selector:'[data-testid="workflow-run-history"]',label:'Completed run'}],'The saved completed run opens with its exact identity and results',async()=>{
+      await page.getByTestId('workflow-run-history').filter({visible:true}).getByRole('button',{name:'Open run in working view',exact:true}).filter({visible:true}).click();
+      const common=page.getByTestId('common-process-view').filter({visible:true});
+      await common.getByRole('heading',{name:'Results and checks',exact:true}).waitFor();
+      await common.getByText('Run identity',{exact:true}).click();
+      const runId=process.argv[process.argv.indexOf('--completed-run')+1];
+      await common.getByText(runId,{exact:true}).waitFor();
+      fs.writeFileSync(path.join(root,'playwright/working-view-text.txt'),await common.innerText());
+    });
+  } else if(process.argv.includes('--working-view')) {
+    await step('07','Open the process working view','Click Open working view.',[{selector:'[data-testid="workflow-working-view-open"]',label:'Open working view'}],'The common working view opens as a workspace tab with backend-owned progress and results',async()=>{
+      await page.getByTestId('workflow-working-view-open').filter({visible:true}).click();
+      await page.getByTestId('common-process-view').filter({visible:true}).waitFor();
+      await page.getByRole('heading',{name:'Results and checks',exact:true}).waitFor();
+    });
+    fs.writeFileSync(path.join(root,'playwright/working-view-text.txt'),await page.getByTestId('common-process-view').filter({visible:true}).innerText());
+  }
+  if(process.argv.includes('--completed-run') || process.argv.includes('--working-view')) {
+    await step('09','Close the inspected working tab','Click Close on the selected working-view tab.',[{selector:'[role="tab"][aria-selected="true"] button',label:'Close selected working tab'}],'The working tab closes through Wright and the process URL is removed',async()=>{
+      const selected=page.getByTestId('editor-tabs-container').getByRole('tab',{selected:true});
+      if(await selected.count()!==1) throw Error('Expected one selected working tab.');
+      await selected.getByRole('button',{name:/^Close /}).click();
+      await page.getByTestId('common-process-view').filter({visible:true}).waitFor({state:'hidden'});
+      await page.waitForFunction(()=>!new URL(location.href).searchParams.has('processView'));
+    });
+  }
+  status.overall='pass';status.summary=process.argv.includes('--completed-run') ? 'The exact completed run opened through Workflows and Previous runs, displayed its recorded identity and results, and its working tab closed through Wright. This does not establish engineering acceptance.' : 'The requested saved process opened through the normal Workflows control. Any inspected working tab closed through Wright. This proves navigation, not engineering acceptance.';
 } catch(error) {process.exitCode=2;console.log('Walkthrough stopped: '+error.message);}
 finally {
   fs.writeFileSync(path.join(root,'playwright/diagnostics.json'),JSON.stringify(diagnostics,null,2));

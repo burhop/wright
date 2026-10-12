@@ -1,0 +1,88 @@
+{
+  "scope": "Additional direct native measurements and clarification of exact counted subjects. Does not rewrite the original plan, failed review or prior passive audit.",
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "stationary_rigid_closure": [
+    "arm_foot",
+    "base_bolt_1",
+    "base_bolt_2",
+    "base_bolt_3",
+    "base_bolt_4",
+    "base_nut_1",
+    "base_nut_2",
+    "base_nut_3",
+    "base_nut_4",
+    "cm5_clearance",
+    "io_board",
+    "retainer_yaw",
+    "retainer_yaw_bolt_1",
+    "retainer_yaw_bolt_2",
+    "retainer_yaw_nut_1",
+    "retainer_yaw_nut_2",
+    "saddle_yaw",
+    "servo_yaw",
+    "standoff_h1",
+    "standoff_h6",
+    "standoff_h7",
+    "standoff_h8",
+    "tray",
+    "yaw_nut",
+    "yaw_shaft",
+    "yaw_washer_head"
+  ],
+  "stationary_extent_mm": [
+    -100.0,
+    0.0,
+    -4.0,
+    100.0,
+    180.0,
+    32.70000000000001
+  ],
+  "stationary_footprint_pass": true,
+  "cradle_instances": [
+    [
+      "saddle_yaw",
+      "saddle_yaw"
+    ],
+    [
+      "saddle_shoulder",
+      "saddle_large"
+    ],
+    [
+      "saddle_elbow",
+      "saddle_large"
+    ],
+    [
+      "saddle_wrist",
+      "saddle_small"
+    ],
+    [
+      "saddle_gripper",
+      "saddle_gripper"
+    ]
+  ],
+  "cradle_instance_count": 5,
+  "cradle_definition_count": 4,
+  "all_palm_rigid_m3_bolts": [
+    "cradle_bolt_a",
+    "cradle_bolt_b",
+    "guide_bolt_fl",
+    "guide_bolt_fr",
+    "guide_bolt_nl",
+    "guide_bolt_nr",
+    "retainer_gripper_bolt_1",
+    "retainer_gripper_bolt_2"
+  ],
+  "six_declared_guide_cradle_bolts": [
+    "guide_bolt_nl",
+    "guide_bolt_nr",
+    "guide_bolt_fl",
+    "guide_bolt_fr",
+    "cradle_bolt_a",
+    "cradle_bolt_b"
+  ],
+  "six_declared_bolts_present_and_rigid_to_palm": true,
+  "original_plan_conflict": "Generated R09 requires five unique cradle definitions, while the retained assembly has five instances of four reused definitions. No geometry was changed to satisfy that extra count. The original FAIL is preserved.",
+  "prior_passive_audit_subject_error": "The old six-palm-bolt predicate counted all M3 bolts in the palm rigid group, including two additional gripper-retainer bolts. The six named guide/cradle stacks are the actual subject; all eight group bolts remain."
+}

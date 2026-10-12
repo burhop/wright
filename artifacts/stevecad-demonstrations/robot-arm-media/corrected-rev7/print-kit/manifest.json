@@ -1,0 +1,1224 @@
+{
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "source_step_sha256": "0053b8de8558ce45a1c5a66da872b6a6ae3ddb461f37f22685fa9347261142e3",
+  "source_manifest_sha256": "97556b745c072eb01f2fed47a91d4ccc91e1f2626eb8c8355cd0f332825bca98",
+  "scope": "Nominal millimetre meshes from independently read exact STEP, inverse native world placement, proper declared print rotation, minimum XYZ translated to zero. Digital geometry/export checks do not prove slicing, supports, physical fit or powered operation.",
+  "unique_printed_definitions": 18,
+  "print_quantity": 28,
+  "tessellation_tolerance_mm": 0.02,
+  "build_volume_mm": [
+    220,
+    220,
+    250
+  ],
+  "items": [
+    {
+      "component": "arm_foot",
+      "quantity": 1,
+      "file": "arm_foot.stl",
+      "representative_instance": "arm_foot",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          45.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          6.0
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        34.0,
+        33.9894323348999,
+        -0.0
+      ],
+      "print_bounds_mm": [
+        68.0,
+        67.97886562347412,
+        8.0
+      ],
+      "maximum_local_extent_error_mm": 0.010567665100097656,
+      "native_local_extent_mm": [
+        -34.0,
+        -34.0,
+        0.0,
+        34.0,
+        34.0,
+        8.0
+      ],
+      "source_world_mesh_sha256": "10b7ecdf8fb1cb4ec20679c32daa02e9d355e97eaf095203068e16f2e8d6e1f0",
+      "sha256": "85571a270ce516eeb9fff80426768b29761ab2f71c824e7ee1c6fdcc1a3227ea",
+      "triangles": 3544,
+      "step_volume_mm3": 27650.89738657489
+    },
+    {
+      "component": "finger",
+      "quantity": 2,
+      "file": "finger.stl",
+      "representative_instance": "finger_left",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -13.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -166.012376571403
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          231.297878852173
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        12.000000837613875,
+        45.50000248591687,
+        3.999999618530273
+      ],
+      "print_bounds_mm": [
+        15.999999671172084,
+        63.00000948788547,
+        8.0
+      ],
+      "maximum_local_extent_error_mm": 7.001968597819541e-06,
+      "native_local_extent_mm": [
+        -4.0,
+        -45.5,
+        -4.0,
+        4.0,
+        17.5,
+        12.0
+      ],
+      "source_world_mesh_sha256": "4289f9b237befc7be473a29761cc5d03b43e9ead90bed89c5f0cf6d6582eebac",
+      "sha256": "555db9eb81054f47b67fc6c444b295c4561fa3997e8bc1426e7f5e54172de136",
+      "triangles": 20,
+      "step_volume_mm3": 5503.999999999999
+    },
+    {
+      "component": "forearm",
+      "quantity": 1,
+      "file": "forearm.stl",
+      "representative_instance": "forearm",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          9.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -36.915204428899
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          132.357643635105
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        9.000008229974975,
+        99.0000048430557,
+        8.999999994039536
+      ],
+      "print_bounds_mm": [
+        18.00001566738038,
+        108.00000451211865,
+        17.99999961256981
+      ],
+      "maximum_local_extent_error_mm": 8.22997497529343e-06,
+      "native_local_extent_mm": [
+        -9.0,
+        -99.0,
+        -9.0,
+        9.0,
+        9.0,
+        9.0
+      ],
+      "source_world_mesh_sha256": "6a82124088f212d97f44f71847d2b069555cfd6cc1c5e004302a19fda511febf",
+      "sha256": "4e181ca04f14c0417c82e342bcbafe8f8c908e3e233b17873cceffe912247bdd",
+      "triangles": 1556,
+      "step_volume_mm3": 25364.09477415212
+    },
+    {
+      "component": "guide_cover",
+      "quantity": 1,
+      "file": "guide_cover.stl",
+      "representative_instance": "guide_cover",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -9.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -159.089096751697
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          236.826730137751
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        33.00000152587891,
+        22.50000731631579,
+        1.5000102166910745
+      ],
+      "print_bounds_mm": [
+        66.00000190734863,
+        45.000008509207916,
+        3.0000203683547095
+      ],
+      "maximum_local_extent_error_mm": 1.0216691074482753e-05,
+      "native_local_extent_mm": [
+        -33.0,
+        -22.5,
+        -1.5,
+        33.0,
+        22.5,
+        1.5
+      ],
+      "source_world_mesh_sha256": "fd16d2464f4a447fc3648cddfe62e10d69908162418c4c041fda937982534803",
+      "sha256": "c0f8df13ef1e65d27a9c4801eedd44a3b898ef20af4df2cff42d33edb24c29ca",
+      "triangles": 3060,
+      "step_volume_mm3": 8746.574350160261
+    },
+    {
+      "component": "guide_post",
+      "quantity": 4,
+      "file": "guide_post.stl",
+      "representative_instance": "guide_post_nl",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -36.9
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -174.203897014293
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          237.033643215683
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        5.000001525878908,
+        5.0000064402286535,
+        7.0000090877606445
+      ],
+      "print_bounds_mm": [
+        10.000001907348633,
+        10.000005986084156,
+        14.000017703841625
+      ],
+      "maximum_local_extent_error_mm": 9.087760644455045e-06,
+      "native_local_extent_mm": [
+        -5.0,
+        -5.0,
+        -7.0,
+        5.0,
+        5.0,
+        7.0
+      ],
+      "source_world_mesh_sha256": "fa139412c5da6e30b4778b4fa483cac185abae7a4737ea8761094e8d7ee9962e",
+      "sha256": "45fc58169dece3c4166b6b2f2e1c90be076297de2aa4435020de6155171ff5b1",
+      "triangles": 520,
+      "step_volume_mm3": 1272.8911612357524
+    },
+    {
+      "component": "palm",
+      "quantity": 1,
+      "file": "palm.stl",
+      "representative_instance": "palm",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -9.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -110.638888414908
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          183.979522906699
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        9.00000796975903,
+        90.00000201414983,
+        33.00000152587891
+      ],
+      "print_bounds_mm": [
+        18.000015350182863,
+        98.99720892547644,
+        66.00000190734863
+      ],
+      "maximum_local_extent_error_mm": 0.0027930886733802396,
+      "native_local_extent_mm": [
+        -33.0,
+        -90.0,
+        -9.0,
+        33.0,
+        9.0,
+        9.0
+      ],
+      "source_world_mesh_sha256": "a1e9e1b54f0da739a16f04dc996c5bccd72146aa29aeaa82a27c27315b9d979f",
+      "sha256": "8ec35521c3379c171128ff6bdfa6613548ada164907ca1983606496e7ee79636",
+      "triangles": 2824,
+      "step_volume_mm3": 35140.080390009934
+    },
+    {
+      "component": "pitch_yoke",
+      "quantity": 2,
+      "file": "pitch_yoke.stl",
+      "representative_instance": "elbow_yoke",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -36.915204428899
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          132.357643635105
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        30.0,
+        10.000002683905873,
+        26.000003871045887
+      ],
+      "print_bounds_mm": [
+        60.0,
+        38.00000494554984,
+        44.0000083746922
+      ],
+      "maximum_local_extent_error_mm": 4.503646309217402e-06,
+      "native_local_extent_mm": [
+        -30.0,
+        -10.0,
+        -26.0,
+        30.0,
+        28.0,
+        18.0
+      ],
+      "source_world_mesh_sha256": "64a6c111a417dc48091fc0bf7e3f71c700c29139532665bea95cb7881ac4530c",
+      "sha256": "2004fd0c747afcfad7405e37d75ecff3450ee301a7bc43f2860e9610e2e2a01f",
+      "triangles": 3084,
+      "step_volume_mm3": 29615.030144281303
+    },
+    {
+      "component": "retainer_large",
+      "quantity": 3,
+      "file": "retainer_large.stl",
+      "representative_instance": "retainer_yaw",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -69.55
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          33.85
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          19.35
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        33.85,
+        4.999999618530275,
+        27.950000000000003
+      ],
+      "print_bounds_mm": [
+        67.69999694824219,
+        10.0,
+        3.0
+      ],
+      "maximum_local_extent_error_mm": 3.051757815342171e-06,
+      "native_local_extent_mm": [
+        -27.95,
+        -5.0,
+        -33.85,
+        -24.95,
+        5.0,
+        33.85
+      ],
+      "source_world_mesh_sha256": "8888f6165d4f7a8c10800ab283834675b4087cb75459a9434b2ff1ea06394ebe",
+      "sha256": "d7ab03002bcdb31f3631ddbd4f52e26503c05266eadbdd46ff48503adc7fa61f",
+      "triangles": 1028,
+      "step_volume_mm3": 1976.5247833867516
+    },
+    {
+      "component": "retainer_small",
+      "quantity": 2,
+      "file": "retainer_small.stl",
+      "representative_instance": "retainer_wrist",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -54.25
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -110.638888414908
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          183.979522906699
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        24.899996980956,
+        12.000001147141566,
+        20.75
+      ],
+      "print_bounds_mm": [
+        49.79999532218362,
+        24.000007304278597,
+        3.0
+      ],
+      "maximum_local_extent_error_mm": 6.157137033113713e-06,
+      "native_local_extent_mm": [
+        -20.75,
+        -12.0,
+        -24.9,
+        -17.75,
+        12.0,
+        24.9
+      ],
+      "source_world_mesh_sha256": "823c8dc8059c94072404e8f088c9bf9ba0535d31aa0deeb984bf3d32c86ee708",
+      "sha256": "aadc3e6da1881fe496ca66a583f7936a065604f448871ee9624bb58bd1782b4f",
+      "triangles": 1536,
+      "step_volume_mm3": 2767.7177685644065
+    },
+    {
+      "component": "saddle_gripper",
+      "quantity": 1,
+      "file": "saddle_gripper.stl",
+      "representative_instance": "saddle_gripper",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -9.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -139.219984530598
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          256.485529173943
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        24.899998498472776,
+        14.300004419109664,
+        17.749999618530275
+      ],
+      "print_bounds_mm": [
+        50.900007509816604,
+        23.8999978930772,
+        50.25
+      ],
+      "maximum_local_extent_error_mm": 9.011343824028017e-06,
+      "native_local_extent_mm": [
+        -17.75,
+        -14.3,
+        -26.0,
+        32.5,
+        9.6,
+        24.9
+      ],
+      "source_world_mesh_sha256": "842f03ebf889a417b26928e860dccc71471d401436d30c16994b6b6c9a5af807",
+      "sha256": "59c8f72ad63ab757724f0d093d0731054cdf9fe7f007abcd743a92cc6e926789",
+      "triangles": 3126,
+      "step_volume_mm3": 13980.589304315949
+    },
+    {
+      "component": "saddle_large",
+      "quantity": 2,
+      "file": "saddle_large.stl",
+      "representative_instance": "saddle_shoulder",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -61.45
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          45.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          75.0
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        33.849998474121094,
+        14.0,
+        24.950001525878903
+      ],
+      "print_bounds_mm": [
+        67.69999694824219,
+        42.0,
+        56.400001525878906
+      ],
+      "maximum_local_extent_error_mm": 1.5258789076710855e-06,
+      "native_local_extent_mm": [
+        -24.95,
+        -14.0,
+        -33.85,
+        31.45,
+        28.0,
+        33.85
+      ],
+      "source_world_mesh_sha256": "7470cabf72703b6eb1a0c18d05d9322fdbc2983ccd5e8dca1fa1133cb70029e6",
+      "sha256": "fadf1335d1959f420788778937a74d196ca7cab0a0a64c70287044bba44bf9ed",
+      "triangles": 3138,
+      "step_volume_mm3": 28487.52126284129
+    },
+    {
+      "component": "saddle_small",
+      "quantity": 1,
+      "file": "saddle_small.stl",
+      "representative_instance": "saddle_wrist",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -54.25
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -110.638888414908
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          183.979522906699
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        24.899996326884178,
+        12.000002778258988,
+        17.75
+      ],
+      "print_bounds_mm": [
+        49.79999401403998,
+        40.0000077921201,
+        42.0
+      ],
+      "maximum_local_extent_error_mm": 5.013861112956874e-06,
+      "native_local_extent_mm": [
+        -17.75,
+        -12.0,
+        -24.9,
+        24.25,
+        28.0,
+        24.9
+      ],
+      "source_world_mesh_sha256": "d469caf1849891929e76496df5c9f4e2a0a78d5417d6572e43906605b8bf8eda",
+      "sha256": "640523f5f6336d17eb33c221fb2913d6ad3454f77c74db03f40e29eb82a37d94",
+      "triangles": 3152,
+      "step_volume_mm3": 17964.429263941045
+    },
+    {
+      "component": "saddle_yaw",
+      "quantity": 1,
+      "file": "saddle_yaw.stl",
+      "representative_instance": "saddle_yaw",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -69.55
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          33.85
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          19.35
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        33.85,
+        13.350000000000001,
+        24.950000000000003
+      ],
+      "print_bounds_mm": [
+        67.69999694824219,
+        26.700000762939453,
+        49.900001525878906
+      ],
+      "maximum_local_extent_error_mm": 3.051757815342171e-06,
+      "native_local_extent_mm": [
+        -24.95,
+        -13.35,
+        -33.85,
+        24.95,
+        13.35,
+        33.85
+      ],
+      "source_world_mesh_sha256": "d93f2182e7ffe1f64ebda6cfd2d1e44555ef3b8279b90889d803beca4a84c0b7",
+      "sha256": "f2ebf83019c2b7d20bd8e95abf180990f8ed670e231f3ad3691024906469718e",
+      "triangles": 2082,
+      "step_volume_mm3": 24522.122822398538
+    },
+    {
+      "component": "tray",
+      "quantity": 1,
+      "file": "tray.stl",
+      "representative_instance": "tray",
+      "native_local_build_direction": "-Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        100.0,
+        180.0,
+        6.0
+      ],
+      "print_bounds_mm": [
+        200.0,
+        180.0,
+        10.0
+      ],
+      "maximum_local_extent_error_mm": 0.0,
+      "native_local_extent_mm": [
+        -100.0,
+        0.0,
+        -4.0,
+        100.0,
+        180.0,
+        6.0
+      ],
+      "source_world_mesh_sha256": "d8f9cee8d6386fd857d94492fad80c84b71a27ff6e36e8f0dd22d146bde3bcac",
+      "sha256": "4536cde0317ec411fcb97ba2ed7471c5f411080711af3a177975c5a775493f20",
+      "triangles": 8616,
+      "step_volume_mm3": 216168.60299453285
+    },
+    {
+      "component": "turntable",
+      "quantity": 1,
+      "file": "turntable.stl",
+      "representative_instance": "turntable",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          45.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          14.4
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        22.0,
+        22.0,
+        3.8146972691777137e-07
+      ],
+      "print_bounds_mm": [
+        44.0,
+        44.0,
+        34.60000038146973
+      ],
+      "maximum_local_extent_error_mm": 3.8146972691777137e-07,
+      "native_local_extent_mm": [
+        -22.0,
+        -22.0,
+        0.0,
+        22.0,
+        22.0,
+        34.6
+      ],
+      "source_world_mesh_sha256": "78c6c01cf568a6197bac85c57a602fa83686f85eadd04536a1b3e31332f991d2",
+      "sha256": "57dfba1f1f3510613bc20dd531e7bc8ed2189a071cb4ab0ad108d74e839b5ace",
+      "triangles": 1822,
+      "step_volume_mm3": 35117.85617316562
+    },
+    {
+      "component": "upper_arm",
+      "quantity": 1,
+      "file": "upper_arm.stl",
+      "representative_instance": "upper_arm",
+      "native_local_build_direction": "+X",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -9.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          45.0
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          75.0
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "bed_translation_mm": [
+        9.00000315508386,
+        108.99999846292168,
+        8.999999618530273
+      ],
+      "print_bounds_mm": [
+        18.000006214906115,
+        118.00000045382853,
+        17.99999961256981
+      ],
+      "maximum_local_extent_error_mm": 3.1550838599514464e-06,
+      "native_local_extent_mm": [
+        -9.0,
+        -109.0,
+        -9.0,
+        9.0,
+        9.0,
+        9.0
+      ],
+      "source_world_mesh_sha256": "baef3adfdae2edda68123aad52b8e121b698fdca1e7a771f049936df4408004b",
+      "sha256": "cfdd2c39d243e81e02198ae024d88cdfd41e26f1cfd1b290641f759b958d81c0",
+      "triangles": 1556,
+      "step_volume_mm3": 26444.094774152123
+    },
+    {
+      "component": "yoke",
+      "quantity": 1,
+      "file": "yoke.stl",
+      "representative_instance": "shoulder_yoke",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          45.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          75.0
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        30.0,
+        10.0,
+        26.0
+      ],
+      "print_bounds_mm": [
+        60.0,
+        38.0,
+        44.0
+      ],
+      "maximum_local_extent_error_mm": 0.0,
+      "native_local_extent_mm": [
+        -30.0,
+        -10.0,
+        -26.0,
+        30.0,
+        28.0,
+        18.0
+      ],
+      "source_world_mesh_sha256": "fff2dffb782d869505b3a3c203de2fb095c1cce2f528b4afb63a0eb3d3930311",
+      "sha256": "09a9253b39f41c73c86b2edb9d2a5b0b949a6214951414c95729417366bc1f60",
+      "triangles": 2068,
+      "step_volume_mm3": 38208.29738858328
+    },
+    {
+      "component": "yoke_mount",
+      "quantity": 2,
+      "file": "yoke_mount.stl",
+      "representative_instance": "elbow_mount",
+      "native_local_build_direction": "+Z",
+      "native_placement": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -9.4
+        ],
+        [
+          0.0,
+          0.819152044289,
+          0.573576436351,
+          -25.817989300991
+        ],
+        [
+          0.0,
+          -0.573576436351,
+          0.819152044289,
+          108.106833001129
+        ]
+      ],
+      "local_to_print_rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "bed_translation_mm": [
+        4.999999618530273,
+        4.999997758728947,
+        4.500002928456453
+      ],
+      "print_bounds_mm": [
+        9.999999523162842,
+        9.999999758605597,
+        9.000006223184569
+      ],
+      "maximum_local_extent_error_mm": 3.294728115221801e-06,
+      "native_local_extent_mm": [
+        -5.0,
+        -5.0,
+        -4.5,
+        5.0,
+        5.0,
+        4.5
+      ],
+      "source_world_mesh_sha256": "bc39f5207b94e0dcd8f193da10deb1c6554193c5b22c012700cd6a37e8520bc8",
+      "sha256": "56713f5eee71e4d0ae1ae53cd0eec2bec37abe153823d729f552778511f0be16",
+      "triangles": 520,
+      "step_volume_mm3": 818.2871750801265
+    }
+  ]
+}

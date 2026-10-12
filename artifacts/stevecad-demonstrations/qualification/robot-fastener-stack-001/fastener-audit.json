@@ -1,0 +1,3466 @@
+{
+  "scope": "Independent passive exact-STEP home-pose alignment, axial-stack and planar bearing-area observations. Simplified purchased references have no threads, driver geometry or physical engagement proof. No CAD edit or MCP invocation.",
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "step_sha256": "0053b8de8558ce45a1c5a66da872b6a6ae3ddb461f37f22685fa9347261142e3",
+  "native_basis_sha256": "fcf58f0aff423f4eda1527a4955485587b19aa1d3dd06486852e68d24cfdbe41",
+  "audit_source_sha256": "3b0436fa909915517995c34fa333fc584d145654dc15f09d376ab8eaa7b7dcb6",
+  "build123d_version": "0.10.0",
+  "linear_kernel_precision_mm": 1e-07,
+  "mapped_instances": 110,
+  "m3_stacks": 25,
+  "m5_stacks": 4,
+  "all_stack_alignments_pass": true,
+  "all_stacks_have_both_bearings": true,
+  "positive_overlap_pairs": [],
+  "stacks": [
+    {
+      "shaft": "base_bolt_1",
+      "nut": "base_nut_1",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          -24.0,
+          33.0,
+          -2.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          -24.0,
+          33.0,
+          0.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.4
+        ],
+        "length_mm": 2.4
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        2.0,
+        4.4
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "arm_foot",
+          "b": "base_bolt_1",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898306
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "base_nut_1",
+          "b": "tray",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "base_bolt_2",
+      "nut": "base_nut_2",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          24.0,
+          33.0,
+          -2.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          24.0,
+          33.0,
+          0.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.4
+        ],
+        "length_mm": 2.4
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        2.0,
+        4.4
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "arm_foot",
+          "b": "base_bolt_2",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898306
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "base_nut_2",
+          "b": "tray",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "base_bolt_3",
+      "nut": "base_nut_3",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          -24.0,
+          57.0,
+          -2.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          -24.0,
+          57.0,
+          0.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.4
+        ],
+        "length_mm": 2.4
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        2.0,
+        4.4
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "arm_foot",
+          "b": "base_bolt_3",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898306
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "base_nut_3",
+          "b": "tray",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "base_bolt_4",
+      "nut": "base_nut_4",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          24.0,
+          57.0,
+          -2.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          24.0,
+          57.0,
+          0.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.4
+        ],
+        "length_mm": 2.4
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        2.0,
+        4.4
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "arm_foot",
+          "b": "base_bolt_4",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898306
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "base_nut_4",
+          "b": "tray",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "cradle_bolt_a",
+      "nut": "cradle_nut_a",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -168.0030690438,
+          231.59307959774
+        ],
+        "axial_span_mm": [
+          0.0,
+          24.999999999999993
+        ],
+        "length_mm": 24.999999999999993
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -164.8483986439,
+          236.09841584133
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.400000000000004
+        ],
+        "length_mm": 2.400000000000004
+      },
+      "coaxial_error_mm": 2.5268676040468563e-11,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        5.499999999982801,
+        7.899999999982806
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "cradle_bolt_a",
+          "b": "saddle_gripper",
+          "minimum_distance_mm": 3.407842369894148e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898311
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "cradle_nut_a",
+          "b": "guide_cover",
+          "minimum_distance_mm": 5.242619092239428e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "cradle_bolt_b",
+      "nut": "cradle_nut_b",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -162.2690047338,
+          227.57804454328
+        ],
+        "axial_span_mm": [
+          0.0,
+          24.999999999999993
+        ],
+        "length_mm": 24.999999999999993
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -159.1143343338,
+          232.08338078687
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.400000000000004
+        ],
+        "length_mm": 2.400000000000004
+      },
+      "coaxial_error_mm": 5.6620486077463283e-11,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        5.500000000040176,
+        7.90000000004018
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "cradle_bolt_b",
+          "b": "saddle_gripper",
+          "minimum_distance_mm": 4.972991096084912e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898311
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "cradle_nut_b",
+          "b": "guide_cover",
+          "minimum_distance_mm": 1.0692003815667233e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884982
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "elbow_cradle_bolt",
+      "nut": "elbow_cradle_nut",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -39.5,
+          -23.81047177376,
+          110.97386515614
+        ],
+        "axial_span_mm": [
+          0.0,
+          20.0
+        ],
+        "length_mm": 20.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -22.0,
+          -23.81047177376,
+          110.97386515614
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.8000000000000007
+        ],
+        "length_mm": 1.8000000000000007
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        17.5,
+        19.3
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "elbow_cradle_bolt",
+          "b": "saddle_elbow",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.67909167389831
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "elbow_cradle_nut",
+          "b": "elbow_yoke",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "elbow_mount_bolt",
+      "nut": "elbow_mount_nut",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          -9.4,
+          -35.85557693713,
+          93.771672226072
+        ],
+        "axial_span_mm": [
+          0.0,
+          40.00000000000001
+        ],
+        "length_mm": 40.00000000000001
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          -9.4,
+          -34.36427820262,
+          95.901467541223
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.399999999999996
+        ],
+        "length_mm": 2.399999999999996
+      },
+      "coaxial_error_mm": 1.8975931936893176e-12,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        2.599999999998132,
+        4.999999999998128
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "elbow_mount_bolt",
+          "b": "upper_arm",
+          "minimum_distance_mm": 6.192517778975812e-12,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898311
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "elbow_mount_nut",
+          "b": "elbow_yoke",
+          "minimum_distance_mm": 1.4232332402722407e-12,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "guide_bolt_fl",
+      "nut": "guide_nut_fl",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          -36.9,
+          -165.196624634,
+          206.31119142112
+        ],
+        "axial_span_mm": [
+          0.0,
+          29.999999999999993
+        ],
+        "length_mm": 29.999999999999993
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          -36.9,
+          -162.5581730268,
+          210.07929082485
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.400000000000004
+        ],
+        "length_mm": 2.400000000000004
+      },
+      "coaxial_error_mm": 1.2329248733067288e-11,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        4.599999999992033,
+        6.999999999992037
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "guide_bolt_fl",
+          "b": "guide_cover",
+          "minimum_distance_mm": 9.509175142144065e-12,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898307
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "guide_nut_fl",
+          "b": "palm",
+          "minimum_distance_mm": 4.2160288985506424e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "guide_bolt_fr",
+      "nut": "guide_nut_fr",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -165.196624634,
+          206.31119142112
+        ],
+        "axial_span_mm": [
+          0.0,
+          29.999999999999993
+        ],
+        "length_mm": 29.999999999999993
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -162.5581730268,
+          210.07929082485
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.400000000000004
+        ],
+        "length_mm": 2.400000000000004
+      },
+      "coaxial_error_mm": 1.2329248733067288e-11,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        4.599999999992033,
+        6.999999999992037
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "guide_bolt_fr",
+          "b": "guide_cover",
+          "minimum_distance_mm": 9.509175142144065e-12,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898307
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "guide_nut_fr",
+          "b": "palm",
+          "minimum_distance_mm": 4.2160288985506424e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "guide_bolt_nl",
+      "nut": "guide_nut_nl",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          -36.9,
+          -185.6754257413,
+          220.6506023299
+        ],
+        "axial_span_mm": [
+          0.0,
+          29.999999999999993
+        ],
+        "length_mm": 29.999999999999993
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          -36.9,
+          -183.036974134,
+          224.41870173363
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.400000000000004
+        ],
+        "length_mm": 2.400000000000004
+      },
+      "coaxial_error_mm": 6.961586862530567e-11,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        4.600000000049376,
+        7.00000000004938
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "guide_bolt_nl",
+          "b": "guide_cover",
+          "minimum_distance_mm": 4.8405049961552616e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898307
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "guide_nut_nl",
+          "b": "palm",
+          "minimum_distance_mm": 6.061050651955736e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "guide_bolt_nr",
+      "nut": "guide_nut_nr",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -185.6754257413,
+          220.6506023299
+        ],
+        "axial_span_mm": [
+          0.0,
+          29.999999999999993
+        ],
+        "length_mm": 29.999999999999993
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          18.1,
+          -183.036974134,
+          224.41870173363
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.400000000000004
+        ],
+        "length_mm": 2.400000000000004
+      },
+      "coaxial_error_mm": 6.961586862530567e-11,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        4.600000000049376,
+        7.00000000004938
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "guide_bolt_nr",
+          "b": "guide_cover",
+          "minimum_distance_mm": 4.8405049961552616e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898307
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "guide_nut_nr",
+          "b": "palm",
+          "minimum_distance_mm": 6.061050651955736e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_elbow_bolt_1",
+      "nut": "retainer_elbow_nut_1",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -89.4,
+          -20.36752424017,
+          155.99018011284
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -76.4,
+          -20.36752424017,
+          155.99018011284
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_elbow",
+          "b": "retainer_elbow_bolt_1",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898325
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_elbow_nut_1",
+          "b": "saddle_elbow",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_elbow_bolt_2",
+      "nut": "retainer_elbow_nut_2",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -89.4,
+          -53.46288461762,
+          108.72510715736
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -76.4,
+          -53.46288461762,
+          108.72510715736
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_elbow",
+          "b": "retainer_elbow_bolt_2",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898318
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_elbow_nut_2",
+          "b": "saddle_elbow",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_gripper_bolt_1",
+      "nut": "retainer_gripper_nut_1",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -30.15,
+          -127.8058134472,
+          272.78665485529
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -17.15,
+          -127.8058134472,
+          272.78665485529
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.8000000000000007
+        ],
+        "length_mm": 1.8000000000000007
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.8
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_gripper",
+          "b": "retainer_gripper_bolt_1",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898318
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_gripper_nut_1",
+          "b": "saddle_gripper",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_gripper_bolt_2",
+      "nut": "retainer_gripper_nut_2",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -30.15,
+          -150.6341556139,
+          240.18440349259
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -17.15,
+          -150.6341556139,
+          240.18440349259
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.8000000000000007
+        ],
+        "length_mm": 1.8000000000000007
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.8
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_gripper",
+          "b": "retainer_gripper_bolt_2",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898318
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_gripper_nut_2",
+          "b": "saddle_gripper",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_shoulder_bolt_1",
+      "nut": "retainer_shoulder_nut_1",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -89.4,
+          45.0,
+          103.85
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -76.4,
+          45.0,
+          103.85
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_shoulder",
+          "b": "retainer_shoulder_bolt_1",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898329
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_shoulder_nut_1",
+          "b": "saddle_shoulder",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_shoulder_bolt_2",
+      "nut": "retainer_shoulder_nut_2",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -89.4,
+          45.0,
+          46.15
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -76.4,
+          45.0,
+          46.15
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_shoulder",
+          "b": "retainer_shoulder_bolt_2",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898318
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_shoulder_nut_2",
+          "b": "saddle_shoulder",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_wrist_bolt_1",
+      "nut": "retainer_wrist_nut_1",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -75.0,
+          -99.22471733152,
+          200.28064858805
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -62.0,
+          -99.22471733152,
+          200.28064858805
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_wrist",
+          "b": "retainer_wrist_bolt_1",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898318
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_wrist_nut_1",
+          "b": "saddle_wrist",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_wrist_bolt_2",
+      "nut": "retainer_wrist_nut_2",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -75.0,
+          -122.0530594982,
+          167.67839722534
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -62.0,
+          -122.0530594982,
+          167.67839722534
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_wrist",
+          "b": "retainer_wrist_bolt_2",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898322
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_wrist_nut_2",
+          "b": "saddle_wrist",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_yaw_bolt_1",
+      "nut": "retainer_yaw_nut_1",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -97.5,
+          5.0,
+          19.35
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -84.5,
+          5.0,
+          19.35
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_yaw",
+          "b": "retainer_yaw_bolt_1",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.67909167389831
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_yaw_nut_1",
+          "b": "saddle_yaw",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "retainer_yaw_bolt_2",
+      "nut": "retainer_yaw_nut_2",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -97.5,
+          62.7,
+          19.35
+        ],
+        "axial_span_mm": [
+          0.0,
+          16.0
+        ],
+        "length_mm": 16.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -84.5,
+          62.7,
+          19.35
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.7999999999999972
+        ],
+        "length_mm": 1.7999999999999972
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        13.0,
+        14.799999999999997
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "retainer_yaw",
+          "b": "retainer_yaw_bolt_2",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898318
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "retainer_yaw_nut_2",
+          "b": "saddle_yaw",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "shoulder_cradle_bolt",
+      "nut": "shoulder_cradle_nut",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -39.5,
+          68.0,
+          65.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          20.0
+        ],
+        "length_mm": 20.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -22.0,
+          68.0,
+          65.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.8000000000000007
+        ],
+        "length_mm": 1.8000000000000007
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        17.5,
+        19.3
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "saddle_shoulder",
+          "b": "shoulder_cradle_bolt",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898307
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "shoulder_cradle_nut",
+          "b": "shoulder_yoke",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "wrist_cradle_bolt",
+      "nut": "wrist_cradle_nut",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -39.5,
+          -97.53415575977,
+          162.59574442773
+        ],
+        "axial_span_mm": [
+          0.0,
+          20.0
+        ],
+        "length_mm": 20.0
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -22.0,
+          -97.53415575977,
+          162.59574442773
+        ],
+        "axial_span_mm": [
+          0.0,
+          1.8000000000000007
+        ],
+        "length_mm": 1.8000000000000007
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        17.5,
+        19.3
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "saddle_wrist",
+          "b": "wrist_cradle_bolt",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.67909167389831
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "wrist_cradle_nut",
+          "b": "wrist_yoke",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884986
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "wrist_mount_bolt",
+      "nut": "wrist_mount_nut",
+      "shaft_cylinder": {
+        "radius_mm": 1.5,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          9.4,
+          -109.5792609231,
+          145.39355149766
+        ],
+        "axial_span_mm": [
+          0.0,
+          39.99999999999999
+        ],
+        "length_mm": 39.99999999999999
+      },
+      "nut_bore": {
+        "radius_mm": 1.7,
+        "axis": [
+          0.0,
+          0.5735764363510113,
+          0.8191520442890162
+        ],
+        "origin_mm": [
+          9.4,
+          -108.0879621886,
+          147.52334681281
+        ],
+        "axial_span_mm": [
+          0.0,
+          2.399999999999996
+        ],
+        "length_mm": 2.399999999999996
+      },
+      "coaxial_error_mm": 9.511502696568641e-12,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        2.5999999999915513,
+        4.999999999991547
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.19999999999999996,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "forearm",
+          "b": "wrist_mount_bolt",
+          "minimum_distance_mm": 2.175421479151797e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 14.679091673898307
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "wrist_mount_nut",
+          "b": "wrist_yoke",
+          "minimum_distance_mm": 1.3317269389192423e-11,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 23.090706003884982
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "yaw_shaft",
+      "nut": "yaw_nut",
+      "shaft_cylinder": {
+        "radius_mm": 2.5,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          0.0,
+          45.0,
+          5.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          25.0
+        ],
+        "length_mm": 25.0
+      },
+      "nut_bore": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.110223024625e-16,
+          0.0,
+          1.0
+        ],
+        "origin_mm": [
+          0.0,
+          45.0,
+          21.4
+        ],
+        "axial_span_mm": [
+          -2.7755575615625e-16,
+          3.9999999999999996
+        ],
+        "length_mm": 4.0
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        16.4,
+        20.4
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.0,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "yaw_shaft",
+          "b": "yaw_washer_head",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 57.30265000147781
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "yaw_nut",
+          "b": "yaw_washer_rotating",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 45.81824389701498
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "shoulder_shaft",
+      "nut": "shoulder_nut",
+      "shaft_cylinder": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -31.0,
+          45.0,
+          75.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          70.0
+        ],
+        "length_mm": 70.0
+      },
+      "nut_bore": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          31.0,
+          45.0,
+          75.0
+        ],
+        "axial_span_mm": [
+          0.0,
+          4.0
+        ],
+        "length_mm": 4.0
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        62.0,
+        66.0
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.0,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "shoulder_shaft",
+          "b": "shoulder_washer_head",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 57.30265000147783
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "shoulder_nut",
+          "b": "shoulder_washer_rotating",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 45.81824389701498
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "elbow_shaft",
+      "nut": "elbow_nut",
+      "shaft_cylinder": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -31.0,
+          -36.91520442889,
+          132.3576436351
+        ],
+        "axial_span_mm": [
+          0.0,
+          70.0
+        ],
+        "length_mm": 70.0
+      },
+      "nut_bore": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          31.0,
+          -36.91520442889,
+          132.3576436351
+        ],
+        "axial_span_mm": [
+          0.0,
+          4.0
+        ],
+        "length_mm": 4.0
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        62.0,
+        66.0
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.0,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "elbow_shaft",
+          "b": "elbow_washer_head",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 57.30265000147783
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "elbow_nut",
+          "b": "elbow_washer_rotating",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 45.81824389701498
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    },
+    {
+      "shaft": "wrist_shaft",
+      "nut": "wrist_nut",
+      "shaft_cylinder": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          -31.0,
+          -110.6388884149,
+          183.97952290669
+        ],
+        "axial_span_mm": [
+          0.0,
+          70.0
+        ],
+        "length_mm": 70.0
+      },
+      "nut_bore": {
+        "radius_mm": 2.5,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "origin_mm": [
+          31.0,
+          -110.6388884149,
+          183.97952290669
+        ],
+        "axial_span_mm": [
+          0.0,
+          4.0
+        ],
+        "length_mm": 4.0
+      },
+      "coaxial_error_mm": 0.0,
+      "axis_parallel_dot_absolute": 1.0,
+      "nut_span_in_shaft_frame_mm": [
+        62.0,
+        66.0
+      ],
+      "nut_within_shaft_span": true,
+      "radial_profile_gap_mm": 0.0,
+      "alignment_pass": true,
+      "shaft_bearing_pairs": [
+        {
+          "a": "wrist_shaft",
+          "b": "wrist_washer_head",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 57.30265000147783
+        }
+      ],
+      "nut_bearing_pairs": [
+        {
+          "a": "wrist_nut",
+          "b": "wrist_washer_rotating",
+          "minimum_distance_mm": 0.0,
+          "overlap_mm3": 0.0,
+          "coplanar_bearing_area_mm2": 45.81824389701498
+        }
+      ],
+      "both_ends_have_measured_planar_bearings": true
+    }
+  ],
+  "measured_planar_bearing_pairs": [
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_3",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_4",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "yaw_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "base_nut_1",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "base_nut_2",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "base_nut_3",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "base_nut_4",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "cradle_bolt_a",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 3.407842369894148e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898311
+    },
+    {
+      "a": "cradle_bolt_b",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 4.972991096084912e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898311
+    },
+    {
+      "a": "cradle_nut_a",
+      "b": "guide_cover",
+      "minimum_distance_mm": 5.242619092239428e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "cradle_nut_b",
+      "b": "guide_cover",
+      "minimum_distance_mm": 1.0692003815667233e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884982
+    },
+    {
+      "a": "elbow_cradle_bolt",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.67909167389831
+    },
+    {
+      "a": "elbow_cradle_nut",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "elbow_mount_bolt",
+      "b": "upper_arm",
+      "minimum_distance_mm": 6.192517778975812e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898311
+    },
+    {
+      "a": "elbow_mount_nut",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 1.4232332402722407e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "elbow_nut",
+      "b": "elbow_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "elbow_shaft",
+      "b": "elbow_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147783
+    },
+    {
+      "a": "elbow_washer_head",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "elbow_washer_rotating",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "forearm",
+      "b": "wrist_mount_bolt",
+      "minimum_distance_mm": 2.175421479151797e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_fl",
+      "b": "guide_cover",
+      "minimum_distance_mm": 9.509175142144065e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_fr",
+      "b": "guide_cover",
+      "minimum_distance_mm": 9.509175142144065e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_nl",
+      "b": "guide_cover",
+      "minimum_distance_mm": 4.8405049961552616e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_nr",
+      "b": "guide_cover",
+      "minimum_distance_mm": 4.8405049961552616e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_nut_fl",
+      "b": "palm",
+      "minimum_distance_mm": 4.2160288985506424e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "guide_nut_fr",
+      "b": "palm",
+      "minimum_distance_mm": 4.2160288985506424e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "guide_nut_nl",
+      "b": "palm",
+      "minimum_distance_mm": 6.061050651955736e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "guide_nut_nr",
+      "b": "palm",
+      "minimum_distance_mm": 6.061050651955736e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_elbow",
+      "b": "retainer_elbow_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898325
+    },
+    {
+      "a": "retainer_elbow",
+      "b": "retainer_elbow_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_elbow_nut_1",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_elbow_nut_2",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_gripper",
+      "b": "retainer_gripper_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_gripper",
+      "b": "retainer_gripper_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_gripper_nut_1",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_gripper_nut_2",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_shoulder",
+      "b": "retainer_shoulder_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898329
+    },
+    {
+      "a": "retainer_shoulder",
+      "b": "retainer_shoulder_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_shoulder_nut_1",
+      "b": "saddle_shoulder",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_shoulder_nut_2",
+      "b": "saddle_shoulder",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_wrist",
+      "b": "retainer_wrist_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_wrist",
+      "b": "retainer_wrist_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898322
+    },
+    {
+      "a": "retainer_wrist_nut_1",
+      "b": "saddle_wrist",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_wrist_nut_2",
+      "b": "saddle_wrist",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_yaw",
+      "b": "retainer_yaw_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.67909167389831
+    },
+    {
+      "a": "retainer_yaw",
+      "b": "retainer_yaw_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_yaw_nut_1",
+      "b": "saddle_yaw",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_yaw_nut_2",
+      "b": "saddle_yaw",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "saddle_shoulder",
+      "b": "shoulder_cradle_bolt",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "saddle_wrist",
+      "b": "wrist_cradle_bolt",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.67909167389831
+    },
+    {
+      "a": "shoulder_cradle_nut",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "shoulder_nut",
+      "b": "shoulder_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "shoulder_shaft",
+      "b": "shoulder_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147783
+    },
+    {
+      "a": "shoulder_washer_head",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "shoulder_washer_rotating",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "turntable",
+      "b": "yaw_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "wrist_cradle_nut",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "wrist_mount_nut",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 1.3317269389192423e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884982
+    },
+    {
+      "a": "wrist_nut",
+      "b": "wrist_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "wrist_shaft",
+      "b": "wrist_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147783
+    },
+    {
+      "a": "wrist_washer_head",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "wrist_washer_rotating",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "yaw_nut",
+      "b": "yaw_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "yaw_shaft",
+      "b": "yaw_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147781
+    }
+  ],
+  "near_pairs_within_half_mm": [
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_3",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "base_bolt_4",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898306
+    },
+    {
+      "a": "arm_foot",
+      "b": "yaw_shaft",
+      "minimum_distance_mm": 0.20000000000000007,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "arm_foot",
+      "b": "yaw_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "base_bolt_1",
+      "b": "base_nut_1",
+      "minimum_distance_mm": 0.1999999999999965,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_1",
+      "b": "tray",
+      "minimum_distance_mm": 0.199999999999997,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_2",
+      "b": "base_nut_2",
+      "minimum_distance_mm": 0.1999999999999965,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_2",
+      "b": "tray",
+      "minimum_distance_mm": 0.199999999999997,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_3",
+      "b": "base_nut_3",
+      "minimum_distance_mm": 0.1999999999999965,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_3",
+      "b": "tray",
+      "minimum_distance_mm": 0.199999999999997,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_4",
+      "b": "base_nut_4",
+      "minimum_distance_mm": 0.1999999999999965,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_bolt_4",
+      "b": "tray",
+      "minimum_distance_mm": 0.199999999999997,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "base_nut_1",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "base_nut_2",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "base_nut_3",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "base_nut_4",
+      "b": "tray",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "cradle_bolt_a",
+      "b": "cradle_nut_a",
+      "minimum_distance_mm": 0.19999999997479218,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "cradle_bolt_a",
+      "b": "guide_cover",
+      "minimum_distance_mm": 0.1999999999999993,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "cradle_bolt_a",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 3.407842369894148e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898311
+    },
+    {
+      "a": "cradle_bolt_b",
+      "b": "cradle_nut_b",
+      "minimum_distance_mm": 0.19999999994356085,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "cradle_bolt_b",
+      "b": "guide_cover",
+      "minimum_distance_mm": 0.1999999999999993,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "cradle_bolt_b",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 4.972991096084912e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898311
+    },
+    {
+      "a": "cradle_nut_a",
+      "b": "guide_cover",
+      "minimum_distance_mm": 5.242619092239428e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "cradle_nut_a",
+      "b": "guide_post_nr",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "cradle_nut_b",
+      "b": "guide_cover",
+      "minimum_distance_mm": 1.0692003815667233e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884982
+    },
+    {
+      "a": "elbow_cradle_bolt",
+      "b": "elbow_cradle_nut",
+      "minimum_distance_mm": 0.19999999999999002,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_cradle_bolt",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.20000000000137022,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_cradle_bolt",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.67909167389831
+    },
+    {
+      "a": "elbow_cradle_nut",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "elbow_mount",
+      "b": "elbow_mount_bolt",
+      "minimum_distance_mm": 0.1999999999999993,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_mount_bolt",
+      "b": "elbow_mount_nut",
+      "minimum_distance_mm": 0.19999999999810542,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_mount_bolt",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.19999999999480483,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_mount_bolt",
+      "b": "upper_arm",
+      "minimum_distance_mm": 6.192517778975812e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898311
+    },
+    {
+      "a": "elbow_mount_nut",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 1.4232332402722407e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "elbow_nut",
+      "b": "elbow_shaft",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_nut",
+      "b": "elbow_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "elbow_shaft",
+      "b": "elbow_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147783
+    },
+    {
+      "a": "elbow_shaft",
+      "b": "elbow_washer_rotating",
+      "minimum_distance_mm": 0.09999999999999432,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_shaft",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.19999999999998164,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_shaft",
+      "b": "forearm",
+      "minimum_distance_mm": 0.19999999999998863,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_shaft",
+      "b": "upper_arm",
+      "minimum_distance_mm": 0.19999999999317328,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "elbow_washer_head",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "elbow_washer_rotating",
+      "b": "elbow_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "forearm",
+      "b": "wrist_mount_bolt",
+      "minimum_distance_mm": 2.175421479151797e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "forearm",
+      "b": "wrist_shaft",
+      "minimum_distance_mm": 0.19999999999874218,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_fl",
+      "b": "guide_cover",
+      "minimum_distance_mm": 9.509175142144065e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_fl",
+      "b": "guide_nut_fl",
+      "minimum_distance_mm": 0.19999999998769863,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_fl",
+      "b": "guide_post_fl",
+      "minimum_distance_mm": 0.19999999998887177,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_fl",
+      "b": "palm",
+      "minimum_distance_mm": 0.19999999993569073,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_fr",
+      "b": "guide_cover",
+      "minimum_distance_mm": 9.509175142144065e-12,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_fr",
+      "b": "guide_nut_fr",
+      "minimum_distance_mm": 0.199999999987682,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_fr",
+      "b": "guide_post_fr",
+      "minimum_distance_mm": 0.19999999998887732,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_fr",
+      "b": "palm",
+      "minimum_distance_mm": 0.19999999993570822,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nl",
+      "b": "guide_cover",
+      "minimum_distance_mm": 4.8405049961552616e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_nl",
+      "b": "guide_nut_nl",
+      "minimum_distance_mm": 0.199999999930604,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nl",
+      "b": "guide_post_nl",
+      "minimum_distance_mm": 0.19999999995559556,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nl",
+      "b": "palm",
+      "minimum_distance_mm": 0.19999999999929985,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nr",
+      "b": "guide_cover",
+      "minimum_distance_mm": 4.8405049961552616e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "guide_bolt_nr",
+      "b": "guide_nut_nr",
+      "minimum_distance_mm": 0.19999999993060683,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nr",
+      "b": "guide_post_nr",
+      "minimum_distance_mm": 0.1999999999556035,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nr",
+      "b": "palm",
+      "minimum_distance_mm": 0.19999999999930487,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_bolt_nr",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.4500000000713536,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "guide_nut_fl",
+      "b": "palm",
+      "minimum_distance_mm": 4.2160288985506424e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "guide_nut_fr",
+      "b": "palm",
+      "minimum_distance_mm": 4.2160288985506424e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "guide_nut_nl",
+      "b": "palm",
+      "minimum_distance_mm": 6.061050651955736e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "guide_nut_nr",
+      "b": "palm",
+      "minimum_distance_mm": 6.061050651955736e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "palm",
+      "b": "wrist_shaft",
+      "minimum_distance_mm": 0.1999999999999812,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_elbow",
+      "b": "retainer_elbow_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898325
+    },
+    {
+      "a": "retainer_elbow",
+      "b": "retainer_elbow_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_elbow_bolt_1",
+      "b": "retainer_elbow_nut_1",
+      "minimum_distance_mm": 0.1999999999999847,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_elbow_bolt_1",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.19999999999308135,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_elbow_bolt_2",
+      "b": "retainer_elbow_nut_2",
+      "minimum_distance_mm": 0.19999999999999327,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_elbow_bolt_2",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.19999999999617718,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_elbow_nut_1",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_elbow_nut_2",
+      "b": "saddle_elbow",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_gripper",
+      "b": "retainer_gripper_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_gripper",
+      "b": "retainer_gripper_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_gripper_bolt_1",
+      "b": "retainer_gripper_nut_1",
+      "minimum_distance_mm": 0.1999999999999706,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_gripper_bolt_1",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.19999999991543488,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_gripper_bolt_2",
+      "b": "retainer_gripper_nut_2",
+      "minimum_distance_mm": 0.1999999999999835,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_gripper_bolt_2",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.1999999999851304,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_gripper_nut_1",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_gripper_nut_2",
+      "b": "saddle_gripper",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_shoulder",
+      "b": "retainer_shoulder_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898329
+    },
+    {
+      "a": "retainer_shoulder",
+      "b": "retainer_shoulder_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_shoulder_bolt_1",
+      "b": "retainer_shoulder_nut_1",
+      "minimum_distance_mm": 0.19999999999999146,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_shoulder_bolt_1",
+      "b": "saddle_shoulder",
+      "minimum_distance_mm": 0.1999999999999804,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_shoulder_bolt_2",
+      "b": "retainer_shoulder_nut_2",
+      "minimum_distance_mm": 0.19999999999999396,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_shoulder_bolt_2",
+      "b": "saddle_shoulder",
+      "minimum_distance_mm": 0.19999999999999432,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_shoulder_nut_1",
+      "b": "saddle_shoulder",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_shoulder_nut_2",
+      "b": "saddle_shoulder",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_wrist",
+      "b": "retainer_wrist_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_wrist",
+      "b": "retainer_wrist_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898322
+    },
+    {
+      "a": "retainer_wrist_bolt_1",
+      "b": "retainer_wrist_nut_1",
+      "minimum_distance_mm": 0.19999999999997592,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_wrist_bolt_1",
+      "b": "saddle_wrist",
+      "minimum_distance_mm": 0.19999999999009163,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_wrist_bolt_2",
+      "b": "retainer_wrist_nut_2",
+      "minimum_distance_mm": 0.19999999999998508,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_wrist_bolt_2",
+      "b": "saddle_wrist",
+      "minimum_distance_mm": 0.19999999991497255,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_wrist_nut_1",
+      "b": "saddle_wrist",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_wrist_nut_2",
+      "b": "saddle_wrist",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_yaw",
+      "b": "retainer_yaw_bolt_1",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.67909167389831
+    },
+    {
+      "a": "retainer_yaw",
+      "b": "retainer_yaw_bolt_2",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898318
+    },
+    {
+      "a": "retainer_yaw_bolt_1",
+      "b": "retainer_yaw_nut_1",
+      "minimum_distance_mm": 0.19999999999999787,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_yaw_bolt_1",
+      "b": "saddle_yaw",
+      "minimum_distance_mm": 0.19999999999999488,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_yaw_bolt_2",
+      "b": "retainer_yaw_nut_2",
+      "minimum_distance_mm": 0.1999999999999964,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_yaw_bolt_2",
+      "b": "saddle_yaw",
+      "minimum_distance_mm": 0.19999999999999507,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "retainer_yaw_nut_1",
+      "b": "saddle_yaw",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "retainer_yaw_nut_2",
+      "b": "saddle_yaw",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "saddle_shoulder",
+      "b": "shoulder_cradle_bolt",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.679091673898307
+    },
+    {
+      "a": "saddle_wrist",
+      "b": "wrist_cradle_bolt",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 14.67909167389831
+    },
+    {
+      "a": "shoulder_cradle_bolt",
+      "b": "shoulder_cradle_nut",
+      "minimum_distance_mm": 0.19999999999999465,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "shoulder_cradle_bolt",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.20000000000000284,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "shoulder_cradle_nut",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "shoulder_nut",
+      "b": "shoulder_shaft",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "shoulder_nut",
+      "b": "shoulder_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "shoulder_shaft",
+      "b": "shoulder_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147783
+    },
+    {
+      "a": "shoulder_shaft",
+      "b": "shoulder_washer_rotating",
+      "minimum_distance_mm": 0.09999999999999432,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "shoulder_shaft",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.1999999999999949,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "shoulder_shaft",
+      "b": "upper_arm",
+      "minimum_distance_mm": 0.1999999999999983,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "shoulder_washer_head",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "shoulder_washer_rotating",
+      "b": "shoulder_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "tray",
+      "b": "yaw_shaft",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "tray",
+      "b": "yaw_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "turntable",
+      "b": "yaw_shaft",
+      "minimum_distance_mm": 0.1999999999999983,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "turntable",
+      "b": "yaw_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.63760589507524
+    },
+    {
+      "a": "wrist_cradle_bolt",
+      "b": "wrist_cradle_nut",
+      "minimum_distance_mm": 0.19999999999997678,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_cradle_bolt",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.20000000000133736,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_cradle_nut",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884986
+    },
+    {
+      "a": "wrist_mount",
+      "b": "wrist_mount_bolt",
+      "minimum_distance_mm": 0.1999999999754338,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_mount_bolt",
+      "b": "wrist_mount_nut",
+      "minimum_distance_mm": 0.1999999999905089,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_mount_bolt",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.19999999998221946,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_mount_nut",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 1.3317269389192423e-11,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 23.090706003884982
+    },
+    {
+      "a": "wrist_nut",
+      "b": "wrist_shaft",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_nut",
+      "b": "wrist_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "wrist_shaft",
+      "b": "wrist_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147783
+    },
+    {
+      "a": "wrist_shaft",
+      "b": "wrist_washer_rotating",
+      "minimum_distance_mm": 0.09999999999999432,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_shaft",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.1999999999999818,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "wrist_washer_head",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "wrist_washer_rotating",
+      "b": "wrist_yoke",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 55.637605895075225
+    },
+    {
+      "a": "yaw_nut",
+      "b": "yaw_shaft",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    },
+    {
+      "a": "yaw_nut",
+      "b": "yaw_washer_rotating",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 45.81824389701498
+    },
+    {
+      "a": "yaw_shaft",
+      "b": "yaw_washer_head",
+      "minimum_distance_mm": 0.0,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 57.30265000147781
+    },
+    {
+      "a": "yaw_shaft",
+      "b": "yaw_washer_rotating",
+      "minimum_distance_mm": 0.09999999999999991,
+      "overlap_mm3": 0.0,
+      "coplanar_bearing_area_mm2": 0.0
+    }
+  ],
+  "elapsed_seconds": 6.351
+}

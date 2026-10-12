@@ -1,0 +1,14 @@
+{
+  "schema_version": "wright.process-input-snapshot/1",
+  "snapshot_id": "inputs-a96fb2aecfec4769988a711784ea16d8",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/transfer-privacy-canary-001.workflow.wflow",
+    "source_digest": "a0960572adc26e59bb6725498c2b8537a4dd33d5e86e023c70ac6685a9f518b0",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "created_at": "2026-10-12T17:19:38.769015+00:00",
+  "bindings": [],
+  "digest": "10ad843e695864e5d02917495d3308615385298bfc0476f86500194f4815ac7a"
+}

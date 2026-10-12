@@ -1,0 +1,27 @@
+{
+  "run_id": "bddd667df90544018d1b2d1d004abf1a",
+  "scope": "Additive requirements and visual review; original specification, plan, test verdicts and report remain unchanged",
+  "original_review_status_counts": {"PASS": 11, "FAIL": 0, "UNVERIFIED": 1},
+  "original_overall_status": "UNVERIFIED",
+  "supplied_final_geometry_numeric_audit": "PASS",
+  "presentation_comparison": {
+    "all_six_images_visually_inspected": true,
+    "isometric": "Six openings, matching major faces and camera class; neutral matte gray studio render",
+    "top": "Matching three-column/two-row pattern and rectangular outline",
+    "front": "Matching side silhouette with the Z-directed holes correctly hidden",
+    "browser": "All six images load; no page error or horizontal overflow"
+  },
+  "authoring_finding": {
+    "requirement_id": "R02",
+    "original_user_prompt": "Create one solid rectangular block, 80 mm along X, 50 mm along Y and 16 mm along Z; add six specified holes and verify the resulting geometry",
+    "generated_addition": "The specification adds before hole subtraction; the test plan then requires a retained intermediate geometric state",
+    "actual_evidence": "Final dimensions, bounds, all six bore positions/axes/depths, one-solid count and analytical volume pass the original numerical criteria",
+    "disposition": "Retain original R02 UNVERIFIED. Record a prospective authoring-provenance defect; do not rewrite its verdict or infer a missing historical state from source code."
+  },
+  "limitations": [
+    "128-sample renders retain visible grain; these are process-proof images.",
+    "Visual comparison does not establish dimensions or physical acceptance.",
+    "This report browser check does not verify the workflow editor or authenticated SteveCAD navigation."
+  ],
+  "original_outputs_edited": false
+}

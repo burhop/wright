@@ -139,6 +139,17 @@ def workflow_decision_kwargs(decide, step, instruction_set, invocation_observer=
         "invocation_observer": invocation_observer,
         "expected_resolution": getattr(step, "model_resolution", None) or None,
     }
+    context_budget = getattr(step, "mcp_context_budget_bytes", None)
+    if context_budget is not None:
+        if not accepts_kwargs and (
+            "context_budget_bytes" not in parameters
+            or parameters["context_budget_bytes"].kind
+            is inspect.Parameter.POSITIONAL_ONLY
+        ):
+            raise _invalid(
+                "The configured model adapter does not support this saved context budget."
+            )
+        optional["context_budget_bytes"] = context_budget
     return {
         name: value
         for name, value in optional.items()
@@ -938,7 +949,9 @@ class WorkflowMcpRuntime:
             )
         return tools
 
-    async def run_task(self, step, prompt, decide, emit, *, cad=None, images=None):
+    async def run_task(
+        self, step, prompt, decide, emit, *, cad=None, images=None, captured_images=None
+    ):
         """One isolated task, one server, bounded decisions, existing gateway calls."""
         from .workflow_source_execution import WorkflowSourceExecutionError
 
@@ -1006,6 +1019,11 @@ class WorkflowMcpRuntime:
             },
         ]
         records, succeeded, rejected_recipes = [], set(), set()
+        from .workflow_mcp_reconciliation import ReconciliationTracker
+
+        reconciliation = ReconciliationTracker(
+            getattr(step, "mcp_reconciliation_contracts", {})
+        )
         action_assumptions = {}
         from .workflow_mcp_images import MAX_IMAGES_PER_TASK, MAX_TASK_IMAGE_BYTES
 
@@ -1076,6 +1094,10 @@ class WorkflowMcpRuntime:
                     attempt=index + 1,
                 )
                 prepared_invocation["capture_scope"] = "runtime_decision_input"
+                if getattr(step, "mcp_context_budget_bytes", None) is not None:
+                    prepared_invocation["context_budget_bytes"] = (
+                        step.mcp_context_budget_bytes
+                    )
                 await emit(
                     "model_invocation",
                     task_id=step.id,
@@ -1446,9 +1468,13 @@ class WorkflowMcpRuntime:
                         f"{step.title}: the same rejected recipe was requested again.",
                         "Correct the conflicting parameter names and their references before retrying.",
                     )
-                if signature in succeeded and not repeatable_call(
-                    current_tool, arguments
-                ):
+                repeat_allowed = (
+                    reconciliation.permit_repeat(signature, current_tool.tool_name)
+                    if signature in succeeded
+                    and current_tool.tool_name in reconciliation.contracts
+                    else repeatable_call(current_tool, arguments)
+                )
+                if signature in succeeded and not repeat_allowed:
                     raise _invalid(
                         f"{step.title}: a completed operation ({tool.title or tool.tool_name}) was requested again.",
                         "Inspect the task log and clarify the remaining work before retrying.",
@@ -1484,6 +1510,17 @@ class WorkflowMcpRuntime:
                             task_deadline=task_deadline,
                         )
                         succeeded.add(signature)
+                        receipt = reconciliation.observe(
+                            signature, current_tool.tool_name, arguments, value
+                        )
+                        if receipt is not None:
+                            await emit(
+                                "operation_reconciled",
+                                task_id=step.id,
+                                tool=current_tool.name,
+                                request_signature_digest=canonical_digest(signature),
+                                **receipt,
+                            )
                         if action_instructions:
                             action_assumptions.clear()
                             action_assumptions.update(proposed_accumulated)
@@ -1535,6 +1572,21 @@ class WorkflowMcpRuntime:
                 if observation.get("evidence"):
                     record["image_observations"] = observation["evidence"]
                 records.append(record)
+                if (
+                    captured_images is not None
+                    and status == "succeeded"
+                    and observation.get("parts")
+                ):
+                    captured_images.append(
+                        {
+                            "tool": tool.name,
+                            "tool_name": tool.tool_name,
+                            "arguments": arguments,
+                            "tool_call_number": len(records),
+                            "parts": observation["parts"],
+                            "evidence": observation["evidence"],
+                        }
+                    )
                 if cad:
                     cad.records.append(record)
                 await emit(
@@ -1576,7 +1628,9 @@ class WorkflowMcpRuntime:
                     ensure_ascii=False,
                     default=dict,
                 )
-                if len(result.encode()) > 262_144:
+                if len(result.encode()) > max(
+                    262_144, getattr(step, "mcp_context_budget_bytes", None) or 0
+                ):
                     raise _invalid(
                         f"{step.title}: the tool result exceeds the task context limit.",
                         "Request a smaller result.",

@@ -14,7 +14,7 @@ from test_workflow_hermes_normalization import normalize  # noqa: F401
 from test_workflow_transcript_evidence import TOOL, observation_exchange, reply
 
 
-def route_to_transport(monkeypatch, handler):
+def route_to_transport(monkeypatch, handler, expected_budget=200_000):
     actual_bridge = hermes_openai_bridge.HermesOpenAICompatibilityBridge
     monkeypatch.setattr(
         report_generation,
@@ -26,7 +26,7 @@ def route_to_transport(monkeypatch, handler):
 
     def construct(settings, **kwargs):
         # Primary and self-contained repair both use the complete fixed budget.
-        assert settings.maximum_translation_prompt_bytes == 200_000
+        assert settings.maximum_translation_prompt_bytes == expected_budget
         return actual_bridge(
             settings, transport=kwargs.get("transport", httpx.MockTransport(handler))
         )
@@ -146,3 +146,58 @@ async def test_workflow_policy_still_fails_before_http_for_unrepresentable_evide
     route_to_transport(monkeypatch, handler)
     with pytest.raises(ValueError, match="workflow_context_limit"):
         await report_generation.decide_workflow_tool_action(messages, [TOOL])
+
+
+@pytest.mark.asyncio
+async def test_saved_larger_budget_preserves_large_adverse_results(
+    monkeypatch, normalize
+):
+    messages = [{"role": "user", "content": "Inspect every recorded failure."}]
+    for index in range(7):
+        messages.extend(
+            observation_exchange(
+                f"required-{index}",
+                {"isSatisfied": False, "evidence": str(index) * 31000},
+                number=index + 1,
+            )
+        )
+    captures = []
+
+    async def handler(call):
+        content = json.loads(call.content)["messages"][1]["content"]
+        normalized = normalize(content)
+        text = (
+            normalized
+            if isinstance(normalized, str)
+            else "\n".join(p["text"] for p in normalized if p["type"] == "text")
+        )
+        actual = json.loads(text.split("\n", 1)[1])["conversation"]
+        for original, observed in zip(messages, actual):
+            if original["role"] == "tool":
+                observed_content = observed["content"]
+                if isinstance(observed_content, str):
+                    observed_content = json.loads(observed_content)
+                assert observed_content == json.loads(original["content"])
+        assert len(actual) == len(messages)
+        return reply()
+
+    async def observe(value):
+        captures.append(value)
+
+    route_to_transport(monkeypatch, handler, expected_budget=400_000)
+    await report_generation.decide_workflow_tool_action(
+        messages,
+        [TOOL],
+        context_budget_bytes=400_000,
+        invocation_observer=observe,
+    )
+    assert captures[0]["context_budget_bytes"] == 400_000
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("budget", [True, "400000", 16383, 1048577])
+async def test_invalid_saved_budget_rejected_before_model_setup(budget):
+    with pytest.raises(ValueError, match="context budget"):
+        await report_generation.decide_workflow_tool_action(
+            [], [], context_budget_bytes=budget
+        )

@@ -1,0 +1,114 @@
+{
+  "passed": true,
+  "checks": {
+    "one_solid": true,
+    "dimensions": true,
+    "hole_count": true,
+    "hole_positions": true,
+    "diameter_depth_axes": true,
+    "analytical_volume": true,
+    "capture_identities": true
+  },
+  "measurements": {
+    "bounds_mm": [
+      60.0,
+      40.0,
+      12.0
+    ],
+    "center_of_mass_mm": [
+      29.999999999999982,
+      19.999999999999993,
+      5.999999999999998
+    ],
+    "components": 1,
+    "faces": 10,
+    "solids": 1,
+    "surface_area_mm2": 7878.584013175396,
+    "units": "mm",
+    "volume_mm3": 27442.831973649212
+  },
+  "holes": [
+    {
+      "area_mm2": 226.19,
+      "at_mm": [
+        10.0,
+        10.0,
+        12.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "stock"
+      ],
+      "diameter_mm": 6.0,
+      "length_mm": 12.0,
+      "name": "part:h1.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 226.19,
+      "at_mm": [
+        50.0,
+        10.0,
+        12.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "stock"
+      ],
+      "diameter_mm": 6.0,
+      "length_mm": 12.0,
+      "name": "part:h2.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 226.19,
+      "at_mm": [
+        10.0,
+        30.0,
+        12.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "stock"
+      ],
+      "diameter_mm": 6.0,
+      "length_mm": 12.0,
+      "name": "part:h3.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 226.19,
+      "at_mm": [
+        50.0,
+        30.0,
+        12.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "stock"
+      ],
+      "diameter_mm": 6.0,
+      "length_mm": 12.0,
+      "name": "part:h4.wall(0)",
+      "type": "cylinder"
+    }
+  ],
+  "analytical_volume_mm3": 27442.83197364921,
+  "scope": "Independent numeric checks from full native inspection receipts"
+}

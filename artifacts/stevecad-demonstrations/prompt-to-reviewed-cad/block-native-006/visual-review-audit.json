@@ -1,0 +1,26 @@
+{
+  "run_id": "15a0b7ad27374a0e9375923cc4dc2725",
+  "scope": "Agent visual and requirements review of the original completed outputs; not human acceptance or physical testing",
+  "original_review_status_counts": {"PASS": 10, "FAIL": 0, "UNVERIFIED": 0},
+  "supplied_requirements_preserved": true,
+  "checks": {
+    "specification_and_plan_preserve_original_geometry_and_tolerances": true,
+    "presentation_finish_applies_to_studio_renderings": true,
+    "all_six_original_images_visually_inspected": true,
+    "isometric_pair_has_four_openings_and_matching_visible_faces": true,
+    "top_pair_has_four_openings_in_matching_two_by_two_pattern": true,
+    "front_pair_has_matching_rectangle_and_correctly_hidden_holes": true,
+    "three_renders_have_neutral_matte_gray_appearance": true,
+    "report_carries_all_ten_requirement_results_and_measured_values": true,
+    "editable_link_matches_actual_write_and_build_provider_receipts": true,
+    "browser_loads_all_six_images_without_errors_or_horizontal_overflow": true
+  },
+  "limitations": [
+    "Visible render grain remains at the qualified 128-sample setting; these are process-proof images, not the selected 512-sample robot marketing finals.",
+    "Front-view background is darker than the floor-backed top/isometric backgrounds. No uniform-background requirement was supplied.",
+    "Image inspection is qualitative; dimensional findings use the actual B-rep observations and the separate independent arithmetic audit.",
+    "Browser checking here covers the saved report, not Wright's workflow editor or the authenticated SteveCAD page."
+  ],
+  "original_outputs_edited": false,
+  "digital_block_process_proof": "PASS"
+}

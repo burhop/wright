@@ -22,7 +22,9 @@ listed 26 prefixed tools and proxied `api_reference(name="Model.box")` successfu
 Redacted receipts are in `docs/mcp-catalog/evidence/stevecad-2026-10-11/`.
 This proves connection and read-only provider use, not CAD correctness.
 
-Next: run a disposable part build/export with independent dimensional checks.
+The disposable coupon build/export and subsequent block workflow now have
+separate evidence. Consult the [usage guide](../usage-guides/stevecad-mcp.md) before
+new work; it links the actual outputs, practices and remaining capability limits.
 Report native Windows and clean Linux container evidence separately. A browser
 session alone does not authorize an MCP client; never copy session cookies.
 

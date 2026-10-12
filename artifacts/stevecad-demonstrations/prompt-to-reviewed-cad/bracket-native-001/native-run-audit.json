@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "run_id": "90087fceacdc494d91eaff6f65d9173d",
+  "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+  "elapsed_seconds": 1204.087,
+  "document_id": "eb50444f-232a-4fb9-9afc-72d8695d5667",
+  "revision": 1,
+  "inspection_build_id": "d65a6b4a-06c4-4240-8f43-18228b08fa26",
+  "export_build_id": "d65a6b4a-06c4-4240-8f43-18228b08fa26",
+  "native_body_matches": 1,
+  "maximum_mesh_extent_error_mm": 3.814697265625e-06,
+  "images": [
+    {
+      "filename": "cad-isometric.png",
+      "size": [
+        800,
+        640
+      ],
+      "sha256": "bf2f8bcfbd4228672048e335dd05681276ea51daac1102dfbbbe5836fdfd6d8b"
+    },
+    {
+      "filename": "render_isometric.png",
+      "size": [
+        1000,
+        720
+      ],
+      "sha256": "9b2c05b95af4d7a349b6c102bbe2f4132b12d95825759f9c4b7ca555a7ccac0e"
+    },
+    {
+      "filename": "cad-top.png",
+      "size": [
+        800,
+        640
+      ],
+      "sha256": "80ad0480ec5e35ef76008a5e8f11c75f6f950f4c49ad340cae5f76dbccd18c56"
+    },
+    {
+      "filename": "render_top.png",
+      "size": [
+        1000,
+        720
+      ],
+      "sha256": "0abb1756155d13ddc74c07e04a61de2b01ecdaa8232908ba1cd71ff372fab8fe"
+    },
+    {
+      "filename": "cad-front.png",
+      "size": [
+        800,
+        640
+      ],
+      "sha256": "c9eadc29df8d95205555bd953d06b4f2910bf2de694ff0cf4493a7cca027bd8a"
+    },
+    {
+      "filename": "render_front.png",
+      "size": [
+        1000,
+        720
+      ],
+      "sha256": "3983819a04850e18908e4a605ccc0358964768fe880a887149d5a2d49cc441f8"
+    }
+  ],
+  "all_file_hashes_verified": true,
+  "credential_bearing_artifacts_saved": false,
+  "original_CAD_test_status_counts": {
+    "PASS": 11,
+    "UNVERIFIED": 1
+  },
+  "review_references_all_six_images": true,
+  "independent_geometry_checks": {},
+  "scope": "Digital runtime, native geometry and presentation handoffs. Visual review, UI usability and physical acceptance are separately assessed.",
+  "provider_internal_directories_not_deliverables": [
+    "handoff/.agentcad"
+  ]
+}

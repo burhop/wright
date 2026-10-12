@@ -1,0 +1,57 @@
+[
+  {
+    "path": "01-create-two-instances.json",
+    "bytes": 2708,
+    "sha256": "70ab8e7e70638f5463ae181b576b05d7897dd66b4b6657a4d324d6d30cb86f41"
+  },
+  {
+    "path": "02-generate-two-instances.json",
+    "bytes": 9356,
+    "sha256": "9e39e1e28cc7327e6072ba5a6a7bb9c5659be53168d3b9aa627ece85ddc8b146"
+  },
+  {
+    "path": "03-show-second-instance-1.png",
+    "bytes": 7785,
+    "sha256": "9d48b9d2b94d78d0ba567493f53a9581ff8f31a49092efb9a02e3b9b34751664"
+  },
+  {
+    "path": "03-show-second-instance.json",
+    "bytes": 3421,
+    "sha256": "c415202c051a41adbfd010f279743fd088afe0357629180dcb97323a680c94d8"
+  },
+  {
+    "path": "04-control-first-instance-1.png",
+    "bytes": 7079,
+    "sha256": "b697d30de2b1ee674a7f899d18c9424c6e8f5df4f3c954ecc4bc31e947e97b96"
+  },
+  {
+    "path": "04-control-first-instance.json",
+    "bytes": 3422,
+    "sha256": "12e603c255ff2423d22a4912f0fab3d1225732f5b64f82fce45f635e6242a25d"
+  },
+  {
+    "path": "05-current-inspection-contract.json",
+    "bytes": 6442,
+    "sha256": "11c39e4a4ea07741a10f1d95771a6c3b18b304aa941134381906d789576a9eab"
+  },
+  {
+    "path": "components/marker.py",
+    "bytes": 146,
+    "sha256": "2043657568c980636bdb710791b97e21c6d359fd419fc406b77c9dbb42b8348f"
+  },
+  {
+    "path": "main.py",
+    "bytes": 208,
+    "sha256": "285278430739bb3dab6fcdb076f067cf422b2010e7c7188ad81aeb4f0a51dc38"
+  },
+  {
+    "path": "README.md",
+    "bytes": 2351,
+    "sha256": "026a7363945a05068021d14dd75563f5bd414d9debe64a5e32152a08648be1f7"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 1719,
+    "sha256": "a50111a7977aeb32b53f23c575a0ea254c4b07028dc709bba89b3d2669ef44fd"
+  }
+]

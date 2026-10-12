@@ -2873,3 +2873,26 @@ receipts, source tables and successful native exports are in
 `artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.
 No host installs, Solid Edge operations, public catalog promotion, total-drop
 qualification or campaign credit are implied.
+
+## Selected generic transfer MCP — 12 October 2026
+
+Independent `tumf/mcp-shell-server` 1.1.12 at commit
+`b71b694b463883fae4ae12dfb111d28a72c405da` runs unmodified in selected image
+`wright-stevecad-transfer-clean:001` (SHA
+`963478d283a142f63b7cb377865a74eded05760b5d0ecfa80f685c80196ffbcc`).
+The image contains Python 3.12, MCP 1.30.0, h11 0.16.0, curl and jq, with UID
+10001. Use the ordinary module entry function
+`python -c "from mcp_shell_server import main; main()"`.
+
+The exact retained registration in
+`artifacts/stevecad-demonstrations/qualification/generic-transfer-001/basis.json`
+records its read-only root, bounded tmpfs/resources, dropped capabilities,
+no-new-privileges, executable allowlist and single workspace output mount.
+The internal network's explicit CONNECT proxy allows only `stevecad.studio:443`.
+Neither credentials nor a Docker socket are mounted. Wright's base image is
+unchanged. Native Windows gateway initialization, tool listing and backend jq
+probe pass; this is not full clean-Linux-Wright catalog qualification.
+
+See the [usage guide](usage-guides/mcp-shell-server.md) for stdin/text ports,
+pipeline and newline constraints, false-success detection, privacy canaries and
+the successful 62-second automatic CAD export-to-three-render handoff.

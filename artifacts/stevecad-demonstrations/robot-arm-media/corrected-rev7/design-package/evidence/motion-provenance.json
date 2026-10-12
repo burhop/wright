@@ -1,0 +1,113 @@
+{
+  "application": "Three.js 0.185.1",
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "geometry_manifest_sha256": "97556b745c072eb01f2fed47a91d4ccc91e1f2626eb8c8355cd0f332825bca98",
+  "kinematics_basis_sha256": "fcf58f0aff423f4eda1527a4955485587b19aa1d3dd06486852e68d24cfdbe41",
+  "scope": "Actual STEP-derived CAD triangles and recorded native joint axes/tree/couplings/keyframes. Offline presentation playback, not SteveCAD Studio capture, a new collision/physics simulation, continuous clearance proof or physical operation.",
+  "timeline_seconds": 8,
+  "frame_rate": 24,
+  "frames": 192,
+  "frame_method": "Deterministic timeline frames i/24, encoded later; no achieved realtime rate claim",
+  "animation": {
+    "check": {
+      "at_rest": [],
+      "clear": true,
+      "collisions": [],
+      "of": 33,
+      "samples": 33
+    },
+    "duration": 8,
+    "easing": "linear",
+    "keys": [
+      {
+        "pose": "home",
+        "time": 0,
+        "values": {
+          "base_yaw": 0,
+          "elbow": 0,
+          "gripper_opening": 0,
+          "shoulder": 0,
+          "wrist_pitch": 0
+        }
+      },
+      {
+        "pose": "reach",
+        "time": 2,
+        "values": {
+          "base_yaw": 60,
+          "elbow": -45,
+          "gripper_opening": 25,
+          "shoulder": -30,
+          "wrist_pitch": 45
+        }
+      },
+      {
+        "pose": "gripper_open",
+        "time": 4,
+        "values": {
+          "base_yaw": 0,
+          "elbow": 0,
+          "gripper_opening": 25,
+          "shoulder": 0,
+          "wrist_pitch": 0
+        }
+      },
+      {
+        "pose": "folded",
+        "time": 6,
+        "values": {
+          "base_yaw": -60,
+          "elbow": 75,
+          "gripper_opening": 0,
+          "shoulder": 60,
+          "wrist_pitch": -45
+        }
+      },
+      {
+        "pose": "home",
+        "time": 8,
+        "values": {
+          "base_yaw": 0,
+          "elbow": 0,
+          "gripper_opening": 0,
+          "shoulder": 0,
+          "wrist_pitch": 0
+        }
+      }
+    ],
+    "loop": false,
+    "name": "eight_second_path",
+    "targets": [
+      "base_yaw",
+      "elbow",
+      "gripper_opening",
+      "shoulder",
+      "wrist_pitch"
+    ]
+  },
+  "captures": [
+    {
+      "pose": "home",
+      "file": "robot-home.png",
+      "sha256": "04c0b78766d78f246a12909fcca0947d64a4b0613cc473bc686e2d87ebd8ff6f"
+    },
+    {
+      "pose": "reach",
+      "file": "robot-reach.png",
+      "sha256": "b48aaeb108f8ac6e964a86340c789c1547a59bd3e3bd83448b4c5a336b606ebf"
+    },
+    {
+      "pose": "folded",
+      "file": "robot-folded.png",
+      "sha256": "60ff4a6f3da78d63c8928c7eb0267a50048a6a7f02ac091c583b08dbdc7c74c6"
+    },
+    {
+      "pose": "gripper_open",
+      "file": "robot-gripper_open.png",
+      "sha256": "618e7f4813f87490f130a28b48992691fff8e9e4484865beaf24d59d2ce996e1"
+    }
+  ],
+  "errors": []
+}

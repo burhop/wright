@@ -1,0 +1,10 @@
+{
+  "scope": "Read-only reconciliation after one timeout; same exact successful current build exposes a nonempty native STEP artifact. Retrieve that cached artifact under generate_model existing-revision contract; do not create/edit a document or relabel revision6.",
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "revision": 7,
+  "current": true,
+  "model_status": "succeeded",
+  "native_step_artifact_present": true,
+  "original_timeout_receipt": "robot-rev7-native-step.json",
+  "reconciliation_receipt": "robot-rev7-export-reconcile-read.json"
+}

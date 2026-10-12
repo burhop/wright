@@ -26,6 +26,89 @@ from test_workflow_transcript_evidence import (
 normalize = hermes_test_support.normalize
 
 
+def test_exact_host_json_text_copy_is_omitted_without_changing_native_result():
+    result = {
+        "source": 'print("μm")\n',
+        "revision": 3,
+        "problems": [{"status": "error", "value": 0.19}],
+        "text": "Native note",
+    }
+    envelope = {
+        "tool_call_number": 2,
+        "status": "succeeded",
+        "result": result,
+        "text": json.dumps(result, indent=2),
+    }
+    message = {"role": "tool", "tool_call_id": "owned", "content": json.dumps(envelope)}
+    original = copy.deepcopy(message)
+    actual, references = project_tool_message(message)
+    decoded = json.loads(actual["content"])
+    assert decoded == {k: v for k, v in envelope.items() if k != "text"}
+    assert decoded["result"]["text"] == "Native note"
+    assert not references and message == original
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        'Native error: {"value": 1}',
+        '{"value": 1} and another failure',
+        '{"value": true}',
+        '{"value": 1.0}',
+        '{"value": 1, "value": 2}',
+        '{"value": NaN}',
+    ],
+)
+def test_nonidentical_host_text_remains_complete(text):
+    envelope = {
+        "tool_call_number": 1,
+        "status": "succeeded",
+        "result": {"value": 1},
+        "text": text,
+    }
+    message = {"role": "tool", "tool_call_id": "owned", "content": json.dumps(envelope)}
+    projected, _ = project_tool_message(message)
+    assert json.loads(projected["content"])["text"] == text
+
+
+@pytest.mark.asyncio
+async def test_large_duplicate_host_text_survives_real_normalization(normalize):
+    result = {
+        "parts": [{"id": f"part_{i}", "source": '"μm" ' * 320} for i in range(30)],
+        "errors": ["Unretained shaft"],
+        "revision": 4,
+    }
+    messages = [
+        {
+            "role": "user",
+            "content": "Inspect the complete assembly; retain all failures.",
+        },
+        *observation_exchange("assembly", result),
+    ]
+    envelope = json.loads(messages[-1]["content"])
+    envelope["text"] = json.dumps(result, indent=2)
+    messages[-1]["content"] = json.dumps(envelope)
+    original = copy.deepcopy(messages)
+
+    async def handler(call):
+        content = json.loads(call.content)["messages"][1]["content"]
+        normalized = normalize(content)
+        text = (
+            normalized
+            if isinstance(normalized, str)
+            else "\n".join(p["text"] for p in normalized if p["type"] == "text")
+        )
+        transcript = json.loads(text.split("\n", 1)[1])
+        actual = transcript["conversation"][-1]["content"]
+        if isinstance(actual, str):
+            actual = json.loads(actual)
+        assert actual["result"] == result and "text" not in actual
+        return reply()
+
+    await bridge(handler).complete(request(messages))
+    assert messages == original
+
+
 def report(identity="first", count=3):
     observations = [
         {

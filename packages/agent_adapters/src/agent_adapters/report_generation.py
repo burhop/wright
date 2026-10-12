@@ -563,6 +563,7 @@ async def decide_workflow_tool_action(
     instruction_override=None,
     invocation_observer=None,
     expected_resolution=None,
+    context_budget_bytes: int | None = None,
 ) -> dict:
     """Reuse Hermes' validated single-action protocol adapter for native tasks."""
     from .hermes_openai_bridge import (
@@ -572,6 +573,11 @@ async def decide_workflow_tool_action(
     )
 
     _validate_recovery_output_format(output_format)
+    if context_budget_bytes is not None and (
+        type(context_budget_bytes) is not int
+        or not 16_384 <= context_budget_bytes <= 1_048_576
+    ):
+        raise ValueError("Workflow context budget must be 16384–1048576 bytes")
     timeout_seconds = workflow_model_timeout_seconds()
     settings = resolve_hermes_api_settings()
     bridge = HermesOpenAICompatibilityBridge(
@@ -581,7 +587,9 @@ async def decide_workflow_tool_action(
             workflow_task=True,
             timeout_seconds=timeout_seconds,
             maximum_tools=64,
-            maximum_translation_prompt_bytes=WORKFLOW_TRANSLATION_PROMPT_BYTES,
+            maximum_translation_prompt_bytes=context_budget_bytes
+            if context_budget_bytes is not None
+            else WORKFLOW_TRANSLATION_PROMPT_BYTES,
             # Includes base64 workspace image attachments, which remain separate
             # from the bounded 200,000-byte textual decision transcript.
             maximum_text_bytes=16 * 1024 * 1024,
@@ -608,6 +616,11 @@ async def decide_workflow_tool_action(
                     instruction_set=instructions,
                     attempt=attempt + 1,
                 )
+            )
+            invocations[-1]["context_budget_bytes"] = (
+                context_budget_bytes
+                if context_budget_bytes is not None
+                else WORKFLOW_TRANSLATION_PROMPT_BYTES
             )
             if invocation_observer is not None:
                 await invocation_observer(deepcopy(invocations[-1]))

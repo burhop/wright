@@ -13,6 +13,7 @@ import re
 from dataclasses import asdict
 
 import anyio
+from core.redaction import redact_evidence
 
 _FINAL_CHECKPOINT_SECONDS = 5
 _MAX_RUN_DIRECTORY_ENTRIES = 10_000
@@ -655,7 +656,7 @@ async def _record_run(
     filename = await service.files.write_generated(
         workspace_dir,
         filename,
-        json.dumps(record, ensure_ascii=False, indent=2),
+        json.dumps(redact_evidence(record), ensure_ascii=False, indent=2),
         "overwrite" if resume_record is not None else "indexed",
     )
     if run_log_path is not None and filename != run_log_path:
@@ -668,7 +669,7 @@ async def _record_run(
             await service.files.write_generated(
                 workspace_dir,
                 filename,
-                json.dumps(record, ensure_ascii=False, indent=2),
+                json.dumps(redact_evidence(record), ensure_ascii=False, indent=2),
                 "overwrite",
             )
 
@@ -688,7 +689,7 @@ async def _record_run(
             }
         await checkpoint()
         if on_event:
-            await on_event(deepcopy(event))
+            await on_event(redact_evidence(event))
 
     try:
         await emit(
@@ -717,6 +718,18 @@ async def _record_run(
             > 1
         ):
             raise ValueError("A run cannot request two checkpoint mechanisms at once")
+        for request in (approval_request, input_request):
+            if (
+                request is not None
+                and redact_evidence(request["continuation"]) != request["continuation"]
+            ):
+                # A redacted value is not a resumable credential. Fail before
+                # writing a checkpoint rather than persist a secret or invent
+                # a usable replacement for it on continuation.
+                raise ValueError(
+                    "A durable interaction cannot retain credential-bearing "
+                    "execution values; use credential-free inputs at this checkpoint."
+                )
         record.pop("input_checkpoint", None)
         if input_request:
             if not workspace_id:
@@ -804,7 +817,7 @@ async def _record_run(
                 workspace_dir=workspace_dir,
                 workflow_path=source_path,
                 run_log_path=filename,
-                result=result,
+                result=redact_evidence(result),
                 request=review_request,
             )
             result.update(status="pending_review", review=review)
@@ -905,7 +918,7 @@ async def _record_run(
             _logger.exception(
                 "Unable to persist final workflow checkpoint: %s", filename
             )
-    return {**result, "run_log_path": filename}
+    return {**redact_evidence(result), "run_log_path": filename}
 
 
 async def record_workflow_artifact_review_decision(
@@ -975,7 +988,7 @@ async def record_workflow_artifact_review_decision(
         await service.files.write_generated(
             workspace_dir,
             relative,
-            json.dumps(record, ensure_ascii=False, indent=2),
+            json.dumps(redact_evidence(record), ensure_ascii=False, indent=2),
             "overwrite",
         )
 
@@ -1123,7 +1136,7 @@ async def record_workflow_approval_transition(
     await service.files.write_generated(
         workspace_dir,
         relative,
-        json.dumps(record, ensure_ascii=False, indent=2),
+        json.dumps(redact_evidence(record), ensure_ascii=False, indent=2),
         "overwrite",
     )
 

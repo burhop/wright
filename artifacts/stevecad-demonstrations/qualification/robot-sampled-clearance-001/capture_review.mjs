@@ -1,0 +1,17 @@
+import { chromium } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+const root=path.resolve('artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001');
+const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+const page=await browser.newPage({viewport:{width:1400,height:1080}});
+const errors=[]; page.on('pageerror',e=>errors.push(e.message));
+await page.goto(pathToFileURL(path.join(root,'review.html')).href);
+const count=await page.locator('.sample').count();
+const loaded=await page.locator('img').evaluate(n=>n.complete && n.naturalWidth>0);
+const layout=await page.evaluate(()=>({viewport:innerWidth,width:document.documentElement.scrollWidth}));
+if(count!==33 || !loaded || errors.length || layout.width>layout.viewport) throw Error(JSON.stringify({count,loaded,errors,layout}));
+await page.screenshot({path:path.join(root,'sampled-clearance-review.png'),fullPage:true});
+fs.writeFileSync(path.join(root,'browser-check.json'),JSON.stringify({passed:true,samples:count,loaded,errors,layout},null,2));
+await browser.close();
+console.log(JSON.stringify({passed:true,root}));

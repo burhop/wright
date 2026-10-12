@@ -1,0 +1,77 @@
+{
+  "status": "confirmed_provider_visibility_and_identity_defect",
+  "document_id": "17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+  "revision": 1,
+  "build_id": "627de50c-cdf4-40f5-ac77-7bccbd4e8b9d",
+  "cadquery_version": "2.8.0",
+  "qualification_server_version": "4.0.10, recorded 11 October; hosted revision not frozen",
+  "current_contract_receipt": "05-current-inspection-contract.json",
+  "expected_second": {
+    "instances": [
+      "second_marker"
+    ],
+    "extent_mm": [
+      100,
+      0,
+      0,
+      110,
+      20,
+      30
+    ]
+  },
+  "observed_second": {
+    "bounds_mm": [
+      10.0,
+      20.0,
+      30.0
+    ],
+    "extent_mm": [
+      100.0,
+      0.0,
+      0.0,
+      110.0,
+      20.0,
+      30.0
+    ],
+    "instances": [
+      "first_marker"
+    ]
+  },
+  "expected_first": {
+    "instances": [
+      "first_marker"
+    ],
+    "extent_mm": [
+      0,
+      0,
+      0,
+      10,
+      20,
+      30
+    ]
+  },
+  "observed_first": {
+    "bounds_mm": [
+      110.0,
+      20.0,
+      30.0
+    ],
+    "extent_mm": [
+      0.0,
+      0.0,
+      0.0,
+      110.0,
+      20.0,
+      30.0
+    ],
+    "instances": [
+      "first_marker"
+    ]
+  },
+  "scope": "Native text and structured results agree; source/build have distinct instance names and correct placements. No Wright renaming or image-editing correction was performed. No implication that robot collision findings are provider defects.",
+  "report": {
+    "status": "prepared_not_submitted",
+    "report_id": null,
+    "route": "Signed-in SteveCAD Feedback > Report a bug; no discovered MCP report tool or available signed-in browser automation capability."
+  }
+}

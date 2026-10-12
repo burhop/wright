@@ -1,0 +1,3 @@
+{
+  "result": "Code executed successfully: 19:27:13 | INFO: Data are loaded, start creating Blender stuff\n19:27:13 | INFO: Blender create Mesh node SOLID\n19:27:13 | INFO: glTF import finished in 0.01s\n{\"document_id\": \"4fef47b1-ac25-432d-897d-3dba016a2cde\", \"revision\": 1, \"build_id\": \"82cee1d2-2566-4704-b60a-527d3be3b4c5\", \"run_id\": \"bddd667df90544018d1b2d1d004abf1a\", \"CAD_meshes\": 1, \"meters_per_input_mm\": 0.001, \"geometry_changes\": false, \"records\": [{\"instance\": \"block\", \"extent_error_mm\": 5.662441253662109e-06, \"polygons\": 660, \"color\": \"#aaaaaa\"}]}\n"
+}

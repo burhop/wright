@@ -2233,3 +2233,27 @@ The user then stopped campaign work for cleanup and process redesign. Keep the
 failure and resume only with new direction. This changes neither public catalog
 qualification nor engineering limits. Portable exact evidence:
 `artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.
+
+### 12 October 2026 — automatic CAD transfer and native rendering
+
+The generic transfer provider's pipeline path ignores its supplied stdin, and
+its argv validator rejects literal newlines. A command can return stderr without
+MCP `isError`. These observed constraints caused retained qualification failures;
+separate jq/curl steps with an explicit text port and exact file checks work.
+Blender's safe mode rejected a text-datablock load. Passing validated metadata as
+literal native-operation arguments works with safe mode unchanged. No defect
+report was submitted for these observations.
+
+The hosted SteveCAD export schema added optional `wait_s`; rediscovery and a
+visible binding revision preceded dispatch. Pending builds were observed rather
+than interrupted. Different full-build IDs were returned at unchanged revision;
+the reason remains unknown. Use returned identity and measured geometry, not a
+cache assumption. An invalid `revision` argument to `read_design` was our error;
+its supported document-only request returned the original block's native basis.
+
+Run `646d7a74c124431e8979c3acea4b01de` passed the full export/download/mesh/
+three-render qualification in 62.007 seconds. Evidence is under
+`artifacts/stevecad-demonstrations/qualification/automatic-native-render-chain-007/`.
+Attempts 001–006 and the rejected metadata probe remain. The generic main-process
+binding is separately qualified and is not established by that robot-specific
+proof. Guides preserve the successful calling conventions for future agents.

@@ -1,0 +1,23 @@
+{
+  "file": "robot-arm-motion-x.mp4",
+  "bytes": 515047,
+  "sha256": "41214826e2b81784742e51cf96987b91167c4c518c546b82d9169ae3d48ba11e",
+  "revision": 7,
+  "video": {
+    "codec": "h264",
+    "profile": "High",
+    "pixel_format": "yuv420p",
+    "width": 1280,
+    "height": 720,
+    "frame_rate": "24/1",
+    "frames": 192
+  },
+  "audio": {
+    "codec": "aac",
+    "profile": "LC",
+    "content": "silent stereo"
+  },
+  "duration_seconds": 8,
+  "container": "MP4 fast-start",
+  "scope": "Actual revision7 STEP-derived geometry and native joint tree/axes/couplings/keyframes. Neutral viewer, not Studio capture, a new collision simulation, physical operation or acceptance. Unpublished."
+}

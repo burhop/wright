@@ -1,0 +1,10 @@
+{
+  "name": "18094520-ff0d-4647-92da-2ae2eda5419b__execute_blender_code",
+  "arguments": {
+    "code": "import bpy\nimport json\nfrom mathutils import Vector\nscene=bpy.context.scene\nassert scene.get('wright_render_run')=='90087fceacdc494d91eaff6f65d9173d'\nassert not bpy.app.is_job_running('RENDER')\ncamera=scene.camera\nright=camera.matrix_world.to_3x3()@Vector((1,0,0))\nup=camera.matrix_world.to_3x3()@Vector((0,1,0))\nassert (right-Vector((1,0,0))).length<1e-6\nassert (up-Vector((0,1,0))).length<1e-6\nprint(json.dumps({'native_render_running':bpy.app.is_job_running('RENDER'),'build_id':scene['wright_cad_scene_owner'],'document_id':scene['wright_cad_document'],'revision':scene['wright_cad_revision'],'output_file':scene.render.filepath,'screen_right_world':list(right),'screen_up_world':list(up),'CAD_meshes':scene['wright_native_mesh_count']}))\n",
+    "user_prompt": "Create three ultrarealistic renderings of the design starting with a screen capture of the part in different orientations. Use the actual CAD surfaces, preserve all geometry and include the results in the design review."
+  },
+  "label": "camera-completion-observation",
+  "output_dir": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001",
+  "print_summary": true
+}

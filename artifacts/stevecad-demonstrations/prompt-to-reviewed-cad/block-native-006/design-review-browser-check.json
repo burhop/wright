@@ -1,0 +1,46 @@
+{
+  "title": "Block_60x40x12 — Digital Design Review",
+  "images": [
+    {
+      "src": "cad-isometric.png",
+      "loaded": true,
+      "width": 800,
+      "height": 640
+    },
+    {
+      "src": "cad-top.png",
+      "loaded": true,
+      "width": 800,
+      "height": 640
+    },
+    {
+      "src": "cad-front.png",
+      "loaded": true,
+      "width": 800,
+      "height": 640
+    },
+    {
+      "src": "render_isometric.png",
+      "loaded": true,
+      "width": 1000,
+      "height": 720
+    },
+    {
+      "src": "render_top.png",
+      "loaded": true,
+      "width": 1000,
+      "height": 720
+    },
+    {
+      "src": "render_front.png",
+      "loaded": true,
+      "width": 1000,
+      "height": 720
+    }
+  ],
+  "errors": [],
+  "geometry": {
+    "viewport": 1440,
+    "document": 1440
+  }
+}

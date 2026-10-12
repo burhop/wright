@@ -1,0 +1,10 @@
+{
+  "file": "robot-arm-rev7-print-kit.zip",
+  "sha256": "da60f48ad449171ded43170ec8e9203990a76d0dfc9611a4f248ec3884165b5b",
+  "bytes": 525649,
+  "unique_stl_files": 18,
+  "print_quantity": 28,
+  "revision": 7,
+  "verified_archive_byte_equality": true,
+  "scope": "Verified nominal digital STL package with explicit unresolved physical/manufacturing interfaces."
+}

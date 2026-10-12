@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "scope": "Actual same-accepted-source reuse, unchanged recorded model routing, and preconstruction producer order; not a blanket acceptance of generated requirements or physical results.",
+  "runs": [
+    {
+      "attempt": "block-native-006",
+      "run_id": "15a0b7ad27374a0e9375923cc4dc2725",
+      "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+      "redacted_receipt_source_sha256": "50a114b2a6fe3a580351ed6fdddc8bb37b71ef3b3277c5db0210dc4fcda6b73d",
+      "input_digest": "f96e9fcaa250270cdcf488e0c87f7bd9038afba4c50bbe300292d6fc17765c47",
+      "model_routing": {
+        "schema_version": "wright.workflow-model-routing/1",
+        "text": {
+          "provider": "openai-codex",
+          "model_reference": "gpt-5.6-sol",
+          "profile": "wright",
+          "endpoint_digest": "4820ad43bc5b284cd50303a01f44adb754a3dfbb8c45e1ecd5a0c46a53bcb7f6",
+          "configuration_digest": "41884f9046aa9dc8e3b599b55a4c2dd653c016d509b9d77690b80b428fc69857",
+          "adapter": "hermes-http"
+        },
+        "images": {}
+      },
+      "elapsed_seconds": 617.248,
+      "producer_order_verified": true
+    },
+    {
+      "attempt": "six-hole-native-001",
+      "run_id": "bddd667df90544018d1b2d1d004abf1a",
+      "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+      "redacted_receipt_source_sha256": "50a114b2a6fe3a580351ed6fdddc8bb37b71ef3b3277c5db0210dc4fcda6b73d",
+      "input_digest": "beffb25401fe069d9a0d5c5ff7379cfe3928b894d68a050365d5ac950b854090",
+      "model_routing": {
+        "schema_version": "wright.workflow-model-routing/1",
+        "text": {
+          "provider": "openai-codex",
+          "model_reference": "gpt-5.6-sol",
+          "profile": "wright",
+          "endpoint_digest": "4820ad43bc5b284cd50303a01f44adb754a3dfbb8c45e1ecd5a0c46a53bcb7f6",
+          "configuration_digest": "41884f9046aa9dc8e3b599b55a4c2dd653c016d509b9d77690b80b428fc69857",
+          "adapter": "hermes-http"
+        },
+        "images": {}
+      },
+      "elapsed_seconds": 542.533,
+      "producer_order_verified": true
+    }
+  ],
+  "preserved_findings": [
+    "The six-hole original review remains UNVERIFIED for its generated intermediate-stock-state test R02. Its supplied final geometric criteria pass independently."
+  ]
+}

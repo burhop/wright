@@ -1,0 +1,21 @@
+{
+  "schema_version": "wright.process-input-snapshot/1",
+  "snapshot_id": "inputs-e298a6d0cd484b0780a348cb5debb723",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+    "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "created_at": "2026-10-12T19:21:18.032866+00:00",
+  "bindings": [
+    {
+      "kind": "value",
+      "input_id": "design_prompt",
+      "value": "Create one solid rectangular block, 80 mm along X, 50 mm along Y and 16 mm along Z. Use millimetres and the lower-left bottom corner as origin: X=0..80, Y=0..50, Z=0..16.\n\nAdd six plain diameter-8 mm through holes parallel to Z, centered at XY (12,12), (40,12), (68,12), (12,38), (40,38) and (68,38). Each hole must traverse the full thickness. Do not add fillets, chamfers, counterbores, text or extra components.\n\nName the CAD body block and the six hole features h01, h02, h03, h04, h05 and h06. Use lowercase snake_case for all CAD feature identifiers, keeping document requirement IDs separate from CAD identifiers.\n\nFor this non-centered block's block.top face, use the listed positive XY coordinates directly as the Model.hole point tuples. Do not subtract (40,25) or assume that the face's sketch origin is its centroid. This coordinate convention was verified on the preceding block's actual geometry.\n\nVerify digital CAD geometry with 0.01 mm absolute tolerance for measured dimensions and positions, one solid, and 0.1 percent relative volume tolerance against 80*50*16 - 6*pi*4^2*16 cubic millimetres. Confirm each hole's diameter, axis and through depth from actual geometry. Use neutral matte gray presentation appearance without assigning mechanical properties.\n\nCapture isometric, top and front CAD views and produce three corresponding realistic studio product renderings. Include requirement checks, actual observations, CAD views, presentation images and unresolved findings in the design review. This prompt changes dimensions and hole pattern; use the same accepted process as the first run.\n",
+      "provenance": "supplied"
+    }
+  ],
+  "digest": "beffb25401fe069d9a0d5c5ff7379cfe3928b894d68a050365d5ac950b854090"
+}

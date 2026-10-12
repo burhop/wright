@@ -1,0 +1,12 @@
+{
+  "name": "8de879d3-9c37-463e-a289-3447cd2cd05d__measure",
+  "arguments": {
+    "file": "/workspace/automatic-transfer-001/90087fceacdc494d91eaff6f65d9173d/design.step",
+    "cwd": "/workspace/automatic-transfer-001/90087fceacdc494d91eaff6f65d9173d",
+    "features": true,
+    "no_limit": true
+  },
+  "label": "exact-step-measure",
+  "output_dir": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001",
+  "print_summary": true
+}

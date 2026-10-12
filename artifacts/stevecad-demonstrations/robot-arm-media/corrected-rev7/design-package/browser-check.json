@@ -1,0 +1,111 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "width": 1440,
+      "images": [
+        {
+          "src": "images/cad-isometric.png",
+          "loaded": true,
+          "width": 800,
+          "height": 640
+        },
+        {
+          "src": "images/render-isometric.png",
+          "loaded": true,
+          "width": 1400,
+          "height": 1000
+        },
+        {
+          "src": "images/cad-top.png",
+          "loaded": true,
+          "width": 800,
+          "height": 640
+        },
+        {
+          "src": "images/render-top.png",
+          "loaded": true,
+          "width": 1400,
+          "height": 1000
+        },
+        {
+          "src": "images/cad-front.png",
+          "loaded": true,
+          "width": 800,
+          "height": 640
+        },
+        {
+          "src": "images/render-front.png",
+          "loaded": true,
+          "width": 1400,
+          "height": 1000
+        }
+      ],
+      "links_checked": 17,
+      "errors": [],
+      "geometry": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "video": {
+        "width": 1280,
+        "height": 720,
+        "duration": 8,
+        "error": null
+      }
+    },
+    {
+      "width": 390,
+      "images": [
+        {
+          "src": "images/cad-isometric.png",
+          "loaded": true,
+          "width": 800,
+          "height": 640
+        },
+        {
+          "src": "images/render-isometric.png",
+          "loaded": true,
+          "width": 1400,
+          "height": 1000
+        },
+        {
+          "src": "images/cad-top.png",
+          "loaded": true,
+          "width": 800,
+          "height": 640
+        },
+        {
+          "src": "images/render-top.png",
+          "loaded": true,
+          "width": 1400,
+          "height": 1000
+        },
+        {
+          "src": "images/cad-front.png",
+          "loaded": true,
+          "width": 800,
+          "height": 640
+        },
+        {
+          "src": "images/render-front.png",
+          "loaded": true,
+          "width": 1400,
+          "height": 1000
+        }
+      ],
+      "links_checked": 17,
+      "errors": [],
+      "geometry": {
+        "viewport": 390,
+        "document": 390
+      },
+      "video": {
+        "width": 1280,
+        "height": 720,
+        "duration": 8,
+        "error": null
+      }
+    }
+  ]
+}

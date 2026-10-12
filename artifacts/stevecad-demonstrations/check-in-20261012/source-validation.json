@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "source_digest_normalized_text": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+  "previous_accepted_v19_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+  "changed_sections": [
+    "prepare_native_arguments",
+    "render_isometric",
+    "render_top",
+    "render_front"
+  ],
+  "execution_tasks": 16,
+  "changes": "Camera orientation/receipt vectors plus a nonfunctional template lint annotation. All other sections unchanged.",
+  "full_v20_process_executed": false,
+  "snapshot_scope": "Prepared source compilation and exact regeneration; actual bracket camera qualification separate."
+}

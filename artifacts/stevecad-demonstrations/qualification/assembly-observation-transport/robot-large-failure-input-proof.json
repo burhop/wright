@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "scope": "Passive replay of exact terminal robot-arm-003 input; original native failures unchanged, no HTTP or CAD effect",
+  "configured_budget_bytes": 400000,
+  "transport_bytes": 274017,
+  "text_parts": 6,
+  "max_part_chars": 65534,
+  "retained_native_results_checked": 11,
+  "request_digest": "d135908c4c28c350629e961de1acbde202259c6b47d41374c2cb58823d64bba9"
+}

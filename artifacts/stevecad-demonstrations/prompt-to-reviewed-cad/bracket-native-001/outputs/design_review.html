@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Right-Angle Bracket — Digital Design Review</title>
+<style>
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#18252b;background:#f4f6f7;line-height:1.35}*{box-sizing:border-box}body{max-width:1080px;margin:auto;padding:20px}h1{font-size:1.65rem;margin:.1rem 0}h2{font-size:1.15rem;border-bottom:2px solid #607d8b;padding-bottom:.25rem;margin:1.25rem 0 .55rem}h3{font-size:1rem;margin:.7rem 0 .25rem}.subtle,figcaption{color:#52636b;font-size:.86rem}.banner{border-left:6px solid #a32626;background:#fff0f0;padding:10px;margin:12px 0}.meta{background:#e8eef1;padding:10px;border-radius:4px;overflow-wrap:anywhere}.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:white;font-size:.82rem;table-layout:fixed}th,td{border:1px solid #ccd5d9;padding:5px;vertical-align:top;overflow-wrap:anywhere}th{background:#dde6ea;text-align:left}.pass{color:#176b3a;font-weight:700}.fail{color:#a32626;font-weight:800}.unv{color:#895700;font-weight:800}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.grid figure{margin:0;background:white;border:1px solid #ccd5d9;padding:7px}.grid img{display:block;width:100%;height:auto;max-width:100%}a{color:#245c75;overflow-wrap:anywhere}.mono{font-family:Consolas,monospace;overflow-wrap:anywhere}@media(max-width:700px){.grid{grid-template-columns:1fr}body{padding:10px}}
+</style>
+</head>
+<body>
+<header>
+<h1>Right-Angle Mounting Bracket — Digital Design Review</h1>
+<p class="subtle">Final digital review of one editable, one-piece bracket. This report records digital design verification and qualitative presentation review; it does not record human acceptance, strength qualification, process qualification, or physical manufacturing acceptance.</p>
+<div class="meta"><b>Editable document:</b> <a href="https://stevecad.studio/?document=eb50444f-232a-4fb9-9afc-72d8695d5667">SteveCAD document eb50444f-232a-4fb9-9afc-72d8695d5667, revision 1</a><br><b>Accepted CAD build:</b> <span class="mono">d65a6b4a-06c4-4240-8f43-18228b08fa26</span><br><b>Render/export run:</b> <span class="mono">90087fceacdc494d91eaff6f65d9173d</span>; full exported STEP, CadQuery 2.8.0.<br><b>Geometry matching report:</b> 1 CAD mesh, 236 polygons, scale 0.001 m/input mm, <span class="mono">geometry_changes=false</span>, extent error 0.0000038147 mm, color <span class="mono">#607d8b</span>. This links the renders to revision 1/build above; it does not assert byte equivalence.</div>
+<div class="banner"><b>Open findings:</b> <span class="fail">FAIL — R16/T10:</span> the top rendering places the upright edge strip on the opposite side from the original top CAD capture, so the requested corresponding orientation is not visually demonstrated. <span class="unv">UNVERIFIED — R06/T04:</span> direct opposing-planar-face wall measurements were unavailable. <span class="unv">UNVERIFIED — R01/T01:</span> the fresh document is identified, but retention of earlier documents was not evidenced. No measured CAD-geometry FAIL was reported.</div>
+</header>
+<section>
+<h2>Design intent and measured definition</h2>
+<p>A connected L-bracket in millimetres and a right-handed Z-up frame: base and upright rectangular regions are united once at the heel, with two plain Z-directed base holes. No fillets, chamfers, counterbores, countersinks, text, logos, or auxiliary components.</p>
+<div class="wrap"><table><thead><tr><th>Feature</th><th>Nominal definition</th><th>Actual CAD evidence</th></tr></thead><tbody>
+<tr><td>Base</td><td>X 0–60, Y 0–40, Z 0–6 mm</td><td>Included in measured bounds; direct wall separation unavailable</td></tr>
+<tr><td>Upright</td><td>X 0–6, Y 0–40, Z 0–46 mm</td><td>Unperforated L upright; direct wall separation unavailable</td></tr>
+<tr><td>Envelope</td><td>60 × 40 × 46 mm</td><td>Min (0,0,0), max (60,40,46), extents (60,40,46) mm</td></tr>
+<tr><td>Hole 1</td><td>Ø4 at (20,10), Z 0–6 mm</td><td>Ø4.00; center (20.00,10.00); axis [0,0,−1]; depth 6.00 mm; through</td></tr>
+<tr><td>Hole 2</td><td>Ø4 at (45,30), Z 0–6 mm</td><td>Ø4.00; center (45.00,30.00); axis [0,0,−1]; depth 6.00 mm; through</td></tr>
+<tr><td>Structure</td><td>1 component/body/solid; 2 holes</td><td>1 component, 1 body, 1 connected solid, 10 faces, 2 holes</td></tr>
+<tr><td>Net volume</td><td>23,849.20355 mm³; allowable 23,825.35435–23,873.05275</td><td>23,849.20355262769 mm³; deviation 0.00000262769 mm³</td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>Requirement-by-requirement results</h2>
+<div class="wrap"><table><thead><tr><th>ID</th><th>Result</th><th>Actual result and evidence</th></tr></thead><tbody>
+<tr><td>R01</td><td class="unv">UNVERIFIED</td><td>Fresh document ID confirmed; earlier-artifact preservation not enumerated.</td></tr>
+<tr><td>R02</td><td class="pass">PASS</td><td>mm, Z-up; absolute bounds exactly 0..60, 0..40, 0..46 mm.</td></tr>
+<tr><td>R03</td><td class="pass">PASS</td><td>Complete solid; expected four-feature inventory and exactly two cylindrical holes.</td></tr>
+<tr><td>R04</td><td class="pass">PASS</td><td>1 component, 1 body, 1 connected L-shaped solid.</td></tr>
+<tr><td>R05</td><td class="pass">PASS</td><td>All six limits and three extents have 0.00 mm deviation; tolerance ±0.01 mm.</td></tr>
+<tr><td>R06</td><td class="unv">UNVERIFIED</td><td>Required direct base/upright planar separations were not returned; source dimensions were not substituted.</td></tr>
+<tr><td>R07</td><td class="pass">PASS</td><td>Hole 1 actual Ø4.00, (20.00,10.00), depth 6.00 mm, Z-parallel.</td></tr>
+<tr><td>R08</td><td class="pass">PASS</td><td>Hole 2 actual Ø4.00, (45.00,30.00), depth 6.00 mm, Z-parallel.</td></tr>
+<tr><td>R09</td><td class="pass">PASS</td><td>Reported linear deviations 0.00 mm; angular deviation 0.00°.</td></tr>
+<tr><td>R10</td><td class="pass">PASS</td><td>Upright holes and all prohibited-feature counts 0; no extra component.</td></tr>
+<tr><td>R11</td><td class="pass">PASS</td><td>All editable identifiers lowercase.</td></tr>
+<tr><td>R12</td><td class="pass">PASS</td><td>Measured volume lies inside ±0.1% interval.</td></tr>
+<tr><td>R13</td><td class="pass">PASS</td><td>Native metadata: fdm-petg presentation mechanism, matte, exact color #607d8b.</td></tr>
+<tr><td>R14</td><td class="pass">PASS</td><td>All three studio views visibly use a matte blue-gray appearance; metadata supplies #607d8b.</td></tr>
+<tr><td>R15</td><td class="pass">PASS</td><td>Three orthographic CAD captures: isometric (+X,−Y,+Z), top +Z, front −Y.</td></tr>
+<tr><td>R16</td><td class="fail">FAIL</td><td>Three native Blender renders use the validated STEP mesh, but the top pair has an opposite-side upright strip and therefore does not preserve the captured orientation convention.</td></tr>
+<tr><td>R17</td><td class="pass">PASS</td><td>Feature count, silhouette, camera, and appearance were qualitatively compared without pixel metrology.</td></tr>
+<tr><td>R18</td><td class="pass">PASS</td><td>Editable link, revision/build/run, STEP format, and geometry-matching report recorded. Export filename/checksum were not supplied.</td></tr>
+<tr><td>R19</td><td class="pass">PASS</td><td>This review includes requirements, planned tests, measurements, six images, identities, linkage, and unresolved findings.</td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>Predeclared test disposition</h2>
+<p><b>T01</b> UNVERIFIED (document retention); <b>T02</b> PASS (frame/bounds); <b>T03</b> PASS (topology/interfaces); <b>T04</b> UNVERIFIED (walls); <b>T05</b> PASS (holes); <b>T06</b> PASS (volume); <b>T07</b> PASS (editability); <b>T08</b> PASS (metadata); <b>T09</b> PASS (CAD captures); <b>T10</b> FAIL (top camera/orientation correspondence); <b>T11</b> PASS (package/linkage). Earlier deferred presentation checks have now been evaluated rather than retained as deferred failures.</p>
+</section>
+<section>
+<h2>Original CAD inspection captures</h2>
+<div class="grid">
+<figure><img src="cad-isometric.png" alt="Original CAD isometric capture"><figcaption><b>CAD isometric.</b> L silhouette and two base openings visible; provider viewport color is not an appearance acceptance criterion.</figcaption></figure>
+<figure><img src="cad-top.png" alt="Original CAD top capture"><figcaption><b>CAD top (+Z).</b> Two openings visible; upright projects as the narrow strip at left.</figcaption></figure>
+<figure><img src="cad-front.png" alt="Original CAD front capture"><figcaption><b>CAD front (−Y).</b> L silhouette; holes appropriately hidden in this projection.</figcaption></figure>
+</div>
+</section>
+<section>
+<h2>Derived studio presentation views</h2>
+<div class="grid">
+<figure><img src="render_isometric.png" alt="Studio isometric rendering"><figcaption><b>Render isometric.</b> Two holes, L silhouette, and camera class agree visually; matte blue-gray appearance present.</figcaption></figure>
+<figure><img src="render_top.png" alt="Studio top rendering"><figcaption><b>Render top.</b> Two holes and rectangular silhouette are present, but the upright strip is at right rather than the CAD view’s left: orientation mismatch.</figcaption></figure>
+<figure><img src="render_front.png" alt="Studio front rendering"><figcaption><b>Render front.</b> L silhouette and left-upright orientation agree; no holes expected in silhouette; matte blue-gray appearance present.</figcaption></figure>
+</div>
+<p class="subtle">These image comparisons are qualitative. They do not establish dimensions, exact color under lighting, pixel identity, or geometric compliance. Geometric compliance derives from CAD measurements and the cited export geometry report, not from rendered images.</p>
+</section>
+</body>
+</html>

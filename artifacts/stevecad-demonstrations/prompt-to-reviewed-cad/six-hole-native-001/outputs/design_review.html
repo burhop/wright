@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design Review — Six-Hole Rectangular Block</title>
+<style>
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#18212a;background:#eef1f3}*{box-sizing:border-box}body{margin:0}main{max-width:1100px;margin:auto;background:#fff;padding:24px}h1{margin:0 0 5px;font-size:1.65rem}h2{margin:25px 0 8px;padding-bottom:4px;border-bottom:2px solid #52616b;font-size:1.15rem}h3{font-size:1rem;margin:14px 0 6px}p{margin:6px 0;line-height:1.38}.meta{color:#52616b}.summary{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.badge{padding:6px 10px;border-radius:4px;font-weight:700}.pass{background:#d9f2e2;color:#145c2d}.fail{background:#ffd9d9;color:#8b1111}.unverified{background:#fff0bd;color:#704d00}.notice{border-left:5px solid #d09200;background:#fff8df;padding:10px;margin:10px 0}.oknote{border-left:5px solid #258447;background:#edf9f1;padding:10px;margin:10px 0}table{border-collapse:collapse;width:100%;max-width:100%;font-size:.86rem;margin:8px 0}th,td{border:1px solid #bec7cd;padding:6px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#e8edf0}.status{font-weight:800;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.grid figure{margin:0;border:1px solid #c8d0d5;background:#f5f6f7;padding:7px}.grid img{display:block;width:100%;height:auto;max-width:100%}figcaption{font-size:.82rem;line-height:1.3;margin-top:6px}.wrap{overflow-wrap:anywhere}a{color:#075f9b}.small{font-size:.82rem;color:#46545e}@media(max-width:760px){main{padding:14px}.grid{grid-template-columns:1fr}table{font-size:.78rem}}
+</style>
+</head>
+<body><main>
+<header>
+<h1>Digital Design Review: Six-Hole Rectangular Block</h1>
+<p class="meta">Document <span class="wrap">4fef47b1-ac25-432d-897d-3dba016a2cde</span> · revision 1 · build <span class="wrap">82cee1d2-2566-4704-b60a-527d3be3b4c5</span></p>
+<p><a href="https://stevecad.studio/?document=4fef47b1-ac25-432d-897d-3dba016a2cde">Open the editable SteveCAD document</a> (revision 1).</p>
+<div class="summary"><span class="badge unverified">OVERALL: UNVERIFIED</span><span class="badge pass">CAD PASS: 8</span><span class="badge fail">CAD FAIL: 0</span><span class="badge unverified">CAD UNVERIFIED: R02</span></div>
+<p><strong>Design intent.</strong> One millimetre-based rectangular component, <code>block</code>, with six named plain Ø8 through holes in a 3 × 2 pattern. No fillets, chamfers, counterbores, text, extra components, physical-material assignment, or mechanical-property claim.</p>
+<p class="small">This report records a digital design review and does not record human acceptance. Geometric measurements come from CAD/B-rep inspection; image findings below are qualitative and do not establish dimensions, pixel identity, or geometric compliance.</p>
+</header>
+
+<h2>1. Requirement Checks</h2>
+<table><thead><tr><th>ID</th><th>Requirement / tolerance</th><th>Actual evidence</th><th>Result</th></tr></thead><tbody>
+<tr><td>R01</td><td>mm frame; origin (0,0,0); bounds ±0.01 mm</td><td>X 0.00..80.00, Y 0.00..50.00, Z 0.00..16.00 mm; +X length, +Y width, +Z up</td><td class="status pass">PASS</td></tr>
+<tr><td>R02</td><td>One 80 × 50 × 16 mm solid before subtraction</td><td>Final envelope is 80.00 × 50.00 × 16.00 mm and one solid. No retained pre-subtraction state was available for direct inspection.</td><td class="status unverified">UNVERIFIED</td></tr>
+<tr><td>R03</td><td>Exactly six named plain holes; Ø8.00 ±0.01 mm</td><td><code>h01</code>–<code>h06</code>; six cylindrical walls, each Ø8.00 mm; no stepped profiles reported</td><td class="status pass">PASS</td></tr>
+<tr><td>R04</td><td>Six specified XY centres, each coordinate ±0.01 mm</td><td>All measured centres equal nominal; every X/Y deviation 0.00 mm</td><td class="status pass">PASS</td></tr>
+<tr><td>R05</td><td>Z-parallel; Z=0..16; depth 16.00 ±0.01 mm</td><td>All axes (0,0,−1), each length 16.00 mm from Z=16 to Z=0</td><td class="status pass">PASS</td></tr>
+<tr><td>R06</td><td>1 solid, 1 component; no prohibited geometry</td><td>1 solid, 1 component, 12 faces, zero other round faces; captures show no prohibited visible features</td><td class="status pass">PASS</td></tr>
+<tr><td>R07</td><td>59,174.5137 mm³; relative error ≤0.1%</td><td>59,174.51368408604 mm³; deviation 0.00001591396 mm³; relative deviation 2.6893×10<sup>−10</sup></td><td class="status pass">PASS</td></tr>
+<tr><td>R08</td><td>Per-hole diameter, axis, and depth</td><td>Each: Ø8.00 mm, axis (0,0,−1), Z extent 0..16 mm, depth 16.00 mm</td><td class="status pass">PASS</td></tr>
+<tr><td>R09</td><td>Isometric, +Z top, −Y front CAD captures</td><td>Exactly three complete-component orthographic captures at 800 × 640 px</td><td class="status pass">PASS</td></tr>
+<tr><td>R10</td><td>Three corresponding neutral matte-gray studio renders</td><td>Three supplied native Blender renders visually match the requested view conventions and use neutral matte gray; no mechanical properties claimed</td><td class="status pass">PASS</td></tr>
+<tr><td>R11</td><td>Five review sections, six images, R01–R11 dispositions</td><td>This final document contains all five named sections, all six supplied images, dispositions for R01–R12, observations, and the unresolved finding</td><td class="status pass">PASS</td></tr>
+<tr><td>R12</td><td>Current dimensions and pattern govern validation</td><td>Traceability consistently cites 80 × 50 × 16 mm and the current six-coordinate pattern on revision 1/build shown above</td><td class="status pass">PASS</td></tr>
+</tbody></table>
+
+<h2>2. Actual Observations</h2>
+<table><thead><tr><th>Feature</th><th>Nominal / actual centre (mm)</th><th>Actual diameter</th><th>Actual Z extent / axis</th></tr></thead><tbody>
+<tr><td><code>block</code></td><td>Bounds nominal = actual: X 0..80, Y 0..50</td><td>—</td><td>Z 0..16 mm</td></tr>
+<tr><td><code>h01</code></td><td>(12,12) / (12.00,12.00)</td><td>8.00 mm</td><td>0..16 mm / (0,0,−1)</td></tr>
+<tr><td><code>h02</code></td><td>(40,12) / (40.00,12.00)</td><td>8.00 mm</td><td>0..16 mm / (0,0,−1)</td></tr>
+<tr><td><code>h03</code></td><td>(68,12) / (68.00,12.00)</td><td>8.00 mm</td><td>0..16 mm / (0,0,−1)</td></tr>
+<tr><td><code>h04</code></td><td>(12,38) / (12.00,38.00)</td><td>8.00 mm</td><td>0..16 mm / (0,0,−1)</td></tr>
+<tr><td><code>h05</code></td><td>(40,38) / (40.00,38.00)</td><td>8.00 mm</td><td>0..16 mm / (0,0,−1)</td></tr>
+<tr><td><code>h06</code></td><td>(68,38) / (68.00,38.00)</td><td>8.00 mm</td><td>0..16 mm / (0,0,−1)</td></tr>
+</tbody></table>
+<p>Derived checks: adjacent X spacing 28.00 mm, row spacing 26.00 mm, and minimum X/Y hole-edge clearance 8.00 mm; all are within ±0.01 mm of nominal.</p>
+<p class="small wrap"><strong>Export and render traceability:</strong> full export of document 4fef47b1-ac25-432d-897d-3dba016a2cde, revision 1, build 82cee1d2-2566-4704-b60a-527d3be3b4c5; render run bddd667df90544018d1b2d1d004abf1a. The geometry-matching report records one CAD mesh, 0.001 metres per input millimetre, 660 polygons, extent error 0.0000056624 mm, <code>geometry_changes=false</code>, and color <code>#aaaaaa</code>. This supports the transfer chain but is not a claim of B-rep, byte, or pixel identity. A different full-build ID on the same revision would be a distinct export identity, not by itself evidence of geometry change.</p>
+
+<h2>3. CAD Views</h2>
+<div class="grid">
+<figure><img src="cad-isometric.png" alt="CAD isometric capture"><figcaption><strong>CAD isometric.</strong> Native (+X, −Y, +Z) convention; complete rectangular silhouette and all six top openings visible. Provider coloring is permissible geometric evidence.</figcaption></figure>
+<figure><img src="cad-top.png" alt="CAD top capture"><figcaption><strong>CAD top.</strong> +Z orthographic view; six openings visibly form three columns and two rows within the complete rectangular outline.</figcaption></figure>
+<figure><img src="cad-front.png" alt="CAD front capture"><figcaption><strong>CAD front.</strong> −Y orthographic view; complete 80-by-16 proportional silhouette. Z-directed holes are occluded in this side view, as expected.</figcaption></figure>
+</div>
+
+<h2>4. Presentation Images and Pair Evaluation</h2>
+<div class="grid">
+<figure><img src="render_isometric.png" alt="Neutral gray isometric studio rendering"><figcaption><strong>Rendered isometric.</strong> Six visible openings, rectangular silhouette, and elevated three-quarter orientation correspond qualitatively to the CAD isometric. Neutral matte gray, soft broad lighting, and a light studio background satisfy the requested appearance.</figcaption></figure>
+<figure><img src="render_top.png" alt="Neutral gray top studio rendering"><figcaption><strong>Rendered top.</strong> Six visible openings retain the CAD view’s 3 × 2 count and top-view silhouette. Camera is qualitatively aligned to +Z; lighting and shadows differ by presentation intent.</figcaption></figure>
+<figure><img src="render_front.png" alt="Neutral gray front studio rendering"><figcaption><strong>Rendered front.</strong> Featureless rectangular side silhouette corresponds to the −Y CAD front view; holes are not visible from this orientation. The object is neutral matte gray against a darker studio field.</figcaption></figure>
+</div>
+<div class="oknote"><strong>Deferred presentation evaluation completed:</strong> R10 passes. Across all three pairs, visible feature count, silhouette, and camera convention agree qualitatively. The render finish is neutral matte gray. This visual assessment does not prove dimensions or exact geometric/pixel identity, and it adds no B-rep equivalence requirement.</div>
+
+<h2>5. Unresolved Findings</h2>
+<div class="notice"><strong>R02 — UNVERIFIED:</strong> The final outer envelope passes all dimensional checks, but the test plan separately requires direct observation of the rectangular solid before hole subtraction. No retained pre-subtraction geometry/state was available. This clause is not waived or inferred from source code.</div>
+<p><strong>Actual CAD failures:</strong> none recorded. <strong>Other unresolved findings:</strong> none. The completed image and document evidence resolves the previously deferred R10–R12 evaluations; they are not carried forward as failures.</p>
+</main></body></html>

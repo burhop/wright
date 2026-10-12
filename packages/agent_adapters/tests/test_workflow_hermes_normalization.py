@@ -211,3 +211,48 @@ async def test_indivisible_oversized_item_fails_before_http(item):
     with pytest.raises(HermesBridgeError, match="per-item text limit") as error:
         await bridge(handler).complete(request(messages, tools))
     assert error.value.code == "workflow_context_limit"
+
+
+@pytest.mark.asyncio
+async def test_large_structured_native_result_survives_normalization(normalize):
+    # A native assembly result can be larger than one Hermes text part while
+    # every individual source string and measurement remains small. Preserve
+    # the whole result, including a real feature failure, through normalization.
+    native = {
+        "components": [
+            {
+                "name": f"part_{i}",
+                "source": '"μm" ' * 320,
+                "extent_mm": [i, 0, 0, i + 1, 20, 30],
+                "feature_status": "error" if i == 27 else "ok",
+            }
+            for i in range(30)
+        ],
+        "error": {"component": "part_27", "message": "Unknown bore wall"},
+        "revision": 3,
+    }
+    messages = [
+        {
+            "role": "user",
+            "content": "Inspect the complete native assembly; preserve its errors.",
+        },
+        *observation_exchange("assembly", native),
+    ]
+    original = json.dumps(messages)
+
+    async def handler(call):
+        content = json.loads(call.content)["messages"][1]["content"]
+        parts = [p["text"] for p in content if p["type"] == "text"]
+        assert len(parts) > 1 and all(len(p) <= 65_536 for p in parts)
+        joined = normalize(content)
+        assert isinstance(joined, str)
+        transcript = json.loads(joined.split("\n", 1)[1])
+        result = transcript["conversation"][-1]["content"]
+        if isinstance(result, str):
+            result = json.loads(result)
+        assert result["result"] == native
+        assert result["result"]["components"][27]["feature_status"] == "error"
+        return reply()
+
+    await bridge(handler).complete(request(messages, [TOOL]))
+    assert json.dumps(messages) == original

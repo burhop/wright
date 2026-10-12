@@ -1,0 +1,281 @@
+{
+  "state": "ready",
+  "assessment_id": "readiness-572439beed784060b9a5c23e360d6a5b",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+    "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "f84ef2e0181292ace7805ffaa7fde9884a89b613849e65d3d39aba51ec9431d3",
+  "assessed_at": "2026-10-12T19:33:21.567578+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "design_prompt",
+      "classification": "supplied",
+      "producer_step": null,
+      "producer_port": null,
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "test_plan.test_plan_design_document",
+      "classification": "upstream_produced",
+      "producer_step": "design_document",
+      "producer_port": "design_document_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "create_design.create_design_design_document",
+      "classification": "upstream_produced",
+      "producer_step": "design_document",
+      "producer_port": "design_document_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_design.validate_design_design_document",
+      "classification": "upstream_produced",
+      "producer_step": "design_document",
+      "producer_port": "design_document_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_design.validate_design_test_plan",
+      "classification": "upstream_produced",
+      "producer_step": "test_plan",
+      "producer_port": "test_plan_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "validate_design.validate_design_created_design",
+      "classification": "upstream_produced",
+      "producer_step": "create_design",
+      "producer_port": "create_design_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_design_document",
+      "classification": "upstream_produced",
+      "producer_step": "design_document",
+      "producer_port": "design_document_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_test_plan",
+      "classification": "upstream_produced",
+      "producer_step": "test_plan",
+      "producer_port": "test_plan_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_create_design",
+      "classification": "upstream_produced",
+      "producer_step": "create_design",
+      "producer_port": "create_design_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_validate_design",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "validate_design_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_cad_isometric",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "isometric",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_cad_top",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "top",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_cad_front",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "front",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "prepare_export.prepare_export_input",
+      "classification": "upstream_produced",
+      "producer_step": "create_design",
+      "producer_port": "create_design_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "request_export.request_export_arguments",
+      "classification": "upstream_produced",
+      "producer_step": "prepare_export",
+      "producer_port": "export_arguments",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "format_transfer.format_transfer_input",
+      "classification": "upstream_produced",
+      "producer_step": "request_export",
+      "producer_port": "request_export_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "format_transfer.format_transfer_expected_revision",
+      "classification": "upstream_produced",
+      "producer_step": "prepare_export",
+      "producer_port": "export_arguments",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "download_step.download_step_input",
+      "classification": "upstream_produced",
+      "producer_step": "format_transfer",
+      "producer_port": "format_transfer_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "retain_export_identity.retain_export_identity_input",
+      "classification": "upstream_produced",
+      "producer_step": "request_export",
+      "producer_port": "request_export_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "retain_export_identity.retain_export_identity_expected_revision",
+      "classification": "upstream_produced",
+      "producer_step": "prepare_export",
+      "producer_port": "export_arguments",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "export_mesh.export_mesh_step",
+      "classification": "upstream_produced",
+      "producer_step": "download_step",
+      "producer_port": "source_step",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "prepare_native_arguments.prepare_native_arguments_input",
+      "classification": "upstream_produced",
+      "producer_step": "export_mesh",
+      "producer_port": "export_mesh_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "prepare_native_arguments.prepare_native_arguments_identity",
+      "classification": "upstream_produced",
+      "producer_step": "retain_export_identity",
+      "producer_port": "native_identity",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "import_mesh.import_mesh_arguments",
+      "classification": "upstream_produced",
+      "producer_step": "prepare_native_arguments",
+      "producer_port": "native_arguments",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "import_mesh.import_mesh_mesh",
+      "classification": "upstream_produced",
+      "producer_step": "export_mesh",
+      "producer_port": "renderer_mesh",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "render_isometric.render_isometric_cad_capture",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "isometric",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_render_isometric",
+      "classification": "upstream_produced",
+      "producer_step": "render_isometric",
+      "producer_port": "render_isometric_image",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "render_top.render_top_cad_capture",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "top",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_render_top",
+      "classification": "upstream_produced",
+      "producer_step": "render_top",
+      "producer_port": "render_top_image",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "render_front.render_front_cad_capture",
+      "classification": "upstream_produced",
+      "producer_step": "validate_design",
+      "producer_port": "front",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_render_front",
+      "classification": "upstream_produced",
+      "producer_step": "render_front",
+      "producer_port": "render_front_image",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_export_identity",
+      "classification": "upstream_produced",
+      "producer_step": "retain_export_identity",
+      "producer_port": "native_identity",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "design_review.design_review_render_geometry_check",
+      "classification": "upstream_produced",
+      "producer_step": "import_mesh",
+      "producer_port": "import_mesh_response",
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": []
+}

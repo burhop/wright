@@ -1,0 +1,2209 @@
+{
+  "scope": "Passive diagnostic tessellation checks. Printed disconnected parts remain failed; this is not print, strength, fit or operation acceptance.",
+  "binary_stl_parse_and_hashes": true,
+  "all_meshes_closed": true,
+  "one_connected_solid_per_printed_instance": true,
+  "max_relative_volume_error": 0.0004154082465586204,
+  "instances": [
+    {
+      "instance": "tray",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 8616,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 216168.5330079651,
+      "step_volume_mm3": 216168.60299453285,
+      "relative_volume_error": 3.237591712011392e-07,
+      "extent_mm": [
+        -100.0,
+        0.0,
+        -4.0,
+        100.0,
+        180.0,
+        6.0
+      ]
+    },
+    {
+      "instance": "arm_foot",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3544,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 27639.43873093657,
+      "step_volume_mm3": 27650.89738657489,
+      "relative_volume_error": 0.0004144044758519024,
+      "extent_mm": [
+        -34.0,
+        11.010567665100098,
+        6.0,
+        34.0,
+        78.98943328857422,
+        14.0
+      ]
+    },
+    {
+      "instance": "io_board",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 2044,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 23003.377151561774,
+      "step_volume_mm3": 23003.356463288525,
+      "relative_volume_error": 8.993588949561994e-07,
+      "extent_mm": [
+        -80.0,
+        90.0,
+        12.0,
+        80.0,
+        180.0,
+        13.600000381469727
+      ]
+    },
+    {
+      "instance": "cm5_clearance",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 12,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 10166.200637817383,
+      "step_volume_mm3": 10166.2,
+      "relative_volume_error": 6.273901576645198e-08,
+      "extent_mm": [
+        -27.5,
+        105.0,
+        13.600000381469727,
+        27.5,
+        145.0,
+        18.22100067138672
+      ]
+    },
+    {
+      "instance": "standoff_h1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 83.42180516500957,
+      "step_volume_mm3": 83.4564088426147,
+      "relative_volume_error": 0.00041463175908264206,
+      "extent_mm": [
+        -71.5,
+        95.50077819824219,
+        6.0,
+        -66.5,
+        100.49922180175781,
+        12.0
+      ]
+    },
+    {
+      "instance": "standoff_h6",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 83.4218015440274,
+      "step_volume_mm3": 83.45640884261482,
+      "relative_volume_error": 0.00041467514679047613,
+      "extent_mm": [
+        50.0,
+        164.5007781982422,
+        6.0,
+        55.0,
+        169.4992218017578,
+        12.0
+      ]
+    },
+    {
+      "instance": "standoff_h7",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 83.4217934589833,
+      "step_volume_mm3": 83.45640884261486,
+      "relative_volume_error": 0.0004147720242412989,
+      "extent_mm": [
+        -71.5,
+        164.5007781982422,
+        6.0,
+        -66.5,
+        169.4992218017578,
+        12.0
+      ]
+    },
+    {
+      "instance": "standoff_h8",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 83.4218132472597,
+      "step_volume_mm3": 83.45640884261464,
+      "relative_volume_error": 0.00041453491510964744,
+      "extent_mm": [
+        50.0,
+        95.50077819824219,
+        6.0,
+        55.0,
+        100.49922180175781,
+        12.0
+      ]
+    },
+    {
+      "instance": "turntable",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1822,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 35115.42992048153,
+      "step_volume_mm3": 35117.85617316562,
+      "relative_volume_error": 6.908886100923903e-05,
+      "extent_mm": [
+        -22.0,
+        23.0,
+        14.399999618530273,
+        22.0,
+        67.0,
+        49.0
+      ]
+    },
+    {
+      "instance": "shoulder_yoke",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 2068,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 38208.50935058715,
+      "step_volume_mm3": 38208.29738858328,
+      "relative_volume_error": 5.547538580666776e-06,
+      "extent_mm": [
+        -30.0,
+        35.0,
+        49.0,
+        30.0,
+        73.0,
+        93.0
+      ]
+    },
+    {
+      "instance": "upper_arm",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1556,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 26444.504560769205,
+      "step_volume_mm3": 26444.094774152123,
+      "relative_volume_error": 1.549633748408571e-05,
+      "extent_mm": [
+        -18.399999618530273,
+        -49.44976043701172,
+        62.4654426574707,
+        -0.4000000059604645,
+        57.5345573425293,
+        144.89219665527344
+      ]
+    },
+    {
+      "instance": "elbow_yoke",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3084,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 29615.303119494612,
+      "step_volume_mm3": 29615.030144281303,
+      "relative_volume_error": 9.217455190124852e-06,
+      "extent_mm": [
+        -30.0,
+        -60.019710540771484,
+        94.99954986572266,
+        30.0,
+        -3.654571294784546,
+        152.83815002441406
+      ]
+    },
+    {
+      "instance": "elbow_mount",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 520,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 818.3208914862781,
+      "step_volume_mm3": 818.2871750801265,
+      "relative_volume_error": 4.120363507871948e-05,
+      "extent_mm": [
+        -14.399999618530273,
+        -32.494842529296875,
+        101.55276489257812,
+        -4.400000095367432,
+        -19.14113426208496,
+        114.66089630126953
+      ]
+    },
+    {
+      "instance": "forearm",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1556,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 25364.503141354402,
+      "step_volume_mm3": 25364.09477415212,
+      "relative_volume_error": 1.610020802708442e-05,
+      "extent_mm": [
+        0.4000000059604645,
+        -123.17344665527344,
+        119.82308959960938,
+        18.399999618530273,
+        -24.380647659301758,
+        196.5140838623047
+      ]
+    },
+    {
+      "instance": "wrist_yoke",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3084,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 29615.299142249525,
+      "step_volume_mm3": 29615.030144281303,
+      "relative_volume_error": 9.083156995325724e-06,
+      "extent_mm": [
+        -30.0,
+        -133.74339294433594,
+        146.62142944335938,
+        30.0,
+        -77.37825775146484,
+        204.46002197265625
+      ]
+    },
+    {
+      "instance": "wrist_mount",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 520,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 818.3207111199405,
+      "step_volume_mm3": 818.2871750801264,
+      "relative_volume_error": 4.098321571614838e-05,
+      "extent_mm": [
+        4.400000095367432,
+        -106.2185287475586,
+        153.17465209960938,
+        14.399999618530273,
+        -92.86482238769531,
+        166.28277587890625
+      ]
+    },
+    {
+      "instance": "palm",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 2824,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 35139.400444202445,
+      "step_volume_mm3": 35140.080390009934,
+      "relative_volume_error": 1.9349580306668252e-05,
+      "extent_mm": [
+        -42.400001525878906,
+        -187.8040313720703,
+        174.980224609375,
+        23.600000381469727,
+        -101.63958740234375,
+        235.6013946533203
+      ]
+    },
+    {
+      "instance": "guide_cover",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3060,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 8746.643980806193,
+      "step_volume_mm3": 8746.574350160261,
+      "relative_volume_error": 7.960904823374344e-06,
+      "extent_mm": [
+        -42.400001525878906,
+        -178.38038635253906,
+        222.69253540039062,
+        23.600000381469727,
+        -139.7978057861328,
+        250.96092224121094
+      ]
+    },
+    {
+      "instance": "guide_post_nl",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 520,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1272.9438743220844,
+      "step_volume_mm3": 1272.8911612357524,
+      "relative_volume_error": 4.141209235896511e-05,
+      "extent_mm": [
+        -41.900001525878906,
+        -182.314697265625,
+        228.43170166015625,
+        -31.899999618530273,
+        -166.09310913085938,
+        245.63558959960938
+      ]
+    },
+    {
+      "instance": "guide_post_nr",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 520,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1272.9436037627868,
+      "step_volume_mm3": 1272.8911612357524,
+      "relative_volume_error": 4.119953742428399e-05,
+      "extent_mm": [
+        13.100000381469727,
+        -182.314697265625,
+        228.43170166015625,
+        23.100000381469727,
+        -166.09310913085938,
+        245.63558959960938
+      ]
+    },
+    {
+      "instance": "guide_post_fl",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 520,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1272.9436891619946,
+      "step_volume_mm3": 1272.8911612357524,
+      "relative_volume_error": 4.1266628162612496e-05,
+      "extent_mm": [
+        -41.900001525878906,
+        -161.8358917236328,
+        214.09228515625,
+        -31.899999618530273,
+        -145.6143035888672,
+        231.29617309570312
+      ]
+    },
+    {
+      "instance": "guide_post_fr",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 520,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1272.9434186015521,
+      "step_volume_mm3": 1272.8911612357524,
+      "relative_volume_error": 4.105407232854069e-05,
+      "extent_mm": [
+        13.100000381469727,
+        -161.8358917236328,
+        214.09228515625,
+        23.100000381469727,
+        -145.6143035888672,
+        231.29617309570312
+      ]
+    },
+    {
+      "instance": "finger_left",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 20,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 5503.997917531058,
+      "step_volume_mm3": 5503.999999999999,
+      "relative_volume_error": 3.7835554885506044e-07,
+      "extent_mm": [
+        -17.399999618530273,
+        -205.57809448242188,
+        217.9836883544922,
+        -9.399999618530273,
+        -149.38290405273438,
+        267.2254333496094
+      ]
+    },
+    {
+      "instance": "finger_right",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 20,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 5503.997671483173,
+      "step_volume_mm3": 5504.0,
+      "relative_volume_error": 4.2305901657332363e-07,
+      "extent_mm": [
+        -9.399999618530273,
+        -205.57809448242188,
+        217.9836883544922,
+        -1.399999976158142,
+        -149.38290405273438,
+        267.2254333496094
+      ]
+    },
+    {
+      "instance": "servo_yaw",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 12,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 34396.794200332726,
+      "step_volume_mm3": 34396.791000000005,
+      "relative_volume_error": 9.304160732501101e-08,
+      "extent_mm": [
+        -91.0,
+        13.5,
+        9.5,
+        -48.099998474121094,
+        54.20000076293945,
+        29.200000762939453
+      ]
+    },
+    {
+      "instance": "saddle_yaw",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 2082,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 24521.756448782817,
+      "step_volume_mm3": 24522.122822398538,
+      "relative_volume_error": 1.4940534242277754e-05,
+      "extent_mm": [
+        -94.5,
+        0.0,
+        6.0,
+        -44.599998474121094,
+        67.69999694824219,
+        32.70000076293945
+      ]
+    },
+    {
+      "instance": "servo_shoulder",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 12,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 34396.78431584179,
+      "step_volume_mm3": 34396.791000000005,
+      "relative_volume_error": 1.9432505246342585e-07,
+      "extent_mm": [
+        -82.9000015258789,
+        35.150001525878906,
+        54.650001525878906,
+        -40.0,
+        54.849998474121094,
+        95.3499984741211
+      ]
+    },
+    {
+      "instance": "saddle_shoulder",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3138,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 28487.579106038454,
+      "step_volume_mm3": 28487.52126284129,
+      "relative_volume_error": 2.0304749097869404e-06,
+      "extent_mm": [
+        -86.4000015258789,
+        31.0,
+        41.150001525878906,
+        -30.0,
+        73.0,
+        108.8499984741211
+      ]
+    },
+    {
+      "instance": "servo_elbow",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 12,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 34396.78925757786,
+      "step_volume_mm3": 34396.791000000005,
+      "relative_volume_error": 5.065653200502155e-08,
+      "extent_mm": [
+        -82.9000015258789,
+        -56.656131744384766,
+        110.03816986083984,
+        -40.0,
+        -17.17427635192871,
+        154.67710876464844
+      ]
+    },
+    {
+      "instance": "saddle_elbow",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3138,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 28487.57124959727,
+      "step_volume_mm3": 28487.52126284131,
+      "relative_volume_error": 1.7546895532976758e-06,
+      "extent_mm": [
+        -86.4000015258789,
+        -62.06312942504883,
+        99.0550308227539,
+        -30.0,
+        -11.767277717590332,
+        160.9897918701172
+      ]
+    },
+    {
+      "instance": "servo_wrist",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 12,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 7927.55546405372,
+      "step_volume_mm3": 7927.560000000001,
+      "relative_volume_error": 5.721743236338257e-07,
+      "extent_mm": [
+        -68.5,
+        -122.17448425292969,
+        171.1423797607422,
+        -40.0,
+        -99.10328674316406,
+        196.81666564941406
+      ]
+    },
+    {
+      "instance": "saddle_wrist",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3152,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 17964.367156340504,
+      "step_volume_mm3": 17964.429263941045,
+      "relative_volume_error": 3.457254312308002e-06,
+      "extent_mm": [
+        -72.0,
+        -129.01499938964844,
+        150.67691040039062,
+        -30.0,
+        -89.4233627319336,
+        205.28025817871094
+      ]
+    },
+    {
+      "instance": "servo_gripper",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 12,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 7927.564765336775,
+      "step_volume_mm3": 7927.56,
+      "relative_volume_error": 6.011101492329804e-07,
+      "extent_mm": [
+        -23.649999618530273,
+        -150.75558471679688,
+        243.64837646484375,
+        4.849999904632568,
+        -127.68438720703125,
+        269.32269287109375
+      ]
+    },
+    {
+      "instance": "saddle_gripper",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 3126,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 13980.322947300681,
+      "step_volume_mm3": 13980.589304315949,
+      "relative_volume_error": 1.90519161581391e-05,
+      "extent_mm": [
+        -27.149999618530273,
+        -165.8468475341797,
+        233.638916015625,
+        23.100000381469727,
+        -122.80620574951172,
+        277.7862548828125
+      ]
+    },
+    {
+      "instance": "horn_yaw",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 582.2727236174381,
+      "step_volume_mm3": 582.5141098286323,
+      "relative_volume_error": 0.0004143868914439727,
+      "extent_mm": [
+        -10.0,
+        35.003108978271484,
+        11.899999618530273,
+        10.0,
+        54.996891021728516,
+        13.899999618530273
+      ]
+    },
+    {
+      "instance": "horn_shoulder",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 582.2726951014483,
+      "step_volume_mm3": 582.5141098286323,
+      "relative_volume_error": 0.00041443584474712896,
+      "extent_mm": [
+        -39.599998474121094,
+        35.00077819824219,
+        65.00077819824219,
+        -37.599998474121094,
+        54.99922180175781,
+        84.99922180175781
+      ]
+    },
+    {
+      "instance": "horn_elbow",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 582.2727908192459,
+      "step_volume_mm3": 582.5141098286324,
+      "relative_volume_error": 0.0004142715263283877,
+      "extent_mm": [
+        -39.599998474121094,
+        -46.9144287109375,
+        122.3584213256836,
+        -37.599998474121094,
+        -26.91598129272461,
+        142.35687255859375
+      ]
+    },
+    {
+      "instance": "horn_wrist",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 356.1717496574868,
+      "step_volume_mm3": 356.3194387701622,
+      "relative_volume_error": 0.0004144851405949935,
+      "extent_mm": [
+        -39.599998474121094,
+        -118.63826751708984,
+        175.9801483154297,
+        -37.599998474121094,
+        -102.63951110839844,
+        191.97889709472656
+      ]
+    },
+    {
+      "instance": "horn_gripper",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 356.1717635523516,
+      "step_volume_mm3": 356.3194387701621,
+      "relative_volume_error": 0.0004144461450663574,
+      "extent_mm": [
+        -30.149999618530273,
+        -147.2193603515625,
+        248.48614501953125,
+        -28.149999618530273,
+        -131.22061157226562,
+        264.4848937988281
+      ]
+    },
+    {
+      "instance": "yaw_shaft",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 765.4458012087449,
+      "step_volume_mm3": 765.7632093125045,
+      "relative_volume_error": 0.00041449902515499005,
+      "extent_mm": [
+        -5.0,
+        40.00155258178711,
+        1.5,
+        5.0,
+        49.99844741821289,
+        30.0
+      ]
+    },
+    {
+      "instance": "yaw_washer_head",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.278905474676776,
+      "step_volume_mm3": 57.30265000147908,
+      "relative_volume_error": 0.00041437048376804353,
+      "extent_mm": [
+        -5.0,
+        40.00155258178711,
+        5.0,
+        5.0,
+        49.99844741821289,
+        6.0
+      ]
+    },
+    {
+      "instance": "yaw_washer_rotating",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.278905474676925,
+      "step_volume_mm3": 57.302650001479094,
+      "relative_volume_error": 0.00041437048376568745,
+      "extent_mm": [
+        -5.0,
+        40.00155258178711,
+        20.399999618530273,
+        5.0,
+        49.99844741821289,
+        21.399999618530273
+      ]
+    },
+    {
+      "instance": "yaw_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 189.60323029318957,
+      "step_volume_mm3": 189.6818246013873,
+      "relative_volume_error": 0.00041434812409089125,
+      "extent_mm": [
+        -4.619999885559082,
+        40.38143539428711,
+        21.399999618530273,
+        4.619999885559082,
+        49.61856460571289,
+        25.399999618530273
+      ]
+    },
+    {
+      "instance": "shoulder_shaft",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1648.6519357256184,
+      "step_volume_mm3": 1649.3361431346148,
+      "relative_volume_error": 0.0004148380618737998,
+      "extent_mm": [
+        -34.5,
+        40.00155258178711,
+        70.0,
+        39.0,
+        49.99844741821289,
+        80.0
+      ]
+    },
+    {
+      "instance": "shoulder_washer_head",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.27888739318587,
+      "step_volume_mm3": 57.302650001479066,
+      "relative_volume_error": 0.0004146860274801151,
+      "extent_mm": [
+        -31.0,
+        40.00155258178711,
+        70.0,
+        -30.0,
+        49.99844741821289,
+        80.0
+      ]
+    },
+    {
+      "instance": "shoulder_washer_rotating",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.27888739318587,
+      "step_volume_mm3": 57.302650001479066,
+      "relative_volume_error": 0.0004146860274801151,
+      "extent_mm": [
+        30.0,
+        40.00155258178711,
+        70.0,
+        31.0,
+        49.99844741821289,
+        80.0
+      ]
+    },
+    {
+      "instance": "shoulder_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 189.60324715753086,
+      "step_volume_mm3": 189.6818246013872,
+      "relative_volume_error": 0.0004142592155124798,
+      "extent_mm": [
+        31.0,
+        40.38143539428711,
+        70.37999725341797,
+        35.0,
+        49.61856460571289,
+        79.62000274658203
+      ]
+    },
+    {
+      "instance": "elbow_shaft",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1648.6528298824996,
+      "step_volume_mm3": 1649.3361431346152,
+      "relative_volume_error": 0.000414295930492925,
+      "extent_mm": [
+        -34.5,
+        -41.91365051269531,
+        127.3576431274414,
+        39.0,
+        -31.916757583618164,
+        137.35765075683594
+      ]
+    },
+    {
+      "instance": "elbow_washer_head",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.27891057412489,
+      "step_volume_mm3": 57.302650001479094,
+      "relative_volume_error": 0.00041428149227981794,
+      "extent_mm": [
+        -31.0,
+        -41.91365051269531,
+        127.3576431274414,
+        -30.0,
+        -31.916757583618164,
+        137.35765075683594
+      ]
+    },
+    {
+      "instance": "elbow_washer_rotating",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.27891057412489,
+      "step_volume_mm3": 57.302650001479094,
+      "relative_volume_error": 0.00041428149227981794,
+      "extent_mm": [
+        30.0,
+        -41.91365051269531,
+        127.3576431274414,
+        31.0,
+        -31.916757583618164,
+        137.35765075683594
+      ]
+    },
+    {
+      "instance": "elbow_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 189.60319133353187,
+      "step_volume_mm3": 189.68182460138718,
+      "relative_volume_error": 0.0004145535188759165,
+      "extent_mm": [
+        31.0,
+        -41.53376770019531,
+        127.73764038085938,
+        35.0,
+        -32.2966423034668,
+        136.97764587402344
+      ]
+    },
+    {
+      "instance": "wrist_shaft",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1648.6530064169008,
+      "step_volume_mm3": 1649.3361431346152,
+      "relative_volume_error": 0.0004141888968831485,
+      "extent_mm": [
+        -34.5,
+        -115.63733673095703,
+        178.97952270507812,
+        39.0,
+        -105.64044189453125,
+        188.97952270507812
+      ]
+    },
+    {
+      "instance": "wrist_washer_head",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.278883433842566,
+      "step_volume_mm3": 57.30265000147909,
+      "relative_volume_error": 0.00041475512277194186,
+      "extent_mm": [
+        -31.0,
+        -115.63733673095703,
+        178.97952270507812,
+        -30.0,
+        -105.64044189453125,
+        188.97952270507812
+      ]
+    },
+    {
+      "instance": "wrist_washer_rotating",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 57.278883433842566,
+      "step_volume_mm3": 57.30265000147909,
+      "relative_volume_error": 0.00041475512277194186,
+      "extent_mm": [
+        30.0,
+        -115.63733673095703,
+        178.97952270507812,
+        31.0,
+        -105.64044189453125,
+        188.97952270507812
+      ]
+    },
+    {
+      "instance": "wrist_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 189.60336124594323,
+      "step_volume_mm3": 189.68182460138723,
+      "relative_volume_error": 0.00041365774295396983,
+      "extent_mm": [
+        31.0,
+        -115.25745391845703,
+        179.35952758789062,
+        35.0,
+        -106.02032470703125,
+        188.59951782226562
+      ]
+    },
+    {
+      "instance": "retainer_yaw",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1028,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1976.5472645671446,
+      "step_volume_mm3": 1976.5247833867516,
+      "relative_volume_error": 1.1374094866897612e-05,
+      "extent_mm": [
+        -97.5,
+        0.0,
+        14.350000381469727,
+        -94.5,
+        67.69999694824219,
+        24.350000381469727
+      ]
+    },
+    {
+      "instance": "retainer_yaw_bolt_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42158690964365,
+      "step_volume_mm3": 172.49307163616314,
+      "relative_volume_error": 0.00041442085668384304,
+      "extent_mm": [
+        -100.0,
+        2.25,
+        16.600854873657227,
+        -81.5,
+        7.75,
+        22.099145889282227
+      ]
+    },
+    {
+      "instance": "retainer_yaw_nut_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54611333207072,
+      "step_volume_mm3": 41.56327080699387,
+      "relative_volume_error": 0.0004128037709742842,
+      "extent_mm": [
+        -84.5,
+        1.7999999523162842,
+        16.1509952545166,
+        -82.69999694824219,
+        8.199999809265137,
+        22.54900550842285
+      ]
+    },
+    {
+      "instance": "retainer_yaw_bolt_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42157148303522,
+      "step_volume_mm3": 172.4930716361631,
+      "relative_volume_error": 0.00041451028988978735,
+      "extent_mm": [
+        -100.0,
+        59.95000076293945,
+        16.600854873657227,
+        -81.5,
+        65.44999694824219,
+        22.099145889282227
+      ]
+    },
+    {
+      "instance": "retainer_yaw_nut_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54612555979369,
+      "step_volume_mm3": 41.56327080699386,
+      "relative_volume_error": 0.00041250957557678635,
+      "extent_mm": [
+        -84.5,
+        59.5,
+        16.1509952545166,
+        -82.69999694824219,
+        65.9000015258789,
+        22.54900550842285
+      ]
+    },
+    {
+      "instance": "retainer_shoulder",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1028,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1976.5472761282024,
+      "step_volume_mm3": 1976.5247833867516,
+      "relative_volume_error": 1.1379944051241222e-05,
+      "extent_mm": [
+        -89.4000015258789,
+        40.0,
+        41.150001525878906,
+        -86.4000015258789,
+        50.0,
+        108.8499984741211
+      ]
+    },
+    {
+      "instance": "retainer_shoulder_bolt_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.4215630252282,
+      "step_volume_mm3": 172.4930716361631,
+      "relative_volume_error": 0.0004145593226244517,
+      "extent_mm": [
+        -91.9000015258789,
+        42.2508544921875,
+        101.0999984741211,
+        -73.4000015258789,
+        47.7491455078125,
+        106.5999984741211
+      ]
+    },
+    {
+      "instance": "retainer_shoulder_nut_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54612683943704,
+      "step_volume_mm3": 41.56327080699386,
+      "relative_volume_error": 0.00041247878773618176,
+      "extent_mm": [
+        -76.4000015258789,
+        41.800994873046875,
+        100.6500015258789,
+        -74.5999984741211,
+        48.199005126953125,
+        107.05000305175781
+      ]
+    },
+    {
+      "instance": "retainer_shoulder_bolt_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42158451498008,
+      "step_volume_mm3": 172.4930716361631,
+      "relative_volume_error": 0.00041443473934890755,
+      "extent_mm": [
+        -91.9000015258789,
+        42.2508544921875,
+        43.400001525878906,
+        -73.4000015258789,
+        47.7491455078125,
+        48.900001525878906
+      ]
+    },
+    {
+      "instance": "retainer_shoulder_nut_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54613768273081,
+      "step_volume_mm3": 41.56327080699385,
+      "relative_volume_error": 0.0004122179012956111,
+      "extent_mm": [
+        -76.4000015258789,
+        41.800994873046875,
+        42.95000076293945,
+        -74.5999984741211,
+        48.199005126953125,
+        49.349998474121094
+      ]
+    },
+    {
+      "instance": "retainer_elbow",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1028,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 1976.54697426653,
+      "step_volume_mm3": 1976.524783386752,
+      "relative_volume_error": 1.1227220606859789e-05,
+      "extent_mm": [
+        -89.4000015258789,
+        -60.4265251159668,
+        101.76146697998047,
+        -86.4000015258789,
+        -13.403882026672363,
+        162.95382690429688
+      ]
+    },
+    {
+      "instance": "retainer_elbow_bolt_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.4215672927527,
+      "step_volume_mm3": 172.49307163616322,
+      "relative_volume_error": 0.0004145345823589526,
+      "extent_mm": [
+        -91.9000015258789,
+        -23.117311477661133,
+        153.24038696289062,
+        -73.4000015258789,
+        -17.617738723754883,
+        158.73995971679688
+      ]
+    },
+    {
+      "instance": "retainer_elbow_nut_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54613888652716,
+      "step_volume_mm3": 41.563270806993856,
+      "relative_volume_error": 0.0004121889383116829,
+      "extent_mm": [
+        -76.4000015258789,
+        -23.567276000976562,
+        152.79043579101562,
+        -74.5999984741211,
+        -17.16777229309082,
+        159.18992614746094
+      ]
+    },
+    {
+      "instance": "retainer_elbow_bolt_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.4216012200452,
+      "step_volume_mm3": 172.49307163616317,
+      "relative_volume_error": 0.00041433789450229344,
+      "extent_mm": [
+        -91.9000015258789,
+        -56.212669372558594,
+        105.9753189086914,
+        -73.4000015258789,
+        -50.713096618652344,
+        111.47489166259766
+      ]
+    },
+    {
+      "instance": "retainer_elbow_nut_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.546120705052545,
+      "step_volume_mm3": 41.56327080699388,
+      "relative_volume_error": 0.00041262637921284215,
+      "extent_mm": [
+        -76.4000015258789,
+        -56.662635803222656,
+        105.52535247802734,
+        -74.5999984741211,
+        -50.26313400268555,
+        111.92485809326172
+      ]
+    },
+    {
+      "instance": "retainer_wrist",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1536,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 2768.0564996511675,
+      "step_volume_mm3": 2767.7177685644065,
+      "relative_volume_error": 0.00012238642632148486,
+      "extent_mm": [
+        -75.0,
+        -134.75076293945312,
+        156.69972229003906,
+        -72.0,
+        -86.52700805664062,
+        211.2593231201172
+      ]
+    },
+    {
+      "instance": "retainer_wrist_bolt_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42157073575072,
+      "step_volume_mm3": 172.49307163616322,
+      "relative_volume_error": 0.0004145146221485226,
+      "extent_mm": [
+        -77.5,
+        -101.97450256347656,
+        197.53086853027344,
+        -59.0,
+        -96.47492980957031,
+        203.0304412841797
+      ]
+    },
+    {
+      "instance": "retainer_wrist_nut_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.5460502191263,
+      "step_volume_mm3": 41.56327080699384,
+      "relative_volume_error": 0.00041432224974564854,
+      "extent_mm": [
+        -62.0,
+        -102.42446899414062,
+        197.08090209960938,
+        -60.20000076293945,
+        -96.02496337890625,
+        203.4803924560547
+      ]
+    },
+    {
+      "instance": "retainer_wrist_bolt_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42154300201219,
+      "step_volume_mm3": 172.49307163616322,
+      "relative_volume_error": 0.0004146754039020799,
+      "extent_mm": [
+        -77.5,
+        -124.80284881591797,
+        164.92860412597656,
+        -59.0,
+        -119.30327606201172,
+        170.4281768798828
+      ]
+    },
+    {
+      "instance": "retainer_wrist_nut_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54605111797567,
+      "step_volume_mm3": 41.56327080699384,
+      "relative_volume_error": 0.0004143006236956681,
+      "extent_mm": [
+        -62.0,
+        -125.2528076171875,
+        164.47865295410156,
+        -60.20000076293945,
+        -118.85330963134766,
+        170.87814331054688
+      ]
+    },
+    {
+      "instance": "retainer_gripper",
+      "printed": true,
+      "sha256_matches": true,
+      "triangles": 1536,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 2768.056451988152,
+      "step_volume_mm3": 2767.717768564407,
+      "relative_volume_error": 0.0001223692052678366,
+      "extent_mm": [
+        -30.149999618530273,
+        -163.3318634033203,
+        229.20571899414062,
+        -27.149999618530273,
+        -115.10810852050781,
+        283.76531982421875
+      ]
+    },
+    {
+      "instance": "retainer_gripper_bolt_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42167470660004,
+      "step_volume_mm3": 172.49307163616305,
+      "relative_volume_error": 0.0004139118683769766,
+      "extent_mm": [
+        -32.650001525878906,
+        -130.55560302734375,
+        270.036865234375,
+        -14.149999618530273,
+        -125.0560302734375,
+        275.53643798828125
+      ]
+    },
+    {
+      "instance": "retainer_gripper_nut_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54602363970861,
+      "step_volume_mm3": 41.563270806993906,
+      "relative_volume_error": 0.0004149617426739102,
+      "extent_mm": [
+        -17.149999618530273,
+        -131.0055694580078,
+        269.5869140625,
+        -15.350000381469727,
+        -124.60606384277344,
+        275.9864196777344
+      ]
+    },
+    {
+      "instance": "retainer_gripper_bolt_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42160682174918,
+      "step_volume_mm3": 172.4930716361632,
+      "relative_volume_error": 0.00041430541955188646,
+      "extent_mm": [
+        -32.650001525878906,
+        -153.38394165039062,
+        237.4346160888672,
+        -14.149999618530273,
+        -147.88436889648438,
+        242.93418884277344
+      ]
+    },
+    {
+      "instance": "retainer_gripper_nut_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.546005081546696,
+      "step_volume_mm3": 41.56327080699387,
+      "relative_volume_error": 0.0004154082465586204,
+      "extent_mm": [
+        -17.149999618530273,
+        -153.8339080810547,
+        236.98464965820312,
+        -15.350000381469727,
+        -147.4344024658203,
+        243.3841552734375
+      ]
+    },
+    {
+      "instance": "base_bolt_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42157893560397,
+      "step_volume_mm3": 172.49307163616317,
+      "relative_volume_error": 0.0004144670848576963,
+      "extent_mm": [
+        -26.75,
+        30.2508544921875,
+        -2.0,
+        -21.25,
+        35.7491455078125,
+        16.5
+      ]
+    },
+    {
+      "instance": "base_nut_1",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39474204497814,
+      "step_volume_mm3": 55.41769440932518,
+      "relative_volume_error": 0.0004141703221630111,
+      "extent_mm": [
+        -27.200000762939453,
+        29.800994873046875,
+        0.0,
+        -20.799999237060547,
+        36.199005126953125,
+        2.4000000953674316
+      ]
+    },
+    {
+      "instance": "base_bolt_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.42157893560397,
+      "step_volume_mm3": 172.49307163616317,
+      "relative_volume_error": 0.0004144670848576963,
+      "extent_mm": [
+        21.25,
+        30.2508544921875,
+        -2.0,
+        26.75,
+        35.7491455078125,
+        16.5
+      ]
+    },
+    {
+      "instance": "base_nut_2",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39474204497808,
+      "step_volume_mm3": 55.41769440932518,
+      "relative_volume_error": 0.0004141703221640368,
+      "extent_mm": [
+        20.799999237060547,
+        29.800994873046875,
+        0.0,
+        27.200000762939453,
+        36.199005126953125,
+        2.4000000953674316
+      ]
+    },
+    {
+      "instance": "base_bolt_3",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.4215639521717,
+      "step_volume_mm3": 172.49307163616314,
+      "relative_volume_error": 0.000414553948823275,
+      "extent_mm": [
+        -26.75,
+        54.2508544921875,
+        -2.0,
+        -21.25,
+        59.7491455078125,
+        16.5
+      ]
+    },
+    {
+      "instance": "base_nut_3",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39475018911494,
+      "step_volume_mm3": 55.417694409325186,
+      "relative_volume_error": 0.00041402336302154345,
+      "extent_mm": [
+        -27.200000762939453,
+        53.800994873046875,
+        0.0,
+        -20.799999237060547,
+        60.199005126953125,
+        2.4000000953674316
+      ]
+    },
+    {
+      "instance": "base_bolt_4",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 172.4215639521717,
+      "step_volume_mm3": 172.49307163616314,
+      "relative_volume_error": 0.000414553948823275,
+      "extent_mm": [
+        21.25,
+        54.2508544921875,
+        -2.0,
+        26.75,
+        59.7491455078125,
+        16.5
+      ]
+    },
+    {
+      "instance": "base_nut_4",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39475018911506,
+      "step_volume_mm3": 55.417694409325186,
+      "relative_volume_error": 0.00041402336301936377,
+      "extent_mm": [
+        20.799999237060547,
+        53.800994873046875,
+        0.0,
+        27.200000762939453,
+        60.199005126953125,
+        2.4000000953674316
+      ]
+    },
+    {
+      "instance": "guide_bolt_nl",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 271.3406870895769,
+      "step_volume_mm3": 271.4532402242399,
+      "relative_volume_error": 0.0004146317596726415,
+      "extent_mm": [
+        -39.650001525878906,
+        -186.90377807617188,
+        219.79051208496094,
+        -34.150001525878906,
+        -164.7822265625,
+        248.84988403320312
+      ]
+    },
+    {
+      "instance": "guide_nut_nl",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.394740372922875,
+      "step_volume_mm3": 55.41769440932525,
+      "relative_volume_error": 0.0004142004940305183,
+      "extent_mm": [
+        -40.099998474121094,
+        -185.65744018554688,
+        222.58383178710938,
+        -33.70000076293945,
+        -179.0399169921875,
+        228.21954345703125
+      ]
+    },
+    {
+      "instance": "guide_bolt_nr",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 271.34067407665134,
+      "step_volume_mm3": 271.45324022423995,
+      "relative_volume_error": 0.00041467969767323943,
+      "extent_mm": [
+        15.350000381469727,
+        -186.90377807617188,
+        219.79051208496094,
+        20.850000381469727,
+        -164.7822265625,
+        248.84988403320312
+      ]
+    },
+    {
+      "instance": "guide_nut_nr",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39472952354496,
+      "step_volume_mm3": 55.417694409325264,
+      "relative_volume_error": 0.00041439626864808444,
+      "extent_mm": [
+        14.899999618530273,
+        -185.65744018554688,
+        222.58383178710938,
+        21.299999237060547,
+        -179.0399169921875,
+        228.21954345703125
+      ]
+    },
+    {
+      "instance": "guide_bolt_fl",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 271.34100110160983,
+      "step_volume_mm3": 271.4532402242399,
+      "relative_volume_error": 0.00041347497836953534,
+      "extent_mm": [
+        -39.650001525878906,
+        -166.4249725341797,
+        205.4510955810547,
+        -34.150001525878906,
+        -144.3034210205078,
+        234.51048278808594
+      ]
+    },
+    {
+      "instance": "guide_nut_fl",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39474685706159,
+      "step_volume_mm3": 55.41769440932525,
+      "relative_volume_error": 0.00041408348918603954,
+      "extent_mm": [
+        -40.099998474121094,
+        -165.17864990234375,
+        208.24441528320312,
+        -33.70000076293945,
+        -158.5611114501953,
+        213.880126953125
+      ]
+    },
+    {
+      "instance": "guide_bolt_fr",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 271.34098808908834,
+      "step_volume_mm3": 271.45324022423995,
+      "relative_volume_error": 0.00041352291488168895,
+      "extent_mm": [
+        15.350000381469727,
+        -166.4249725341797,
+        205.4510955810547,
+        20.850000381469727,
+        -144.3034210205078,
+        234.51048278808594
+      ]
+    },
+    {
+      "instance": "guide_nut_fr",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39473467680531,
+      "step_volume_mm3": 55.417694409325264,
+      "relative_volume_error": 0.0004143032792084953,
+      "extent_mm": [
+        14.899999618530273,
+        -165.17864990234375,
+        208.24441528320312,
+        21.299999237060547,
+        -158.5611114501953,
+        213.880126953125
+      ]
+    },
+    {
+      "instance": "cradle_bolt_a",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 236.01233037965463,
+      "step_volume_mm3": 236.11032287135538,
+      "relative_volume_error": 0.00041502840921589875,
+      "extent_mm": [
+        15.350000381469727,
+        -169.23141479492188,
+        230.7329864501953,
+        20.850000381469727,
+        -149.97775268554688,
+        255.6966094970703
+      ]
+    },
+    {
+      "instance": "cradle_nut_a",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.394696119175784,
+      "step_volume_mm3": 55.417694409325264,
+      "relative_volume_error": 0.00041499904307839197,
+      "extent_mm": [
+        14.899999618530273,
+        -167.4688720703125,
+        234.26353454589844,
+        21.299999237060547,
+        -160.85134887695312,
+        239.89926147460938
+      ]
+    },
+    {
+      "instance": "cradle_bolt_b",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 236.01249491466874,
+      "step_volume_mm3": 236.11032287135532,
+      "relative_volume_error": 0.0004143315527118569,
+      "extent_mm": [
+        15.350000381469727,
+        -163.49734497070312,
+        226.7179412841797,
+        20.850000381469727,
+        -144.24368286132812,
+        251.6815643310547
+      ]
+    },
+    {
+      "instance": "cradle_nut_b",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39475295603112,
+      "step_volume_mm3": 55.417694409325264,
+      "relative_volume_error": 0.00041397343463434223,
+      "extent_mm": [
+        14.899999618530273,
+        -161.73480224609375,
+        230.24850463867188,
+        21.299999237060547,
+        -155.11727905273438,
+        235.88421630859375
+      ]
+    },
+    {
+      "instance": "elbow_mount_bolt",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 341.9972593981882,
+      "step_volume_mm3": 342.13907493000886,
+      "relative_volume_error": 0.00041449674185761953,
+      "extent_mm": [
+        -12.149999618530273,
+        -37.08392333984375,
+        92.91157531738281,
+        -6.650000095367432,
+        -9.22661018371582,
+        130.1624755859375
+      ]
+    },
+    {
+      "instance": "elbow_mount_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.3947340301028,
+      "step_volume_mm3": 55.41769440932521,
+      "relative_volume_error": 0.00041431494881065357,
+      "extent_mm": [
+        -12.600000381469727,
+        -36.98474884033203,
+        94.06659698486328,
+        -6.199999809265137,
+        -30.367223739624023,
+        99.70230865478516
+      ]
+    },
+    {
+      "instance": "wrist_mount_bolt",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 341.9972899004675,
+      "step_volume_mm3": 342.139074930009,
+      "relative_volume_error": 0.0004144075901605214,
+      "extent_mm": [
+        6.650000095367432,
+        -110.80760955810547,
+        144.533447265625,
+        12.149999618530273,
+        -82.9502944946289,
+        181.78436279296875
+      ]
+    },
+    {
+      "instance": "wrist_mount_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 55.39472392229376,
+      "step_volume_mm3": 55.41769440932519,
+      "relative_volume_error": 0.0004144973419820075,
+      "extent_mm": [
+        6.199999809265137,
+        -110.70843505859375,
+        145.6884765625,
+        12.600000381469727,
+        -104.09090423583984,
+        151.32418823242188
+      ]
+    },
+    {
+      "instance": "shoulder_cradle_bolt",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 200.6842386957578,
+      "step_volume_mm3": 200.76740551847075,
+      "relative_volume_error": 0.0004142446454301988,
+      "extent_mm": [
+        -42.0,
+        65.2508544921875,
+        62.25,
+        -19.5,
+        70.7491455078125,
+        67.75
+      ]
+    },
+    {
+      "instance": "shoulder_cradle_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.5460228831256,
+      "step_volume_mm3": 41.56327080699387,
+      "relative_volume_error": 0.0004149799458363616,
+      "extent_mm": [
+        -22.0,
+        64.80099487304688,
+        61.79999923706055,
+        -20.200000762939453,
+        71.19900512695312,
+        68.19999694824219
+      ]
+    },
+    {
+      "instance": "elbow_cradle_bolt",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 200.6841917744714,
+      "step_volume_mm3": 200.7674055184708,
+      "relative_volume_error": 0.0004144783551120441,
+      "extent_mm": [
+        -42.0,
+        -26.560258865356445,
+        108.22407531738281,
+        -19.5,
+        -21.060686111450195,
+        113.72364807128906
+      ]
+    },
+    {
+      "instance": "elbow_cradle_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.546034138522884,
+      "step_volume_mm3": 41.56327080699391,
+      "relative_volume_error": 0.0004147091443084383,
+      "extent_mm": [
+        -22.0,
+        -27.010223388671875,
+        107.77411651611328,
+        -20.200000762939453,
+        -20.610719680786133,
+        114.17361450195312
+      ]
+    },
+    {
+      "instance": "wrist_cradle_bolt",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1004,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 200.6842439729371,
+      "step_volume_mm3": 200.76740551847087,
+      "relative_volume_error": 0.00041421836039069883,
+      "extent_mm": [
+        -42.0,
+        -100.28394317626953,
+        159.84596252441406,
+        -19.5,
+        -94.78437042236328,
+        165.3455352783203
+      ]
+    },
+    {
+      "instance": "wrist_cradle_nut",
+      "printed": false,
+      "sha256_matches": true,
+      "triangles": 1008,
+      "closed_edge_incidence": true,
+      "connected_vertex_groups": 1,
+      "step_solids": 1,
+      "mesh_volume_mm3": 41.54601889994681,
+      "step_volume_mm3": 41.56327080699387,
+      "relative_volume_error": 0.0004150757799397823,
+      "extent_mm": [
+        -22.0,
+        -100.7339096069336,
+        159.39599609375,
+        -20.200000762939453,
+        -94.33440399169922,
+        165.79550170898438
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "source_bound_regressions": 275,
+  "regression_failures": 0,
+  "known_private_credentials_absent": true,
+  "selected_evidence_blocks_scanned_including_archives": 339,
+  "original_native_output_hashes_verified": true,
+  "exact_robot_audit_sources_verified": true,
+  "prepared_source_regenerates": true,
+  "scope": "Code check-in verification; full engineering campaign, remote CI, dev integration and physical acceptance remain separate."
+}

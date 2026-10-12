@@ -1,0 +1,18 @@
+{
+  "principal_id": "local-control-plane",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/transfer-privacy-canary-001.workflow.wflow",
+    "source_digest": "a0960572adc26e59bb6725498c2b8537a4dd33d5e86e023c70ac6685a9f518b0",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "request_id": "transfer-privacy-canary-003",
+  "payload_digest": "cf1f32f5a1e229577713ef0cc6ec22e8e8c0bb79ed9485b815157a6ba24b024b",
+  "input_snapshot_id": "inputs-a96fb2aecfec4769988a711784ea16d8",
+  "input_digest": "10ad843e695864e5d02917495d3308615385298bfc0476f86500194f4815ac7a",
+  "run_id": "d1efc0838317485b8ede9497bb799c23",
+  "run_log_path": "runs/transfer-privacy-canary-001/d1efc0838317485b8ede9497bb799c23.json",
+  "initial_outcome": "accepted",
+  "created_at": "2026-10-12T17:19:45.215602+00:00"
+}

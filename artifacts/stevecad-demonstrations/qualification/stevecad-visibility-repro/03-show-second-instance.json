@@ -1,0 +1,94 @@
+{
+  "observed_at": "2026-10-12T00:21:52.627204+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__inspect_model",
+    "arguments": {
+      "document_id": "17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+      "view": "isometric",
+      "checks": [],
+      "show": [
+        "second_marker"
+      ]
+    },
+    "label": "03-show-second-instance",
+    "output_dir": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro",
+    "print_summary": true
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"build_id\": \"627de50c-cdf4-40f5-ac77-7bccbd4e8b9d\", \"coordinates\": \"CAD Z-up; front looks from -Y, right from +X, top from +Z\", \"document_id\": \"17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\", \"drawn\": {\"bounds_mm\": [10.0, 20.0, 30.0], \"extent_mm\": [100.0, 0.0, 0.0, 110.0, 20.0, 30.0], \"instances\": [\"first_marker\"]}, \"feature_capture\": {\"coverage\": null, \"editable\": null, \"execution_verified\": null, \"status\": null}, \"measurements\": {\"bounds_mm\": [110.0, 20.0, 30.0], \"center_of_mass_mm\": [55.0, 10.0, 15.0], \"components\": 2, \"faces\": 12, \"solids\": 2, \"surface_area_mm2\": 4400.0, \"units\": \"mm\", \"volume_mm3\": 12000.0}, \"projection\": \"orthographic\", \"revision\": 1, \"view\": \"isometric\", \"url\": \"https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\"}"
+      },
+      {
+        "type": "image",
+        "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/03-show-second-instance-1.png",
+        "sha256": "9d48b9d2b94d78d0ba567493f53a9581ff8f31a49092efb9a02e3b9b34751664",
+        "size_bytes": 7785
+      },
+      {
+        "name": "Document (revision 1)",
+        "uri": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+        "description": "Open in STEVE",
+        "mimeType": "text/html",
+        "type": "resource_link"
+      }
+    ],
+    "structuredContent": {
+      "build_id": "627de50c-cdf4-40f5-ac77-7bccbd4e8b9d",
+      "coordinates": "CAD Z-up; front looks from -Y, right from +X, top from +Z",
+      "document_id": "17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+      "drawn": {
+        "bounds_mm": [
+          10.0,
+          20.0,
+          30.0
+        ],
+        "extent_mm": [
+          100.0,
+          0.0,
+          0.0,
+          110.0,
+          20.0,
+          30.0
+        ],
+        "instances": [
+          "first_marker"
+        ]
+      },
+      "feature_capture": {
+        "coverage": null,
+        "editable": null,
+        "execution_verified": null,
+        "status": null
+      },
+      "measurements": {
+        "bounds_mm": [
+          110.0,
+          20.0,
+          30.0
+        ],
+        "center_of_mass_mm": [
+          55.0,
+          10.0,
+          15.0
+        ],
+        "components": 2,
+        "faces": 12,
+        "solids": 2,
+        "surface_area_mm2": 4400.0,
+        "units": "mm",
+        "volume_mm3": 12000.0
+      },
+      "projection": "orthographic",
+      "revision": 1,
+      "view": "isometric",
+      "url": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8"
+    },
+    "isError": false
+  }
+}

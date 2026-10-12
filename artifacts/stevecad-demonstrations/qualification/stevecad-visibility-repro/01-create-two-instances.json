@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-10-12T00:21:25.442341+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__write_design",
+    "arguments": {
+      "name": "Wright visibility metadata minimal reproduction 2026-10-12",
+      "kind": "design",
+      "code": "from steve import Design\nfrom components.marker import marker\ndesign = Design()\ndesign.add(marker, name=\"first_marker\")\ndesign.add(marker, name=\"second_marker\", at=(100, 0, 0))\nresult = design.result()\n",
+      "files": {
+        "components/marker.py": "from steve import Component\nmarker = Component(\"marker\", name=\"Ten by twenty by thirty marker\")\nmarker.box(\"body\", 10, 20, 30, centered=False)\n"
+      }
+    },
+    "label": "01-create-two-instances",
+    "output_dir": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro",
+    "print_summary": true
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"document\": {\"created_at\": \"2026-10-12T00:21:26.357738+00:00\", \"file_names\": [\"components/marker.py\"], \"id\": \"17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\", \"kind\": \"design\", \"links\": {}, \"name\": \"Wright visibility metadata minimal reproduction 2026-10-12\", \"preview_build_id\": null, \"revision\": 1, \"updated_at\": \"2026-10-12T00:21:26.357738+00:00\", \"url\": \"https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\"}, \"url\": \"https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\"}"
+      },
+      {
+        "name": "Wright visibility metadata minimal reproduction 2026-10-12 (revision 1)",
+        "uri": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+        "description": "Open in STEVE",
+        "mimeType": "text/html",
+        "type": "resource_link"
+      }
+    ],
+    "structuredContent": {
+      "document": {
+        "created_at": "2026-10-12T00:21:26.357738+00:00",
+        "file_names": [
+          "components/marker.py"
+        ],
+        "id": "17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+        "kind": "design",
+        "links": {},
+        "name": "Wright visibility metadata minimal reproduction 2026-10-12",
+        "preview_build_id": null,
+        "revision": 1,
+        "updated_at": "2026-10-12T00:21:26.357738+00:00",
+        "url": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8"
+      },
+      "url": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8"
+    },
+    "isError": false
+  }
+}

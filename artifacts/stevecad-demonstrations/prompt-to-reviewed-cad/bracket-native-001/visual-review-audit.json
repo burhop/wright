@@ -1,0 +1,25 @@
+{
+  "run_id": "90087fceacdc494d91eaff6f65d9173d",
+  "scope": "Agent visual review; not human acceptance or physical testing",
+  "all_six_original_images_inspected": true,
+  "original_CAD_results": {
+    "PASS": 11,
+    "UNVERIFIED": 1
+  },
+  "isometric_geometry_match": true,
+  "front_geometry_match": true,
+  "original_top_camera_match": false,
+  "original_top_finding": "Render is rotated 180 degrees about the view direction relative to the actual CAD top capture: upright appears right rather than left. Symmetric drilled blocks did not expose this camera convention error. This is our renderer authoring error, not a SteveCAD defect.",
+  "original_render_material": "Blue-gray matte appearance matches requested presentation metadata",
+  "corrected_top_image": "../../qualification/bracket-native-supplement-001/render_top-corrected.png",
+  "corrected_top_visually_matches_capture": true,
+  "browser_check": "design-review-browser-check.json",
+  "limitations": [
+    "128-sample render grain remains.",
+    "Front background is dark.",
+    "The original automated review did not identify the top-camera mismatch; this additive agent review preserves and corrects that omission."
+  ],
+  "original_outputs_edited": false,
+  "original_presentation_verdict": "FAIL",
+  "supplemental_geometry_audit": "../../qualification/bracket-native-supplement-001/geometry-audit.json"
+}

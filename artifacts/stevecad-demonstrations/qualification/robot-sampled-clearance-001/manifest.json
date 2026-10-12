@@ -1,0 +1,47 @@
+[
+  {
+    "name": "audit.py",
+    "bytes": 8476,
+    "sha256": "07a2d25f063b5a27519e082c00fe74ce9c393cdfa2e1749b54c84e66c586d5cd"
+  },
+  {
+    "name": "browser-check.json",
+    "bytes": 130,
+    "sha256": "5385f7823940fab2bcf182b7ca817bb405a318606e591387ca43a8f4af403dce"
+  },
+  {
+    "name": "capture_review.mjs",
+    "bytes": 1250,
+    "sha256": "d1faaa45091151d294d567558421444d25f85cccd0706fde47e7fe05d7dac9d7"
+  },
+  {
+    "name": "execution-environment.json",
+    "bytes": 1485,
+    "sha256": "15620b1d4dbbb2d79eff766cd15b9ff5560c42475b6f484067a83e20eee05834"
+  },
+  {
+    "name": "README.md",
+    "bytes": 1926,
+    "sha256": "24edbe4e828d027dbf93b2c475befdf3e8df8cb0377da44dafd1b8058c9b078d"
+  },
+  {
+    "name": "render_review.py",
+    "bytes": 4596,
+    "sha256": "29b6c35388f7b6e2a785b4d0eac579450a8511aa7a0b3392b45c57750deb8351"
+  },
+  {
+    "name": "review.html",
+    "bytes": 6386,
+    "sha256": "ab7e1c33415e93a5df61d55b7df747361f1602ba271a17fbf7bba32a7301765b"
+  },
+  {
+    "name": "sampled-clearance-review.png",
+    "bytes": 286110,
+    "sha256": "fa5654f3aef8594f8a516d7fc949c0dc2fa3ff9dba58dfd435fdddab138b569a"
+  },
+  {
+    "name": "sampled-clearance.json",
+    "bytes": 2720520,
+    "sha256": "72623bf221e620b3567fec201bbee942b116ffa89d499901acf03ba027a3ee67"
+  }
+]

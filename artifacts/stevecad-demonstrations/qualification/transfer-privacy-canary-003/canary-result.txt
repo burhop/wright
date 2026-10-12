@@ -1,0 +1,4 @@
+{
+  "raw_transient_value_received": true,
+  "ticket_id": "public-canary-001"
+}

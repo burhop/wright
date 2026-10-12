@@ -4,6 +4,8 @@
 # SteveCAD demonstration receipts and engineering files retain exact tool bytes.
 artifacts/stevecad-demonstrations/** -text -whitespace
 artifacts/ui-walkthrough/stevecad-thermal/** -text -whitespace
+artifacts/ui-walkthrough/prompt-to-reviewed-cad/** -text -whitespace
+examples/stevecad-demonstrations/prompt-to-reviewed-cad/** text eol=lf
 docker/mcp/brep-mcp-launcher.cjs text eol=lf
 
 # Versioned Workspace Surface contracts are byte-hashed. Keep their source and
