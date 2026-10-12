@@ -1,0 +1,147 @@
+{
+  "status": "readiness only; no engineering run",
+  "examples": [
+    {
+      "workspace_id": "34a24230-8159-4fd8-affa-e390e0dbd8e2",
+      "session_id": "desktop-probe-d9aa7e35-2ad0-4523-8747-b3f7363470ac",
+      "workspace_path": "/tmp/wright-host-ui-original-examples-20261012-01/workspaces/desktop-original-printed-replacement-part",
+      "template_id": "printed-replacement-part",
+      "template_version": "1.0.0",
+      "template_source_digest": "4d7fc589183f84b34a66c9495798507b2ef4326e467f2e927effe9733bf1e545",
+      "source_path": "workflows/printed-replacement-part.workflow.wflow",
+      "source_digest": "03c4ddba4a5dce6b0ad228c03f9a083f74e8bf377f2fd2712349eba036bf46ec",
+      "original_scenario": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel",
+      "scenario_hashes": {
+        "concept.png": "fadfb31ee61a05ae307c43ec88575800f97ce3c8dfbb7694cdb9a26556c61861",
+        "concept.svg": "c864b34577b009cc9f066d2d50384ebf76c16666e9a8f34117533edaaedf0e27",
+        "context.md": "6009611f13ee11708f2b5b68efbf21c43a15f27387b72b9a3caeba15260c91f2",
+        "prompt.txt": "03946f7e05842a53576f81d391ca602c704e5bdc79e95ca39b98ad0d9070a922",
+        "scenario.json": "774d3b7296262d0d0bd515fa5d0a19955aa42515c32423cd92b9040049a2d7a3",
+        "user-profile.md": "76d3dafa65504fb32aca1561423ae825cecbf7f263d8adf32e5e303c3bad999a"
+      },
+      "bindings_sha256": "07b70aea8f0491b7f837bc38017e5c40a263efdb476e70452ba2abdfbfe4a99c",
+      "catalog_readiness": {
+        "state": "setup_required",
+        "definition_valid": true,
+        "configured": false,
+        "qualified": false,
+        "available": false,
+        "verified_run": false,
+        "facts": [
+          {
+            "code": "definition-reviewed",
+            "label": "Starter definition reviewed",
+            "satisfied": true,
+            "evidence": []
+          },
+          {
+            "code": "adapters-qualified",
+            "label": "Image, slicer, and printer adapters qualified",
+            "satisfied": false,
+            "evidence": []
+          }
+        ],
+        "blocking_reasons": [
+          "Configure and qualify image-to-mesh, slicer, and Bambu P1S transfer adapters before a live run."
+        ]
+      },
+      "capability_requirements": [
+        {
+          "operation": "image_to_mesh",
+          "qualification": "required"
+        },
+        {
+          "operation": "mesh_repair",
+          "qualification": "required"
+        },
+        {
+          "operation": "slice_with_supports",
+          "qualification": "required"
+        },
+        {
+          "operation": "printer_transfer",
+          "qualification": "required"
+        }
+      ],
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Create source mesh needs a supported execution type."
+      },
+      "execution": "not started; full original capabilities remain gated"
+    },
+    {
+      "workspace_id": "edb72a7e-af6c-442a-b030-15aaa0f7f7fe",
+      "session_id": "desktop-probe-276cd17b-57bb-4bf0-a52f-99a677e97fd3",
+      "workspace_path": "/tmp/wright-host-ui-original-examples-20261012-01/workspaces/desktop-original-robot-tracking-diagnosis",
+      "template_id": "robot-tracking-diagnosis",
+      "template_version": "1.0.0",
+      "template_source_digest": "8383ffbf8533294793d2cb77b10eda5b204ed70534f2c5722647332255fb1bdd",
+      "source_path": "workflows/robot-tracking-diagnosis.workflow.wflow",
+      "source_digest": "61af6657d4163e436bcc84ef592831abb8b74601ad575ea6b7e8900498d90014",
+      "original_scenario": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam",
+      "scenario_hashes": {
+        "bag-conversion.md": "c9ac61198aa5b26055930c13d02fc684477554c70dcd23a5d4c2d2b79a8a940b",
+        "concept.png": "79f619187a5be0f67aa718cec63724274beb13ab16c123c0186d5a0cf3fee906",
+        "concept.svg": "32bf793d00deeb7c6c7c6f14dfb645bda69605b51a3586d3aeeb3bb041042edb",
+        "context.md": "1841c3deb9283d7a233a4cb02319b2b23290e8f23baaceff5e9d3bf61fce1ae2",
+        "events.csv": "f26fd0aa3adef43d50e05747240f427a4ca201183a4bf4723336f6c43c0d3eee",
+        "external-pose.csv": "1ab73704189b23c807be38c9d8e0e6425d8e6f30aab9eeed1517669a7938b703",
+        "odometry.csv": "2847c1cb6ef465741fdd0812a0d38c8f0edc0faf0bf65bdb58f960ef44badb18",
+        "planned-path.csv": "e2f86b0f864cd2366184f55b518cc710231cfebde69fdf3a5f7aed86295e73ce",
+        "prompt.txt": "3733ed5b19007f9fdf436859501cdc5e8867d4c123af3df4acf23c156c011528",
+        "scenario.json": "dd5acab3091daba92dc7a002980786017d71fa8edb90665f0b285fc51c10a3d8",
+        "telemetry.csv": "708b6fc86962aca07b2a0e787948368ae4480423f41627e9d245dc168086b365",
+        "user-profile.md": "f18f1024061c918c8484e06673f75105b8500dc7d8e30aa27c24f5eb056e4f16",
+        "velocity-command.csv": "3a75978ad446e822c2671d0f05ec94eebd4d05129c9a8a72aa331baa480dd386"
+      },
+      "bindings_sha256": "9b17ee58a813bc1a66dc3289c8652c7fbbcd00e1070f308775eb2d1ac0c6ccd7",
+      "catalog_readiness": {
+        "state": "reference",
+        "definition_valid": true,
+        "configured": false,
+        "qualified": false,
+        "available": false,
+        "verified_run": false,
+        "facts": [
+          {
+            "code": "rosbag-retrieval",
+            "label": "Known-message retrieval qualified",
+            "satisfied": true,
+            "evidence": []
+          },
+          {
+            "code": "analysis-qualified",
+            "label": "Numeric alignment and metrics qualified",
+            "satisfied": false,
+            "evidence": []
+          }
+        ],
+        "blocking_reasons": [
+          "Numeric messages, independent alignment, plotting, and recovery behavior require qualification."
+        ]
+      },
+      "capability_requirements": [
+        {
+          "operation": "rosbag_retrieval",
+          "qualification": "partial"
+        },
+        {
+          "operation": "time_alignment_and_metrics",
+          "qualification": "required"
+        }
+      ],
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Inspect bag and topic schemas needs a supported execution type."
+      },
+      "execution": "not started; full original capabilities remain gated"
+    }
+  ],
+  "editor_workspace": {
+    "workspace_id": "4a56c269-5cbb-49e2-9e99-ac767e68bbb1",
+    "session_id": "desktop-probe-36126c26-ac8c-4c91-95e8-eae34a3b4615",
+    "workspace_path": "/tmp/wright-host-ui-original-examples-20261012-01/workspaces/desktop-hosted-editor-qualification"
+  }
+}

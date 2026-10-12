@@ -13,7 +13,7 @@ the user's review of the three [UI concepts](README.md).
 | Compact authoring | Toolbar Add step popover, contextual bottom/right inspector, existing focus control and saved preferences retained | Final browser checks pass; native editing remains gated by the surface probe |
 | Run + review | Existing common process view reused; adds read-only exact-run chat-wait observation; observer close does not cancel execution | Actual same-conversation reasoning/checkpoint/result journey in new target |
 | Wright/Hermes shell | Same shared controls/canvas; its own single chat visible by default; explicit saved collapse preferences retained | Live Hermes acceptance not claimed from mock regressions |
-| Original examples | Fresh isolated template/scenario/binding copies, byte hashes verified; no engineering runs | Image/slicer/printer and numeric analysis provider gates remain unmet |
+| Original examples | Fresh isolated copies and byte hashes verified; both original starter sources display/reopen through Workflows; no engineering runs | Image/slicer/printer and numeric analysis provider gates remain unmet |
 | Candidate qualification | Focused frontend/backend/pilot checks, build and browser Workflows evidence recorded | Native lifecycle, actual zoom, usability and full end-to-end remain open |
 
 See [implementation-evidence.md](implementation-evidence.md) for exact boundaries,

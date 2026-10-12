@@ -2,7 +2,7 @@
 
 12 October 2026. Implementation in progress, **not completed native acceptance**.
 Local branch `codex/host-adaptive-ui-prototype`; native-panel milestone commit
-`f8cace61` follows preserved-baseline commit `2d1e6c02`. Source is the isolated feature
+`f8cace61` and shared-UI commit `9fc6ce9a` follow preserved-baseline commit `2d1e6c02`. Source is the isolated feature
 worktree, never the installed Wright command. Original worktrees, old targets,
 configurations and runs are preserved. No push, merge, release or physical run.
 
@@ -44,7 +44,7 @@ capability does not prove background wakeup or automatic workflow continuation.
 | `/tmp/wright-host-ui-authoring-20261012-09` | Retained failed run: captured a calculating layout digest prematurely; exact hash readiness assertion repaired |
 | `/tmp/wright-host-ui-authoring-20261012-10` | All 11 final served Workflows checks passed, exact source/layout reload, full action visibility and visible bottom-inspector fields |
 | [progress-images/README.md](progress-images/README.md) | Three exact actual-browser captures and honest social caption; no external posting |
-| `/tmp/wright-host-ui-original-examples-20261012-01/existing-examples.json` | Fresh original manufacturing-preparation and Robot Tracking Diagnosis template/data/binding hashes; readiness only, no run |
+| [original-example-ui-evidence/README.md](original-example-ui-evidence/README.md) | Fresh template/data/binding hashes; compiled Workflows entry, exact source/reopen and asset hashes; five/three declared graph blocks; no engineering/model/gateway/run call |
 
 Raw browser subjects are working-tree snapshots, with served-module hashes;
 they do not establish committed or native acceptance. Tokens are supplied via
@@ -94,7 +94,10 @@ passed. Full viewport visibility assertions were added rather than weakening
 checks. Theme capture now waits for the activity-bar color transition to finish. A later
 Save/reopen check captured `sha256:calculating` before hashing completed; the
 harness now requires a real 64-hex layout digest before checking exact identity.
-All 11 final checks passed. All 22 original inherited dirty files still match
+All 11 final checks passed. Original-example counter reports are retained and reconciled: broad test-id
+counts were replaced by actual graph-block counts compared with accepted source
+declarations. The temporary source-only server was stopped after the checks.
+All 22 original inherited dirty files still match
 their initial byte hashes; original checkout and pilot notes are preserved.
 
 ## Remaining work / next decisions
@@ -109,8 +112,10 @@ Next demonstrate a fresh permitted digital run with **actual desktop conversatio
 reasoning, gateway evidence and a declared checkpoint, using the same durable
 run after returning to the view. No SDK worker or Hermes substitution. Native
 UI authoring gates, uncertain-action reconciliation and frozen configuration
-continue to apply. Original engineering examples remain unavailable for full
-execution until their original providers qualify; no toy replacement is proof.
+continue to apply. The original starter definitions now display/reopen byte-exactly through
+Workflows in the compiled browser. Scenario input/binding bytes were preserved
+but not applied to those starters; full original engineering assignments remain
+unavailable until their providers qualify. No toy replacement is proof.
 
 Actual desktop 200% zoom and an uncoached usability walkthrough remain open.
 Browser width/height checks are not Windows zoom acceptance. Record first useful
