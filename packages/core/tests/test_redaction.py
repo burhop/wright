@@ -127,3 +127,28 @@ def test_public_evidence_preserves_original_embedded_json_bytes():
         "token_count": 30,
     }
     assert redact_evidence(value) == value
+
+
+@pytest.mark.parametrize("container", [list, tuple])
+def test_evidence_preserves_provenance_containers_while_redacting_nested_secrets(
+    container,
+):
+    secret = "private-sequence-transfer-value"
+    revisions = container([("source", "a" * 64)])
+    payload = {
+        "input_revisions": revisions,
+        "nested": container(
+            [{"headers": {"X-Download-Ticket": secret}, "reference": ("part", 2)}]
+        ),
+    }
+
+    clean = redact_evidence(payload)
+
+    assert clean["input_revisions"] == revisions
+    assert type(clean["input_revisions"]) is container
+    assert type(clean["nested"]) is container
+    assert clean["nested"][0]["reference"] == ("part", 2)
+    assert clean["nested"][0]["headers"]["X-Download-Ticket"] == REDACTED
+    assert secret not in json.dumps(clean)
+    assert payload["nested"][0]["headers"]["X-Download-Ticket"] == secret
+    assert redact_evidence(clean) == clean

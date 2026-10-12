@@ -66,7 +66,7 @@ def redact_mapping(mapping: Mapping[str, Any] | None) -> dict[str, Any]:
 
 
 def redact_evidence(value: Any) -> Any:
-    """Copy JSON evidence without credentials, preserving public provenance.
+    """Copy evidence without credentials, preserving public provenance and types.
 
     Raw values stay in the current execution for connected tool arguments. This
     projection is for persistence/observation, never for reconstructing authority
@@ -80,8 +80,10 @@ def redact_evidence(value: Any) -> Any:
             else redact_evidence(item)
             for key, item in value.items()
         }
-    if isinstance(value, (list, tuple)):
+    if isinstance(value, list):
         return [redact_evidence(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(redact_evidence(item) for item in value)
     if isinstance(value, str):
         if value.lstrip().startswith(("{", "[", '"')):
             try:

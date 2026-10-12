@@ -96,3 +96,10 @@ includes SteveCAD in the preview category. All 532 registry tests pass after thi
 correction. The stdio framing test that timed out in the initial full run passes
 both independently and in the complete corrected suite; its 30-second deadline
 and protocol assertions remain unchanged.
+
+The cumulative workspace suite exposed a result-contract regression in our new
+evidence redactor: safe provenance tuples became lists. Redaction now preserves
+list/tuple container types while removing nested credentials. The original
+first-question restart/resume test stays unchanged and checks the same durable
+run, exact input snapshot, and absence of replay. Separate credential controls
+still reject secret-bearing continuations before checkpoint persistence.
