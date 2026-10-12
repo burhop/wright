@@ -66,10 +66,10 @@ def build_current(as_of: date = date(2026, 9, 10)):
 def test_combined_baseline_has_one_category_per_canonical_integration():
     status = build_current()
     ids = [record["server_id"] for record in status["records"]]
-    assert len(ids) == len(set(ids)) == status["total"] == 81
+    assert len(ids) == len(set(ids)) == status["total"] == 82
     assert status["category_counts"] == {
         "works": 10,
-        "preview": 6,
+        "preview": 7,
         "requires_login": 15,
         "in_progress": 4,
         "abandoned": 46,
@@ -85,9 +85,12 @@ def test_combined_baseline_has_one_category_per_canonical_integration():
         for category in PORTFOLIO_CATEGORY_IDS
     }
     assert "kernelcad-mcp" in by_category["abandoned"]
-    assert {"web3d-mcp", "grafana-official-mcp", "nvidia-elements-mcp"} <= (
-        by_category["preview"]
-    )
+    assert {
+        "web3d-mcp",
+        "grafana-official-mcp",
+        "nvidia-elements-mcp",
+        "stevecad-mcp",
+    } <= (by_category["preview"])
     assert {
         "ansys-mcp-server-community",
         "easy-mcp-autocad",

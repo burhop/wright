@@ -27,6 +27,17 @@ from catalog_update_fixtures import (
 NOW = datetime(2026, 8, 12, 12, 0, tzinfo=UTC)
 
 
+def test_historical_catalog_fixture_is_detached_from_live_catalog_and_mutations():
+    historical = candidate_70_catalog()
+    assert "stevecad-mcp" in {
+        entry["id"] for entry in load_catalog_document()["servers"]
+    }
+    assert "stevecad-mcp" not in {entry["id"] for entry in historical["servers"]}
+    historical["servers"].clear()
+    assert len(candidate_70_catalog()["servers"]) == 70
+    assert len(prior_69_catalog()["servers"]) == 69
+
+
 def test_catalog_contexts_close_database_connections(tmp_path, monkeypatch) -> None:
     database = tmp_path / "state.db"
     upgrade_database(database)

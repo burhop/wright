@@ -88,3 +88,11 @@ numeric distinctions. Negative controls cover both boolean values, nested
 objects and lists; a positive control retains identical nested boolean requests
 with different object-key order. The earlier 275-test checkpoint remains
 historical evidence; current merge/push gate results are recorded separately.
+
+The full integration gate also caught stale catalog test inputs after SteveCAD
+expanded the current catalog from 81 to 82 entries. The historical 69/70-entry
+update scenarios now read an immutable fixture, and the current status assertion
+includes SteveCAD in the preview category. All 532 registry tests pass after this
+correction. The stdio framing test that timed out in the initial full run passes
+both independently and in the complete corrected suite; its 30-second deadline
+and protocol assertions remain unchanged.
