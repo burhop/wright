@@ -203,5 +203,15 @@
   },
   "prepared_candidate": "candidate-0.4.0.json + candidate-protocol-0.4.0.json; uninstalled/unapproved",
   "review_packet": "../review-candidate.md",
-  "exact_update_and_rollback": "../native-working-update.md"
+  "exact_update_and_rollback": "../native-working-update.md",
+  "completion_audit": {
+    "qualified_candidate_commit": "f2bfbc1e4a908b8984bdcd05e5c4aeac133b90da",
+    "inherited_dirty_files_unchanged": 22,
+    "candidate_hashes_unchanged": true,
+    "installed_selection": "0.3.0 original editor candidate",
+    "full_goal_achieved": false,
+    "audit": "../review-candidate.md#goal-audit-before-native-acceptance",
+    "dependent_next_step": "pending specific named0.4.0 live update approval, then actual Windows/GB10 user walkthrough",
+    "next_local_change": "only for a demonstrated gap; current audit found none replacing native acceptance"
+  }
 }

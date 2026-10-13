@@ -72,6 +72,37 @@ Measure first useful result, help/wrong turns, repeated context entry, current-s
 clarity and 1–5 ease/confidence/pleasantness. Expert captures are not customer
 research. No outreach or social publishing is authorized.
 
+## Goal audit before native acceptance
+
+The audit re-read the full goal and inspected the current package/reports and
+original-worktree preservation. All 22 inherited dirty files still match their
+baseline hashes. Main a4a31c97, installed-source72c4f86f and shared-UI814a763d
+remain clean; dirty prototype/pilot work is preserved. Package/runtime hashes
+match, and live selection remains approved0.3.0. No repeated suite was necessary.
+
+| Full requirement | Evidence now | Completion judgment |
+| --- | --- | --- |
+| Baseline, instructions, concepts, preservation | baseline.json, frozen files, design references, current worktree checks | Local established; existing data/configuration preserved |
+| R0 six–eight journeys, separated claims, <=5 findings/<=3 experiments | research-findings.md, sources and formative script | Complete bounded pass; no fabricated interviews |
+| Native panel/theme/resize/lifecycle/continuation investigation | User-confirmed0.2.0 rendering, protocol/browser reports, explicit gaps | Rendering observed; actual host theme/resize/lifecycle unproven |
+| Workspace create/open; workflow create/view/edit/save | Actual native creation, packaged/served Workflows checks, source/layout receipts | Local mechanism proved; complete Windows editing journey unproven |
+| Desktop reasoning, single chat, preserved pilot | Actual-native-conversation.json, checkpoint/gateway replies, shell/pilot regressions | Stated conversation/transport boundaries proved; combined native0.4.0 journey pending |
+| Progress/results/evidence; declared input continuation | Same-run checkpoint, exact bytes/hashes, captures, scripted attribution | Mechanism proved; actual user response/Windows observation pending |
+| Close/reopen accepted work, no replay | Source/layout reload, run readback, lost-ack reload, restart artifacts | Local proved; native storage/close/unsaved behaviour unproven |
+| Neutral canvas, compact/focused authoring, Hermes shell | Shared code, served authoring reports, focus/source/inspector and preference checks | Implemented/local checked; host usability acceptance pending |
+| Authority/configuration/evidence | Scope/stale/permission denial, frozen config, one gateway dispatch, late denial/no replay | Affected boundaries proved; unreported identities/unavailable capabilities explicit |
+| Lifecycle/keyboard/sizes/actual zoom | Browser light/dark/size/authoring evidence, native script | Browser scope proved; actual Windows keyboard/zoom/lifecycle missing |
+| Hermes/pilot and unavailable-platform regression | Backend/registry68, pilot24 mocks, shared frontend196, native/shared87 | Local regression; not live Hermes acceptance |
+| Different original manufacturing and Robot workflows | Exact hashes, served reopen, five/three blocks | Shared authoring spans both; original provider gates prevent engineering execution |
+| Ease/confidence/first result/clear next action | Research, expert fixes, wait/reconciliation UI, formative script | Expert evaluation; actual user measurements/feedback pending |
+| Prototype/walkthrough/matrix/images/limits | This packet, evidence index, update/rollback, screenshots/captions | Local deliverables ready; no external publishing/integration/release |
+
+The full goal is **not achieved**. Remaining acceptance depends on the named0.4.0
+update approval and actual Windows/GB10 walkthrough. Local tests, scripted input,
+a browser fallback or another report cannot prove those requirements. The pending
+update is the only live-change request. Further local changes should follow a
+specific demonstrated gap; this audit found none that replaces the native test.
+
 ## Integration and proposed PR description
 
 Keep this isolated branch stacked on the preserved native-editor/shared-UI work.
