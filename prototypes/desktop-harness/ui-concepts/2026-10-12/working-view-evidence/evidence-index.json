@@ -223,5 +223,13 @@
     "windows_native_acceptance": false,
     "old_package": "restored byte-for-byte after CLI cache eviction; old state/source preserved",
     "prior_sections": "Earlier installed-selection and qualification claims describe their recorded phase, not current selection"
+  },
+  "latest_source_rebase": {
+    "upstream_dev": "c1a8d00942d8a80ca6229ebed23d7b8f4153a7d9",
+    "branch": "codex/stevecad-ui-rebase",
+    "record": "source-rebase-20261013.json",
+    "tests": "source-rebase-20261013-tests.xml",
+    "summary": "../source-rebase-20261013.md",
+    "activation": "Source only; installed 0.4.0 and original preview preserved"
   }
 }

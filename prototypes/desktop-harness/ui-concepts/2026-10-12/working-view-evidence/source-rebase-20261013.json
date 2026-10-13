@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-10-13T21:59:08.601190+00:00",
+  "upstream_dev": "c1a8d00942d8a80ca6229ebed23d7b8f4153a7d9",
+  "upstream_stevecad_pr": "https://github.com/burhop/wright/pull/151",
+  "previous_common_base": "ba2fad68c181165b96b9c15c40b1a1f63c88acb3",
+  "original_saved_branch": "codex/host-adaptive-ui-debug",
+  "original_saved_head": "e3c4a4b7f4063450c9183b2316d4923a3bc61721",
+  "rebased_branch": "codex/stevecad-ui-rebase",
+  "rebased_source_head": "9e016f1bdfb1e4062c35b632fd72715a2ccd8b66",
+  "rebased_worktree": "/home/burhop/.codex/worktrees/wright-stevecad-rebase/wright",
+  "replayed_commits": 26,
+  "conflicts": 0,
+  "range_diff": "All 26 replayed commits have identical patches (=); no manual conflict resolutions",
+  "mapped_checkout": "/home/burhop/repos/wright",
+  "mapped_windows_checkout": "B:\\repos\\wright",
+  "mapped_checkout_before": "a4a31c97ff4d47818574b67fb95b9f0a0c2914ac",
+  "mapped_checkout_after": "c1a8d00942d8a80ca6229ebed23d7b8f4153a7d9",
+  "mapped_checkout_backup_branch": "codex/backup-gb10-dev-before-stevecad-20261013",
+  "copied_workflows_preserved": {
+    "workflows/desktop-checkpoint.workflow.wflow": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+    "workflows/ui-bug-review.workflow.wflow": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+    "workflows/ui-walkthrough.workflow.wflow": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789"
+  },
+  "preserved_runtime_source": "/tmp/wright-host-adaptive-native-working-view",
+  "preserved_runtime_head": "91da5d805342cb55435c2c4ed589933b37b901c6",
+  "original_developer_preview": "preserved on original worktree; no service restart",
+  "local_checks": {
+    "passed": 113,
+    "skipped": 5,
+    "skip_details": [
+      {
+        "test": "test_complete_semantic_parts_survive_real_hermes_boundary[installed-False-False]",
+        "reason": "Installed Hermes API source is unavailable on this host"
+      },
+      {
+        "test": "test_complete_semantic_parts_survive_real_hermes_boundary[installed-False-True]",
+        "reason": "Installed Hermes API source is unavailable on this host"
+      },
+      {
+        "test": "test_complete_semantic_parts_survive_real_hermes_boundary[installed-True-False]",
+        "reason": "Installed Hermes API source is unavailable on this host"
+      },
+      {
+        "test": "test_complete_semantic_parts_survive_real_hermes_boundary[installed-True-True]",
+        "reason": "Installed Hermes API source is unavailable on this host"
+      },
+      {
+        "test": "test_large_structured_native_result_survives_normalization[installed]",
+        "reason": "Installed Hermes API source is unavailable on this host"
+      }
+    ],
+    "scope": "Offline desktop dispatch/permission/native port regressions; upstream MCP image outputs/observations; Hermes normalization source mirror and unavailable platforms; SteveCAD source preparation",
+    "git_diff_check": "pass",
+    "no_live_model_provider_or_workflow_runs": true
+  },
+  "limits": [
+    "Installed Hermes-source tests unavailable (five explicit skips)",
+    "New dev updates the Node dependency lock; fresh frontend build/package/native qualification not performed for this rebased source",
+    "Existing installed 0.4.0 package/configuration/resource and target state were not redirected to the new worktree",
+    "SteveCAD workflow execution through the experimental desktop profile has not been qualified by this rebase"
+  ],
+  "source_locations": {
+    "cad_review": "examples/stevecad-demonstrations/prompt-to-reviewed-cad",
+    "thermal": "examples/stevecad-demonstrations/heat-spreader",
+    "check_in": "docs/demos/stevecad-check-in.md"
+  },
+  "no_push_release_or_remote_changes": true,
+  "preservation_record": "/tmp/wright-stevecad-rebase-preservation-20261013T215153Z/preservation.json"
+}
