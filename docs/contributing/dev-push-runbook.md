@@ -177,6 +177,12 @@ origin, denied-network, permissions and opaque-origin assertions. Save generated
 screenshots with `testInfo.outputPath` so profiles have separate evidence and a
 rerun cannot replace a tracked historical review image.
 
+Polling-recovery browser contracts control the browser clock and wait for the
+specific failed refresh response before checking retained evidence. Initial or
+cancelled Strict Mode requests do not prove that a refresh occurred. Keep both
+last-valid evidence and no-prior-bundle assertions; do not widen their deadlines
+to accommodate an unobserved poll.
+
 Digest assertions over Git-managed text fixtures must likewise canonicalize
 checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte
 exact; never apply text normalization to binary artifacts. This ensures the

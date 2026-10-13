@@ -331,7 +331,7 @@ test.describe("Program status comprehension and accessibility", () => {
   test("keeps last-valid evidence on refresh failure and stays honest with no prior bundle", async ({
     page,
   }) => {
-    let bundleCalls = 0;
+    await page.clock.install();
     let failRefresh = false;
     await page.route("**/api/auth/session/status", (route) =>
       route.fulfill({ json: { auth_required: false, authenticated: true } }),
@@ -364,7 +364,6 @@ test.describe("Program status comprehension and accessibility", () => {
         },
       });
     await page.route("**/api/program-status", (route) => {
-      bundleCalls += 1;
       if (failRefresh) return fail(route);
       return route.fulfill({
         body: bundle,
@@ -377,10 +376,14 @@ test.describe("Program status comprehension and accessibility", () => {
     await expect(
       page.getByTestId("program-status-refresh-state"),
     ).toContainText("Committed evidence current");
+    const failedRefresh = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/program-status" &&
+        response.status() === 503,
+    );
     failRefresh = true;
-    await expect
-      .poll(() => bundleCalls, { timeout: 12_000 })
-      .toBeGreaterThan(1);
+    await page.clock.runFor(5_000);
+    await failedRefresh;
     await expect(
       page.getByTestId("program-status-refresh-state"),
     ).toContainText("Showing last valid evidence");

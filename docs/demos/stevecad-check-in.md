@@ -157,3 +157,11 @@ Generated captures use per-test output paths; the original tracked review image
 is restored and new captures remain separate. This correction changes tests and
 documentation only. The red full-gate result remains recorded; passing focused
 checks does not turn it into a green full gate or replace current-head CI.
+
+The later complete matrix again reported 178 passed, 5 skipped and one failure,
+this time in the program-status refresh contract. Its trace retains initial
+cancelled requests and a 503 refresh arriving near the UI assertion deadline.
+The test now advances the browser poll clock and waits for that exact failed
+response before checking last-valid evidence. It retains the original
+unavailable-state assertions and deadlines. All four program-status browser
+contracts pass after this test-only correction; full final gates remain pending.
