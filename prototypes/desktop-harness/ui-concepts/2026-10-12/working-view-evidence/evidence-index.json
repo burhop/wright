@@ -1,5 +1,5 @@
 {
-  "status": "local prototype mechanism evidence and prepared review candidate; full native goal incomplete",
+  "status": "0.4.0 named update approved and installed on GB10; exact installed protocol reads qualified; actual Windows user walkthrough pending",
   "worktree": "/tmp/wright-host-adaptive-native-working-view",
   "base": "72c4f86f",
   "native_process_python_checks": 15,
@@ -201,7 +201,7 @@
     "output_sha256": "168af6f832c3832b2b1dd8f5666f725a4dab3e94767c6a2bf40ebf96ed73b2cf",
     "default_candidate_selects_gateway_profile": false
   },
-  "prepared_candidate": "candidate-0.4.0.json + candidate-protocol-0.4.0.json; uninstalled/unapproved",
+  "prepared_candidate": "candidate-0.4.0.json + candidate-protocol-0.4.0.json retain historical prepared-package evidence; installed status in native-installation-0.4.0.json",
   "review_packet": "../review-candidate.md",
   "exact_update_and_rollback": "../native-working-update.md",
   "completion_audit": {
@@ -213,5 +213,15 @@
     "audit": "../review-candidate.md#goal-audit-before-native-acceptance",
     "dependent_next_step": "pending specific named0.4.0 live update approval, then actual Windows/GB10 user walkthrough",
     "next_local_change": "only for a demonstrated gap; current audit found none replacing native acceptance"
+  },
+  "latest_native_installation": {
+    "version": "0.4.0",
+    "approval": "Approve named 0.4.0 update",
+    "evidence": "native-installation-0.4.0.json",
+    "preflight": "native-installation-0.4.0-preflight.json",
+    "walkthrough": "../quick-walkthrough.md",
+    "windows_native_acceptance": false,
+    "old_package": "restored byte-for-byte after CLI cache eviction; old state/source preserved",
+    "prior_sections": "Earlier installed-selection and qualification claims describe their recorded phase, not current selection"
   }
 }

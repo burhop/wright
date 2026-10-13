@@ -6,9 +6,12 @@ hosts; controls/frames adapt through a small presentation profile and scoped
 theme values. Wright/Hermes retains its own single chat and useful capabilities.
 No new docking system, database, executor or speculative Claude/OpenClaw adapter.
 
-The local prototype is reviewable; **the full goal is not complete**. The installed
-plugin is 0.3.0. The prepared 0.4.0 update is unapproved/uninstalled, and actual
-Windows editor/working-view acceptance remains open.
+The local prototype is reviewable; **the full goal is not complete**. The user
+approved the named update and **0.4.0 is now installed on GB10**. Its exact package,
+18 tools, resource, saved source and completed-run readback are verified through
+the official MCP client. Actual Windows editor/working-view acceptance remains
+open. Use [the short walkthrough](quick-walkthrough.md); no separate 0.3.0 test
+is required. See [installation evidence](working-view-evidence/native-installation-0.4.0.json).
 
 ## Current evidence and capability matrix
 
@@ -42,7 +45,7 @@ Read [implementation-evidence.md](implementation-evidence.md) and the existing
 hashes, failed checks, repaired continuations and commands. The Windows walkthrough
 is the next acceptance boundary, not another framework refactor.
 
-## Windows walkthrough after the approved 0.4.0 update
+## Windows walkthrough for installed 0.4.0
 
 Use a fresh conversation on the existing GB10 host:
 
@@ -72,7 +75,7 @@ Measure first useful result, help/wrong turns, repeated context entry, current-s
 clarity and 1–5 ease/confidence/pleasantness. Expert captures are not customer
 research. No outreach or social publishing is authorized.
 
-## Goal audit before native acceptance
+## Historical goal audit before the 0.4.0 installation
 
 The audit re-read the full goal and inspected the current package/reports and
 original-worktree preservation. All 22 inherited dirty files still match their
@@ -97,11 +100,11 @@ match, and live selection remains approved0.3.0. No repeated suite was necessary
 | Ease/confidence/first result/clear next action | Research, expert fixes, wait/reconciliation UI, formative script | Expert evaluation; actual user measurements/feedback pending |
 | Prototype/walkthrough/matrix/images/limits | This packet, evidence index, update/rollback, screenshots/captions | Local deliverables ready; no external publishing/integration/release |
 
-The full goal is **not achieved**. Remaining acceptance depends on the named0.4.0
-update approval and actual Windows/GB10 walkthrough. Local tests, scripted input,
-a browser fallback or another report cannot prove those requirements. The pending
-update is the only live-change request. Further local changes should follow a
-specific demonstrated gap; this audit found none that replaces the native test.
+The full goal is **not achieved**. The named 0.4.0 update was subsequently approved
+and installed on 13 October; remaining acceptance depends on the actual
+Windows/GB10 walkthrough. Local tests, scripted input, a browser fallback or
+another report cannot prove those requirements. No further live-update approval
+is currently needed. Further changes should follow a demonstrated gap.
 
 ## Integration and proposed PR description
 
@@ -121,7 +124,7 @@ editor/working surface beside the host conversation, with neutral canvas control
 source/layout conflict handling, exact process/run bindings and honest chat waits.
 The existing Wright process client/runtime owns inputs, execution, permissions,
 results and recovery; closing/reopening and uncertain acknowledgements do not
-automatically repeat effects. The prepared native plugin is experimental.
+automatically repeat effects. The installed native plugin is experimental.
 
 Validation: focused editor/common-client/backend/pilot regressions, served
 Workflows entry, packaged resource/protocol checks, real digital same-run input/

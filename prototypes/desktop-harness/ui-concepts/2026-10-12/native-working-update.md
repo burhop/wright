@@ -1,4 +1,9 @@
-# Named 0.4.0 working-view update — prepared, not approved or installed
+# Named 0.4.0 working-view update — approved and installed
+
+The user approved the named update on 13 October 2026. Version 0.4.0 is now
+selected on GB10; actual Windows acceptance remains pending. See
+[quick-walkthrough.md](quick-walkthrough.md) and
+[installation evidence](working-view-evidence/native-installation-0.4.0.json).
 
 The candidate adds run/results to the already-approved shared manual editor.
 Use the OpenAI desktop conversation as the only chat. Wright owns accepted source,
@@ -45,8 +50,9 @@ Native historical-run opening after changing the source head is unavailable:
 stale digests are rejected, and retained evidence stays intact. Edit fresh copies
 for the user walkthrough. Existing browser/recorder behaviour is not claimed native.
 
-## Commands only after specific named-update approval
+## Commands used for the approved named update
 
+The following was the approved procedure, not a request to run it again.
 Privately back up the selected 0.3.0 package and current config; check its exact
 target for pending/live work and preserve that work. Verify package/runtime hashes.
 The tested CLI0.159.2 requires scoped marketplace replacement:
@@ -73,5 +79,5 @@ codex plugin add wright-desktop-gb10-prototype@wright-desktop-gb10-prototype --j
 
 Restore only the named selection/package if its source is unavailable, never the
 whole old configuration. Keep all newly saved source, runs, answers and evidence.
-Follow the Windows test in [review-candidate.md](review-candidate.md) after installation;
+Follow [quick-walkthrough.md](quick-walkthrough.md) for Windows acceptance;
 do not manufacture native acceptance from passing local checks.

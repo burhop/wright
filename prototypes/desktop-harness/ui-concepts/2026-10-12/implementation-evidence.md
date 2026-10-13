@@ -484,3 +484,23 @@ Consequently historical native-run opening after source edits is unavailable;
 stale context is rejected rather than rebound. Retained evidence and the existing
 Wright recorder/browser remain preserved. Use fresh copies for editing tests.
 This documented prototype limit is not a completed history capability.
+
+## Approved 0.4.0 installation — 13 October 2026
+
+The user approved the named update. Only its marketplace source changed; the
+same plugin remains enabled. The stopped isolated API8123 was restarted with the
+existing pinned digital profile, without the gateway opt-in or a workflow start.
+The CLI replacement removed the old 0.3.0 cache; the post-install preservation
+assertion caught this and its exact private backup restored only that cache.
+The installed 0.4.0 package matches the qualified candidate. Actual Windows
+acceptance remains pending; use [quick-walkthrough.md](quick-walkthrough.md).
+Installation/protocol evidence and private backup location are in
+working-view-evidence/native-installation-0.4.0.json. No desktop restart, other
+settings, model/auth changes, push, merge or release.
+
+Official MCP-client verification of the installed package passed: 18 tools,
+matching immutable resource, UI-only save/read/update visibility, connected
+status during its lifecycle, exact saved source and completed same-run readback.
+The first read-only verifier assumed the primary view had an `ok` field; its
+actual workspace/snapshot/enabled contract was checked after correcting that
+probe. No runtime change or workflow write was needed.
