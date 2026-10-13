@@ -169,7 +169,7 @@ panel with Refresh status. The next editor slice is isolated on
 and unchanged. API 8122 and fresh target `wright-native-editor-target-20261012-02`
 serve candidate source state only; no engineering run started.
 
-The existing editor/UI kit is bundled as one 1,325,784-byte HTML resource using
+The existing editor/UI kit is bundled as one 1,325,752-byte HTML resource using
 existing Vite/React and official MCP Apps SDK 1.7.5 (JS MCP SDK 1.30.0; Python MCP
 1.28.1). No new dependency, executor, generic proxy, native tabs or second chat.
 An opt-in open tool and narrow UI save adapter reuse Wright's source/layout CAS;
@@ -214,3 +214,25 @@ from its frozen manifest. The 14 affected bridge checks pass after that guard
 passes with SDK 1.28.1. This original desktop conversation now exposes the live
 0.2.0 Wright tools: its actual `wright_connection_status` returned connected,
 with model/app identity still unreported. No candidate write tool was enabled.
+
+The first editor milestone commit (`5a207b7e`) retained four whitespace-only
+lines inside generated Zod function strings, and its staged whitespace check
+reported them. Packaging now removes those generated blank-line spaces rather
+than disabling the gate. The resource's final hash is
+`ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e`;
+the read-only MCP resource check and all five affected browser checks pass on
+these final bytes. Prior resource manifests/captures remain preserved.
+
+Proposed PR title: **Prototype Wright's shared canvas and native desktop editor**.
+Description: Wright previously exposed a read-only desktop panel and a separate
+browser editor. This experimental candidate places the existing shared editor
+in one MCP App panel, with exact source/layout saves through Wright's existing
+revision checks, while adapting surrounding controls for Wright and desktop
+hosts. No second chat, workflow executor or generic proxy is added. Native
+read-only rendering is user-confirmed; editor save/reopen, theme and conflicts
+are locally qualified in a simulated host against real isolated storage. Actual
+Windows editor acceptance remains pending the scoped 0.3.0 installation.
+Validation: 41-check backend batch; 14 affected bridge checks after the SDK guard;
+7 source-client checks; TypeScript/targeted ESLint/Ruff; final five-check packaged
+editor walkthrough; earlier served Workflows and existing-platform regression
+evidence retains its stated scope. No push, merge or release performed.

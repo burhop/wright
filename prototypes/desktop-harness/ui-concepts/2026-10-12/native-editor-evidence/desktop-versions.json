@@ -6,7 +6,7 @@
     "backend": "624d2f84515530f611a2ab35f111c82468f884f4506b94f87a3b954271065d67",
     "transport": "aaf6511ad519f81d58d107c295e9ad18bd500e8d4b9f5adf7469d7ad3bbf94e9",
     "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
-    "native_editor": "36692e525f406b0101280ece15596a74af4c3c8277b0b3e3768e47962aec27e6"
+    "native_editor": "ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e"
   },
   "confined_inspection": false,
   "native_editor": true,
