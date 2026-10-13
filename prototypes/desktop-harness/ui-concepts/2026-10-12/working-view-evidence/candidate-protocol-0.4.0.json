@@ -1,0 +1,13 @@
+{
+  "boundary": "prepared package command/args through official MCP SDK; not installed or Windows acceptance",
+  "version": "0.4.0",
+  "tools": 18,
+  "resource_uri": "ui://wright/workflow/ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60.html",
+  "resource_sha256": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+  "resource_bytes": 2184542,
+  "ui_update_visibility": [
+    "app"
+  ],
+  "primary_view_read_only": true,
+  "profile": "digital text/checkpoints; gateway opt-in not selected"
+}

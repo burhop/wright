@@ -1,0 +1,17 @@
+{
+  "mcp_sdk": "1.28.1",
+  "files": {
+    "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+    "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+    "backend": "4ea50e3b214c1b0879d986e7db5ad3b6cd35afc73b545d0d15891d34829e2f05",
+    "transport": "e2e67589be46747d0568487e61e3c15b179b75e754414ce19b9e315a39320dcd",
+    "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+    "native_editor": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+    "native_process_tools": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc"
+  },
+  "confined_inspection": true,
+  "native_editor": true,
+  "native_working_view": true,
+  "connection_lease_seconds": 30,
+  "heartbeat_interval_seconds": 5
+}

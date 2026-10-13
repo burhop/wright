@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "wright-desktop-gb10": {
+      "command": "/tmp/wright-host-adaptive-native-working-view/.venv/bin/python",
+      "args": [
+        "/tmp/wright-host-adaptive-native-working-view/prototypes/desktop-harness/mcp_bridge.py",
+        "--state-dir",
+        "/tmp/wright-native-working-target-20261012-01",
+        "--native-editor",
+        "--native-working-view"
+      ]
+    }
+  }
+}

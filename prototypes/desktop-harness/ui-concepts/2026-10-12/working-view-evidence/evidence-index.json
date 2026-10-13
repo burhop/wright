@@ -1,5 +1,5 @@
 {
-  "status": "local opt-in packaged editor/common-view composition qualified for preparation; not installed",
+  "status": "local prototype mechanism evidence and prepared review candidate; full native goal incomplete",
   "worktree": "/tmp/wright-host-adaptive-native-working-view",
   "base": "72c4f86f",
   "native_process_python_checks": 15,
@@ -187,5 +187,21 @@
       "extensions": "https://developers.openai.com/plugins/build/extensions",
       "observation": "Official pages fetched; no automatic Windows renderer inspection capability qualified"
     }
-  }
+  },
+  "gateway_qualification": {
+    "state": "/tmp/wright-native-working-gateway-20261013-01",
+    "api": "http://127.0.0.1:8125",
+    "run": "5eb37ae960e7451baa175b4dbddfa8f2",
+    "no_grant_http_status": 403,
+    "successful_dispatches": 1,
+    "input_unchanged": true,
+    "actual_conversation_proposals": 2,
+    "actual_windows_acceptance": false,
+    "private_enrollment_is_not_review_or_automatic_dispatch_authority": true,
+    "output_sha256": "168af6f832c3832b2b1dd8f5666f725a4dab3e94767c6a2bf40ebf96ed73b2cf",
+    "default_candidate_selects_gateway_profile": false
+  },
+  "prepared_candidate": "candidate-0.4.0.json + candidate-protocol-0.4.0.json; uninstalled/unapproved",
+  "review_packet": "../review-candidate.md",
+  "exact_update_and_rollback": "../native-working-update.md"
 }

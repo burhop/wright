@@ -1,0 +1,45 @@
+{
+  "version": "0.4.0",
+  "status": "prepared, uninstalled, live update unapproved",
+  "source_worktree": "/tmp/wright-host-adaptive-native-working-view",
+  "base_commit": "235e9520",
+  "state": "/tmp/wright-native-working-target-20261012-01",
+  "api": "http://127.0.0.1:8123",
+  "runtime": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "4ea50e3b214c1b0879d986e7db5ad3b6cd35afc73b545d0d15891d34829e2f05",
+      "transport": "e2e67589be46747d0568487e61e3c15b179b75e754414ce19b9e315a39320dcd",
+      "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+      "native_editor": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+      "native_process_tools": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc"
+    },
+    "confined_inspection": false,
+    "native_editor": true,
+    "native_working_view": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "resource": {
+    "boundary": "official MCP client; resource/source reads only, not Windows acceptance",
+    "resource_uri": "ui://wright/workflow/ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60.html",
+    "resource_sha256": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+    "resource_bytes": 2184542,
+    "tools": 18,
+    "ui_save_visibility": [
+      "app"
+    ],
+    "native_working_view": true
+  },
+  "files": {
+    "prototypes/desktop-harness/native-working-candidate/README.md": "27221ab49e661bc7b122e882a5f1adb49723f36811c5a426e3869da4ea8fa0b6",
+    "prototypes/desktop-harness/native-working-candidate/.agents/plugins/marketplace.json": "f597b763083b273cca355d511ba91ea12c719677510c872150b4a8ef32baa262",
+    "prototypes/desktop-harness/native-working-candidate/plugins/wright-desktop-gb10-prototype/.mcp.json": "3f569ad77e062371bcd8f74a7f3218e3c6639f11a8189625f4d4e96f3dac0797",
+    "prototypes/desktop-harness/native-working-candidate/plugins/wright-desktop-gb10-prototype/.codex-plugin/plugin.json": "2f4f6dbe9ebcff9e12c69a72a869f2eafcd82b36767119925a40c579cc55c1b2",
+    "prototypes/desktop-harness/native-working-candidate/plugins/wright-desktop-gb10-prototype/skills/wright-workflows/SKILL.md": "856fb5422ca685b66387f52309b12ee592ad6501dccb0b491e137109c47c1a62"
+  },
+  "gateway_default": false,
+  "windows_native_acceptance": false
+}

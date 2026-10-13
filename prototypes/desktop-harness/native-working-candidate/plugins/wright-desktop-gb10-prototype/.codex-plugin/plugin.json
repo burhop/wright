@@ -1,0 +1,21 @@
+{
+  "interface": {
+    "displayName": "Wright GB10 Prototype",
+    "shortDescription": "Engineering workflows beside your desktop conversation",
+    "longDescription": "Experimental shared Wright editor and run/results view beside the desktop conversation. Wright owns accepted source, durable runs, permitted actions, reviews, evidence and recovery.",
+    "developerName": "Wright",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Create a Wright workspace and prepare a small digital inspection workflow."
+    ]
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "name": "wright-desktop-gb10-prototype",
+  "version": "0.4.0",
+  "description": "Experimental Wright bridge on an existing GB10-hosted desktop chat."
+}

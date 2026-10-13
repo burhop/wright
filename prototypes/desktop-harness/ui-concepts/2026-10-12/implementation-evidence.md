@@ -13,10 +13,10 @@ configurations and runs are preserved. No push, merge, release or physical run.
 | GB10 host | Linux aarch64; Python 3.13.12; Node 22.22.0 | Actual local processes; Windows GUI is a separate subject |
 | Dependency subject | Existing frozen uv/npm locks; Python MCP 1.28.1; JS MCP SDK 1.30.0; ext-apps 1.7.5 | Installed only in feature worktree; no lock/global upgrades. npm warned about jsdom's Node patch minimum; focused tests passed |
 | Desktop host runtime | GB10 Codex CLI/daemon 0.159.2 | Existing runtime, not an independent model worker. Actual Windows app build still unreported |
-| Wright native prototype | `wright-desktop-gb10-prototype` 0.2.0; same named MCP server | Approved installed update; only marketplace source changed. Old 0.1.1 package/private settings backed up. Original chat still reports initialize-handshake failure; the fresh user-tested chat is connected with 13 tools and one resource |
+| Wright native prototype | Installed `wright-desktop-gb10-prototype`0.3.0; prepared0.4.0 uninstalled | Approved named update preserves prior packages/targets. 0.2.0 rendering is user-confirmed; its actual native tools subsequently completed a digital run. 0.3.0 installed resource/tools verified; actual Windows editing remains pending |
 | Read-only MCP panel | MCP Apps resource, thread entry, protocol 2026-01-26 | Official documented pattern; actual SDK discovers 13 tools and reads scoped resource. Browser simulated-host checks pass. Fresh native call passed and the user reports the panel visible/working. Independent desktop capture, app build, theme/resize observations, tabs and lifecycle remain unverified |
 | Shared editor | Same command/model/source/layout owners | Neutral canvas once across hosts, Add step toolbar, panel-sized bottom/right inspector. Actual browser Workflows authoring verified; no claim of native editing |
-| Common working view | Existing process client, reviews/actions/recovery retained | Exact-run chat wait is read-only; closing aborts its status read, never cancels or replays a run. Mock component qualification, not an actual new-target desktop workflow completion |
+| Common working view | Existing client/controller reused in local0.4.0 resource | Actual digital checkpoint/result/cancel/lost-ack/restart/gateway mechanisms qualified at specified protocol/browser boundaries. Native Windows acceptance remains pending; historical source-head changes and automatic restart are explicit unavailable capabilities |
 | Hermes / prior chat pilot | Existing source/adapters retained | Focused regressions; no live Hermes or independent model substituted. Prior Codex-inside-Wright worktree untouched |
 | OpenClaw / Pi / future Claude | Existing stub/unavailable contracts retained | No new adapter; future native surfaces unqualified |
 
@@ -458,3 +458,29 @@ Exact receipts, calls, fault manifests and captures are in the existing evidence
 index. Remaining work is the next gateway profile, final adaptive-UI/regression
 review and Windows/native permission/lifecycle/usability acceptance; live update
 approval remains separate.
+
+### Gateway proof and prepared review candidate
+
+Fresh opt-in state `/tmp/wright-native-working-gateway-20261013-01`, API8125,
+qualified the existing exact file-inspection policy through closed UI start/read
+ports. A start without private enrollment was denied403. This conversation then
+proposed the declared inspection, Wright dispatched it exactly once, and the
+observed 267-byte input/SHA-256 supported the final saved note. The input was
+unchanged; no CAD measurement, external action, review grant or new MCP/catalog
+implementation occurred. Runtime/configuration and private policy digest were
+frozen. Gateway events, exact proposal/reply/source and result are preserved.
+
+The named0.4.0 package is prepared in `prototypes/desktop-harness/native-working-candidate`,
+not installed or approved. Its actual command/args were qualified read only through
+the official MCP SDK: 18 tools, exact resource/hash and UI visibility metadata.
+The default package selects API8123's text/checkpoint profile, not the opt-in
+gateway profile. [Review packet](review-candidate.md) carries the capability/version
+matrix, native Windows walkthrough, integration strategy, images, limitations and
+proposed PR description. [Exact update/rollback](native-working-update.md) is ready
+for a later specific named-plugin approval; no request is needed for local work.
+
+The native entry requires its current source head to match the requested digest.
+Consequently historical native-run opening after source edits is unavailable;
+stale context is rejected rather than rebound. Retained evidence and the existing
+Wright recorder/browser remain preserved. Use fresh copies for editing tests.
+This documented prototype limit is not a completed history capability.

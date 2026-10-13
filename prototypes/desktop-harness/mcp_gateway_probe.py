@@ -22,9 +22,10 @@ from workspace_service.workflow_integration_policy import (
 )
 
 from gateway_probe import INPUT, SOURCE
+from checkpoint_probe import panel_request
 
 
-async def main(state, qualified_read):
+async def main(state, qualified_read, *, native_working_view=False):
     proof = state / "mcp-gateway-probe.json"
     if proof.exists():
         raise ValueError("Use fresh evidence; never replay an existing probe")
@@ -40,6 +41,7 @@ async def main(state, qualified_read):
     evidence = {
         "transport": "MCP protocol client; installed desktop plugin unverified",
         "calls": [],
+        "native_working_view": native_working_view,
     }
     parameters = StdioServerParameters(
         command=sys.executable,
@@ -47,6 +49,11 @@ async def main(state, qualified_read):
             str(Path(__file__).with_name("mcp_bridge.py")),
             "--state-dir",
             str(state),
+            *(
+                ["--native-editor", "--native-working-view"]
+                if native_working_view
+                else []
+            ),
         ],
     )
     async with stdio_client(parameters) as (read, write):
@@ -58,18 +65,46 @@ async def main(state, qualified_read):
             ]
 
             async def call(tool_name, *, expect_error=False, **arguments):
-                result = await session.call_tool(tool_name, arguments)
+                name, payload = (
+                    panel_request(tool_name, arguments)
+                    if native_working_view
+                    else (tool_name, arguments)
+                )
+                result = await session.call_tool(name, payload)
+                document = (
+                    None
+                    if result.isError
+                    else (
+                        result.structuredContent or json.loads(result.content[0].text)
+                    )
+                )
+                owner_denied = (
+                    name in ("wright_process_ui_read", "wright_process_ui_update")
+                    and document
+                    and document.get("ok") is False
+                )
                 evidence["calls"].append(
-                    {"tool": tool_name, "is_error": result.isError}
+                    {
+                        "tool": name,
+                        "logical_operation": tool_name,
+                        "is_error": result.isError,
+                        "owner_denied": bool(owner_denied),
+                    }
                 )
                 proof.write_text(json.dumps(evidence, indent=2))
-                if bool(result.isError) != expect_error:
+                if bool(result.isError or owner_denied) != expect_error:
                     raise ValueError(
                         f"Unexpected {tool_name} outcome: {result.content}"
                     )
                 if expect_error:
+                    if owner_denied:
+                        return document
                     return [item.model_dump(mode="json") for item in result.content]
-                return result.structuredContent or json.loads(result.content[0].text)
+                return (
+                    document["document"]
+                    if name in ("wright_process_ui_read", "wright_process_ui_update")
+                    else document
+                )
 
             workspace = await call(
                 "wright_workspace_create", name="Desktop MCP Gateway Proof"
@@ -121,7 +156,12 @@ async def main(state, qualified_read):
                 request_id="desktop-gateway-no-grant",
                 expect_error=True,
             )
-            if "(403)" not in json.dumps(evidence["no_grant_denial"]):
+            if (
+                native_working_view
+                and evidence["no_grant_denial"].get("http_status") != 403
+                or not native_working_view
+                and "(403)" not in json.dumps(evidence["no_grant_denial"])
+            ):
                 raise ValueError(
                     "The no-grant control did not prove an authority denial"
                 )
@@ -260,10 +300,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
     parser.add_argument("--qualified-read", required=True, type=Path)
+    parser.add_argument("--native-working-view", action="store_true")
     args = parser.parse_args()
     asyncio.run(
         main(
             args.state_dir.resolve(strict=True),
             args.qualified_read.resolve(strict=True),
+            native_working_view=args.native_working_view,
         )
     )
