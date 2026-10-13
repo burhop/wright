@@ -19,12 +19,12 @@ hardware motion is established by these digital results.
 
 Useful evidence:
 
-- [Four-hole block](../../../artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-008/run-summary.json)
-  and [actual geometry audit](../../../artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-008/independent-geometry-audit.json).
-- [Six-hole reuse](../../../artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-005/run-summary.json)
-  and [actual geometry audit](../../../artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-005/independent-geometry-audit.json).
-- [Qualification coupon STEP](../../../artifacts/stevecad-demonstrations/qualification/native/coupon.step).
-- [Provider skills discovery](../../../artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/provider-guidance/guide-skills-20261011.json).
+- [Native four-hole block](https://github.com/burhop/wright/blob/dev/artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/run-summary.json)
+  and [actual geometry audit](https://github.com/burhop/wright/blob/dev/artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/independent-geometry-audit.json).
+- [Native six-hole reuse](https://github.com/burhop/wright/blob/dev/artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/run-summary.json)
+  and [actual geometry audit](https://github.com/burhop/wright/blob/dev/artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/independent-geometry-audit.json).
+- [Qualification coupon STEP](https://github.com/burhop/wright/blob/dev/artifacts/stevecad-demonstrations/qualification/native/coupon.step).
+- [Provider skills discovery](https://github.com/burhop/wright/blob/dev/artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/provider-guidance/guide-skills-20261011.json).
 
 ## Discover, then build
 
