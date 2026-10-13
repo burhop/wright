@@ -16,6 +16,30 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 
+def panel_request(tool_name, arguments):
+    """Probe-only translation to the existing closed UI ports; no execution logic."""
+    operations = {
+        "wright_process_prepare": "inputs",
+        "wright_process_start": "start",
+        "wright_process_read": "snapshot",
+        "wright_process_respond": "respond",
+        "wright_process_cancel": "cancel",
+    }
+    if tool_name not in operations:
+        return tool_name, arguments
+    request = dict(arguments)
+    request["expected_storage_digest"] = request.pop("source_digest")
+    if "input_digest" in request:
+        request["expected_input_digest"] = request.pop("input_digest")
+    request["operation"] = operations[tool_name]
+    tool = (
+        "wright_process_ui_read"
+        if request["operation"] == "snapshot"
+        else "wright_process_ui_update"
+    )
+    return tool, {"request": request}
+
+
 @asynccontextmanager
 async def connection(state, evidence, evidence_file):
     parameters = StdioServerParameters(
@@ -24,6 +48,11 @@ async def connection(state, evidence, evidence_file):
             str(Path(__file__).with_name("mcp_bridge.py")),
             "--state-dir",
             str(state),
+            *(
+                ["--native-editor", "--native-working-view"]
+                if evidence.get("native_working_view")
+                else []
+            ),
         ],
     )
     async with stdio_client(parameters) as (read, write):
@@ -32,16 +61,42 @@ async def connection(state, evidence, evidence_file):
             evidence.setdefault("connections", []).append(initialized.protocolVersion)
 
             async def call(tool_name, *, expect_error=False, **arguments):
-                result = await session.call_tool(tool_name, arguments)
+                name, payload = (
+                    panel_request(tool_name, arguments)
+                    if evidence.get("native_working_view")
+                    else (tool_name, arguments)
+                )
+                result = await session.call_tool(name, payload)
+                document = (
+                    None
+                    if result.isError
+                    else (
+                        result.structuredContent or json.loads(result.content[0].text)
+                    )
+                )
+                owner_denied = bool(
+                    name in ("wright_process_ui_read", "wright_process_ui_update")
+                    and document
+                    and document.get("ok") is False
+                )
                 evidence["calls"].append(
-                    {"tool": tool_name, "is_error": bool(result.isError)}
+                    {
+                        "tool": name,
+                        "logical_operation": tool_name,
+                        "is_error": bool(result.isError),
+                        "owner_denied": owner_denied,
+                    }
                 )
                 evidence_file.write_text(json.dumps(evidence, indent=2))
-                if bool(result.isError) != expect_error:
+                if bool(result.isError or owner_denied) != expect_error:
                     raise RuntimeError(str(result.content))
                 if result.isError:
                     return {"error": result.content[0].text}
-                return result.structuredContent or json.loads(result.content[0].text)
+                if owner_denied:
+                    return {"error": document}
+                if name in ("wright_process_ui_read", "wright_process_ui_update"):
+                    return document["document"]
+                return document
 
             yield call
 
@@ -74,7 +129,7 @@ async def read_until(call, arguments, states):
             await asyncio.sleep(0.25)
 
 
-async def main(state, phase):
+async def main(state, phase, *, native_working_view=False):
     evidence_file = state / "checkpoint-probe.json"
     if phase == "start":
         if evidence_file.exists():
@@ -85,6 +140,10 @@ async def main(state, phase):
             "transport": "MCP stdio protocol client; installed desktop plugin unverified",
             "test_data": "Existing synthetic comparison fixture; no engineering approval",
             "calls": [],
+            "native_working_view": native_working_view,
+            "runtime_versions": json.loads(
+                (state / "desktop-versions.json").read_text()
+            ),
         }
         evidence_file.write_text(json.dumps(evidence, indent=2))
         async with connection(state, evidence, evidence_file) as call:
@@ -139,6 +198,14 @@ async def main(state, phase):
         evidence["stage"] = "disconnected_at_checkpoint"
     else:
         evidence = json.loads(evidence_file.read_text())
+        if evidence.get(
+            "native_working_view", False
+        ) != native_working_view or evidence.get("runtime_versions") != json.loads(
+            (state / "desktop-versions.json").read_text()
+        ):
+            raise ValueError(
+                "Reconcile probe routing/configuration drift before continuation"
+            )
         if evidence.get("stage") != "disconnected_at_checkpoint":
             raise ValueError("Reconcile the retained probe before any continuation")
         workspace, source, receipt = (
@@ -232,11 +299,140 @@ async def main(state, phase):
     )
 
 
+async def cancel_probe(state, *, native_working_view):
+    """One bounded cancellation/duplicate-request control; no generated model reply."""
+    original = json.loads((state / "checkpoint-probe.json").read_text())
+    if (
+        original.get("stage") != "completed"
+        or original.get("native_working_view", False) != native_working_view
+    ):
+        raise ValueError(
+            "Complete and reconcile the original probe before this separate control"
+        )
+    if original["runtime_versions"] != json.loads(
+        (state / "desktop-versions.json").read_text()
+    ):
+        raise ValueError("Frozen qualification runtime changed")
+    output = state / "checkpoint-cancel-probe.json"
+    if output.exists():
+        raise ValueError(
+            "Retain this cancellation control; never create or cancel it again"
+        )
+    evidence = {
+        "native_working_view": native_working_view,
+        "calls": [],
+        "test_data": "Synthetic fixture; no engineering/tool/physical action",
+        "runtime_versions": original["runtime_versions"],
+    }
+    output.write_text(json.dumps(evidence, indent=2))
+    scope = {key: original["workspace"][key] for key in ("workspace_id", "session_id")}
+    source = original["source"]
+    source_ref = {
+        **scope,
+        "path": source["path"],
+        "source_digest": source["storage_digest"],
+    }
+    prepared = original["input_snapshot"]
+    start = {
+        **source_ref,
+        "input_snapshot_id": prepared["snapshot_id"],
+        "input_digest": prepared["digest"],
+        "request_id": "native-working-cancel-start-20261013-01",
+    }
+    async with connection(state, evidence, output) as call:
+        receipt = await call("wright_process_start", **start)
+        evidence["start_receipt"] = receipt
+        # Explicit idempotency test with a known receipt, not an automatic uncertain retry.
+        duplicate = await call("wright_process_start", **start)
+        evidence["duplicate_receipt"] = duplicate
+        if duplicate != receipt:
+            raise ValueError(
+                "Duplicate start did not return its exact retained receipt"
+            )
+        async with asyncio.timeout(30):
+            while True:
+                rows = await call("wright_reasoning_pending", **scope)
+                queued = [
+                    item
+                    for item in rows["tasks"]
+                    if item["request"]["run_id"] == receipt["run_id"]
+                ]
+                if queued:
+                    break
+                await asyncio.sleep(1)
+        task = queued[0]
+        evidence["pending_before_cancel"] = task
+        read = {**source_ref, "run_id": receipt["run_id"]}
+        evidence["cancel_receipt"] = await call(
+            "wright_process_cancel",
+            **read,
+            request_id="native-working-cancel-request-20261013-01",
+        )
+        final = await read_until(
+            call, read, {"cancelled", "failed", "reconciliation_required"}
+        )
+        evidence["after_cancel"] = final
+        if (
+            final["state"] != "cancelled"
+            or final["context"]["run_id"] != receipt["run_id"]
+        ):
+            raise ValueError(
+                "Cancellation did not reach the exact terminal cancelled run"
+            )
+        evidence["late_answer_denial"] = await call(
+            "wright_reasoning_answer",
+            **scope,
+            request_id=task["request"]["request_id"],
+            request_digest=task["request_digest"],
+            binding_digest=task["binding_digest"],
+            response_id="native-working-cancel-late-control-20261013-01",
+            reply=json.dumps(
+                {
+                    "version": "wright.unattended-step/1",
+                    "status": "completed",
+                    "response": "Late cancellation control must not be consumed.",
+                    "reason": None,
+                }
+            ),
+            expect_error=True,
+        )
+        after = await call("wright_process_read", **read)
+        evidence["after_late_denial"] = after
+        if after["state"] != "cancelled" or after.get("outputs"):
+            raise ValueError("Late reply changed a cancelled run or created output")
+    evidence["stage"] = "cancelled_and_late_reply_denied"
+    output.write_text(json.dumps(evidence, indent=2))
+    print(
+        json.dumps(
+            {
+                "stage": evidence["stage"],
+                "run_id": receipt["run_id"],
+                "evidence": str(output),
+            }
+        ),
+        flush=True,
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
     parser.add_argument(
-        "--phase", choices=("start", "continue", "ui-continue"), required=True
+        "--phase",
+        choices=("start", "continue", "ui-continue", "cancel-test"),
+        required=True,
     )
+    parser.add_argument("--native-working-view", action="store_true")
     args = parser.parse_args()
-    asyncio.run(main(args.state_dir.resolve(strict=True), args.phase))
+    asyncio.run(
+        cancel_probe(
+            args.state_dir.resolve(strict=True),
+            native_working_view=args.native_working_view,
+        )
+        if args.phase == "cancel-test"
+        else main(
+            args.state_dir.resolve(strict=True),
+            args.phase,
+            native_working_view=args.native_working_view,
+        )
+    )

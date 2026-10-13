@@ -90,6 +90,41 @@
     ],
     "primary_working_opener": "real preparing context with null run id; cached stale primary rejected; explicit new source context reopens",
     "actual_editor_undo_redo": "passed after returning from working view in final packaged browser",
-    "installed_plugin_preserved": "0.3.0 source remains exact approved original worktree; newer working-view not selected"
+    "installed_plugin_preserved": "0.3.0 source remains exact approved original worktree; newer working-view not selected",
+    "bounded_digital_runs_started_after_composition": 2
+  },
+  "checkpoint_qualification": {
+    "status": "local digital fixture completed; experimental package still uninstalled",
+    "desktop_reasoning": "this conversation wrote both replies; official MCP protocol client relayed them",
+    "actual_native_windows_acceptance": false,
+    "actual_user_checkpoint_response": false,
+    "scripted_choice": {
+      "selection": "b"
+    },
+    "engineering_approval": false,
+    "completed_run": "92db9047617c48ec91a85dec3a3a0a1b",
+    "cancelled_run": "342df43453134f80a4278b8ccf40b8be",
+    "runtime_configuration_unchanged": true,
+    "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+    "handoff_counts": {
+      "desktop_reasoning_requests": 3,
+      "desktop_reasoning_responses": 2,
+      "desktop_reasoning_terminal_receipts": 3,
+      "pending": 0
+    },
+    "proofs": [
+      "closed UI ports start/read; invalid selection rejected without advancing run",
+      "disconnect/reconnect retains exact waiting run and prior output",
+      "packaged common UI submits one exact-subject scripted input; same run visibly waits for desktop chat",
+      "same run completes after actual conversation reply; both raw output byte hashes verified via official MCP UI read port",
+      "packaged completed view/reload and served Workflows entry/common close preserve results",
+      "explicit duplicate stable start returns identical receipt; cancellation terminal; late answer denied with no new output"
+    ],
+    "capture_side_effects": "Normal served Workflows control creates an isolated empty authoring draft; auth session is also established. Recorded POSTs are not workflow-run starts. Existing test source/output/run are unchanged by readback. Packaged readback uses reads only.",
+    "remaining": [
+      "actual Windows editor/save/reopen and working-view permission/lifecycle acceptance",
+      "abrupt restart and lost-ack uncertainty qualification for next resource",
+      "gateway opt-in qualification for next candidate; original engineering providers unavailable"
+    ]
   }
 }

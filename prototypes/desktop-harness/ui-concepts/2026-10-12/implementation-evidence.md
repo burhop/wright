@@ -334,7 +334,10 @@ view was also exercised. Its first stale continuation failure is retained; the
 scope guard was preserved. The fixture forwards preparation only, never runs,
 reviews or external actions. A separate sequential served-build capture entered
 through **Workflows**, read the exact saved process in the common view and closed
-its actual workspace tab. These are GB10 browser checks, not Windows acceptance.
+its actual workspace tab. That normal Workflows control also creates an isolated
+empty authoring draft, and authentication establishes a local session; recorded
+POSTs confirm those side effects. The accepted test source and its runs are not
+changed by readback. These are GB10 browser checks, not Windows acceptance.
 
 Failures are retained in the existing evidence index: a backend command omitted
 the repository PYTHONPATH, the first served Vite launch omitted the existing
@@ -362,3 +365,50 @@ Suggested caption: “One canvas for authoring, one working view for preparing t
 job. Wright’s neutral controls now fit the desktop-harness prototype.” Image:
 `working-view-evidence/browser-working-primary-final/native-working-preparation-fixture.png`.
 Label it **GB10 browser protocol prototype**, not a Windows desktop screenshot.
+
+### Actual digital checkpoint, same-run continuation and cancellation
+
+The existing synthetic declared-input fixture ran through the next candidate's
+closed UI ports. This desktop conversation supplied both text replies; the
+official MCP protocol client relayed them. Wright saved the first output and
+persisted its exact input checkpoint. Disconnect/reconnect retained the same
+run and prior output; an invalid `c` response was rejected without advancing it.
+The packaged common view then submitted exactly one **scripted test choice** `b`
+against that subject and showed **Waiting for desktop chat**. The second reply
+completed the same run `92db9047617c48ec91a85dec3a3a0a1b`. This is not an actual
+user checkpoint response, native Windows acceptance, or engineering approval.
+
+Packaged and served common views reloaded the completed run; the packaged view
+displayed its actual recorded file. Official MCP reads verified both files' bytes
+and SHA-256 values: first.txt 383 bytes, second.txt 299 bytes. A separate bounded
+run `342df43453134f80a4278b8ccf40b8be` tested duplicate stable-start receipts,
+terminal cancellation and rejection of a late answer with no output. The target
+now has three requests, two accepted responses, three terminal receipts and zero
+pending requests. Frozen runtime/instructions/configuration were unchanged.
+
+The existing checkpoint probe has an explicit `--native-working-view` mode and
+refuses routing/configuration drift or replay of an existing control. Browser
+checkpoint modes keep their forwarding finite and exactly scoped. The initial
+new browser mode had a JavaScript top-level return error, detected before any
+operation; it was corrected. Source remains `reviewed_ai_suggestions: false`.
+The installed 0.3.0 editor and original engineering workflows are unchanged.
+
+Reopen these completed results without supplying another answer:
+
+```sh
+node prototypes/desktop-harness/native_editor_acceptance.mjs /tmp/wright-native-working-target-20261012-01 --checkpoint --completed
+node prototypes/desktop-harness/capture-preview.mjs /tmp/wright-native-working-target-20261012-01 /tmp/wright-completed-readback-new checkpoint-completed
+```
+
+Do not replay start, scripted-response or cancellation commands against the saved
+evidence. Use a fresh isolated fixture for another execution. See the existing
+working-view evidence index for exact request/response/source/receipt/capture
+records and scripted-input attribution. Abrupt restart, lost acknowledgements,
+the next gateway profile and actual Windows editor/working-view acceptance remain.
+The newer resource is local and uninstalled; its live update is not approved.
+
+Suggested caption: “Pause for input, continue the same run, keep the evidence.
+Wright’s desktop-harness prototype now shows that loop working with digital test
+data.” Use `working-view-evidence/checkpoint-panel-scripted-input/native-test-choice-waiting-for-chat.png`
+or `checkpoint-panel-completed/native-completed-owned-result-fixture.png`; label
+these **GB10 browser protocol prototype**, not Windows desktop captures.

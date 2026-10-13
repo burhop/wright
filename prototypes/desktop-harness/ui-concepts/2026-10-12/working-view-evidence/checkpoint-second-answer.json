@@ -1,0 +1,7 @@
+{
+  "request_id": "9e57a6e5-1245-434a-ac5c-9b681b71fb1f",
+  "request_digest": "e7295599b497838fa49d90627e0d930475ffe0881a2fa8f3a894be8221b6c66a",
+  "binding_digest": "72d8c8f6b8b829f49a5dbc84dbfff84a43e9c32f03887edbae2f4fa4842f2748",
+  "response_id": "native-working-checkpoint-second-answer-20261013-01",
+  "reply": "{\"version\":\"wright.unattended-step/1\",\"status\":\"completed\",\"response\":\"Carry forward alternative b, exactly as supplied in the declared input. This is a label selection in the digital comparison fixture. It does not establish b as superior and supplies no measurements, tool execution, engineering validation or approval. The original comparison brief remains unchanged.\",\"reason\":null}"
+}

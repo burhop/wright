@@ -1,0 +1,22 @@
+{
+  "boundary": "Official MCP read port and exact owner bytes; no Windows capture or provider attestation",
+  "files": [
+    {
+      "artifact_ref": "first.txt",
+      "sha256": "ac5f9a0493e82978d2f2917f9f845386162fbf28199c4aaa6eac7bbca3aff674",
+      "size_bytes": 383,
+      "media_type": "text/plain",
+      "actual_byte_check": "matches owning read and recorded file"
+    },
+    {
+      "artifact_ref": "second.txt",
+      "sha256": "448ffd5581eaf9e9bd8db87734e882c47e3c9729da301c2529a23462ee9ae1ff",
+      "size_bytes": 299,
+      "media_type": "text/plain",
+      "actual_byte_check": "matches owning read and recorded file"
+    }
+  ],
+  "run_id": "92db9047617c48ec91a85dec3a3a0a1b",
+  "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+  "runtime_unchanged": true
+}

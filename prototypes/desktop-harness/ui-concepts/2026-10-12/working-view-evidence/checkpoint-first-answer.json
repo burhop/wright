@@ -1,0 +1,7 @@
+{
+  "request_id": "c89a89b8-9715-4d36-ac0d-c06d277d1437",
+  "request_digest": "1494a8c74d4f8f2448bfa7987f035d9e53e4ac3481724c389b9b034bb9097dca",
+  "binding_digest": "72d8c8f6b8b829f49a5dbc84dbfff84a43e9c32f03887edbae2f4fa4842f2748",
+  "response_id": "native-working-checkpoint-first-answer-20261013-01",
+  "reply": "{\"version\":\"wright.unattended-step/1\",\"status\":\"completed\",\"response\":\"Digital comparison fixture: a and b are the two supplied alternatives. The brief supplies no characteristics, measurements or ranking criteria, so neither alternative is established as better. Preserve both labels and carry forward the selection made at Wright's declared input checkpoint. This result reports no measured evidence, tool execution, engineering validation or approval.\",\"reason\":null}"
+}
