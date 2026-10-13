@@ -54,6 +54,7 @@ branch failure from hiding outside the latest incremental diff.
   $env:WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS = "tests/ui-integration/example.spec.ts:42;tests/ui-integration/other.spec.ts:88"
   scripts/check-dev-push.ps1
   ```
+
 - Scheduler-sensitive microbenchmarks marked `performance` are trend evidence,
   not PR correctness gates. They run in the scheduled/manual performance workflow;
   deterministic functional, security, compatibility, and customer-journey tests
@@ -167,6 +168,14 @@ Browser tests running against the managed frontend must send application API
 requests through same-origin `/api/...` paths. Do not hard-code the default
 backend port: both local gates intentionally support configurable API and UI
 ports, and Vite routes same-origin requests to the selected backend.
+
+Iframe attachment is not document readiness. Sandbox browser contracts use
+locator assertions for proxy readiness and inner content before evaluating the
+inner document; polling raw `frame.evaluate` during its initial navigation can
+fail when Firefox destroys the initial execution context. Retain the distinct
+origin, denied-network, permissions and opaque-origin assertions. Save generated
+screenshots with `testInfo.outputPath` so profiles have separate evidence and a
+rerun cannot replace a tracked historical review image.
 
 Digest assertions over Git-managed text fixtures must likewise canonicalize
 checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte

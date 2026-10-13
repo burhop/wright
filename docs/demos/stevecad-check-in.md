@@ -146,3 +146,14 @@ open advanced JSON; use the input palette and current file close action. The
 thumbnail retains exact natural dimensions and viewport bounds with fractional
 CSS-pixel tolerance. All 10 affected Chromium contracts pass. This is test-contract
 alignment, not an editor implementation change or engineering acceptance.
+
+The next complete matrix reported 178 passed, 5 skipped and one Firefox failure:
+the sandbox test evaluated an iframe during initial navigation and lost its
+execution context. Locator assertions now establish proxy/content readiness
+before document evaluation, retaining all origin, blocked-network, permissions
+and initialization checks. All 14 affected browser checks pass across Chromium,
+Firefox, WebKit and desktop profiles, including the review screenshot contracts.
+Generated captures use per-test output paths; the original tracked review image
+is restored and new captures remain separate. This correction changes tests and
+documentation only. The red full-gate result remains recorded; passing focused
+checks does not turn it into a green full gate or replace current-head CI.

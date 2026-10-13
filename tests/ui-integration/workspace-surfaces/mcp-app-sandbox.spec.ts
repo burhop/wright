@@ -54,9 +54,10 @@ async function mountOuter(page: Page): Promise<Frame> {
     .find((frame) => frame.url().startsWith(sandboxOrigin));
   if (!outer)
     throw new Error("outer sandbox did not load on its distinct origin");
-  await expect
-    .poll(() => outer.evaluate(() => document.body.dataset.proxyReady))
-    .toBe("true");
+  await expect(outer.locator("body")).toHaveAttribute(
+    "data-proxy-ready",
+    "true",
+  );
   await expect
     .poll(() =>
       page.evaluate(() =>
@@ -126,13 +127,11 @@ test("uses a distinct-origin double iframe with restrictive defaults", async ({
   });
 
   await expect.poll(() => outer.childFrames().length).toBe(1);
+  await expect(
+    outer.locator("iframe").contentFrame().locator("#app"),
+  ).toHaveText("sandboxed app");
   const inner = outer.childFrames()[0];
   expect(inner).toBeDefined();
-  await expect
-    .poll(() =>
-      inner.evaluate(() => document.querySelector("#app")?.textContent),
-    )
-    .toBe("sandboxed app");
   await expect
     .poll(() =>
       inner.evaluate(

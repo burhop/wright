@@ -1,5 +1,3 @@
-import { mkdirSync } from "node:fs";
-
 import { expect, test } from "@playwright/test";
 
 import {
@@ -7,7 +5,9 @@ import {
   openRecoveryEditor,
 } from "./fixtures/workflow-recovery";
 
-test("retains a review screenshot of the workflow canvas", async ({ page }) => {
+test("retains a review screenshot of the workflow canvas", async ({
+  page,
+}, testInfo) => {
   await mockRecoveryWorkspace(page);
   await openRecoveryEditor(page);
   const canvas = page.getByTestId("workflow-recovery-canvas");
@@ -16,16 +16,15 @@ test("retains a review screenshot of the workflow canvas", async ({ page }) => {
   const after = await canvas.boundingBox();
   expect(after?.height).toBe(before?.height);
   expect(after?.y).toBe(before?.y);
-  mkdirSync("artifacts/qa/workflow-recovery-20260918", { recursive: true });
   await page.screenshot({
-    path: "artifacts/qa/workflow-recovery-20260918/canvas-readiness.png",
+    path: testInfo.outputPath("canvas-readiness.png"),
     fullPage: true,
   });
 });
 
 test("keeps expanded readiness contained on mobile without shrinking the canvas", async ({
   page,
-}) => {
+}, testInfo) => {
   await mockRecoveryWorkspace(page);
   await openRecoveryEditor(page);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -52,7 +51,7 @@ test("keeps expanded readiness contained on mobile without shrinking the canvas"
     ),
   ).toBe(true);
   await page.screenshot({
-    path: "test-results/pr133-readiness-mobile.png",
+    path: testInfo.outputPath("readiness-mobile.png"),
     fullPage: true,
   });
 });
