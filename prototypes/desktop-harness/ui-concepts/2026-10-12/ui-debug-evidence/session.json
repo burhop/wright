@@ -1,0 +1,25 @@
+{
+  "started_at_utc": "2026-10-13T12:02:19.770942+00:00",
+  "pid": 2459362,
+  "source_worktree": "/home/burhop/.codex/worktrees/wright-ui-debug/wright",
+  "source_commit": "91da5d80",
+  "branch": "codex/host-adaptive-ui-debug",
+  "frontend": "http://127.0.0.1:5223",
+  "api": "http://127.0.0.1:8123",
+  "backend": "preserved installed 0.4.0 owner and test state",
+  "package": "0.4.0 installed source/cache unchanged",
+  "log": "/tmp/wright-ui-debug-20261013-01/vite.log",
+  "evidence_scope": "Developer browser build with HMR; native panel behaviour requires separate retest",
+  "walkthrough_feedback": "User completed walkthrough and reported lots of small bugs; no individual bug list or full acceptance claim yet",
+  "nested_dependencies": [
+    "apps/web/node_modules"
+  ],
+  "startup_recovery": "First copied root dependencies only; preserved failure log and copied pinned workspace dependencies before restarting owned frontend. No installs/lock changes.",
+  "browser_open_request": "queued by open_in_codex; actual Windows preview/annotation visibility awaits user observation",
+  "workspace_id": "1b212827-4eee-482f-a32c-7b18c26b3a33",
+  "session_id": "desktop-fddaff89-54db-408f-9607-e3754f3dd613",
+  "source_path": "workflows/ui-bug-review.workflow.wflow",
+  "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+  "official_annotation_source": "https://learn.chatgpt.com/docs/browser#comment-on-the-page",
+  "annotation_available_in_this_browser_session": "unverified"
+}
