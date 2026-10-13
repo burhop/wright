@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-10-11T16:13:29.009146+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "label": "04-save-coupon",
+    "name": "stevecad-mcp__write_design",
+    "arguments": {
+      "name": "Wright qualification coupon 2026-10-11",
+      "kind": "part",
+      "code": "\"\"\"Gateway qualification coupon; not a load-qualified equipment mount.\nDimensions are mm: 50 x 30 x 3 plate, four 4.5 mm through holes at +/-18, +/-8.\n\"\"\"\nfrom steve import Model\nlength = 50  # mm Plate length\nwidth = 30  # mm Plate width\nthickness = 3  # mm Plate thickness\nhole_diameter = 4.5  # mm Through-hole diameter\nmodel = Model()\nwith model.sketch(\"outline\", on=\"XY\", name=\"Coupon outline\") as s:\n    s.rect(\"r1\", (-length/2, -width/2), (length/2, width/2))\nmodel.extrude(\"plate\", \"outline\", distance=thickness)\nmodel.hole(\"mount_holes\", on=\"plate.end\", points=[(-18,-8),(-18,8),(18,-8),(18,8)], diameter=hole_diameter)\nresult = model.result()\n"
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"document\": {\"created_at\": \"2026-10-11T16:13:29.700819+00:00\", \"id\": \"875dbd4e-aec5-4c07-8eae-cf34e1161557\", \"kind\": \"part\", \"links\": {}, \"name\": \"Wright qualification coupon 2026-10-11\", \"preview_build_id\": null, \"revision\": 1, \"updated_at\": \"2026-10-11T16:13:29.700819+00:00\", \"url\": \"https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557\"}, \"url\": \"https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557\"}"
+      },
+      {
+        "name": "Wright qualification coupon 2026-10-11 (revision 1)",
+        "uri": "https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557",
+        "description": "Open in STEVE",
+        "mimeType": "text/html",
+        "type": "resource_link"
+      }
+    ],
+    "structuredContent": {
+      "document": {
+        "created_at": "2026-10-11T16:13:29.700819+00:00",
+        "id": "875dbd4e-aec5-4c07-8eae-cf34e1161557",
+        "kind": "part",
+        "links": {},
+        "name": "Wright qualification coupon 2026-10-11",
+        "preview_build_id": null,
+        "revision": 1,
+        "updated_at": "2026-10-11T16:13:29.700819+00:00",
+        "url": "https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557"
+      },
+      "url": "https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557"
+    },
+    "isError": false
+  }
+}

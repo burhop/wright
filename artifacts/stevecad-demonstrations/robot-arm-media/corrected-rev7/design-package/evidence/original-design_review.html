@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Robot Arm Revision 7 — Digital Design Review</title>
+<style>
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#18222b;background:#eef1f4}body{max-width:1120px;margin:auto;padding:18px}main{background:#fff;padding:24px;border-top:6px solid #ed6b20;box-shadow:0 2px 12px #0002}h1{margin:.1em 0;font-size:1.65rem}h2{font-size:1.15rem;border-bottom:2px solid #d8dee4;padding-bottom:4px;margin-top:1.25rem}h3{font-size:1rem;margin:.8rem 0 .35rem}p{margin:.45rem 0;line-height:1.38}.meta,.note{background:#f4f6f8;padding:10px;border-left:4px solid #667785}.critical{background:#fff0ed;border:2px solid #bd2c20;padding:11px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}figure{margin:0;border:1px solid #ccd3d9;padding:7px;background:#fafbfc}img{display:block;width:100%;height:auto;max-width:100%}figcaption{font-size:.78rem;line-height:1.3;margin-top:6px}table{width:100%;max-width:100%;border-collapse:collapse;font-size:.78rem;table-layout:fixed}th,td{border:1px solid #cbd2d8;padding:5px;vertical-align:top;overflow-wrap:anywhere}th{background:#263641;color:#fff;text-align:left}.pass{color:#126735;font-weight:700}.fail{color:#a11d16;font-weight:800}.unv{color:#7a5200;font-weight:800}a,.wrap{overflow-wrap:anywhere}.small{font-size:.8rem}.tag{display:inline-block;padding:2px 6px;background:#dfe5ea;margin:2px}@media(max-width:760px){.grid{grid-template-columns:1fr}body{padding:4px}main{padding:12px}table{font-size:.7rem}}
+</style>
+</head>
+<body><main>
+<h1>Robot Arm Revision 7 — Digital Design Review</h1>
+<p class="meta"><strong>Connected editable design:</strong> document <span class="wrap">167ef21f-6679-4e4d-8917-14dc067893d6</span>, revision 7, build <span class="wrap">780f3196-07b2-4590-b102-1cdd9a73b6cf</span>. <a href="https://stevecad.studio/?document=167ef21f-6679-4e4d-8917-14dc067893d6">Open editable SteveCAD document/revision</a> · <a href="https://stevecad.studio/?model=780f3196-07b2-4590-b102-1cdd9a73b6cf">Open revision-7 build</a></p>
+<div class="critical"><strong>Overall result: FAIL.</strong> Actual CAD failures remain at R09 and R10. R01, R04, R05, R08 and R16 remain <strong>UNVERIFIED</strong>. Presentation evidence is now evaluated rather than deferred: R17 and R18 fail because the top rendering colors the large tray/base panel green instead of required safety orange. This report records a digital design review; it does not record human acceptance.</div>
+<h2>Intent and controlled change</h2>
+<p>Revision 7 was intended to preserve revision-6 B-rep geometry, identities, placements, hardware, contacts, clearances and kinematics while changing only print metadata and source comments. The editable articulated assembly uses millimetres, degrees and a right-handed frame (+X right, +Y rear, +Z up). Rendered pixels provide qualitative presentation evidence only and do not prove geometry or dimensions.</p>
+<h2>Measured dimensions and features</h2>
+<table><thead><tr><th>Feature</th><th>Actual result</th><th>Disposition</th></tr></thead><tbody>
+<tr><td>Assembly</td><td>110 instances; 110 solids; 831 faces; 783,118.7195908069 mm³; bounds 200.0 × 385.5781003319563 × 287.76533231295184 mm; 0 component errors</td><td>Counts pass; whole-assembly bounds are not the stationary footprint.</td></tr>
+<tr><td>Printed register</td><td>18 definitions; 28 instances. Tray maximum mapped envelope 200 × 180 × 10 mm; all mapped envelopes ≤220 × 220 × 250 mm.</td><td>PASS</td></tr>
+<tr><td>Links</td><td>Shoulder–elbow 100.0 mm; elbow–wrist 90.0 mm; sections 18 × 18 mm; planes −9.4/+9.4 mm.</td><td>PASS, ±0.1 mm spacing</td></tr>
+<tr><td>Main pivots</td><td>Ø5.4 mm printed bores; Ø5.0 mm shafts; derived radial gap 0.20 mm; −X pitch and +Z yaw axes.</td><td>PASS, minimum 0.19 mm</td></tr>
+<tr><td>Electronics</td><td>PCB 160 × 90 × 1.6 mm; CM5 envelope 55 × 40 × 4.621 mm; four 6 mm standoffs at specified XY coordinates.</td><td>Geometry PASS; physical interfaces unverified</td></tr>
+<tr><td>Motion</td><td>Five states: 5,995 pairs/state, 0 issues. Path: 33 samples, 8.0 s, 0 new collisions.</td><td>PASS for bounded checks only</td></tr>
+<tr><td>FDM screen</td><td>One whole-design run; 2 errors and 25 warnings. Purchased standoff 1.15 mm and washer 1.00 mm failed the 1.2 mm thin-wall screen.</td><td>PASS for required run; not manufacturing approval</td></tr>
+</tbody></table>
+<h2>Native CAD captures</h2>
+<div class="grid">
+<figure><img src="cad-isometric.png" alt="Native CAD isometric capture"><figcaption><strong>CAD isometric.</strong> Orthographic home view; arm reaches upper-left, rear electronics region lies rightward.</figcaption></figure>
+<figure><img src="cad-top.png" alt="Native CAD top capture"><figcaption><strong>CAD top.</strong> World top looking along −Z; board rectangle, yaw base, links, servo envelopes and gripper are visible.</figcaption></figure>
+<figure><img src="cad-front.png" alt="Native CAD front capture"><figcaption><strong>CAD front.</strong> Front from −Y; stacked links, servo envelopes, pivots and base silhouette are visible.</figcaption></figure>
+</div>
+<h2>Presentation renderings</h2>
+<div class="grid">
+<figure><img src="render_isometric.png" alt="Studio isometric rendering"><figcaption><strong>Rendered isometric.</strong> Broad silhouette and oblique orientation agree qualitatively. Major feature categories remain visible. Orange/charcoal/metal/green treatment is broadly present; framing and occlusion prevent exact visible-feature counting.</figcaption></figure>
+<figure><img src="render_top.png" alt="Studio top rendering"><figcaption><strong>Rendered top — FAIL.</strong> Camera is qualitatively top-down and major arm features agree, but the large tray/base panel is green. Required appearance specifies an orange tray and exposed green board; this is a material/color discrepancy.</figcaption></figure>
+<figure><img src="render_front.png" alt="Studio front rendering"><figcaption><strong>Rendered front.</strong> Frontal orientation and major silhouette categories agree qualitatively; orange printed frames, charcoal links/servos, metallic fasteners and exposed green board are visible. Pixel or dimensional identity is not claimed.</figcaption></figure>
+</div>
+<h3>Pairwise presentation evaluation</h3>
+<table><thead><tr><th>Pair</th><th>Feature count and silhouette</th><th>Camera</th><th>Appearance</th></tr></thead><tbody>
+<tr><td>Isometric</td><td>Base, yaw, articulated links, servo blocks, pivots, gripper and board region correspond qualitatively; no exact count claim.</td><td>Matching oblique family; crop/scale differs.</td><td>Broadly compliant.</td></tr>
+<tr><td>Top</td><td>Major categories and longitudinal silhouette correspond; holes and fasteners are visible but not proven one-for-one.</td><td>Top-down orientation agrees.</td><td class="fail">Noncompliant green tray/base panel.</td></tr>
+<tr><td>Front</td><td>Base, stacked arm, servo blocks, yokes, shafts and gripper correspond qualitatively.</td><td>Frontal orientation agrees.</td><td>Broadly compliant.</td></tr>
+</tbody></table>
+<h2>Requirement-by-requirement results</h2>
+<table><thead><tr><th style="width:7%">ID</th><th style="width:12%">Status</th><th>Actual evidence/result</th></tr></thead><tbody>
+<tr><td>R01</td><td class="unv">UNVERIFIED</td><td>Global counts, faces, bounds and volume match revision 6, but no per-instance coincident-body/topology diff or kernel tolerance exists.</td></tr>
+<tr><td>R02</td><td class="pass">PASS</td><td>110 identifiable instances/solids; 18 printed definitions; 28 printed instances; 0 errors; editable joints retained.</td></tr>
+<tr><td>R03</td><td class="pass">PASS</td><td>mm, degrees and specified right-handed frame recorded.</td></tr>
+<tr><td>R04</td><td class="unv">UNVERIFIED</td><td>Tray is 200 × 180 mm; complete explicitly selected stationary-group bounds were not measured.</td></tr>
+<tr><td>R05</td><td class="unv">UNVERIFIED</td><td>PCB bounds and rearward placement observed; five reserved-bay intersection volumes were not reported.</td></tr>
+<tr><td>R06</td><td class="pass">PASS</td><td>100.0/90.0 mm spacings, 18 × 18 mm sections and −9.4/+9.4 mm planes.</td></tr>
+<tr><td>R07</td><td class="pass">PASS</td><td>Ø5.4/Ø5.0 mm interfaces yield 0.20 mm radial gap; axes and through-lengths inspected.</td></tr>
+<tr><td>R08</td><td class="unv">UNVERIFIED</td><td>Five states and sampled path show no issues, but every path-sample minimum printed-pair distance was not reported.</td></tr>
+<tr><td>R09</td><td class="fail">FAIL</td><td>Four unique cradle definitions, not five. Bodies are single solids, but isolated boss-web volumes were not measured.</td></tr>
+<tr><td>R10</td><td class="fail">FAIL</td><td>25 M3 bolts and 25 nuts; 1 yaw shaft, 3 pitch shafts, 8 washers and 4 M5 nuts. Explicit hardware-pair contacts and complete measured stack order are absent.</td></tr>
+<tr><td>R11</td><td class="pass">PASS</td><td>Axis line distances 0.0 mm; directions, limits and poses match; symmetric gripper opens 25 mm.</td></tr>
+<tr><td>R12</td><td class="pass">PASS</td><td>Five clear states; 33/33 samples over 8.0 s; zero new collisions.</td></tr>
+<tr><td>R13</td><td class="pass">PASS</td><td>All 18 independently represented definitions fit the mapped 220 × 220 × 250 mm build volume.</td></tr>
+<tr><td>R14</td><td class="pass">PASS</td><td>One identity-classified whole-design FDM screen completed; orientation limitations retained.</td></tr>
+<tr><td>R15</td><td class="pass">PASS</td><td>Board, CM5, standoffs and 3 MG996R/2 MG90S reference envelopes match specified geometry.</td></tr>
+<tr><td>R16</td><td class="unv">UNVERIFIED</td><td>No new-revision printable export manifest exists to prove purchased-body exclusion.</td></tr>
+<tr><td>R17</td><td class="fail">FAIL</td><td>Exactly six required views exist; native captures pass. Top studio view has incorrect green tray appearance.</td></tr>
+<tr><td>R18</td><td class="fail">FAIL</td><td>Silhouette, feature categories and cameras broadly agree, but requested appearance does not agree in the top pair.</td></tr>
+<tr><td>R19</td><td class="fail">FAIL</td><td>Six images, identity, measurements, sequence, directions and limitations are present; exact per-definition quantities, complete stack/contact register and export manifest remain unavailable.</td></tr>
+<tr><td>R20</td><td class="pass">PASS</td><td>No prohibited manufacturing, physical-fit, strength, payload, stability, continuous-collision, powered-operation, publication or acceptance claim is made.</td></tr>
+</tbody></table>
+<h2>Register, preparation and limitations</h2>
+<p><strong>Printed definitions:</strong> tray (−Z); arm_foot, turntable, yoke, pitch_yoke, yoke_mount, guide_post, guide_cover (+Z); upper_arm, forearm, palm, finger, retainer_large, retainer_small, saddle_large, saddle_small, saddle_yaw, saddle_gripper (+X). Total: 18 definitions/28 instances. Tower is integral with turntable. Use removable support for tower access, yoke bores/cheeks and negative-X saddle cavities/webs; clean bores and trial-fit. Exact per-definition quantities were not supplied by validation.</p>
+<p><strong>Export preparation:</strong> only the 18 revision-7 printed definitions are eligible for later independently oriented STL acquisition and validation. Purchased servos, boards, horns, shafts, fasteners and standoffs must be excluded; this remains unverified until a manifest exists.</p>
+<p><strong>Assembly sequence:</strong> clean parts; trial-fit saddles/bores; install standoffs and PCB; join tray/foot, turntable/tower and yaw stack; install shoulder, upper arm, elbow, forearm, wrist, palm and gripper; fit servo references and outward hardware; perform unpowered manual checks.</p>
+<p class="note"><strong>Unresolved:</strong> native topology equality; stationary footprint; five bay intersections; all sampled minimum gaps; fifth cradle definition and boss-web volumes; explicit hardware contacts/stack order; rendering color correction; export manifest; servo/horn fit, inventory, connectors, cables, torque, transmission, payload, strength, stability, slicing, support volume, print quality, physical assembly and energized operation. The bounded tests do not establish continuous collision freedom or manufacturing readiness.</p>
+</main></body></html>

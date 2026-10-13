@@ -114,5 +114,6 @@ button to Studio with a print-only wrapper that preserves the reviewed G-code,
 explicit AMS selection/readback, submission progress, and a confirmation timeout.
 It is enabled in this isolated demo. A real print through the newly connected
 button is pending; cancellation uses Studio or Handy for this transport.
-See [the experiment record](prompt-to-printed-part-studio-automation.md) for the
-actual package, telemetry, limits, and remaining integration work.
+The desktop transport has since been retired, and its original experiment record
+is retained privately. See the [vendor retirement record](../architecture/workflow-platform-refactoring-plan.md)
+for the current architecture and disposition.

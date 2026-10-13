@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "source_sha256": "4f021738e51446d486ac7486dda579c41a0b43fa7050605e156182ff69b3e1c4",
+  "execution_tasks": 16,
+  "tests": [
+    {
+      "case": "robot",
+      "native_items": 110,
+      "native_arguments_bytes": 35626,
+      "template_compiles": true,
+      "evidence_kind": "retained actual metadata with retained actual mesh validation"
+    },
+    {
+      "case": "robot invalid mesh",
+      "rejected": true
+    },
+    {
+      "case": "block",
+      "native_items": 1,
+      "native_arguments_bytes": 6340,
+      "template_compiles": true,
+      "evidence_kind": "retained actual metadata with synthetic mesh-validation control"
+    },
+    {
+      "case": "block invalid mesh",
+      "rejected": true
+    },
+    {
+      "case": "matching revision",
+      "outcome": "allowed"
+    },
+    {
+      "case": "different revision",
+      "outcome": "rejected"
+    },
+    {
+      "case": "different document",
+      "outcome": "rejected"
+    }
+  ],
+  "scope": "Offline declaration and selected jq checks, not a live main workflow run"
+}

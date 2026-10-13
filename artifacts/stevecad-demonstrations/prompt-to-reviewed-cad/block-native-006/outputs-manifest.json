@@ -1,0 +1,127 @@
+[
+  {
+    "path": "outputs/cad-front.png",
+    "sha256": "f0f03fe9077c5345b7869f1e401aa5d2aa4be459fbb793c73f80331013fe1d07",
+    "bytes": 4183
+  },
+  {
+    "path": "outputs/cad-isometric.png",
+    "sha256": "660ab79de420de3c365c75b56c1bfa42cabeb1fd59d9627eb348393b6899dcd0",
+    "bytes": 14306
+  },
+  {
+    "path": "outputs/cad-top.png",
+    "sha256": "893a2487466d3adda514a4311fd1ec9be405e4a7ad3de9ffd0cbc895cbf58d22",
+    "bytes": 7257
+  },
+  {
+    "path": "outputs/create_design.json",
+    "sha256": "43d81c014ac3a54ec2e8b49d94725c1a8ec07010230ec8ec1f4614c1fde5e9c0",
+    "bytes": 1969
+  },
+  {
+    "path": "outputs/design_document.md",
+    "sha256": "3d22660f568b92a7720674ba08011b9848a1b0653e425c3276f6217b973d948e",
+    "bytes": 4061
+  },
+  {
+    "path": "outputs/design_review.html",
+    "sha256": "bbd4316f8feb38fe052133ff056dc25401c76922693fff1e6ab58213504eb362",
+    "bytes": 11849
+  },
+  {
+    "path": "outputs/render_front.png",
+    "sha256": "033f49254aae5b7dbb3991267f6d1c41219e2a464570b417d2f1070d761b852b",
+    "bytes": 375954
+  },
+  {
+    "path": "outputs/render_isometric.png",
+    "sha256": "833f5158ebf712044a1cffaf6789eefee317e3f1879862e1562918e04213953f",
+    "bytes": 570582
+  },
+  {
+    "path": "outputs/render_top.png",
+    "sha256": "fd93ba6d566b69fa5fc3dabce5a5bd08731814389601af84f45a3326a94aecdf",
+    "bytes": 566454
+  },
+  {
+    "path": "outputs/test_plan.md",
+    "sha256": "1c1c851a5a6fe2f40c80eadfeb89c5fc6b6ec6e9d8147dee20ece5b63a327cf2",
+    "bytes": 5501
+  },
+  {
+    "path": "outputs/validate_design.json",
+    "sha256": "61dd2bae3c1f98216c3e9d3a4e479596aa1ba2b098df74c8d43ba3462f1d7868",
+    "bytes": 6944
+  },
+  {
+    "path": "handoff/design.glb",
+    "sha256": "d6ad1e1ac153fcdfa391c00782f053276c88384d0365b820a107244aebe989a0",
+    "bytes": 18140
+  },
+  {
+    "path": "handoff/design.step",
+    "sha256": "e00967a9517d3c64f310e1b4793b604a05f2b49f450b97b003626a9061c5f9fd",
+    "bytes": 34249
+  },
+  {
+    "path": "handoff/download_step.json",
+    "sha256": "95c6666853fc9a10957b1d49fbabfe0410344fb5fdb8f5b3d9fa7ca44e07500e",
+    "bytes": 116
+  },
+  {
+    "path": "handoff/export-arguments.json",
+    "sha256": "4b62b9177000882455bcca1e4b4d1e5a632cd3ce04b91ef92800d21b5a30f7cc",
+    "bytes": 129
+  },
+  {
+    "path": "handoff/export_mesh.json",
+    "sha256": "d39bf175c10a189fe6fda598d5a5803bdae31148194f6f8b21d09aeeffe06153",
+    "bytes": 4348
+  },
+  {
+    "path": "handoff/import_mesh.json",
+    "sha256": "10335f6e8b6edeb62ab9154ca5f6ce43964ce965f398b07c27484492dbe87d11",
+    "bytes": 601
+  },
+  {
+    "path": "handoff/native-arguments.json",
+    "sha256": "0a06bbb5b757b72ac4b7137ca70f39c595ca569fee2fcc061e375a98ea6cb0f0",
+    "bytes": 6370
+  },
+  {
+    "path": "handoff/native-identity.json",
+    "sha256": "944b28f29f3be1d2cf0a61a64d8564e79ee1219e12c9ffb4353fa2991e61fdd3",
+    "bytes": 1611
+  },
+  {
+    "path": "handoff/prepare_export.json",
+    "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621",
+    "bytes": 110
+  },
+  {
+    "path": "handoff/prepare_native_arguments.json",
+    "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621",
+    "bytes": 110
+  },
+  {
+    "path": "handoff/render_front.json",
+    "sha256": "52707d36a5666d68f4fa8e53827876999de2c0be5869a27bc6f83222da7e65ca",
+    "bytes": 509
+  },
+  {
+    "path": "handoff/render_isometric.json",
+    "sha256": "044aec0d79d330ff7e722a36300aea723cebe788b2ff26a5f741c65d13e4f5c7",
+    "bytes": 517
+  },
+  {
+    "path": "handoff/render_top.json",
+    "sha256": "19d7fda9b9cbe3a86dbeabaab2978b8910e767b7a31e2b77f565a67851a3bae3",
+    "bytes": 505
+  },
+  {
+    "path": "handoff/retain_export_identity.json",
+    "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621",
+    "bytes": 110
+  }
+]

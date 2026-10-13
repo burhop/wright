@@ -65,7 +65,9 @@ def project_tool_message(message: dict[str, Any]) -> tuple[dict[str, Any], bool]
     """Return a detached compact message and whether host references were added.
 
     Only byte-identical canonical JSON observations in a single verification
-    report can be referenced. No cross-report/call matching, inferred equality,
+    report can be referenced. A host envelope's redundant ``text`` copy can be
+    omitted only when strict JSON decoding equals its complete ``result``.
+    Native result fields are never removed. No cross-report/call matching, inferred equality,
     status changes or source mutation is permitted. Unknown/ambiguous JSON keeps
     its original representation, including numbers that cannot round-trip.
     """
@@ -130,6 +132,18 @@ def project_tool_message(message: dict[str, Any]) -> tuple[dict[str, Any], bool]
         and isinstance(message.get("tool_call_id"), str)
         and not _contains_marker(value)
     ):
+        # This field belongs to Wright's model-facing tool envelope, not the
+        # native result. A complete, strictly identical JSON text copy carries
+        # no additional observation. Keep all prose, errors, suffixes, ambiguous
+        # JSON and differing numeric tokens; raw envelopes remain in run evidence.
+        text = value.get("text")
+        if isinstance(text, str):
+            try:
+                if _strict_json(text) == _strict_json(_compact(value["result"])):
+                    del value["text"]
+                    compact = _compact(value)
+            except (ValueError, TypeError, RecursionError, OverflowError):
+                pass
         visit(value["result"], "/result")
         if references:
             compact = _compact(value)

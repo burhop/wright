@@ -1,0 +1,27 @@
+[
+  {
+    "attempt": "2026-10-11T1708Z",
+    "artifact_structure_errors": [],
+    "observed_state": "blocked"
+  },
+  {
+    "attempt": "2026-10-11T1713Z",
+    "artifact_structure_errors": [],
+    "observed_state": "blocked"
+  },
+  {
+    "attempt": "2026-10-11T1715Z",
+    "artifact_structure_errors": [],
+    "observed_state": "blocked"
+  },
+  {
+    "attempt": "2026-10-11T1717Z",
+    "artifact_structure_errors": [],
+    "observed_state": "blocked"
+  },
+  {
+    "attempt": "2026-10-11T1719Z",
+    "artifact_structure_errors": [],
+    "observed_state": "pass"
+  }
+]

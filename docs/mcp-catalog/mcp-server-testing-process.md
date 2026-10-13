@@ -49,7 +49,11 @@ For each MCP server, work in catalog order:
    server's prefixed tools and successfully proxy at least one safe backend tool
    call.
 8. Record what was learned on the MCP server entry: validation status, date,
-   platform, dependency outcome, message, and evidence.
+   platform, dependency outcome, message, and evidence. Create or update its
+   discoverable [usage guide](usage-guides/README.md) using the shared template,
+   including prerequisites, observed versions, successful calls, pitfalls and
+   recovery. This applies to every installed or used MCP server; clearly mark
+   engineering capabilities that have not yet been exercised.
 9. If the MCP has a problem that needs later engineering work, create a follow-up
    record under `docs/mcp-catalog/followups/` with the exact command,
    environment, observed output, and proposed next action. When GitHub
@@ -131,3 +135,12 @@ When a server has been attempted, add or update its setup recipe in
 exact install command, selected-server backend dependencies, MCP launch command,
 safe backend probes, and known version-specific traps. The problem log remains
 the chronological record; the setup recipe is the reusable retest guide.
+
+## Required Usage Knowledge
+
+After using a provider for actual engineering work, add or update its guide under
+`docs/mcp-catalog/usage-guides/`, following the [shared standard](usage-guides/README.md).
+Link verified examples, exact artifact identities, observed versions, pitfalls,
+bounded recovery and unverified limits. Keep setup recipes and qualification
+evidence as their existing owners. Record suspected bugs separately from proven
+provider defects and prepare reproducible, redacted reports before submission.

@@ -1,0 +1,154 @@
+{
+  "passed": true,
+  "checks": {
+    "one_solid": true,
+    "dimensions": true,
+    "hole_count": true,
+    "hole_positions": true,
+    "diameter_depth_axes": true,
+    "analytical_volume": true,
+    "capture_identities": true
+  },
+  "measurements": {
+    "bounds_mm": [
+      80.0,
+      50.0,
+      16.0
+    ],
+    "center_of_mass_mm": [
+      40.00000000000003,
+      25.000000000000004,
+      8.000000000000002
+    ],
+    "components": 1,
+    "faces": 12,
+    "solids": 1,
+    "surface_area_mm2": 13969.55736846772,
+    "units": "mm",
+    "volume_mm3": 59174.51368408604
+  },
+  "holes": [
+    {
+      "area_mm2": 402.12,
+      "at_mm": [
+        12.0,
+        12.0,
+        16.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "block"
+      ],
+      "diameter_mm": 8.0,
+      "length_mm": 16.0,
+      "name": "part:h01.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 402.12,
+      "at_mm": [
+        40.0,
+        12.0,
+        16.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "block"
+      ],
+      "diameter_mm": 8.0,
+      "length_mm": 16.0,
+      "name": "part:h02.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 402.12,
+      "at_mm": [
+        68.0,
+        12.0,
+        16.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "block"
+      ],
+      "diameter_mm": 8.0,
+      "length_mm": 16.0,
+      "name": "part:h03.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 402.12,
+      "at_mm": [
+        12.0,
+        38.0,
+        16.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "block"
+      ],
+      "diameter_mm": 8.0,
+      "length_mm": 16.0,
+      "name": "part:h04.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 402.12,
+      "at_mm": [
+        40.0,
+        38.0,
+        16.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "block"
+      ],
+      "diameter_mm": 8.0,
+      "length_mm": 16.0,
+      "name": "part:h05.wall(0)",
+      "type": "cylinder"
+    },
+    {
+      "area_mm2": 402.12,
+      "at_mm": [
+        68.0,
+        38.0,
+        16.0
+      ],
+      "axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "bodies": [
+        "block"
+      ],
+      "diameter_mm": 8.0,
+      "length_mm": 16.0,
+      "name": "part:h06.wall(0)",
+      "type": "cylinder"
+    }
+  ],
+  "analytical_volume_mm3": 59174.51368408608,
+  "scope": "Independent numeric checks from full native inspection receipts"
+}

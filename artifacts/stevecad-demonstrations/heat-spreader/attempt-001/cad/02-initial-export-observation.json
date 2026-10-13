@@ -1,0 +1,8 @@
+{
+  "status": "export_not_completed",
+  "case_id": "baseline_40",
+  "operation": "generate_model revision 1 with download step",
+  "observation": "Operator client found no transfer command and raised before recording the response. No STEP was downloaded. The raw model status from this first response is unavailable; it is not claimed succeeded or still working.",
+  "recovery": "Retain this observation, record the next complete response, and join the same document revision. Do not create another document or replay write_design.",
+  "error": "Expected exactly one documented export transfer command; found 0"
+}

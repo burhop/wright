@@ -1,0 +1,92 @@
+{
+  "run_id": "15a0b7ad27374a0e9375923cc4dc2725",
+  "workflow_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+  "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+  "status": "completed",
+  "started_at": "2026-10-12T19:08:27.616743+00:00",
+  "completed_at": "2026-10-12T19:18:44.864700+00:00",
+  "error": null,
+  "execution_context": {
+    "model_routing": {
+      "schema_version": "wright.workflow-model-routing/1",
+      "text": {
+        "provider": "openai-codex",
+        "model_reference": "gpt-5.6-sol",
+        "profile": "wright",
+        "endpoint_digest": "4820ad43bc5b284cd50303a01f44adb754a3dfbb8c45e1ecd5a0c46a53bcb7f6",
+        "configuration_digest": "41884f9046aa9dc8e3b599b55a4c2dd653c016d509b9d77690b80b428fc69857",
+        "adapter": "hermes-http"
+      },
+      "images": {}
+    }
+  },
+  "step_timings": [
+    {
+      "task_id": "design_document",
+      "seconds": 38.387
+    },
+    {
+      "task_id": "test_plan",
+      "seconds": 47.999
+    },
+    {
+      "task_id": "create_design",
+      "seconds": 79.326
+    },
+    {
+      "task_id": "validate_design",
+      "seconds": 169.233
+    },
+    {
+      "task_id": "prepare_export",
+      "seconds": 2.664
+    },
+    {
+      "task_id": "request_export",
+      "seconds": 2.182
+    },
+    {
+      "task_id": "format_transfer",
+      "seconds": 2.158
+    },
+    {
+      "task_id": "retain_export_identity",
+      "seconds": 3.196
+    },
+    {
+      "task_id": "download_step",
+      "seconds": 2.474
+    },
+    {
+      "task_id": "export_mesh",
+      "seconds": 3.428
+    },
+    {
+      "task_id": "prepare_native_arguments",
+      "seconds": 2.514
+    },
+    {
+      "task_id": "import_mesh",
+      "seconds": 2.234
+    },
+    {
+      "task_id": "render_isometric",
+      "seconds": 51.261
+    },
+    {
+      "task_id": "render_top",
+      "seconds": 33.42
+    },
+    {
+      "task_id": "render_front",
+      "seconds": 11.753
+    },
+    {
+      "task_id": "design_review",
+      "seconds": 131.097
+    }
+  ],
+  "elapsed_seconds": 617.248,
+  "recorded_model_invocation_events": 54,
+  "invocation_count_scope": "Observable invocation events can include more than one transport boundary for a request. This is not a deduplicated provider-call or billing count."
+}

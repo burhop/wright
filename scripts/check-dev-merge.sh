@@ -86,6 +86,7 @@ run git diff --check
 # Rivet assets are force-included from integrations/, outside the Python package root.
 run uv sync --all-packages --all-groups --reinstall-package wright-engineering
 run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
+run "$GATE_PYTHON" -m scripts.release.audit_node_dependencies
 run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host
 
 if [[ "${SKIP_PLAYWRIGHT:-0}" != "1" ]]; then

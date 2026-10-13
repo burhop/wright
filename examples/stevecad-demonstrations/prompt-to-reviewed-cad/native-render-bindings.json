@@ -1,0 +1,198 @@
+{
+  "transfer": {
+    "name": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4__shell_execute",
+    "server_id": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4",
+    "tool_name": "shell_execute",
+    "title": "shell execute",
+    "description": "Execute an allowed command as an argv array on the MCP server host. Allowed commands run with the server process's OS authority; the allowlist controls executable names, not what an allowed program does.\nAllowed commands: curl, jq, sha256sum\nAllowed patterns: \nDefault timeout: 60s; maximum timeout: 120s; output cap: 65536 bytes",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Command and its arguments as array"
+        },
+        "stdin": {
+          "type": "string",
+          "description": "Input to be passed to the command via stdin"
+        },
+        "directory": {
+          "type": "string",
+          "description": "Optional working directory. Omit to use the MCP server process current working directory; relative paths are resolved from that same server process CWD."
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Maximum execution time in seconds; clamped to server maximum",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "command"
+      ]
+    },
+    "output_schema": null,
+    "schema_digest": "5be49730ebc2f82fddd46ef0284d05c3bc1e304c70dff4d0a6a4c1a0eb77327f"
+  },
+  "export": {
+    "name": "stevecad-mcp__generate_model",
+    "server_id": "stevecad-mcp",
+    "tool_name": "generate_model",
+    "title": "Generate Model",
+    "description": "Execute and validate a saved document, wait for geometry, and attach STEP and preview.\n\nThe result's model.artifacts are the revision's export files: step, components_step (one STEP per\ncomponent), sheet_metal_export (flat-pattern DXF ZIP), bodies_mesh (STL per body, made when first asked for). Those links need the person's\nSTEVE sign-in: give the person the model's link. To get files onto your own machine (agents outside STEVE), pass\ndownload=[\"step\", \u2026]: each comes back with a one-time command (curl) that fetches it within 10 minutes.\nLinks build at their pinned revisions, frozen when execution is queued; unchanged components\ncome from the component cache. Check returned measurements/errors. A circuit evaluates its TSX, lays out\nthe schematic and places the board, unrouted (a ratsnest, except copper routed before for the same problem); its\nproblems come back as `circuit` errors and warnings, not as a failed build. route=true (circuits only) autoroutes\nthe board: do it once, at the end, when placement is final; it can take minutes, and `circuit.routing` says how it\nwent. It doesn't start while the unrouted build has issues that would waste it (`not_routed`). A routing result with retryable false is final for that board: change the board, don't route it again.\nA shop builds its items as manufacturing library records, then saves them to the workspace's library: `library`\nlists each item with its library id, revision and change (created, revised or unchanged); `library_error` names\nthe item, file and line the library refused (fix it and generate again).\nA CAM program runs its operations, posts the G-code and has Steve check it (steve-cam-programs): `cam.stage` says\nhow far it got; each call waits up to 50 s, and while `still_working` is in the result, generating again keeps\nwaiting. download=[\"gcode\"] gives the G-code once it's posted and no check failed (stage `checked` or `verified`):\none machine file per setup, each download naming its setup (`cam.posts`), to run in the program's setup order.\n`cam.posted_resolution` (a program posted at six decimals for a controller that rounds finer words) says how far the\npath the machine runs can lie from the checked one: tell the person, and generate again only if they want it.\nGenerate once after a batch of edits, not after each one.\nAgents outside STEVE: each call waits up to 50 s. A build still going then comes back with `still_working` and its id;\nit carries on with its whole budget, and calling generate_model again with the same revision joins that same build\n(never starts over), so repeating it is the status check: don't read the whole document to check a build. A\nstill-working result's `document` is light: its identity and revision, with `link_count` instead of the links and\ntheir status (read_design has those). If your client allows longer calls, pass wait_s (0\u2013600 seconds) to wait that\nlong per call instead of 50 s; the result and rejoining are the same. While it\nruns, `progress` (and `still_working`, in words) says what it is doing: the stage (main.py, components, drive and\nanimation checks, collision studies, fit, cable and fastener checks, STEP export, meshes), the item and count\n(\"animation check 'walk', sample 120 of 285\") and the time used of its budget; read_design's `latest_build` too. A full\nbuild doesn't wait for a running preview of the same source (a preview has no exports); while the full build is\nworking or after it failed, `model.preview` (read_design: `latest_build.preview`) says how that preview went.\nGeometry alone does not establish load capacity or manufacturing suitability.\nbranch optionally generates and attaches geometry on one of this document's branches.",
+    "input_schema": {
+      "properties": {
+        "document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "route": {
+          "default": false,
+          "type": "boolean"
+        },
+        "download": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "step",
+                  "components_step",
+                  "sheet_metal_export",
+                  "bodies_mesh",
+                  "gcode"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "wait_s": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "document_id",
+        "revision"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "output_schema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "schema_digest": "db316e0cade5a5632a2fb9afdac72b74d3ce18a7f69631dfd253559793e09b58"
+  },
+  "mesh": {
+    "name": "8de879d3-9c37-463e-a289-3447cd2cd05d__export",
+    "server_id": "8de879d3-9c37-463e-a289-3447cd2cd05d",
+    "tool_name": "export",
+    "title": "export",
+    "description": "Export a STEP file to mesh formats (stl, glb, obj).\n\n    Returns source CAD validation separately from mesh_validation per written\n    format. Success means files were written; require that mesh's is_valid is\n    true before handoff. Failed/unknown mesh checks retain files and warn.\n\n    Args:\n        step_file: Path to the STEP file.\n        formats: Comma-separated formats (stl, glb, obj).\n        cwd: Source project directory (or a subdirectory).\n        build_dir: Optional artifact/history root, relative to the project root.\n            Overrides agentcad.toml for this call only. Use returned artifact paths.\n    ",
+    "input_schema": {
+      "properties": {
+        "step_file": {
+          "title": "Step File",
+          "type": "string"
+        },
+        "formats": {
+          "title": "Formats",
+          "type": "string"
+        },
+        "cwd": {
+          "title": "Cwd",
+          "type": "string"
+        },
+        "build_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Build Dir"
+        }
+      },
+      "required": [
+        "step_file",
+        "formats",
+        "cwd"
+      ],
+      "title": "exportArguments",
+      "type": "object"
+    },
+    "output_schema": null,
+    "schema_digest": "6265cab77cbdbfdb577066d35b0a8e32322b5010c0b121f3bf75af2dd1b374d8"
+  },
+  "blender": {
+    "name": "18094520-ff0d-4647-92da-2ae2eda5419b__execute_blender_code",
+    "server_id": "18094520-ff0d-4647-92da-2ae2eda5419b",
+    "tool_name": "execute_blender_code",
+    "title": "execute blender code",
+    "description": "\n    Execute arbitrary Python code in Blender. Make sure to do it step-by-step by breaking it into smaller chunks.\n\n    Parameters:\n    - code: The Python code to execute\n    - user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n    ",
+    "input_schema": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "user_prompt": {
+          "default": "",
+          "title": "User Prompt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "execute_blender_codeArguments",
+      "type": "object"
+    },
+    "output_schema": {
+      "properties": {
+        "result": {
+          "title": "Result",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "title": "execute_blender_codeOutput",
+      "type": "object"
+    },
+    "schema_digest": "cc9a7a39a0b79505e5a2f53ac7c60a96ec9d5a587ff65296abe53a0d4db640f7"
+  }
+}

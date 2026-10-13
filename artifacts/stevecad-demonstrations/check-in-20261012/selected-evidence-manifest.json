@@ -1,0 +1,1251 @@
+{
+  "scope": "Selected original evidence; other historical attempts and duplicate media remain local and unchanged. Paths are relative to the repository root.",
+  "files": [
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/accepted-source.json",
+      "bytes": 106227,
+      "sha256": "b0b6cb688d902d7fb1aba044fe3ca0be34fe77873660b02f0146f303c55d711b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/design-review-browser-check.json",
+      "bytes": 801,
+      "sha256": "e01f0de913fd80d3ae84c54faed85bb899e5a1dd9947d2b81393966b4506c4de"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/design-review-first-page.png",
+      "bytes": 110758,
+      "sha256": "df30a225e50251d3a35db76db9b6bb9a7982848bc3e743457db85cfdb304e235"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/design-review-preview.png",
+      "bytes": 354294,
+      "sha256": "191f0a81b3738c91bd6d35c7a3c6813bfb6e997269d0c896e7aabd16ebd3fb2c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/design.glb",
+      "bytes": 18140,
+      "sha256": "d6ad1e1ac153fcdfa391c00782f053276c88384d0365b820a107244aebe989a0"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/design.step",
+      "bytes": 34249,
+      "sha256": "e00967a9517d3c64f310e1b4793b604a05f2b49f450b97b003626a9061c5f9fd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/download_step.json",
+      "bytes": 116,
+      "sha256": "95c6666853fc9a10957b1d49fbabfe0410344fb5fdb8f5b3d9fa7ca44e07500e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/export-arguments.json",
+      "bytes": 129,
+      "sha256": "4b62b9177000882455bcca1e4b4d1e5a632cd3ce04b91ef92800d21b5a30f7cc"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/export_mesh.json",
+      "bytes": 4348,
+      "sha256": "d39bf175c10a189fe6fda598d5a5803bdae31148194f6f8b21d09aeeffe06153"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/import_mesh.json",
+      "bytes": 601,
+      "sha256": "10335f6e8b6edeb62ab9154ca5f6ce43964ce965f398b07c27484492dbe87d11"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/native-arguments.json",
+      "bytes": 6370,
+      "sha256": "0a06bbb5b757b72ac4b7137ca70f39c595ca569fee2fcc061e375a98ea6cb0f0"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/native-identity.json",
+      "bytes": 1611,
+      "sha256": "944b28f29f3be1d2cf0a61a64d8564e79ee1219e12c9ffb4353fa2991e61fdd3"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/prepare_export.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/prepare_native_arguments.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/render_front.json",
+      "bytes": 509,
+      "sha256": "52707d36a5666d68f4fa8e53827876999de2c0be5869a27bc6f83222da7e65ca"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/render_isometric.json",
+      "bytes": 517,
+      "sha256": "044aec0d79d330ff7e722a36300aea723cebe788b2ff26a5f741c65d13e4f5c7"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/render_top.json",
+      "bytes": 505,
+      "sha256": "19d7fda9b9cbe3a86dbeabaab2978b8910e767b7a31e2b77f565a67851a3bae3"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/handoff/retain_export_identity.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/independent-geometry-audit.json",
+      "bytes": 2127,
+      "sha256": "429fc5dfb0c700a8b04ad68f4068dc776dfca63dfd248565813257064b1e79a5"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/inputs.json",
+      "bytes": 1968,
+      "sha256": "ddd55032cb1562ec001705fa1b8f8d840aaf50f314b54752e0f9f1f71a7bff4e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/native-run-audit.json",
+      "bytes": 2326,
+      "sha256": "cfc2a0f0c0d6cb10ec79074d7c2774e5bc35ac3a0aad1f4bb05f75580b0a79db"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs-manifest.json",
+      "bytes": 3894,
+      "sha256": "88a5fcec7286021570b6eb810fd7479100f72cc53d25c3d65fd80cde049efd7d"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/cad-front.png",
+      "bytes": 4183,
+      "sha256": "f0f03fe9077c5345b7869f1e401aa5d2aa4be459fbb793c73f80331013fe1d07"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/cad-isometric.png",
+      "bytes": 14306,
+      "sha256": "660ab79de420de3c365c75b56c1bfa42cabeb1fd59d9627eb348393b6899dcd0"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/cad-top.png",
+      "bytes": 7257,
+      "sha256": "893a2487466d3adda514a4311fd1ec9be405e4a7ad3de9ffd0cbc895cbf58d22"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/create_design.json",
+      "bytes": 1969,
+      "sha256": "43d81c014ac3a54ec2e8b49d94725c1a8ec07010230ec8ec1f4614c1fde5e9c0"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/design_document.md",
+      "bytes": 4061,
+      "sha256": "3d22660f568b92a7720674ba08011b9848a1b0653e425c3276f6217b973d948e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/design_review.html",
+      "bytes": 11849,
+      "sha256": "bbd4316f8feb38fe052133ff056dc25401c76922693fff1e6ab58213504eb362"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_front.png",
+      "bytes": 375954,
+      "sha256": "033f49254aae5b7dbb3991267f6d1c41219e2a464570b417d2f1070d761b852b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_isometric.png",
+      "bytes": 570582,
+      "sha256": "833f5158ebf712044a1cffaf6789eefee317e3f1879862e1562918e04213953f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_top.png",
+      "bytes": 566454,
+      "sha256": "fd93ba6d566b69fa5fc3dabce5a5bd08731814389601af84f45a3326a94aecdf"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/test_plan.md",
+      "bytes": 5501,
+      "sha256": "1c1c851a5a6fe2f40c80eadfeb89c5fc6b6ec6e9d8147dee20ece5b63a327cf2"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/validate_design.json",
+      "bytes": 6944,
+      "sha256": "61dd2bae3c1f98216c3e9d3a4e479596aa1ba2b098df74c8d43ba3462f1d7868"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/process.workflow.wflow",
+      "bytes": 100046,
+      "sha256": "0e0f85f52f633c49d0abed8279c1e6fbdc70fc232e41d3b8d374611e6d04de7f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/readiness.json",
+      "bytes": 9423,
+      "sha256": "ab083513f9fcbac09b0bb1d7a7722a48fc062b19157abb46f16dc1185ec1f12f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/run-summary.json",
+      "bytes": 2372,
+      "sha256": "d6f038477b424086cd17f6bd251931283d89f15334876bd5c485002fbe5381e2"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/run.redacted.json.gz",
+      "bytes": 1208789,
+      "sha256": "ab9e57a1677db852b1d8514cbef685aa06244794164ac91506df6b3c16d0ec8c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/start.json",
+      "bytes": 887,
+      "sha256": "a4133739f17bd4807803ab0ade641a7e52a599fef9869eab3800df47c872284c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/visual-review-audit.json",
+      "bytes": 1678,
+      "sha256": "77c7bf304f40bf1888b8d606e5393626d6148fdd7ea36762482fff91cf66d41c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/accepted-source.json",
+      "bytes": 106227,
+      "sha256": "b0b6cb688d902d7fb1aba044fe3ca0be34fe77873660b02f0146f303c55d711b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/design-review-browser-check.json",
+      "bytes": 806,
+      "sha256": "983e6c571522b6d26cc4bc17dacab6ef70b409c33aad061a0ed0ce9b7592e16c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/design-review-first-page.png",
+      "bytes": 122397,
+      "sha256": "9a2934a7f8f0579c5baf4a406c795eabb44a56db2deff56a68eb2a0d8522ac0d"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/design-review-preview.png",
+      "bytes": 388265,
+      "sha256": "a0aa9aeba4b4eaf4022fa9f572a458e441edd24168ebab092e81e0f9c83a8835"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/design.glb",
+      "bytes": 12020,
+      "sha256": "63dd5c8b5f24703eb063aa363ad2c3bace0a797daf7ef75f601245724b00be87"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/design.step",
+      "bytes": 31610,
+      "sha256": "825c3fcc14947389e11b0b4bbc9d159635af4bd54f477a001d96f95c3802f64e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/download_step.json",
+      "bytes": 116,
+      "sha256": "870f73f481b625c4f54106b2ae39990e41cc2d293c3c2dd8f27be14eaaaf0a78"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/export-arguments.json",
+      "bytes": 129,
+      "sha256": "c1e7eeb763fa7194749ff29f569bb345e88da8ad1aa8600262ba1f4847bfd47b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/export_mesh.json",
+      "bytes": 4348,
+      "sha256": "d4137c21c421e272214504542e78e5b090c2b2303dc93bf0a704a7451cdeb131"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/import_mesh.json",
+      "bytes": 603,
+      "sha256": "c6e7b1f44d939ade277227307a6e33bd572b64e587daf87f6d2893c307f3627f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/native-arguments.json",
+      "bytes": 6414,
+      "sha256": "b0f43a9dac533ed0e3bcb1e3dfdc80cb140aa58e0b937965e7709fcc2a872496"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/native-identity.json",
+      "bytes": 1745,
+      "sha256": "ff3367a1e2d94a3e4aa89d46c53f523e74b0953ad5f94ffd7e100cf398fb3149"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/prepare_export.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/prepare_native_arguments.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/render_front.json",
+      "bytes": 509,
+      "sha256": "175fdadfc1488c15e5dd1746a9cf09b95872782c7522500bede77c18d95bd036"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/render_isometric.json",
+      "bytes": 517,
+      "sha256": "3de3887d955bfdcfc5ed00ba6d5ad92e9bf511c16fe7dd98bba7af0245066806"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/render_top.json",
+      "bytes": 505,
+      "sha256": "fb8b06cbc51b733249dbeed3f02bf05d4e60a32f71408440a8866d82a8b2a8f4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/retain_export_identity.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/inputs.json",
+      "bytes": 3397,
+      "sha256": "dcb9c79a1f75a703ddd951ae8802320ce1a78277061d09cf93cd1f9cacaa28fb"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/native-run-audit.json",
+      "bytes": 2141,
+      "sha256": "f1d78bd96167f0bfd969dce66c77c83c504a2fd19644752ab0e2c4af812fc0e7"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs-manifest.json",
+      "bytes": 3894,
+      "sha256": "9e9ea86accdc39fd64614cb4ed76bc8a5312fb8343bf477c435cea9e33dbd53f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/cad-front.png",
+      "bytes": 4219,
+      "sha256": "c9eadc29df8d95205555bd953d06b4f2910bf2de694ff0cf4493a7cca027bd8a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/cad-isometric.png",
+      "bytes": 11546,
+      "sha256": "bf2f8bcfbd4228672048e335dd05681276ea51daac1102dfbbbe5836fdfd6d8b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/cad-top.png",
+      "bytes": 5490,
+      "sha256": "80ad0480ec5e35ef76008a5e8f11c75f6f950f4c49ad340cae5f76dbccd18c56"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/create_design.json",
+      "bytes": 2661,
+      "sha256": "6204fd00d27151dd78643c67bea0f14bcaa8473c9f492cc519b7220aca264f2a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/design_document.md",
+      "bytes": 10516,
+      "sha256": "654a7729aba0151ff8d155e1d29ed937312d1cf33d50476eac6e1996aa126ece"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/design_review.html",
+      "bytes": 9803,
+      "sha256": "f6f3ed8407966fcd39056c55b65d2f36e78f35cc3df5975d3745408d4719deef"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/render_front.png",
+      "bytes": 440860,
+      "sha256": "3983819a04850e18908e4a605ccc0358964768fe880a887149d5a2d49cc441f8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/render_isometric.png",
+      "bytes": 890563,
+      "sha256": "9b2c05b95af4d7a349b6c102bbe2f4132b12d95825759f9c4b7ca555a7ccac0e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/render_top.png",
+      "bytes": 960019,
+      "sha256": "0abb1756155d13ddc74c07e04a61de2b01ecdaa8232908ba1cd71ff372fab8fe"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/test_plan.md",
+      "bytes": 5116,
+      "sha256": "6e9de6b747f826062147247da545f1d93817bf1a408cc62d7cf409f88ba8239d"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/outputs/validate_design.json",
+      "bytes": 8325,
+      "sha256": "ce9f6abac7c3f5f92e591b6927bdbab11f3c1753f1024423e0b6a0b3ce77af2e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/process.workflow.wflow",
+      "bytes": 100046,
+      "sha256": "0e0f85f52f633c49d0abed8279c1e6fbdc70fc232e41d3b8d374611e6d04de7f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/readiness.json",
+      "bytes": 9423,
+      "sha256": "69349a456cf23ab87fd68d8072e5822d3f238e4438f398f9cd795f2278a8a669"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/run-summary.json",
+      "bytes": 2379,
+      "sha256": "eb81eb259b40c1c11c75e5b620579830674bd20cca5b940f23ca47e63c6aec85"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/run.redacted.json.gz",
+      "bytes": 2256018,
+      "sha256": "f82fa6581c379c030462c13dc14fffb9e1bada82d969a7c96efd8f240c2b5332"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/start.json",
+      "bytes": 889,
+      "sha256": "f5b1a2c622e3ca5a980befc32ce0247fea21c35894fab17866bbc21b37e9cb7a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/visual-review-audit.json",
+      "bytes": 1400,
+      "sha256": "0dfa278317cb4c0c511e16a3fdecb5e527c7dad0ecd77dc7243b5668bc86dbe8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/accepted-source.json",
+      "bytes": 106227,
+      "sha256": "b0b6cb688d902d7fb1aba044fe3ca0be34fe77873660b02f0146f303c55d711b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/design-review-browser-check.json",
+      "bytes": 805,
+      "sha256": "8673b1c73a9ad3e06f4c8cdbcf2af6f229bfebef021e181ebeb406f540ba060f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/design-review-first-page.png",
+      "bytes": 118666,
+      "sha256": "244504b96fabd48f87dbfc60033316dcfde1c873ea33cf43c2d983ab699c12c3"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/design-review-preview.png",
+      "bytes": 343371,
+      "sha256": "6a2d16b16f2a443f66efca8892cf83a82eeb8961d30a9f2cafa6a97398f56c40"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/design.glb",
+      "bytes": 25344,
+      "sha256": "b68b43981314833d9925d48b81dd9ef8ba392b193931da7e72b715496aab8621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/design.step",
+      "bytes": 43653,
+      "sha256": "b244fa2cf0e11eb7c5bd0b0d7f84555f252303bb233c6864297ac240f8117ffb"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/download_step.json",
+      "bytes": 116,
+      "sha256": "22a6d1454fb27495ee6f1c4c1ffd30ad7ef2060ac090e1e189cfa023d7ea8ce1"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/export-arguments.json",
+      "bytes": 129,
+      "sha256": "fe1857023ccccdd5fd6178d3287a1659a63cfcaf47ca4562848e9e28f407145b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/export_mesh.json",
+      "bytes": 4349,
+      "sha256": "95b2a9f658cac5fbc37be9744b536d3c760b124d6ebfa9c887d8fee5fd13d5b2"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/import_mesh.json",
+      "bytes": 600,
+      "sha256": "270288129e1d7acb7b4f1d2af4e4a2d7f9cf5a398c7e4b934fad91982a43870f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/native-arguments.json",
+      "bytes": 6370,
+      "sha256": "ce9fc5791ec39a6bc8bf1b96d2f09a8757a472bb5817f5d3100ac91c36c3b605"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/native-identity.json",
+      "bytes": 1818,
+      "sha256": "ba2a819c3a177656b528163d79653eefa6b357c00fcdd745c96fd72dd58e6ec7"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/prepare_export.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/prepare_native_arguments.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/render_front.json",
+      "bytes": 509,
+      "sha256": "0b9f039c26f650c6da918b82a8b7bf99db04ed539645c07335a2986f4fdcbff4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/render_isometric.json",
+      "bytes": 517,
+      "sha256": "764c93f81d5c9bec1f0766a4c5473fd2bf627eb095fd76233de8e58ea999ac41"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/render_top.json",
+      "bytes": 505,
+      "sha256": "bc6353c3660ff887428b258b86d09b7d9832a77467370f6cb395427451d2e844"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/handoff/retain_export_identity.json",
+      "bytes": 110,
+      "sha256": "e3b35093cb254a757f940ed195a151f91d90244cef996975838c2f5c1d872621"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/independent-geometry-audit.json",
+      "bytes": 2815,
+      "sha256": "87bb5cfe89069034c0452ef11524ad9d6df1ac40f868a904ef03be55efc31478"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/inputs.json",
+      "bytes": 2350,
+      "sha256": "05d61d4c471fb0420686a499825dbc241caf1e52de62ccaa5f4236fee8ce2a80"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/native-run-audit.json",
+      "bytes": 2347,
+      "sha256": "bf9bd440b954dc37b24c4c93b922b6bfac9ae5eb7a99ec3bd989aa3fdf4b62ae"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs-manifest.json",
+      "bytes": 3894,
+      "sha256": "093db5d44f509c7ee4f1a960cb45cecd8cac36a4620f5cb5c84fd5784741776e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/cad-front.png",
+      "bytes": 4181,
+      "sha256": "fa95f263554b2121cc2bdc3a114f58e19d769e3bc879c1a38e8a95ceaabc59d1"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/cad-isometric.png",
+      "bytes": 16634,
+      "sha256": "a7c51d62449b505f9c61a6f069199c02cfa74ac0785686692bd24749e34275c1"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/cad-top.png",
+      "bytes": 7797,
+      "sha256": "5202e51ef9a6f49b5769ff07718a0043fe84ba98d16ba224eba064a1998da06a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/create_design.json",
+      "bytes": 2189,
+      "sha256": "f0482f22110ff439e887e6836bd6a55b3bac643d1a899b474a78c6b1d72ae913"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/design_document.md",
+      "bytes": 8647,
+      "sha256": "4ecc9c979f7eac360f7f83f38f2830eabd54d3004dce50c010354ad8370814a9"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/design_review.html",
+      "bytes": 10448,
+      "sha256": "3eb73ad0a861625662135b801bec4916f222cf8bec9e63e876630d828ecc1efd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/render_front.png",
+      "bytes": 376092,
+      "sha256": "b337052865bb3a6173d672a3047c82e78eeb61e3c1c6c73ac98f4b68538f37c6"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/render_isometric.png",
+      "bytes": 572464,
+      "sha256": "8be535e7f0ca08ab3e1cecb1153d8bab45c6465a986389e4fab0d5c75acb3db5"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/render_top.png",
+      "bytes": 574666,
+      "sha256": "f9e17b8d0e248c8bb4fbc94331963d495f567c00c00b8d551f4efd799bfcc772"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/test_plan.md",
+      "bytes": 5188,
+      "sha256": "b58b24f3042362ab14cdb29d9099f095a5dbbacf50ae90f7299d910ab921b365"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/validate_design.json",
+      "bytes": 8019,
+      "sha256": "531048088da3c216ddaebbb4dc04d8158328216098bd619e470fcf41e9d132ba"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/process.workflow.wflow",
+      "bytes": 100046,
+      "sha256": "0e0f85f52f633c49d0abed8279c1e6fbdc70fc232e41d3b8d374611e6d04de7f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/readiness.json",
+      "bytes": 9423,
+      "sha256": "32fc600b6a4f18e5f2c2981ad7257e49b3e9b55499ce683d3f588c3727689265"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/run-summary.json",
+      "bytes": 2371,
+      "sha256": "d41095fdb7ff1b83250c25bf0d617847aa18f93ffc85ebf1b3ef66220200dbb4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/run.redacted.json.gz",
+      "bytes": 1245945,
+      "sha256": "5799790e8cbbc7211f9a633e5b5c4903283a07951e876a2bc960a99d6404ff40"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/start.json",
+      "bytes": 890,
+      "sha256": "13767857d3e15a5a41085bc6de444a70950b4bddbd21b3f5eda74568aedf3819"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/visual-review-audit.json",
+      "bytes": 1822,
+      "sha256": "88e51d4dda5715db5ada55548ef043c423c4e9223f67714e242de9a5712a6f73"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/local-checks.json",
+      "bytes": 490,
+      "sha256": "8c6e7ed733a533877955f48b50b7e6772222ddeaaff5733e0b7c1ee3cb002242"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/model-availability-20261012T0015.json",
+      "bytes": 11538,
+      "sha256": "1f2d97c4e12dc1fb3cd4aeb781c03f43b1dd99b5f512a91a6d7cd4d2cc21807c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/model-availability-before-robot008.json",
+      "bytes": 11698,
+      "sha256": "2bc837a3d30d6be6d029fd260968e8f4172da9a06dd96921e7ee5c52284427a7"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/model-availability-normal-20261012T0028.json",
+      "bytes": 11750,
+      "sha256": "ed43c6c44fdb719b1dc0328aa4fd24963519c3a37eace36733d96184786eab77"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/revision6-context-v13.json",
+      "bytes": 487,
+      "sha256": "598f715166d4fccedca5c590095b3d880f1215d76f9a75fbf9e35705763a1990"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/robot-large-failure-input-proof.json",
+      "bytes": 400,
+      "sha256": "1f4652222293b66990b232a385fa4467a59a823b34c10a4cc51a00b8748ba5fa"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/assembly-observation-transport/robot-recovery-input-proof.json",
+      "bytes": 616,
+      "sha256": "bc873b252c927f3ed3f012a8aff68459962f71ab376a35f23660042bf8e66135"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/camera-completion-observation.json",
+      "bytes": 2515,
+      "sha256": "66f21c94395ded157d1ecb593a9193911e2e1382beaf7afdc063b1cc3ef03d81"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/camera-correction.py",
+      "bytes": 1714,
+      "sha256": "3c2369c9fc783cf6c7e4eb95e29b74c02c63c9c90f39eb0b53e22977c0dea0c2"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/camera-observation-request.json",
+      "bytes": 1285,
+      "sha256": "9bebd8dc85c3f60000c338c5e02cc9a4d6732cb3e5f716947a9bca9ffc1fc126"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/camera-request.json",
+      "bytes": 2236,
+      "sha256": "c0c5e9e0f09a7a6162359489be0e6e181cefae56030d20a3c2b43754d3380058"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/exact-step-measure.json",
+      "bytes": 21068,
+      "sha256": "f0c3c067bcbfc5793b4345e5d516773cbecabd9ba6da0825dbbf8656de07224f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/geometry-audit.json",
+      "bytes": 1765,
+      "sha256": "f9abeedf6ebdcf734320767e4026efa42831e05ee270c6a11becbff1d1b3ebad"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/measure-request.json",
+      "bytes": 469,
+      "sha256": "c7ba5ce40f2762d46fc715d5bb26fa12628454c838aa04e28f40583e9b7ab10e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/render_top-corrected.png",
+      "bytes": 961012,
+      "sha256": "9e57b5b83a45369ccd27b8e925ec57c827eec0290dccaca1b7ffb94f02d4971e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/bracket-native-supplement-001/top-camera-correction.json",
+      "bytes": 2766,
+      "sha256": "775d1d4d32c8e102face94afe87bf48e6e7be05074c1b061d5dea30241f41b25"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/binding-checks.json",
+      "bytes": 1095,
+      "sha256": "08612d3becfbe5312264577e455be5920e534021407197168f48dceb9ea90bc8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/read-design-current-contract.json",
+      "bytes": 3353,
+      "sha256": "e0b6b40b0e224355e7a443148db79e573399d21fb607ff3d2062f5b9bef47999"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/single-part-native-basis-002.json",
+      "bytes": 16157,
+      "sha256": "24f70d03a8de6971c9368c3d192d60a0f4ff00a301f1bb3b72b960d8ff70969c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/single-part-native-basis.json",
+      "bytes": 787,
+      "sha256": "dedd2e9fab910512e3b8ce4414b511164a624bc29c39e95e055154d2fd1a534f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/v19-authoring-change-audit.json",
+      "bytes": 615,
+      "sha256": "49d0fde38e66e16d1ac41a4db7b1ffbc99784e9a0929b52628d0ec6ef4366f5c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/v19-reuse-audit.json",
+      "bytes": 2388,
+      "sha256": "39fff65323eeb03bc459398f31f026f1a39f0b30805cbc4b5e3d9e606668a50b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001/v20-authoring-change-audit.json",
+      "bytes": 674,
+      "sha256": "cd3824e43f994f4b23b490c60cf500721ae4aa47435d5340db5937a03465d710"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-fastener-stack-001/README.md",
+      "bytes": 2905,
+      "sha256": "39e8e7e4a645b99c37d60b20120f68ce935d9e34ae70c987e752115590e8d398"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-fastener-stack-001/audit.py",
+      "bytes": 9260,
+      "sha256": "3b0436fa909915517995c34fa333fc584d145654dc15f09d376ab8eaa7b7dcb6"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-fastener-stack-001/execution-environment.json",
+      "bytes": 1496,
+      "sha256": "80ea1cc20d2b40c1e9d10318fe21b79b7f91a6d956a76f97fb247dd1a2a93d9a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-fastener-stack-001/fastener-audit.json",
+      "bytes": 86938,
+      "sha256": "bf03588ae208ef18841852abb2e4d0bd3b3a5617f52124da1442cce3ad610795"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/README.md",
+      "bytes": 1926,
+      "sha256": "24edbe4e828d027dbf93b2c475befdf3e8df8cb0377da44dafd1b8058c9b078d"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/audit.py",
+      "bytes": 8476,
+      "sha256": "07a2d25f063b5a27519e082c00fe74ce9c393cdfa2e1749b54c84e66c586d5cd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/browser-check.json",
+      "bytes": 130,
+      "sha256": "5385f7823940fab2bcf182b7ca817bb405a318606e591387ca43a8f4af403dce"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/capture_review.mjs",
+      "bytes": 1250,
+      "sha256": "d1faaa45091151d294d567558421444d25f85cccd0706fde47e7fe05d7dac9d7"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/execution-environment.json",
+      "bytes": 1485,
+      "sha256": "15620b1d4dbbb2d79eff766cd15b9ff5560c42475b6f484067a83e20eee05834"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/manifest.json",
+      "bytes": 1335,
+      "sha256": "b436d3d902b3876219c0db334df9c1981886127ae9d6a1a197bbcda9aa4280dd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/render_review.py",
+      "bytes": 4596,
+      "sha256": "29b6c35388f7b6e2a785b4d0eac579450a8511aa7a0b3392b45c57750deb8351"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/review.html",
+      "bytes": 6386,
+      "sha256": "ab7e1c33415e93a5df61d55b7df747361f1602ba271a17fbf7bba32a7301765b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/sampled-clearance-review.png",
+      "bytes": 286110,
+      "sha256": "fa5654f3aef8594f8a516d7fc949c0dc2fa3ff9dba58dfd435fdddab138b569a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/robot-sampled-clearance-001/sampled-clearance.json",
+      "bytes": 2720520,
+      "sha256": "72623bf221e620b3567fec201bbee942b116ffa89d499901acf03ba027a3ee67"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/01-create-two-instances.json",
+      "bytes": 2708,
+      "sha256": "70ab8e7e70638f5463ae181b576b05d7897dd66b4b6657a4d324d6d30cb86f41"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/02-generate-two-instances.json",
+      "bytes": 9356,
+      "sha256": "9e39e1e28cc7327e6072ba5a6a7bb9c5659be53168d3b9aa627ece85ddc8b146"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/03-show-second-instance-1.png",
+      "bytes": 7785,
+      "sha256": "9d48b9d2b94d78d0ba567493f53a9581ff8f31a49092efb9a02e3b9b34751664"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/03-show-second-instance.json",
+      "bytes": 3421,
+      "sha256": "c415202c051a41adbfd010f279743fd088afe0357629180dcb97323a680c94d8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/04-control-first-instance-1.png",
+      "bytes": 7079,
+      "sha256": "b697d30de2b1ee674a7f899d18c9424c6e8f5df4f3c954ecc4bc31e947e97b96"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/04-control-first-instance.json",
+      "bytes": 3422,
+      "sha256": "12e603c255ff2423d22a4912f0fab3d1225732f5b64f82fce45f635e6242a25d"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/05-current-inspection-contract.json",
+      "bytes": 6442,
+      "sha256": "11c39e4a4ea07741a10f1d95771a6c3b18b304aa941134381906d789576a9eab"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/README.md",
+      "bytes": 2351,
+      "sha256": "026a7363945a05068021d14dd75563f5bd414d9debe64a5e32152a08648be1f7"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/components/marker.py",
+      "bytes": 146,
+      "sha256": "2043657568c980636bdb710791b97e21c6d359fd419fc406b77c9dbb42b8348f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/main.py",
+      "bytes": 208,
+      "sha256": "285278430739bb3dab6fcdb076f067cf422b2010e7c7188ad81aeb4f0a51dc38"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/packet-manifest.json",
+      "bytes": 1697,
+      "sha256": "286d409bbbdc0328a1f7bd8fd5daecb78b073565c63f5df7bd264bf57bc6c4cc"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/verification.json",
+      "bytes": 1719,
+      "sha256": "a50111a7977aeb32b53f23c575a0ea254c4b07028dc709bba89b3d2669ef44fd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro/visibility-reproduction.zip",
+      "bytes": 22512,
+      "sha256": "5514f17a976cea6c37927b61c55f2ac4109b5b7a4269ffe9a452e3874cfa0bd8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/accepted-source.json",
+      "bytes": 36238,
+      "sha256": "125db4522a35477cc052cb5fcccd4d25f4df4b591aa372cca95d7c03f293e68a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/canary-result.txt",
+      "bytes": 78,
+      "sha256": "5abe3a9366b21ae01ddd1aed48d7a88a2da05e95557f5a7ac72570f6dc2a3db9"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/inputs.json",
+      "bytes": 597,
+      "sha256": "fd237be0257c396084e9195f319e8040849b02027d5a99e38a0c002b6266aa42"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/process.workflow.wflow",
+      "bytes": 33938,
+      "sha256": "529dc2ef850e3b022a764c309e020f6ad119323c26e3568347acba52c774ab03"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/readiness.json",
+      "bytes": 1118,
+      "sha256": "9619a46618882e6e0be4e8518f8097bf577b4ab6ba1c47de51b0526ad4f54040"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/run.json.gz",
+      "bytes": 2565,
+      "sha256": "9f50444b0cd352043eb92d8a2004f4d841d903e3de2c6ac2bf596d28b3173547"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/snapshot.json",
+      "bytes": 4986,
+      "sha256": "aa692de0e2e68004526f008851ede80083708835b280e788f3dfbc2fc739034c"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/start.json",
+      "bytes": 889,
+      "sha256": "45d84d7b39a3a43b11879a0779351e845bf984bed86aecb3196c67be694a81fd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/qualification/transfer-privacy-canary-003/verification.json",
+      "bytes": 931,
+      "sha256": "9c8ca5e0bc0f3ebe9a0b74ce27502b15e75519fb9519ff1bdc8dab5f32d2cf30"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/blender-renderings/render-front-final.png",
+      "bytes": 1310849,
+      "sha256": "398aa86624626d660c44f9edab27f8e5cb53a2c68529553887e1fc2788bf265e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/blender-renderings/render-isometric-final.png",
+      "bytes": 2010808,
+      "sha256": "619e5a470031359c1a51f50ded21021626cc5d164a4418598331ee1bc572f023"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/blender-renderings/render-top-final.png",
+      "bytes": 2018992,
+      "sha256": "6c93743bc067ada25ac8fa99d4228e64c8b9f287348ce83446a8795d2e8b1a90"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/README.md",
+      "bytes": 651,
+      "sha256": "9d2a94200a27e88b0cc942fe245ba9dd7ddd800474bb676e9a12498254ac3da5"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/browser-check.json",
+      "bytes": 2312,
+      "sha256": "78c610ae34c5b2416a19d52fada5c3c7de0b16e22e3cd091b7fc426f6492ddde"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/design-review.html",
+      "bytes": 13051,
+      "sha256": "a89040af419646ae71544264d17e3cd0bc51a6c56f387e3cbc34d1338aaf7df9"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/accepted-source.json",
+      "bytes": 67598,
+      "sha256": "87cc02e409d972d36bcbb58c249b4287416b7da386df61fb620e70bd8dc82f1d"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/cad-front.png",
+      "bytes": 14911,
+      "sha256": "c52b84ae0e4d15c1d64249354ec2f907c264a78d1601ebd3621c42f2d8f1f909"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/cad-isometric.png",
+      "bytes": 25662,
+      "sha256": "4d065a32c6cb65d64ee47f7d1e2ff6254f179cea06f39b35df64ebfe73c58bb8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/cad-top.png",
+      "bytes": 14269,
+      "sha256": "1e30b01e3f9ff8f7f71f803c96b17d088cfdfcceea3c32b2293a66c45b28d369"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/export-reconciliation-basis.json",
+      "bytes": 570,
+      "sha256": "b79a612687869ab1d1b5dbe06fe3246a57eb86c144c17ffb6dd64aa54629f852"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/final-render-provenance.json",
+      "bytes": 2011,
+      "sha256": "17132e9ba5fe054795ef2e5011b02238d7b104dccbdedd8b9195038b126f8895"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/independent-electronics-reserve-audit.json",
+      "bytes": 6394,
+      "sha256": "d398a5cc52642516714d97440cb30a90e1e875ef78e350333a3cf1bb6ad93eec"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/manifest.json",
+      "bytes": 81261,
+      "sha256": "97556b745c072eb01f2fed47a91d4ccc91e1f2626eb8c8355cd0f332825bca98"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/mesh-verification.json",
+      "bytes": 62286,
+      "sha256": "0b04d9385e997fbe29ecc25d1da34a302bd41394f31b1b1c9637df17ee780d10"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/motion-provenance.json",
+      "bytes": 2948,
+      "sha256": "571d16eedaedac1eed3d9a5b5308c5153f3fcdd0c1eaa2ae69cbb6c2b21e5801"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/original-design_document.md",
+      "bytes": 14616,
+      "sha256": "8374bdd6d34a8e58c56ec886a00365dad2c113160c1d718f0e8421638f910402"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/original-design_review.html",
+      "bytes": 12432,
+      "sha256": "93480336b580f993e5fe1475eade3ff0bf5d5ff785fbd1a970e4b31289fd6849"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/original-test_plan.md",
+      "bytes": 11741,
+      "sha256": "a5c7407cc966569b4903100066e1dc67d6652e812c0790b0b19123213184ceae"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/original-validate_design.json",
+      "bytes": 13970,
+      "sha256": "589d5c07706a30432516138a1db61e61bc90b274ac85b5abf49e510719b2ab1b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/print-kit-package.json",
+      "bytes": 374,
+      "sha256": "4decf2ef910d106751908274cf494532623c1b5fd406633d03c9ae9d1add10ee"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/render_front.png",
+      "bytes": 1728442,
+      "sha256": "dfdf7131384e60e3806f6784bd70925eb42d3b520e6611365a19d0f95474c1df"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/render_isometric.png",
+      "bytes": 1802950,
+      "sha256": "fac68e1a49b7dca6192b29d23bb73c3a5995ea7445c4bb5440fbab7597ecd4aa"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/render_top.png",
+      "bytes": 1700172,
+      "sha256": "b2ea0ed4f6f405cfca62f82b679cea574d90b6d53b1251424bd141c0f7ecaad2"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/requirement-scope-addendum.json",
+      "bytes": 2400,
+      "sha256": "1b52fd80709405e55ff0282a2f2abcfd145339cd6cdd4c05171ca1035d97b0a9"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/revision6-7-geometry-comparison.json",
+      "bytes": 376,
+      "sha256": "f52291390408d690b9c2cfa18be4ada9bddaaf345211618c5ce0c6efe755663b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/run-summary.json",
+      "bytes": 1270,
+      "sha256": "cbeae82af78319b6d88537d6709cc9509b385b85b8d51c2024e4603846d68732"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/evidence/x-export.json",
+      "bytes": 713,
+      "sha256": "a9fed45cb00f06436cb79f1d542d8d0fab15c3e92d998005e4f6b37186cf488e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/images/cad-front.png",
+      "bytes": 14911,
+      "sha256": "c52b84ae0e4d15c1d64249354ec2f907c264a78d1601ebd3621c42f2d8f1f909"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/images/cad-isometric.png",
+      "bytes": 25662,
+      "sha256": "4d065a32c6cb65d64ee47f7d1e2ff6254f179cea06f39b35df64ebfe73c58bb8"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/images/cad-top.png",
+      "bytes": 14269,
+      "sha256": "1e30b01e3f9ff8f7f71f803c96b17d088cfdfcceea3c32b2293a66c45b28d369"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/images/render-front.png",
+      "bytes": 1310849,
+      "sha256": "398aa86624626d660c44f9edab27f8e5cb53a2c68529553887e1fc2788bf265e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/images/render-isometric.png",
+      "bytes": 2010808,
+      "sha256": "619e5a470031359c1a51f50ded21021626cc5d164a4418598331ee1bc572f023"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/images/render-top.png",
+      "bytes": 2018992,
+      "sha256": "6c93743bc067ada25ac8fa99d4228e64c8b9f287348ce83446a8795d2e8b1a90"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/package-manifest.json",
+      "bytes": 6752,
+      "sha256": "d54b1eff3bb478e56a81c95e0af0f00d575e24a13ee4c86125de5b175a090f0e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/print-kit/README.md",
+      "bytes": 2220,
+      "sha256": "3e843cfcec2afa6a388b93bc1bde7342827b91b72dfd183391f8695d8415ae97"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/print-kit/assembly.md",
+      "bytes": 4618,
+      "sha256": "cdbc4e74ad22ade0b7b17f47d23e1a9a06f32f00764f8b195fe955783cd11803"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/print-kit/complete-modeled-bom.csv",
+      "bytes": 2728,
+      "sha256": "58f6d38153e0f9001eb9f9e08fa15ea7c305bc1eb826c33450e70067469d10e4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/print-kit/manifest.json",
+      "bytes": 27239,
+      "sha256": "33e8b1053ba8a82e7720e9f2483397043cb9620ad4fd0d4353a9dbc52db14d77"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/print-kit/printed-bom.csv",
+      "bytes": 1372,
+      "sha256": "f26c92622064488c0fe0ac11fe5d58922dd9246b5829d11489ae162dc99502c4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/print-kit/verification.json",
+      "bytes": 10569,
+      "sha256": "5c7ef6b9cede993b5361a95fa8f89a1df95646f919c65c9b313f9458e18f0096"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/review-1440-first-page.png",
+      "bytes": 87379,
+      "sha256": "169722eccadd49f30f625671987b67675943fee822a5beb7f90f7138b03163fd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/review-390-first-page.png",
+      "bytes": 45702,
+      "sha256": "1e4ed11ee56db67fa99e8ccfea231d94ff905b733b1d5761bd581e2eee03347a"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/robot-arm-motion.mp4",
+      "bytes": 515047,
+      "sha256": "41214826e2b81784742e51cf96987b91167c4c518c546b82d9169ae3d48ba11e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/robot-arm-rev7-print-kit.zip",
+      "bytes": 525649,
+      "sha256": "da60f48ad449171ded43170ec8e9203990a76d0dfc9611a4f248ec3884165b5b"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/design-package/robot-arm-rev7.step",
+      "bytes": 1449929,
+      "sha256": "0053b8de8558ce45a1c5a66da872b6a6ae3ddb461f37f22685fa9347261142e3"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/independent-electronics-reserve-audit.json",
+      "bytes": 6394,
+      "sha256": "d398a5cc52642516714d97440cb30a90e1e875ef78e350333a3cf1bb6ad93eec"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/native-assembly-basis.json",
+      "bytes": 139003,
+      "sha256": "fcf58f0aff423f4eda1527a4955485587b19aa1d3dd06486852e68d24cfdbe41"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/README.md",
+      "bytes": 2220,
+      "sha256": "3e843cfcec2afa6a388b93bc1bde7342827b91b72dfd183391f8695d8415ae97"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/arm_foot.stl",
+      "bytes": 177284,
+      "sha256": "85571a270ce516eeb9fff80426768b29761ab2f71c824e7ee1c6fdcc1a3227ea"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/assembly.md",
+      "bytes": 4618,
+      "sha256": "cdbc4e74ad22ade0b7b17f47d23e1a9a06f32f00764f8b195fe955783cd11803"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/complete-modeled-bom.csv",
+      "bytes": 2728,
+      "sha256": "58f6d38153e0f9001eb9f9e08fa15ea7c305bc1eb826c33450e70067469d10e4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/finger.stl",
+      "bytes": 1084,
+      "sha256": "555db9eb81054f47b67fc6c444b295c4561fa3997e8bc1426e7f5e54172de136"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/forearm.stl",
+      "bytes": 77884,
+      "sha256": "4e181ca04f14c0417c82e342bcbafe8f8c908e3e233b17873cceffe912247bdd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/guide_cover.stl",
+      "bytes": 153084,
+      "sha256": "c0f8df13ef1e65d27a9c4801eedd44a3b898ef20af4df2cff42d33edb24c29ca"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/guide_post.stl",
+      "bytes": 26084,
+      "sha256": "45fc58169dece3c4166b6b2f2e1c90be076297de2aa4435020de6155171ff5b1"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/manifest.json",
+      "bytes": 27239,
+      "sha256": "33e8b1053ba8a82e7720e9f2483397043cb9620ad4fd0d4353a9dbc52db14d77"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/palm.stl",
+      "bytes": 141284,
+      "sha256": "8ec35521c3379c171128ff6bdfa6613548ada164907ca1983606496e7ee79636"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/pitch_yoke.stl",
+      "bytes": 154284,
+      "sha256": "2004fd0c747afcfad7405e37d75ecff3450ee301a7bc43f2860e9610e2e2a01f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/printed-bom.csv",
+      "bytes": 1372,
+      "sha256": "f26c92622064488c0fe0ac11fe5d58922dd9246b5829d11489ae162dc99502c4"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/retainer_large.stl",
+      "bytes": 51484,
+      "sha256": "d7ab03002bcdb31f3631ddbd4f52e26503c05266eadbdd46ff48503adc7fa61f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/retainer_small.stl",
+      "bytes": 76884,
+      "sha256": "aadc3e6da1881fe496ca66a583f7936a065604f448871ee9624bb58bd1782b4f"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/saddle_gripper.stl",
+      "bytes": 156384,
+      "sha256": "59c8f72ad63ab757724f0d093d0731054cdf9fe7f007abcd743a92cc6e926789"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/saddle_large.stl",
+      "bytes": 156984,
+      "sha256": "fadf1335d1959f420788778937a74d196ca7cab0a0a64c70287044bba44bf9ed"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/saddle_small.stl",
+      "bytes": 157684,
+      "sha256": "640523f5f6336d17eb33c221fb2913d6ad3454f77c74db03f40e29eb82a37d94"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/saddle_yaw.stl",
+      "bytes": 104184,
+      "sha256": "f2ebf83019c2b7d20bd8e95abf180990f8ed670e231f3ad3691024906469718e"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/tray.stl",
+      "bytes": 430884,
+      "sha256": "4536cde0317ec411fcb97ba2ed7471c5f411080711af3a177975c5a775493f20"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/turntable.stl",
+      "bytes": 91184,
+      "sha256": "57dfba1f1f3510613bc20dd531e7bc8ed2189a071cb4ab0ad108d74e839b5ace"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/upper_arm.stl",
+      "bytes": 77884,
+      "sha256": "cfdd2c39d243e81e02198ae024d88cdfd41e26f1cfd1b290641f759b958d81c0"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/verification.json",
+      "bytes": 10569,
+      "sha256": "5c7ef6b9cede993b5361a95fa8f89a1df95646f919c65c9b313f9458e18f0096"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/yoke.stl",
+      "bytes": 103484,
+      "sha256": "09a9253b39f41c73c86b2edb9d2a5b0b949a6214951414c95729417366bc1f60"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/print-kit/yoke_mount.stl",
+      "bytes": 26084,
+      "sha256": "56713f5eee71e4d0ae1ae53cd0eec2bec37abe153823d729f552778511f0be16"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/robot-arm-rev7-social-media-20-images.zip",
+      "bytes": 12322637,
+      "sha256": "229b100915b54d03b6876ddada3bcc5fad069a33002cf5aac4ae0645952ba5dd"
+    },
+    {
+      "path": "artifacts/stevecad-demonstrations/robot-arm-media/corrected-rev7/robot-rev7.step",
+      "bytes": 1449929,
+      "sha256": "0053b8de8558ce45a1c5a66da872b6a6ae3ddb461f37f22685fa9347261142e3"
+    }
+  ],
+  "total_bytes": 52028280
+}

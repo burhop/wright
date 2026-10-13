@@ -1,0 +1,36 @@
+{
+  "title": "SteveCAD comparison in Wright",
+  "summary": "Stopped at Unlock the isolated local Wright instance. Earlier evidence retained; no process was run or approved.",
+  "overall": "blocked",
+  "updated": "2026-10-11T17:15:22.780Z",
+  "manualSteps": [
+    {
+      "label": "Unlock the isolated local Wright instance",
+      "instruction": "Open Wright and unlock it with the existing private local access token. Do not share the token."
+    }
+  ],
+  "steps": [
+    {
+      "id": "00",
+      "state": "blocked",
+      "label": "Unlock the isolated local Wright instance",
+      "summary": "Unlock the isolated local Wright instance",
+      "purpose": "Normal local access succeeds without exposing credentials",
+      "action": "Open Wright and unlock it with the existing private local access token. Do not share the token.",
+      "controls": [
+        {
+          "selector": "input[type=\"password\"]",
+          "label": "Private Access Token"
+        },
+        {
+          "selector": "button[type=\"submit\"]",
+          "label": "Unlock"
+        }
+      ],
+      "expected": "Normal local access succeeds without exposing credentials",
+      "actual": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Access Token', { exact: true }) to be visible\u001b[22m\n",
+      "raw": "screenshots/raw/00-stopped.png",
+      "annotated": "screenshots/annotated/00-stopped.png"
+    }
+  ]
+}

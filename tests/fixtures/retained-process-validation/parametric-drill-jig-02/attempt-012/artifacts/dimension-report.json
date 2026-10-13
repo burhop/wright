@@ -1,0 +1,677 @@
+{
+  "access_envelope": {
+    "diameter_mm": 25.0,
+    "reason": "A full-height literal exclusion conflicts with the required annular flange-bearing seat; no unapproved interpretation is applied.",
+    "requirement": "Non-bushing jig material outside the vertical envelope at each axis.",
+    "status": "unresolved_interpretation"
+  },
+  "authorized_end_facing_ligaments": [
+    {
+      "authorized_nominal_mm": 2.85,
+      "hole_id": "H1",
+      "matches_authorized_nominal": true,
+      "observed_end_facing_ligament_mm": 2.8500000000000014,
+      "side": "front_clamp_boundary_x_18"
+    },
+    {
+      "authorized_nominal_mm": 2.85,
+      "hole_id": "H2",
+      "matches_authorized_nominal": true,
+      "observed_end_facing_ligament_mm": 2.8500000000000014,
+      "side": "front_clamp_boundary_x_18"
+    },
+    {
+      "authorized_nominal_mm": 2.85,
+      "hole_id": "H3",
+      "matches_authorized_nominal": true,
+      "observed_end_facing_ligament_mm": 2.8499999999999943,
+      "side": "rear_clamp_boundary_x_162"
+    },
+    {
+      "authorized_nominal_mm": 2.85,
+      "hole_id": "H4",
+      "matches_authorized_nominal": true,
+      "observed_end_facing_ligament_mm": 2.8499999999999943,
+      "side": "rear_clamp_boundary_x_162"
+    }
+  ],
+  "bushing_input_rows": [
+    {
+      "body_diametral_clearance_mm": "0.15",
+      "body_length_mm": "15",
+      "body_od_mm": "12.0",
+      "bore_mm": "6.7",
+      "bushing_id": "B66",
+      "flange_diametral_clearance_mm": "0.30",
+      "flange_od_mm": "18",
+      "flange_thickness_mm": "2.5",
+      "provenance": "synthetic_fixture_not_supplier_data"
+    }
+  ],
+  "claims_limit": "Digital geometric inspection only; no physical-fit, safe-operation, production-readiness, or qualified-manufacturing claim.",
+  "datum_features_required_mm": {
+    "datum_connector_y": [
+      -8,
+      0
+    ],
+    "front_pad_1": {
+      "x": [
+        -4,
+        0
+      ],
+      "y": [
+        24,
+        32
+      ],
+      "z": [
+        -3,
+        12
+      ]
+    },
+    "front_pad_2": {
+      "x": [
+        -4,
+        0
+      ],
+      "y": [
+        48,
+        56
+      ],
+      "z": [
+        -3,
+        12
+      ]
+    },
+    "jig_key_tongue": {
+      "x": [
+        0,
+        3.8
+      ],
+      "y": [
+        9.2,
+        14.8
+      ],
+      "z": [
+        -2.8,
+        0
+      ]
+    },
+    "left_fence": {
+      "x": [
+        18,
+        162
+      ],
+      "y": [
+        -4,
+        0
+      ],
+      "z": [
+        0,
+        12
+      ]
+    },
+    "workpiece_notch": {
+      "x": [
+        0,
+        4
+      ],
+      "y": [
+        9,
+        15
+      ],
+      "z": [
+        -3,
+        0
+      ]
+    }
+  },
+  "datum_transform": {
+    "axis_mapping": {
+      "X_model": "X_table",
+      "Y_model": "Y_table",
+      "Z_model": "Z_table"
+    },
+    "matrix_4x4": [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "mirrored": false,
+    "name": "table_to_model_identity",
+    "origin_mm": [
+      0,
+      0,
+      0
+    ]
+  },
+  "drilling": {
+    "direction": [
+      0,
+      0,
+      -1
+    ],
+    "scope": "nominal 3 mm top wall only",
+    "warning": "The nominal wall thickness is not a machine depth, quill-stop setting, or breakthrough allowance."
+  },
+  "hole_and_seat_observations": [
+    {
+      "axis_deviation_mm": {
+        "dx": 0.0,
+        "dy": 0.0,
+        "radial": 0.0
+      },
+      "body_diametral_clearance_mm": 0.15000000000000036,
+      "body_hole_edge_z_levels_mm": [
+        0.0,
+        15.0
+      ],
+      "center_tolerance_mm": 0.15,
+      "checks": {
+        "axis_within_center_tolerance": true,
+        "body_hole_diameter_matches": true,
+        "body_span_matches_15_mm": true,
+        "counterbore_depth_matches_2_5_mm": true,
+        "flange_pocket_diameter_matches": true
+      },
+      "circular_edge_evidence": {
+        "body_hole_edges": [
+          {
+            "center_mm": [
+              30.0,
+              20.0,
+              0.0
+            ],
+            "edge_index": 19,
+            "radius_mm": 6.075
+          },
+          {
+            "center_mm": [
+              30.0,
+              20.0,
+              15.0
+            ],
+            "edge_index": 68,
+            "radius_mm": 6.075
+          }
+        ],
+        "flange_pocket_edges": [
+          {
+            "center_mm": [
+              30.0,
+              20.0,
+              15.0
+            ],
+            "edge_index": 79,
+            "radius_mm": 9.15
+          },
+          {
+            "center_mm": [
+              30.0,
+              20.0,
+              17.5
+            ],
+            "edge_index": 41,
+            "radius_mm": 9.15
+          }
+        ]
+      },
+      "datum_transformed_position_mm": [
+        30.0,
+        20.0,
+        0.0
+      ],
+      "expected_body_hole_diameter_mm": 12.15,
+      "expected_flange_pocket_diameter_mm": 18.3,
+      "flange_diametral_clearance_mm": 0.3000000000000007,
+      "flange_pocket_edge_z_levels_mm": [
+        15.0,
+        17.5
+      ],
+      "hole_id": "H1",
+      "input_table_position_mm": [
+        30.0,
+        20.0,
+        0.0
+      ],
+      "observed_axis_xy_mm": [
+        30.0,
+        20.0
+      ],
+      "observed_body_hole_diameter_mm": 12.15,
+      "observed_body_span_mm": 15.0,
+      "observed_counterbore_depth_mm": 2.5,
+      "observed_flange_pocket_diameter_mm": 18.3
+    },
+    {
+      "axis_deviation_mm": {
+        "dx": 0.0,
+        "dy": 0.0,
+        "radial": 0.0
+      },
+      "body_diametral_clearance_mm": 0.15000000000000036,
+      "body_hole_edge_z_levels_mm": [
+        0.0,
+        15.0
+      ],
+      "center_tolerance_mm": 0.15,
+      "checks": {
+        "axis_within_center_tolerance": true,
+        "body_hole_diameter_matches": true,
+        "body_span_matches_15_mm": true,
+        "counterbore_depth_matches_2_5_mm": true,
+        "flange_pocket_diameter_matches": true
+      },
+      "circular_edge_evidence": {
+        "body_hole_edges": [
+          {
+            "center_mm": [
+              30.0,
+              60.0,
+              0.0
+            ],
+            "edge_index": 21,
+            "radius_mm": 6.075
+          },
+          {
+            "center_mm": [
+              30.0,
+              60.0,
+              15.0
+            ],
+            "edge_index": 72,
+            "radius_mm": 6.075
+          }
+        ],
+        "flange_pocket_edges": [
+          {
+            "center_mm": [
+              30.0,
+              60.0,
+              15.0
+            ],
+            "edge_index": 81,
+            "radius_mm": 9.15
+          },
+          {
+            "center_mm": [
+              30.0,
+              60.0,
+              17.5
+            ],
+            "edge_index": 42,
+            "radius_mm": 9.15
+          }
+        ]
+      },
+      "datum_transformed_position_mm": [
+        30.0,
+        60.0,
+        0.0
+      ],
+      "expected_body_hole_diameter_mm": 12.15,
+      "expected_flange_pocket_diameter_mm": 18.3,
+      "flange_diametral_clearance_mm": 0.3000000000000007,
+      "flange_pocket_edge_z_levels_mm": [
+        15.0,
+        17.5
+      ],
+      "hole_id": "H2",
+      "input_table_position_mm": [
+        30.0,
+        60.0,
+        0.0
+      ],
+      "observed_axis_xy_mm": [
+        30.0,
+        60.0
+      ],
+      "observed_body_hole_diameter_mm": 12.15,
+      "observed_body_span_mm": 15.0,
+      "observed_counterbore_depth_mm": 2.5,
+      "observed_flange_pocket_diameter_mm": 18.3
+    },
+    {
+      "axis_deviation_mm": {
+        "dx": 0.0,
+        "dy": 0.0,
+        "radial": 0.0
+      },
+      "body_diametral_clearance_mm": 0.15000000000000036,
+      "body_hole_edge_z_levels_mm": [
+        0.0,
+        15.0
+      ],
+      "center_tolerance_mm": 0.15,
+      "checks": {
+        "axis_within_center_tolerance": true,
+        "body_hole_diameter_matches": true,
+        "body_span_matches_15_mm": true,
+        "counterbore_depth_matches_2_5_mm": true,
+        "flange_pocket_diameter_matches": true
+      },
+      "circular_edge_evidence": {
+        "body_hole_edges": [
+          {
+            "center_mm": [
+              150.0,
+              20.0,
+              0.0
+            ],
+            "edge_index": 20,
+            "radius_mm": 6.075
+          },
+          {
+            "center_mm": [
+              150.0,
+              20.0,
+              15.0
+            ],
+            "edge_index": 70,
+            "radius_mm": 6.075
+          }
+        ],
+        "flange_pocket_edges": [
+          {
+            "center_mm": [
+              150.0,
+              20.0,
+              15.0
+            ],
+            "edge_index": 92,
+            "radius_mm": 9.15
+          },
+          {
+            "center_mm": [
+              150.0,
+              20.0,
+              17.5
+            ],
+            "edge_index": 82,
+            "radius_mm": 9.15
+          }
+        ]
+      },
+      "datum_transformed_position_mm": [
+        150.0,
+        20.0,
+        0.0
+      ],
+      "expected_body_hole_diameter_mm": 12.15,
+      "expected_flange_pocket_diameter_mm": 18.3,
+      "flange_diametral_clearance_mm": 0.3000000000000007,
+      "flange_pocket_edge_z_levels_mm": [
+        15.0,
+        17.5
+      ],
+      "hole_id": "H3",
+      "input_table_position_mm": [
+        150.0,
+        20.0,
+        0.0
+      ],
+      "observed_axis_xy_mm": [
+        150.0,
+        20.0
+      ],
+      "observed_body_hole_diameter_mm": 12.15,
+      "observed_body_span_mm": 15.0,
+      "observed_counterbore_depth_mm": 2.5,
+      "observed_flange_pocket_diameter_mm": 18.3
+    },
+    {
+      "axis_deviation_mm": {
+        "dx": 0.0,
+        "dy": 0.0,
+        "radial": 0.0
+      },
+      "body_diametral_clearance_mm": 0.15000000000000036,
+      "body_hole_edge_z_levels_mm": [
+        0.0,
+        15.0
+      ],
+      "center_tolerance_mm": 0.15,
+      "checks": {
+        "axis_within_center_tolerance": true,
+        "body_hole_diameter_matches": true,
+        "body_span_matches_15_mm": true,
+        "counterbore_depth_matches_2_5_mm": true,
+        "flange_pocket_diameter_matches": true
+      },
+      "circular_edge_evidence": {
+        "body_hole_edges": [
+          {
+            "center_mm": [
+              150.0,
+              60.0,
+              0.0
+            ],
+            "edge_index": 22,
+            "radius_mm": 6.075
+          },
+          {
+            "center_mm": [
+              150.0,
+              60.0,
+              15.0
+            ],
+            "edge_index": 74,
+            "radius_mm": 6.075
+          }
+        ],
+        "flange_pocket_edges": [
+          {
+            "center_mm": [
+              150.0,
+              60.0,
+              15.0
+            ],
+            "edge_index": 93,
+            "radius_mm": 9.15
+          },
+          {
+            "center_mm": [
+              150.0,
+              60.0,
+              17.5
+            ],
+            "edge_index": 83,
+            "radius_mm": 9.15
+          }
+        ]
+      },
+      "datum_transformed_position_mm": [
+        150.0,
+        60.0,
+        0.0
+      ],
+      "expected_body_hole_diameter_mm": 12.15,
+      "expected_flange_pocket_diameter_mm": 18.3,
+      "flange_diametral_clearance_mm": 0.3000000000000007,
+      "flange_pocket_edge_z_levels_mm": [
+        15.0,
+        17.5
+      ],
+      "hole_id": "H4",
+      "input_table_position_mm": [
+        150.0,
+        60.0,
+        0.0
+      ],
+      "observed_axis_xy_mm": [
+        150.0,
+        60.0
+      ],
+      "observed_body_hole_diameter_mm": 12.15,
+      "observed_body_span_mm": 15.0,
+      "observed_counterbore_depth_mm": 2.5,
+      "observed_flange_pocket_diameter_mm": 18.3
+    }
+  ],
+  "keepout_boolean_results": [
+    {
+      "actual_boolean_intersection_volume_mm3": 0.0,
+      "check_no_positive_volume_intersection": true,
+      "extents_mm": {
+        "x_max_mm": 18.0,
+        "x_min_mm": 0.0,
+        "y_max_mm": 80.0,
+        "y_min_mm": 0.0,
+        "z_max_mm": 30.0,
+        "z_min_mm": 0.0
+      },
+      "keepout_id": "FRONT_CLAMP",
+      "purpose": "external_clamp_occupancy"
+    },
+    {
+      "actual_boolean_intersection_volume_mm3": 0.0,
+      "check_no_positive_volume_intersection": true,
+      "extents_mm": {
+        "x_max_mm": 180.0,
+        "x_min_mm": 162.0,
+        "y_max_mm": 80.0,
+        "y_min_mm": 0.0,
+        "z_max_mm": 30.0,
+        "z_min_mm": 0.0
+      },
+      "keepout_id": "REAR_CLAMP",
+      "purpose": "external_clamp_occupancy"
+    },
+    {
+      "actual_boolean_intersection_volume_mm3": 0.0,
+      "check_no_positive_volume_intersection": true,
+      "extents_mm": {
+        "x_max_mm": 115.0,
+        "x_min_mm": 65.0,
+        "y_max_mm": 65.0,
+        "y_min_mm": 15.0,
+        "z_max_mm": 35.0,
+        "z_min_mm": 0.0
+      },
+      "keepout_id": "CHIP_WINDOW",
+      "purpose": "exclude_jig_material_for_chip_access"
+    }
+  ],
+  "lineage": {
+    "actual_reopened_model": {
+      "bytes": 117096,
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\artifacts\\jig.step",
+      "sha256_after": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "sha256_before": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831",
+      "unchanged_during_inspection": true
+    },
+    "inputs": {
+      "bushings.csv": {
+        "bytes": 216,
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\inputs\\bushings.csv",
+        "sha256": "e74e77fba315308890fc017820925b48b319240623a1523f72ab5f307e83234e"
+      },
+      "holes.csv": {
+        "bytes": 202,
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\inputs\\holes.csv",
+        "sha256": "ed8b0c150f6c38836ca8c32bd35fd28cfc64db84265d83d29348d7985350a683"
+      },
+      "keepouts.csv": {
+        "bytes": 246,
+        "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\inputs\\keepouts.csv",
+        "sha256": "ad5009a74911fbf75eece4e55df60e14f704e584bbbc6a4a6bc6a8f50cf13946"
+      }
+    },
+    "inspection_source": {
+      "bytes": 17715,
+      "path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\artifacts\\inspect-jig-source.py",
+      "sha256": "64165f5cbfe41dd27e0bd1ad1478bceb5eeb5980f1c32924cf62c6b3f01eb932"
+    },
+    "method": "Reopened jig.step with build123d import_step; no generator source was imported or trusted.",
+    "output_report": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\artifacts\\dimension-report.json",
+    "project_directory": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-02\\attempt-012\\artifacts\\agentcad-project"
+  },
+  "material_rule": {
+    "exception": "2.85 mm only on end-facing sides of the four flange pockets",
+    "preferred_elsewhere_mm": 6.0
+  },
+  "model_observations": {
+    "bounding_box_mm": {
+      "dimensions": [
+        166.0,
+        83.15,
+        20.5
+      ],
+      "max": [
+        162.0,
+        75.15,
+        17.5
+      ],
+      "min": [
+        -4.0,
+        -8.0,
+        -3.0
+      ]
+    },
+    "check_maximum_height_at_or_below_17_5_mm": true,
+    "circular_edge_count": 16,
+    "is_valid_property": true,
+    "maximum_modeled_height_above_tube_top_mm": 17.5,
+    "volume_mm3": 127811.11766802764
+  },
+  "nominal_stackup": {
+    "body_diametral_clearance_mm": 0.15,
+    "body_hole_diameter_mm": 12.15,
+    "body_length_mm": 15.0,
+    "counterbore_depth_mm": 2.5,
+    "flange_diametral_clearance_mm": 0.3,
+    "flange_pocket_diameter_mm": 18.3,
+    "flange_seat_z_mm": 15.0,
+    "provenance": "synthetic fixture data, not supplier data",
+    "top_z_mm": 17.5,
+    "tube_top_z_mm": 0.0
+  },
+  "report_type": "independent_build123d_ocp_reinspection",
+  "source_authority": [
+    "holes.csv",
+    "bushings.csv",
+    "keepouts.csv",
+    "authorized prototype decisions"
+  ],
+  "status": "checks_passed",
+  "summary": {
+    "observed_failed_checks": 0,
+    "unresolved_checks": 0
+  },
+  "units": "mm",
+  "unresolved_physical_review": [
+    "Access-cylinder vertical start and end remain undefined.",
+    "Purchased bushing dimensions and finished physical fit are unverified.",
+    "Chip evacuation, spindle and chuck clearance, runout, guarding, and safe setup require human verification.",
+    "Drill-point breakthrough allowance and prevention of opposite-wall contact require human verification.",
+    "Strength, stiffness, fatigue, machinability, and durability of the jig and 2.85 mm ligaments are unqualified.",
+    "Workpiece notch and tube dimensional variation and resulting saddle fit are unverified.",
+    "No production material approval, standards compliance, or manufacturing qualification is claimed."
+  ],
+  "workpiece": {
+    "exterior_height_mm": 30.0,
+    "exterior_length_mm": 180.0,
+    "exterior_width_mm": 80.0,
+    "nominal_top_wall_mm": 3.0
+  }
+}

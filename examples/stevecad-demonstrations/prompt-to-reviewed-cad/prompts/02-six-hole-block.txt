@@ -1,0 +1,11 @@
+Create one solid rectangular block, 80 mm along X, 50 mm along Y and 16 mm along Z. Use millimetres and the lower-left bottom corner as origin: X=0..80, Y=0..50, Z=0..16.
+
+Add six plain diameter-8 mm through holes parallel to Z, centered at XY (12,12), (40,12), (68,12), (12,38), (40,38) and (68,38). Each hole must traverse the full thickness. Do not add fillets, chamfers, counterbores, text or extra components.
+
+Name the CAD body block and the six hole features h01, h02, h03, h04, h05 and h06. Use lowercase snake_case for all CAD feature identifiers, keeping document requirement IDs separate from CAD identifiers.
+
+For this non-centered block's block.top face, use the listed positive XY coordinates directly as the Model.hole point tuples. Do not subtract (40,25) or assume that the face's sketch origin is its centroid. This coordinate convention was verified on the preceding block's actual geometry.
+
+Verify digital CAD geometry with 0.01 mm absolute tolerance for measured dimensions and positions, one solid, and 0.1 percent relative volume tolerance against 80*50*16 - 6*pi*4^2*16 cubic millimetres. Confirm each hole's diameter, axis and through depth from actual geometry. Use neutral matte gray presentation appearance without assigning mechanical properties.
+
+Capture isometric, top and front CAD views and produce three corresponding realistic studio product renderings. Include requirement checks, actual observations, CAD views, presentation images and unresolved findings in the design review. This prompt changes dimensions and hole pattern; use the same accepted process as the first run.

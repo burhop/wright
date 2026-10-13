@@ -1,0 +1,25 @@
+{
+  "observed_at": "2026-10-12T17:41:14.975859+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__read_design",
+    "arguments": {
+      "document_id": "0d927bb4-87e0-49ba-ba84-c256bf035bce",
+      "revision": 1
+    },
+    "label": "single-part-native-basis",
+    "output_dir": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001",
+    "print_summary": true
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Input validation error: Additional properties are not allowed ('revision' was unexpected)"
+      }
+    ],
+    "isError": true
+  }
+}

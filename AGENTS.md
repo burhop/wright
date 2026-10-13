@@ -136,3 +136,12 @@ contains PR merge commits; matching tree hashes mean the files match.
 For engineering MCP server validation, follow the clean-container process in
 docs/mcp-catalog/mcp-server-testing-process.md. Do not add MCP-specific host
 software to the base Docker image just to make catalog validation pass.
+
+Before installing or using an MCP provider, read its setup recipe, qualification
+evidence and available usage guide under `docs/mcp-catalog/usage-guides/`. Create
+or update a discoverable guide for every server installed or used, using that
+directory's template; installation alone is not verified engineering use. Maintain verified
+examples, pitfalls, recovery and evidence links for every provider used, following
+that directory's shared standard. Report provider bugs only when exact inputs and
+current contracts establish a provider defect; retain a minimal reproduction,
+redacted evidence and report identity, and avoid duplicate submissions.

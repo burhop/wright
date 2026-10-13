@@ -1,0 +1,1667 @@
+{
+  "tools": [
+    {
+      "tool_id": "stevecad-mcp:api_reference",
+      "server_id": "stevecad-mcp",
+      "name": "api_reference",
+      "title": "Api Reference",
+      "description": "STEVE's CadQuery modeling API (not tscircuit) from its source: no name lists the classes (Model, Component,\nDesign, Sketch) and their methods; a class (\"Sketch\"), a method (\"Sketch.polygon\", or just \"polygon\") or a fragment\n(\"fillet\") gives exact signatures and docs. A tool's name (\"inspect_model\") gives that tool's arguments and docs.\nLook calls up here instead of guessing them.",
+      "input_schema": {
+        "properties": {
+          "name": {
+            "default": "",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:create_component",
+      "server_id": "stevecad-mcp",
+      "name": "create_component",
+      "title": "Create Component",
+      "description": "Add a component to a design as its own file: components/<component>.py with one Component\n(importing params.py when the design has one), imported and placed in main.py.\n\nThen build it up with edit_design(path=\"components/<component>.py\", ...). One component per\nfile: never define a second component in an existing file or in main.py.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "component": {
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision",
+          "component"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:create_shop_item",
+      "server_id": "stevecad-mcp",
+      "name": "create_shop_item",
+      "title": "Create Shop Item",
+      "description": "Add a machine, controller, tool or tool setup to a shop as its own file: <folder>/<key>.py (machines/,\ncontrollers/, tools/, tool_setups/) with a minimal item of that kind that builds as is (a machine with its model and\ncontroller; a tool with its cutter and holder), imported and added in main.py (`shop.add(<key>)`, which adds what it\nuses). Then make it the real one with edit_design(path=\"<folder>/<key>.py\", ...); api_reference(\"Machine\") etc. give\nthe helpers. key is the item's stable identity in the library: renaming its name later keeps its record.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "machine",
+              "controller",
+              "tool",
+              "tool_setup"
+            ],
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision",
+          "kind",
+          "key"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:edit_design",
+      "server_id": "stevecad-mcp",
+      "name": "edit_design",
+      "title": "Edit Design",
+      "description": "Edit exact source fragments of one document and save them as one revision.\n\nOne edit: old_text and new_text. Several (batch every change you have planned into one call): `edits`, a list of\n{old_text, new_text, path?} applied in order, all or nothing; each old_text must occur exactly once in its file as\nthe earlier edits left it. Returns the new revision and `changes`, the changed lines with context as unified diff\nhunks: no need to read the document again to check the edit. Read the document before the first edit.\npath names the file of a design (main.py, params.py, components/disk.py, a table like holes.csv), a shop (main.py, tools/em6.py) or a\ncircuit (main.tsx, power.tsx); a new path with an empty old_text creates that file. branch optionally edits one of this document's branches.\nnew_branch (instead of branch) tries the edits without touching main: it starts a branch of that name from main at\n`revision` and saves them on it; then pass branch=<name>, and finish with merge_branch (merge into main, or discard).",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "old_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "edits": {
+            "anyOf": [
+              {
+                "items": {
+                  "description": "One exact replacement: old_text (exactly once in the file, as the earlier edits left it) becomes new_text.",
+                  "properties": {
+                    "old_text": {
+                      "type": "string"
+                    },
+                    "new_text": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "old_text",
+                    "new_text"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:find_electronic_parts",
+      "server_id": "stevecad-mcp",
+      "name": "find_electronic_parts",
+      "title": "Find Electronic Parts",
+      "description": "Search JLCPCB's in-stock electronic parts (tscircuit's jlcsearch index) for a circuit: \"10k 0402 resistor\",\n\"100nF 0603 capacitor\", \"3.3V LDO\", \"USB-C connector\", or a part number (\"AP2112K-3.3TRG1\", \"C25744\").\ncategory narrows it (resistors, capacitors, leds, ldos, voltage_regulators, microcontrollers, usb_c_connectors,\nwifi_modules, ble_modules, mosfets, diodes, bjt_transistors, headers, jst_connectors, switches, fuses); package\nfilters by package (\"0402\", \"SOT-23-5\"). In-stock basic and preferred parts come first: they assemble without a\nloading fee, while each extended part adds one. Each result gives its C-number, part number, package, stock and\nprice, its `tsx` (supplierPartNumbers) to pin it, and `footprint` (\"jlcpcb:C\u2026\"), which loads that part's own\nfootprint. Use it for chips, connectors and modules.\nSeveral parts at once (every part you are choosing): `queries`, a list of {query, category?, package?, limit?}\n(limit 5 unless given), searched together; `results` answers each in order, naming its query.",
+      "input_schema": {
+        "properties": {
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "package": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer"
+          },
+          "queries": {
+            "anyOf": [
+              {
+                "items": {
+                  "description": "One search of a batch, as find_electronic_parts takes it for a single part.",
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "package": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null
+                    },
+                    "limit": {
+                      "default": 5,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:find_standard_parts",
+      "server_id": "stevecad-mcp",
+      "name": "find_standard_parts",
+      "title": "Find Standard Parts",
+      "description": "Search about 17,000 open-source STEP models of off-the-shelf parts (step.parts, MIT): bearings, fasteners,\nmotors, connectors, pulleys, gears, extrusions, electronics. Query tokens are ANDed (\"608 bearing\",\n\"M3 socket head 10\", \"NEMA 17\"); category, family and standard narrow it (values from a result's facets).\nReturns compact records (id, name, key dimensions, picture, page). Bring one in with insert_standard_part.",
+      "input_schema": {
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "standard": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "default": 10,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:generate_model",
+      "server_id": "stevecad-mcp",
+      "name": "generate_model",
+      "title": "Generate Model",
+      "description": "Execute and validate a saved document, wait for geometry, and attach STEP and preview.\n\nThe result's model.artifacts are the revision's export files: step, components_step (one STEP per\ncomponent), sheet_metal_export (flat-pattern DXF ZIP), bodies_mesh (STL per body, made when first asked for). Those links need the person's\nSTEVE sign-in: give the person the model's link. To get files onto your own machine (agents outside STEVE), pass\ndownload=[\"step\", \u2026]: each comes back with a one-time command (curl) that fetches it within 10 minutes.\nLinks build at their pinned revisions, frozen when execution is queued; unchanged components\ncome from the component cache. Check returned measurements/errors. A circuit evaluates its TSX, lays out\nthe schematic and places the board, unrouted (a ratsnest, except copper routed before for the same problem); its\nproblems come back as `circuit` errors and warnings, not as a failed build. route=true (circuits only) autoroutes\nthe board: do it once, at the end, when placement is final; it can take minutes, and `circuit.routing` says how it\nwent. It doesn't start while the unrouted build has issues that would waste it (`not_routed`). A routing result with retryable false is final for that board: change the board, don't route it again.\nA shop builds its items as manufacturing library records, then saves them to the workspace's library: `library`\nlists each item with its library id, revision and change (created, revised or unchanged); `library_error` names\nthe item, file and line the library refused (fix it and generate again).\nA CAM program runs its operations, posts the G-code and has Steve check it (steve-cam-programs): `cam.stage` says\nhow far it got; each call waits up to 50 s, and while `still_working` is in the result, generating again keeps\nwaiting. download=[\"gcode\"] gives the G-code once it's posted and no check failed (stage `checked` or `verified`).\n`cam.posted_resolution` (a program posted at six decimals for a controller that rounds finer words) says how far the\npath the machine runs can lie from the checked one: tell the person, and generate again only if they want it.\nGenerate once after a batch of edits, not after each one.\nAgents outside STEVE: each call waits up to 50 s. A build still going then comes back with `still_working` and its id;\nit carries on with its whole budget, and calling generate_model again with the same revision joins that same build\n(never starts over), so repeating it is the status check: don't read the whole document to check a build. A full\nbuild doesn't wait for a running preview of the same source (a preview has no exports); while the full build is\nworking or after it failed, `model.preview` (read_design: `latest_build.preview`) says how that preview went.\nGeometry alone does not establish load capacity or manufacturing suitability.\nbranch optionally generates and attaches geometry on one of this document's branches.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "route": {
+            "default": false,
+            "type": "boolean"
+          },
+          "download": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "step",
+                    "components_step",
+                    "sheet_metal_export",
+                    "bodies_mesh",
+                    "gcode"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:insert_import",
+      "server_id": "stevecad-mcp",
+      "name": "insert_import",
+      "title": "Insert Import",
+      "description": "Insert one of the user's uploaded STEP or Fusion (.f3d) files (list_imports; by id or sha256) into a document,\nlike insert_mcmaster_part: a part gets `model.import_step(...)` (place it with model.move); a design gets a\ncomponent (components/import_<name>.py) placed with design.add(..., at=(x, y, z) in mm). A comment keeps the file\nname and sha256. Returns the new revision: generate_model next. For a Fusion file the result also has `fusion`: its\nparameters and timeline features, as data (see the note).",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "import_id": {
+            "type": "string"
+          },
+          "at": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision",
+          "import_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:insert_mcmaster_part",
+      "server_id": "stevecad-mcp",
+      "name": "insert_mcmaster_part",
+      "title": "Insert Mcmaster Part",
+      "description": "Insert a McMaster-Carr part from the user's McMaster parts (list_mcmaster_parts) into a document, like\ninsert_standard_part: a part gets `model.import_step(...)` (place it with model.move); a design gets a component\n(components/mcmaster_<number>.py) placed with design.add(..., at=(x, y, z) in mm). A comment keeps the part\nnumber, its McMaster page and the file's sha256. Returns the new revision: generate_model next.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "part_number": {
+            "type": "string"
+          },
+          "at": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision",
+          "part_number"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:insert_standard_part",
+      "server_id": "stevecad-mcp",
+      "name": "insert_standard_part",
+      "title": "Insert Standard Part",
+      "description": "Bring a step.parts part (an id from find_standard_parts) into a document, its STEP file verified against the\ncatalog's checksum and stored like an upload.\n\nA part gets `model.import_step(...)` in the file's own coordinates (place it with model.move). A design gets the part\nas a component (components/<id>.py, created once) placed with design.add(..., at=(x, y, z) in mm); inserting the\nsame part again adds another instance. A comment above the import keeps the catalog id, link, license and sha256.\nReturns the new revision: generate_model next.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "part_id": {
+            "type": "string"
+          },
+          "at": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision",
+          "part_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:inspect_model",
+      "server_id": "stevecad-mcp",
+      "name": "inspect_model",
+      "title": "Inspect Model",
+      "description": "See the generated part or design as an image with CAD measurements, and/or check manufacturability or fit.\nA circuit gives its board, components (footprint, position), nets, routing and every diagnostic, with both its\nschematic and its PCB image; review both (view \"schematic\" or \"pcb\" only to re-check one).\n\nGenerate first. Without checks you get the isometric view (or `view`); use the numbers, not pixels, for\ndimensions. Visibility (designs): show draws only these instances, hide draws all but these; each entry is an\ninstance name (read_design's instances), a component's name or id (all its instances) or a pattern (\"wheel_*\").\nThe camera frames what's drawn, and summary.drawn gives its instances and extent_mm/bounds_mm. Use it to check the\npart an edit changed, e.g. show=[\"bracket\"], or to see inside, e.g. view=\"front\", hide=[\"housing\", \"cover_*\"].\nchecks (exact B-rep; load the matching dfm/dfam skill to interpret): \"dfam:fdm|sla|sls|mjf|metal_pbf\",\n\"molding\", \"cnc\", \"sheet_metal\". options override generic limits, e.g. {\"build_direction\": \"+Z\",\n\"pull_direction\": \"+Z\", \"tool_radius_mm\": 3, \"min_wall_mm\": 1}. Findings name faces/edges with measured\nvalue, limit and source; they are review evidence, not certification. branch: one of this document's branches.\n\"interference\" (designs with design.fit_check in main.py): overlaps and clearances per instance pair, each new,\nworse, unchanged or resolved against options {\"base_revision\": N} (default the previous revision), so only what\nan edit broke fails; {\"fit_check\": name} picks one.\n\"fasteners\" (designs with design.fasten in main.py): each declared screw's holes, seat, thread engagement,\nbottoming, walls, clashes and driver access as built, pass/review/fail, with the holes each part wants;\n{\"fastener\": name or pattern} picks some.\n\"machining\": what a CAM program can target, named exactly as its targets take them: each instance's bodies, its\nholes (Model.hole's wall, counterbore and countersink faces), its other round faces (fillets, bosses), and its\nup-facing flats (height), with diameters, axes and positions in the design's mm (a round face's at_mm is the point\non its axis at its top end, length_mm its length along the axis).",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "view": {
+            "anyOf": [
+              {
+                "enum": [
+                  "isometric",
+                  "top",
+                  "front",
+                  "right",
+                  "schematic",
+                  "pcb"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "checks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "options": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "show": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "hide": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": null,
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:link_design",
+      "server_id": "stevecad-mcp",
+      "name": "link_design",
+      "title": "Link Design",
+      "description": "Use another saved design, part or circuit inside a design (or a part or design inside a part), pinned to a\nrevision (its current one if omitted).\n\ncomponent: link one component of the target design (its components/<component>.py, built with that design's\nparams.py and overridable like the whole design) instead of all of it; its faces need no instance prefix.\nextract_component (no target_document_id): turn this design's own components/<id>.py into a new reusable part,\nwith the shared parameters it uses as the part's own, and link it back under `alias` (use the component id to keep\ninstance names) in one revision, passing this design's parameters as overrides so the geometry stays the same.\nRefused, with the file and line, when another file imports that component or it imports another component.\nThe result has the new `part` and `notes` on what to check.\n\nmain.py then gets `from links import <alias>`; place it with `design.add(<alias>(param=value), at=...)`\n(overrides set the linked document's own parameters) or `design.pattern(<alias>(), count=..., axis=\"Z\")`.\nA circuit (kind \"circuit\") comes in as its board: an exact board solid plus each part's body, placed with\n`design.add(<alias>, at=(x, y, z))` (z is the board's bottom face), with no overrides. read_design then lists its\nboard facts (size, thickness, holes, connectors) under `features.circuit_boards`: load electronics-fabrication's\nenclosure section to design a case around it.\nA shop links other shops (never designs or parts): `from links import <alias>`, then `<alias>.<item>` (or\n`<alias>.shop[\"key\"]`) is that shop's item, to add to this shop (`shop.add(<alias>.vmc)`, with what it uses) or to\nuse in its own items.\nA CAM program links the part or design it machines and the shop it uses (`from links import part, shop`).\nA part links parts and designs (not circuits) to use them as a feature, positioned in code:\n`model.add(\"boss_1\", <alias>(height=8).result.translate((x, y, z)), op=\"join\")` (or `op=\"cut\"`), or the instance\nitself, `model.add(\"boss_1\", <alias>(height=8))`. Reuse a saved part this way instead of copying it into a new design.\nRelinking an existing alias moves it to the new document or revision. read_design shows each link's\npinned and latest revision (\"update available\").",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "target_document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "target_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "extract_component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id",
+          "revision",
+          "alias"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:list_comments",
+      "server_id": "stevecad-mcp",
+      "name": "list_comments",
+      "title": "List Comments",
+      "description": "The comments the person pinned to this document's geometry in STEVE's viewer (open ones by default), numbered\nlike their pins, each with its anchor (what was selected: kind, description, component, topology_ref, point), the\nrevision it was written on, and its replies. Act on them, then reply_comment and resolve_comment.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "default": "open",
+            "enum": [
+              "open",
+              "resolved",
+              "all"
+            ],
+            "type": "string"
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:list_decal_images",
+      "server_id": "stevecad-mcp",
+      "name": "list_decal_images",
+      "title": "List Decal Images",
+      "description": "The images uploaded into this workspace for decals (the Decal dialog, add_decal_image or request_upload), newest first:\nid, name and pixel size. Show one on a flat face with `model.decal(\"decal_1\", image=\"<id>\", on=\"<face>\", width=<mm>)`.",
+      "input_schema": {
+        "properties": {
+          "search": {
+            "default": "",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:list_designs",
+      "server_id": "stevecad-mcp",
+      "name": "list_designs",
+      "title": "List Designs",
+      "description": "Find saved documents without loading their source: parts, designs and circuits; shops (kind \"shop\") and CAM programs\n(kind \"cam\") only when asked for by kind (read_design on a part lists the CAM programs that machine it). Page with\noffset.\n\nSearch before creating: a part or design that already does the job is better linked (link_design, with parameter\noverrides) than rebuilt. `search` matches names, parameter names and descriptions, and descriptions; `matched` says\nwhich (\"source\" when only other code matched). Each document has `description` (main.py's docstring or leading\ncomment), `parameters` (what a link can override: name, value, unit, description; `parameters_more` counts any\nbeyond 20), `bounds_mm` (its latest preview's size, null if none), `model_current` (that preview was built from this\nrevision) and `used_by` (designs, not trashed, whose main links it).\nsource \"samples\" lists STEVE's built-in samples instead (`sample_id`, name, kind, description, parameters). They\naren't documents: read_design(sample=<sample_id>) gives the source; save a copy with write_design, then link that.\nsource \"catalogue\" lists Steve's catalogue, a read-only shop document every shop may link: its `document_id` and\n`revision`, and its items (machine models with travel, spindle and changer; controllers with their dialect and\n`status`: executable, Steve posts and checks its G-code, or saved_only; holders with their interfaces and clamp\nrange; cutters with their sizes). `search` narrows the items by name, key or item kind (machine_model, controller,\ntool_holder, rotary_cutter). read_design on it gives its source. Nothing listed fits: request_catalog_entry.",
+      "input_schema": {
+        "properties": {
+          "search": {
+            "default": "",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "part",
+                  "design",
+                  "circuit",
+                  "shop",
+                  "cam"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "limit": {
+            "default": 30,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "type": "integer"
+          },
+          "source": {
+            "default": "workspace",
+            "enum": [
+              "workspace",
+              "samples",
+              "catalogue"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:list_imports",
+      "server_id": "stevecad-mcp",
+      "name": "list_imports",
+      "title": "List Imports",
+      "description": "The STEP and Fusion (.f3d) files uploaded into this workspace (File \u2192 Import\u2026, dropping a file, or request_upload),\nnewest first: id, name, file name, format (step | f3d), check status (ready | validating | failed), solids and bounds.\nInsert one with insert_import. A file on your machine: upload it with request_upload first (agents outside STEVE).",
+      "input_schema": {
+        "properties": {
+          "search": {
+            "default": "",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:list_mcmaster_parts",
+      "server_id": "stevecad-mcp",
+      "name": "list_mcmaster_parts",
+      "title": "List Mcmaster Parts",
+      "description": "The McMaster-Carr parts the user has downloaded into STEVE (their 3-D STEP files, checked), newest first, by part\nnumber and catalog title. Only these can be inserted: STEVE can't download from McMaster (no open API, and the\nsite is the user's to browse). For a part that isn't here, give the user its page, https://www.mcmaster.com/<part\nnumber>, and ask them to download the 3-D STEP and drop it into STEVE (Parts \u2192 McMaster-Carr).",
+      "input_schema": {
+        "properties": {
+          "search": {
+            "default": "",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:list_skills",
+      "server_id": "stevecad-mcp",
+      "name": "list_skills",
+      "title": "List Skills",
+      "description": "STEVE's skills: detailed instructions for areas beyond single-part modeling (designs with several components,\njoints and motion, materials, simulation, sheet metal, engineering drawings, imported STEP geometry, manufacturability reviews), plus\nany the person wrote. Read one with read_skill before working in its area.",
+      "input_schema": {
+        "properties": {},
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:read_design",
+      "server_id": "stevecad-mcp",
+      "name": "read_design",
+      "title": "Read Design",
+      "description": "Read one document's source, revision, links, and latest geometry measurements.\n\nsample (instead of document_id): a built-in sample's source, by list_designs(source=\"samples\")'s sample_id.\n\nA design (kind \"design\") is a small codebase: `code` is main.py and `files` holds params.py and\ncomponents/*.py; `features` then outlines every file, its components and any diagnostics.\nA circuit (kind \"circuit\") is tscircuit TSX: `code` is main.tsx, `files` its other modules, and `circuit` the\nlast build's board, counts, readiness verdict and diagnostics, grouped by kind (inspect_model lists the built\ncomponents and nets).\nA shop (kind \"shop\") is machines, controllers and tools as code: `features` outlines its files and the items each\ndefines, with its links; `shop` lists the last build's items (key, kind, name, file, line) and counts.\nbranch optionally names one of this document's branches; omitted means main.\n`model.current` says whether the model was built from exactly this revision's source. When it's false the model is\nan earlier revision's last good geometry (`model.stale`): its status, measurements and results don't validate this\nrevision, and `latest_build` reports this revision's own latest attempt and what to do next.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "sample": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:read_skill",
+      "server_id": "stevecad-mcp",
+      "name": "read_skill",
+      "title": "Read Skill",
+      "description": "One skill's instructions (list_skills names them), as Markdown.",
+      "input_schema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:reply_comment",
+      "server_id": "stevecad-mcp",
+      "name": "reply_comment",
+      "title": "Reply Comment",
+      "description": "Reply to one of the person's comments (list_comments), e.g. what you changed or a question. Shown in STEVE.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "comment_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "comment_id",
+          "text"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:request_catalog_entry",
+      "server_id": "stevecad-mcp",
+      "name": "request_catalog_entry",
+      "title": "Request Catalog Entry",
+      "description": "Ask for a machine or controller that isn't in Steve's catalogue (look first: list_designs(source=\"catalogue\")). One request per\nmaker and model: asking again adds a +1. Give what you know in `details` (spec sheet, control and its mode, a link\nto the maker's page). Meanwhile describe the machine in the shop with the helpers; a missing controller stays\nsaved-only (programs plan and simulate, posting waits). Counts toward the workspace's daily feature requests.",
+      "input_schema": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "machine",
+              "controller"
+            ],
+            "type": "string"
+          },
+          "maker": {
+            "maxLength": 60,
+            "minLength": 1,
+            "type": "string"
+          },
+          "model": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          },
+          "details": {
+            "default": "",
+            "maxLength": 4000,
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "maker",
+          "model"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:request_upload",
+      "server_id": "stevecad-mcp",
+      "name": "request_upload",
+      "title": "Request Upload",
+      "description": "Upload a file from your machine: a STEP (.step/.stp) or Autodesk Fusion (.f3d) file to import, or an image (.png/.jpg/.webp) for\n`model.decal`. Returns a one-time ticket and the command to send the file. Give the file's name, its size in bytes\nand its SHA-256 (e.g. `sha256sum file.step`, `shasum -a 256 logo.png`). The ticket accepts only that exact file,\nonce, within 10 minutes; keep it out of anything you show or store. If the same file is already uploaded you get\nit back instead. STEP: list_imports then shows it (validating, then ready) and insert_import places it; meshes\nmust be converted to STEP first. Image: the response's `id` goes in `model.decal(..., image=\"img_\u2026\")`.",
+      "input_schema": {
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename",
+          "size_bytes",
+          "sha256"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:resolve_comment",
+      "server_id": "stevecad-mcp",
+      "name": "resolve_comment",
+      "title": "Resolve Comment",
+      "description": "Mark one of the person's comments resolved once it's dealt with (reply first, saying how), or reopen it.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "comment_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "reopen": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id",
+          "comment_id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:run_study",
+      "server_id": "stevecad-mcp",
+      "name": "run_study",
+      "title": "Run Study",
+      "description": "Write a simulation study of a saved, generated part or design and run it to its results: one call.\n\n`study` is the whole study (it is saved as studies/<id>/study.py, versioned, and opens in the\nSimulate workspace). SI units throughout. Write it whole, e.g. a cantilever:\n    {\"name\": \"Bracket under load\", \"analysis\": \"static\",\n     \"boundaries\": [{\"type\": \"fixed\", \"faces\": [\"@x-\"]},\n                    {\"type\": \"force\", \"faces\": [\"@x+\"], \"force_n\": [0, 0, -100]}]}\nanalysis: static | modal ({\"type\": \"modal\", \"modes\": 6}) | thermal_steady | thermal_transient\n  ({\"type\": ..., \"time\": {\"duration_s\", \"steps\", \"initial_temperature_k\"}}) | thermal_stress\n  ({\"type\": ..., \"reference_temperature_k\": 293.15}) | flow_steady | flow_transient | cht_steady.\n  Gravity: {\"type\": \"static\", \"gravity_m_s2\": [0, 0, -9.81]}.\nboundaries (each: type, faces, values): fixed (axes [0,1,2] default) \u00b7 force (force_n [x,y,z], total) \u00b7\n  pressure (pressure_pa, positive pushes in) \u00b7 temperature (temperature_k) \u00b7 heat_flux (flux_w_m2, positive in) \u00b7\n  convection (coefficient_w_m2k, ambient_temperature_k) \u00b7 velocity_inlet (velocity_m_s) \u00b7 pressure_outlet /\n  pressure_inlet (gauge_pressure_pa) \u00b7 no_slip \u00b7 slip. Structural studies need at least one fixed support.\nfaces: persistent face names from read_design / the model (e.g. \"extrude_1.end\"), or selectors\n  \"@x+\" \"@x-\" \"@y+\" \"@y-\" \"@z+\" \"@z-\" = the planar end faces at the max/min of that axis. A wrong name\n  returns the list of faces with their area, normal and centre: pick from it; never guess names.\n  \"@rest\" (flow and cht_steady, one flow boundary, usually no_slip) = every outer face of the fluid body that no\n  other flow boundary or interface names; the saved study lists the faces it stood for.\nDesigns: static, modal, thermal, thermal_stress and flow studies solve ONE solid, so name the component\n  instance to analyse: \"design\": {\"instances\": [\"blade_2\"]} (instance names from read_design); faces and\n  selectors then resolve on that instance only. cht_steady may include several (default: all).\n  A design with joints is simulated as modelled (every joint at 0) unless \"design\": {\"pose\": \"open\"} names a\n  pose from design.pose, or {\"pose\": {\"hinge\": 100, \"lift.travel\": 5}} gives joint/coupling values (from the\n  code's pose; limits are checked). Faces keep their names in any pose; \"@x+\"-style selectors resolve as modelled.\nMaterials come from the design (model.material); override per body with \"materials\", keyed by the instance\n  name from design.instances (or the body id \"instance:body\"; a one-solid study accepts any key). Each override\n  needs \"name\"; SI values replace the design's, e.g. \"materials\": {\"bracket\": {\"name\": \"Aluminium 6061\",\n  \"density_kg_m3\": 2700, \"youngs_modulus_pa\": 6.9e10, \"poisson_ratio\": 0.33, \"conductivity_w_mk\": 167,\n  \"specific_heat_j_kgk\": 896, \"expansion_per_k\": 2.36e-5}}. A wrong key's error lists valid_bodies.\nFlow studies solve ONE body, which is the fluid volume itself (e.g. a tunnel's air domain with the obstacle cut\n  out): name it in design.instances and give the fluid as \"fluid\": {\"name\": \"Air\", \"density_kg_m3\": 1.204,\n  \"dynamic_viscosity_pa_s\": 1.81e-5} (never together with \"materials\"); every outer face of it gets an inlet,\n  outlet or wall ({\"type\": \"no_slip\", \"faces\": [\"@rest\"]} for all the others). cht_steady: one region per body (body = its id \"instance:body\"), \"regions\": [{\"id\": \"air\",\n  \"body\": \"air:<body>\", \"phase\": \"fluid\"}, {\"id\": \"chip\", \"body\": \"chip:<body>\", \"phase\": \"solid\"}]\n  (initial_temperature_k optional), \"interfaces\": [{\"id\": \"i1\",\n  \"region_a\": \"air\", \"faces_a\": [...], \"region_b\": \"chip\", \"faces_b\": [...]}], and \"materials\" per body with\n  density, conductivity and specific heat (plus dynamic_viscosity_pa_s for the fluid). Mesh size defaults from the part's size\n(\"mesh\": {\"size_m\": 0.002} to refine). Every other option has a fixed default and one run uses exactly the study's\noptions (nothing is retried with others): mesh.tetrahedral_algorithm \"delaunay\" | \"hxt\"; quadratic (structural,\nthermal, modal) meshes mesh.high_order_optimization \"elastic_optimization\" | \"optimization\" | \"elastic\" |\n\"fast_curving\" | \"none\"; flow and CHT also\nmesh.flow_cells \"polyhedral_dual\" | \"tetrahedral\" and mesh.dual_concave_edges \"single_cell\" | \"split\" |\n\"split_until_valid\" (re-entrant edges next to walls about one element thick: \"split_until_valid\"), and analysis.solver {momentum_scheme,\nenergy_scheme, *_relaxation, non_orthogonal_correctors, consistent, pressure_correctors, linear_relative_tolerance}.\nThe simulation-* skills say what each does and when to choose it. Pass study_id to change an existing study (a new revision; an unchanged\nstudy keeps its revision). A study whose inputs were already solved returns that result without solving again;\none that already failed returns that failure: change the study, or pass retry=true only when the person asks.\nReturns the saved study, the run, and results in engineering units (MPa, mm, \u00b0C, Hz) with balance checks.\nIf it is still running after wait_seconds, call again with the same study_id and the same study.",
+      "input_schema": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "study": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "study_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "wait_seconds": {
+            "default": 240,
+            "type": "integer"
+          },
+          "retry": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id",
+          "study"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    },
+    {
+      "tool_id": "stevecad-mcp:write_design",
+      "server_id": "stevecad-mcp",
+      "name": "write_design",
+      "title": "Write Design",
+      "description": "Save one small CadQuery document. Create with no ID; updating requires its current revision.\n\nkind \"design\": `code` is main.py (`design = Design()`, `design.add(component)`, `result = design.result()`)\nand `files` holds every other file: params.py (shared parameters) and components/<name>.py with\nexactly one `Component` each. Prefer create_component and edit_design(path=...) for changes.\n\nA part sets result to one Workplane/Shape solid. Saved parts and designs used by a design are\nlinks ({alias: {\"document_id\", \"revision\"}}; prefer link_design): `from links import plate`, then\n`design.add(plate(), at=(x, y, z))` or `design.add(plate(width=40))` with parameter overrides.\nkind \"circuit\": `code` is main.tsx (tscircuit TSX: `export default () => (<board \u2026>\u2026</board>)`) and `files`\nholds other .tsx/.ts modules it imports by relative path (\"power.tsx\"). Load the electronics skill first.\nkind \"shop\": `code` is main.py (`from steve.shop import *`, `shop = Shop()`, `shop.add(item)`) and `files` one\nmodule per item (machines/x7.py, tools/em6.py; prefer create_shop_item); links are other shops. Load steve-shop.\nkind \"cam\": a CAM program. `code` is main.py (`from links import part, shop`, `from steve.cam import body, faces`,\n`program = {...}`, api_reference(\"Program\")); links are the part it machines and the shop it uses. Load\nsteve-cam-programs.\nSaving queues a background preview build of the saved revision; generate_model waits for the\nmodel, reports errors and measurements, and creates STEP.\nbranch optionally saves an existing document on one of its branches (revision is then the\nbranch revision); omitted means main. new_branch (instead of branch) tries a change without touching main: it\nstarts a branch of that name from main at `revision` and saves this on it; then pass branch=<name>, and finish with\nmerge_branch (merge into main, or discard).",
+      "input_schema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "part",
+              "design",
+              "circuit",
+              "shop",
+              "cam"
+            ],
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "files": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "links": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "new_branch": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "code"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "annotations": {},
+      "meta": {
+        "fastmcp": {
+          "tags": []
+        }
+      },
+      "is_enabled": true,
+      "created_at": 1791733541
+    }
+  ]
+}

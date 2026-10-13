@@ -4,6 +4,8 @@ import importlib.util
 import json
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -41,3 +43,13 @@ def test_checked_in_revision_is_reproducible():
     json_bytes, markdown_bytes = module.render()
     assert module.JSON_DESTINATION.read_bytes() == json_bytes
     assert module.MARKDOWN_DESTINATION.read_bytes() == markdown_bytes
+
+
+def test_revision_rejects_changed_historical_semantic_identity(monkeypatch):
+    module = _module()
+    identities = module._historical_identities()
+    identities[next(iter(identities))]["semantic_manifest_sha256"] = "0" * 64
+    monkeypatch.setattr(module, "_historical_identities", lambda: identities)
+
+    with pytest.raises(ValueError, match="Historical scenario content changed"):
+        module.render()

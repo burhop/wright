@@ -847,6 +847,28 @@ class HermesOpenAICompatibilityBridge:
         preamble, serialized = prompt.split("\n", 1)
         transcript = json.loads(serialized)
         units = [preamble + "\n{"]
+
+        def structural_units(value):
+            # Hermes joins text parts with whitespace. JSON container boundaries
+            # can carry that whitespace without changing any value or discarding
+            # evidence. Scalar strings/numbers remain indivisible; never split
+            # source text or a numeric token inside its JSON representation.
+            if isinstance(value, dict):
+                yield "{"
+                for index, (key, child) in enumerate(sorted(value.items())):
+                    yield ("," if index else "") + _compact(key) + ":"
+                    yield from structural_units(child)
+                yield "}"
+            elif isinstance(value, list):
+                yield "["
+                for index, child in enumerate(value):
+                    if index:
+                        yield ","
+                    yield from structural_units(child)
+                yield "]"
+            else:
+                yield _compact(value)
+
         for index, (key, value) in enumerate(sorted(transcript.items())):
             units.append(("," if index else "") + _compact(key) + ":")
             if key in {"conversation", "tools"} and isinstance(value, list):
@@ -879,6 +901,10 @@ class HermesOpenAICompatibilityBridge:
                             else:
                                 units.append(_compact(field_value))
                         units.append("}")
+                    elif len(prefix + _compact(item)) > _HERMES_TEXT_PART_CHARACTERS:
+                        if prefix:
+                            units.append(prefix)
+                        units.extend(structural_units(item))
                     else:
                         units.append(prefix + _compact(item))
                 units.append("]")

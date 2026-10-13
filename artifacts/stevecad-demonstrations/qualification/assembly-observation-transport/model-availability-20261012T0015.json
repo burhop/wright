@@ -1,0 +1,105 @@
+{
+  "observed_at": "2026-10-12T00:14:47.419619+00:00",
+  "scope": "One tool-free availability probe of the existing frozen model route; no workflow step, CAD operation or retry of an external effect.",
+  "available": false,
+  "error": "The model returned an invalid unattended-step outcome. Inspect the step instructions; no output or user interaction was accepted.",
+  "invocations": [
+    {
+      "schema_version": "wright.workflow-invocation/1",
+      "operation": "workflow-response",
+      "request_digest": "e678bdc3cf808c43000791b0bc545564ced82617ecb032cc976e8937e498f4af",
+      "attempt": 1,
+      "messages": [
+        {
+          "role": "system",
+          "content": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return plain text answering the prompt. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers)."
+        },
+        {
+          "role": "user",
+          "content": "Return exactly availability_probe_ready as your response. This is a tool-free service-availability probe. Do not access files or execute tools."
+        }
+      ],
+      "tool_schemas": [],
+      "tool_schemas_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+      "profile_id": "wright.workflow-defaults",
+      "capture_scope": "primary_adapter_request",
+      "resolved_instructions": {
+        "role": "workflow-task",
+        "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+        "asset_ids": [
+          "policy.document-reasonable",
+          "task.response",
+          "format.text"
+        ],
+        "text": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return plain text answering the prompt. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers).",
+        "text_digest": "bd587fc06e7ad844e845383f731c9bf2d61a65a42160153515fc7c9e8d65f5f4",
+        "assumption_policy": "document_reasonable",
+        "origins": [
+          "wright.workflow-defaults",
+          "wright.workflow-defaults",
+          "wright.workflow-defaults"
+        ]
+      },
+      "frozen_model_lock": {
+        "adapter": "hermes-http",
+        "provider": "openai-codex",
+        "model_reference": "gpt-5.6-sol",
+        "configuration_digest": "41884f9046aa9dc8e3b599b55a4c2dd653c016d509b9d77690b80b428fc69857",
+        "model_lock": "accepted",
+        "session_id": "wright-workflow-fa5c40a9-79dd-4cfd-8b55-b8b3fa5f307d",
+        "session_created": true
+      },
+      "capture_phase": "submission"
+    },
+    {
+      "schema_version": "wright.workflow-invocation/1",
+      "operation": "workflow-response",
+      "request_digest": "e678bdc3cf808c43000791b0bc545564ced82617ecb032cc976e8937e498f4af",
+      "attempt": 1,
+      "messages": [
+        {
+          "role": "system",
+          "content": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return plain text answering the prompt. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers)."
+        },
+        {
+          "role": "user",
+          "content": "Return exactly availability_probe_ready as your response. This is a tool-free service-availability probe. Do not access files or execute tools."
+        }
+      ],
+      "tool_schemas": [],
+      "tool_schemas_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+      "profile_id": "wright.workflow-defaults",
+      "capture_scope": "primary_adapter_request",
+      "resolved_instructions": {
+        "role": "workflow-task",
+        "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+        "asset_ids": [
+          "policy.document-reasonable",
+          "task.response",
+          "format.text"
+        ],
+        "text": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return plain text answering the prompt. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers).",
+        "text_digest": "bd587fc06e7ad844e845383f731c9bf2d61a65a42160153515fc7c9e8d65f5f4",
+        "assumption_policy": "document_reasonable",
+        "origins": [
+          "wright.workflow-defaults",
+          "wright.workflow-defaults",
+          "wright.workflow-defaults"
+        ]
+      },
+      "frozen_model_lock": {
+        "adapter": "hermes-http",
+        "provider": "openai-codex",
+        "model_reference": "gpt-5.6-sol",
+        "configuration_digest": "41884f9046aa9dc8e3b599b55a4c2dd653c016d509b9d77690b80b428fc69857",
+        "model_lock": "accepted",
+        "session_id": "wright-workflow-fa5c40a9-79dd-4cfd-8b55-b8b3fa5f307d",
+        "session_created": true
+      },
+      "capture_phase": "response",
+      "upstream_reported_model": "hermes"
+    }
+  ]
+}

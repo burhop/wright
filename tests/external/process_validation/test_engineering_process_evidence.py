@@ -153,7 +153,13 @@ def test_heat_run_proves_real_bound_artifacts_and_independent_measurements():
     assert len(evidence["staged_inputs"]) == 5
     for item in evidence["staged_inputs"]:
         staged = EVIDENCE_ROOT / "heat/workspace" / item["workspace_path"]
-        retained = REPOSITORY / item["retained_path"]
+        retained = (
+            REPOSITORY
+            / "tests/fixtures/retained-process-validation"
+            / Path(item["retained_path"]).relative_to(
+                "artifacts/engineering-workflow-datasets/output"
+            )
+        )
         assert item["bytes"] == staged.stat().st_size
         assert item["sha256"] == _sha256(staged)
         assert item["sha256"] == _sha256(retained)

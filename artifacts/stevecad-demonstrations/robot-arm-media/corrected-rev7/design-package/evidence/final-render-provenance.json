@@ -1,0 +1,45 @@
+{
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "producer": "Blender MCP1.9.1; Blender4.3.2 native Cycles CPU",
+  "native_samples": 512,
+  "image_format": "PNG",
+  "resolution": [
+    1400,
+    1000
+  ],
+  "geometry_source": "Exact independently checked STEP-derived STL files,110 source meshes; imported at.001m/mm with measured bounds checked",
+  "scope": "Supplemental native studio renders of actual geometry; lighting/material normals are presentation choices. Not physical photographs, dimensions or manufacturing/user acceptance. The original v13 image derivatives and failed review remain preserved. Reusable workflow binding to this rendering path remains pending.",
+  "images": [
+    {
+      "view": "isometric",
+      "file": "render-isometric-final.png",
+      "bytes": 2010808,
+      "sha256": "619e5a470031359c1a51f50ded21021626cc5d164a4418598331ee1bc572f023",
+      "camera": "orthographic, framed from projected actual CAD bounds"
+    },
+    {
+      "view": "top",
+      "file": "render-top-final.png",
+      "bytes": 2018992,
+      "sha256": "6c93743bc067ada25ac8fa99d4228e64c8b9f287348ce83446a8795d2e8b1a90",
+      "camera": "orthographic, framed from projected actual CAD bounds"
+    },
+    {
+      "view": "front",
+      "file": "render-front-final.png",
+      "bytes": 1310849,
+      "sha256": "398aa86624626d660c44f9edab27f8e5cb53a2c68529553887e1fc2788bf265e",
+      "camera": "orthographic, framed from projected actual CAD bounds"
+    }
+  ],
+  "failed_candidates": [
+    "black/control viewport captures: missing selected-host NumPy",
+    "first native file render: overexposed",
+    "OpenImageDenoise request: host build lacks support",
+    "first top render: clipped / reversed screen axes",
+    "imagegen cleanup experiment: added fastener details; not selected"
+  ],
+  "retention": "Unchanged native PNG bytes, read-only owned-container file transfer"
+}

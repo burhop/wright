@@ -1,0 +1,21 @@
+{
+  "schema_version": "wright.process-input-snapshot/1",
+  "snapshot_id": "inputs-82b2a8700a0044539b9a6617bfde84c9",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+    "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "created_at": "2026-10-12T19:08:01.766858+00:00",
+  "bindings": [
+    {
+      "kind": "value",
+      "input_id": "design_prompt",
+      "value": "Create one solid rectangular block, 60 mm along X, 40 mm along Y and 12 mm along Z. Use millimetres and the lower-left bottom corner as origin: the block occupies X=0..60, Y=0..40, Z=0..12.\n\nAdd four plain diameter-6 mm through holes parallel to Z, centered at XY (10,10), (50,10), (10,30) and (50,30). Each hole must traverse the full thickness. Do not add fillets, chamfers, counterbores, text or extra components.\n\nThis first exercise verifies digital CAD geometry. Use 0.01 mm absolute tolerance for measured linear dimensions and hole positions, and 0.1 percent relative tolerance for the analytical volume comparison. Require one solid. Nominal volume is 60*40*12 - 4*pi*3^2*12 cubic millimetres. Confirm hole diameter, axis and through depth from actual geometry, not just source-code intent.\n\nUse a neutral matte gray appearance for presentation only; no mechanical material properties or physical manufacturing acceptance are requested. Capture isometric, top and front CAD views, then create one realistic studio product rendering from each view without changing geometry. The final design review must include all requirement checks, actual observations, CAD views, the three presentation images and any unresolved findings.\n",
+      "provenance": "supplied"
+    }
+  ],
+  "digest": "f96e9fcaa250270cdcf488e0c87f7bd9038afba4c50bbe300292d6fc17765c47"
+}

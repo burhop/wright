@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "document_id": "eb50444f-232a-4fb9-9afc-72d8695d5667",
+  "revision": 1,
+  "build_id": "d65a6b4a-06c4-4240-8f43-18228b08fa26",
+  "step_sha256": "825c3fcc14947389e11b0b4bbc9d159635af4bd54f477a001d96f95c3802f64e",
+  "measurement_receipt_sha256": "f0c3c067bcbfc5793b4345e5d516773cbecabd9ba6da0825dbbf8656de07224f",
+  "checks": {
+    "exact_envelope": true,
+    "one_valid_closed_solid": true,
+    "volume_within_original_0_1_percent": true,
+    "two_diameter_4_z_holes": true,
+    "both_wall_measurements_pass": true
+  },
+  "wall_measurements": [
+    {
+      "wall": "base",
+      "face_ids": [
+        3,
+        7
+      ],
+      "axis": "z",
+      "plane_coordinates_mm": [
+        0.0,
+        6.0
+      ],
+      "thickness_mm": 6.0,
+      "tolerance_mm": 0.01,
+      "status": "PASS",
+      "method": "Opposing planar-face normals and constant coordinate bounds; separation of measured parallel planes, with overlapping projected face bounds"
+    },
+    {
+      "wall": "upright",
+      "face_ids": [
+        1,
+        6
+      ],
+      "axis": "x",
+      "plane_coordinates_mm": [
+        0.0,
+        6.0
+      ],
+      "thickness_mm": 6.0,
+      "tolerance_mm": 0.01,
+      "status": "PASS",
+      "method": "Opposing planar-face normals and constant coordinate bounds; separation of measured parallel planes, with overlapping projected face bounds"
+    }
+  ],
+  "measured_volume_mm3": 23849.2036,
+  "analytical_volume_mm3": 23849.20355262769,
+  "scope": "Additive real AgentCAD MCP measurements through local offline provider. Original R06 UNVERIFIED and workflow outputs unchanged. This closes that measurement gap for the same exported geometry, not a rerun or physical acceptance."
+}

@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "text": "{\"matches\":{\"Model.box\":{\"signature\":\"box(id, length, width, height, at=(0, 0, 0), centered=True, op=None, body=None, name=None, suppressed=False)\",\"doc\":\"\"}}}",
+      "type": "text"
+    }
+  ],
+  "structuredContent": {
+    "matches": {
+      "Model.box": {
+        "signature": "box(id, length, width, height, at=(0, 0, 0), centered=True, op=None, body=None, name=None, suppressed=False)",
+        "doc": ""
+      }
+    }
+  },
+  "isError": false
+}

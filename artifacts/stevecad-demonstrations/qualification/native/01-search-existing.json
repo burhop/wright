@@ -1,0 +1,27 @@
+{
+  "observed_at": "2026-10-11T16:11:51.575392+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "label": "01-search-existing",
+    "name": "stevecad-mcp__list_designs",
+    "arguments": {
+      "search": "Wright qualification coupon",
+      "limit": 5
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"documents\":[]}"
+      }
+    ],
+    "structuredContent": {
+      "documents": []
+    },
+    "isError": false
+  }
+}

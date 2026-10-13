@@ -1,0 +1,3 @@
+{
+  "result": "Code executed successfully: {\"native_operator_result\": [\"FINISHED\"], \"native_render_running\": false, \"document_id\": \"eb50444f-232a-4fb9-9afc-72d8695d5667\", \"revision\": 1, \"build_id\": \"d65a6b4a-06c4-4240-8f43-18228b08fa26\", \"run_id\": \"90087fceacdc494d91eaff6f65d9173d\", \"output_file\": \"/outputs/90087fceacdc494d91eaff6f65d9173d/render_top.png\", \"CAD_meshes\": 1, \"view\": \"top\", \"scope\": \"Native CAD presentation, not dimensional or physical acceptance\"}\n"
+}

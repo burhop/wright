@@ -1,0 +1,219 @@
+{
+  "scope": "Conservative transformed actual native B-rep bounds against declared 25 mm electronics headroom. Disjoint enclosing boxes prove no solid penetration at these samples. Overlapping boxes would be UNVERIFIED, not proof of collision. No continuous-path or physical/cable/cooler certification.",
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "native_basis_sha256": "fcf58f0aff423f4eda1527a4955485587b19aa1d3dd06486852e68d24cfdbe41",
+  "reserve_extent_mm": [
+    -80.0,
+    90.0,
+    13.6,
+    80.0,
+    180.0,
+    38.6
+  ],
+  "excluded_intended_electronics_and_supports": [
+    "cm5_clearance",
+    "io_board",
+    "standoff_h1",
+    "standoff_h6",
+    "standoff_h7",
+    "standoff_h8",
+    "tray"
+  ],
+  "named_poses": 5,
+  "path_samples": 33,
+  "clear_by_conservative_bounds": true,
+  "results": [
+    {
+      "pose": "folded",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "gripper_closed",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "gripper_open",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "home",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "reach",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_00_t0",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_01_t0.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_02_t0.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_03_t0.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_04_t1",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_05_t1.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_06_t1.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_07_t1.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_08_t2",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_09_t2.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_10_t2.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_11_t2.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_12_t3",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_13_t3.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_14_t3.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_15_t3.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_16_t4",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    },
+    {
+      "pose": "path_17_t4.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 6.48451296126301
+    },
+    {
+      "pose": "path_18_t4.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_19_t4.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_20_t5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_21_t5.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_22_t5.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_23_t5.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_24_t6",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_25_t6.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_26_t6.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_27_t6.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_28_t7",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_29_t7.25",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_30_t7.5",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 2.549999999999997
+    },
+    {
+      "pose": "path_31_t7.75",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 6.48451296126301
+    },
+    {
+      "pose": "path_32_t8",
+      "aabb_potential_intersections": [],
+      "minimum_conservative_separation_mm": 11.0
+    }
+  ]
+}

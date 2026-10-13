@@ -54,10 +54,31 @@ branch failure from hiding outside the latest incremental diff.
   $env:WRIGHT_FOCUSED_PLAYWRIGHT_TARGETS = "tests/ui-integration/example.spec.ts:42;tests/ui-integration/other.spec.ts:88"
   scripts/check-dev-push.ps1
   ```
+
 - Scheduler-sensitive microbenchmarks marked `performance` are trend evidence,
   not PR correctness gates. They run in the scheduled/manual performance workflow;
   deterministic functional, security, compatibility, and customer-journey tests
   remain blocking.
+- A consolidated **CI-readiness correction** can retain an actual green full-gate
+  receipt on the current pushed tip. Set both variables below and commit exactly
+  one descendant correction in a clean worktree. The scope owner rejects product,
+  dependency, packaging, publication and workflow execution changes. Workflow
+  changes must consist solely of the enumerated long-path/locked-compiler setup
+  steps; the complete existing test commands must remain identical. The gate
+  verifies the receipt's successful exact base and unchanged log hash, runs the
+  policy/scope regressions, all affected compiler tests, lint/types and strict
+  docs. Full current-head PR CI remains required. This is retained qualification
+  plus affected checks, not a new execution of the full gate.
+
+  ```powershell
+  $env:WRIGHT_CI_CORRECTION_BASE_SHA = "<current-pushed-40-character-sha>"
+  $env:WRIGHT_CI_CORRECTION_FULL_GATE_RECEIPT = "<absolute-green-full-gate-receipt.json>"
+  scripts/check-dev-push.ps1
+  ```
+
+  Missing/failed receipts, changed logs, more than one commit, dirty worktrees,
+  unlisted files or broader workflow changes fail closed. Use the normal gate
+  when the correction exceeds that scope; never fabricate a receipt or waive CI.
 - Track pushes per feature, CI cycles, first-push green rate, runner time, local
   gate time, product-versus-infrastructure failures, and customer capabilities
   delivered. Use these measures to remove process cost, never to weaken a red
@@ -66,7 +87,8 @@ branch failure from hiding outside the latest incremental diff.
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
-validates the whole pull-request diff. Gate or workflow changes run all slices.
+validates the whole pull-request diff. Outside the bounded correction modes above,
+gate or workflow changes run all slices.
 When the broad `tests` target and a nested `tests/...` target are both selected,
 the fast gate excludes the nested target from the broad invocation and runs it
 separately. This preserves suite-local pytest imports while preventing duplicate
@@ -75,6 +97,21 @@ Container and engineering-image changes also select the Docker bundle, smoke
 contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
 developer host; both images must build and pass their exact-image smoke tests.
+
+Windows-capable jobs enable `git config --global core.longpaths true` **before**
+checkout. Local long-path configuration does not qualify hosted runner setup.
+Backend Python CI also installs the pinned Node toolchain and runs `npm ci`, then
+checks `BuildToolchain.describe()` before tests: workspace tests exercise the real
+fixed interface compiler. `validate_scoped_workflows` checks this preparation in
+both gates. Fixture rendezvous must surface an already-failed task and use a
+bounded wait; absent compiler dependencies must not cause an hours-long wait.
+
+Review actual stage durations before removing tests. A previously passing full
+gate can be retained for permitted corrections; rerun affected checks and full
+current-head CI. Duplicate execution can be consolidated only with exact unique
+coverage and equivalent environment evidence. Keep security, review authority,
+engineering identity, durable recovery and installed/browser compatibility checks.
+No test is obsolete merely because its feature shipped or its failure is costly.
 
 Changes to every bound Docker input also run `scripts.release.scan_image` in the
 fast gate and select OCI PR CI, including `.dockerignore`, root package files,
@@ -147,10 +184,45 @@ Windows. Wait for asynchronous digests to reach their final value before
 capturing them. A focused Windows pass does not replace the Linux CI check for
 these portability-sensitive contracts.
 
+Keep browser fixtures aligned with the current workspace journey: Workflows
+explicitly creates a uniquely named empty source; Workspace Files opens an
+existing source with its exact `workflowPath`. A passive link to a missing file
+does not authorize creation. Mock storage must retain separate documents and
+enforce each file's CAS identity, including when multiple tabs remain mounted.
+Do not restore implicit example creation to satisfy an older browser fixture.
+
+An empty Curated catalog is a valid environment result; custom onboarding tests
+can select All records to prove discovery loaded without inventing a
+recommendation. Common-view tests must open the accepted working tab before
+leaving a local draft, keep required-answer validation blocking, and use the
+current file-viewer close control. Advanced declaration JSON is an explicit
+disclosure and Request input belongs to the input palette. Viewport assertions
+may tolerate fractional CSS-pixel intersection rounding while still checking
+the full thumbnail's bounds and exact natural dimensions.
+
 Browser tests running against the managed frontend must send application API
 requests through same-origin `/api/...` paths. Do not hard-code the default
 backend port: both local gates intentionally support configurable API and UI
 ports, and Vite routes same-origin requests to the selected backend.
+
+Iframe attachment is not document readiness. Sandbox browser contracts use
+locator assertions for proxy readiness and inner content before evaluating the
+inner document; polling raw `frame.evaluate` during its initial navigation can
+fail when Firefox destroys the initial execution context. Retain the distinct
+origin, denied-network, permissions and opaque-origin assertions. Save generated
+screenshots with `testInfo.outputPath` so profiles have separate evidence and a
+rerun cannot replace a tracked historical review image.
+
+Polling-recovery browser contracts control the browser clock and wait for the
+specific failed refresh response before checking retained evidence. Initial or
+cancelled Strict Mode requests do not prove that a refresh occurred. Keep both
+last-valid evidence and no-prior-bundle assertions; do not widen their deadlines
+to accommodate an unobserved poll.
+
+Presentation tests return focus to Wright after inspecting a browser popup and
+wait for the exact presentation-close acknowledgement before checking removal.
+Close owned browser presentations through Wright before disposing test pages;
+retain the shared-instance and application-still-running assertions.
 
 Digest assertions over Git-managed text fixtures must likewise canonicalize
 checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte
@@ -158,6 +230,22 @@ exact; never apply text normalization to binary artifacts. This ensures the
 Windows merge gate and Linux CI verify one recorded content identity. Pin
 digest-protected repository text to `text eol=lf` in `.gitattributes`; test-side
 normalization is a defensive check, not a substitute for stable checkout bytes.
+The dependency `uv.lock` also uses `text eol=lf`: native packaging hashes its
+actual bytes into the runtime-extra lock. A CRLF checkout would otherwise dirty
+that generated lock and give Windows and Linux different dependency identities.
+
+Accepted campaign-renewal inputs, their generated revision records and the
+wall-dock R5 amendment also pin their committed LF bytes. The 30 qualified source
+packs preserve their captured mixed LF/CRLF bytes with `-text`; their complete
+264-file inventory retains its original hashes and lengths across platforms.
+Preserve their recorded hashes; do not regenerate engineering baselines to accept
+checkout conversion. Required retained-output regressions use the versioned,
+byte-exact `tests/fixtures/retained-process-validation` inputs instead of requiring
+a developer's Git-ignored campaign output directory. Their fixture manifest
+records the original paths and hashes; no live campaign or approval is replayed.
+The renewal generator retains the accepted historical manifest identities from
+their immutable snapshot and verifies current semantic content before generation.
+It does not recalculate past identities from a new platform's checkout encoding.
 
 Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
 
@@ -256,6 +344,14 @@ malformed audit reports and audit-service failures block the gate. Network
 access to the advisory service is required; do not treat an unavailable audit
 as a clean result. The PowerShell entry points delegate to these same gates.
 
+The full merge gate and frontend slice of the fast gate also run
+`scripts.release.audit_node_dependencies`: CI's `npm audit --json --audit-level=high`
+against the workspace lockfile and the same exception policy. Empty inventories,
+malformed reports, audit-service errors and unexcepted High/Critical advisories
+block the gate. An exact-image scan does not replace this workspace dependency
+audit. Update compatible dependencies and validate their consumers before retrying;
+do not turn a patched advisory into a new exception.
+
 Concurrency regressions must control the failing interleaving, rather than
 depend on repeated lucky schedules. The metrics replay test forces competing
 pre-insert reads if that unsafe pattern returns. Native API functional tests
@@ -295,3 +391,12 @@ be rolled back without rebuilding.
 - Keep `scripts/check-dev-push.*`, `scripts/check-dev-merge.*`, and GitHub
   Actions commands aligned. The merge script remains the authoritative full
   gate; the push script is the fast feedback subset.
+
+### Hash-bound sources outside dataset directories
+
+Baseline and coverage generators also hash references under `specs/`. Preserve
+those exact accepted bytes with explicit Git attributes; do not regenerate
+accepted hashes merely to match a platform checkout. When correcting a byte
+binding, compare the committed blob with its recorded hash and run baseline and
+coverage reproducibility checks from a clean Git archive. A Windows worktree
+pass alone can conceal Git line-ending conversion in Linux CI.

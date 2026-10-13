@@ -58,7 +58,7 @@ def evaluate(tmp_path, scenario_id, *, corrupt=None):
     profile = automated(load_profile(scenario_id))
     source = (
         REPOSITORY
-        / "artifacts/engineering-workflow-datasets/output"
+        / "tests/fixtures/retained-process-validation"
         / scenario_id
         / ATTEMPTS[scenario_id]
         / "artifacts"
@@ -86,7 +86,7 @@ def evaluate(tmp_path, scenario_id, *, corrupt=None):
         )
     source_step = (
         REPOSITORY
-        / "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step"
+        / "tests/fixtures/retained-process-validation/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step"
     )
     if not source_step.is_file():
         pytest.skip("Retained STEP fixture is unavailable")

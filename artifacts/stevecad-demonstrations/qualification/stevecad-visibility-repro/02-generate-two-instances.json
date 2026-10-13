@@ -1,0 +1,192 @@
+{
+  "observed_at": "2026-10-12T00:21:37.959068+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__generate_model",
+    "arguments": {
+      "document_id": "17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+      "revision": 1
+    },
+    "label": "02-generate-two-instances",
+    "output_dir": "artifacts/stevecad-demonstrations/qualification/stevecad-visibility-repro",
+    "print_summary": true
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"document\": {\"created_at\": \"2026-10-12T00:21:26.357738+00:00\", \"file_names\": [\"components/marker.py\"], \"id\": \"17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\", \"kind\": \"design\", \"links\": {}, \"name\": \"Wright visibility metadata minimal reproduction 2026-10-12\", \"preview_build_id\": \"627de50c-cdf4-40f5-ac77-7bccbd4e8b9d\", \"revision\": 1, \"updated_at\": \"2026-10-12T00:21:26.357738+00:00\", \"url\": \"https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\"}, \"model\": {\"artifacts\": {\"bodies_mesh\": \"https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/bodies_mesh\", \"components_step\": \"https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/components_step\", \"preview\": \"https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/preview\", \"step\": \"https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/step\", \"topology\": \"https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/topology\"}, \"id\": \"627de50c-cdf4-40f5-ac77-7bccbd4e8b9d\", \"logs\": \"STEVE stage: sheet-metal export\\nSTEVE stage: STEP export\\nSTEVE stage: preview mesh\\nSTEVE stage: topology\\nSTEVE stage: summary\\n\", \"metadata\": {\"bounds_mm\": [110.0, 20.0, 30.0], \"cadquery_version\": \"2.8.0\", \"center_of_mass_mm\": [55.0, 10.0, 15.0], \"component_documents\": {}, \"components\": 2, \"extent_mm\": [0.0, 0.0, 0.0, 110.0, 20.0, 30.0], \"faces\": 12, \"inspection_views\": {\"available\": [], \"deferred\": true, \"error\": null, \"height\": 640, \"projection\": \"orthographic\", \"source\": \"exported STEP\", \"width\": 800}, \"modeling\": {\"design\": {\"bom\": [{\"item\": \"marker\", \"kind\": \"component\", \"link\": false, \"name\": \"Ten by twenty by thirty marker\", \"quantity\": 2}], \"components\": {\"marker\": {\"bodies\": {\"body\": {\"extent_mm\": [0.0, 0.0, 0.0, 10.0, 20.0, 30.0], \"faces\": 6, \"index\": 0, \"name\": null, \"volume\": 6000.0}}, \"cache\": \"hit\", \"features\": [{\"body\": \"body\", \"id\": \"body\", \"kind\": \"box\", \"ms\": 8.6, \"name\": \"Body\", \"status\": \"ok\"}], \"file\": \"components/marker.py\", \"name\": \"Ten by twenty by thirty marker\", \"sketches\": {}, \"version\": 1}}, \"errors\": [], \"instances\": [{\"at\": null, \"bodies\": {\"body\": [0.0, 0.0, 0.0, 10.0, 20.0, 30.0]}, \"component\": \"marker\", \"name\": \"first_marker\"}, {\"at\": [100, 0, 0], \"bodies\": {\"body\": [100.0, 0.0, 0.0, 110.0, 20.0, 30.0]}, \"component\": \"marker\", \"name\": \"second_marker\"}], \"links\": {}, \"name\": \"design\", \"version\": 1}}, \"solids\": 2, \"surface_area_mm2\": 4400.0, \"topology\": {\"state\": \"complete\"}, \"units\": \"mm\", \"volume_mm3\": 12000.0}, \"mode\": \"full\", \"status\": \"succeeded\", \"url\": \"https://stevecad.studio/?model=627de50c-cdf4-40f5-ac77-7bccbd4e8b9d\"}, \"url\": \"https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8\"}"
+      },
+      {
+        "name": "Wright visibility metadata minimal reproduction 2026-10-12 (revision 1)",
+        "uri": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+        "description": "Open in STEVE",
+        "mimeType": "text/html",
+        "type": "resource_link"
+      }
+    ],
+    "structuredContent": {
+      "document": {
+        "created_at": "2026-10-12T00:21:26.357738+00:00",
+        "file_names": [
+          "components/marker.py"
+        ],
+        "id": "17b6718f-d0e5-4a13-bcf7-48f3d963b7e8",
+        "kind": "design",
+        "links": {},
+        "name": "Wright visibility metadata minimal reproduction 2026-10-12",
+        "preview_build_id": "627de50c-cdf4-40f5-ac77-7bccbd4e8b9d",
+        "revision": 1,
+        "updated_at": "2026-10-12T00:21:26.357738+00:00",
+        "url": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8"
+      },
+      "model": {
+        "artifacts": {
+          "bodies_mesh": "https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/bodies_mesh",
+          "components_step": "https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/components_step",
+          "preview": "https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/preview",
+          "step": "https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/step",
+          "topology": "https://stevecad.studio/v1/builds/627de50c-cdf4-40f5-ac77-7bccbd4e8b9d/artifacts/topology"
+        },
+        "id": "627de50c-cdf4-40f5-ac77-7bccbd4e8b9d",
+        "logs": "STEVE stage: sheet-metal export\nSTEVE stage: STEP export\nSTEVE stage: preview mesh\nSTEVE stage: topology\nSTEVE stage: summary\n",
+        "metadata": {
+          "bounds_mm": [
+            110.0,
+            20.0,
+            30.0
+          ],
+          "cadquery_version": "2.8.0",
+          "center_of_mass_mm": [
+            55.0,
+            10.0,
+            15.0
+          ],
+          "component_documents": {},
+          "components": 2,
+          "extent_mm": [
+            0.0,
+            0.0,
+            0.0,
+            110.0,
+            20.0,
+            30.0
+          ],
+          "faces": 12,
+          "inspection_views": {
+            "available": [],
+            "deferred": true,
+            "error": null,
+            "height": 640,
+            "projection": "orthographic",
+            "source": "exported STEP",
+            "width": 800
+          },
+          "modeling": {
+            "design": {
+              "bom": [
+                {
+                  "item": "marker",
+                  "kind": "component",
+                  "link": false,
+                  "name": "Ten by twenty by thirty marker",
+                  "quantity": 2
+                }
+              ],
+              "components": {
+                "marker": {
+                  "bodies": {
+                    "body": {
+                      "extent_mm": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        10.0,
+                        20.0,
+                        30.0
+                      ],
+                      "faces": 6,
+                      "index": 0,
+                      "name": null,
+                      "volume": 6000.0
+                    }
+                  },
+                  "cache": "hit",
+                  "features": [
+                    {
+                      "body": "body",
+                      "id": "body",
+                      "kind": "box",
+                      "ms": 8.6,
+                      "name": "Body",
+                      "status": "ok"
+                    }
+                  ],
+                  "file": "components/marker.py",
+                  "name": "Ten by twenty by thirty marker",
+                  "sketches": {},
+                  "version": 1
+                }
+              },
+              "errors": [],
+              "instances": [
+                {
+                  "at": null,
+                  "bodies": {
+                    "body": [
+                      0.0,
+                      0.0,
+                      0.0,
+                      10.0,
+                      20.0,
+                      30.0
+                    ]
+                  },
+                  "component": "marker",
+                  "name": "first_marker"
+                },
+                {
+                  "at": [
+                    100,
+                    0,
+                    0
+                  ],
+                  "bodies": {
+                    "body": [
+                      100.0,
+                      0.0,
+                      0.0,
+                      110.0,
+                      20.0,
+                      30.0
+                    ]
+                  },
+                  "component": "marker",
+                  "name": "second_marker"
+                }
+              ],
+              "links": {},
+              "name": "design",
+              "version": 1
+            }
+          },
+          "solids": 2,
+          "surface_area_mm2": 4400.0,
+          "topology": {
+            "state": "complete"
+          },
+          "units": "mm",
+          "volume_mm3": 12000.0
+        },
+        "mode": "full",
+        "status": "succeeded",
+        "url": "https://stevecad.studio/?model=627de50c-cdf4-40f5-ac77-7bccbd4e8b9d"
+      },
+      "url": "https://stevecad.studio/?document=17b6718f-d0e5-4a13-bcf7-48f3d963b7e8"
+    },
+    "isError": false
+  }
+}

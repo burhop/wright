@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-11T16:12:48.686129+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "label": "03-box-api",
+    "name": "stevecad-mcp__api_reference",
+    "arguments": {
+      "name": "Model.box"
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"matches\":{\"Model.box\":{\"signature\":\"box(id, length, width, height, at=(0, 0, 0), centered=True, op=None, body=None, name=None, suppressed=False)\",\"doc\":\"\"}}}"
+      }
+    ],
+    "structuredContent": {
+      "matches": {
+        "Model.box": {
+          "signature": "box(id, length, width, height, at=(0, 0, 0), centered=True, op=None, body=None, name=None, suppressed=False)",
+          "doc": ""
+        }
+      }
+    },
+    "isError": false
+  }
+}

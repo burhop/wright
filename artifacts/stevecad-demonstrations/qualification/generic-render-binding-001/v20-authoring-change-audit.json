@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "previous_source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+  "source_digest": "beffecd42906b69d8ff529e1c8bc3f04ca15f60f1435906f315583d30a9f9d35",
+  "changed_tasks": [
+    "render_isometric",
+    "render_top",
+    "render_front"
+  ],
+  "task_count": 16,
+  "all_other_sections_unchanged": true,
+  "purpose": "Fix the observed 180-degree top-camera roll and record screen right/up vectors in native render receipts. No geometry, model routing, inspection, instruction assets, inputs or capability changes.",
+  "basis": "bracket-native-001 visual-review-audit.json; supplemental actual native top render"
+}

@@ -83,6 +83,35 @@ fi
 
 run git diff --check
 
+# A readiness-only CI correction retains a verified full baseline. Product,
+# dependency, packaging and workflow execution changes are rejected by the
+# scope owner; complete current-head PR CI remains required.
+CI_CORRECTION_BASE="${WRIGHT_CI_CORRECTION_BASE_SHA:-}"
+CI_CORRECTION_RECEIPT="${WRIGHT_CI_CORRECTION_FULL_GATE_RECEIPT:-}"
+if [[ -n "$CI_CORRECTION_BASE" || -n "$CI_CORRECTION_RECEIPT" ]]; then
+  if [[ -z "$CI_CORRECTION_BASE" || -z "$CI_CORRECTION_RECEIPT" ]]; then
+    echo "CI correction requires both the exact pushed base and its green full-gate receipt."
+    exit 1
+  fi
+  run bash -n scripts/check-dev-push.sh
+  run uv sync --locked --all-packages --all-groups
+  run "$GATE_PYTHON" -m scripts.release.ci_correction \
+    --base "$CI_CORRECTION_BASE" --receipt "$CI_CORRECTION_RECEIPT"
+  run uv run ruff check scripts/release tests/release/test_ci_correction.py \
+    tests/release/test_workflow_policy.py packages/workspace_service/tests/test_process_ui_build.py
+  run uv run ruff format --check scripts/release tests/release/test_ci_correction.py \
+    tests/release/test_workflow_policy.py packages/workspace_service/tests/test_process_ui_build.py
+  run uv run --with mypy mypy scripts/release --ignore-missing-imports
+  run "$GATE_PYTHON" -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
+  run uv run python -m pytest -q tests/release/test_ci_correction.py \
+    tests/release/test_workflow_policy.py tests/release/test_native_workflow_policy.py \
+    tests/release/test_dev_push_process.py
+  run uv run python -m pytest -q packages/workspace_service/tests/test_process_ui_build.py --durations=10
+  run uv run --with mkdocs-material mkdocs build --strict
+  echo "Dev push CI-readiness correction gate passed; full baseline retained, current-head PR CI still required."
+  exit 0
+fi
+
 # A correction-only push may reuse the immediately preceding full-gate result.
 # This path is intentionally limited to one clean, test-only commit plus the
 # policy files that define and verify this exception. CI and the merge gate
@@ -468,6 +497,10 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
 fi
 
 if [[ "$CHECK_FRONTEND" == "1" ]]; then
+  if [[ "$CHECK_PYTHON" == "0" ]]; then
+    run uv sync --all-packages --all-groups
+  fi
+  run "$GATE_PYTHON" -m scripts.release.audit_node_dependencies
   run npm ci --dry-run
   run npx -w apps/web eslint .
   if [[ "${OSTYPE:-}" == msys* || "${OSTYPE:-}" == cygwin* ]]; then
@@ -480,10 +513,6 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
   # also selects the large Python matrix on high-core developer hosts.
   run npm run test --workspace=apps/web -- --changed "$BASE_REF" --maxWorkers=4
   run npm run build --workspace=apps/web
-
-  if [[ "$CHECK_PYTHON" == "0" ]]; then
-    run uv sync --all-packages --all-groups
-  fi
 
   GATE_API_PORT="${WRIGHT_GATE_API_PORT:-18001}"
   GATE_UI_PORT="${WRIGHT_GATE_UI_PORT:-15174}"

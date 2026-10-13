@@ -1,0 +1,202 @@
+{
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "scope": "Additive curation; original run findings preserved; no engineering acceptance",
+  "files": [
+    {
+      "path": "design-review.html",
+      "bytes": 13051,
+      "sha256": "a89040af419646ae71544264d17e3cd0bc51a6c56f387e3cbc34d1338aaf7df9"
+    },
+    {
+      "path": "evidence/accepted-source.json",
+      "bytes": 67598,
+      "sha256": "87cc02e409d972d36bcbb58c249b4287416b7da386df61fb620e70bd8dc82f1d"
+    },
+    {
+      "path": "evidence/cad-front.png",
+      "bytes": 14911,
+      "sha256": "c52b84ae0e4d15c1d64249354ec2f907c264a78d1601ebd3621c42f2d8f1f909"
+    },
+    {
+      "path": "evidence/cad-isometric.png",
+      "bytes": 25662,
+      "sha256": "4d065a32c6cb65d64ee47f7d1e2ff6254f179cea06f39b35df64ebfe73c58bb8"
+    },
+    {
+      "path": "evidence/cad-top.png",
+      "bytes": 14269,
+      "sha256": "1e30b01e3f9ff8f7f71f803c96b17d088cfdfcceea3c32b2293a66c45b28d369"
+    },
+    {
+      "path": "evidence/export-reconciliation-basis.json",
+      "bytes": 570,
+      "sha256": "b79a612687869ab1d1b5dbe06fe3246a57eb86c144c17ffb6dd64aa54629f852"
+    },
+    {
+      "path": "evidence/final-render-provenance.json",
+      "bytes": 2011,
+      "sha256": "17132e9ba5fe054795ef2e5011b02238d7b104dccbdedd8b9195038b126f8895"
+    },
+    {
+      "path": "evidence/independent-electronics-reserve-audit.json",
+      "bytes": 6394,
+      "sha256": "d398a5cc52642516714d97440cb30a90e1e875ef78e350333a3cf1bb6ad93eec"
+    },
+    {
+      "path": "evidence/manifest.json",
+      "bytes": 81261,
+      "sha256": "97556b745c072eb01f2fed47a91d4ccc91e1f2626eb8c8355cd0f332825bca98"
+    },
+    {
+      "path": "evidence/mesh-verification.json",
+      "bytes": 62286,
+      "sha256": "0b04d9385e997fbe29ecc25d1da34a302bd41394f31b1b1c9637df17ee780d10"
+    },
+    {
+      "path": "evidence/motion-provenance.json",
+      "bytes": 2948,
+      "sha256": "571d16eedaedac1eed3d9a5b5308c5153f3fcdd0c1eaa2ae69cbb6c2b21e5801"
+    },
+    {
+      "path": "evidence/original-design_document.md",
+      "bytes": 14616,
+      "sha256": "8374bdd6d34a8e58c56ec886a00365dad2c113160c1d718f0e8421638f910402"
+    },
+    {
+      "path": "evidence/original-design_review.html",
+      "bytes": 12432,
+      "sha256": "93480336b580f993e5fe1475eade3ff0bf5d5ff785fbd1a970e4b31289fd6849"
+    },
+    {
+      "path": "evidence/original-test_plan.md",
+      "bytes": 11741,
+      "sha256": "a5c7407cc966569b4903100066e1dc67d6652e812c0790b0b19123213184ceae"
+    },
+    {
+      "path": "evidence/original-validate_design.json",
+      "bytes": 13970,
+      "sha256": "589d5c07706a30432516138a1db61e61bc90b274ac85b5abf49e510719b2ab1b"
+    },
+    {
+      "path": "evidence/print-kit-package.json",
+      "bytes": 374,
+      "sha256": "4decf2ef910d106751908274cf494532623c1b5fd406633d03c9ae9d1add10ee"
+    },
+    {
+      "path": "evidence/render_front.png",
+      "bytes": 1728442,
+      "sha256": "dfdf7131384e60e3806f6784bd70925eb42d3b520e6611365a19d0f95474c1df"
+    },
+    {
+      "path": "evidence/render_isometric.png",
+      "bytes": 1802950,
+      "sha256": "fac68e1a49b7dca6192b29d23bb73c3a5995ea7445c4bb5440fbab7597ecd4aa"
+    },
+    {
+      "path": "evidence/render_top.png",
+      "bytes": 1700172,
+      "sha256": "b2ea0ed4f6f405cfca62f82b679cea574d90b6d53b1251424bd141c0f7ecaad2"
+    },
+    {
+      "path": "evidence/requirement-scope-addendum.json",
+      "bytes": 2400,
+      "sha256": "1b52fd80709405e55ff0282a2f2abcfd145339cd6cdd4c05171ca1035d97b0a9"
+    },
+    {
+      "path": "evidence/revision6-7-geometry-comparison.json",
+      "bytes": 376,
+      "sha256": "f52291390408d690b9c2cfa18be4ada9bddaaf345211618c5ce0c6efe755663b"
+    },
+    {
+      "path": "evidence/run-summary.json",
+      "bytes": 1270,
+      "sha256": "cbeae82af78319b6d88537d6709cc9509b385b85b8d51c2024e4603846d68732"
+    },
+    {
+      "path": "evidence/x-export.json",
+      "bytes": 713,
+      "sha256": "a9fed45cb00f06436cb79f1d542d8d0fab15c3e92d998005e4f6b37186cf488e"
+    },
+    {
+      "path": "images/cad-front.png",
+      "bytes": 14911,
+      "sha256": "c52b84ae0e4d15c1d64249354ec2f907c264a78d1601ebd3621c42f2d8f1f909"
+    },
+    {
+      "path": "images/cad-isometric.png",
+      "bytes": 25662,
+      "sha256": "4d065a32c6cb65d64ee47f7d1e2ff6254f179cea06f39b35df64ebfe73c58bb8"
+    },
+    {
+      "path": "images/cad-top.png",
+      "bytes": 14269,
+      "sha256": "1e30b01e3f9ff8f7f71f803c96b17d088cfdfcceea3c32b2293a66c45b28d369"
+    },
+    {
+      "path": "images/render-front.png",
+      "bytes": 1310849,
+      "sha256": "398aa86624626d660c44f9edab27f8e5cb53a2c68529553887e1fc2788bf265e"
+    },
+    {
+      "path": "images/render-isometric.png",
+      "bytes": 2010808,
+      "sha256": "619e5a470031359c1a51f50ded21021626cc5d164a4418598331ee1bc572f023"
+    },
+    {
+      "path": "images/render-top.png",
+      "bytes": 2018992,
+      "sha256": "6c93743bc067ada25ac8fa99d4228e64c8b9f287348ce83446a8795d2e8b1a90"
+    },
+    {
+      "path": "print-kit/assembly.md",
+      "bytes": 4618,
+      "sha256": "cdbc4e74ad22ade0b7b17f47d23e1a9a06f32f00764f8b195fe955783cd11803"
+    },
+    {
+      "path": "print-kit/complete-modeled-bom.csv",
+      "bytes": 2728,
+      "sha256": "58f6d38153e0f9001eb9f9e08fa15ea7c305bc1eb826c33450e70067469d10e4"
+    },
+    {
+      "path": "print-kit/manifest.json",
+      "bytes": 27239,
+      "sha256": "33e8b1053ba8a82e7720e9f2483397043cb9620ad4fd0d4353a9dbc52db14d77"
+    },
+    {
+      "path": "print-kit/printed-bom.csv",
+      "bytes": 1372,
+      "sha256": "f26c92622064488c0fe0ac11fe5d58922dd9246b5829d11489ae162dc99502c4"
+    },
+    {
+      "path": "print-kit/README.md",
+      "bytes": 2220,
+      "sha256": "3e843cfcec2afa6a388b93bc1bde7342827b91b72dfd183391f8695d8415ae97"
+    },
+    {
+      "path": "print-kit/verification.json",
+      "bytes": 10569,
+      "sha256": "5c7ef6b9cede993b5361a95fa8f89a1df95646f919c65c9b313f9458e18f0096"
+    },
+    {
+      "path": "README.md",
+      "bytes": 651,
+      "sha256": "9d2a94200a27e88b0cc942fe245ba9dd7ddd800474bb676e9a12498254ac3da5"
+    },
+    {
+      "path": "robot-arm-motion.mp4",
+      "bytes": 515047,
+      "sha256": "41214826e2b81784742e51cf96987b91167c4c518c546b82d9169ae3d48ba11e"
+    },
+    {
+      "path": "robot-arm-rev7-print-kit.zip",
+      "bytes": 525649,
+      "sha256": "da60f48ad449171ded43170ec8e9203990a76d0dfc9611a4f248ec3884165b5b"
+    },
+    {
+      "path": "robot-arm-rev7.step",
+      "bytes": 1449929,
+      "sha256": "0053b8de8558ce45a1c5a66da872b6a6ae3ddb461f37f22685fa9347261142e3"
+    }
+  ]
+}

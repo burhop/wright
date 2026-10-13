@@ -4957,7 +4957,7 @@ License Text:
 ---
 
 Name: @modelcontextprotocol/sdk
-Version: 1.30.0
+Version: 1.32.1
 License: MIT
 Private: false
 Description: Model Context Protocol implementation for TypeScript

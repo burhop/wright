@@ -1,0 +1,3206 @@
+{
+  "scope": "Diagnostic tessellation of exact standard STEP, not a native bodies_mesh export or print acceptance.",
+  "reader": "build123d",
+  "reader_version": "0.10.0",
+  "selected_environment": "agentcad 0.6.0",
+  "mcp_call": false,
+  "source_sha256": "0053b8de8558ce45a1c5a66da872b6a6ae3ddb461f37f22685fa9347261142e3",
+  "document_id": "167ef21f-6679-4e4d-8917-14dc067893d6",
+  "revision": 7,
+  "build_id": "780f3196-07b2-4590-b102-1cdd9a73b6cf",
+  "mapping": "Unique world B-rep bounds within 1e-5 mm and native rounded volume within .001 mm3; repeated labels are not identity.",
+  "tessellation_tolerance_mm": 0.02,
+  "angular_tolerance_radians": 0.1,
+  "items": [
+    {
+      "instance": "tray",
+      "component": "tray",
+      "file": "tray.stl",
+      "source_step_label": "tray",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -100.0,
+        0.0,
+        -4.0,
+        100.0,
+        180.0,
+        6.0
+      ],
+      "volume_mm3": 216168.60299453285,
+      "sha256": "d8f9cee8d6386fd857d94492fad80c84b71a27ff6e36e8f0dd22d146bde3bcac"
+    },
+    {
+      "instance": "arm_foot",
+      "component": "arm_foot",
+      "file": "arm_foot.stl",
+      "source_step_label": "arm_foot",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -34.0,
+        11.0,
+        6.0,
+        34.0,
+        79.0,
+        14.0
+      ],
+      "volume_mm3": 27650.89738657489,
+      "sha256": "10b7ecdf8fb1cb4ec20679c32daa02e9d355e97eaf095203068e16f2e8d6e1f0"
+    },
+    {
+      "instance": "io_board",
+      "component": "io_board",
+      "file": "io_board.stl",
+      "source_step_label": "io_board",
+      "color": "#158b49",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -80.0,
+        90.0,
+        12.0,
+        80.0,
+        180.0,
+        13.6
+      ],
+      "volume_mm3": 23003.356463288525,
+      "sha256": "0ce5ffda6e9e37398639784253fd889c42707fe6f784f774355f41e4ceb49266"
+    },
+    {
+      "instance": "cm5_clearance",
+      "component": "cm5",
+      "file": "cm5_clearance.stl",
+      "source_step_label": "cm5_clearance",
+      "color": "#158b49",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -27.5,
+        105.0,
+        13.6,
+        27.5,
+        145.0,
+        18.221
+      ],
+      "volume_mm3": 10166.2,
+      "sha256": "34b2e8087fbd773062b260733d18500c9b9e06969e9dfca2b9edeb1ac1418f1e"
+    },
+    {
+      "instance": "standoff_h1",
+      "component": "standoff",
+      "file": "standoff_h1.stl",
+      "source_step_label": "standoff_h1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -71.5,
+        95.5,
+        6.0,
+        -66.5,
+        100.5,
+        12.0
+      ],
+      "volume_mm3": 83.4564088426147,
+      "sha256": "7ede389245cfaa09a74ecf55c22e3bc76ffe642e95366b4619f718a594f245e7"
+    },
+    {
+      "instance": "standoff_h6",
+      "component": "standoff",
+      "file": "standoff_h6.stl",
+      "source_step_label": "standoff_h1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        50.0,
+        164.5,
+        6.0,
+        55.0,
+        169.5,
+        12.0
+      ],
+      "volume_mm3": 83.45640884261482,
+      "sha256": "cb67cd38af234b9d77deb8bb600e37f009f5d6b65594ff145408988b1def6c6d"
+    },
+    {
+      "instance": "standoff_h7",
+      "component": "standoff",
+      "file": "standoff_h7.stl",
+      "source_step_label": "standoff_h1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -71.5,
+        164.5,
+        6.0,
+        -66.5,
+        169.5,
+        12.0
+      ],
+      "volume_mm3": 83.45640884261486,
+      "sha256": "2daf84a3918d0e6fe605dcab004bbc2d3012d22b1635966e04ddc9acf6491591"
+    },
+    {
+      "instance": "standoff_h8",
+      "component": "standoff",
+      "file": "standoff_h8.stl",
+      "source_step_label": "standoff_h1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        50.0,
+        95.5,
+        6.0,
+        55.0,
+        100.5,
+        12.0
+      ],
+      "volume_mm3": 83.45640884261464,
+      "sha256": "5982a244316e48585469376db21e8fe61201c2d582149df7447259ccb372fa5c"
+    },
+    {
+      "instance": "turntable",
+      "component": "turntable",
+      "file": "turntable.stl",
+      "source_step_label": "turntable",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -22.0,
+        23.0,
+        14.4,
+        22.0,
+        67.0,
+        49.0
+      ],
+      "volume_mm3": 35117.85617316562,
+      "sha256": "78c6c01cf568a6197bac85c57a602fa83686f85eadd04536a1b3e31332f991d2"
+    },
+    {
+      "instance": "shoulder_yoke",
+      "component": "yoke",
+      "file": "shoulder_yoke.stl",
+      "source_step_label": "shoulder_yoke",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -30.0,
+        35.0,
+        49.0,
+        30.0,
+        73.0,
+        93.0
+      ],
+      "volume_mm3": 38208.29738858328,
+      "sha256": "fff2dffb782d869505b3a3c203de2fb095c1cce2f528b4afb63a0eb3d3930311"
+    },
+    {
+      "instance": "upper_arm",
+      "component": "upper_arm",
+      "file": "upper_arm.stl",
+      "source_step_label": "upper_arm",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -18.4,
+        -49.44976075466187,
+        62.46544367423975,
+        -0.3999999999999986,
+        57.53455632576025,
+        144.89219996086138
+      ],
+      "volume_mm3": 26444.094774152123,
+      "sha256": "baef3adfdae2edda68123aad52b8e121b698fdca1e7a771f049936df4408004b"
+    },
+    {
+      "instance": "elbow_yoke",
+      "component": "pitch_yoke",
+      "file": "elbow_yoke.stl",
+      "source_step_label": "elbow_yoke",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -30.0,
+        -60.019712216906456,
+        94.99955026575726,
+        30.0,
+        -3.654571334479339,
+        152.8381447958124
+      ],
+      "volume_mm3": 29615.030144281303,
+      "sha256": "64a6c111a417dc48091fc0bf7e3f71c700c29139532665bea95cb7881ac4530c"
+    },
+    {
+      "instance": "elbow_mount",
+      "component": "yoke_mount",
+      "file": "elbow_mount.stl",
+      "source_step_label": "elbow_mount",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -14.4,
+        -32.49484348601463,
+        101.55276662006436,
+        -4.4,
+        -19.141135115965366,
+        114.66089938217563
+      ],
+      "volume_mm3": 818.2871750801265,
+      "sha256": "bc39f5207b94e0dcd8f193da10deb1c6554193c5b22c012700cd6a37e8520bc8"
+    },
+    {
+      "instance": "forearm",
+      "component": "forearm",
+      "file": "forearm.stl",
+      "source_step_label": "forearm",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        0.3999999999999986,
+        -123.1734447406617,
+        119.82308730933975,
+        18.4,
+        -24.380648103129744,
+        196.51407923245125
+      ],
+      "volume_mm3": 25364.09477415212,
+      "sha256": "6a82124088f212d97f44f71847d2b069555cfd6cc1c5e004302a19fda511febf"
+    },
+    {
+      "instance": "wrist_yoke",
+      "component": "pitch_yoke",
+      "file": "wrist_yoke.stl",
+      "source_step_label": "elbow_yoke",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -30.0,
+        -133.74339620291644,
+        146.62142953734724,
+        30.0,
+        -77.37825532048933,
+        204.4600240674024
+      ],
+      "volume_mm3": 29615.030144281303,
+      "sha256": "0398b7fa7f6fe7820cb69e10a619eba3b6681e1cfcacda6c9adf8bea812a1f1c"
+    },
+    {
+      "instance": "wrist_mount",
+      "component": "yoke_mount",
+      "file": "wrist_mount.stl",
+      "source_step_label": "elbow_mount",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        4.4,
+        -106.21852747202463,
+        153.17464589166437,
+        14.4,
+        -92.86481910197536,
+        166.28277865377564
+      ],
+      "volume_mm3": 818.2871750801264,
+      "sha256": "03feab481eec3ba495ba564cde0c369884c25a93f8d318f1707d08febddac80d"
+    },
+    {
+      "instance": "palm",
+      "component": "palm",
+      "file": "palm.stl",
+      "source_step_label": "palm",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -42.4,
+        -187.80403101901754,
+        174.97952290669,
+        23.6,
+        -101.6388884149,
+        235.601402178281
+      ],
+      "volume_mm3": 35140.080390009934,
+      "sha256": "a1e9e1b54f0da739a16f04dc996c5bccd72146aa29aeaa82a27c27315b9d979f"
+    },
+    {
+      "instance": "guide_cover",
+      "component": "guide_cover",
+      "file": "guide_cover.stl",
+      "source_step_label": "guide_cover",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -42.4,
+        -178.38038240262938,
+        222.6925322534187,
+        23.6,
+        -139.7978111005706,
+        250.96092802208128
+      ],
+      "volume_mm3": 8746.574350160261,
+      "sha256": "fd16d2464f4a447fc3648cddfe62e10d69908162418c4c041fda937982534803"
+    },
+    {
+      "instance": "guide_post_nl",
+      "component": "guide_post",
+      "file": "guide_post_nl.stl",
+      "source_step_label": "guide_post_nl",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -41.9,
+        -182.31469229010216,
+        228.43169672390184,
+        -31.9,
+        -166.09310173829786,
+        245.63558970745817
+      ],
+      "volume_mm3": 1272.8911612357524,
+      "sha256": "fa139412c5da6e30b4778b4fa483cac185abae7a4737ea8761094e8d7ee9962e"
+    },
+    {
+      "instance": "guide_post_nr",
+      "component": "guide_post",
+      "file": "guide_post_nr.stl",
+      "source_step_label": "guide_post_nl",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        13.100000000000001,
+        -182.31469229010216,
+        228.43169672390184,
+        23.1,
+        -166.09310173829786,
+        245.63558970745817
+      ],
+      "volume_mm3": 1272.8911612357524,
+      "sha256": "33fbda91c263e4ffa32f3303a8224fe10ccf3f91cd33c1634c0b55e9cf407fe1"
+    },
+    {
+      "instance": "guide_post_fl",
+      "component": "guide_post",
+      "file": "guide_post_fl.stl",
+      "source_step_label": "guide_post_nl",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -41.9,
+        -161.83589118290215,
+        214.09228581512184,
+        -31.9,
+        -145.61430063109785,
+        231.29617879867817
+      ],
+      "volume_mm3": 1272.8911612357524,
+      "sha256": "546b18f79a31f266813453ceca15693db202532d9d4dd067775b5883dd29523a"
+    },
+    {
+      "instance": "guide_post_fr",
+      "component": "guide_post",
+      "file": "guide_post_fr.stl",
+      "source_step_label": "guide_post_nl",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        13.100000000000001,
+        -161.83589118290215,
+        214.09228581512184,
+        23.1,
+        -145.61430063109785,
+        231.29617879867817
+      ],
+      "volume_mm3": 1272.8911612357524,
+      "sha256": "8e12b9b69648e5f8dd448f21bd642a20379df8eb9c5eca35ec3a15424c3cd8de"
+    },
+    {
+      "instance": "finger_left",
+      "component": "finger",
+      "file": "finger_left.stl",
+      "source_step_label": "finger_left",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -17.4,
+        -205.57810033195432,
+        217.98368303887122,
+        -9.399999999999999,
+        -149.38291005093816,
+        267.2254312376092
+      ],
+      "volume_mm3": 5503.999999999999,
+      "sha256": "4289f9b237befc7be473a29761cc5d03b43e9ead90bed89c5f0cf6d6582eebac"
+    },
+    {
+      "instance": "finger_right",
+      "component": "finger",
+      "file": "finger_right.stl",
+      "source_step_label": "finger_left",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -9.4,
+        -205.57810033195432,
+        217.98368303887122,
+        -1.4000000000000004,
+        -149.38291005093816,
+        267.2254312376092
+      ],
+      "volume_mm3": 5504.0,
+      "sha256": "88a49b7e813b124314c8bc03e36d017432b5b7ccc090734f7ba0337b45fc25d1"
+    },
+    {
+      "instance": "servo_yaw",
+      "component": "mg996r",
+      "file": "servo_yaw.stl",
+      "source_step_label": "servo_yaw",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -91.0,
+        13.5,
+        9.5,
+        -48.099999999999994,
+        54.2,
+        29.200000000000003
+      ],
+      "volume_mm3": 34396.791000000005,
+      "sha256": "3b1185b6e8dc07f4536850ab32b0192a514d001630e09b035fc1d3772a5495bf"
+    },
+    {
+      "instance": "saddle_yaw",
+      "component": "saddle_yaw",
+      "file": "saddle_yaw.stl",
+      "source_step_label": "saddle_yaw",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -94.5,
+        0.0,
+        6.0,
+        -44.599999999999994,
+        67.7,
+        32.70000000000001
+      ],
+      "volume_mm3": 24522.122822398538,
+      "sha256": "d93f2182e7ffe1f64ebda6cfd2d1e44555ef3b8279b90889d803beca4a84c0b7"
+    },
+    {
+      "instance": "servo_shoulder",
+      "component": "mg996r",
+      "file": "servo_shoulder.stl",
+      "source_step_label": "servo_yaw",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -82.9,
+        35.15,
+        54.65,
+        -40.0,
+        54.85,
+        95.35
+      ],
+      "volume_mm3": 34396.791000000005,
+      "sha256": "c28608591484ffbc533a44be6b765f5ab45824c631ea7a48cbed3faf634f12ac"
+    },
+    {
+      "instance": "saddle_shoulder",
+      "component": "saddle_large",
+      "file": "saddle_shoulder.stl",
+      "source_step_label": "saddle_shoulder",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -86.4,
+        31.0,
+        41.15,
+        -30.0,
+        73.0,
+        108.85
+      ],
+      "volume_mm3": 28487.52126284129,
+      "sha256": "7470cabf72703b6eb1a0c18d05d9322fdbc2983ccd5e8dca1fa1133cb70029e6"
+    },
+    {
+      "instance": "servo_elbow",
+      "component": "mg996r",
+      "file": "servo_elbow.stl",
+      "source_step_label": "servo_yaw",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -82.9,
+        -56.656132544879895,
+        110.03817163576106,
+        -40.0,
+        -17.17427631290011,
+        154.67711563443896
+      ],
+      "volume_mm3": 34396.791000000005,
+      "sha256": "55861f07032bf13d5cb0fe5c8e6c20fc369a871effb1fe7790631d0c87aca8c4"
+    },
+    {
+      "instance": "saddle_elbow",
+      "component": "saddle_large",
+      "file": "saddle_elbow.stl",
+      "source_step_label": "saddle_shoulder",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -86.4,
+        -62.063131055907846,
+        99.05503290638269,
+        -30.0,
+        -11.767277801872151,
+        160.99018011283812
+      ],
+      "volume_mm3": 28487.52126284131,
+      "sha256": "2aa956a39b1d6ffb9d969c8874a6c433eed5a1ccf24223f544868cd438efd803"
+    },
+    {
+      "instance": "servo_wrist",
+      "component": "mg90s",
+      "file": "servo_wrist.stl",
+      "source_step_label": "servo_wrist",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -68.5,
+        -122.17448725946453,
+        171.14237334005404,
+        -40.0,
+        -99.10328957033546,
+        196.81667247332595
+      ],
+      "volume_mm3": 7927.560000000001,
+      "sha256": "5cb0b7c17cacfdcf41a3288b65a38c0ea23fb9533cb752a23ea6d681ccbb67ea"
+    },
+    {
+      "instance": "saddle_wrist",
+      "component": "saddle_small",
+      "file": "saddle_wrist.stl",
+      "source_step_label": "saddle_wrist",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -72.0,
+        -129.01500184799826,
+        150.67691217797267,
+        -30.0,
+        -89.42336048386058,
+        205.2806485880414
+      ],
+      "volume_mm3": 17964.429263941045,
+      "sha256": "d469caf1849891929e76496df5c9f4e2a0a78d5417d6572e43906605b8bf8eda"
+    },
+    {
+      "instance": "servo_gripper",
+      "component": "mg90s",
+      "file": "servo_gripper.stl",
+      "source_step_label": "servo_wrist",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -23.65,
+        -150.75558337506453,
+        243.64837960730404,
+        4.850000000000001,
+        -127.68438568593547,
+        269.32267874057595
+      ],
+      "volume_mm3": 7927.56,
+      "sha256": "af220899d05fa7edaab722e59b3da917e164ae566535a7ac89bd2859bb597131"
+    },
+    {
+      "instance": "saddle_gripper",
+      "component": "saddle_gripper",
+      "file": "saddle_gripper.stl",
+      "source_step_label": "saddle_gripper",
+      "color": "#ed6b20",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -27.15,
+        -165.84684610895923,
+        233.63891964427785,
+        23.1,
+        -122.80581344711487,
+        277.78665485529143
+      ],
+      "volume_mm3": 13980.589304315949,
+      "sha256": "842f03ebf889a417b26928e860dccc71471d401436d30c16994b6b6c9a5af807"
+    },
+    {
+      "instance": "horn_yaw",
+      "component": "horn_large",
+      "file": "horn_yaw.stl",
+      "source_step_label": "horn_yaw",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -10.0,
+        35.0,
+        11.899999999999999,
+        10.0,
+        55.0,
+        13.900000000000002
+      ],
+      "volume_mm3": 582.5141098286323,
+      "sha256": "26e584b0e93bc11a39325f316bd94096e0685c929b98588f0b4332e90e9b540d"
+    },
+    {
+      "instance": "horn_shoulder",
+      "component": "horn_large",
+      "file": "horn_shoulder.stl",
+      "source_step_label": "horn_yaw",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -39.6,
+        35.0,
+        65.0,
+        -37.6,
+        55.0,
+        85.0
+      ],
+      "volume_mm3": 582.5141098286323,
+      "sha256": "b46a88df3e9076561e8be1b8b2946a14215ec5a13d58940e5097f63607ed2c04"
+    },
+    {
+      "instance": "horn_elbow",
+      "component": "horn_large",
+      "file": "horn_elbow.stl",
+      "source_step_label": "horn_yaw",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -39.6,
+        -46.91520442889,
+        122.3576436351,
+        -37.6,
+        -26.91520442889,
+        142.3576436351
+      ],
+      "volume_mm3": 582.5141098286324,
+      "sha256": "285b62b94456041b7a51aded645ba931789de2be0e6af5a7ed1c246593567847"
+    },
+    {
+      "instance": "horn_wrist",
+      "component": "horn_small",
+      "file": "horn_wrist.stl",
+      "source_step_label": "horn_wrist",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -39.6,
+        -118.6388884149,
+        175.97952290669,
+        -37.6,
+        -102.6388884149,
+        191.97952290669
+      ],
+      "volume_mm3": 356.3194387701622,
+      "sha256": "5743dae7767c22378577c490a915b4382b070aa26981be4c2dded8a0b6dc725a"
+    },
+    {
+      "instance": "horn_gripper",
+      "component": "horn_small",
+      "file": "horn_gripper.stl",
+      "source_step_label": "horn_wrist",
+      "color": "#202830",
+      "material": "abs",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -30.15,
+        -147.2199845305,
+        248.48552917394,
+        -28.15,
+        -131.2199845305,
+        264.48552917394
+      ],
+      "volume_mm3": 356.3194387701621,
+      "sha256": "9651a53d5075f995aacb96ccd486e15def7b97b0b1b38251a292958266093198"
+    },
+    {
+      "instance": "yaw_shaft",
+      "component": "yaw_shaft",
+      "file": "yaw_shaft.stl",
+      "source_step_label": "yaw_shaft",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -5.0,
+        40.0,
+        1.5,
+        5.0,
+        50.0,
+        30.0
+      ],
+      "volume_mm3": 765.7632093125045,
+      "sha256": "1977cf18e667ff55571bed82db0a83d2dad783749d241296167664a80f964acc"
+    },
+    {
+      "instance": "yaw_washer_head",
+      "component": "pivot_washer",
+      "file": "yaw_washer_head.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -5.0,
+        40.0,
+        4.999999999999999,
+        5.0,
+        50.0,
+        6.000000000000001
+      ],
+      "volume_mm3": 57.30265000147908,
+      "sha256": "bd2ef2093eae82da224fe8278f1a70310c09bb441e655e953967a686e1623671"
+    },
+    {
+      "instance": "yaw_washer_rotating",
+      "component": "pivot_washer",
+      "file": "yaw_washer_rotating.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -5.0,
+        40.0,
+        20.4,
+        5.0,
+        50.0,
+        21.4
+      ],
+      "volume_mm3": 57.302650001479094,
+      "sha256": "ef9ff2ee1a7a2ee111a1f2cbbd8cc91566ed8ec541da359ad8e72dea09f887b2"
+    },
+    {
+      "instance": "yaw_nut",
+      "component": "pivot_nut",
+      "file": "yaw_nut.stl",
+      "source_step_label": "yaw_nut",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -4.62,
+        40.38,
+        21.4,
+        4.62,
+        49.62,
+        25.4
+      ],
+      "volume_mm3": 189.6818246013873,
+      "sha256": "cdb0db1dc27318999eb269fd8d7932ef8b0c8d68bb81592fd9a69112bf9407dc"
+    },
+    {
+      "instance": "shoulder_shaft",
+      "component": "pivot_shaft",
+      "file": "shoulder_shaft.stl",
+      "source_step_label": "shoulder_shaft",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -34.5,
+        40.0,
+        70.0,
+        39.0,
+        50.0,
+        80.0
+      ],
+      "volume_mm3": 1649.3361431346148,
+      "sha256": "e60bc77014a81ec6257a1e7fa7d3fcbb223a8471e70925dbbd5e50863836776d"
+    },
+    {
+      "instance": "shoulder_washer_head",
+      "component": "pivot_washer",
+      "file": "shoulder_washer_head.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -31.0,
+        40.0,
+        70.0,
+        -30.0,
+        50.0,
+        80.0
+      ],
+      "volume_mm3": 57.302650001479066,
+      "sha256": "d10febf141e6b69cdff494bf24eecab22c9f5bc72e523890d34d05c2c157befe"
+    },
+    {
+      "instance": "shoulder_washer_rotating",
+      "component": "pivot_washer",
+      "file": "shoulder_washer_rotating.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        30.0,
+        40.0,
+        70.0,
+        31.0,
+        50.0,
+        80.0
+      ],
+      "volume_mm3": 57.302650001479066,
+      "sha256": "20340a4b27f62880b66e84828783e2b8219dc4e23a8d80ab8fb9dbd0ea64cc37"
+    },
+    {
+      "instance": "shoulder_nut",
+      "component": "pivot_nut",
+      "file": "shoulder_nut.stl",
+      "source_step_label": "yaw_nut",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        31.0,
+        40.38,
+        70.38,
+        35.0,
+        49.62,
+        79.62
+      ],
+      "volume_mm3": 189.6818246013872,
+      "sha256": "363b66b3567349e49700ce4c30e59b1955eeb9f585153e75e7b1274d9e679ca6"
+    },
+    {
+      "instance": "elbow_shaft",
+      "component": "pivot_shaft",
+      "file": "elbow_shaft.stl",
+      "source_step_label": "shoulder_shaft",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -34.5,
+        -41.91520442889,
+        127.3576436351,
+        39.0,
+        -31.91520442889,
+        137.3576436351
+      ],
+      "volume_mm3": 1649.3361431346152,
+      "sha256": "9aaf58695f0429e5f05588223e278032f380068c837268b594bb6eb87636072a"
+    },
+    {
+      "instance": "elbow_washer_head",
+      "component": "pivot_washer",
+      "file": "elbow_washer_head.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -31.0,
+        -41.91520442889,
+        127.3576436351,
+        -30.0,
+        -31.91520442889,
+        137.3576436351
+      ],
+      "volume_mm3": 57.302650001479094,
+      "sha256": "3d08d8ba9aae28e645c5e2e41bba0e1a056591cd7f26f51497026fec36d17072"
+    },
+    {
+      "instance": "elbow_washer_rotating",
+      "component": "pivot_washer",
+      "file": "elbow_washer_rotating.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        30.0,
+        -41.91520442889,
+        127.3576436351,
+        31.0,
+        -31.91520442889,
+        137.3576436351
+      ],
+      "volume_mm3": 57.302650001479094,
+      "sha256": "9e7a082befe3de5e532a5cbec8b315dbc61cb7d583f72fbe68b5b528019bd665"
+    },
+    {
+      "instance": "elbow_nut",
+      "component": "pivot_nut",
+      "file": "elbow_nut.stl",
+      "source_step_label": "yaw_nut",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        31.0,
+        -41.53520442889,
+        127.7376436351,
+        35.0,
+        -32.29520442889,
+        136.9776436351
+      ],
+      "volume_mm3": 189.68182460138718,
+      "sha256": "64c992e324219b72e6a02f16ef65b63c74a57e5c8a37d17a67c64cdc3ff75719"
+    },
+    {
+      "instance": "wrist_shaft",
+      "component": "pivot_shaft",
+      "file": "wrist_shaft.stl",
+      "source_step_label": "shoulder_shaft",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -34.5,
+        -115.6388884149,
+        178.97952290669,
+        39.0,
+        -105.6388884149,
+        188.97952290669
+      ],
+      "volume_mm3": 1649.3361431346152,
+      "sha256": "dc64f65ff076139a7f65a1ded66e57b448f7b1e93baf9472eb7929ed6ea91c47"
+    },
+    {
+      "instance": "wrist_washer_head",
+      "component": "pivot_washer",
+      "file": "wrist_washer_head.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -31.0,
+        -115.6388884149,
+        178.97952290669,
+        -30.0,
+        -105.6388884149,
+        188.97952290669
+      ],
+      "volume_mm3": 57.30265000147909,
+      "sha256": "47d9928e467b79cb7bcfb3d29a7d0b47beb65ec126e2fb8fc2fab25e7dc16a66"
+    },
+    {
+      "instance": "wrist_washer_rotating",
+      "component": "pivot_washer",
+      "file": "wrist_washer_rotating.stl",
+      "source_step_label": "yaw_washer_head",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        30.0,
+        -115.6388884149,
+        178.97952290669,
+        31.0,
+        -105.6388884149,
+        188.97952290669
+      ],
+      "volume_mm3": 57.30265000147909,
+      "sha256": "94bdb08b63633132b4820d3fd7ecec9d49c41b816cf814a54ed68677dc9f9bff"
+    },
+    {
+      "instance": "wrist_nut",
+      "component": "pivot_nut",
+      "file": "wrist_nut.stl",
+      "source_step_label": "yaw_nut",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        31.0,
+        -115.2588884149,
+        179.35952290669,
+        35.0,
+        -106.01888841489999,
+        188.59952290669
+      ],
+      "volume_mm3": 189.68182460138723,
+      "sha256": "17ef041f9402876f49b185c5e1dbd34a0891c86d4c435cb1892709cbebce4347"
+    },
+    {
+      "instance": "retainer_yaw",
+      "component": "retainer_large",
+      "file": "retainer_yaw.stl",
+      "source_step_label": "retainer_yaw",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -97.5,
+        0.0,
+        14.349999999999998,
+        -94.5,
+        67.7,
+        24.350000000000005
+      ],
+      "volume_mm3": 1976.5247833867516,
+      "sha256": "8888f6165d4f7a8c10800ab283834675b4087cb75459a9434b2ff1ea06394ebe"
+    },
+    {
+      "instance": "retainer_yaw_bolt_1",
+      "component": "m3_bolt_16x",
+      "file": "retainer_yaw_bolt_1.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -100.0,
+        2.25,
+        16.6,
+        -81.5,
+        7.75,
+        22.1
+      ],
+      "volume_mm3": 172.49307163616314,
+      "sha256": "c01903fae23abba06ce0aecaacc2741782177760a38c19059163c2fa3d8d7738"
+    },
+    {
+      "instance": "retainer_yaw_nut_1",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_yaw_nut_1.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -84.5,
+        1.7999999999999998,
+        16.150000000000002,
+        -82.7,
+        8.2,
+        22.55
+      ],
+      "volume_mm3": 41.56327080699387,
+      "sha256": "60be3adde0f790fc61358c2721bba21488f4b8dde32a369b7b63276bdc535c96"
+    },
+    {
+      "instance": "retainer_yaw_bolt_2",
+      "component": "m3_bolt_16x",
+      "file": "retainer_yaw_bolt_2.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -100.0,
+        59.95,
+        16.6,
+        -81.5,
+        65.45,
+        22.1
+      ],
+      "volume_mm3": 172.4930716361631,
+      "sha256": "201b0a83f29ee5aee8f9a03832ac2f73a861bcda6b32238c3dd6c0104e4b5778"
+    },
+    {
+      "instance": "retainer_yaw_nut_2",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_yaw_nut_2.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -84.5,
+        59.5,
+        16.150000000000002,
+        -82.7,
+        65.9,
+        22.55
+      ],
+      "volume_mm3": 41.56327080699386,
+      "sha256": "cbf99a8491cd0a33d2525065bb7e9212cb03bdc9cddde996800f56284a8fac17"
+    },
+    {
+      "instance": "retainer_shoulder",
+      "component": "retainer_large",
+      "file": "retainer_shoulder.stl",
+      "source_step_label": "retainer_yaw",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -89.4,
+        40.0,
+        41.15,
+        -86.4,
+        50.0,
+        108.85
+      ],
+      "volume_mm3": 1976.5247833867516,
+      "sha256": "a205f6da37c6b01c410c99b87c7030377505eaececa200341a23c43a0fc2dfb5"
+    },
+    {
+      "instance": "retainer_shoulder_bolt_1",
+      "component": "m3_bolt_16x",
+      "file": "retainer_shoulder_bolt_1.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -91.9,
+        42.25,
+        101.1,
+        -73.4,
+        47.75,
+        106.6
+      ],
+      "volume_mm3": 172.4930716361631,
+      "sha256": "061022aa30eab629407e42a1e6eb5820551e73a382ca4492ef091a28d6ceb494"
+    },
+    {
+      "instance": "retainer_shoulder_nut_1",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_shoulder_nut_1.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -76.4,
+        41.8,
+        100.64999999999999,
+        -74.60000000000001,
+        48.2,
+        107.05
+      ],
+      "volume_mm3": 41.56327080699386,
+      "sha256": "fde15c57be501b62ecf5d8b50271452be90c3fdb87784a1a5e8b3d6cb1b83cd0"
+    },
+    {
+      "instance": "retainer_shoulder_bolt_2",
+      "component": "m3_bolt_16x",
+      "file": "retainer_shoulder_bolt_2.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -91.9,
+        42.25,
+        43.4,
+        -73.4,
+        47.75,
+        48.9
+      ],
+      "volume_mm3": 172.4930716361631,
+      "sha256": "efdd648c385510782b47d4e860a6e9721a07b5469ccc2f492d3e2e1f259f1918"
+    },
+    {
+      "instance": "retainer_shoulder_nut_2",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_shoulder_nut_2.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -76.4,
+        41.8,
+        42.949999999999996,
+        -74.60000000000001,
+        48.2,
+        49.35
+      ],
+      "volume_mm3": 41.56327080699385,
+      "sha256": "09d2f7b384b5c6cf8e51f91d0bcb16bb80cc72db5ba9f0f4bb9567f9f9479eda"
+    },
+    {
+      "instance": "retainer_elbow",
+      "component": "retainer_large",
+      "file": "retainer_elbow.stl",
+      "source_step_label": "retainer_yaw",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -89.4,
+        -60.42652702081681,
+        101.76146475416175,
+        -86.4,
+        -13.403881836963183,
+        162.95382251603826
+      ],
+      "volume_mm3": 1976.524783386752,
+      "sha256": "36ee7ed90be1d8772ee7b2fb7aff14b3bc22e0992ec0b6f0a730030f6fe6f5f1"
+    },
+    {
+      "instance": "retainer_elbow_bolt_1",
+      "component": "m3_bolt_16x",
+      "file": "retainer_elbow_bolt_1.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -91.9,
+        -23.11752424017,
+        153.24018011284,
+        -73.4,
+        -17.61752424017,
+        158.74018011284
+      ],
+      "volume_mm3": 172.49307163616322,
+      "sha256": "651ea6e095e7b8637abdc3f00a4f1b9253d61287d0ad1bceb26d1c0cbdf76a5b"
+    },
+    {
+      "instance": "retainer_elbow_nut_1",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_elbow_nut_1.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -76.4,
+        -23.56752424017,
+        152.79018011284,
+        -74.60000000000001,
+        -17.16752424017,
+        159.19018011283998
+      ],
+      "volume_mm3": 41.563270806993856,
+      "sha256": "9fce8e4c91b318f0c6ec7df1b54c2109a34d932a09d5f65b005bbb30e0563627"
+    },
+    {
+      "instance": "retainer_elbow_bolt_2",
+      "component": "m3_bolt_16x",
+      "file": "retainer_elbow_bolt_2.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -91.9,
+        -56.21288461762,
+        105.97510715736,
+        -73.4,
+        -50.71288461762,
+        111.47510715736
+      ],
+      "volume_mm3": 172.49307163616317,
+      "sha256": "9b264db0d0cfe6127fec47cd7b59246bcb98e2e4de7214d46548c4fa99a70002"
+    },
+    {
+      "instance": "retainer_elbow_nut_2",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_elbow_nut_2.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -76.4,
+        -56.66288461762,
+        105.52510715736,
+        -74.60000000000001,
+        -50.262884617619996,
+        111.92510715736
+      ],
+      "volume_mm3": 41.56327080699388,
+      "sha256": "d35c1e350da0aff310d71071ca22e53abe324cd3368ca585bf838003f7664d30"
+    },
+    {
+      "instance": "retainer_wrist",
+      "component": "retainer_small",
+      "file": "retainer_wrist.stl",
+      "source_step_label": "retainer_wrist",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -75.0,
+        -134.75076621150836,
+        156.69971976768136,
+        -72.0,
+        -86.52701061829163,
+        211.25932604569863
+      ],
+      "volume_mm3": 2767.7177685644065,
+      "sha256": "823c8dc8059c94072404e8f088c9bf9ba0535d31aa0deeb984bf3d32c86ee708"
+    },
+    {
+      "instance": "retainer_wrist_bolt_1",
+      "component": "m3_bolt_16x",
+      "file": "retainer_wrist_bolt_1.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -77.5,
+        -101.97471733152,
+        197.53064858805,
+        -59.0,
+        -96.47471733152,
+        203.03064858805
+      ],
+      "volume_mm3": 172.49307163616322,
+      "sha256": "34905ffe9d18818ce305609bfaf1e0973db1dbda6e571553cf57c4870d522d12"
+    },
+    {
+      "instance": "retainer_wrist_nut_1",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_wrist_nut_1.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -62.0,
+        -102.42471733152,
+        197.08064858805002,
+        -60.2,
+        -96.02471733152,
+        203.48064858805
+      ],
+      "volume_mm3": 41.56327080699384,
+      "sha256": "d66265269addb8e2b9e786fab3d76491202fae01c42dfd4707baa6cab66f1d47"
+    },
+    {
+      "instance": "retainer_wrist_bolt_2",
+      "component": "m3_bolt_16x",
+      "file": "retainer_wrist_bolt_2.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -77.5,
+        -124.8030594982,
+        164.92839722534,
+        -59.0,
+        -119.3030594982,
+        170.42839722534
+      ],
+      "volume_mm3": 172.49307163616322,
+      "sha256": "9a270f818e5cd6d35c2b0dd5d248d4e6c88593db6d8c5818cd238966622d0d6e"
+    },
+    {
+      "instance": "retainer_wrist_nut_2",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_wrist_nut_2.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -62.0,
+        -125.2530594982,
+        164.47839722534002,
+        -60.2,
+        -118.8530594982,
+        170.87839722534
+      ],
+      "volume_mm3": 41.56327080699384,
+      "sha256": "7e4ba191daa6c444468d2f1331af6e7773caf4177db8c34358fbb82f75ab7d99"
+    },
+    {
+      "instance": "retainer_gripper",
+      "component": "retainer_small",
+      "file": "retainer_gripper.stl",
+      "source_step_label": "retainer_wrist",
+      "color": "#323840",
+      "material": "fdm-petg",
+      "printed": true,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -30.15,
+        -163.33186232710838,
+        229.20572603493136,
+        -27.15,
+        -115.10810673389162,
+        283.76533231294866
+      ],
+      "volume_mm3": 2767.717768564407,
+      "sha256": "cc090ec6217221d138a3d05ac9fbe695c9bf1eb5e96b36995042e9411bfca65f"
+    },
+    {
+      "instance": "retainer_gripper_bolt_1",
+      "component": "m3_bolt_16x",
+      "file": "retainer_gripper_bolt_1.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -32.65,
+        -130.5558134472,
+        270.03665485529,
+        -14.149999999999999,
+        -125.0558134472,
+        275.53665485529
+      ],
+      "volume_mm3": 172.49307163616305,
+      "sha256": "0532e1db2a9e35f79dd05866f2bccad9d7ef6b9adbce08e6ce16d2303426cc60"
+    },
+    {
+      "instance": "retainer_gripper_nut_1",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_gripper_nut_1.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -17.15,
+        -131.00581344719998,
+        269.58665485529,
+        -15.349999999999998,
+        -124.60581344719999,
+        275.98665485529
+      ],
+      "volume_mm3": 41.563270806993906,
+      "sha256": "47f58bc806139c9d42d4ed3080942b71f69913b204b7000d0d4a8d7be92646a8"
+    },
+    {
+      "instance": "retainer_gripper_bolt_2",
+      "component": "m3_bolt_16x",
+      "file": "retainer_gripper_bolt_2.stl",
+      "source_step_label": "retainer_yaw_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -32.65,
+        -153.3841556139,
+        237.43440349259,
+        -14.149999999999999,
+        -147.8841556139,
+        242.93440349259
+      ],
+      "volume_mm3": 172.4930716361632,
+      "sha256": "3b1b7c2d25805e0f5d8eee678648e5a30ed3eea4bd10bcfd0e0ce326dbbe345e"
+    },
+    {
+      "instance": "retainer_gripper_nut_2",
+      "component": "m3_nut_thin_x",
+      "file": "retainer_gripper_nut_2.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -17.15,
+        -153.83415561389998,
+        236.98440349259002,
+        -15.349999999999998,
+        -147.4341556139,
+        243.38440349259
+      ],
+      "volume_mm3": 41.56327080699387,
+      "sha256": "e422350637a87d148a1e47e5a5f6034435922ad9d737ee1fac69e63ef23a000f"
+    },
+    {
+      "instance": "base_bolt_1",
+      "component": "m3_bolt_16",
+      "file": "base_bolt_1.stl",
+      "source_step_label": "base_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -26.75,
+        30.25,
+        -2.0,
+        -21.25,
+        35.75,
+        16.5
+      ],
+      "volume_mm3": 172.49307163616317,
+      "sha256": "25910d644b5465c67731eb01eaee7f88f9b965904d9fb55a62b778b483de372e"
+    },
+    {
+      "instance": "base_nut_1",
+      "component": "m3_nut",
+      "file": "base_nut_1.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -27.2,
+        29.8,
+        0.0,
+        -20.8,
+        36.2,
+        2.4
+      ],
+      "volume_mm3": 55.41769440932518,
+      "sha256": "e8dc333df49ff6f641629bd49f52f41833e88418a837575bdf45ceadcd228c13"
+    },
+    {
+      "instance": "base_bolt_2",
+      "component": "m3_bolt_16",
+      "file": "base_bolt_2.stl",
+      "source_step_label": "base_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        21.25,
+        30.25,
+        -2.0,
+        26.75,
+        35.75,
+        16.5
+      ],
+      "volume_mm3": 172.49307163616317,
+      "sha256": "7b2353d7b95ddeeb4b48a083599b31f45bfee5518679bad1c5be9322110d3d85"
+    },
+    {
+      "instance": "base_nut_2",
+      "component": "m3_nut",
+      "file": "base_nut_2.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        20.8,
+        29.8,
+        0.0,
+        27.2,
+        36.2,
+        2.4
+      ],
+      "volume_mm3": 55.41769440932518,
+      "sha256": "176e3a96544031bd8f829339fd7ab14933c6dfd9be8bc2d12b849e9186f00992"
+    },
+    {
+      "instance": "base_bolt_3",
+      "component": "m3_bolt_16",
+      "file": "base_bolt_3.stl",
+      "source_step_label": "base_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -26.75,
+        54.25,
+        -2.0,
+        -21.25,
+        59.75,
+        16.5
+      ],
+      "volume_mm3": 172.49307163616314,
+      "sha256": "ae624f04e763e1b4e35904ddbe3d81157dd2701338f0e82d20ae5ebfd201f24e"
+    },
+    {
+      "instance": "base_nut_3",
+      "component": "m3_nut",
+      "file": "base_nut_3.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -27.2,
+        53.8,
+        0.0,
+        -20.8,
+        60.2,
+        2.4
+      ],
+      "volume_mm3": 55.417694409325186,
+      "sha256": "f97fa7f7e461cd4491753af59967bcbf0d45762f4dd219d311ff1656046cc720"
+    },
+    {
+      "instance": "base_bolt_4",
+      "component": "m3_bolt_16",
+      "file": "base_bolt_4.stl",
+      "source_step_label": "base_bolt_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        21.25,
+        54.25,
+        -2.0,
+        26.75,
+        59.75,
+        16.5
+      ],
+      "volume_mm3": 172.49307163616314,
+      "sha256": "b1bf61b96402e7e3b947566336928363c48ed5d272b2b97d5ec2783d3c26f8b8"
+    },
+    {
+      "instance": "base_nut_4",
+      "component": "m3_nut",
+      "file": "base_nut_4.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        20.8,
+        53.8,
+        0.0,
+        27.2,
+        60.2,
+        2.4
+      ],
+      "volume_mm3": 55.417694409325186,
+      "sha256": "4f491ac40f5aecb3c1d1a6380d95460ed68d0a94f8ff9f5c1f6e1dec28fc307a"
+    },
+    {
+      "instance": "guide_bolt_nl",
+      "component": "m3_bolt_30",
+      "file": "guide_bolt_nl.stl",
+      "source_step_label": "guide_bolt_nl",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -39.65,
+        -186.9041538077335,
+        219.7902376753735,
+        -34.15,
+        -164.78152343809734,
+        248.85037896925834
+      ],
+      "volume_mm3": 271.4532402242399,
+      "sha256": "3c52e562d94a4b8f37eb40586e7b17b2d90bc4744391468906093380a9067e91"
+    },
+    {
+      "instance": "guide_nut_nl",
+      "component": "m3_nut",
+      "file": "guide_nut_nl.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -40.1,
+        -185.65826067572485,
+        222.58325713730676,
+        -33.699999999999996,
+        -179.0391041450327,
+        228.22011123624688
+      ],
+      "volume_mm3": 55.41769440932525,
+      "sha256": "f226a2ad08e3ddfda54fe4f8c82a8f3221c99245e34fe232415e5f0c7049e58a"
+    },
+    {
+      "instance": "guide_bolt_nr",
+      "component": "m3_bolt_30",
+      "file": "guide_bolt_nr.stl",
+      "source_step_label": "guide_bolt_nl",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        15.350000000000001,
+        -186.9041538077335,
+        219.7902376753735,
+        20.85,
+        -164.78152343809734,
+        248.85037896925834
+      ],
+      "volume_mm3": 271.45324022423995,
+      "sha256": "5b06b8099eb8ab3391aeb8d10f2cf112c1d9a2b11d681ad74c19175acc0c702d"
+    },
+    {
+      "instance": "guide_nut_nr",
+      "component": "m3_nut",
+      "file": "guide_nut_nr.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        14.900000000000002,
+        -185.65826067572485,
+        222.58325713730676,
+        21.3,
+        -179.0391041450327,
+        228.22011123624688
+      ],
+      "volume_mm3": 55.417694409325264,
+      "sha256": "032415e6004b5ecbadb3809e40f8e0103cf2135674c4794f9775fd3a175540af"
+    },
+    {
+      "instance": "guide_bolt_fl",
+      "component": "m3_bolt_30",
+      "file": "guide_bolt_fl.stl",
+      "source_step_label": "guide_bolt_nl",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -39.65,
+        -166.4253527004335,
+        205.45082676659348,
+        -34.15,
+        -144.30272233079734,
+        234.5109680604783
+      ],
+      "volume_mm3": 271.4532402242399,
+      "sha256": "f1c77a61f32a60b95741a09db91e1eeffa4587dcd8ef117b3f3b29ff854fc468"
+    },
+    {
+      "instance": "guide_nut_fl",
+      "component": "m3_nut",
+      "file": "guide_nut_fl.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -40.1,
+        -165.17945956852486,
+        208.24384622852676,
+        -33.699999999999996,
+        -158.5603030378327,
+        213.88070032746688
+      ],
+      "volume_mm3": 55.41769440932525,
+      "sha256": "2ed7b41ac7424954e3012c3cf19621ceb8eaa35011a6424a4399124f5a93eb15"
+    },
+    {
+      "instance": "guide_bolt_fr",
+      "component": "m3_bolt_30",
+      "file": "guide_bolt_fr.stl",
+      "source_step_label": "guide_bolt_nl",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        15.350000000000001,
+        -166.4253527004335,
+        205.45082676659348,
+        20.85,
+        -144.30272233079734,
+        234.5109680604783
+      ],
+      "volume_mm3": 271.45324022423995,
+      "sha256": "bc35f052aa3505ddf41fddb47b3d336573ac01d55e5a8b343eb21943c20e13ec"
+    },
+    {
+      "instance": "guide_nut_fr",
+      "component": "m3_nut",
+      "file": "guide_nut_fr.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        14.900000000000002,
+        -165.17945956852486,
+        208.24384622852676,
+        21.3,
+        -158.5603030378327,
+        213.88070032746688
+      ],
+      "volume_mm3": 55.417694409325264,
+      "sha256": "ceaea6f9fb3941266e3224ebc6de92060d9c8b26ef4d69ccd842fdb840e54dcd"
+    },
+    {
+      "instance": "cradle_bolt_a",
+      "component": "m3_bolt_25",
+      "file": "cradle_bolt_a.stl",
+      "source_step_label": "cradle_bolt_a",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        15.350000000000001,
+        -169.23179711023352,
+        230.7327149432135,
+        20.85,
+        -149.9770489223524,
+        255.69709601565324
+      ],
+      "volume_mm3": 236.11032287135538,
+      "sha256": "a7848a34e6bdc98b087c373aa0461054cda55c9f6bf81de63d4c310924355d3e"
+    },
+    {
+      "instance": "cradle_nut_a",
+      "component": "m3_nut",
+      "file": "cradle_nut_a.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        14.900000000000002,
+        -167.46968518562485,
+        234.26297124500675,
+        21.3,
+        -160.8505286549327,
+        239.89982534394687
+      ],
+      "volume_mm3": 55.417694409325264,
+      "sha256": "6efb6c1f2240af28ef3df4814fdab8b093cf219a2696d47712941ce871d647f8"
+    },
+    {
+      "instance": "cradle_bolt_b",
+      "component": "m3_bolt_25",
+      "file": "cradle_bolt_b.stl",
+      "source_step_label": "cradle_bolt_a",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        15.350000000000001,
+        -163.4977328002335,
+        226.71767988875348,
+        20.85,
+        -144.2429846123524,
+        251.68206096119323
+      ],
+      "volume_mm3": 236.11032287135532,
+      "sha256": "0ce21c75588f0dc004d780490367fbf4c52c6c89ae1c95c7f88c12cfdb1239f1"
+    },
+    {
+      "instance": "cradle_nut_b",
+      "component": "m3_nut",
+      "file": "cradle_nut_b.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        14.900000000000002,
+        -161.73562087552486,
+        230.24793619054677,
+        21.3,
+        -155.1164643448327,
+        235.8847902894869
+      ],
+      "volume_mm3": 55.417694409325264,
+      "sha256": "08ca9a5b134ba3c3eab66aac353316458145435af759e5e004558ab91dcdca8b"
+    },
+    {
+      "instance": "elbow_mount_bolt",
+      "component": "m3_bolt_40",
+      "file": "elbow_mount_bolt.stl",
+      "source_step_label": "elbow_mount_bolt",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -12.15,
+        -37.08430500356353,
+        92.91130757154548,
+        -6.65,
+        -9.225910270417227,
+        130.16296930832047
+      ],
+      "volume_mm3": 342.13907493000886,
+      "sha256": "89b046411c3d2672c3422eff5f50dd21c8a1670e0eb2bd064004cea2d96414e2"
+    },
+    {
+      "instance": "elbow_mount_nut",
+      "component": "m3_nut",
+      "file": "elbow_mount_nut.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -12.600000000000001,
+        -36.98556474434485,
+        94.06602294489976,
+        -6.2,
+        -30.366408213652722,
+        99.70287704383988
+      ],
+      "volume_mm3": 55.41769440932521,
+      "sha256": "6423826d64d5e3b6c5af8ddb0efed608936917a8049852466ea2018bb4a907c7"
+    },
+    {
+      "instance": "wrist_mount_bolt",
+      "component": "m3_bolt_40",
+      "file": "wrist_mount_bolt.stl",
+      "source_step_label": "elbow_mount_bolt",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        6.65,
+        -110.80798898953351,
+        144.5331868431335,
+        12.15,
+        -82.94959425638721,
+        181.7848485799085
+      ],
+      "volume_mm3": 342.139074930009,
+      "sha256": "7b894136c587ef4aebdb5e75b1b3938a851fbf323c6c946dc262f41391f515f2"
+    },
+    {
+      "instance": "wrist_mount_nut",
+      "component": "m3_nut",
+      "file": "wrist_mount_nut.stl",
+      "source_step_label": "base_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        6.2,
+        -110.70924873032486,
+        145.68790221648675,
+        12.600000000000001,
+        -104.09009219963272,
+        151.32475631542687
+      ],
+      "volume_mm3": 55.41769440932519,
+      "sha256": "c50238db7fbf88c94e485c36206004fcccc591cb331a32b2f9883a2d9b169839"
+    },
+    {
+      "instance": "shoulder_cradle_bolt",
+      "component": "m3_bolt_20x",
+      "file": "shoulder_cradle_bolt.stl",
+      "source_step_label": "shoulder_cradle_bolt",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -42.0,
+        65.25,
+        62.25,
+        -19.5,
+        70.75,
+        67.75
+      ],
+      "volume_mm3": 200.76740551847075,
+      "sha256": "f87424df4ff98e5ccd00ca066018d001299ba1ee3369fa4dfceb837951cf735c"
+    },
+    {
+      "instance": "shoulder_cradle_nut",
+      "component": "m3_nut_thin_x",
+      "file": "shoulder_cradle_nut.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -22.0,
+        64.8,
+        61.8,
+        -20.2,
+        71.2,
+        68.2
+      ],
+      "volume_mm3": 41.56327080699387,
+      "sha256": "63ac51d7147dd5d593c128cee6ccdac4634b360e92a3beb8f7bd0aea56dcf861"
+    },
+    {
+      "instance": "elbow_cradle_bolt",
+      "component": "m3_bolt_20x",
+      "file": "elbow_cradle_bolt.stl",
+      "source_step_label": "shoulder_cradle_bolt",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -42.0,
+        -26.56047177376,
+        108.22386515614,
+        -19.5,
+        -21.06047177376,
+        113.72386515614
+      ],
+      "volume_mm3": 200.7674055184708,
+      "sha256": "6aec239225fedfc0d0e2bd4a51c1eeebd1060281814bbf44b970ff0c6d7beb90"
+    },
+    {
+      "instance": "elbow_cradle_nut",
+      "component": "m3_nut_thin_x",
+      "file": "elbow_cradle_nut.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -22.0,
+        -27.01047177376,
+        107.77386515613999,
+        -20.2,
+        -20.61047177376,
+        114.17386515614
+      ],
+      "volume_mm3": 41.56327080699391,
+      "sha256": "73aaa2fc9a2d5a2896115fe98305c9aef918058f931b584aa3e3b517e621b6e5"
+    },
+    {
+      "instance": "wrist_cradle_bolt",
+      "component": "m3_bolt_20x",
+      "file": "wrist_cradle_bolt.stl",
+      "source_step_label": "shoulder_cradle_bolt",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -42.0,
+        -100.28415575977,
+        159.84574442773,
+        -19.5,
+        -94.78415575977,
+        165.34574442773
+      ],
+      "volume_mm3": 200.76740551847087,
+      "sha256": "501a702251d08154c0314063f24a9ddc2eda4358f8f8b2234ddfaf1a96c15b2a"
+    },
+    {
+      "instance": "wrist_cradle_nut",
+      "component": "m3_nut_thin_x",
+      "file": "wrist_cradle_nut.stl",
+      "source_step_label": "retainer_yaw_nut_1",
+      "color": null,
+      "material": "stainless-304",
+      "printed": false,
+      "solids": 1,
+      "valid": true,
+      "native_extent_mm": [
+        -22.0,
+        -100.7341557597721,
+        159.39574442773477,
+        -20.2,
+        -94.33415575977209,
+        165.79574442773475
+      ],
+      "extent_mm": [
+        -22.0,
+        -100.73415575977,
+        159.39574442773002,
+        -20.2,
+        -94.33415575977,
+        165.79574442773
+      ],
+      "volume_mm3": 41.56327080699387,
+      "sha256": "99a293afaa5eaf1e0b86d253f9d955d8537086aa1bc268f535c5004f6000cd58"
+    }
+  ]
+}

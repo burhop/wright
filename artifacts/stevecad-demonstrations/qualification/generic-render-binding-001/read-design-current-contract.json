@@ -1,0 +1,82 @@
+{
+  "name": "stevecad-mcp__read_design",
+  "description": "Read one document's source, revision, links, and latest geometry measurements.\n\nsample (instead of document_id): a built-in sample's source, by list_designs(source=\"samples\")'s sample_id.\npath optionally reads just one file (\"main.py\", \"params.py\", \"components/arm.py\"; a circuit's \"main.tsx\"): the\nresult is then only the document's identity and revision (`file_names` lists its files) and that file's `content`,\nwithout the other files, model or outline.\n\nA design (kind \"design\") is a small codebase: `code` is main.py and `files` holds params.py and\ncomponents/*.py; `features` then outlines every file, its components and any diagnostics.\nA circuit (kind \"circuit\") is tscircuit TSX: `code` is main.tsx, `files` its other modules, and `circuit` the\nlast build's board, counts, readiness verdict and diagnostics, grouped by kind (inspect_model lists the built\ncomponents and nets).\nA shop (kind \"shop\") is machines, controllers and tools as code: `features` outlines its files and the items each\ndefines, with its links; `shop` lists the last build's items (key, kind, name, file, line) and counts.\nbranch optionally names one of this document's branches; omitted means main.\n`model.current` says whether the model was built from exactly this revision's source. When it's false the model is\nan earlier revision's last good geometry (`model.stale`): its status, measurements and results don't validate this\nrevision, and `latest_build` reports this revision's own latest attempt and what to do next.",
+  "inputSchema": {
+    "properties": {
+      "document_id": {
+        "anyOf": [
+          {
+            "format": "uuid",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "branch": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "sample": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "type": "object",
+    "additionalProperties": false
+  },
+  "outputSchema": {
+    "type": "object",
+    "additionalProperties": true
+  },
+  "annotations": {
+    "title": "Read Design"
+  },
+  "_meta": {
+    "fastmcp": {
+      "tags": []
+    },
+    "wright/serverId": "stevecad-mcp",
+    "wright/toolName": "read_design",
+    "wright/approvalGates": [
+      "cloud_data_approval",
+      "network_access_approval"
+    ],
+    "wright/provenance": {
+      "server_id": "stevecad-mcp",
+      "source_url": "https://stevecad.studio/docs/agents/",
+      "installed_version": null,
+      "server_revision": "config-3ad21c66752fd78f2cc514ce9317626a4baa814875730e24cf75c04141f7df92",
+      "validation_status": "not_tested",
+      "validation_evidence_id": "gateway-validation:stevecad-mcp:1791824952:not_tested"
+    },
+    "wright/safetyReviewed": true
+  }
+}

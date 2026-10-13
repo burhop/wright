@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "run_id": "d1efc0838317485b8ede9497bb799c23",
+  "source_digest": "a0960572adc26e59bb6725498c2b8537a4dd33d5e86e023c70ac6685a9f518b0",
+  "elapsed_seconds": 5.109408,
+  "raw_transient_value_received": true,
+  "run_evidence_redacted": true,
+  "public_ticket_identity_preserved": true,
+  "files_scanned_including_runtime_database_and_logs": 276,
+  "real_transfer_credentials_used": false,
+  "runtime": "isolated server009",
+  "source_files": {
+    "packages/core/src/core/redaction.py": "712a84a95622137b0be50802224f427828aaf7f923ebfe6eeac3dbd1be0cae8a",
+    "packages/workspace_service/src/workspace_service/workflow_run_record.py": "3ad7c0d36ab82411ee90aa49c980ec1a2262f2fa8efcf4377bc90ae60975ad15"
+  },
+  "limits": "Proves this exact declared no-checkpoint path. Ordinary saved artifact contents are explicit workflow responsibility; credential-bearing continuation checkpoints fail closed."
+}

@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "source_record": "specs/082-output-content-validation/campaign-example-renewal-revision.json",
+  "source_record_git_blob_sha256": "f9c336fb85d8364090fd92823fcf9d79ef8a0f4feea110b3529fab3c751047b7",
+  "purpose": "immutable identities recorded by the accepted historical revision; no new campaign credit",
+  "cases": {
+    "heat-spreader-sizing-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/01-eink-sign-controller-strap/scenario.json",
+      "scenario_manifest_sha256": "3d5b739b3b74c1d6ccf03e560302b54544e40f3786c3ca293b5f025d25a74ee8",
+      "semantic_manifest_sha256": "2f917e31d3585fa6ccf53d04fcf0f75f331629093b426371e4c6f279fcf291c9",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "heat-spreader-sizing-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/02-camera-cold-wall-link/scenario.json",
+      "scenario_manifest_sha256": "e2224633b40de53468bfd7997f58b3cc98106529601305c1c91e5c9467f6655b",
+      "semantic_manifest_sha256": "283ec0205b249855316d9ec337982a847bc60cd589a084743e4e58f759b0ae13",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "heat-spreader-sizing-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/heat-spreader-sizing/03-calibration-lamp-copper-link/scenario.json",
+      "scenario_manifest_sha256": "53ab559d3276265e6ee1060a58f6af4e3b44db8ce61dad2231ee96a26d232ffe",
+      "semantic_manifest_sha256": "ae987d3e9886e278e16ca27e9c911623589fb7decc4272a807fe991267630b12",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "lightweight-equipment-bracket-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/01-conveyor-vision-mount/scenario.json",
+      "scenario_manifest_sha256": "735133bfe5de35febbf84fd4e794418ec21fa4c5d852b88386a0f2ea107c7c15",
+      "semantic_manifest_sha256": "130b874a617b9d944eb1cee9ccd90dccc5f602c00c3b5dd7b9d28a9e3b8d56ef",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "lightweight-equipment-bracket-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/02-pump-instrument-outrigger/scenario.json",
+      "scenario_manifest_sha256": "33d45156645efbea01ae4fd09f22417b61bd14b9e80390859ef6e7b3c4659e47",
+      "semantic_manifest_sha256": "a1c9a8dcf39869c618da75e1b7861705e078d7862c7ef4f42e315e999e2b25c5",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "lightweight-equipment-bracket-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/lightweight-equipment-bracket/03-dock-sensor-yoke/scenario.json",
+      "scenario_manifest_sha256": "0a48320dc27f865584d539385995d221bcad32ca0e2e37460511d2f2aa94d1a7",
+      "semantic_manifest_sha256": "0ae7f94e4b59fbfa458f269ead7cd04b7366381229aaf0a9ba0b82cdb64dedac",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "parametric-drill-jig-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/01-furniture-rail-insert-jig/scenario.json",
+      "scenario_manifest_sha256": "0d6faaeb6b4b33eb715c9a47183b3b4a034b31fc06ff2aa275f62d074c0ca1c0",
+      "semantic_manifest_sha256": "2ad8c7cd30553f34439ce7a1c287f22a92483f5fec753d4dccf069bed1bb1589",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "parametric-drill-jig-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/02-extrusion-panel-mount-jig/scenario.json",
+      "scenario_manifest_sha256": "22248a341687933b5badfbd202f2830db2c6c1bc29e85eef9f33876cd64ac2e8",
+      "semantic_manifest_sha256": "dc14071dd9daa0347c441e1932ba9582ed66a04c8106b609924008e8f1726c11",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "parametric-drill-jig-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/parametric-drill-jig/03-indexable-circular-fixture-jig/scenario.json",
+      "scenario_manifest_sha256": "86eb944b9c6fbacb7f4ae1403db080e229baac0c098be7f09ab554080a18522b",
+      "semantic_manifest_sha256": "8c07800a8d206e2ed99e0f6250701a45be1ed596fdfc0f7f38bb8f7ca6505d5b",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "printed-replacement-part-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/01-observatory-focus-wheel/scenario.json",
+      "scenario_manifest_sha256": "8a08fb90109349f50e0a3bb61f601c0c5edad83314a9c98ec0a96c789253c2a2",
+      "semantic_manifest_sha256": "565c8dd164a74f6b87bd98f34fb56b04cb5311e131708722d0646cfaf3086f15",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "printed-replacement-part-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/scenario.json",
+      "scenario_manifest_sha256": "4d0ec7d6c8cff674507cb5a5f418bacee3c5eef2f27002370fe3d9e60f44e6a5",
+      "semantic_manifest_sha256": "3bff0e0f20ce22de74930779e459e6b02e19dd44919563568b59e30f98d1acaf",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "printed-replacement-part-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/printed-replacement-part/03-synthesizer-tilt-foot/scenario.json",
+      "scenario_manifest_sha256": "5fd29ff1e6d43e71d3f0b177cf31cf420518e546f9a29b6276659984da3895f4",
+      "semantic_manifest_sha256": "40104ce0106b3fc71f26aba1220524c155191a71a6477f18eb27ae919262583f",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "raspberry-pi-enclosure-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer/scenario.json",
+      "scenario_manifest_sha256": "981156df9bfb6a44817b798323d6606093c43b80a0a6ec053849b343ec1caf79",
+      "semantic_manifest_sha256": "f23bdec9c269933f73d92829ef74e4e2a7993d4175d87186ee5a7b1e5d7db327",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "raspberry-pi-enclosure-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/02-greenhouse-sensor-gateway/scenario.json",
+      "scenario_manifest_sha256": "48fcff88d6d853bcb2ae200882db674ce01aaf3979e59b89529a25ebf5d221f2",
+      "semantic_manifest_sha256": "e07582e6835cc707e9bcb061e6bd14b09b7f5f948a9787792b6b331508e1eb8f",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "raspberry-pi-enclosure-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/03-edge-vision-instrument/scenario.json",
+      "scenario_manifest_sha256": "008664293bd0bdfc226a4aa24b24070f6882f0e4a049dd81c7f9d152b9492e18",
+      "semantic_manifest_sha256": "228b71a28bdcd4e9a42a26a79500c872cb7adfa8fc6a50a2f8ec3937a2971570",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "robot-tracking-diagnosis-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/01-aisle-floor-seam/scenario.json",
+      "scenario_manifest_sha256": "e9984e1231caf54dd26de9258b7cbb011f0a7ddd4152eefc4fec7079bfff0e94",
+      "semantic_manifest_sha256": "9a84cf43fcfb8425e287dce79f71c72494b884fd154b1a63506a56ead75304e2",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "robot-tracking-diagnosis-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/02-corner-time-alignment/scenario.json",
+      "scenario_manifest_sha256": "2c7662d7ea99f020a9d8181dbb22d9bebee2a5fc161f3a381b80d2a83948e901",
+      "semantic_manifest_sha256": "e258e68038bfac502e6c4abb24e18b6bb46e9e3807e3ad12b2bf9c5ad6a20565",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "robot-tracking-diagnosis-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis/03-figure-eight-occlusion/scenario.json",
+      "scenario_manifest_sha256": "6dd179b77b8454391b7d180ed8bf7ecba5f97a4d032b7885ae11308d96d7462e",
+      "semantic_manifest_sha256": "b425af7760f7185b99017be2cb7d2b6596e844608e85fdc4df4be7e62dc02c4a",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sensor-fan-harness-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/01-desktop-incubator/scenario.json",
+      "scenario_manifest_sha256": "578a06017a82b6c13579dfcf7cadab153d78e9a85e088593e6411793200a5678",
+      "semantic_manifest_sha256": "e4ddd0ae6b661c1b05136c625be6f230c6b712cf06569b602ff993e987abb4ca",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sensor-fan-harness-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/02-growth-rack-long-run/scenario.json",
+      "scenario_manifest_sha256": "2b2da84918df722205fc6b1661ae77ea0c10713d215b5123e453742d3ea13dd4",
+      "semantic_manifest_sha256": "6c74c5665a31e3933abbe9c85e09b33009e068737b00b4de7cf69c9b0593747a",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sensor-fan-harness-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-fan-harness/03-dual-zone-air-sampler/scenario.json",
+      "scenario_manifest_sha256": "8ef631f198186768211900c39ddbef823f34c34f38ba2d8c339df2f301db7495",
+      "semantic_manifest_sha256": "13959b3197398c429ab09cdc15df8a34f10ff14bceb65d648233c286bcf70159",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sensor-interface-pcb-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/01-thermistor-interface/scenario.json",
+      "scenario_manifest_sha256": "7e6ca1ae045e61813357037a28652a633cf19a99a572e42e05ab8de71b3dc61b",
+      "semantic_manifest_sha256": "c798596b62fd07d612ab5800a38c5df1c77ace6d98eb0a3123f35729bcc08691",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sensor-interface-pcb-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/02-dual-pressure-filter/scenario.json",
+      "scenario_manifest_sha256": "114acb14a26acfcc1c22b2a83d7694daa38314e9c728482acb6306d54d423cee",
+      "semantic_manifest_sha256": "3cc2ccf7dee16b4ada169adc7386b8f2a92ba62549ac337b3efc2c38661b1c52",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sensor-interface-pcb-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sensor-interface-pcb/03-fan-tach-service-board/scenario.json",
+      "scenario_manifest_sha256": "71cf89052a11dcf367c15de87102345cec8c8e939ec26e6bb1707012149b6509",
+      "semantic_manifest_sha256": "fd2f5a99386cbc8224139ad0797593c646210ecbcfda12eeeae090f937ab9f52",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sheet-metal-supplier-handoff-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/01-barcode-reader-wall-dock/scenario.json",
+      "scenario_manifest_sha256": "09883fe369edf3b6f838856acfa8ad226e2f354ed46b1bf4d8bc3fa4e7a0eecc",
+      "semantic_manifest_sha256": "44b3b4657a19993e0693ed1c5bc5d7e982899d02e6fa93a9fea02bf4662f5b54",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sheet-metal-supplier-handoff-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/02-industrial-cable-trough/scenario.json",
+      "scenario_manifest_sha256": "f5551c17e8f5f8423f6f771687d3118f47bff1331a485c1ceb31d1021ddd1ac2",
+      "semantic_manifest_sha256": "c0875d457f1928fa3c2ec0b578992c8b6ac7b18eb878de62551caf824071ab82",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "sheet-metal-supplier-handoff-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/03-precision-instrument-chassis/scenario.json",
+      "scenario_manifest_sha256": "de40b08d4ef47c2301db33dc6efe470135365d6117beb3c913f03b4e8cade2f8",
+      "semantic_manifest_sha256": "4aed3857fe8763516643047047fb3f8e593dad0e2dd482f7463d14ef40622f70",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "water-heater-sizing-01": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/01-single-cup-countertop/scenario.json",
+      "scenario_manifest_sha256": "b6b2403ad8efd59d7bd03382af2866fb45c461c08d552022890ada23319f2df6",
+      "semantic_manifest_sha256": "05b310606b7d3c0c053d275411c5b9b1843296ed8365a09c885b07d9854d571e",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "water-heater-sizing-02": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/02-mobile-field-brewer/scenario.json",
+      "scenario_manifest_sha256": "0c54b65730d4185122ce3c25a4ee730fe773290716df4ea21bf61e35a003228a",
+      "semantic_manifest_sha256": "7c70c523ca64fe6ed6b5f35678bdf9109b8064bc037bfcf24b33734be1aca756",
+      "preservation": "unchanged_history; prospective attempts only"
+    },
+    "water-heater-sizing-03": {
+      "scenario_manifest": "tests/datasets/engineering-workflows/scenarios/water-heater-sizing/03-pilot-batch-dispensing/scenario.json",
+      "scenario_manifest_sha256": "9e3ccfa728ba776b04f687b66aa9309fd82b3d634e75154c0bcc31c2ff9fa47e",
+      "semantic_manifest_sha256": "e34b643dccd9cde0beca72cb584460a4224de3d74f556a459128961cd4523537",
+      "preservation": "unchanged_history; prospective attempts only"
+    }
+  }
+}

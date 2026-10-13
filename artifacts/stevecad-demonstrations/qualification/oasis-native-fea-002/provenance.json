@@ -1,0 +1,22 @@
+{
+  "scope": "Selected-provider native reaction-output readiness; not equipment-mount compliance",
+  "oasis_source_commit": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "oasis_input_image_id": "sha256:e15942085d86f637c65da60c50804fa31500a43d2a45b3bd69bb19c82311760f",
+  "native_prerequisites_reference": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+  "native_prerequisites_image_id": "sha256:f3b2d16a6cf42b60c3f3bfb72541a9e1b5dfe47b6ad32f4006cfdc828cd6aeb0",
+  "selected_output_image_id": "sha256:470218f738d2d956964afbbbccf068cc9a3c86a4860b683b8ddcc37a0be2aa1e",
+  "container_id": "ae1c2e9b956847c189dafff1cbf71dacabaa6c47d51082af22a8c29841bc48a3",
+  "network": "none",
+  "wright_server_id": "e1c8ddeb-d1d6-4d60-aa0e-6140e6c14d5a",
+  "transport": "Normal Wright authenticated streamable HTTP gateway to selected provider stdio",
+  "execution": "OASiS Python execution backend invokes native ccx on the retained standard deck; CalculiX is the numerical engine",
+  "versions_observed": {"python": "3.12.12", "scikit_fem": "12.0.2", "numpy": "1.26.4", "meshio": "5.3.5", "gmsh": "4.12.1", "calculix": "2.21"},
+  "job_id": "47f8646b",
+  "field_sha256": "49317cafd327ab464eb31c9bc0d5d6da0fe2335832d63d1e4261530c212accdd",
+  "deck_sha256": "421b2d97f94ad5629cadec9af55ee84f77f1640a83cd8ecca72072a91fb56d81",
+  "dat_sha256": "d1bc3676a20fd59812ae60073cfb89cbd878e2c94d463a03dd5827ffcd6d7e9d",
+  "provider_status": "completed",
+  "trustworthy_result": false,
+  "critic_approved": false,
+  "notes": ["Wright base image unchanged; source/protocol of OASiS unchanged by selected prerequisite composition.", "ccx -v prints version but returns 201; successful fixture solve returns 0. The version probe is not a successful solver qualification.", "One-element synthetic readiness fixture only; equipment-mount CAD, actual supports/load patch, mesh refinement and compliance remain pending."]
+}

@@ -5,10 +5,10 @@ import hashlib
 import json
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from tool_registry.canonical_catalog import load_catalog_document
 
 
 TEST_PRIVATE_KEY = Ed25519PrivateKey.from_private_bytes(bytes(range(32)))
@@ -64,23 +64,9 @@ def tampered_catalog(envelope: dict) -> dict:
 
 def candidate_70_catalog() -> dict:
     """Return a stable 70-entry historical update fixture as the bundle grows."""
-    payload = deepcopy(load_catalog_document())
-    additions = {
-        "autocad-mcp-u-c4n",
-        "rosbag-mcp-pypi",
-        "kicad-mcp-blwfish",
-        "kernelcad-mcp",
-        "github-official-mcp",
-        "atlassian-rovo-mcp",
-        "grafana-official-mcp",
-        "partuno-mcp",
-        "agentcad",
-        "foam-agent-csml-rpi",
-        "bambu-p1s-mcp-marctheshark3",
-    }
-    payload["servers"] = [
-        entry for entry in payload["servers"] if entry["id"] not in additions
-    ]
+    path = Path(__file__).with_name("fixtures") / "catalog-update-historical-70.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert len(payload["servers"]) == 70
     return payload
 
 

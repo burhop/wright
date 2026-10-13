@@ -1,5 +1,46 @@
 # MCP Server Testing Problem Log
 
+## 2026-10-11 — SteveCAD follow-up and native structural output contract
+
+SteveCAD native CAD creation, inspection and exact STEP transfer now passed in
+the isolated normal workspace. Fresh neutral Linux attempt 005 passed discovery,
+direct read and gateway inspection; source overlay and fixture scope are retained.
+Attempts 001–004 remain incomplete/failed. Refreshing OAuth state resolved the
+connection issue with the original base SDK; SDK incompatibility was not established.
+A child venv attempt also lacked inherited base dependencies and is not a pass.
+
+Casys 0.8.6 native stdio and actual coupon mesh preflight passed. Inspection of its
+upstream static deck showed U/S outputs without RF, so it cannot alone prove the
+original bracket reaction requirement. A separately selected unchanged OASiS
+environment with existing native Gmsh/CalculiX prerequisites executed a standard
+reaction fixture. Its first attempt wrote DAT/FRD outside supported result discovery;
+the provider correctly retained `completed_unverified`. Fresh attempt 002 exports
+actual DAT rows to VTU in the provider job directory. Automated finite-output checks
+pass; mandatory independent critic remains pending, `trustworthy_result=false`.
+The bracket has not been analysed. No dependencies were added to Wright's base image.
+
+Evidence: `artifacts/stevecad-demonstrations/qualification/README.md` and the separate
+`container-001`…`container-005`, `calculix-native-001`, `oasis-native-fea-001/002` folders.
+
+## 2026-10-11 — SteveCAD native connection
+
+Problem:
+  A SteveCAD browser session is not an MCP client authorization. Initial public
+  tool metadata returned HTTP 401 on Windows.
+
+Solution:
+  Added the officially documented `https://stevecad.studio/mcp` endpoint to the
+  Wright catalog and used existing registry/installer/OAuth/secret/gateway owners
+  in isolated state. The browser account authorized Wright.
+
+Result:
+  STEVE CAD 4.0.10 initialized MCP 2025-11-25, exposed 26 tools, passed read-only
+  `list_skills`/`api_reference` calls and a Wright gateway API-reference proxy.
+  The expected catalog count changed from 81 to 82; all 17 relevant catalog
+  checks passed after updating that assertion. No vendor software or protocol
+  workaround was added. CAD and clean-container qualification remain pending.
+  Evidence: `docs/mcp-catalog/evidence/stevecad-2026-10-11/`.
+
 ## 2026-06-26
 
 Problem:
@@ -2192,3 +2233,27 @@ The user then stopped campaign work for cleanup and process redesign. Keep the
 failure and resume only with new direction. This changes neither public catalog
 qualification nor engineering limits. Portable exact evidence:
 `artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.
+
+### 12 October 2026 — automatic CAD transfer and native rendering
+
+The generic transfer provider's pipeline path ignores its supplied stdin, and
+its argv validator rejects literal newlines. A command can return stderr without
+MCP `isError`. These observed constraints caused retained qualification failures;
+separate jq/curl steps with an explicit text port and exact file checks work.
+Blender's safe mode rejected a text-datablock load. Passing validated metadata as
+literal native-operation arguments works with safe mode unchanged. No defect
+report was submitted for these observations.
+
+The hosted SteveCAD export schema added optional `wait_s`; rediscovery and a
+visible binding revision preceded dispatch. Pending builds were observed rather
+than interrupted. Different full-build IDs were returned at unchanged revision;
+the reason remains unknown. Use returned identity and measured geometry, not a
+cache assumption. An invalid `revision` argument to `read_design` was our error;
+its supported document-only request returned the original block's native basis.
+
+Run `646d7a74c124431e8979c3acea4b01de` passed the full export/download/mesh/
+three-render qualification in 62.007 seconds. Evidence is under
+`artifacts/stevecad-demonstrations/qualification/automatic-native-render-chain-007/`.
+Attempts 001–006 and the rejected metadata probe remain. The generic main-process
+binding is separately qualified and is not established by that robot-specific
+proof. Guides preserve the successful calling conventions for future agents.

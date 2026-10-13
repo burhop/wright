@@ -1,0 +1,34 @@
+{
+  "operation": "Passive read-only independent geometry audit",
+  "selected_image": "wright-083-agentcad-head-selected:002",
+  "image_id": "sha256:d8b9cd78f929bf4e2705127e09f8b69b0bdf339682a6d79c2fdbf9f0c7b3077f",
+  "python_entrypoint": "/selected/uv-cache/archive-v0/JENql-Gvo7B4jt6kbPvLe/bin/python",
+  "container_name": "wright-robot-fastener-audit-001",
+  "completed_exit_code": 0,
+  "runtime_seconds_reported": 6.351,
+  "isolation": {
+    "network": "none",
+    "root_filesystem": "read-only",
+    "capabilities": "all dropped",
+    "no_new_privileges": true,
+    "memory_limit_gib": 3,
+    "cpu_limit": 2,
+    "temporary_filesystem_mib": 256,
+    "source_and_design_mounts": "read-only",
+    "writable_output": "only this fresh qualification directory",
+    "container_removal": "--rm after exit"
+  },
+  "verification": {
+    "original_step_and_basis_hashes_unchanged": true,
+    "audit_source_matches_reported_hash": true,
+    "mapped_step_instances": 110,
+    "stacks": 29,
+    "measured_planar_bearing_pairs": 66,
+    "all_stack_alignments_pass": true,
+    "all_stacks_have_both_bearings": true,
+    "positive_overlap_pairs": []
+  },
+  "mcp_call": false,
+  "original_workflow_verdicts_modified": false,
+  "limitations": "Independent passive exact-STEP home-pose alignment, axial-stack and planar bearing-area observations. Simplified purchased references have no threads, driver geometry or physical engagement proof. No CAD edit or MCP invocation."
+}

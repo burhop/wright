@@ -1,5 +1,66 @@
 # MCP Server Setup Recipes
 
+## SteveCAD demonstration follow-up — isolated selected providers
+
+The native coupon qualification and scoped neutral Linux read/inspection pass
+are indexed in `artifacts/stevecad-demonstrations/qualification/README.md`. The
+opt-in `examples/stevecad-demonstrations/qualify_container.py` is a fresh-container
+fixture: mount the current checkout read-only at `/source`, a fresh evidence
+directory at `/evidence`, and privately managed existing OAuth state read-only at
+`/run/stevecad-credentials.json`. It copies credentials to ephemeral `/tmp` solely
+for the existing refresh owner, creates a fresh database and uses the real
+registry/lifecycle/gateway/policy/audit with an explicit qualification workspace.
+It reads the retained coupon identity specified in the fixture; it does not create
+CAD or qualify the installed distribution or workspace UI. Authorize network/cloud
+access in the actual test context. A stale copied token can trigger new browser
+authorization even while an older native session still works. Never publish the
+mounted credential file or mistake that failure for an SDK incompatibility.
+
+For structural prerequisites use the external provider environment rather than
+the Wright base image. `examples/stevecad-demonstrations/oasis-native-fea.Dockerfile`
+copies the selected OASiS installation unchanged into the pinned Casys native image.
+Record both image IDs and the built image ID; recorded IDs and versions are in
+`artifacts/stevecad-demonstrations/qualification/oasis-native-fea-002/provenance.json`.
+Use a fresh provider container with `--network none`, a bounded memory/CPU budget,
+and only the new workspace mounted at `/workspace`. Register normal stdio as
+`docker exec -i -w /workspace <owned-container> <selected-python> -m server`, then
+install and enable it using Wright's normal MCP manager and required local gates.
+
+The retained `native_reaction_probe.py` is an engineering readiness fixture, not
+a new MCP server or a process executor. OASiS/scikit-fem's execution backend invokes
+native CalculiX explicitly; the physical engine attribution remains CalculiX.
+Supported result discovery requires actual VTU/VTK/PVD in its job directory. The
+fixture converts actual native DAT rows to VTU without inventing fields. Its
+mandatory independent critic remains separate; successful automatic checks do
+not authorize setting `critic_approved=true`. This path has not established the
+original equipment mount's mesh/load/support or numerical compliance.
+
+## SteveCAD (STEVE CAD) — 11 October 2026
+
+- Source: [official MCP documentation](https://stevecad.studio/docs/agents/).
+- Connection: `https://stevecad.studio/mcp`, **streamable HTTP**, **OAuth 2.1**.
+- Installation: register/select the remote server in Wright's MCP manager, install
+  it and enable it for the intended workspace. No local package, CAD host or AI
+  API key is needed. OAuth credentials are managed by Wright's existing secret
+  provider; they do not belong in catalog metadata or workflow exports.
+- Browser: sign in with the intended SteveCAD account and authorize Wright. A
+  browser session alone does not authorize the MCP client. Wright handles OAuth
+  discovery, dynamic registration, PKCE and refresh using its existing transport.
+- Fallback registration: name `SteveCAD (STEVE CAD)`, remote HTTP URL above,
+  transport `streamable_http` (stored internally as `type=sse` with the explicit
+  transport variant). Do not substitute the Fusion STEVE add-in or VibeCAD.
+- Safe probes: `list_skills({})`, `api_reference({})`, and
+  `api_reference({"name":"Model.box"})`. Discover tool schemas after connecting.
+- Observed on native Windows: STEVE CAD **4.0.10**, protocol **2025-11-25**, **26**
+  tools; direct probes and Wright gateway proxy passed. Evidence:
+  `docs/mcp-catalog/evidence/stevecad-2026-10-11/`.
+- Scope: authenticated connection/read-only tools are qualified. CAD geometry,
+  simulation accuracy, container support and licensing terms remain separate.
+- Local review workspace: `http://wright.localhost:8891/`; isolated state under
+  `.local-run/runtime/` in the `codex/stevecad-engineering-demos` worktree. The
+  helper `.local-run/serve_wright.py` starts this source workspace. This is a local
+  review instance, not a production release or a change to the existing instance.
+
 These notes capture the repeatable setup path for each MCP server validated in
 the engineering catalog sprint. They are intentionally operational: future
 agents should be able to retest a server after upstream changes without
@@ -2812,3 +2873,26 @@ receipts, source tables and successful native exports are in
 `artifacts/campaign-example-renewal/qualification/harness-native-20260922/`.
 No host installs, Solid Edge operations, public catalog promotion, total-drop
 qualification or campaign credit are implied.
+
+## Selected generic transfer MCP — 12 October 2026
+
+Independent `tumf/mcp-shell-server` 1.1.12 at commit
+`b71b694b463883fae4ae12dfb111d28a72c405da` runs unmodified in selected image
+`wright-stevecad-transfer-clean:001` (SHA
+`963478d283a142f63b7cb377865a74eded05760b5d0ecfa80f685c80196ffbcc`).
+The image contains Python 3.12, MCP 1.30.0, h11 0.16.0, curl and jq, with UID
+10001. Use the ordinary module entry function
+`python -c "from mcp_shell_server import main; main()"`.
+
+The exact retained registration in
+`artifacts/stevecad-demonstrations/qualification/generic-transfer-001/basis.json`
+records its read-only root, bounded tmpfs/resources, dropped capabilities,
+no-new-privileges, executable allowlist and single workspace output mount.
+The internal network's explicit CONNECT proxy allows only `stevecad.studio:443`.
+Neither credentials nor a Docker socket are mounted. Wright's base image is
+unchanged. Native Windows gateway initialization, tool listing and backend jq
+probe pass; this is not full clean-Linux-Wright catalog qualification.
+
+See the [usage guide](usage-guides/mcp-shell-server.md) for stdin/text ports,
+pipeline and newline constraints, false-success detection, privacy canaries and
+the successful 62-second automatic CAD export-to-three-render handoff.

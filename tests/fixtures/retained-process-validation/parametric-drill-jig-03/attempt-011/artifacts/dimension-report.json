@@ -1,0 +1,1268 @@
+{
+  "report_type": "independent_reopened_STEP_dimensional_inspection",
+  "source_identifier": "t442db537559689fa3881e91c",
+  "units": "mm",
+  "qualification_boundary": "Digital inspection only; no physical-fit, tolerance-capability, supplier-qualified, fabrication, machining, or manufacturing-suitability claim is made.",
+  "lineage": {
+    "inspection_source_path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-03\\attempt-011\\artifacts\\inspect-jig-source.py",
+    "inspection_source_sha256": "1026585342d21fa8eaaf548ac0537c2d4567ef7cc7d368833472ea07e30adaf5",
+    "reopened_model_path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-03\\attempt-011\\artifacts\\jig.step",
+    "reopened_model_sha256": "1df6d321cfdb083cefacac340a1076b0305793d8713ad5350664e49ad52b334d",
+    "input_directory": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-03\\attempt-011\\inputs",
+    "input_sha256": {
+      "holes.csv": "70f2fd72075b675dbfa2adf6d9c1223c356ba597934fe229b088f736d1a2862d",
+      "bushings.csv": "5003b7347097b48172231d268dd0ba41efa5afdcbb96f486cd4ffa0d8124a582",
+      "keepouts.csv": "2bf730ee6ac2c2db594bb3a147acd3329ed665e73fecec337503a6cafe2cb6c2"
+    },
+    "output_report_path": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-03\\attempt-011\\artifacts\\dimension-report.json",
+    "configured_project_directory": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-03\\attempt-011\\artifacts\\agentcad-project",
+    "actual_process_cwd": "C:\\Users\\markb\\wright-feature-081\\engineering-workflow-demos\\campaign\\parametric-drill-jig-03\\attempt-011\\artifacts\\agentcad-project",
+    "cwd_matches_configured_project_directory": true,
+    "method": "Imported jig.step directly with build123d import_step; generator source was not imported or trusted for dimensions."
+  },
+  "datum": {
+    "workpiece_origin_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "positive_x": "toward existing rectangular rim notch",
+    "positive_y": "90 degrees counterclockwise from positive X in plan",
+    "positive_z": "outward from workpiece top face",
+    "drill_vector": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "transform_workpiece_to_jig": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "translation_mm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "rotation_xyz_deg": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": 1.0,
+    "handedness": "right-handed"
+  },
+  "workpiece": {
+    "diameter_mm": 152.0,
+    "thickness_mm": 10.0,
+    "top_z_mm": 0.0,
+    "bottom_z_mm": -10.0,
+    "existing_notch_extents_mm": {
+      "x": [
+        70.0,
+        76.0
+      ],
+      "y": [
+        -4.0,
+        4.0
+      ],
+      "z": [
+        -10.0,
+        0.0
+      ]
+    },
+    "notch_status": "supplied datum feature; no modification authorized"
+  },
+  "reopened_model": {
+    "is_valid": true,
+    "solid_count": 1,
+    "volume_mm3": 338190.3608,
+    "bounding_box_mm": {
+      "x": [
+        -84.0,
+        84.0
+      ],
+      "y": [
+        -84.0,
+        84.0
+      ],
+      "z": [
+        -10.0,
+        18.5
+      ],
+      "size": [
+        168.0,
+        168.0,
+        28.5
+      ]
+    },
+    "circular_edge_count": 56
+  },
+  "controlling_hole_table": [
+    {
+      "hole_id": "H1",
+      "x_mm": "50.000",
+      "y_mm": "0.000",
+      "z_surface_mm": "0",
+      "drill_diameter_mm": "6.6",
+      "workpiece_thickness_mm": "10",
+      "center_tolerance_mm": "0.10",
+      "bushing_id": "B66R"
+    },
+    {
+      "hole_id": "H2",
+      "x_mm": "25.000",
+      "y_mm": "43.301",
+      "z_surface_mm": "0",
+      "drill_diameter_mm": "6.6",
+      "workpiece_thickness_mm": "10",
+      "center_tolerance_mm": "0.10",
+      "bushing_id": "B66R"
+    },
+    {
+      "hole_id": "H3",
+      "x_mm": "-25.000",
+      "y_mm": "43.301",
+      "z_surface_mm": "0",
+      "drill_diameter_mm": "6.6",
+      "workpiece_thickness_mm": "10",
+      "center_tolerance_mm": "0.10",
+      "bushing_id": "B66R"
+    },
+    {
+      "hole_id": "H4",
+      "x_mm": "-50.000",
+      "y_mm": "0.000",
+      "z_surface_mm": "0",
+      "drill_diameter_mm": "6.6",
+      "workpiece_thickness_mm": "10",
+      "center_tolerance_mm": "0.10",
+      "bushing_id": "B66R"
+    },
+    {
+      "hole_id": "H5",
+      "x_mm": "-25.000",
+      "y_mm": "-43.301",
+      "z_surface_mm": "0",
+      "drill_diameter_mm": "6.6",
+      "workpiece_thickness_mm": "10",
+      "center_tolerance_mm": "0.10",
+      "bushing_id": "B66R"
+    },
+    {
+      "hole_id": "H6",
+      "x_mm": "25.000",
+      "y_mm": "-43.301",
+      "z_surface_mm": "0",
+      "drill_diameter_mm": "6.6",
+      "workpiece_thickness_mm": "10",
+      "center_tolerance_mm": "0.10",
+      "bushing_id": "B66R"
+    }
+  ],
+  "hole_and_seat_checks": [
+    {
+      "hole_id": "H1",
+      "controlling_csv": {
+        "x_mm": 50.0,
+        "y_mm": 0.0,
+        "z_surface_mm": 0.0,
+        "drill_diameter_mm": 6.6,
+        "workpiece_thickness_mm": 10.0,
+        "center_tolerance_mm_independent_xy": 0.1,
+        "bushing_id": "B66R"
+      },
+      "datum_transformed_expected_center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "body_seat_observation": {
+        "axis_workpiece_mm": {
+          "x": 50.0,
+          "y": 0.0
+        },
+        "axis_jig_mm": {
+          "x": 50.0,
+          "y": 0.0
+        },
+        "diameters_mm": [
+          12.2
+        ],
+        "circular_edge_z_levels_mm": [
+          0.0,
+          16.0
+        ],
+        "axial_span_between_observed_circular_edges_mm": 16.0,
+        "circular_edge_count": 2
+      },
+      "flange_clearance_observation": {
+        "axis_workpiece_mm": {
+          "x": 50.0,
+          "y": 0.0
+        },
+        "axis_jig_mm": {
+          "x": 50.0,
+          "y": 0.0
+        },
+        "diameters_mm": [
+          18.3
+        ],
+        "circular_edge_z_levels_mm": [
+          16.0,
+          18.5
+        ],
+        "axial_span_between_observed_circular_edges_mm": 2.5,
+        "circular_edge_count": 2
+      },
+      "center_error_mm": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "center_within_independent_xy_tolerance": true,
+      "body_seat_required_diameter_mm": 12.2,
+      "body_seat_diameter_observed": true,
+      "flange_clearance_required_diameter_mm": 18.3,
+      "flange_clearance_diameter_observed": true
+    },
+    {
+      "hole_id": "H2",
+      "controlling_csv": {
+        "x_mm": 25.0,
+        "y_mm": 43.301,
+        "z_surface_mm": 0.0,
+        "drill_diameter_mm": 6.6,
+        "workpiece_thickness_mm": 10.0,
+        "center_tolerance_mm_independent_xy": 0.1,
+        "bushing_id": "B66R"
+      },
+      "datum_transformed_expected_center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 0.0
+      },
+      "body_seat_observation": {
+        "axis_workpiece_mm": {
+          "x": 25.0,
+          "y": 43.301
+        },
+        "axis_jig_mm": {
+          "x": 25.0,
+          "y": 43.301
+        },
+        "diameters_mm": [
+          12.2
+        ],
+        "circular_edge_z_levels_mm": [
+          0.0,
+          16.0
+        ],
+        "axial_span_between_observed_circular_edges_mm": 16.0,
+        "circular_edge_count": 2
+      },
+      "flange_clearance_observation": {
+        "axis_workpiece_mm": {
+          "x": 25.0,
+          "y": 43.301
+        },
+        "axis_jig_mm": {
+          "x": 25.0,
+          "y": 43.301
+        },
+        "diameters_mm": [
+          18.3
+        ],
+        "circular_edge_z_levels_mm": [
+          16.0,
+          18.5
+        ],
+        "axial_span_between_observed_circular_edges_mm": 2.5,
+        "circular_edge_count": 2
+      },
+      "center_error_mm": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "center_within_independent_xy_tolerance": true,
+      "body_seat_required_diameter_mm": 12.2,
+      "body_seat_diameter_observed": true,
+      "flange_clearance_required_diameter_mm": 18.3,
+      "flange_clearance_diameter_observed": true
+    },
+    {
+      "hole_id": "H3",
+      "controlling_csv": {
+        "x_mm": -25.0,
+        "y_mm": 43.301,
+        "z_surface_mm": 0.0,
+        "drill_diameter_mm": 6.6,
+        "workpiece_thickness_mm": 10.0,
+        "center_tolerance_mm_independent_xy": 0.1,
+        "bushing_id": "B66R"
+      },
+      "datum_transformed_expected_center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 0.0
+      },
+      "body_seat_observation": {
+        "axis_workpiece_mm": {
+          "x": -25.0,
+          "y": 43.301
+        },
+        "axis_jig_mm": {
+          "x": -25.0,
+          "y": 43.301
+        },
+        "diameters_mm": [
+          12.2
+        ],
+        "circular_edge_z_levels_mm": [
+          0.0,
+          16.0
+        ],
+        "axial_span_between_observed_circular_edges_mm": 16.0,
+        "circular_edge_count": 2
+      },
+      "flange_clearance_observation": {
+        "axis_workpiece_mm": {
+          "x": -25.0,
+          "y": 43.301
+        },
+        "axis_jig_mm": {
+          "x": -25.0,
+          "y": 43.301
+        },
+        "diameters_mm": [
+          18.3
+        ],
+        "circular_edge_z_levels_mm": [
+          16.0,
+          18.5
+        ],
+        "axial_span_between_observed_circular_edges_mm": 2.5,
+        "circular_edge_count": 2
+      },
+      "center_error_mm": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "center_within_independent_xy_tolerance": true,
+      "body_seat_required_diameter_mm": 12.2,
+      "body_seat_diameter_observed": true,
+      "flange_clearance_required_diameter_mm": 18.3,
+      "flange_clearance_diameter_observed": true
+    },
+    {
+      "hole_id": "H4",
+      "controlling_csv": {
+        "x_mm": -50.0,
+        "y_mm": 0.0,
+        "z_surface_mm": 0.0,
+        "drill_diameter_mm": 6.6,
+        "workpiece_thickness_mm": 10.0,
+        "center_tolerance_mm_independent_xy": 0.1,
+        "bushing_id": "B66R"
+      },
+      "datum_transformed_expected_center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "body_seat_observation": {
+        "axis_workpiece_mm": {
+          "x": -50.0,
+          "y": 0.0
+        },
+        "axis_jig_mm": {
+          "x": -50.0,
+          "y": 0.0
+        },
+        "diameters_mm": [
+          12.2
+        ],
+        "circular_edge_z_levels_mm": [
+          0.0,
+          16.0
+        ],
+        "axial_span_between_observed_circular_edges_mm": 16.0,
+        "circular_edge_count": 2
+      },
+      "flange_clearance_observation": {
+        "axis_workpiece_mm": {
+          "x": -50.0,
+          "y": 0.0
+        },
+        "axis_jig_mm": {
+          "x": -50.0,
+          "y": 0.0
+        },
+        "diameters_mm": [
+          18.3
+        ],
+        "circular_edge_z_levels_mm": [
+          16.0,
+          18.5
+        ],
+        "axial_span_between_observed_circular_edges_mm": 2.5,
+        "circular_edge_count": 2
+      },
+      "center_error_mm": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "center_within_independent_xy_tolerance": true,
+      "body_seat_required_diameter_mm": 12.2,
+      "body_seat_diameter_observed": true,
+      "flange_clearance_required_diameter_mm": 18.3,
+      "flange_clearance_diameter_observed": true
+    },
+    {
+      "hole_id": "H5",
+      "controlling_csv": {
+        "x_mm": -25.0,
+        "y_mm": -43.301,
+        "z_surface_mm": 0.0,
+        "drill_diameter_mm": 6.6,
+        "workpiece_thickness_mm": 10.0,
+        "center_tolerance_mm_independent_xy": 0.1,
+        "bushing_id": "B66R"
+      },
+      "datum_transformed_expected_center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 0.0
+      },
+      "body_seat_observation": {
+        "axis_workpiece_mm": {
+          "x": -25.0,
+          "y": -43.301
+        },
+        "axis_jig_mm": {
+          "x": -25.0,
+          "y": -43.301
+        },
+        "diameters_mm": [
+          12.2
+        ],
+        "circular_edge_z_levels_mm": [
+          0.0,
+          16.0
+        ],
+        "axial_span_between_observed_circular_edges_mm": 16.0,
+        "circular_edge_count": 2
+      },
+      "flange_clearance_observation": {
+        "axis_workpiece_mm": {
+          "x": -25.0,
+          "y": -43.301
+        },
+        "axis_jig_mm": {
+          "x": -25.0,
+          "y": -43.301
+        },
+        "diameters_mm": [
+          18.3
+        ],
+        "circular_edge_z_levels_mm": [
+          16.0,
+          18.5
+        ],
+        "axial_span_between_observed_circular_edges_mm": 2.5,
+        "circular_edge_count": 2
+      },
+      "center_error_mm": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "center_within_independent_xy_tolerance": true,
+      "body_seat_required_diameter_mm": 12.2,
+      "body_seat_diameter_observed": true,
+      "flange_clearance_required_diameter_mm": 18.3,
+      "flange_clearance_diameter_observed": true
+    },
+    {
+      "hole_id": "H6",
+      "controlling_csv": {
+        "x_mm": 25.0,
+        "y_mm": -43.301,
+        "z_surface_mm": 0.0,
+        "drill_diameter_mm": 6.6,
+        "workpiece_thickness_mm": 10.0,
+        "center_tolerance_mm_independent_xy": 0.1,
+        "bushing_id": "B66R"
+      },
+      "datum_transformed_expected_center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 0.0
+      },
+      "body_seat_observation": {
+        "axis_workpiece_mm": {
+          "x": 25.0,
+          "y": -43.301
+        },
+        "axis_jig_mm": {
+          "x": 25.0,
+          "y": -43.301
+        },
+        "diameters_mm": [
+          12.2
+        ],
+        "circular_edge_z_levels_mm": [
+          0.0,
+          16.0
+        ],
+        "axial_span_between_observed_circular_edges_mm": 16.0,
+        "circular_edge_count": 2
+      },
+      "flange_clearance_observation": {
+        "axis_workpiece_mm": {
+          "x": 25.0,
+          "y": -43.301
+        },
+        "axis_jig_mm": {
+          "x": 25.0,
+          "y": -43.301
+        },
+        "diameters_mm": [
+          18.3
+        ],
+        "circular_edge_z_levels_mm": [
+          16.0,
+          18.5
+        ],
+        "axial_span_between_observed_circular_edges_mm": 2.5,
+        "circular_edge_count": 2
+      },
+      "center_error_mm": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "center_within_independent_xy_tolerance": true,
+      "body_seat_required_diameter_mm": 12.2,
+      "body_seat_diameter_observed": true,
+      "flange_clearance_required_diameter_mm": 18.3,
+      "flange_clearance_diameter_observed": true
+    }
+  ],
+  "bushings": [
+    {
+      "bushing_id": "B66R",
+      "provenance": "synthetic_fixture_not_supplier_data",
+      "supplied": {
+        "bore_mm": 6.7,
+        "body_od_mm": 12.0,
+        "body_length_mm": 16.0,
+        "flange_od_mm": 18.0,
+        "flange_thickness_mm": 2.5,
+        "body_diametral_clearance_mm": 0.2,
+        "flange_diametral_clearance_mm": 0.3
+      },
+      "derived": {
+        "body_seat_diameter_mm": 12.2,
+        "body_radial_clearance_per_side_mm": 0.1,
+        "flange_clearance_diameter_mm": 18.3,
+        "flange_radial_clearance_per_side_mm": 0.15,
+        "drill_to_bore_nominal_diameter_difference_mm": 0.1
+      }
+    }
+  ],
+  "stackup": {
+    "required_local_jig_thickness_mm": 16.0,
+    "bushing_body_length_mm": 16.0,
+    "flange_thickness_mm": 2.5,
+    "required_counterbore_depth_mm": 0.0,
+    "flange_seating": "from above on unrecessed top face",
+    "nominal_body_projection_below_jig_mm": 0.0,
+    "nominal_height_jig_underside_to_flange_top_mm": 18.5,
+    "observed_body_seat_axial_spans_mm": {
+      "H1": 16.0,
+      "H2": 16.0,
+      "H3": 16.0,
+      "H4": 16.0,
+      "H5": 16.0,
+      "H6": 16.0
+    },
+    "status": "Observed circular-edge levels are reported; physical seating and retention remain unvalidated."
+  },
+  "annular_and_registration_checks": {
+    "minimum_center_opening_diameter_mm": 55.0,
+    "center_opening_circle_observation": {
+      "nominal_diameter_mm": 55.0,
+      "observed": true,
+      "observed_diameters_mm": [
+        55.0
+      ],
+      "observed_z_levels_mm": [
+        0.0,
+        16.0
+      ],
+      "circular_edge_count": 2
+    },
+    "outer_collar_radial_clearance_mm": 0.2,
+    "outer_collar_diametral_clearance_mm": 0.4,
+    "required_collar_inner_diameter_mm": 152.4,
+    "collar_inner_circle_observation": {
+      "nominal_diameter_mm": 152.4,
+      "observed": true,
+      "observed_diameters_mm": [
+        152.4
+      ],
+      "observed_z_levels_mm": [
+        -10.0,
+        -9.5,
+        -1.0,
+        0.0
+      ],
+      "circular_edge_count": 10
+    },
+    "key_clearance_per_side_mm": 0.15,
+    "nominal_key_tab_width_mm": 7.7,
+    "minimum_nominal_wall_outside_flange_pockets_mm": 5.0,
+    "wall_exceptions": "Reviewed clamp/service cutouts may locally interrupt the nominal wall."
+  },
+  "keepout_boolean_checks": [
+    {
+      "keepout_id": "WEST_CLAMP",
+      "purpose": "existing_external_clamp",
+      "bounds_mm": {
+        "x": [
+          -82.0,
+          -63.0
+        ],
+        "y": [
+          -12.0,
+          12.0
+        ],
+        "z": [
+          0.0,
+          35.0
+        ]
+      },
+      "actual_boolean_intersection_volume_mm3": 0.0,
+      "clear_of_jig_material": true
+    },
+    {
+      "keepout_id": "SOUTHEAST_CLAMP",
+      "purpose": "existing_external_clamp",
+      "bounds_mm": {
+        "x": [
+          43.0,
+          62.0
+        ],
+        "y": [
+          -62.0,
+          -45.0
+        ],
+        "z": [
+          0.0,
+          35.0
+        ]
+      },
+      "actual_boolean_intersection_volume_mm3": 0.0,
+      "clear_of_jig_material": true
+    }
+  ],
+  "checks_summary": {
+    "all_six_body_seat_axes_observed": true,
+    "all_six_flange_diameters_observed": true,
+    "all_hole_centers_within_independent_xy_tolerance": true,
+    "all_keepouts_clear": true,
+    "model_valid": true
+  },
+  "unresolved": [
+    "Positive bushing retention during drill withdrawal.",
+    "Real supplier dimensions, tolerances, and correspondence to the synthetic bushing data.",
+    "Manufacturing tolerances for body seats, flange clearances, collar, and key.",
+    "Whether declared clearances provide acceptable location repeatability.",
+    "Material, wear, thermal, moisture, and contamination effects.",
+    "Spindle, chuck, collet, drill, toolholder, chip-evacuation, and breakthrough clearances.",
+    "Clamp stability, remaining stiffness around windows, seating flatness, and achievable plus/minus 0.10 mm X/Y performance.",
+    "Final machining strategy, inspection method, deburring, edge treatment, and prototype-material approval.",
+    "Physical fit and qualified manufacturing suitability."
+  ],
+  "all_extracted_circular_edges": [
+    {
+      "edge_index": 0,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 2,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 3.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 4,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -1.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 6,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -10.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 7,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -1.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 9,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 3.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 10,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 12,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 84.0,
+      "diameter_mm": 168.0
+    },
+    {
+      "edge_index": 18,
+      "center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 16.0
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 19,
+      "center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 16.0
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 20,
+      "center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 26,
+      "center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 16.0
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 27,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 27.5,
+      "diameter_mm": 55.0
+    },
+    {
+      "edge_index": 28,
+      "center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 117,
+      "center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 16.0
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 122,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 130,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -10.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 140,
+      "center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 18.5
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 142,
+      "center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 18.5
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 143,
+      "center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 18.5
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 158,
+      "center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 18.5
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 160,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 27.5,
+      "diameter_mm": 55.0
+    },
+    {
+      "edge_index": 162,
+      "center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 18.5
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 340,
+      "center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 18.5
+      },
+      "radius_mm": 14.0,
+      "diameter_mm": 28.0
+    },
+    {
+      "edge_index": 343,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 344,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 345,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 349,
+      "center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 0.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 350,
+      "center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 0.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 351,
+      "center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 352,
+      "center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 0.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 353,
+      "center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 354,
+      "center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 0.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 356,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -1.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 358,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -9.5
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 360,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -9.5
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 362,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -1.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 364,
+      "center_mm": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "radius_mm": 76.2,
+      "diameter_mm": 152.4
+    },
+    {
+      "edge_index": 365,
+      "center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 18.5
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 366,
+      "center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 18.5
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 367,
+      "center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 18.5
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 368,
+      "center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 18.5
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 369,
+      "center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 18.5
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 385,
+      "center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 18.5
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 398,
+      "center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 16.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 400,
+      "center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 16.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 402,
+      "center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 404,
+      "center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 16.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 406,
+      "center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 408,
+      "center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 16.0
+      },
+      "radius_mm": 6.1,
+      "diameter_mm": 12.2
+    },
+    {
+      "edge_index": 410,
+      "center_mm": {
+        "x": -25.0,
+        "y": -43.301,
+        "z": 16.0
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 412,
+      "center_mm": {
+        "x": 25.0,
+        "y": -43.301,
+        "z": 16.0
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 414,
+      "center_mm": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 416,
+      "center_mm": {
+        "x": -25.0,
+        "y": 43.301,
+        "z": 16.0
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 418,
+      "center_mm": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 16.0
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    },
+    {
+      "edge_index": 450,
+      "center_mm": {
+        "x": 25.0,
+        "y": 43.301,
+        "z": 16.0
+      },
+      "radius_mm": 9.15,
+      "diameter_mm": 18.3
+    }
+  ]
+}

@@ -19,6 +19,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Enable long Git paths on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: git config --global core.longpaths true
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -41,9 +45,19 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Set up Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: "npm"
+      - name: Install locked interface compiler dependencies
+        run: npm ci
       - name: Install dependencies
         run: uv sync --all-packages --all-groups
 
+      - name: Verify fixed interface compiler readiness
+        run: >-
+          uv run python -c "from pathlib import Path; import shutil; from workspace_service.process_interfaces.build import BuildToolchain; root=Path.cwd(); BuildToolchain(Path(shutil.which('node') or ''), root, root / 'packages/process_client', root / 'packages/ui_kit').describe()"
       - name: Configure Git for tests
         run: |
           git config --global user.email "test-ci@example.com"
@@ -80,6 +94,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Enable long Git paths on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: git config --global core.longpaths true
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 

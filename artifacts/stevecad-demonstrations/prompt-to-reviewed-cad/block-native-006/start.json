@@ -1,0 +1,18 @@
+{
+  "principal_id": "local-control-plane",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+    "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "request_id": "prompt-cad-block-native-006",
+  "payload_digest": "b7e88233875f8a038da1aa628f48629e4eb964e11d7f1c0b0ae99b112e5e786e",
+  "input_snapshot_id": "inputs-82b2a8700a0044539b9a6617bfde84c9",
+  "input_digest": "f96e9fcaa250270cdcf488e0c87f7bd9038afba4c50bbe300292d6fc17765c47",
+  "run_id": "15a0b7ad27374a0e9375923cc4dc2725",
+  "run_log_path": "runs/prompt-to-reviewed-cad-v19/15a0b7ad27374a0e9375923cc4dc2725.json",
+  "initial_outcome": "accepted",
+  "created_at": "2026-10-12T19:08:27.601260+00:00"
+}

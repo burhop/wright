@@ -8632,4 +8632,78 @@ servers:
     review_due: '2026-10-11'
     next_action: Fix or waive the POSIX-only Windows test fixture, repeat two fresh protocol sessions, then qualify read-only printer status and an explicitly approved transfer-only action without starting a print.
     adoption: unknown
+- id: stevecad-mcp
+  name: SteveCAD (STEVE CAD)
+  vendor: STEVE Studio
+  description: Hosted parametric CAD, geometry inspection, and revision-bound engineering studies through STEVE Studio's official remote MCP server.
+  domains: [cad, simulation]
+  engineering_stages: [design, simulation, test_quality]
+  integration_kind: mcp_server
+  tags: [remote, cadquery, oauth]
+  transport: streamable_http
+  command: https://stevecad.studio/mcp
+  source_url: https://stevecad.studio/docs/agents/
+  license: Hosted service; licensing and commercial-use terms have not been established by Wright.
+  auth_model: oauth
+  install_method: remote-http
+  maturity: official
+  evidence_class: official_preview
+  capability_summary:
+  - Find, read, create, and edit account-scoped parametric parts and assemblies.
+  - Build and inspect exact document revisions; export STEP and meshes.
+  - Run revision-bound engineering studies when enabled for the signed-in account.
+  source_records:
+  - url: https://stevecad.studio/docs/agents/
+    kind: vendor_docs
+    primary: true
+    authority: vendor
+    observed_at: '2026-10-11'
+    notes: Official documentation specifies this endpoint, streamable HTTP, OAuth 2.1, and account-scoped access.
+  - url: https://stevecad.studio/.well-known/oauth-protected-resource/mcp
+    kind: vendor_docs
+    primary: true
+    authority: vendor
+    observed_at: '2026-10-11'
+    notes: Live resource metadata confirms the endpoint and the auth.stevecad.studio users-realm issuer.
+  - url: https://stevecad.studio/docs/reference/mcp-tools/
+    kind: vendor_docs
+    primary: true
+    authority: vendor
+    observed_at: '2026-10-11'
+    notes: Tool availability is account/server dependent; documentation is not live qualification.
+  locality: remote
+  weight: light
+  env_vars: []
+  dependencies: {system: [], python: [], node: []}
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: remote-http
+  runtime_requirements:
+    notes: Wright's existing HTTP/OAuth transport connects to the hosted server. No local CAD host, provider package, or AI API key is needed to connect over MCP. The user authorizes their SteveCAD account in a browser.
+  platform_support:
+    windows_11_x64: {status: 'yes', tested: true, notes: Native Windows OAuth connection to STEVE CAD 4.0.10 discovered 26 tools and passed read-only backend calls directly and through Wright's gateway. Geometry and clean-container qualification remain separate.}
+    linux_x64: {status: likely, tested: false, notes: Remote HTTP client path; clean-container qualification pending.}
+    linux_arm64: {status: likely, tested: false, notes: Remote HTTP client path; not tested on ARM64.}
+    macos_x64: {status: likely, tested: false, notes: Remote HTTP client path; not tested on macOS.}
+    macos_arm64: {status: likely, tested: false, notes: Remote HTTP client path; not tested on macOS.}
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates: [network_access_approval, cloud_data_approval]
+  validation_result:
+    status: passed
+    validated_at: '2026-10-11'
+    evidence_status: recorded
+    message: Native Windows authenticated STEVE CAD 4.0.10 using Wright OAuth, discovered 26 tools, called list_skills and api_reference, and proxied api_reference(Model.box) through the existing Wright gateway. Evidence is in docs/mcp-catalog/evidence/stevecad-2026-10-11/. This qualifies connection and read-only calls; CAD geometry and clean-container testing remain pending.
+    environment: isolated-wright-native-windows-x64
+    missing_dependencies: []
+  follow_up_url: docs/mcp-catalog/followups/stevecad-mcp.md
+  curation:
+    disposition: follow_up
+    reason: Native authenticated connection, 26-tool discovery and read-only gateway calls passed. Retain follow-up status until a substantive CAD operation and clean-container qualification are recorded.
+    owner: Wright catalog maintainers
+    reviewed_at: '2026-10-11'
+    next_action: Run a disposable CAD build/export with exact geometry checks and qualify the clean-container boundary separately.
+    adoption: unknown
 format_version: 1

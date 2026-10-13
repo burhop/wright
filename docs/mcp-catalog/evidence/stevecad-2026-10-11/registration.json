@@ -1,0 +1,8 @@
+{
+  "server_id": "stevecad-mcp",
+  "endpoint": "https://stevecad.studio/mcp",
+  "transport": "streamable_http",
+  "state": "isolated",
+  "authorization": "[REDACTED]",
+  "observed_at": "2026-10-11T15:45:32.002316+00:00"
+}

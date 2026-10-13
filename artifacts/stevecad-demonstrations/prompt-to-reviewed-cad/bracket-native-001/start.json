@@ -1,0 +1,18 @@
+{
+  "principal_id": "local-control-plane",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+    "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "request_id": "prompt-cad-bracket-native-001",
+  "payload_digest": "cb2fd3c8714af0180dc332f6959e74173a205b3144b531f2309f988cb3abac95",
+  "input_snapshot_id": "inputs-f263c55938f246a38493004a5ab814a7",
+  "input_digest": "f84ef2e0181292ace7805ffaa7fde9884a89b613849e65d3d39aba51ec9431d3",
+  "run_id": "90087fceacdc494d91eaff6f65d9173d",
+  "run_log_path": "runs/prompt-to-reviewed-cad-v19/90087fceacdc494d91eaff6f65d9173d.json",
+  "initial_outcome": "accepted",
+  "created_at": "2026-10-12T19:33:51.214662+00:00"
+}

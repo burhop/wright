@@ -1,0 +1,176 @@
+# SteveCAD workflow code checkpoint
+
+12 October 2026. The user requested completing and checking in the current code.
+Additional example runs are deferred. This checkpoint preserves delivered code
+and useful engineering evidence without claiming that all remaining campaign
+requirements, user acceptance or physical robot tests have passed.
+
+## Delivered behavior and ownership
+
+SteveCAD is an independently connected remote OAuth MCP provider. Wright's
+existing durable runtime, gateway, file/result storage and model adapters own
+execution and evidence. The workflow accepts a design prompt, produces its
+specification and preconstruction test plan, builds and inspects exact CAD,
+passes the actual STEP through AgentCAD to Blender, and creates an illustrated
+review with three original captures and three native renderings.
+
+The shared changes provide explicit MCP image-output bindings, bounded
+same-operation reconciliation, saved context budgets, complete assembly
+observation transport and evidence redaction for one-use transfer credentials.
+They retain existing scope, argument, replay, deadline, model and approval
+enforcement. Native provider protocols remain external. No additional executor
+or independent UI job-state authority is introduced.
+
+The native source's camera correction is prospective v20. Its real bracket
+render and source/compile checks are retained; the last completed full process
+and same-source reuse proof use v19. These are different verification scopes.
+
+## Retained engineering outputs
+
+- Original four-hole block: eight CAD checks and ten final review requirements
+  pass; exact numeric geometry, file hashes, all six images and report rendering
+  are independently checked. Runtime: 617.248 seconds.
+- Six-hole block: same accepted v19 source and frozen routing, changed input,
+  fresh run and correct final geometry. Runtime: 542.533 seconds. Original
+  review retains an unrequested intermediate-stock-state test as UNVERIFIED.
+- Bracket: correct envelope, volume and bores; original review 11 PASS /
+  one UNVERIFIED. The same exported geometry now has supplemental measured
+  6.00 mm base/upright walls and a corrected native top image. Original evidence
+  retains its missing measurement and camera mismatch. Runtime: 1204.087 seconds.
+- Robot revision 7: 110 solids, 18 unique print meshes / 28 printed quantities,
+  BOM, assembly instructions, joint ranges, three final native renderings,
+  illustrated review and H.264 MP4 media. Original review remains 10 PASS /
+  four UNVERIFIED / two FAIL. Additive exact-STEP audits record 14,364 sampled
+  printed-pair evaluations (minimum non-seat gap 0.400 mm, zero overlap) and
+  29 aligned fastener stacks with 66 measured planar bearing pairs. They do not
+  rewrite the original review.
+
+The commit retains a selected evidence set rather than every historical run,
+scratch file and duplicate media archive. Additional original records remain
+in the local worktree. The committed evidence index records exact paths/hashes
+and the selection boundary. No source, original CAD or local run evidence is
+deleted as part of check-in.
+
+## Durable MCP knowledge
+
+[Usage guides](../mcp-catalog/usage-guides/README.md) cover SteveCAD, KiCad,
+AgentCAD, Blender and the file-transfer MCP. The common template and AGENTS.md
+require a discoverable guide for every server installed or used. Guides record
+observed versions, successful schemas/examples, evidence, prerequisites,
+pitfalls, recovery and unverified capabilities, without credentials.
+
+## Validation and remaining limits
+
+Current source-bound regression, lint, format, source regeneration, exact
+artifact and credential checks are recorded in the committed check-in evidence.
+An initial Windows sandbox test stalled; the isolated mocked test passes
+outside it. That diagnostic is not reported as a passing full test run.
+
+The broader different-live-workflow qualification of the new shared mechanisms
+remains open. The latest workflow-editor walkthrough has a retained clipped
+diagram finding. The confirmed SteveCAD visibility bug has a minimal redacted
+packet but no supported submission/report ID. Full native-process joint/robot
+proof and physical printing, assembly, strength, motor sizing, drive transmission
+and powered operation remain unverified. The user's CM5 and official IO Board
+are recorded; provisional servo choices still need actual hardware confirmation.
+
+Code check-in is distinct from `dev` integration, a production release, public
+marketing publication and human engineering acceptance. Required push/merge
+gates apply before those separately authorized actions.
+
+## Pre-merge image-selector correction
+
+The integration review reproduced a literal-selector mismatch: Python's value
+equality let boolean `true` select a response whose request argument was numeric
+`1`, including nested objects. The corrected matcher compares complete JSON
+representations and rejects unsupported/nonfinite data, preserving boolean and
+numeric distinctions. Negative controls cover both boolean values, nested
+objects and lists; a positive control retains identical nested boolean requests
+with different object-key order. The earlier 275-test checkpoint remains
+historical evidence; current merge/push gate results are recorded separately.
+
+The full integration gate also caught stale catalog test inputs after SteveCAD
+expanded the current catalog from 81 to 82 entries. The historical 69/70-entry
+update scenarios now read an immutable fixture, and the current status assertion
+includes SteveCAD in the preview category. All 532 registry tests pass after this
+correction. The stdio framing test that timed out in the initial full run passes
+both independently and in the complete corrected suite; its 30-second deadline
+and protocol assertions remain unchanged.
+
+The cumulative workspace suite exposed a result-contract regression in our new
+evidence redactor: safe provenance tuples became lists. Redaction now preserves
+list/tuple container types while removing nested credentials. The original
+first-question restart/resume test stays unchanged and checks the same durable
+run, exact input snapshot, and absence of replay. Separate credential controls
+still reject secret-bearing continuations before checkpoint persistence.
+
+The clean-checkout review also retains 36 exact historical native files as
+regression fixtures (4,722,342 bytes), fixes LF checkout of existing hash-bound
+renewal inputs, and marks inert credential-test strings with the scanner's
+existing fake-value convention. Recorded engineering hashes and corruption checks
+remain unchanged. The saved jig-context test now verifies that the improved
+reversible transport fits its historical observation and rejects an explicitly
+smaller budget, preserving complete page reconstruction and per-part limits.
+The accepted renewal record's 27 original CRLF manifest identities remain intact
+in a separate historical snapshot; generation verifies unchanged semantic inputs
+instead of rebasing their recorded byte hashes onto the current checkout.
+The qualified 264-file source-pack inventory also retains its recorded bytes.
+Its 204 CRLF text inputs are checked in byte-exactly, with normalized semantic
+content verified equal to their previous Git blobs; no qualification is rerun or
+assigned new credit by this encoding correction.
+
+The pre-push Node audit found nine unexcepted High/Critical advisory identities.
+The workspace now resolves SDK 1.32.1 and compatible patched brace-expansion,
+fast-uri, proxy-addr, source-map-js and undici versions. The repaired lockfile
+reports zero High/Critical findings under CI's unchanged policy. Both local gates
+now include that same Node audit and reject missing/malformed inventories and
+service errors; focused audit and gate regressions pass. Fresh image and cumulative
+merge validation remain required before this candidate is integrated.
+
+The first browser gate exposed 14 legacy fixture failures at the workspace entry:
+the fixtures expected Workflows to create/open the bracket example implicitly.
+The current reviewed editor creates a uniquely named empty source explicitly,
+and existing designs open through Workspace Files. Tests now exercise those
+paths, retain per-file CAS checks, preserve the original saved design and verify
+that a passive missing-file link creates nothing. All 17 affected Chromium
+checks pass, including source/diagram edits, review, routing, layout and template
+navigation. The editor implementation is unchanged; full final gates remain
+required and superseded runs are not reported as complete.
+
+The complete 184-case browser matrix then reported 172 passed, 5 skipped and
+7 failed legacy interaction assertions. The consolidated correction preserves
+qualification and validation: discover All records when the environment has no
+curated recommendation; establish the accepted working tab before a local
+source draft; keep required-answer errors and disabled submission; explicitly
+open advanced JSON; use the input palette and current file close action. The
+thumbnail retains exact natural dimensions and viewport bounds with fractional
+CSS-pixel tolerance. All 10 affected Chromium contracts pass. This is test-contract
+alignment, not an editor implementation change or engineering acceptance.
+
+The next complete matrix reported 178 passed, 5 skipped and one Firefox failure:
+the sandbox test evaluated an iframe during initial navigation and lost its
+execution context. Locator assertions now establish proxy/content readiness
+before document evaluation, retaining all origin, blocked-network, permissions
+and initialization checks. All 14 affected browser checks pass across Chromium,
+Firefox, WebKit and desktop profiles, including the review screenshot contracts.
+Generated captures use per-test output paths; the original tracked review image
+is restored and new captures remain separate. This correction changes tests and
+documentation only. The red full-gate result remains recorded; passing focused
+checks does not turn it into a green full gate or replace current-head CI.
+
+The later complete matrix again reported 178 passed, 5 skipped and one failure,
+this time in the program-status refresh contract. Its trace retains initial
+cancelled requests and a 503 refresh arriving near the UI assertion deadline.
+The test now advances the browser poll clock and waits for that exact failed
+response before checking last-valid evidence. It retains the original
+unavailable-state assertions and deadlines. All four program-status browser
+contracts pass after this test-only correction; full final gates remain pending.
+
+The next complete matrix retained 178 passes and 5 skips but failed the WebKit
+presentation-choice case: its trace contains no panel-close request before the
+test timeout. The corrected journey explicitly returns to Wright after viewing
+the popup and checks each exact DELETE acknowledgement before removing a view.
+It also closes the owned browser presentation through Wright before disposing
+the test page. Shared state and application-lifetime assertions remain intact.
+All eight presentation contracts pass across the four profiles. The last full
+gate remains red; this focused pass does not establish a green final gate.

@@ -193,6 +193,9 @@ class PromptStep:
     model_resolution: dict = field(default_factory=dict)
     instruction_set: dict | None = None
     instruction_override: dict | None = None
+    mcp_image_outputs: dict = field(default_factory=dict)
+    mcp_reconciliation_contracts: dict = field(default_factory=dict)
+    mcp_context_budget_bytes: int | None = None
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -874,6 +877,31 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             or (raw_task_tools and not agent_task)
         ):
             raise _invalid(f"{title}: select distinct tool names for an MCP task.")
+        from .workflow_mcp_image_outputs import validate_image_output_bindings
+
+        mcp_image_outputs = validate_image_output_bindings(
+            settings.get("mcp_image_outputs", {}),
+            agent_task=agent_task,
+            file_ports=file_ports,
+            allowed_tools=raw_task_tools,
+            incompatible=bool(cad or application or image_output),
+        )
+        from .workflow_mcp_reconciliation import validate_reconciliation_contracts
+
+        mcp_reconciliation_contracts = validate_reconciliation_contracts(
+            settings.get("mcp_reconciliation_contracts", {}),
+            agent_task=agent_task and not bool(cad or application),
+            allowed_tools=raw_task_tools,
+        )
+        context_budget = settings.get("mcp_context_budget_bytes")
+        if context_budget is not None and (
+            not agent_task
+            or type(context_budget) is not int
+            or not 16_384 <= context_budget <= 1_048_576
+        ):
+            raise _invalid(
+                f"{title}: use a 16384–1048576 byte context budget only for an MCP task."
+            )
         revision_policy = settings.get("revision_policy", "")
         if revision_policy not in {"", "create_new_files"} or (
             revision_policy and not (agent_task or native_image)
@@ -1132,6 +1160,9 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 file_dependencies=file_dependencies,
                 task_tool_allowlist=tuple(raw_task_tools),
                 native_image_format=image_output["format"] if native_image else "",
+                mcp_image_outputs=mcp_image_outputs,
+                mcp_reconciliation_contracts=mcp_reconciliation_contracts,
+                mcp_context_budget_bytes=context_budget,
             )
         )
     from .workflow_design_check import validate_rework
@@ -1342,6 +1373,8 @@ def validate_workspace_authoring_shape(source: str):
             }
         elif kind == "connection":
             required = {"type", "from", "to", "label", "when"}
+        elif kind == "group":
+            required = {"name", "purpose", "order"}
         else:
             continue
         missing = required - fields.keys()
@@ -2815,7 +2848,16 @@ async def execute_prompt_workflow(
                 from .workflow_references import snapshot_task_files
 
                 prior_files = snapshot_task_files(workspace_dir, step.expected_files)
-                if not step.native_image_format:
+                external_files = tuple(
+                    path
+                    for path in step.expected_files
+                    if path
+                    not in {
+                        step.expected_file_ports[port]
+                        for port in step.mcp_image_outputs
+                    }
+                )
+                if not step.native_image_format and external_files:
                     from agent_adapters.workflow_instructions import (
                         workflow_helper_instructions,
                     )
@@ -2823,7 +2865,7 @@ async def execute_prompt_workflow(
                     prompt += "\n\n" + workflow_helper_instructions(
                         step.instruction_set,
                         "context.expected-files",
-                        variables={"files": ", ".join(step.expected_files)},
+                        variables={"files": ", ".join(external_files)},
                     )
             await emit(
                 "step_started",
@@ -2952,9 +2994,33 @@ async def execute_prompt_workflow(
                             )
                             calls = task.records
                     else:
+                        captured_images = []
                         response, calls = await tool_runtime.run_task(
-                            step, prompt, action_generator, emit, images=images
+                            step,
+                            prompt,
+                            action_generator,
+                            emit,
+                            images=images,
+                            **(
+                                {"captured_images": captured_images}
+                                if step.mcp_image_outputs
+                                else {}
+                            ),
                         )
+                        if step.mcp_image_outputs:
+                            from .workflow_mcp_image_outputs import (
+                                publish_image_outputs,
+                            )
+
+                            image_receipts = await publish_image_outputs(
+                                service, workspace_dir, step, captured_images
+                            )
+                            await emit(
+                                "mcp_images_saved",
+                                task_id=step.id,
+                                task_title=step.title,
+                                images=image_receipts,
+                            )
                     if step.run_path_template == ATTEMPT_VERSION:
                         await asyncio.to_thread(
                             verify_prior_attempt_files, step, attempts, workspace_dir

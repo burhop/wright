@@ -1,0 +1,15 @@
+{
+  "owning_and_affected_tests": {
+    "count": 126,
+    "status": "passed",
+    "files": [
+      "test_workflow_hermes_normalization.py",
+      "test_workflow_transcript_evidence.py",
+      "test_workflow_observation_projection.py",
+      "test_hermes_openai_bridge.py"
+    ],
+    "temp": ".local-run/pytest-assembly-transport-002"
+  },
+  "ruff": "passed",
+  "scope": "Local adapter transport tests; actual robot continuation and independent live-workflow proof separate"
+}

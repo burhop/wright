@@ -1,0 +1,31 @@
+{
+  "tools": [
+    "stevecad-mcp__api_reference",
+    "stevecad-mcp__create_component",
+    "stevecad-mcp__create_shop_item",
+    "stevecad-mcp__edit_design",
+    "stevecad-mcp__find_electronic_parts",
+    "stevecad-mcp__find_standard_parts",
+    "stevecad-mcp__generate_model",
+    "stevecad-mcp__insert_import",
+    "stevecad-mcp__insert_mcmaster_part",
+    "stevecad-mcp__insert_standard_part",
+    "stevecad-mcp__inspect_model",
+    "stevecad-mcp__link_design",
+    "stevecad-mcp__list_comments",
+    "stevecad-mcp__list_decal_images",
+    "stevecad-mcp__list_designs",
+    "stevecad-mcp__list_imports",
+    "stevecad-mcp__list_mcmaster_parts",
+    "stevecad-mcp__list_skills",
+    "stevecad-mcp__read_design",
+    "stevecad-mcp__read_skill",
+    "stevecad-mcp__reply_comment",
+    "stevecad-mcp__request_catalog_entry",
+    "stevecad-mcp__request_upload",
+    "stevecad-mcp__resolve_comment",
+    "stevecad-mcp__run_study",
+    "stevecad-mcp__write_design"
+  ],
+  "binding_scope": "isolated qualification ports; real registry/lifecycle/provider"
+}

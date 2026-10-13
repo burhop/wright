@@ -1,0 +1,4 @@
+request_id,electrical_power_W,loss_W_per_K,time_to_90C_s,time_limit_s,meets_time,refined_request_id,refined_delta_time_s,refined_relative_energy_difference,energy_consistent,numerically_stable
+water-heater-sizing-01-attempt-005-p350-nominal-baseline,350,0.6,,180,false,,,,true,false
+water-heater-sizing-01-attempt-005-p500-nominal-baseline,500,0.6,247.8201508770297,180,false,,,,true,false
+water-heater-sizing-01-attempt-005-p700-nominal-baseline,700,0.6,174.56056246993037,180,true,water-heater-sizing-01-attempt-005-selected-nominal-refined,2.417310440705478e-7,8.878792781746648e-10,true,true

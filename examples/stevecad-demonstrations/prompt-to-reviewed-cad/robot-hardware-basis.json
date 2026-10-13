@@ -1,0 +1,30 @@
+{
+  "recorded_date": "2026-10-11",
+  "purpose": "Hardware inputs for the printable robot-arm prompt; no physical compatibility acceptance",
+  "confirmed_owned_hardware": [
+    {"id":"cm5","manufacturer":"Raspberry Pi","model":"Compute Module 5","quantity":1,"provenance":"user supplied","variant":"unspecified"},
+    {"id":"cm5io","manufacturer":"Raspberry Pi","model":"Official Compute Module 5 IO Board","quantity":1,"provenance":"user supplied","board_revision":"unspecified"}
+  ],
+  "candidate_hardware_not_confirmed_owned": [
+    {"id":"mg996r_reference","manufacturer":"TowerPro","model":"MG996R","quantity":3,"role":"base, shoulder and elbow candidate","status":"provisional reference; inventory not supplied"},
+    {"id":"mg90s_reference","manufacturer":"TowerPro","model":"MG90S","quantity":2,"role":"wrist and gripper candidate","status":"provisional reference; inventory not supplied"}
+  ],
+  "unresolved": ["Actual servo models and quantities", "Carrier board revision", "CM5 RAM/eMMC/wireless variant", "Installed cooler and expansion cards", "Arduino model if used", "Printer and material availability"],
+  "manufacturer_sources": [
+    {"id":"cm5_design_files","url":"https://pip.raspberrypi.com/categories/1096-design-files","local_manifest":"../../../artifacts/stevecad-demonstrations/robot-hardware/references/manifest.json"},
+    {"id":"cm5io_design_files","url":"https://pip.raspberrypi.com/categories/1098-design-files","local_manifest":"../../../artifacts/stevecad-demonstrations/robot-hardware/references/manifest.json"},
+    {"id":"cm5_datasheet","url":"https://pip-assets.raspberrypi.com/categories/944-raspberry-pi-compute-module-5/documents/RP-008180-DS-7-cm5-datasheet.pdf","mechanical_section":"4.1"},
+    {"id":"cm5io_datasheet","url":"https://pip-assets.raspberrypi.com/categories/1097-raspberry-pi-compute-module-5-io-board/documents/RP-008182-DS-3-cm5io-datasheet.pdf","mechanical_section":"6.1"},
+    {"id":"mg996r_specs","url":"https://towerpro.com.tw/product/mg996r/"},
+    {"id":"mg90s_specs","url":"https://towerpro.com.tw/product/mg90s-3/"}
+  ],
+  "modeling_requirements": [
+    "Represent purchased hardware as separate identifiable components, excluded from printable exports",
+    "Record manufacturer asset hashes and the exact reference revision when an import is used",
+    "Use parameterized interface/reference components when detailed models are unavailable; label their approximations",
+    "Measure holes, mounting faces, servo axes and connector envelopes before freezing dependent printed parts",
+    "Keep the CM5 plus carrier and cooler in the stationary electronics bay",
+    "Declare actuator power and control assumptions; no energized motion is authorized by digital model construction",
+    "Changing a hardware profile invalidates its dependent mounts, fits, interference checks and review"
+  ]
+}

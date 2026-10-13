@@ -32,6 +32,7 @@ interface WorkflowSourceDocument {
 
 export interface RecoveryWorkspaceMock {
   current(): WorkflowSourceDocument | null;
+  sourceAt(path: string): WorkflowSourceDocument | null;
   createCount(): number;
   missingReadCount(): number;
   runCount(): number;
@@ -95,6 +96,8 @@ export async function mockRecoveryWorkspace(
       ? null
       : workflowDocument(options.source ?? publicWorkflowSource, 1, 2);
   let currentPath = WORKFLOW_PATH;
+  const documents = new Map<string, WorkflowSourceDocument>();
+  if (document !== null) documents.set(currentPath, document);
   let sourceReadiness: "not_template" | "setup_required" =
     options.readiness ?? "not_template";
   let creates = 0;
@@ -194,17 +197,12 @@ export async function mockRecoveryWorkspace(
             name: "bracket-development",
             path: "/",
             type: "directory",
-            children:
-              document === null
-                ? []
-                : [
-                    {
-                      name: currentPath.split("/").at(-1)!,
-                      path: `/${currentPath}`,
-                      type: "file",
-                      children: null,
-                    },
-                  ],
+            children: [...documents.keys()].map((workflowPath) => ({
+              name: workflowPath.split("/").at(-1)!,
+              path: `/${workflowPath}`,
+              type: "file",
+              children: null,
+            })),
           },
         },
       });
@@ -377,6 +375,7 @@ export async function mockRecoveryWorkspace(
       currentPath = body.workflow_path;
       sourceReadiness = "setup_required";
       document = workflowDocument(publicWorkflowSource, 1, 1, currentPath);
+      documents.set(currentPath, document);
       return route.fulfill({
         status: 201,
         json: {
@@ -390,13 +389,20 @@ export async function mockRecoveryWorkspace(
         },
       });
     }
-    if (path === "/api/workspace/workflow-sources/readiness" && method === "GET") {
+    if (
+      path === "/api/workspace/workflow-sources/readiness" &&
+      method === "GET"
+    ) {
       return route.fulfill({
         headers: { "Cache-Control": "no-store" },
         json: {
           state: sourceReadiness,
-          template_id: sourceReadiness === "setup_required" ? "printed-replacement-part" : null,
-          template_version: sourceReadiness === "setup_required" ? "1.0.0" : null,
+          template_id:
+            sourceReadiness === "setup_required"
+              ? "printed-replacement-part"
+              : null,
+          template_version:
+            sourceReadiness === "setup_required" ? "1.0.0" : null,
           source_digest: null,
           layout_digest: null,
           definition_valid: true,
@@ -405,22 +411,30 @@ export async function mockRecoveryWorkspace(
           available: sourceReadiness !== "setup_required",
           verified_run: false,
           facts: [],
-          blocking_reasons: sourceReadiness === "setup_required" ? ["Connect and qualify the required engineering tools."] : [],
+          blocking_reasons:
+            sourceReadiness === "setup_required"
+              ? ["Connect and qualify the required engineering tools."]
+              : [],
           message: null,
         },
       });
     }
     if (path === "/api/workspace/workflow-sources" && method === "GET") {
+      const requestedPath = url.searchParams.get("path");
       if (
         url.searchParams.get("session_id") !== SESSION_ID ||
-        url.searchParams.get("path") !== currentPath
+        requestedPath === null ||
+        !/^workflows\/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow$/.test(
+          requestedPath,
+        )
       ) {
         return route.fulfill({
           status: 400,
           json: { message: "Unexpected workflow source identity" },
         });
       }
-      if (document === null) {
+      const requestedDocument = documents.get(requestedPath) ?? null;
+      if (requestedDocument === null) {
         missingReads += 1;
         return route.fulfill({
           status: 404,
@@ -432,7 +446,7 @@ export async function mockRecoveryWorkspace(
       }
       return route.fulfill({
         headers: { "Cache-Control": "no-store" },
-        json: document,
+        json: requestedDocument,
       });
     }
     if (path === "/api/workspace/workflow-sources" && method === "POST") {
@@ -443,13 +457,20 @@ export async function mockRecoveryWorkspace(
       };
       if (
         body.session_id !== SESSION_ID ||
-        body.path !== currentPath ||
-        document !== null
+        !/^workflows\/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow$/.test(
+          body.path,
+        ) ||
+        documents.has(body.path)
       ) {
-        return route.fulfill({ status: 409, json: conflictEnvelope(document) });
+        return route.fulfill({
+          status: 409,
+          json: conflictEnvelope(documents.get(body.path) ?? null),
+        });
       }
       creates += 1;
+      currentPath = body.path;
       document = workflowDocument(body.source, 1, 1, currentPath);
+      documents.set(currentPath, document);
       return route.fulfill({
         status: 201,
         headers: { "Cache-Control": "no-store" },
@@ -468,20 +489,20 @@ export async function mockRecoveryWorkspace(
         expected_layout_revision?: number;
       };
       updates += 1;
+      const previous = documents.get(body.path) ?? null;
       const stale =
-        document === null ||
+        previous === null ||
         body.session_id !== SESSION_ID ||
-        body.path !== currentPath ||
-        body.expected_storage_revision !== document.storage_revision ||
-        body.expected_storage_digest !== document.storage_digest ||
+        body.expected_storage_revision !== previous.storage_revision ||
+        body.expected_storage_digest !== previous.storage_digest ||
         typeof body.semantic_change_validated !== "boolean" ||
         (body.layout !== undefined &&
-          body.expected_layout_revision !== document.layout_revision);
-      if (rejectNextUpdate || stale || document === null) {
+          body.expected_layout_revision !== previous.layout_revision);
+      if (rejectNextUpdate || stale || previous === null) {
         rejectNextUpdate = false;
-        return route.fulfill({ status: 409, json: conflictEnvelope(document) });
+        return route.fulfill({ status: 409, json: conflictEnvelope(previous) });
       }
-      const previous = document;
+      currentPath = body.path;
       const sourceChanged = body.source !== previous.source;
       document = workflowDocument(
         body.source,
@@ -506,6 +527,7 @@ export async function mockRecoveryWorkspace(
             ? "stale"
             : previous.layout_status;
       }
+      documents.set(currentPath, document);
       return route.fulfill({
         headers: { "Cache-Control": "no-store" },
         json: document,
@@ -533,6 +555,7 @@ export async function mockRecoveryWorkspace(
 
   return {
     current: () => document,
+    sourceAt: (workflowPath) => documents.get(workflowPath) ?? null,
     createCount: () => creates,
     missingReadCount: () => missingReads,
     runCount: () => runs,
@@ -546,17 +569,47 @@ export async function mockRecoveryWorkspace(
 
 export async function openRecoveryEditor(page: Page): Promise<void> {
   await page.goto(`/workspace/${WORKSPACE_ID}`);
-  const workflows = page.getByTestId("activity-bar-workflows-btn");
-  await expect(workflows).toBeVisible();
-  await workflows.click();
+  const files = page.getByTestId("activity-bar-explorer-btn");
+  await expect(files).toBeVisible();
+  if ((await files.getAttribute("aria-expanded")) !== "true")
+    await files.click();
+  const navigation = page.getByRole("region", { name: "Workspace navigation" });
+  const savedFile = navigation.getByText("mounting-bracket.workflow.wflow", {
+    exact: true,
+  });
+  if (!(await savedFile.isVisible())) {
+    await navigation.getByText("bracket-development", { exact: true }).click();
+  }
+  await savedFile.click();
   await expect(page).toHaveURL(
-    new RegExp(`/workspace/${WORKSPACE_ID}\\?workflow=canonical$`),
+    (url) =>
+      url.pathname === `/workspace/${WORKSPACE_ID}` &&
+      url.searchParams.get("workflow") === "canonical" &&
+      url.searchParams.get("workflowPath") === WORKFLOW_PATH,
   );
   await expect(
     page.getByRole("region", {
       name: /Bracket development workflow workflows\/mounting-bracket\.workflow\.wflow/,
     }),
   ).toBeVisible();
+  const collapseAgent = page.getByTitle("Collapse Agent Console");
+  if (await collapseAgent.isVisible()) await collapseAgent.click();
+}
+
+export async function openNewRecoveryEditor(page: Page): Promise<void> {
+  await page.goto(`/workspace/${WORKSPACE_ID}`);
+  const workflows = page.getByTestId("activity-bar-workflows-btn");
+  await expect(workflows).toBeVisible();
+  await workflows.click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === `/workspace/${WORKSPACE_ID}` &&
+      url.searchParams.get("workflow") === "canonical" &&
+      /^workflows\/untitled-workflow-[a-f0-9-]{12}\.workflow\.wflow$/.test(
+        url.searchParams.get("workflowPath") ?? "",
+      ),
+  );
+  await expect(page.getByTestId("workflow-recovery-canvas")).toBeVisible();
   const collapseAgent = page.getByTitle("Collapse Agent Console");
   if (await collapseAgent.isVisible()) await collapseAgent.click();
 }

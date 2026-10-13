@@ -1,0 +1,11 @@
+{
+  "scope": "Passive replay of terminal robot-arm-002 exact recorded model input; no HTTP/model request or provider effect. Complete native results retained through real part-size and text-budget path. Only strictly identical host-envelope text copies omitted.",
+  "status": "pass",
+  "transport_bytes": 123684,
+  "parts": 3,
+  "max_part_chars": 64565,
+  "retained_native_results_checked": 2,
+  "request_digest": "f6ff1f09c9d309cc0fc760487ab5f0448d3caa501ccae81c7ad52d5ef5c8ce26",
+  "source_digest": "6824d3a57de405a5bd2d16505e6ef6850c20163d9eabacecfebc6e237c62b71b",
+  "original_run_status": "failed"
+}

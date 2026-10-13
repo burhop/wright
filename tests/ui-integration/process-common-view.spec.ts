@@ -45,7 +45,14 @@ end
       await expect(image).toBeVisible();
       await expect.poll(() => image.evaluate(element => ({width:(element as HTMLImageElement).naturalWidth, height:(element as HTMLImageElement).naturalHeight}))).toEqual({width:96,height:96});
       await image.scrollIntoViewIfNeeded();
-      await expect(image).toBeInViewport({ratio:1});
+      // IntersectionObserver rounds fractional CSS pixels differently across hosts.
+      // Keep the complete thumbnail inside the viewport within one CSS pixel.
+      await expect(image).toBeInViewport({ratio:0.999});
+      const bounds = await image.boundingBox(); const viewport = page.viewportSize();
+      expect(bounds).not.toBeNull(); expect(viewport).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(-1); expect(bounds!.y).toBeGreaterThanOrEqual(-1);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(viewport!.width + 1);
+      expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(viewport!.height + 1);
       await expect(common.getByText("Preparing file…", {exact:true})).toBeVisible();
       await expect(prepare).toBeDisabled(); await expect(start).toBeDisabled(); expect(fixture.starts()).toBe(0);
     });
@@ -169,12 +176,17 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
     disconnectEvents: true,
   });
   await openRecoveryEditor(page);
+  // Bind the working tab to the accepted source before leaving an unsaved draft.
+  await page.getByTestId("workflow-working-view-open").click();
+  const common = page.getByTestId("common-process-view");
+  await expect(common).toBeVisible();
+  await page.getByRole("tab").filter({ hasText: "mounting-bracket" }).first().click();
   await page.getByTestId("workflow-recovery-view-code").click();
   const source = page.getByTestId("workflow-recovery-source-editor");
   const draft = `${await source.inputValue()}\n# Uncommitted browser source draft\n`;
   await source.fill(draft);
-  await page.getByTestId("workflow-working-view-open").click();
-  const common = page.getByTestId("common-process-view");
+  await expect(page.getByTestId("workflow-working-view-open")).toBeDisabled();
+  await page.getByRole("tab").filter({ hasText: "mounting-bracket" }).last().click();
   await expect(common).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Start process", exact: true }),
@@ -240,7 +252,7 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
     fullPage: true,
   });
   await page
-    .getByRole("button", { name: "Close representation", exact: true })
+    .getByRole("button", { name: "Close file", exact: true })
     .click();
   await result
     .getByRole("button", { name: "Open producing step", exact: true })

@@ -1,0 +1,49 @@
+{
+  "run_id": "3ab6b30fac054902aaccdcfce3789cb2",
+  "workflow_path": "workflows/prompt-to-reviewed-cad-v13.workflow.wflow",
+  "source_digest": "1fb0c11ca47e88416ecc97245ff9d610836dfdc60d9eeaa45f1612fbfb7e6795",
+  "status": "completed",
+  "started_at": "2026-10-12T02:32:43.683958+00:00",
+  "completed_at": "2026-10-12T02:51:20.864106+00:00",
+  "execution_ended_at": "2026-10-12T02:51:20.864106+00:00",
+  "error": null,
+  "attempt": "robot-arm-010",
+  "original_run_sha256": "9d509ffb77e06c0f99b31e2289894d884600f1c7d122383ac80b68e2fbe7a7b2",
+  "redacted_run_sha256": "47b1b3c8c30752afe73d5a4774602c97a2cc57a3f988415346012297a4b834cc",
+  "step_timings": [
+    {
+      "task_id": "design_document",
+      "seconds": 115.45
+    },
+    {
+      "task_id": "test_plan",
+      "seconds": 74.99
+    },
+    {
+      "task_id": "create_design",
+      "seconds": 326.13
+    },
+    {
+      "task_id": "validate_design",
+      "seconds": 413.55
+    },
+    {
+      "task_id": "render_isometric",
+      "seconds": 38.55
+    },
+    {
+      "task_id": "render_top",
+      "seconds": 37.54
+    },
+    {
+      "task_id": "render_front",
+      "seconds": 35.55
+    },
+    {
+      "task_id": "design_review",
+      "seconds": 68.78
+    }
+  ],
+  "elapsed_seconds": 1117.18,
+  "failures": []
+}

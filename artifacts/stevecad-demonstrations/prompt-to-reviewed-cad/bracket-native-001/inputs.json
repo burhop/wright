@@ -1,0 +1,21 @@
+{
+  "schema_version": "wright.process-input-snapshot/1",
+  "snapshot_id": "inputs-f263c55938f246a38493004a5ab814a7",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/prompt-to-reviewed-cad-v19.workflow.wflow",
+    "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "created_at": "2026-10-12T19:33:21.457163+00:00",
+  "bindings": [
+    {
+      "kind": "value",
+      "input_id": "design_prompt",
+      "value": "Create a small one-piece right-angle mounting bracket for the next digital exercise. Use millimetres and a right-handed Z-up coordinate frame. The final solid is the union of a base region occupying X=0..60, Y=0..40, Z=0..6 and an upright region occupying X=0..6, Y=0..40, Z=0..46, minus the two holes below. These regions describe the required final geometry. The two regions overlap at the heel; the result must be one connected L-shaped solid with a 60 x 40 x 46 mm overall envelope and 6 mm nominal wall thickness.\n\nAdd two plain diameter-4 mm through holes in the base, parallel to Z, at global XY (20,10) and (45,30). Each traverses the 6 mm base thickness. The upright remains unperforated. No fillets, chamfers, counterbores, text or extra components. Use lowercase editable feature identifiers. Modeling operations, construction order and intermediate stock states are implementation choices: acceptance evaluates the final generated part, with no requirement to retain or inspect an intermediate unperforated block.\n\nVerify the final overall envelope and hole diameter/position/depth within 0.01 mm; one connected solid; and net volume within 0.1 percent of (60*40*6 + 6*40*46 - 6*40*6 - 2*pi*2^2*6) mm^3. Measure the 6 mm base and upright wall thicknesses from actual geometry or clearly state any unavailable evidence. This is a digital geometry exercise; strength, material-property qualification and physical manufacturing acceptance are outside its scope.\n\nUse matte blue-gray #607d8b presentation appearance in the studio renderings. Make that appearance available in native body color metadata, so the existing renderer can preserve it. If the documented provider API requires a material profile to carry color, the existing fdm-petg profile is an explicitly permitted presentation assumption, with matte finish and that color; no mechanical or manufacturing compliance follows from this assignment. The original CAD captures may retain provider display colors. Studio background and lighting are presentation choices.\n\nCapture isometric, top and front CAD views, then produce three realistic studio renderings based on those actual views and the exact exported geometry. Evaluate their visible geometry and requested appearance qualitatively without claiming dimensions from pixels. The design review must include supplied requirements, the predeclared test plan, numerical CAD observations, all six images, the provider-returned editable design link, export identity and unresolved findings. Use the same accepted workflow as the preceding block runs. Create one fresh exercise document, preserving the earlier bracket documents and evidence.\n",
+      "provenance": "supplied"
+    }
+  ],
+  "digest": "f84ef2e0181292ace7805ffaa7fde9884a89b613849e65d3d39aba51ec9431d3"
+}

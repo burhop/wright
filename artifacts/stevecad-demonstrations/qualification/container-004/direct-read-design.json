@@ -1,0 +1,232 @@
+{
+  "content": [
+    {
+      "text": "{\"document\": {\"code\": \"\\\"\\\"\\\"Gateway qualification coupon; not a load-qualified equipment mount.\\nDimensions are mm: 50 x 30 x 3 plate, four 4.5 mm through holes at +/-18, +/-8.\\n\\\"\\\"\\\"\\nfrom steve import Model\\nlength = 50  # mm Plate length\\nwidth = 30  # mm Plate width\\nthickness = 3  # mm Plate thickness\\nhole_diameter = 4.5  # mm Through-hole diameter\\nmodel = Model()\\nwith model.sketch(\\\"outline\\\", on=\\\"XY\\\", name=\\\"Coupon outline\\\") as s:\\n    s.rect(\\\"r1\\\", (-length/2, -width/2), (length/2, width/2))\\nmodel.extrude(\\\"plate\\\", \\\"outline\\\", distance=thickness)\\nmodel.hole(\\\"mount_holes\\\", on=\\\"plate.end\\\", points=[(-18,-8),(-18,8),(18,-8),(18,8)], diameter=hole_diameter)\\nresult = model.result()\\n\", \"created_at\": \"2026-10-11T16:13:29.700819+00:00\", \"files\": {}, \"id\": \"875dbd4e-aec5-4c07-8eae-cf34e1161557\", \"kind\": \"part\", \"links\": {}, \"name\": \"Wright qualification coupon 2026-10-11\", \"preview_build_id\": \"bb8eedbe-fd79-4c2d-a869-34973282015e\", \"revision\": 1, \"updated_at\": \"2026-10-11T16:13:29.700819+00:00\", \"url\": \"https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557\"}, \"features\": {\"diagnostics\": [], \"features\": [{\"editable_in_gui\": true, \"id\": \"outline\", \"kind\": \"sketch\", \"line\": 10, \"name\": \"Coupon outline\", \"status\": \"ok\"}, {\"editable_in_gui\": true, \"id\": \"plate\", \"kind\": \"extrude\", \"line\": 12, \"name\": \"Plate\", \"status\": \"ok\"}, {\"editable_in_gui\": true, \"id\": \"mount_holes\", \"kind\": \"hole\", \"line\": 13, \"name\": \"Mount holes\", \"status\": \"ok\"}], \"modeling\": true, \"parameters\": [{\"description\": \"Plate length\", \"expression\": \"50\", \"name\": \"length\", \"unit\": \"mm\", \"value\": 50}, {\"description\": \"Plate width\", \"expression\": \"30\", \"name\": \"width\", \"unit\": \"mm\", \"value\": 30}, {\"description\": \"Plate thickness\", \"expression\": \"3\", \"name\": \"thickness\", \"unit\": \"mm\", \"value\": 3}, {\"description\": \"Through-hole diameter\", \"expression\": \"4.5\", \"name\": \"hole_diameter\", \"unit\": \"mm\", \"value\": 4.5}]}, \"model\": {\"artifacts\": {\"bodies_mesh\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/bodies_mesh\", \"preview\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/preview\", \"step\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/step\", \"topology\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/topology\", \"view_front\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_front\", \"view_isometric\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_isometric\", \"view_right\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_right\", \"view_top\": \"https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_top\"}, \"current\": true, \"id\": \"bb8eedbe-fd79-4c2d-a869-34973282015e\", \"logs\": \"STEVE stage: sheet-metal export\\nSTEVE stage: STEP export\\nSTEVE stage: preview mesh\\nSTEVE stage: topology\\nSTEVE stage: summary\\nSTEVE stage: history check\\n\", \"metadata\": {\"bounds_mm\": [50.0, 30.0, 3.0], \"cadquery_version\": \"2.8.0\", \"center_of_mass_mm\": [-2.9020937397852817e-16, -2.1106136289347504e-16, 1.4999999999999998], \"component_documents\": {}, \"components\": 1, \"extent_mm\": [-25.0, -15.0, 0.0, 25.0, 15.0, 3.0], \"faces\": 10, \"feature_tree\": {\"coverage\": {\"categories\": {}, \"control_flow\": {}, \"observed_calls\": 0, \"operations\": {}, \"recognized_calls\": 0, \"scope\": \"Public CadQuery calls directly invoked by the submitted source on the executed path. Not a proof of universal completeness.\"}, \"editable\": false, \"execution_verified\": true, \"status\": \"partial\"}, \"inspection_views\": {\"available\": [\"isometric\", \"top\", \"front\", \"right\"], \"error\": null, \"height\": 640, \"projection\": \"orthographic\", \"source\": \"exported STEP\", \"width\": 800}, \"modeling\": {\"bodies\": {\"plate\": {\"extent_mm\": [-25.0, -15.0, 0.0, 25.0, 15.0, 3.0], \"faces\": 10, \"index\": 0, \"name\": null, \"volume\": 4309.1482}}, \"features\": [{\"detail\": {\"dof\": 4, \"profiles\": 1, \"solver\": \"ok\"}, \"id\": \"outline\", \"kind\": \"sketch\", \"ms\": 10.1, \"name\": \"Coupon outline\", \"status\": \"ok\"}, {\"body\": \"plate\", \"id\": \"plate\", \"kind\": \"extrude\", \"ms\": 5.0, \"name\": \"Plate\", \"status\": \"ok\"}, {\"body\": \"plate\", \"detail\": {\"holes\": 4}, \"id\": \"mount_holes\", \"kind\": \"hole\", \"ms\": 32.5, \"name\": \"Mount holes\", \"status\": \"ok\"}], \"sketches\": {\"outline\": {\"dof\": 4, \"regions\": [{\"area\": 1500.0, \"depth\": 0, \"name\": \"outline.region(r1.bottom,r1.left,r1.right,r1.top)\"}], \"solver\": \"ok\"}}, \"version\": 1}, \"solids\": 1, \"surface_area_mm2\": 3522.411500823462, \"topology\": {\"state\": \"complete\"}, \"units\": \"mm\", \"volume_mm3\": 4309.1482462944205}, \"mode\": \"full\", \"status\": \"succeeded\", \"url\": \"https://stevecad.studio/?model=bb8eedbe-fd79-4c2d-a869-34973282015e\"}, \"url\": \"https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557\"}",
+      "type": "text"
+    },
+    {
+      "description": "Open in STEVE",
+      "mimeType": "text/html",
+      "name": "Wright qualification coupon 2026-10-11 (revision 1)",
+      "type": "resource_link",
+      "uri": "https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557"
+    }
+  ],
+  "isError": false,
+  "structuredContent": {
+    "document": {
+      "code": "\"\"\"Gateway qualification coupon; not a load-qualified equipment mount.\nDimensions are mm: 50 x 30 x 3 plate, four 4.5 mm through holes at +/-18, +/-8.\n\"\"\"\nfrom steve import Model\nlength = 50  # mm Plate length\nwidth = 30  # mm Plate width\nthickness = 3  # mm Plate thickness\nhole_diameter = 4.5  # mm Through-hole diameter\nmodel = Model()\nwith model.sketch(\"outline\", on=\"XY\", name=\"Coupon outline\") as s:\n    s.rect(\"r1\", (-length/2, -width/2), (length/2, width/2))\nmodel.extrude(\"plate\", \"outline\", distance=thickness)\nmodel.hole(\"mount_holes\", on=\"plate.end\", points=[(-18,-8),(-18,8),(18,-8),(18,8)], diameter=hole_diameter)\nresult = model.result()\n",
+      "created_at": "2026-10-11T16:13:29.700819+00:00",
+      "files": {},
+      "id": "875dbd4e-aec5-4c07-8eae-cf34e1161557",
+      "kind": "part",
+      "links": {},
+      "name": "Wright qualification coupon 2026-10-11",
+      "preview_build_id": "bb8eedbe-fd79-4c2d-a869-34973282015e",
+      "revision": 1,
+      "updated_at": "2026-10-11T16:13:29.700819+00:00",
+      "url": "https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557"
+    },
+    "features": {
+      "diagnostics": [],
+      "features": [
+        {
+          "editable_in_gui": true,
+          "id": "outline",
+          "kind": "sketch",
+          "line": 10,
+          "name": "Coupon outline",
+          "status": "ok"
+        },
+        {
+          "editable_in_gui": true,
+          "id": "plate",
+          "kind": "extrude",
+          "line": 12,
+          "name": "Plate",
+          "status": "ok"
+        },
+        {
+          "editable_in_gui": true,
+          "id": "mount_holes",
+          "kind": "hole",
+          "line": 13,
+          "name": "Mount holes",
+          "status": "ok"
+        }
+      ],
+      "modeling": true,
+      "parameters": [
+        {
+          "description": "Plate length",
+          "expression": "50",
+          "name": "length",
+          "unit": "mm",
+          "value": 50
+        },
+        {
+          "description": "Plate width",
+          "expression": "30",
+          "name": "width",
+          "unit": "mm",
+          "value": 30
+        },
+        {
+          "description": "Plate thickness",
+          "expression": "3",
+          "name": "thickness",
+          "unit": "mm",
+          "value": 3
+        },
+        {
+          "description": "Through-hole diameter",
+          "expression": "4.5",
+          "name": "hole_diameter",
+          "unit": "mm",
+          "value": 4.5
+        }
+      ]
+    },
+    "model": {
+      "artifacts": {
+        "bodies_mesh": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/bodies_mesh",
+        "preview": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/preview",
+        "step": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/step",
+        "topology": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/topology",
+        "view_front": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_front",
+        "view_isometric": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_isometric",
+        "view_right": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_right",
+        "view_top": "https://stevecad.studio/v1/builds/bb8eedbe-fd79-4c2d-a869-34973282015e/artifacts/view_top"
+      },
+      "current": true,
+      "id": "bb8eedbe-fd79-4c2d-a869-34973282015e",
+      "logs": "STEVE stage: sheet-metal export\nSTEVE stage: STEP export\nSTEVE stage: preview mesh\nSTEVE stage: topology\nSTEVE stage: summary\nSTEVE stage: history check\n",
+      "metadata": {
+        "bounds_mm": [
+          50.0,
+          30.0,
+          3.0
+        ],
+        "cadquery_version": "2.8.0",
+        "center_of_mass_mm": [
+          -2.9020937397852817e-16,
+          -2.1106136289347504e-16,
+          1.4999999999999998
+        ],
+        "component_documents": {},
+        "components": 1,
+        "extent_mm": [
+          -25.0,
+          -15.0,
+          0.0,
+          25.0,
+          15.0,
+          3.0
+        ],
+        "faces": 10,
+        "feature_tree": {
+          "coverage": {
+            "categories": {},
+            "control_flow": {},
+            "observed_calls": 0,
+            "operations": {},
+            "recognized_calls": 0,
+            "scope": "Public CadQuery calls directly invoked by the submitted source on the executed path. Not a proof of universal completeness."
+          },
+          "editable": false,
+          "execution_verified": true,
+          "status": "partial"
+        },
+        "inspection_views": {
+          "available": [
+            "isometric",
+            "top",
+            "front",
+            "right"
+          ],
+          "error": null,
+          "height": 640,
+          "projection": "orthographic",
+          "source": "exported STEP",
+          "width": 800
+        },
+        "modeling": {
+          "bodies": {
+            "plate": {
+              "extent_mm": [
+                -25.0,
+                -15.0,
+                0.0,
+                25.0,
+                15.0,
+                3.0
+              ],
+              "faces": 10,
+              "index": 0,
+              "name": null,
+              "volume": 4309.1482
+            }
+          },
+          "features": [
+            {
+              "detail": {
+                "dof": 4,
+                "profiles": 1,
+                "solver": "ok"
+              },
+              "id": "outline",
+              "kind": "sketch",
+              "ms": 10.1,
+              "name": "Coupon outline",
+              "status": "ok"
+            },
+            {
+              "body": "plate",
+              "id": "plate",
+              "kind": "extrude",
+              "ms": 5.0,
+              "name": "Plate",
+              "status": "ok"
+            },
+            {
+              "body": "plate",
+              "detail": {
+                "holes": 4
+              },
+              "id": "mount_holes",
+              "kind": "hole",
+              "ms": 32.5,
+              "name": "Mount holes",
+              "status": "ok"
+            }
+          ],
+          "sketches": {
+            "outline": {
+              "dof": 4,
+              "regions": [
+                {
+                  "area": 1500.0,
+                  "depth": 0,
+                  "name": "outline.region(r1.bottom,r1.left,r1.right,r1.top)"
+                }
+              ],
+              "solver": "ok"
+            }
+          },
+          "version": 1
+        },
+        "solids": 1,
+        "surface_area_mm2": 3522.411500823462,
+        "topology": {
+          "state": "complete"
+        },
+        "units": "mm",
+        "volume_mm3": 4309.1482462944205
+      },
+      "mode": "full",
+      "status": "succeeded",
+      "url": "https://stevecad.studio/?model=bb8eedbe-fd79-4c2d-a869-34973282015e"
+    },
+    "url": "https://stevecad.studio/?document=875dbd4e-aec5-4c07-8eae-cf34e1161557"
+  }
+}

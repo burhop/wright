@@ -1,0 +1,9 @@
+{
+  "ui_url": "http://wright.localhost:8891/",
+  "health": 200,
+  "ui": 200,
+  "server_status": "active",
+  "is_installed": true,
+  "tool_count": 26,
+  "existing_runtime_changed": false
+}

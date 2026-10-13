@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "selected_evidence_files_byte_exact_in_git_index": 249,
+  "tested_python_files_AST_equal_to_index": 17,
+  "prepared_source_git_blob_digest_matches": true,
+  "new_guide_and_checkin_links_resolve": true,
+  "ruff_and_format_pass": true,
+  "javascript_syntax_pass": true,
+  "source_bound_regressions_passed": 275,
+  "mkdocs_strict_build": "Not run: MkDocs is absent from the existing host environments; new guide/checkpoint links checked directly. No dependency install was performed.",
+  "scope": "Local Git check-in; no remote push, CI, dev integration or production release."
+}

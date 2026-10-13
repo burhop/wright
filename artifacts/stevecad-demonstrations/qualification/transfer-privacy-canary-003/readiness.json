@@ -1,0 +1,33 @@
+{
+  "state": "ready",
+  "assessment_id": "readiness-70d6f9094f6345beb8cc58dcc6016ee2",
+  "process": {
+    "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+    "source_path": "workflows/transfer-privacy-canary-001.workflow.wflow",
+    "source_digest": "a0960572adc26e59bb6725498c2b8537a4dd33d5e86e023c70ac6685a9f518b0",
+    "semantic_digest": null,
+    "source_contract": "canonical-source"
+  },
+  "input_digest": "10ad843e695864e5d02917495d3308615385298bfc0476f86500194f4815ac7a",
+  "assessed_at": "2026-10-12T17:19:38.864702+00:00",
+  "expires_at": null,
+  "dependencies": [
+    {
+      "binding_id": "format_config.native_response",
+      "classification": "upstream_produced",
+      "producer_step": "produce",
+      "producer_port": "produce_response",
+      "interaction_step": null,
+      "reasons": []
+    },
+    {
+      "binding_id": "consume.transient_input",
+      "classification": "upstream_produced",
+      "producer_step": "format_config",
+      "producer_port": "transient_config",
+      "interaction_step": null,
+      "reasons": []
+    }
+  ],
+  "reasons": []
+}

@@ -157,7 +157,7 @@ async def assert_saved_page_fits_after_removing_native_bindings(step, workspace)
     async def emit(*args, **kwargs):
         pass
 
-    async def request_for(prompt, observations=None):
+    async def request_for(prompt, observations=None, *, context_bytes=200000):
         captured = {}
 
         async def decide(messages, schemas, **kwargs):
@@ -178,18 +178,26 @@ async def assert_saved_page_fits_after_removing_native_bindings(step, workspace)
             ])
         bridge = HermesOpenAICompatibilityBridge(HermesOpenAIBridgeSettings(
             base_url="http://invalid.offline-only", api_key="unused", workflow_task=True,
-            maximum_tools=64, maximum_translation_prompt_bytes=200000, maximum_text_bytes=16 * 1024 * 1024))
+            maximum_tools=64, maximum_translation_prompt_bytes=context_bytes, maximum_text_bytes=16 * 1024 * 1024))
         request = bridge._validate({"model": "wright-hermes", "messages": captured["messages"],
             "tools": captured["schemas"], "tool_choice": "auto", "stream": False})
         return bridge._upstream_payload(request, translate=True, stream=False)
 
+    # The reversible structured transport now fits this historical observation.
+    # An explicitly smaller model budget must still fail before any request.
+    historical = await request_for(fixture["original_prompt"])
+    historical_parts = [part["text"] for message in historical["messages"]
+        for part in (message["content"] if isinstance(message["content"], list) else [{"type": "text", "text": message["content"]}])
+        if part["type"] == "text"]
+    assert max(map(len, historical_parts)) <= 65536
+    assert observation["result"]["sha256"] in "\n".join(historical_parts)
     with pytest.raises(HermesBridgeError) as failure:
-        await request_for(fixture["original_prompt"])
+        await request_for(fixture["original_prompt"], context_bytes=16384)
     assert failure.value.code == "workflow_context_limit"
     prompt = step.prompt + f"\n\nWorkspace directory: {workspace}. File references are relative to this directory."
-    # Removing references alone cannot fix an oversized individual observation.
+    # Removing references alone cannot fit the observation into this small budget.
     with pytest.raises(HermesBridgeError):
-        await request_for(prompt)
+        await request_for(prompt, context_bytes=16384)
     files = json.loads((ROOT / "tests/fixtures/jig-final-inspection-files.json").read_text(encoding="utf-8"))["files"]
     inspector = WorkspaceFileInspector()
     session = SimpleNamespace(session_id="unit", workspace_id="unit", workspace_path=str(workspace), principal_id="wright-native-workflow")
@@ -232,5 +240,6 @@ async def assert_saved_page_fits_after_removing_native_bindings(step, workspace)
     assert len(history) == 7
     return {"pages": len(history), "maximum_transport_text_part_chars": maximum_part_chars,
         "exact_file_bytes": {name: artifact["bytes"] for name, artifact in files.items()},
-        "complete_bytes_reconstructed": True, "old_failure_reproduced": True,
+        "complete_bytes_reconstructed": True, "historical_fixture_now_fits": True,
+        "explicit_small_budget_rejected": True,
         "removing_bindings_alone_insufficient": True, "model_calls": 0, "native_calls": 0}

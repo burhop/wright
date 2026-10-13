@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import shlex
 from collections.abc import Mapping, Sequence
@@ -8,12 +9,22 @@ from typing import Any
 REDACTED = "[REDACTED]"
 
 SECRET_KEY_RE = re.compile(
-    r"(?i)(api[_-]?key|secret|token|password|authorization|cookie|credential|private[_-]?key)"
+    r"(?i)(api[_-]?key|secret|token|password|authorization|cookie|credential|private[_-]?key|x[_-](?:upload|download)[_-]ticket)"
 )
 SECRET_ASSIGNMENT_RE = re.compile(
     r"(?i)\b(api[_-]?(?:key|token)|secret|token|password|authorization|cookie|credential)\b\s*[:=]\s*([^\s,;]+)"
 )
 BEARER_RE = re.compile(r"(?i)\bbearer\s+[a-z0-9._~+/=-]+")
+# One-use HTTP transfer credentials also occur inside returned command strings
+# and JSON encoded in a text block. Preserve surrounding quoting/JSON syntax.
+TRANSFER_TICKET_RE = re.compile(
+    r"""(?i)(\bx[_-](?:upload|download)[_-]ticket\b)((?:\\*["'])?\s*[:=]\s*)((?:\\*["'])?)([^\s"'\\,;}]+)"""
+)
+# Evidence also contains public identities such as credential_binding_digest and
+# token counts. Match credential fields, not those longer metadata names.
+EVIDENCE_SECRET_KEY_RE = re.compile(
+    r"(?i)(api[_-]?key|token|secret|password|authorization|cookie|credential|private[_-]?key|x[_-](?:upload|download)[_-]ticket)$"
+)
 
 
 def redact_text(text: Any, secrets: Sequence[str] | None = None) -> str:
@@ -22,6 +33,10 @@ def redact_text(text: Any, secrets: Sequence[str] | None = None) -> str:
         if secret:
             value = value.replace(str(secret), REDACTED)
     value = BEARER_RE.sub(f"Bearer {REDACTED}", value)
+    value = TRANSFER_TICKET_RE.sub(
+        lambda match: f"{match.group(1)}{match.group(2)}{match.group(3)}{REDACTED}",
+        value,
+    )
     return SECRET_ASSIGNMENT_RE.sub(lambda match: f"{match.group(1)}={REDACTED}", value)
 
 
@@ -50,6 +65,39 @@ def redact_mapping(mapping: Mapping[str, Any] | None) -> dict[str, Any]:
     return redacted
 
 
+def redact_evidence(value: Any) -> Any:
+    """Copy evidence without credentials, preserving public provenance and types.
+
+    Raw values stay in the current execution for connected tool arguments. This
+    projection is for persistence/observation, never for reconstructing authority
+    or silently replacing execution inputs. Decode embedded JSON before redacting
+    its fields so surrounding syntax and nonsecret values remain usable.
+    """
+    if isinstance(value, Mapping):
+        return {
+            key: REDACTED
+            if EVIDENCE_SECRET_KEY_RE.search(str(key))
+            else redact_evidence(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [redact_evidence(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(redact_evidence(item) for item in value)
+    if isinstance(value, str):
+        if value.lstrip().startswith(("{", "[", '"')):
+            try:
+                decoded = json.loads(value)
+            except (ValueError, RecursionError):
+                pass
+            else:
+                clean = redact_evidence(decoded)
+                if clean != decoded:
+                    return json.dumps(clean, ensure_ascii=False)
+        return redact_text(value)
+    return value
+
+
 def redact_command(command: str | Sequence[str]) -> str:
     parts = (
         shlex.split(command)
@@ -62,6 +110,9 @@ def redact_command(command: str | Sequence[str]) -> str:
         if redact_next:
             redacted.append(REDACTED)
             redact_next = False
+            continue
+        if TRANSFER_TICKET_RE.search(part):
+            redacted.append(redact_text(part))
             continue
         if SECRET_KEY_RE.search(part):
             if "=" in part:

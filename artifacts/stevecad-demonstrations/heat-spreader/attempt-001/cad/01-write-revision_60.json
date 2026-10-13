@@ -1,0 +1,48 @@
+{
+  "observed_at": "2026-10-11T16:51:30.419369+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__write_design",
+    "label": "01-write-revision_60",
+    "output_dir": "artifacts/stevecad-demonstrations/heat-spreader/attempt-001/cad",
+    "print_summary": true,
+    "arguments": {
+      "name": "Wright conduction strap revision_60 2026-10-11",
+      "kind": "part",
+      "code": "\"\"\"Original bounded conduction case; millimetres, no holes or interfaces.\"\"\"\nfrom steve import Model\n\nlength = 100  # mm Conduction length\nwidth = 60  # mm Candidate width\nthickness = 2  # mm Plate thickness\nmodel = Model()\nwith model.sketch(\"outline\", on=\"XY\", name=\"Heat strap outline\") as s:\n    s.rect(\"r1\", (0, 0), (length, width))\nmodel.extrude(\"strap\", \"outline\", distance=thickness)\nresult = model.result()\n"
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"document\": {\"created_at\": \"2026-10-11T16:51:31.145392+00:00\", \"id\": \"b1294a0d-acf9-4f13-8586-08ed992fb685\", \"kind\": \"part\", \"links\": {}, \"name\": \"Wright conduction strap revision_60 2026-10-11\", \"preview_build_id\": null, \"revision\": 1, \"updated_at\": \"2026-10-11T16:51:31.145392+00:00\", \"url\": \"https://stevecad.studio/?document=b1294a0d-acf9-4f13-8586-08ed992fb685\"}, \"url\": \"https://stevecad.studio/?document=b1294a0d-acf9-4f13-8586-08ed992fb685\"}"
+      },
+      {
+        "name": "Wright conduction strap revision_60 2026-10-11 (revision 1)",
+        "uri": "https://stevecad.studio/?document=b1294a0d-acf9-4f13-8586-08ed992fb685",
+        "description": "Open in STEVE",
+        "mimeType": "text/html",
+        "type": "resource_link"
+      }
+    ],
+    "structuredContent": {
+      "document": {
+        "created_at": "2026-10-11T16:51:31.145392+00:00",
+        "id": "b1294a0d-acf9-4f13-8586-08ed992fb685",
+        "kind": "part",
+        "links": {},
+        "name": "Wright conduction strap revision_60 2026-10-11",
+        "preview_build_id": null,
+        "revision": 1,
+        "updated_at": "2026-10-11T16:51:31.145392+00:00",
+        "url": "https://stevecad.studio/?document=b1294a0d-acf9-4f13-8586-08ed992fb685"
+      },
+      "url": "https://stevecad.studio/?document=b1294a0d-acf9-4f13-8586-08ed992fb685"
+    },
+    "isError": false
+  }
+}

@@ -1,0 +1,244 @@
+{
+  "observed_at": "2026-10-12T17:41:34.772536+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "name": "stevecad-mcp__read_design",
+    "arguments": {
+      "document_id": "0d927bb4-87e0-49ba-ba84-c256bf035bce"
+    },
+    "label": "single-part-native-basis-002",
+    "output_dir": "artifacts/stevecad-demonstrations/qualification/generic-render-binding-001",
+    "print_summary": true
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"document\": {\"code\": \"\\\"\\\"\\\"Rectangular Four-Hole Block \\u2014 Engineering Design Specification\\n\\nR01: One 60 x 40 x 12 mm block in a right-handed millimetre frame,\\noccupying X=0..60, Y=0..40, Z=0..12 with the origin at the lower-left\\nbottom corner.\\nR02: Four individual plain diameter-6 mm through holes, parallel to Z,\\nat global XY centers h01=(10,10), h02=(50,10), h03=(10,30), and\\nh04=(50,30). Positive XY coordinates are passed directly on block.top.\\nR03: The sole body is named block; feature identifiers are lowercase h01-h04.\\nR04: Exactly one solid, with no fillets, chamfers, counterbores, text, or\\nextra components.\\nR05-R09: Geometric validation, analytical-volume comparison, CAD views,\\npresentation rendering, and final review are downstream tasks.\\n\\nNominal gross volume: 28800 mm^3.\\nNominal removed volume: 432*pi mm^3.\\nNominal final volume: 28800 - 432*pi = approximately 27442.832 mm^3.\\n\\\"\\\"\\\"\\n\\nfrom steve import Model\\n\\nmodel = Model(\\\"rectangular_four_hole_block\\\")\\n\\nmodel.box(\\n    \\\"block\\\",\\n    length=60.0,\\n    width=40.0,\\n    height=12.0,\\n    at=(0.0, 0.0, 0.0),\\n    centered=False,\\n    name=\\\"block\\\",\\n)\\nmodel.body_name(\\\"block\\\", \\\"block\\\")\\n\\nmodel.hole(\\n    \\\"h01\\\",\\n    on=\\\"block.top\\\",\\n    points=[(10.0, 10.0)],\\n    diameter=6.0,\\n    depth=None,\\n    kind=\\\"simple\\\",\\n    name=\\\"h01\\\",\\n)\\nmodel.hole(\\n    \\\"h02\\\",\\n    on=\\\"block.top\\\",\\n    points=[(50.0, 10.0)],\\n    diameter=6.0,\\n    depth=None,\\n    kind=\\\"simple\\\",\\n    name=\\\"h02\\\",\\n)\\nmodel.hole(\\n    \\\"h03\\\",\\n    on=\\\"block.top\\\",\\n    points=[(10.0, 30.0)],\\n    diameter=6.0,\\n    depth=None,\\n    kind=\\\"simple\\\",\\n    name=\\\"h03\\\",\\n)\\nmodel.hole(\\n    \\\"h04\\\",\\n    on=\\\"block.top\\\",\\n    points=[(50.0, 30.0)],\\n    diameter=6.0,\\n    depth=None,\\n    kind=\\\"simple\\\",\\n    name=\\\"h04\\\",\\n)\\n\\nresult = model.result()\\n\", \"created_at\": \"2026-10-11T19:57:17.669470+00:00\", \"files\": {}, \"id\": \"0d927bb4-87e0-49ba-ba84-c256bf035bce\", \"kind\": \"part\", \"links\": {}, \"name\": \"Wright reviewed design cd33cd5747b145f784a6007f6c244412\", \"preview_build_id\": \"5d3c54b3-9cfb-4f49-a68d-0a86b2936e22\", \"revision\": 1, \"updated_at\": \"2026-10-11T19:57:17.669470+00:00\", \"url\": \"https://stevecad.studio/?document=0d927bb4-87e0-49ba-ba84-c256bf035bce\"}, \"features\": {\"diagnostics\": [], \"features\": [{\"editable_in_gui\": true, \"id\": \"block\", \"kind\": \"box\", \"line\": 24, \"name\": \"block\", \"status\": \"ok\"}, {\"editable_in_gui\": true, \"id\": \"h01\", \"kind\": \"hole\", \"line\": 35, \"name\": \"h01\", \"status\": \"ok\"}, {\"editable_in_gui\": true, \"id\": \"h02\", \"kind\": \"hole\", \"line\": 44, \"name\": \"h02\", \"status\": \"ok\"}, {\"editable_in_gui\": true, \"id\": \"h03\", \"kind\": \"hole\", \"line\": 53, \"name\": \"h03\", \"status\": \"ok\"}, {\"editable_in_gui\": true, \"id\": \"h04\", \"kind\": \"hole\", \"line\": 62, \"name\": \"h04\", \"status\": \"ok\"}], \"modeling\": true, \"parameters\": []}, \"model\": {\"artifacts\": {\"bodies_mesh\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/bodies_mesh\", \"preview\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/preview\", \"step\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/step\", \"topology\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/topology\", \"view_front\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_front\", \"view_isometric\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_isometric\", \"view_right\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_right\", \"view_top\": \"https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_top\"}, \"current\": true, \"id\": \"5d3c54b3-9cfb-4f49-a68d-0a86b2936e22\", \"logs\": \"STEVE stage: sheet-metal export\\nSTEVE stage: STEP export\\nSTEVE stage: preview mesh\\nSTEVE stage: topology\\nSTEVE stage: summary\\nSTEVE stage: history check\\n\", \"metadata\": {\"bounds_mm\": [60.0, 40.0, 12.0], \"cadquery_version\": \"2.8.0\", \"center_of_mass_mm\": [29.999999999999982, 19.999999999999993, 5.999999999999998], \"component_documents\": {}, \"components\": 1, \"extent_mm\": [0.0, 0.0, 0.0, 60.0, 40.0, 12.0], \"faces\": 10, \"feature_tree\": {\"coverage\": {\"categories\": {}, \"control_flow\": {}, \"observed_calls\": 0, \"operations\": {}, \"recognized_calls\": 0, \"scope\": \"Public CadQuery calls directly invoked by the submitted source on the executed path. Not a proof of universal completeness.\"}, \"editable\": false, \"execution_verified\": true, \"status\": \"partial\"}, \"inspection_views\": {\"available\": [\"isometric\", \"top\", \"front\", \"right\"], \"error\": null, \"height\": 640, \"projection\": \"orthographic\", \"source\": \"exported STEP\", \"width\": 800}, \"modeling\": {\"bodies\": {\"block\": {\"extent_mm\": [0.0, 0.0, 0.0, 60.0, 40.0, 12.0], \"faces\": 10, \"index\": 0, \"name\": \"block\", \"volume\": 27442.832}}, \"features\": [{\"body\": \"block\", \"id\": \"block\", \"kind\": \"box\", \"ms\": 1.5, \"name\": \"block\", \"status\": \"ok\"}, {\"body\": \"block\", \"detail\": {\"holes\": 1}, \"id\": \"h01\", \"kind\": \"hole\", \"ms\": 22.1, \"name\": \"h01\", \"status\": \"ok\"}, {\"body\": \"block\", \"detail\": {\"holes\": 1}, \"id\": \"h02\", \"kind\": \"hole\", \"ms\": 18.1, \"name\": \"h02\", \"status\": \"ok\"}, {\"body\": \"block\", \"detail\": {\"holes\": 1}, \"id\": \"h03\", \"kind\": \"hole\", \"ms\": 20.1, \"name\": \"h03\", \"status\": \"ok\"}, {\"body\": \"block\", \"detail\": {\"holes\": 1}, \"id\": \"h04\", \"kind\": \"hole\", \"ms\": 23.8, \"name\": \"h04\", \"status\": \"ok\"}], \"sketches\": {}, \"version\": 1}, \"solids\": 1, \"surface_area_mm2\": 7878.584013175396, \"topology\": {\"state\": \"complete\"}, \"units\": \"mm\", \"volume_mm3\": 27442.831973649212}, \"mode\": \"full\", \"status\": \"succeeded\", \"url\": \"https://stevecad.studio/?model=5d3c54b3-9cfb-4f49-a68d-0a86b2936e22\"}, \"url\": \"https://stevecad.studio/?document=0d927bb4-87e0-49ba-ba84-c256bf035bce\"}"
+      },
+      {
+        "name": "Wright reviewed design cd33cd5747b145f784a6007f6c244412 (revision 1)",
+        "uri": "https://stevecad.studio/?document=0d927bb4-87e0-49ba-ba84-c256bf035bce",
+        "description": "Open in STEVE",
+        "mimeType": "text/html",
+        "type": "resource_link"
+      }
+    ],
+    "structuredContent": {
+      "document": {
+        "code": "\"\"\"Rectangular Four-Hole Block \u2014 Engineering Design Specification\n\nR01: One 60 x 40 x 12 mm block in a right-handed millimetre frame,\noccupying X=0..60, Y=0..40, Z=0..12 with the origin at the lower-left\nbottom corner.\nR02: Four individual plain diameter-6 mm through holes, parallel to Z,\nat global XY centers h01=(10,10), h02=(50,10), h03=(10,30), and\nh04=(50,30). Positive XY coordinates are passed directly on block.top.\nR03: The sole body is named block; feature identifiers are lowercase h01-h04.\nR04: Exactly one solid, with no fillets, chamfers, counterbores, text, or\nextra components.\nR05-R09: Geometric validation, analytical-volume comparison, CAD views,\npresentation rendering, and final review are downstream tasks.\n\nNominal gross volume: 28800 mm^3.\nNominal removed volume: 432*pi mm^3.\nNominal final volume: 28800 - 432*pi = approximately 27442.832 mm^3.\n\"\"\"\n\nfrom steve import Model\n\nmodel = Model(\"rectangular_four_hole_block\")\n\nmodel.box(\n    \"block\",\n    length=60.0,\n    width=40.0,\n    height=12.0,\n    at=(0.0, 0.0, 0.0),\n    centered=False,\n    name=\"block\",\n)\nmodel.body_name(\"block\", \"block\")\n\nmodel.hole(\n    \"h01\",\n    on=\"block.top\",\n    points=[(10.0, 10.0)],\n    diameter=6.0,\n    depth=None,\n    kind=\"simple\",\n    name=\"h01\",\n)\nmodel.hole(\n    \"h02\",\n    on=\"block.top\",\n    points=[(50.0, 10.0)],\n    diameter=6.0,\n    depth=None,\n    kind=\"simple\",\n    name=\"h02\",\n)\nmodel.hole(\n    \"h03\",\n    on=\"block.top\",\n    points=[(10.0, 30.0)],\n    diameter=6.0,\n    depth=None,\n    kind=\"simple\",\n    name=\"h03\",\n)\nmodel.hole(\n    \"h04\",\n    on=\"block.top\",\n    points=[(50.0, 30.0)],\n    diameter=6.0,\n    depth=None,\n    kind=\"simple\",\n    name=\"h04\",\n)\n\nresult = model.result()\n",
+        "created_at": "2026-10-11T19:57:17.669470+00:00",
+        "files": {},
+        "id": "0d927bb4-87e0-49ba-ba84-c256bf035bce",
+        "kind": "part",
+        "links": {},
+        "name": "Wright reviewed design cd33cd5747b145f784a6007f6c244412",
+        "preview_build_id": "5d3c54b3-9cfb-4f49-a68d-0a86b2936e22",
+        "revision": 1,
+        "updated_at": "2026-10-11T19:57:17.669470+00:00",
+        "url": "https://stevecad.studio/?document=0d927bb4-87e0-49ba-ba84-c256bf035bce"
+      },
+      "features": {
+        "diagnostics": [],
+        "features": [
+          {
+            "editable_in_gui": true,
+            "id": "block",
+            "kind": "box",
+            "line": 24,
+            "name": "block",
+            "status": "ok"
+          },
+          {
+            "editable_in_gui": true,
+            "id": "h01",
+            "kind": "hole",
+            "line": 35,
+            "name": "h01",
+            "status": "ok"
+          },
+          {
+            "editable_in_gui": true,
+            "id": "h02",
+            "kind": "hole",
+            "line": 44,
+            "name": "h02",
+            "status": "ok"
+          },
+          {
+            "editable_in_gui": true,
+            "id": "h03",
+            "kind": "hole",
+            "line": 53,
+            "name": "h03",
+            "status": "ok"
+          },
+          {
+            "editable_in_gui": true,
+            "id": "h04",
+            "kind": "hole",
+            "line": 62,
+            "name": "h04",
+            "status": "ok"
+          }
+        ],
+        "modeling": true,
+        "parameters": []
+      },
+      "model": {
+        "artifacts": {
+          "bodies_mesh": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/bodies_mesh",
+          "preview": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/preview",
+          "step": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/step",
+          "topology": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/topology",
+          "view_front": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_front",
+          "view_isometric": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_isometric",
+          "view_right": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_right",
+          "view_top": "https://stevecad.studio/v1/builds/5d3c54b3-9cfb-4f49-a68d-0a86b2936e22/artifacts/view_top"
+        },
+        "current": true,
+        "id": "5d3c54b3-9cfb-4f49-a68d-0a86b2936e22",
+        "logs": "STEVE stage: sheet-metal export\nSTEVE stage: STEP export\nSTEVE stage: preview mesh\nSTEVE stage: topology\nSTEVE stage: summary\nSTEVE stage: history check\n",
+        "metadata": {
+          "bounds_mm": [
+            60.0,
+            40.0,
+            12.0
+          ],
+          "cadquery_version": "2.8.0",
+          "center_of_mass_mm": [
+            29.999999999999982,
+            19.999999999999993,
+            5.999999999999998
+          ],
+          "component_documents": {},
+          "components": 1,
+          "extent_mm": [
+            0.0,
+            0.0,
+            0.0,
+            60.0,
+            40.0,
+            12.0
+          ],
+          "faces": 10,
+          "feature_tree": {
+            "coverage": {
+              "categories": {},
+              "control_flow": {},
+              "observed_calls": 0,
+              "operations": {},
+              "recognized_calls": 0,
+              "scope": "Public CadQuery calls directly invoked by the submitted source on the executed path. Not a proof of universal completeness."
+            },
+            "editable": false,
+            "execution_verified": true,
+            "status": "partial"
+          },
+          "inspection_views": {
+            "available": [
+              "isometric",
+              "top",
+              "front",
+              "right"
+            ],
+            "error": null,
+            "height": 640,
+            "projection": "orthographic",
+            "source": "exported STEP",
+            "width": 800
+          },
+          "modeling": {
+            "bodies": {
+              "block": {
+                "extent_mm": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  60.0,
+                  40.0,
+                  12.0
+                ],
+                "faces": 10,
+                "index": 0,
+                "name": "block",
+                "volume": 27442.832
+              }
+            },
+            "features": [
+              {
+                "body": "block",
+                "id": "block",
+                "kind": "box",
+                "ms": 1.5,
+                "name": "block",
+                "status": "ok"
+              },
+              {
+                "body": "block",
+                "detail": {
+                  "holes": 1
+                },
+                "id": "h01",
+                "kind": "hole",
+                "ms": 22.1,
+                "name": "h01",
+                "status": "ok"
+              },
+              {
+                "body": "block",
+                "detail": {
+                  "holes": 1
+                },
+                "id": "h02",
+                "kind": "hole",
+                "ms": 18.1,
+                "name": "h02",
+                "status": "ok"
+              },
+              {
+                "body": "block",
+                "detail": {
+                  "holes": 1
+                },
+                "id": "h03",
+                "kind": "hole",
+                "ms": 20.1,
+                "name": "h03",
+                "status": "ok"
+              },
+              {
+                "body": "block",
+                "detail": {
+                  "holes": 1
+                },
+                "id": "h04",
+                "kind": "hole",
+                "ms": 23.8,
+                "name": "h04",
+                "status": "ok"
+              }
+            ],
+            "sketches": {},
+            "version": 1
+          },
+          "solids": 1,
+          "surface_area_mm2": 7878.584013175396,
+          "topology": {
+            "state": "complete"
+          },
+          "units": "mm",
+          "volume_mm3": 27442.831973649212
+        },
+        "mode": "full",
+        "status": "succeeded",
+        "url": "https://stevecad.studio/?model=5d3c54b3-9cfb-4f49-a68d-0a86b2936e22"
+      },
+      "url": "https://stevecad.studio/?document=0d927bb4-87e0-49ba-ba84-c256bf035bce"
+    },
+    "isError": false
+  }
+}

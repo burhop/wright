@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-11T16:12:20.275635+00:00",
+  "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+  "session_id": "api_1791735041_4d5f7de1",
+  "transport": "Wright authenticated streamable HTTP gateway",
+  "request": {
+    "label": "02-hole-api",
+    "name": "stevecad-mcp__api_reference",
+    "arguments": {
+      "name": "Model.hole"
+    }
+  },
+  "result": {
+    "_meta": {},
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"matches\":{\"Model.hole\":{\"signature\":\"hole(id, on, points, diameter, depth=None, kind='simple', cbore_diameter=None, cbore_depth=None, csk_diameter=None, csk_angle=90.0, thread=None, name=None, suppressed=False)\",\"doc\":\"Holes normal to a planar face at 2D points in that face's sketch coordinates\\n(or at the points and circle centres of a sketch). `depth=None` goes through. `thread` labels a tapped hole's\\nthread (\\\"M6x1\\\") for drawings' hole tables; the hole is modelled at its `diameter` (the tap drill).\"}}}"
+      }
+    ],
+    "structuredContent": {
+      "matches": {
+        "Model.hole": {
+          "signature": "hole(id, on, points, diameter, depth=None, kind='simple', cbore_diameter=None, cbore_depth=None, csk_diameter=None, csk_angle=90.0, thread=None, name=None, suppressed=False)",
+          "doc": "Holes normal to a planar face at 2D points in that face's sketch coordinates\n(or at the points and circle centres of a sketch). `depth=None` goes through. `thread` labels a tapped hole's\nthread (\"M6x1\") for drawings' hole tables; the hole is modelled at its `diameter` (the tap drill)."
+        }
+      }
+    },
+    "isError": false
+  }
+}

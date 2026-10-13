@@ -1,0 +1,159 @@
+{
+  "schema_version": "wright.process-interaction/1",
+  "context": {
+    "process": {
+      "workspace_id": "225aca34-3ae9-4557-85d6-0d8defd90a86",
+      "source_path": "workflows/transfer-privacy-canary-001.workflow.wflow",
+      "source_digest": "a0960572adc26e59bb6725498c2b8537a4dd33d5e86e023c70ac6685a9f518b0",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "run_id": "d1efc0838317485b8ede9497bb799c23",
+    "input_snapshot_id": "inputs-a96fb2aecfec4769988a711784ea16d8",
+    "input_digest": "10ad843e695864e5d02917495d3308615385298bfc0476f86500194f4815ac7a",
+    "cursor": 13,
+    "generated_at": "2026-10-12T17:20:09.931446+00:00"
+  },
+  "state": "completed",
+  "inputs": [],
+  "readiness": null,
+  "outputs": [
+    {
+      "result_id": "d1efc0838317485b8ede9497bb799c23:produce:produce_response",
+      "step_id": "produce",
+      "port_id": "produce_response",
+      "role": "deliverable",
+      "title": "Produce",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "d1efc0838317485b8ede9497bb799c23:format_config:transient_config",
+      "step_id": "format_config",
+      "port_id": "transient_config",
+      "role": "deliverable",
+      "title": "Format transient curl configuration",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [],
+      "assessments": [],
+      "supported_viewers": []
+    },
+    {
+      "result_id": "d1efc0838317485b8ede9497bb799c23:consume:consume_response",
+      "step_id": "consume",
+      "port_id": "consume_response",
+      "role": "deliverable",
+      "title": "Consume",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "render-proofs/native-chain-001/automatic-transfer-001/canary-result-003.txt",
+          "sha256": "5abe3a9366b21ae01ddd1aed48d7a88a2da05e95557f5a7ac72570f6dc2a3db9",
+          "media_type": null,
+          "result_id": "d1efc0838317485b8ede9497bb799c23:consume:consume_response",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "interactions": [],
+  "actions": [
+    {
+      "action_id": "cancel-run",
+      "operation": "cancel",
+      "title": "Cancel this run",
+      "enabled": false,
+      "subject_digest": "57306ed42db1a4b7476745df2dc6771fd991dfe16e9ca7d13c26f107f9d89a23",
+      "reasons": [
+        {
+          "code": "ACTION_NOT_PERMITTED",
+          "message": "This Wright run has completed; there is no active execution to cancel.",
+          "correction": "Open its saved results or prepare another run.",
+          "binding_id": null,
+          "step_id": null,
+          "navigation": null,
+          "technical_details_ref": null
+        }
+      ],
+      "checkpoint_id": null,
+      "idempotency_required": true
+    }
+  ],
+  "observations": [
+    {
+      "observation_id": "source-run",
+      "provider_binding": "wright-source-run",
+      "state": "completed",
+      "observed_at": "2026-10-12T17:20:09.931446+00:00",
+      "stale_after": "2026-10-12T17:20:39.931446+00:00",
+      "operation_id": "d1efc0838317485b8ede9497bb799c23",
+      "activity": null,
+      "progress_percent": null,
+      "estimated_remaining_seconds": null,
+      "metrics": {
+        "recorded_events": 13,
+        "completed_steps": 3
+      },
+      "limitations": []
+    }
+  ],
+  "diagnostics": [],
+  "navigation": [
+    {
+      "kind": "process",
+      "block_id": null,
+      "run_id": null,
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "run",
+      "block_id": null,
+      "run_id": "d1efc0838317485b8ede9497bb799c23",
+      "result_id": null,
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "d1efc0838317485b8ede9497bb799c23",
+      "result_id": "d1efc0838317485b8ede9497bb799c23:produce:produce_response",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "d1efc0838317485b8ede9497bb799c23",
+      "result_id": "d1efc0838317485b8ede9497bb799c23:format_config:transient_config",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "result",
+      "block_id": null,
+      "run_id": "d1efc0838317485b8ede9497bb799c23",
+      "result_id": "d1efc0838317485b8ede9497bb799c23:consume:consume_response",
+      "assessment_id": null,
+      "artifact_ref": null
+    },
+    {
+      "kind": "evidence",
+      "block_id": null,
+      "run_id": "d1efc0838317485b8ede9497bb799c23",
+      "result_id": "d1efc0838317485b8ede9497bb799c23:consume:consume_response",
+      "assessment_id": null,
+      "artifact_ref": "render-proofs/native-chain-001/automatic-transfer-001/canary-result-003.txt"
+    }
+  ],
+  "next_page": null
+}

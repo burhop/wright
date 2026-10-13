@@ -1,0 +1,11 @@
+{
+  "scope": "Native measured B-rep bodies, world extents and joint/pose metadata equality; independent STEP/mesh check follows. Print metadata is deliberately changed.",
+  "checks": {
+    "instance_names_same": true,
+    "body_extents_same": true,
+    "component_brep_bodies_same": true,
+    "joint_tree_same": true,
+    "poses_same": true
+  },
+  "passed": true
+}

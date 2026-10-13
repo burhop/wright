@@ -4,6 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 import {
   mockRecoveryWorkspace,
   openRecoveryEditor,
+  openNewRecoveryEditor,
   publicWorkflowSource,
   type RecoveryWorkspaceMock,
 } from "./fixtures/workflow-recovery";
@@ -36,9 +37,9 @@ async function expectReadinessBlocksDispatch(
   page: Page,
   state: RecoveryWorkspaceMock,
 ): Promise<void> {
-  await expect(page.getByTestId("workflow-recovery-run-readiness")).toContainText(
-    "Connect and qualify the required engineering tools.",
-  );
+  await expect(
+    page.getByTestId("workflow-recovery-run-readiness"),
+  ).toContainText("Connect and qualify the required engineering tools.");
   await page.getByTestId("workflow-recovery-run-start").click();
   await expect(page.getByTestId("workflow-recovery-run-drawer")).toContainText(
     "Run blocked before prompt dispatch.",
@@ -46,32 +47,57 @@ async function expectReadinessBlocksDispatch(
   expect(state.runRequestCount()).toBe(0);
   expect(state.runCount()).toBe(0);
   await expect(page.getByTestId("workflow-recovery-run-mode")).toHaveCount(0);
-  await expect(page.getByTestId("workflow-recovery-run-advance")).toHaveCount(0);
+  await expect(page.getByTestId("workflow-recovery-run-advance")).toHaveCount(
+    0,
+  );
 }
 
-test("automatically creates the default workflow when Workflows is opened", async ({
+test("creates a new empty workflow without overwriting the saved design", async ({
   page,
 }) => {
-  const state = await mockRecoveryWorkspace(page, { source: null });
-  await openRecoveryEditor(page);
+  const state = await mockRecoveryWorkspace(page);
+  await openNewRecoveryEditor(page);
 
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
   await expect(page.getByTestId("workflow-recovery-filebar")).toContainText(
-    "Mounting bracket development",
+    "Bracket development",
   );
   await expect(
     page.getByTestId("workflow-recovery-block-binding-block.generate-geometry"),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await expect(page.getByTestId("workflow-recovery-save-status")).toContainText(
     "Saved",
   );
   await expect(page.getByTestId("workflow-source-missing")).toHaveCount(0);
   await expect(page.getByTestId("workflow-source-create")).toHaveCount(0);
-  expect(state.missingReadCount()).toBe(1);
+  expect(state.missingReadCount()).toBe(0);
   expect(state.createCount()).toBe(1);
-  expect(state.current()?.source.replace(/\r\n/g, "\n")).toBe(
-    publicWorkflowSource.replace(/\r\n/g, "\n"),
+  expect(state.current()?.source).toContain('name: "Untitled workflow"');
+  expect(
+    state.sourceAt("workflows/mounting-bracket.workflow.wflow")?.source,
+  ).toBe(publicWorkflowSource);
+  await page.getByTestId("workflow-recovery-view-code").click();
+  await expect(page.getByTestId("workflow-recovery-source-editor")).toHaveValue(
+    /name: "Untitled workflow"/,
   );
+});
+
+test("does not create a missing saved workflow from a passive file link", async ({
+  page,
+}) => {
+  const state = await mockRecoveryWorkspace(page, { source: null });
+  await page.goto(
+    "/workspace/ws-recovery?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+  );
+  await expect(
+    page.getByText(
+      "The saved workflow file is no longer available. Choose an existing workflow or create a new one explicitly.",
+    ),
+  ).toBeVisible();
+  expect(state.missingReadCount()).toBeGreaterThan(0);
+  expect(state.createCount()).toBe(0);
+  expect(state.current()).toBeNull();
+  expect(state.runRequestCount()).toBe(0);
 });
 
 test("loads and saves the workspace workflow with its current CAS identity", async ({
@@ -253,12 +279,12 @@ test("persists authored input text and a scoped workspace file reference across 
   );
   await expect(page.getByTestId("workflow-recovery-run-start")).toBeEnabled();
   await page.getByTestId("workflow-recovery-run-readiness-toggle").click();
-  await expect(page.getByTestId("workflow-recovery-run-readiness")).toContainText(
-    "2/3 configured",
-  );
-  await expect(page.getByTestId("workflow-recovery-run-readiness")).toContainText(
-    "Connected · preflight required",
-  );
+  await expect(
+    page.getByTestId("workflow-recovery-run-readiness"),
+  ).toContainText("2/3 configured");
+  await expect(
+    page.getByTestId("workflow-recovery-run-readiness"),
+  ).toContainText("Connected · preflight required");
   expect(state.runRequestCount()).toBe(0);
   expect(state.runCount()).toBe(0);
 });
@@ -424,7 +450,7 @@ test("keeps one accepted definition across canvas, source, and AI review", async
   await expect(page.getByTestId("workflow-recovery-canvas")).toBeVisible();
   await expect(concept).toHaveAttribute("data-revision", "2");
   const filebar = page.getByTestId("workflow-recovery-filebar");
-  await expect(filebar).toContainText("Mounting bracket development");
+  await expect(filebar).toContainText("Bracket development");
   await expect(page.getByTestId("workflow-recovery-save-status")).toContainText(
     "Saved",
   );
@@ -725,7 +751,9 @@ test("uses real typed handles and preserves source across a layout save", async 
 test("promotes valid source and reviewed AI commands while production execution remains fail-closed", async ({
   page,
 }) => {
-  const state = await mockRecoveryWorkspace(page, { readiness: "setup_required" });
+  const state = await mockRecoveryWorkspace(page, {
+    readiness: "setup_required",
+  });
   await openRecoveryEditor(page);
   const concept = page.getByTestId("workflow-recovery-concept");
 
@@ -827,7 +855,9 @@ test("keeps production readiness accessible, reduced-motion legible, and mobile-
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const state = await mockRecoveryWorkspace(page, { readiness: "setup_required" });
+  const state = await mockRecoveryWorkspace(page, {
+    readiness: "setup_required",
+  });
   await openRecoveryEditor(page);
   await expect(page.getByTestId("workflow-recovery-concept")).toBeVisible();
 

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "source_digest": "77c35b95c93eb6d0dc220d26391f809d67ef8c4bb20ad35004c0f35e574fd35e",
+  "changed_tasks": [
+    "design_document",
+    "test_plan",
+    "design_review"
+  ],
+  "added_original_prompt_connections": [
+    "to_design_review_supplied_prompt",
+    "to_test_plan_supplied_prompt"
+  ],
+  "same_execution_tasks": 16,
+  "geometry_creation_inspection_and_native_handoff_unchanged": true,
+  "original_default_prompt_unchanged": true,
+  "instruction_assets_unchanged": true,
+  "scope": "Exact source diff, regeneration and real compiler validation; live results separate"
+}
