@@ -15,6 +15,9 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
 
     // 2. Confirm the current catalog projection loaded. Its contents can vary
     // with the active signed snapshot and are not part of this custom flow.
+    // A valid environment may have no curated recommendation. Discovery still
+    // exposes all records without changing their qualification or disposition.
+    await page.getByLabel("Catalog list").selectOption("all");
     await liveExpect(page.getByTestId("capability-results")).toBeVisible();
 
     // 3. Open the guided flow and choose an advanced local command.

@@ -241,7 +241,8 @@ for (const loseAcknowledgement of [false, true]) {
     await expect(common.getByLabel("selection (required)")).toBeVisible();
     expect(fixture.starts()).toBe(1);
     expect(submissions).toHaveLength(0);
-    await expect(common.getByRole("alert")).toHaveCount(0);
+    await expect(common.getByRole("alert")).toHaveText("Provide a value.");
+    await expect(common.getByRole("button", { name: "Submit response" })).toBeDisabled();
     await common.getByLabel("selection (required)").scrollIntoViewIfNeeded();
     await page.screenshot({
       path: testInfo.outputPath("reopened-input-form.png"),

@@ -136,3 +136,13 @@ that a passive missing-file link creates nothing. All 17 affected Chromium
 checks pass, including source/diagram edits, review, routing, layout and template
 navigation. The editor implementation is unchanged; full final gates remain
 required and superseded runs are not reported as complete.
+
+The complete 184-case browser matrix then reported 172 passed, 5 skipped and
+7 failed legacy interaction assertions. The consolidated correction preserves
+qualification and validation: discover All records when the environment has no
+curated recommendation; establish the accepted working tab before a local
+source draft; keep required-answer errors and disabled submission; explicitly
+open advanced JSON; use the input palette and current file close action. The
+thumbnail retains exact natural dimensions and viewport bounds with fractional
+CSS-pixel tolerance. All 10 affected Chromium contracts pass. This is test-contract
+alignment, not an editor implementation change or engineering acceptance.

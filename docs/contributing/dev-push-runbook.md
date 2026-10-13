@@ -154,6 +154,15 @@ does not authorize creation. Mock storage must retain separate documents and
 enforce each file's CAS identity, including when multiple tabs remain mounted.
 Do not restore implicit example creation to satisfy an older browser fixture.
 
+An empty Curated catalog is a valid environment result; custom onboarding tests
+can select All records to prove discovery loaded without inventing a
+recommendation. Common-view tests must open the accepted working tab before
+leaving a local draft, keep required-answer validation blocking, and use the
+current file-viewer close control. Advanced declaration JSON is an explicit
+disclosure and Request input belongs to the input palette. Viewport assertions
+may tolerate fractional CSS-pixel intersection rounding while still checking
+the full thumbnail's bounds and exact natural dimensions.
+
 Browser tests running against the managed frontend must send application API
 requests through same-origin `/api/...` paths. Do not hard-code the default
 backend port: both local gates intentionally support configurable API and UI
