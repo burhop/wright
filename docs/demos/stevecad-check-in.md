@@ -118,3 +118,11 @@ The qualified 264-file source-pack inventory also retains its recorded bytes.
 Its 204 CRLF text inputs are checked in byte-exactly, with normalized semantic
 content verified equal to their previous Git blobs; no qualification is rerun or
 assigned new credit by this encoding correction.
+
+The pre-push Node audit found nine unexcepted High/Critical advisory identities.
+The workspace now resolves SDK 1.32.1 and compatible patched brace-expansion,
+fast-uri, proxy-addr, source-map-js and undici versions. The repaired lockfile
+reports zero High/Critical findings under CI's unchanged policy. Both local gates
+now include that same Node audit and reject missing/malformed inventories and
+service errors; focused audit and gate regressions pass. Fresh image and cumulative
+merge validation remain required before this candidate is integrated.

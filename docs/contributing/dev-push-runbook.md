@@ -272,6 +272,14 @@ malformed audit reports and audit-service failures block the gate. Network
 access to the advisory service is required; do not treat an unavailable audit
 as a clean result. The PowerShell entry points delegate to these same gates.
 
+The full merge gate and frontend slice of the fast gate also run
+`scripts.release.audit_node_dependencies`: CI's `npm audit --json --audit-level=high`
+against the workspace lockfile and the same exception policy. Empty inventories,
+malformed reports, audit-service errors and unexcepted High/Critical advisories
+block the gate. An exact-image scan does not replace this workspace dependency
+audit. Update compatible dependencies and validate their consumers before retrying;
+do not turn a patched advisory into a new exception.
+
 Concurrency regressions must control the failing interleaving, rather than
 depend on repeated lucky schedules. The metrics replay test forces competing
 pre-insert reads if that unsafe pattern returns. Native API functional tests

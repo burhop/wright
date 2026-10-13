@@ -468,6 +468,10 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
 fi
 
 if [[ "$CHECK_FRONTEND" == "1" ]]; then
+  if [[ "$CHECK_PYTHON" == "0" ]]; then
+    run uv sync --all-packages --all-groups
+  fi
+  run "$GATE_PYTHON" -m scripts.release.audit_node_dependencies
   run npm ci --dry-run
   run npx -w apps/web eslint .
   if [[ "${OSTYPE:-}" == msys* || "${OSTYPE:-}" == cygwin* ]]; then
@@ -480,10 +484,6 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
   # also selects the large Python matrix on high-core developer hosts.
   run npm run test --workspace=apps/web -- --changed "$BASE_REF" --maxWorkers=4
   run npm run build --workspace=apps/web
-
-  if [[ "$CHECK_PYTHON" == "0" ]]; then
-    run uv sync --all-packages --all-groups
-  fi
 
   GATE_API_PORT="${WRIGHT_GATE_API_PORT:-18001}"
   GATE_UI_PORT="${WRIGHT_GATE_UI_PORT:-15174}"
