@@ -191,6 +191,19 @@ describe("EngineeringModelLibraryPage", () => {
   });
 
   it("separates engineering models from conversational Model Setup", async () => {
+    let releaseCatalog!: () => void;
+    vi.mocked(engineeringModelService.listCatalog).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          releaseCatalog = () =>
+            resolve({
+              snapshot,
+              models: [generated, pointnet],
+              next_cursor: null,
+              total: 2,
+            });
+        }),
+    );
     render(<EngineeringModelLibraryPage />);
 
     expect(
@@ -199,8 +212,11 @@ describe("EngineeringModelLibraryPage", () => {
     expect(
       screen.getByText(/specialized engineering models/i),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("model-snapshot-state")).toHaveTextContent(
-      "Offline snapshot",
+    releaseCatalog();
+    await waitFor(() =>
+      expect(screen.getByTestId("model-snapshot-state")).toHaveTextContent(
+        "Offline snapshot",
+      ),
     );
     expect(
       screen.getByTestId("model-card-wright-affine-test"),
