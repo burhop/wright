@@ -162,6 +162,17 @@ The dependency `uv.lock` also uses `text eol=lf`: native packaging hashes its
 actual bytes into the runtime-extra lock. A CRLF checkout would otherwise dirty
 that generated lock and give Windows and Linux different dependency identities.
 
+Accepted campaign-renewal inputs, their generated revision records, scenario
+manifests and the wall-dock R5 amendment also pin their committed LF bytes.
+Preserve their recorded hashes; do not regenerate engineering baselines to accept
+checkout conversion. Required retained-output regressions use the versioned,
+byte-exact `tests/fixtures/retained-process-validation` inputs instead of requiring
+a developer's Git-ignored campaign output directory. Their fixture manifest
+records the original paths and hashes; no live campaign or approval is replayed.
+The renewal generator retains the accepted historical manifest identities from
+their immutable snapshot and verifies current semantic content before generation.
+It does not recalculate past identities from a new platform's checkout encoding.
+
 Engineering-process control-plane changes have an explicit focused route. Changes under `docs/programs/engineering-process-platform/**`, `specs/076-control-plane-validator/**`, `scripts/program_control/**`, the `scripts/validate-engineering-process-program.py` entrypoint, or `tests/program_control_plane/**` select `tests/program_control_plane`. Python source and tests also enter Ruff/format/MyPy scope. The full merge gate and Linux/Windows CI run the focused suite before broader test roots so contract failures remain attributable. On either Windows or POSIX, the repeatable focused command is:
 
 ```text

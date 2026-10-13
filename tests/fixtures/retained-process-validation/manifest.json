@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "purpose": "read-only regression inputs; no new campaign credit",
+  "files": [
+    {
+      "path": "heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-coarse-temperature.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-coarse-temperature.csv",
+      "bytes": 13526,
+      "sha256": "dc39b8b4313a050e3c951f63d6cc44e9bb00ad461caf6c8fee6a94b8c4cbd70b"
+    },
+    {
+      "path": "heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-fine-temperature.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40-fine-temperature.csv",
+      "bytes": 76526,
+      "sha256": "46e3f5658b4c6d16843bc6a4d8d06531414633cbab8be932561e57a96a3c0cf0"
+    },
+    {
+      "path": "heat-spreader-sizing-01/attempt-008/artifacts/revision_60-coarse-temperature.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-coarse-temperature.csv",
+      "bytes": 13526,
+      "sha256": "21e1f046d06f8bcaae72110d8b8ecba91b610a10bfabc936a92260f3c54a9d12"
+    },
+    {
+      "path": "heat-spreader-sizing-01/attempt-008/artifacts/revision_60-fine-temperature.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/revision_60-fine-temperature.csv",
+      "bytes": 76526,
+      "sha256": "db1e5fd5906fdb6e80ca7590d9ecc2436b1f8daf6bc9b41a57747cedbd4ddf73"
+    },
+    {
+      "path": "heat-spreader-sizing-01/attempt-008/artifacts/sizing-decision.json",
+      "source": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/sizing-decision.json",
+      "bytes": 5943,
+      "sha256": "6aae15c7dc30bfee4a27adda471356fb32cf1a5235f0f802836bbc66f17d933a"
+    },
+    {
+      "path": "parametric-drill-jig-01/attempt-012/artifacts/jig.step",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-01/attempt-012/artifacts/jig.step",
+      "bytes": 577605,
+      "sha256": "2e4b9c5a137ef9d32c6ca0a4b58b4a74806bc2d94b68a6af77b496016fb6df84"
+    },
+    {
+      "path": "parametric-drill-jig-01/attempt-012/artifacts/jig.stl",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-01/attempt-012/artifacts/jig.stl",
+      "bytes": 390084,
+      "sha256": "9031bd2a495a143903e9d331880845f2cfb500d8ab8fd3c476d68c79116a5eef"
+    },
+    {
+      "path": "parametric-drill-jig-01/attempt-012/artifacts/hole-layout.dxf",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-01/attempt-012/artifacts/hole-layout.dxf",
+      "bytes": 2828,
+      "sha256": "b30048339f51ecae188aaf067e8c4b9e2eb76b1294356e0eca1374dac921de5c"
+    },
+    {
+      "path": "parametric-drill-jig-01/attempt-012/artifacts/dimension-report.json",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-01/attempt-012/artifacts/dimension-report.json",
+      "bytes": 12621,
+      "sha256": "f36657a2b0ef096bbe6ec8bd82885b96d4d0aa27e1752da3422e47da23d62fb2"
+    },
+    {
+      "path": "parametric-drill-jig-02/attempt-012/artifacts/jig.step",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-02/attempt-012/artifacts/jig.step",
+      "bytes": 117096,
+      "sha256": "90dc6068d44f11e8e4de83598d0f830ee5bf67d2666d922cea50a358d500a831"
+    },
+    {
+      "path": "parametric-drill-jig-02/attempt-012/artifacts/jig.stl",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-02/attempt-012/artifacts/jig.stl",
+      "bytes": 207084,
+      "sha256": "31fe7cc7a4af85e52c5b9167d9e3cd4bed604f6094a34a71f24cc73153b7ac73"
+    },
+    {
+      "path": "parametric-drill-jig-02/attempt-012/artifacts/hole-layout.dxf",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-02/attempt-012/artifacts/hole-layout.dxf",
+      "bytes": 5241,
+      "sha256": "d02ea6f5a708d44665b76ca581a46eec46813b493b0940bcf36d0550b846b942"
+    },
+    {
+      "path": "parametric-drill-jig-02/attempt-012/artifacts/dimension-report.json",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-02/attempt-012/artifacts/dimension-report.json",
+      "bytes": 17251,
+      "sha256": "c42c25606cf0d3c4c74ab6028931dcff8447ed8fe4292e3d99ef4b2695f9765a"
+    },
+    {
+      "path": "parametric-drill-jig-03/attempt-011/artifacts/jig.step",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-03/attempt-011/artifacts/jig.step",
+      "bytes": 595603,
+      "sha256": "1df6d321cfdb083cefacac340a1076b0305793d8713ad5350664e49ad52b334d"
+    },
+    {
+      "path": "parametric-drill-jig-03/attempt-011/artifacts/jig.stl",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-03/attempt-011/artifacts/jig.stl",
+      "bytes": 830584,
+      "sha256": "c5708995ea74f69398579c9154e222e07bba54939ff608c86586111bca33c08f"
+    },
+    {
+      "path": "parametric-drill-jig-03/attempt-011/artifacts/hole-layout.dxf",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-03/attempt-011/artifacts/hole-layout.dxf",
+      "bytes": 4413,
+      "sha256": "3adb238dd320cba98eb4f78a266d429f64b78340b1d0c1d5765dea2856baf8ca"
+    },
+    {
+      "path": "parametric-drill-jig-03/attempt-011/artifacts/dimension-report.json",
+      "source": "artifacts/engineering-workflow-datasets/output/parametric-drill-jig-03/attempt-011/artifacts/dimension-report.json",
+      "bytes": 28784,
+      "sha256": "77c2114b92d631a924ce1dd3afb68e6b4202dd4b82030b12dcf975de939a6d99"
+    },
+    {
+      "path": "water-heater-sizing-01/attempt-005/artifacts/temperature-time.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-01/attempt-005/artifacts/temperature-time.csv",
+      "bytes": 135505,
+      "sha256": "4f526e1ee648ca71108b81538cc95ebf6b16486911ba0cad7efdb6df0c79be1d"
+    },
+    {
+      "path": "water-heater-sizing-01/attempt-005/artifacts/power-comparison.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-01/attempt-005/artifacts/power-comparison.csv",
+      "bytes": 596,
+      "sha256": "231e5d5ac645f85a574516aca66d2860eb261fc9b78f5fd100ad7427af6cedeb"
+    },
+    {
+      "path": "water-heater-sizing-01/attempt-005/artifacts/energy-summary.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-01/attempt-005/artifacts/energy-summary.csv",
+      "bytes": 891,
+      "sha256": "ba981e02ce328f7d6ebf61d2ffd89ad6f8374b54724199e9ed725528cfcbd21a"
+    },
+    {
+      "path": "water-heater-sizing-01/attempt-005/artifacts/temperature-curve.svg",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-01/attempt-005/artifacts/temperature-curve.svg",
+      "bytes": 30403,
+      "sha256": "4e53eb54ccfdb6d7f95cdadea4458a307b51e7e2d157d9bbe7b603ecedac7f48"
+    },
+    {
+      "path": "water-heater-sizing-01/attempt-005/artifacts/heater-selection.md",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-01/attempt-005/artifacts/heater-selection.md",
+      "bytes": 1410,
+      "sha256": "5696df6600a834732c289ebfec7c5d9a2c79a0460b248a5cdafce7f6d1f9c225"
+    },
+    {
+      "path": "water-heater-sizing-01/attempt-005/artifacts/kit-run-parameters.json",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-01/attempt-005/artifacts/kit-run-parameters.json",
+      "bytes": 5932,
+      "sha256": "02789b17c56e1492aced0e0d198caf2ab6873fecd5c38a22015185395abe6d3d"
+    },
+    {
+      "path": "water-heater-sizing-02/attempt-003/artifacts/temperature-time.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-02/attempt-003/artifacts/temperature-time.csv",
+      "bytes": 269007,
+      "sha256": "a77d40ec2074ba01c1d9b7a937bce90501af869f051eb1896ed84965af400688"
+    },
+    {
+      "path": "water-heater-sizing-02/attempt-003/artifacts/power-comparison.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-02/attempt-003/artifacts/power-comparison.csv",
+      "bytes": 615,
+      "sha256": "de0cf7085035f18412f14c763ebb892d9defdd6194fef7274146b77db89abfd4"
+    },
+    {
+      "path": "water-heater-sizing-02/attempt-003/artifacts/energy-summary.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-02/attempt-003/artifacts/energy-summary.csv",
+      "bytes": 930,
+      "sha256": "a615a583dd24c0dcf4bfa5cc7a1800e9286f77d8f98a56723562425e62825c1b"
+    },
+    {
+      "path": "water-heater-sizing-02/attempt-003/artifacts/temperature-curve.svg",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-02/attempt-003/artifacts/temperature-curve.svg",
+      "bytes": 60280,
+      "sha256": "e12ed05d75e1173f81e49c300d04cb2d777117034d2fb445fee82249bf9811cc"
+    },
+    {
+      "path": "water-heater-sizing-02/attempt-003/artifacts/heater-selection.md",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-02/attempt-003/artifacts/heater-selection.md",
+      "bytes": 1420,
+      "sha256": "775e427327741542ebfb9b83c283bd43add8287c4d2f8957d0b7d4c629400d14"
+    },
+    {
+      "path": "water-heater-sizing-02/attempt-003/artifacts/kit-run-parameters.json",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-02/attempt-003/artifacts/kit-run-parameters.json",
+      "bytes": 5941,
+      "sha256": "60ca377ccf8f48ced73f5d1f293bb18970535140f9829c5d6a36e3e685f1fab4"
+    },
+    {
+      "path": "water-heater-sizing-03/attempt-003/artifacts/temperature-time.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-03/attempt-003/artifacts/temperature-time.csv",
+      "bytes": 967830,
+      "sha256": "663c01d1d14d0ffd7710760c9cfc36b73bda7143b9939305fb15595a69ec322d"
+    },
+    {
+      "path": "water-heater-sizing-03/attempt-003/artifacts/power-comparison.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-03/attempt-003/artifacts/power-comparison.csv",
+      "bytes": 1449,
+      "sha256": "28df828ed31f18ba81bd83b948f390772942fd3149ee83e1fbfc3a838879dfc5"
+    },
+    {
+      "path": "water-heater-sizing-03/attempt-003/artifacts/energy-summary.csv",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-03/attempt-003/artifacts/energy-summary.csv",
+      "bytes": 2389,
+      "sha256": "332b817d4b1ca8a5bdfcca32f93dcf0b1c99bfade4e03f86fddfffe749e13e01"
+    },
+    {
+      "path": "water-heater-sizing-03/attempt-003/artifacts/temperature-curve.svg",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-03/attempt-003/artifacts/temperature-curve.svg",
+      "bytes": 227811,
+      "sha256": "dcdefa8ad06a230934a83979a1647bf40a2e31b7ad0787afd5202ad310e5b333"
+    },
+    {
+      "path": "water-heater-sizing-03/attempt-003/artifacts/heater-selection.md",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-03/attempt-003/artifacts/heater-selection.md",
+      "bytes": 1896,
+      "sha256": "0755943fe42930830f31b7d267163f965c4fe15897b40a4477b3e182f8e4abe0"
+    },
+    {
+      "path": "water-heater-sizing-03/attempt-003/artifacts/kit-run-parameters.json",
+      "source": "artifacts/engineering-workflow-datasets/output/water-heater-sizing-03/attempt-003/artifacts/kit-run-parameters.json",
+      "bytes": 17456,
+      "sha256": "7ce3f55d5639315dc38c655db713beb43100534a6df070a6bbfd434c835100c7"
+    },
+    {
+      "path": "heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step",
+      "source": "artifacts/engineering-workflow-datasets/output/heat-spreader-sizing-01/attempt-008/artifacts/baseline_40.step",
+      "bytes": 15340,
+      "sha256": "df6a60815339a5644312ca2b6c6db25ed56cb42d5b486e901e324757c8ebbcea"
+    }
+  ]
+}

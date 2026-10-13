@@ -63,7 +63,7 @@ def test_one_time_transfer_headers_are_removed_from_mappings_and_commands(header
 def test_transfer_header_redaction_preserves_embedded_json_at_each_encoding_depth(
     depth,
 ):
-    secret = "test-transfer-credential"
+    secret = "fake-transfer-credential"
     value = {"headers": {"x-download-ticket": secret}, "artifact": "part.step"}
     text = json.dumps(value)
     for _ in range(depth):
@@ -133,7 +133,7 @@ def test_public_evidence_preserves_original_embedded_json_bytes():
 def test_evidence_preserves_provenance_containers_while_redacting_nested_secrets(
     container,
 ):
-    secret = "private-sequence-transfer-value"
+    secret = "fake-sequence-transfer-value"
     revisions = container([("source", "a" * 64)])
     payload = {
         "input_revisions": revisions,

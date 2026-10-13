@@ -74,7 +74,7 @@ async def test_sensitive_continuation_is_rejected_before_any_checkpoint_storage(
     tmp_path, kind
 ):
     files = Files()
-    secret = "sensitive-continuation-test"
+    secret = "fake-continuation-test"
 
     async def execute(emit):
         return {

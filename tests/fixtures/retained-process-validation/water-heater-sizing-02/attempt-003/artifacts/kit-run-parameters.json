@@ -1,0 +1,218 @@
+{
+  "selected_electrical_power_w": 600,
+  "time_limit_s": 360,
+  "candidate_powers_w": [
+    400,
+    600,
+    800
+  ],
+  "loss_conductances_w_per_k": [
+    0.85
+  ],
+  "runs": [
+    {
+      "request_id": "water-heater-sizing-02-attempt-003-p400-nominal-baseline",
+      "run_id": "run_61b486ab-3baf-4fce-888e-9235b3c75186",
+      "manifest_sha256": "dc560df2d76313ce2d81a3ba17009e77d7b150308a7fd85148ae7dafc5034685",
+      "source_csv_uri": "casys://modelica/requests/water-heater-sizing-02-attempt-003-p400-nominal-baseline/artifacts/result.csv",
+      "source_csv_sha256": "bd958daa0f69e4ce082887df137fd1e207438dca451f4b755cb6bd757b7548dd",
+      "parameters": {
+        "ambient_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "boiler_heat_capacity": {
+          "unit": "J/K",
+          "value": 180
+        },
+        "electrical_power": {
+          "unit": "W",
+          "value": 400
+        },
+        "heat_loss_conductance": {
+          "unit": "W/K",
+          "value": 0.85
+        },
+        "heater_efficiency": {
+          "unit": "1",
+          "value": 0.93
+        },
+        "hysteresis": {
+          "unit": "K",
+          "value": 2
+        },
+        "initial_water_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "setpoint_temperature": {
+          "unit": "degC",
+          "value": 90
+        },
+        "water_mass": {
+          "unit": "kg",
+          "value": 0.6
+        }
+      },
+      "controls": {
+        "max_step_size_s": 1,
+        "tolerance": 0.000001
+      },
+      "power": 400,
+      "loss": 0.85
+    },
+    {
+      "request_id": "water-heater-sizing-02-attempt-003-p600-nominal-baseline",
+      "run_id": "run_03b1de62-30c8-46c9-bb15-3468175c9430",
+      "manifest_sha256": "dc560df2d76313ce2d81a3ba17009e77d7b150308a7fd85148ae7dafc5034685",
+      "source_csv_uri": "casys://modelica/requests/water-heater-sizing-02-attempt-003-p600-nominal-baseline/artifacts/result.csv",
+      "source_csv_sha256": "89f387ea005eb527bf3e496b2a67e7b5eff97513bb181e8e1ee2cec837248869",
+      "parameters": {
+        "ambient_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "boiler_heat_capacity": {
+          "unit": "J/K",
+          "value": 180
+        },
+        "electrical_power": {
+          "unit": "W",
+          "value": 600
+        },
+        "heat_loss_conductance": {
+          "unit": "W/K",
+          "value": 0.85
+        },
+        "heater_efficiency": {
+          "unit": "1",
+          "value": 0.93
+        },
+        "hysteresis": {
+          "unit": "K",
+          "value": 2
+        },
+        "initial_water_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "setpoint_temperature": {
+          "unit": "degC",
+          "value": 90
+        },
+        "water_mass": {
+          "unit": "kg",
+          "value": 0.6
+        }
+      },
+      "controls": {
+        "max_step_size_s": 1,
+        "tolerance": 0.000001
+      },
+      "power": 600,
+      "loss": 0.85
+    },
+    {
+      "request_id": "water-heater-sizing-02-attempt-003-p800-nominal-baseline",
+      "run_id": "run_d2fccf9d-5c55-4df8-8647-cf006885497b",
+      "manifest_sha256": "dc560df2d76313ce2d81a3ba17009e77d7b150308a7fd85148ae7dafc5034685",
+      "source_csv_uri": "casys://modelica/requests/water-heater-sizing-02-attempt-003-p800-nominal-baseline/artifacts/result.csv",
+      "source_csv_sha256": "f4a27b6da43b92173bd1528ae107f1812493ea06934d130a7d8577789421f2dd",
+      "parameters": {
+        "ambient_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "boiler_heat_capacity": {
+          "unit": "J/K",
+          "value": 180
+        },
+        "electrical_power": {
+          "unit": "W",
+          "value": 800
+        },
+        "heat_loss_conductance": {
+          "unit": "W/K",
+          "value": 0.85
+        },
+        "heater_efficiency": {
+          "unit": "1",
+          "value": 0.93
+        },
+        "hysteresis": {
+          "unit": "K",
+          "value": 2
+        },
+        "initial_water_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "setpoint_temperature": {
+          "unit": "degC",
+          "value": 90
+        },
+        "water_mass": {
+          "unit": "kg",
+          "value": 0.6
+        }
+      },
+      "controls": {
+        "max_step_size_s": 1,
+        "tolerance": 0.000001
+      },
+      "power": 800,
+      "loss": 0.85
+    },
+    {
+      "request_id": "water-heater-sizing-02-attempt-003-selected-nominal-refined",
+      "run_id": "run_983271cf-d8d2-4d2d-9bab-873871f8768e",
+      "manifest_sha256": "516f259c74988b8144975540e98f785119e9cff541549a144a943c8fb454b76e",
+      "source_csv_uri": "casys://modelica/requests/water-heater-sizing-02-attempt-003-selected-nominal-refined/artifacts/result.csv",
+      "source_csv_sha256": "4320b9a4beeac7ef9a142d6fd8829750ea7c3397a478a9f4b224fc425d4171b1",
+      "parameters": {
+        "ambient_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "boiler_heat_capacity": {
+          "unit": "J/K",
+          "value": 180
+        },
+        "electrical_power": {
+          "unit": "W",
+          "value": 600
+        },
+        "heat_loss_conductance": {
+          "unit": "W/K",
+          "value": 0.85
+        },
+        "heater_efficiency": {
+          "unit": "1",
+          "value": 0.93
+        },
+        "hysteresis": {
+          "unit": "K",
+          "value": 2
+        },
+        "initial_water_temperature": {
+          "unit": "degC",
+          "value": 20
+        },
+        "setpoint_temperature": {
+          "unit": "degC",
+          "value": 90
+        },
+        "water_mass": {
+          "unit": "kg",
+          "value": 0.6
+        }
+      },
+      "controls": {
+        "max_step_size_s": 0.25,
+        "tolerance": 1e-8
+      },
+      "power": 600,
+      "loss": 0.85
+    }
+  ]
+}

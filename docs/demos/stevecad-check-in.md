@@ -103,3 +103,14 @@ list/tuple container types while removing nested credentials. The original
 first-question restart/resume test stays unchanged and checks the same durable
 run, exact input snapshot, and absence of replay. Separate credential controls
 still reject secret-bearing continuations before checkpoint persistence.
+
+The clean-checkout review also retains 36 exact historical native files as
+regression fixtures (4,722,342 bytes), fixes LF checkout of existing hash-bound
+renewal inputs, and marks inert credential-test strings with the scanner's
+existing fake-value convention. Recorded engineering hashes and corruption checks
+remain unchanged. The saved jig-context test now verifies that the improved
+reversible transport fits its historical observation and rejects an explicitly
+smaller budget, preserving complete page reconstruction and per-part limits.
+The accepted renewal record's 27 original CRLF manifest identities remain intact
+in a separate historical snapshot; generation verifies unchanged semantic inputs
+instead of rebasing their recorded byte hashes onto the current checkout.

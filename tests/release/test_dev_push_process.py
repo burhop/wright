@@ -396,6 +396,10 @@ def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
 
     for pattern in (
         "uv.lock",
+        "specs/082-output-content-validation/campaign-example-renewal*.json",
+        "specs/082-output-content-validation/campaign-example-renewal*.md",
+        "tests/datasets/engineering-workflows/**/scenario.json",
+        "examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md",
         "tests/fixtures/blender_mcp_5f8ddaf6/src/blender_mcp/safe_mode.py",
         "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.csv",
         "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.json",

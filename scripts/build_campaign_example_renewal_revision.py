@@ -1,4 +1,5 @@
 """Build the prospective R1 campaign revision ledger without dispatching work."""
+
 from __future__ import annotations
 
 import hashlib
@@ -26,6 +27,21 @@ def _renewal_module():
     return module
 
 
+def _historical_identities() -> dict[str, dict[str, str]]:
+    document = json.loads(
+        (SPEC / "campaign-example-renewal-historical-identities.json").read_bytes()
+    )
+    identities = document.get("cases")
+    if (
+        type(document.get("schema_version")) is not int
+        or document["schema_version"] != 1
+        or not isinstance(identities, dict)
+        or len(identities) != 30
+    ):
+        raise ValueError("Expected the 30 recorded historical scenario identities")
+    return identities
+
+
 def render() -> tuple[bytes, bytes]:
     renewal = _renewal_module()
     lineup, _, decision = renewal.approved_documents()
@@ -37,28 +53,35 @@ def render() -> tuple[bytes, bytes]:
         ).read_text(encoding="utf-8")
     )
     coverage = {item["scenario_id"]: item for item in coverage_document["scenarios"]}
+    historical_identities = _historical_identities()
     cases = []
     for path in sorted(
-        (ROOT / "tests/datasets/engineering-workflows/scenarios").glob("*/*/scenario.json")
+        (ROOT / "tests/datasets/engineering-workflows/scenarios").glob(
+            "*/*/scenario.json"
+        )
     ):
         raw = path.read_bytes()
         manifest = json.loads(raw)
         scenario_id = manifest["scenario_id"]
         contract = renewal.case_contract(manifest)
+        historical = historical_identities.get(scenario_id)
+        if (
+            not isinstance(historical, dict)
+            or historical.get("scenario_manifest") != path.relative_to(ROOT).as_posix()
+            or historical.get("semantic_manifest_sha256")
+            != contract["scenario"]["original_manifest_sha256"]
+        ):
+            raise ValueError(
+                f"Historical scenario content changed: {scenario_id}; "
+                "preserve the recorded identity and prepare a new revision"
+            )
         support = coverage[scenario_id]
         profile = support.get("full_profile") or support["profile"]
         cases.append(
             {
                 "scenario_id": scenario_id,
                 "family": manifest["template_id"],
-                "historical_identity": {
-                    "scenario_manifest": path.relative_to(ROOT).as_posix(),
-                    "scenario_manifest_sha256": _digest(raw),
-                    "semantic_manifest_sha256": contract["scenario"][
-                        "original_manifest_sha256"
-                    ],
-                    "preservation": "unchanged_history; prospective attempts only",
-                },
+                "historical_identity": historical,
                 "prospective_identity": {
                     "campaign_revision_id": lineup["proposal_id"],
                     "contract_sha256": _digest(renewal.contract_bytes(manifest)),

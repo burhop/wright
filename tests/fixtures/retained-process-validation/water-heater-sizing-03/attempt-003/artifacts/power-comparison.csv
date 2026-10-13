@@ -1,0 +1,10 @@
+request_id,electrical_power_W,loss_W_per_K,time_to_90C_s,time_limit_s,meets_time,refined_request_id,refined_delta_time_s,refined_relative_energy_difference,energy_consistent,numerically_stable
+water-heater-sizing-03-attempt-003-p1200-low-baseline,1200,1.92,446.0158176899982,400,false,,,,true,false
+water-heater-sizing-03-attempt-003-p1200-nominal-baseline,1200,2.4,453.5667085910589,400,false,,,,true,false
+water-heater-sizing-03-attempt-003-p1200-high-baseline,1200,2.88,461.47347145743595,400,false,,,,true,false
+water-heater-sizing-03-attempt-003-p1500-low-baseline,1500,1.92,352.17089274772275,400,true,water-heater-sizing-03-attempt-003-selected-low-refined,1.0627047686284641e-7,6.1413277705497245e-9,true,true
+water-heater-sizing-03-attempt-003-p1500-nominal-baseline,1500,2.4,356.8126793682013,400,true,water-heater-sizing-03-attempt-003-selected-nominal-refined,1.6599500440861448e-7,5.608395165272077e-9,true,true
+water-heater-sizing-03-attempt-003-p1500-high-baseline,1500,2.88,361.62317608894085,400,true,water-heater-sizing-03-attempt-003-selected-high-refined,2.3903129431346315e-7,5.612358702648124e-9,true,true
+water-heater-sizing-03-attempt-003-p1800-low-baseline,1800,1.92,290.97150510989445,400,true,,,,true,false
+water-heater-sizing-03-attempt-003-p1800-nominal-baseline,1800,2.4,294.11164769873557,400,true,,,,true,false
+water-heater-sizing-03-attempt-003-p1800-high-baseline,1800,2.88,297.3446680201564,400,true,,,,true,false

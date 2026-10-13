@@ -46,7 +46,7 @@ def evaluate(tmp_path, scenario_id, *, corrupt_slice_binding=False):
     profile = automated(load_profile(resource))
     source = (
         REPOSITORY
-        / "artifacts/engineering-workflow-datasets/output"
+        / "tests/fixtures/retained-process-validation"
         / scenario_id
         / ATTEMPTS[scenario_id]
         / "artifacts"
