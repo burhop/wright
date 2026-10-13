@@ -92,25 +92,23 @@ function setup(extra: Partial<ComponentProps<typeof NativePanelContent>> = {}) {
     },
     read,
   );
-  const call = vi
-    .fn<NativeProcessCall>()
-    .mockResolvedValue({
-      content: [],
-      structuredContent: {
-        ok: true,
-        document: {
-          context: {
-            process: {
-              workspace_id: original.workspace_id,
-              source_path: original.path,
-              source_digest: saved.storage_digest,
-            },
-            generated_at: "2026-10-12T12:00:00Z",
+  const call = vi.fn<NativeProcessCall>().mockResolvedValue({
+    content: [],
+    structuredContent: {
+      ok: true,
+      document: {
+        context: {
+          process: {
+            workspace_id: original.workspace_id,
+            source_path: original.path,
+            source_digest: saved.storage_digest,
           },
-          state: "preparing",
+          generated_at: "2026-10-12T12:00:00Z",
         },
+        state: "preparing",
       },
-    });
+    },
+  });
   const onDirty = vi.fn();
   const view = render(
     <NativePanelContent

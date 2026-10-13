@@ -125,16 +125,14 @@ it("shows a queued desktop task on the exact active run and clears it on complet
   const reviews = vi
     .spyOn(workspaceService, "getWorkspaceWorkflowReviews")
     .mockResolvedValue([]);
-  const read = vi
-    .fn()
-    .mockResolvedValue({
-      runId: "run-1",
-      requestId: "request-1",
-      queuedAt: record.started_at,
-      label: "Waiting for desktop chat",
-      detail:
-        "Send Continue the workflow in dave in the desktop chat to continue this same run.",
-    });
+  const read = vi.fn().mockResolvedValue({
+    runId: "run-1",
+    requestId: "request-1",
+    queuedAt: record.started_at,
+    label: "Waiting for desktop chat",
+    detail:
+      "Send Continue the workflow in dave in the desktop chat to continue this same run.",
+  });
   const onRun = vi.fn();
   const props = {
     workflowSource: reportWorkflowSource,
