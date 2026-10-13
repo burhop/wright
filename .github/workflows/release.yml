@@ -420,6 +420,10 @@ jobs:
       HERMES_PLUGIN_IDENTITY: ${{ needs.verify-manager-adapters.outputs.hermes_plugin_identity }}
       PREVIOUS_NATIVE_WRIGHT_VERSION: ${{ vars.PREVIOUS_NATIVE_WRIGHT_VERSION }}
     steps:
+      - name: Enable long Git paths on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: git config --global core.longpaths true
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
         with:
           persist-credentials: false

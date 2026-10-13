@@ -1,6 +1,12 @@
 from pathlib import Path
 
-from scripts.release.workflow_policy import validate_scoped_workflows
+import pytest
+
+from scripts.release.workflow_policy import (
+    WorkflowPolicyError,
+    validate_checkout_readiness,
+    validate_scoped_workflows,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -8,6 +14,52 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_all_workflow_actions_are_pinned_to_full_commit_shas() -> None:
     validate_scoped_workflows(ROOT)
+
+
+BOOTSTRAP = (
+    "      - name: Enable long Git paths on Windows\n"
+    "        if: runner.os == 'Windows'\n"
+    "        shell: pwsh\n"
+    "        run: git config --global core.longpaths true\n"
+)
+CHECKOUT = "      - uses: actions/checkout@" + "a" * 40 + "\n"
+
+
+@pytest.mark.parametrize("runner", ["windows-latest", "${{ matrix.os }}"])
+@pytest.mark.parametrize("late", [False, True])
+def test_windows_checkout_rejects_absent_or_late_setup(tmp_path, runner, late):
+    workflow = tmp_path / "workflow.yml"
+    workflow.write_text(
+        "jobs:\n  test:\n    strategy:\n      matrix:\n        os: [ubuntu-latest, windows-latest]\n"
+        f"    runs-on: {runner}\n    steps:\n" + CHECKOUT + (BOOTSTRAP if late else ""),
+        encoding="utf-8",
+    )
+    with pytest.raises(WorkflowPolicyError, match="before Windows checkout"):
+        validate_checkout_readiness(workflow)
+
+
+def test_matrix_setup_is_checked_per_job_not_borrowed_from_another_job(tmp_path):
+    workflow = tmp_path / "workflow.yml"
+    ready = "  ready:\n    runs-on: windows-latest\n    steps:\n" + BOOTSTRAP + CHECKOUT
+    unready = "  unready:\n    runs-on: windows-latest\n    steps:\n" + CHECKOUT
+    workflow.write_text("jobs:\n" + ready, encoding="utf-8")
+    validate_checkout_readiness(workflow)
+    workflow.write_text("jobs:\n" + ready + unready, encoding="utf-8")
+    with pytest.raises(WorkflowPolicyError, match="unready"):
+        validate_checkout_readiness(workflow)
+
+
+def test_backend_python_dependencies_do_not_establish_compiler_readiness(tmp_path):
+    workflow = tmp_path / "workflow.yml"
+    workflow.write_text(
+        "jobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n"
+        + CHECKOUT
+        + "      - name: Install Python dependencies\n        run: uv sync --all-packages --all-groups\n"
+        + "      - name: Run Tests with pytest\n        run: uv run pytest packages/workspace_service/tests\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(WorkflowPolicyError, match="compiler readiness"):
+        validate_checkout_readiness(workflow)
 
 
 def test_release_builds_each_subject_once_and_publishes_release_last() -> None:

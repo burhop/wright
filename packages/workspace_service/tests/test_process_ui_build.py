@@ -417,13 +417,49 @@ async def test_builder_bounds_and_disposes_its_owned_child(
             builds_root=tmp_path,
         )
     )
-    await entered.wait()
-    if condition == "cancel":
-        task.cancel()
-        with pytest.raises(asyncio.CancelledError):
+    entry = asyncio.create_task(entered.wait())
+    try:
+        done, _ = await asyncio.wait(
+            (task, entry), timeout=5, return_when=asyncio.FIRST_COMPLETED
+        )
+        if task in done and not entered.is_set():
+            # Surface failed readiness immediately instead of waiting forever
+            # for a child that the fixed builder never started.
             await task
-    else:
-        result = await task
-        assert result.report.state == "failed"
-        assert result.dist is None
-    assert child.killed
+            pytest.fail("Builder returned before entering the owned child")
+        assert entered.is_set(), (
+            "Builder did not enter the owned child within 5 seconds"
+        )
+        if condition == "cancel":
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await task
+        else:
+            result = await task
+            assert result.report.state == "failed"
+            assert result.dist is None
+        assert child.killed
+    finally:
+        for pending in (entry, task):
+            if not pending.done():
+                pending.cancel()
+        await asyncio.gather(entry, task, return_exceptions=True)
+
+
+@pytest.mark.asyncio
+async def test_owned_child_fixture_surfaces_failed_readiness(tmp_path, monkeypatch):
+    def unavailable(_self):
+        raise ProcessInterfaceError(
+            "CAPABILITY_UNAVAILABLE",
+            "Compiler readiness failed",
+            "Install the qualified compiler",
+        )
+
+    monkeypatch.setattr(BuildToolchain, "describe", unavailable)
+    with pytest.raises(ProcessInterfaceError, match="Compiler readiness failed"):
+        await asyncio.wait_for(
+            test_builder_bounds_and_disposes_its_owned_child(
+                tmp_path, monkeypatch, "timeout"
+            ),
+            timeout=2,
+        )

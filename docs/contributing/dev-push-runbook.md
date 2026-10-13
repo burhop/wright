@@ -59,6 +59,26 @@ branch failure from hiding outside the latest incremental diff.
   not PR correctness gates. They run in the scheduled/manual performance workflow;
   deterministic functional, security, compatibility, and customer-journey tests
   remain blocking.
+- A consolidated **CI-readiness correction** can retain an actual green full-gate
+  receipt on the current pushed tip. Set both variables below and commit exactly
+  one descendant correction in a clean worktree. The scope owner rejects product,
+  dependency, packaging, publication and workflow execution changes. Workflow
+  changes must consist solely of the enumerated long-path/locked-compiler setup
+  steps; the complete existing test commands must remain identical. The gate
+  verifies the receipt's successful exact base and unchanged log hash, runs the
+  policy/scope regressions, all affected compiler tests, lint/types and strict
+  docs. Full current-head PR CI remains required. This is retained qualification
+  plus affected checks, not a new execution of the full gate.
+
+  ```powershell
+  $env:WRIGHT_CI_CORRECTION_BASE_SHA = "<current-pushed-40-character-sha>"
+  $env:WRIGHT_CI_CORRECTION_FULL_GATE_RECEIPT = "<absolute-green-full-gate-receipt.json>"
+  scripts/check-dev-push.ps1
+  ```
+
+  Missing/failed receipts, changed logs, more than one commit, dirty worktrees,
+  unlisted files or broader workflow changes fail closed. Use the normal gate
+  when the correction exceeds that scope; never fabricate a receipt or waive CI.
 - Track pushes per feature, CI cycles, first-push green rate, runner time, local
   gate time, product-versus-infrastructure failures, and customer capabilities
   delivered. Use these measures to remove process cost, never to weaken a red
@@ -67,7 +87,8 @@ branch failure from hiding outside the latest incremental diff.
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
-validates the whole pull-request diff. Gate or workflow changes run all slices.
+validates the whole pull-request diff. Outside the bounded correction modes above,
+gate or workflow changes run all slices.
 When the broad `tests` target and a nested `tests/...` target are both selected,
 the fast gate excludes the nested target from the broad invocation and runs it
 separately. This preserves suite-local pytest imports while preventing duplicate
@@ -76,6 +97,21 @@ Container and engineering-image changes also select the Docker bundle, smoke
 contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
 developer host; both images must build and pass their exact-image smoke tests.
+
+Windows-capable jobs enable `git config --global core.longpaths true` **before**
+checkout. Local long-path configuration does not qualify hosted runner setup.
+Backend Python CI also installs the pinned Node toolchain and runs `npm ci`, then
+checks `BuildToolchain.describe()` before tests: workspace tests exercise the real
+fixed interface compiler. `validate_scoped_workflows` checks this preparation in
+both gates. Fixture rendezvous must surface an already-failed task and use a
+bounded wait; absent compiler dependencies must not cause an hours-long wait.
+
+Review actual stage durations before removing tests. A previously passing full
+gate can be retained for permitted corrections; rerun affected checks and full
+current-head CI. Duplicate execution can be consolidated only with exact unique
+coverage and equivalent environment evidence. Keep security, review authority,
+engineering identity, durable recovery and installed/browser compatibility checks.
+No test is obsolete merely because its feature shipped or its failure is costly.
 
 Changes to every bound Docker input also run `scripts.release.scan_image` in the
 fast gate and select OCI PR CI, including `.dockerignore`, root package files,
