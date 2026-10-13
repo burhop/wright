@@ -2430,11 +2430,17 @@ function WorkflowRecoveryReadyConcept({
       : recordedRun;
   const presentedPending = workflowRunPending || observed?.status === "running";
   const reasoningRun = workflowRunPending
-    ? observer.record?.status === "running" && observer.record.path === nativeRunLogPath
-      ? observer.record : null
-    : observed?.status === "running" ? observed : null;
+    ? observer.record?.status === "running" &&
+      observer.record.path === nativeRunLogPath
+      ? observer.record
+      : null
+    : observed?.status === "running"
+      ? observed
+      : null;
   const reasoning = useWorkflowReasoningStatus(
-    reasoningRun?.source_digest === storageDigest ? reasoningRun?.run_id ?? undefined : undefined,
+    reasoningRun?.source_digest === storageDigest
+      ? (reasoningRun?.run_id ?? undefined)
+      : undefined,
     !simulationPreview && onRun ? onReadReasoningStatus : undefined,
   );
   const presentedInputWait = presentedRun?.status === "waiting_human";
@@ -4212,7 +4218,9 @@ function WorkflowRecoveryReadyConcept({
               onClick={runStage === 0 ? () => void startRun() : undefined}
             >
               {presentedPending
-                ? reasoning.wait ? "Waiting for chat" : "Running…"
+                ? reasoning.wait
+                  ? "Waiting for chat"
+                  : "Running…"
                 : onRun
                   ? semanticDirty || layoutDirty
                     ? "Save & run"
@@ -4229,23 +4237,47 @@ function WorkflowRecoveryReadyConcept({
       </header>
 
       {onRun && presentedPending && (reasoning.wait || reasoning.error) && (
-        <section className="recovery-runbar recovery-native-run" role="status" data-testid="workflow-run-reasoning-wait" data-run-id={reasoning.wait?.runId}>
+        <section
+          className="recovery-runbar recovery-native-run"
+          role="status"
+          data-testid="workflow-run-reasoning-wait"
+          data-run-id={reasoning.wait?.runId}
+        >
           <div className="recovery-native-run__summary">
             <b>{reasoning.wait?.label ?? "AI handoff status unavailable"}</b>
-            <span>{reasoning.wait?.detail ?? `${reasoning.error} The saved run remains active; check its status before starting another run.`}</span>
+            <span>
+              {reasoning.wait?.detail ??
+                `${reasoning.error} The saved run remains active; check its status before starting another run.`}
+            </span>
             {reasoning.wait && (
               <small aria-live="off">
-                Queued at <time dateTime={reasoning.wait.queuedAt}>{new Date(reasoning.wait.queuedAt).toLocaleTimeString()}</time>
-                {" · Last checked "}<time dateTime={reasoning.checkedAt}>{new Date(reasoning.checkedAt).toLocaleTimeString()}</time>
+                Queued at{" "}
+                <time dateTime={reasoning.wait.queuedAt}>
+                  {new Date(reasoning.wait.queuedAt).toLocaleTimeString()}
+                </time>
+                {" · Last checked "}
+                <time dateTime={reasoning.checkedAt}>
+                  {new Date(reasoning.checkedAt).toLocaleTimeString()}
+                </time>
               </small>
             )}
           </div>
           {reasoning.wait && nativeRunBlock && !observedSourceMismatch && (
-            <button type="button" className="recovery-button recovery-button--secondary" onClick={() => selectObject(nativeRunBlock.id, "overview")}>
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              onClick={() => selectObject(nativeRunBlock.id, "overview")}
+            >
               Show waiting task
             </button>
           )}
-          {reasoning.wait && <details><summary>Handoff details</summary><div>Run: {reasoning.wait.runId}</div><div>Request: {reasoning.wait.requestId}</div></details>}
+          {reasoning.wait && (
+            <details>
+              <summary>Handoff details</summary>
+              <div>Run: {reasoning.wait.runId}</div>
+              <div>Request: {reasoning.wait.requestId}</div>
+            </details>
+          )}
         </section>
       )}
 
@@ -4337,8 +4369,6 @@ function WorkflowRecoveryReadyConcept({
       <div
         className={`recovery-workbench ${hasInspection ? "recovery-workbench--inspecting" : ""}${hasInspection && selectedResult ? " recovery-workbench--result-viewing" : ""}`}
       >
-
-
         <div className={`recovery-stage recovery-stage--${view}`}>
           {view !== "code" && (
             <div className="recovery-canvas-tools">

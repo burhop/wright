@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import type { WorkflowReasoningStatusReader, WorkflowReasoningWait } from "../../services/desktop-reasoning-status";
+import type {
+  WorkflowReasoningStatusReader,
+  WorkflowReasoningWait,
+} from "../../services/desktop-reasoning-status";
 
 const pageVisible = () => document.visibilityState !== "hidden";
 
@@ -29,11 +32,27 @@ export function useWorkflowReasoningStatus(
       try {
         const wait = await read(runId, request.signal);
         if (!current || token !== serial) return;
-        if (wait && wait.runId !== runId) throw new Error("AI handoff status belongs to another run.");
-        setState({ runId, read, wait, error: "", checkedAt: new Date().toISOString() });
+        if (wait && wait.runId !== runId)
+          throw new Error("AI handoff status belongs to another run.");
+        setState({
+          runId,
+          read,
+          wait,
+          error: "",
+          checkedAt: new Date().toISOString(),
+        });
       } catch (cause) {
         if (!current || token !== serial) return;
-        setState({ runId, read, wait: null, checkedAt: "", error: cause instanceof Error ? cause.message : "AI handoff status is unavailable." });
+        setState({
+          runId,
+          read,
+          wait: null,
+          checkedAt: "",
+          error:
+            cause instanceof Error
+              ? cause.message
+              : "AI handoff status is unavailable.",
+        });
       } finally {
         if (current && token === serial && pageVisible())
           timer = setTimeout(() => void refresh(), 2000);
@@ -59,5 +78,7 @@ export function useWorkflowReasoningStatus(
       window.removeEventListener("focus", focus);
     };
   }, [runId, read]);
-  return runId && read && state.runId === runId && state.read === read ? state : { wait: null, error: "", checkedAt: "" };
+  return runId && read && state.runId === runId && state.read === read
+    ? state
+    : { wait: null, error: "", checkedAt: "" };
 }

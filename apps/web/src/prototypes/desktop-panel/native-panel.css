@@ -39,7 +39,10 @@
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
-.native-workflow-panel__context > button:disabled { opacity: .6; cursor: default; }
+.native-workflow-panel__context > button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 /* Keep the common kit, with the same surrounding neutral controls as the editor. */
 .native-process-panel .wright-process-ui {
   --color-neutral: inherit;
@@ -60,6 +63,11 @@
   min-width: 0;
 }
 /* Suggestions come from the host conversation; internal demo proposals stay hidden. */
-.native-workflow-panel [data-testid="workflow-recovery-ai-request"] { display: none; }
+.native-workflow-panel [data-testid="workflow-recovery-ai-request"] {
+  display: none;
+}
 /* This resource uses the owning common view for runs, not the editor's unbound start. */
-.native-workflow-panel[data-working-view="true"] [data-testid="workflow-recovery-run-start"] { display: none; }
+.native-workflow-panel[data-working-view="true"]
+  [data-testid="workflow-recovery-run-start"] {
+  display: none;
+}

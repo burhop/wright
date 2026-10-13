@@ -78,9 +78,11 @@ export function WorkflowRecoveryPage({
   // This selects a read-only presentation adapter, never execution authority.
   const desktopConversation = historicalQuery.get("host") === "openai-desktop";
   const readReasoningStatus = useCallback(
-    (runId: string, signal: AbortSignal) => readDesktopReasoningWait(
-      { workspaceId, sessionId, runId, workspaceName }, signal,
-    ),
+    (runId: string, signal: AbortSignal) =>
+      readDesktopReasoningWait(
+        { workspaceId, sessionId, runId, workspaceName },
+        signal,
+      ),
     [workspaceId, sessionId, workspaceName],
   );
   const historicalWorkflow = historicalQuery
@@ -942,7 +944,9 @@ export function WorkflowRecoveryPage({
                 onReadStoredSource={readStoredWorkflow}
                 onReloadStoredSource={reloadStoredWorkflow}
                 onRun={runWorkflow}
-                onReadReasoningStatus={desktopConversation ? readReasoningStatus : undefined}
+                onReadReasoningStatus={
+                  desktopConversation ? readReasoningStatus : undefined
+                }
                 templateReadiness={templateReadiness}
                 onRefreshTemplateReadiness={refreshTemplateReadiness}
                 onOpenFile={onOpenFile}

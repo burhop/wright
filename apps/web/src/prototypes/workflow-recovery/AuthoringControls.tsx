@@ -466,7 +466,11 @@ export function AuthoringCreateRail({
           setGroup(null);
           if (!id) setOpen(false);
           rootRef.current
-            ?.querySelector<HTMLButtonElement>(id ? `[data-group="${id}"]` : "[data-testid=workflow-recovery-add-step]")
+            ?.querySelector<HTMLButtonElement>(
+              id
+                ? `[data-group="${id}"]`
+                : "[data-testid=workflow-recovery-add-step]",
+            )
             ?.focus();
         }
       }}
@@ -520,7 +524,9 @@ export function AuthoringCreateRail({
               }
             >
               <header>
-                <h3>{AUTHORING_GROUPS.find((item) => item.id === group)?.label}</h3>
+                <h3>
+                  {AUTHORING_GROUPS.find((item) => item.id === group)?.label}
+                </h3>
                 <button
                   type="button"
                   data-testid="workflow-recovery-create-close"
@@ -538,7 +544,9 @@ export function AuthoringCreateRail({
               {AUTHORING_TEMPLATES.filter(
                 (item) =>
                   item.group === group &&
-                  !["mcp-tool", "mcp-task", "engineering-step"].includes(item.id),
+                  !["mcp-tool", "mcp-task", "engineering-step"].includes(
+                    item.id,
+                  ),
               ).map((item) => (
                 <button
                   type="button"
@@ -549,7 +557,11 @@ export function AuthoringCreateRail({
                     onCreate(item.id);
                     setGroup(null);
                     setOpen(false);
-                    rootRef.current?.querySelector<HTMLButtonElement>("[data-testid=workflow-recovery-add-step]")?.focus();
+                    rootRef.current
+                      ?.querySelector<HTMLButtonElement>(
+                        "[data-testid=workflow-recovery-add-step]",
+                      )
+                      ?.focus();
                   }}
                 >
                   <b>{item.label}</b>
@@ -565,12 +577,18 @@ export function AuthoringCreateRail({
                     onClick={() => {
                       onCreate("mcp-task");
                       setGroup(null);
-                    setOpen(false);
-                    rootRef.current?.querySelector<HTMLButtonElement>("[data-testid=workflow-recovery-add-step]")?.focus();
+                      setOpen(false);
+                      rootRef.current
+                        ?.querySelector<HTMLButtonElement>(
+                          "[data-testid=workflow-recovery-add-step]",
+                        )
+                        ?.focus();
                     }}
                   >
                     <b>MCP task · choose server later</b>
-                    <span>Select a server in the Inspector before running.</span>
+                    <span>
+                      Select a server in the Inspector before running.
+                    </span>
                   </button>
                   {toolMessage && <p role="status">{toolMessage}</p>}
                   <button
@@ -590,8 +608,12 @@ export function AuthoringCreateRail({
                       onClick={() => {
                         onCreateServer?.(server);
                         setGroup(null);
-                    setOpen(false);
-                    rootRef.current?.querySelector<HTMLButtonElement>("[data-testid=workflow-recovery-add-step]")?.focus();
+                        setOpen(false);
+                        rootRef.current
+                          ?.querySelector<HTMLButtonElement>(
+                            "[data-testid=workflow-recovery-add-step]",
+                          )
+                          ?.focus();
                       }}
                     >
                       <b>{server.name}</b>

@@ -231,5 +231,19 @@
     "tests": "source-rebase-20261013-tests.xml",
     "summary": "../source-rebase-20261013.md",
     "activation": "Source only; installed 0.4.0 and original preview preserved"
+  },
+  "current_merge_candidate": {
+    "version": "0.5.0",
+    "source": "merge-candidate-20261013.md",
+    "resource_sha256": "08f146c976f273936b218408edd380e6936860e38d10ce2e0d9f054a1f0906ca",
+    "resource_bytes": 2185196,
+    "sdk_js": "1.32.1",
+    "node": "22.22.2",
+    "mcp_python": "1.28.1",
+    "stevecad_source_ui": "stevecad-source-ui-0.5.0/report.json",
+    "prototype_checks": 71,
+    "installed": false,
+    "SteveCAD_execution": "gated; authorized connection and live qualification pending",
+    "push_merge": "user authorized 13October; repository gates/current-head CI required"
   }
 }

@@ -136,10 +136,16 @@ export function ProcessWorkspaceTab({
     [process, sessionId, navigationHost],
   );
   const readReasoningStatus = useCallback(
-    (runId: string, signal: AbortSignal) => readDesktopReasoningWait(
-      { workspaceId: workspace_id, sessionId, runId, workspaceName: desktopWorkspaceName ?? "this workspace" },
-      signal,
-    ),
+    (runId: string, signal: AbortSignal) =>
+      readDesktopReasoningWait(
+        {
+          workspaceId: workspace_id,
+          sessionId,
+          runId,
+          workspaceName: desktopWorkspaceName ?? "this workspace",
+        },
+        signal,
+      ),
     [workspace_id, sessionId, desktopWorkspaceName],
   );
   const attached = useCallback(
@@ -260,7 +266,9 @@ export function ProcessWorkspaceTab({
       ) : (
         <CommonProcessView
           client={client}
-          readReasoningStatus={desktopWorkspaceName ? readReasoningStatus : undefined}
+          readReasoningStatus={
+            desktopWorkspaceName ? readReasoningStatus : undefined
+          }
           sessionId={sessionId}
           title={
             acceptedTitle?.workspaceId === workspace_id &&

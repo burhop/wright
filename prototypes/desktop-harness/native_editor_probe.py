@@ -227,7 +227,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.native_working_view:
         if args.phase != "resource":
-            parser.error("Working-view opt-in is available only for resource inspection")
+            parser.error(
+                "Working-view opt-in is available only for resource inspection"
+            )
         asyncio.run(inspect_resource(args.state_dir, native_working_view=True))
     else:
         asyncio.run(qualify(args.state_dir, args.phase))

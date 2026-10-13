@@ -1,0 +1,29 @@
+{
+  "boundary": "GB10 served Workflows browser preview; not native Windows or CAD execution",
+  "sources": [
+    {
+      "path": "workflows/prompt-to-reviewed-cad.workflow.wflow",
+      "source_digest": "1fb0c11ca47e88416ecc97245ff9d610836dfdc60d9eeaa45f1612fbfb7e6795",
+      "image": "stevecad-source.png",
+      "diagram_visible": true
+    },
+    {
+      "path": "workflows/prompt-to-reviewed-cad-native.workflow.wflow",
+      "source_digest": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+      "image": "stevecad-native-source.png",
+      "diagram_visible": true
+    }
+  ],
+  "page_errors": [],
+  "workflow_starts": 0,
+  "provider_calls": 0,
+  "probe_failure_retained": {
+    "boundary": "first browser probe",
+    "failure": "Strict canvas selector found a hidden retained editor and visible current editor",
+    "correction": "Select the visible canvas; kept tab/source retention and strict matching; no product change or replayed run"
+  },
+  "screenshot_hashes": {
+    "stevecad-source.png": "0d1d872a12e0acd65295e3d629cc44f37974a7e02375052ef9cf70dd86596968",
+    "stevecad-native-source.png": "02e69b1e6753054844c6a020a3ff3e158df799a92bc764f0cd4b5a93f167de89"
+  }
+}

@@ -42,7 +42,11 @@
   --color-border: var(--workflow-node-border);
   --color-primary: var(--workflow-canvas-ink);
   --color-text-muted: var(--workflow-canvas-muted);
-  --color-border-glow: color-mix(in srgb, var(--workflow-selection) 20%, transparent);
+  --color-border-glow: color-mix(
+    in srgb,
+    var(--workflow-selection) 20%,
+    transparent
+  );
   --recovery-ink: var(--workflow-canvas-ink);
   --recovery-muted: var(--workflow-canvas-muted);
   --recovery-grid: var(--workflow-node-border);
@@ -176,7 +180,9 @@
     grid-template-rows: minmax(100px, 1fr) minmax(160px, 42%);
   }
 
-  .workflow-recovery--redesign .recovery-workbench--inspecting .recovery-inspector {
+  .workflow-recovery--redesign
+    .recovery-workbench--inspecting
+    .recovery-inspector {
     position: static;
     width: auto;
     min-height: 0;
@@ -202,7 +208,9 @@
       grid-template-rows: minmax(0, 1fr);
     }
 
-    .workflow-recovery--redesign .recovery-workbench--inspecting .recovery-inspector {
+    .workflow-recovery--redesign
+      .recovery-workbench--inspecting
+      .recovery-inspector {
       position: absolute;
       inset: 0;
       z-index: 22;

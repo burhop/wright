@@ -1310,13 +1310,32 @@ function CommonProcessController({
               )}
               <Section title="Progress" focusId="progress">
                 {(reasoning.wait || reasoning.error) && (
-                  <div role="status" data-testid="process-desktop-reasoning-wait">
-                    <b>{reasoning.wait?.label ?? "AI handoff status unavailable"}</b>
-                    <p>{reasoning.wait?.detail ?? `${reasoning.error} Refresh the saved run before taking another action.`}</p>
+                  <div
+                    role="status"
+                    data-testid="process-desktop-reasoning-wait"
+                  >
+                    <b>
+                      {reasoning.wait?.label ?? "AI handoff status unavailable"}
+                    </b>
+                    <p>
+                      {reasoning.wait?.detail ??
+                        `${reasoning.error} Refresh the saved run before taking another action.`}
+                    </p>
                     {reasoning.wait && (
                       <>
-                        <small>Queued at <time dateTime={reasoning.wait.queuedAt}>{new Date(reasoning.wait.queuedAt).toLocaleTimeString()}</time></small>
-                        <details><summary>Handoff details</summary><div>Run: {reasoning.wait.runId}</div><div>Request: {reasoning.wait.requestId}</div></details>
+                        <small>
+                          Queued at{" "}
+                          <time dateTime={reasoning.wait.queuedAt}>
+                            {new Date(
+                              reasoning.wait.queuedAt,
+                            ).toLocaleTimeString()}
+                          </time>
+                        </small>
+                        <details>
+                          <summary>Handoff details</summary>
+                          <div>Run: {reasoning.wait.runId}</div>
+                          <div>Request: {reasoning.wait.requestId}</div>
+                        </details>
                       </>
                     )}
                   </div>

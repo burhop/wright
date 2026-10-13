@@ -3488,7 +3488,11 @@ export function WorkspacePanel({
                 <ProcessWorkspaceTab
                   tab={tab}
                   sessionId={workspaceFileSessionId}
-                  desktopWorkspaceName={desktopConversation ? workspaceInfo?.workspace_name || "this workspace" : undefined}
+                  desktopWorkspaceName={
+                    desktopConversation
+                      ? workspaceInfo?.workspace_name || "this workspace"
+                      : undefined
+                  }
                   onRunAttached={attachProcessTabRun}
                   onOpenInterface={openProcessInterface}
                   onPrepareAnother={openProcessView}

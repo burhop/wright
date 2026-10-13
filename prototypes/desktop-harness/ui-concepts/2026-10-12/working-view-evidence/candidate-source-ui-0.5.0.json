@@ -1,0 +1,77 @@
+{
+  "boundary": "Official MCP client; real accepted SteveCAD source reads and explicit execution denial; not Windows rendering or CAD execution",
+  "calls": [
+    {
+      "name": "wright_workspace_create",
+      "error": false
+    },
+    {
+      "name": "wright_workflow_create",
+      "error": false
+    },
+    {
+      "name": "wright_workflow_open",
+      "error": false
+    },
+    {
+      "name": "wright_process_prepare",
+      "error": true
+    },
+    {
+      "name": "wright_workflow_create",
+      "error": false
+    },
+    {
+      "name": "wright_workflow_open",
+      "error": false
+    },
+    {
+      "name": "wright_process_prepare",
+      "error": true
+    }
+  ],
+  "sources": [
+    {
+      "repository_source": "examples/stevecad-demonstrations/prompt-to-reviewed-cad/prompt-to-reviewed-cad.workflow.wflow",
+      "saved_path": "workflows/prompt-to-reviewed-cad.workflow.wflow",
+      "source_sha256": "1fb0c11ca47e88416ecc97245ff9d610836dfdc60d9eeaa45f1612fbfb7e6795",
+      "saved_storage_digest": "1fb0c11ca47e88416ecc97245ff9d610836dfdc60d9eeaa45f1612fbfb7e6795",
+      "opened_exact_source": true,
+      "unqualified_execution_denied": true,
+      "denial": "Error executing tool wright_process_prepare: Wright rejected request (503): Desktop image input and generation capabilities are not qualified"
+    },
+    {
+      "repository_source": "examples/stevecad-demonstrations/prompt-to-reviewed-cad/prompt-to-reviewed-cad-native.workflow.wflow",
+      "saved_path": "workflows/prompt-to-reviewed-cad-native.workflow.wflow",
+      "source_sha256": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+      "saved_storage_digest": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+      "opened_exact_source": true,
+      "unqualified_execution_denied": true,
+      "denial": "Error executing tool wright_process_prepare: Wright rejected request (503): CAD, application, external-action and direct-tool execution remain unavailable in this prototype."
+    }
+  ],
+  "resource": {
+    "uri": "ui://wright/workflow/08f146c976f273936b218408edd380e6936860e38d10ce2e0d9f054a1f0906ca.html",
+    "sha256": "08f146c976f273936b218408edd380e6936860e38d10ce2e0d9f054a1f0906ca",
+    "bytes": 2185196,
+    "tools": 18
+  },
+  "workspace": {
+    "workspace_id": "56dcf44f-35c5-4f58-9321-9914de4de9f1",
+    "session_id": "desktop-6fca33a3-136c-4975-9a6c-4efb78b8f1ea",
+    "workspace_name": "SteveCAD desktop source qualification",
+    "url": "http://127.0.0.1:5226/workspace/56dcf44f-35c5-4f58-9321-9914de4de9f1?host=openai-desktop"
+  },
+  "workflow_starts": 0,
+  "provider_calls": 0,
+  "candidate_version": "0.5.0",
+  "installed": false,
+  "runtime_versions": {
+    "node": "22.22.2",
+    "js_sdk": "1.32.1",
+    "ext_apps": "1.7.5",
+    "python_mcp": "1.28.1"
+  },
+  "source_worktree": "/home/burhop/.codex/worktrees/wright-stevecad-rebase/wright",
+  "candidate_path": "/home/burhop/.codex/worktrees/wright-stevecad-rebase/wright/prototypes/desktop-harness/native-merge-candidate"
+}
