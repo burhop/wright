@@ -414,6 +414,15 @@ def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
     )
 
 
+def test_digest_protected_external_source_references_preserve_exact_bytes() -> None:
+    attributes = _read(".gitattributes")
+    for path in (
+        "specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md",
+        "specs/081-engineering-workflow-templates/content-validation/acceptance-cases.md",
+    ):
+        assert f"{path} -text -whitespace" in attributes
+
+
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:
     workflow = _read(".github/workflows/frontend-quality.yml")
     playwright = _read("playwright.config.ts")

@@ -5,6 +5,9 @@ uv.lock text eol=lf
 # These accepted inputs and generated revision records carry recorded byte hashes.
 specs/082-output-content-validation/campaign-example-renewal*.json text eol=lf
 specs/082-output-content-validation/campaign-example-renewal*.md text eol=lf
+# These external source-pack references also retain their recorded CRLF bytes.
+specs/081-engineering-workflow-templates/dataset-campaign/modelica-selected-kit.md -text -whitespace
+specs/081-engineering-workflow-templates/content-validation/acceptance-cases.md -text -whitespace
 # Source packs retain the exact mixed LF/CRLF bytes in the qualified inventory.
 tests/datasets/engineering-workflows/scenarios/** -text -whitespace
 examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md text eol=lf

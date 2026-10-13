@@ -391,3 +391,12 @@ be rolled back without rebuilding.
 - Keep `scripts/check-dev-push.*`, `scripts/check-dev-merge.*`, and GitHub
   Actions commands aligned. The merge script remains the authoritative full
   gate; the push script is the fast feedback subset.
+
+### Hash-bound sources outside dataset directories
+
+Baseline and coverage generators also hash references under `specs/`. Preserve
+those exact accepted bytes with explicit Git attributes; do not regenerate
+accepted hashes merely to match a platform checkout. When correcting a byte
+binding, compare the committed blob with its recorded hash and run baseline and
+coverage reproducibility checks from a clean Git archive. A Windows worktree
+pass alone can conceal Git line-ending conversion in Linux CI.
