@@ -44,7 +44,15 @@ class AnswerRequest(BaseModel):
 
 
 class DesktopBackend:
-    def __init__(self, service, state, web_port, *, confined_inspection=False):
+    def __init__(
+        self,
+        service,
+        state,
+        web_port,
+        *,
+        confined_inspection=False,
+        native_editor=False,
+    ):
         self.service = service
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
@@ -56,6 +64,7 @@ class DesktopBackend:
             "mcp_sdk": version("mcp"),
             "files": {},
             "confined_inspection": confined_inspection,
+            "native_editor": native_editor,
             "connection_lease_seconds": CLIENT_LEASE_SECONDS,
             "heartbeat_interval_seconds": HEARTBEAT_INTERVAL_SECONDS,
         }
@@ -69,6 +78,12 @@ class DesktopBackend:
             ("transport", Path(__file__).with_name("mcp_bridge.py")),
         ):
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
+        for name, file in [("native_source_tools", "native_source_tools.py")] + (
+            [("native_editor", "native-editor.html")] if native_editor else []
+        ):
+            runtime["files"][name] = hashlib.sha256(
+                Path(__file__).with_name(file).read_bytes()
+            ).hexdigest()
         self.binding = DesktopHarnessBinding(
             connection_id="wright-desktop-prototype:" + canonical_digest(runtime),
         )

@@ -159,3 +159,58 @@ SDK and served-browser boundaries are qualified; actual Windows native rendering
 and full native workflow continuation remain open and must not be implied by the
 PR title or description. Existing workflow/provider/authoring gates are retained.
 Validation and reproducible evidence are indexed above. No push is authorized.
+
+## Native shared editor candidate, 12 October — not installed
+
+User confirmation now explicitly identifies the actual read-only native Wright
+panel with Refresh status. The next editor slice is isolated on
+`codex/host-adaptive-native-editor`, based at `814a763d`, in
+`/tmp/wright-host-adaptive-native-editor`. The working live 0.2.0 source is clean
+and unchanged. API 8122 and fresh target `wright-native-editor-target-20261012-02`
+serve candidate source state only; no engineering run started.
+
+The existing editor/UI kit is bundled as one 1,325,784-byte HTML resource using
+existing Vite/React and official MCP Apps SDK 1.7.5 (JS MCP SDK 1.30.0; Python MCP
+1.28.1). No new dependency, executor, generic proxy, native tabs or second chat.
+An opt-in open tool and narrow UI save adapter reuse Wright's source/layout CAS;
+source conflicts and known denials stay distinct from unknown outcomes. Reads
+never silently rebase a retained draft. Bundle/helper/runtime hashes and the
+native-editor flag are frozen and checked on connection. Run and generated UI
+capabilities gain no authority from this UI.
+
+41 focused Python checks, 7 source-client checks, TypeScript, targeted ESLint and
+Ruff pass. Five browser fixture checks pass using the packaged resource and real
+isolated Wright storage. Official MCP source save/stale/scope/reconnect checks
+passed after read-only reconciliation of a result-decoding assertion. Preserved
+failed reports and final captures are in [native-editor-evidence](native-editor-evidence/candidate.json).
+The first sandbox attempt stalled before MCP operations; only owned processes
+were stopped. Two browser selector failures were repaired without changing the
+editor. The receipt comparison accepts Wright-assigned layout revisions while
+checking the requested positions/viewport and source.
+
+Native editor rendering/save/host permission behavior remains **unverified**;
+native read-only rendering is **user confirmed**. Theme/narrow/reload above are
+**locally verified in a simulated browser host**, not Windows acceptance. Saved
+source restoration is verified; unsaved close restoration and native tabs are
+unverified. Single-panel fallback is explicit. No automatic chat wakeup claim.
+
+Prepared exact [0.3.0 update and rollback](native-editor-update.md) and
+[actual desktop walkthrough](native-editor-walkthrough.md). Specific approval is
+required by the submitted goal before this live change adds a write tool and
+selects the new source state. Old target/workspaces/runs and other settings remain.
+Suggested caption for the labelled browser image: “Wright’s shared workflow
+canvas now edits, saves and restores in our GB10 panel test. Windows desktop
+editor testing is next.” Do not present it as an actual Windows capture.
+
+Final packaging also rejects external emitted assets/module imports. The resource
+was retrieved with its exact new hash through the official MCP client (15 tools),
+and the five affected browser checks passed again on that final bundle. The
+working 0.2.0 and candidate targets both have zero reasoning requests/responses;
+no pending desktop reasoning is redirected by the prepared update.
+
+The final bridge also rejects an installed Python MCP SDK version that differs
+from its frozen manifest. The 14 affected bridge checks pass after that guard
+(including the additional drift case); the final official MCP resource read
+passes with SDK 1.28.1. This original desktop conversation now exposes the live
+0.2.0 Wright tools: its actual `wright_connection_status` returned connected,
+with model/app identity still unreported. No candidate write tool was enabled.

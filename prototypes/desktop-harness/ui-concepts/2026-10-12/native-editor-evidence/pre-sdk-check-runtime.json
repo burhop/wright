@@ -1,0 +1,27 @@
+{
+  "desktop-binding.json": {
+    "schema_version": "wright.desktop-binding/1",
+    "connection_id": "wright-desktop-prototype:a7144490810975fed466af3633b03386cd058db8c5d92fd0ffd7ebc75385ddf3",
+    "adapter": "openai-desktop-harness",
+    "requested_model": null,
+    "reported_model": null,
+    "model_identity_source": "unreported",
+    "reported_app_build": null,
+    "protocol_version": "wright.desktop-reasoning/1"
+  },
+  "desktop-versions.json": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "624d2f84515530f611a2ab35f111c82468f884f4506b94f87a3b954271065d67",
+      "transport": "05b80095abcb116d9ebd5d9b9b65c543190fc86b706231142e5291ecbf8f3c75",
+      "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+      "native_editor": "36692e525f406b0101280ece15596a74af4c3c8277b0b3e3768e47962aec27e6"
+    },
+    "confined_inspection": false,
+    "native_editor": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  }
+}

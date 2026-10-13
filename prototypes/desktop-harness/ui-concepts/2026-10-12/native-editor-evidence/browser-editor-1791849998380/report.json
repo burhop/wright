@@ -1,0 +1,17 @@
+{
+  "boundary": "GB10 browser simulated MCP App host; real isolated Wright source owner",
+  "native_desktop_verified": false,
+  "passed": [
+    "official App SDK initializes and reads accepted source",
+    "shared Source edit/apply/save and Wright source/layout readback",
+    "panel reload restores exact accepted source without save replay",
+    "host light theme and narrow panel actions",
+    "stale source rejection preserves local draft and accepted external edit"
+  ],
+  "scope": {
+    "workspace_id": "c54dabc1-b560-4dfb-8197-f922e9ff6edf",
+    "session_id": "desktop-abbb5c26-d460-4a5c-a52b-ff905156c6ed",
+    "path": "workflows/native-editor.workflow.wflow"
+  },
+  "errors": []
+}

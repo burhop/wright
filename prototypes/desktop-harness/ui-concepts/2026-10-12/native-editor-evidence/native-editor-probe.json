@@ -1,0 +1,44 @@
+{
+  "boundary": "official MCP client to isolated Wright source owner; not desktop UI acceptance",
+  "calls": [
+    {
+      "tool": "wright_workspace_create",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_create",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_open",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_save",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_save",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_save",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_read",
+      "is_error": false
+    }
+  ],
+  "resource": {
+    "uri": "ui://wright/workflow/80a214c293c55303c728fa99d5a405dc965d7d5d0fb38a6774ae8601cdc17ab6.html",
+    "sha256": "80a214c293c55303c728fa99d5a405dc965d7d5d0fb38a6774ae8601cdc17ab6",
+    "bytes": 1326992
+  },
+  "workspace": {
+    "workspace_id": "c54dabc1-b560-4dfb-8197-f922e9ff6edf",
+    "session_id": "desktop-abbb5c26-d460-4a5c-a52b-ff905156c6ed",
+    "workspace_name": "Native editor qualification",
+    "url": "http://127.0.0.1:5222/workspace/c54dabc1-b560-4dfb-8197-f922e9ff6edf?host=openai-desktop"
+  }
+}

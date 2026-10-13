@@ -10,6 +10,7 @@ the user's review of the three [UI concepts](README.md).
 | R0 bounded research | Complete; six source-backed comparisons, five findings, three experiments and an uncoached task script | Actual user walkthrough remains pending |
 | Native read-only panel | Implemented; SDK/resource and browser protocol checks pass; named 0.2.0 update explicitly approved and installed | Native rendering user-confirmed in fresh chat; next confined editing spike. Build/theme/resize/lifecycle remain open |
 | Shared presentation and canvas | Implemented; one neutral graph palette, scoped controls, distinct Wright-shell accent; URL mode is explicitly browser presentation with Wright document tabs | Native binding only after observed host capabilities |
+| Native editor | Local 0.3.0 candidate; shared canvas/source/layout save and conflict checks pass in a simulated host against real isolated storage | Specific live update approval, then actual Windows edit/save/reopen walkthrough |
 | Compact authoring | Toolbar Add step popover, contextual bottom/right inspector, existing focus control and saved preferences retained | Final browser checks pass; native editing prototype can now be prepared; live write-tool update requires its specific approval |
 | Run + review | Existing common process view reused; adds read-only exact-run chat-wait observation; observer close does not cancel execution | Actual same-conversation reasoning/checkpoint/result journey in new target |
 | Wright/Hermes shell | Same shared controls/canvas; its own single chat visible by default; explicit saved collapse preferences retained | Live Hermes acceptance not claimed from mock regressions |
@@ -17,9 +18,7 @@ the user's review of the three [UI concepts](README.md).
 | Candidate qualification | Focused frontend/backend/pilot checks, build and browser Workflows evidence recorded | Native lifecycle, actual zoom, usability and full end-to-end remain open |
 
 See [implementation-evidence.md](implementation-evidence.md) for exact boundaries,
-versions, reproducible commands, failures, images and remaining gaps. The native
-panel probe is experimental and read-only; no native editor, tabs, file handler
-or automatic chat wakeup is claimed. Use the existing browser experience only
+versions, reproducible commands, failures, images and remaining gaps. The installed native panel is experimental and read-only. A native editor candidate is prepared locally, but actual native editing, tabs, file handlers and automatic chat wakeup are not claimed. Use the existing browser experience only
 with an explicit browser label. Do not add its source/process transport or
 remove duplicate outer chrome until the native surface is qualified.
 

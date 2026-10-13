@@ -204,3 +204,75 @@ def test_denied_workspace_panel_does_not_read_connection_or_another_workspace(br
             )
         )
     client.call.assert_not_awaited()
+
+
+def test_native_editor_is_opt_in_and_uses_same_source_owner(bridge):
+    client = SimpleNamespace(
+        scope=AsyncMock(
+            return_value={"workspace_id": "workspace", "session_id": "session"}
+        ),
+        call=AsyncMock(return_value={"source": "accepted"}),
+    )
+    plain = bridge.server(client)
+    assert "wright_workflow_save" not in {
+        item.name for item in asyncio.run(plain.list_tools())
+    }
+    native = bridge.server(client, native_editor=True)
+    tools = {item.name: item for item in asyncio.run(native.list_tools())}
+    assert tools["wright_workflow_save"].meta["ui"]["visibility"] == ["app"]
+    uri = tools["wright_workflow_open"].meta["ui"]["resourceUri"]
+    import hashlib
+
+    assert (
+        hashlib.sha256(
+            Path(bridge.__file__).with_name("native-editor.html").read_bytes()
+        ).hexdigest()
+        in uri
+    )
+    _, document = asyncio.run(
+        native.call_tool(
+            "wright_workflow_open",
+            {
+                "workspace_id": "workspace",
+                "session_id": "session",
+                "path": "workflows/test.workflow.wflow",
+            },
+        )
+    )
+    assert document["document"] == {"source": "accepted"}
+    client.scope.assert_awaited_once_with("workspace", "session")
+    assert client.call.call_args.args == ("GET", "/api/workspace/workflow-sources")
+
+
+def test_frozen_editor_configuration_must_match_on_connection(bridge, tmp_path):
+    import hashlib
+
+    (tmp_path / "preview.json").write_text(
+        json.dumps({"api_url": "http://127.0.0.1:8122"})
+    )
+    (tmp_path / "desktop-binding.json").write_text("{}")
+    files = {
+        "transport": hashlib.sha256(Path(bridge.__file__).read_bytes()).hexdigest(),
+        "native_editor": "0" * 64,
+    }
+    (tmp_path / "desktop-versions.json").write_text(
+        json.dumps(
+            {"mcp_sdk": bridge.version("mcp"), "native_editor": True, "files": files}
+        )
+    )
+    with pytest.raises(ValueError, match="capability differs"):
+        bridge.WrightDesktopClient(tmp_path)
+    with pytest.raises(ValueError, match="bytes changed"):
+        bridge.WrightDesktopClient(tmp_path, native_editor=True)
+
+
+def test_sdk_version_drift_is_denied_before_connecting(bridge, tmp_path):
+    (tmp_path / "preview.json").write_text(
+        json.dumps({"api_url": "http://127.0.0.1:8122"})
+    )
+    (tmp_path / "desktop-binding.json").write_text("{}")
+    (tmp_path / "desktop-versions.json").write_text(
+        json.dumps({"mcp_sdk": "untested", "files": {}})
+    )
+    with pytest.raises(ValueError, match="SDK version differs"):
+        bridge.WrightDesktopClient(tmp_path, native_editor=True)

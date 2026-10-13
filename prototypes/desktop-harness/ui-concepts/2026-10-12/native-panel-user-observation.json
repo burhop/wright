@@ -53,7 +53,7 @@
     "native_tool_call": "passed; isError=false; connected=true; exact workspace/session returned",
     "native_rendering": {
       "status": "user_reported_visible_and_working",
-      "user_statement": "Panel appeared; I’ll provide the observations",
+      "user_statement": "Panel appeared; I\u2019ll provide the observations",
       "independent_desktop_capture": false
     },
     "heading": {
@@ -115,5 +115,6 @@
     ],
     "evidence_type": "read-only source inspection; not rendering proof"
   },
-  "updated_at_utc": "2026-10-12T23:00:10.334578+00:00"
+  "updated_at_utc": "2026-10-12T23:00:10.334578+00:00",
+  "followup_user_confirmation": "Wright panel with Refresh status"
 }

@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 from typing import Any
+from importlib.metadata import version
 from urllib.parse import urlsplit
 from uuid import uuid4
 from pydantic import TypeAdapter
@@ -19,6 +20,7 @@ from core.desktop_reasoning import DesktopActionReply
 from core.process_validation import Identifier
 
 import httpx
+from native_source_tools import WrightRequestRejected, register_native_source_tools
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
@@ -93,7 +95,7 @@ WORKSPACE_PANEL_URI = (
 
 
 class WrightDesktopClient:
-    def __init__(self, state):
+    def __init__(self, state, *, native_editor=False):
         self.state = Path(state).resolve(strict=True)
         preview = json.loads((self.state / "preview.json").read_text())
         url = preview["api_url"]
@@ -102,11 +104,33 @@ class WrightDesktopClient:
             raise ValueError("This prototype connects only to its loopback Wright API")
         self.binding = json.loads((self.state / "desktop-binding.json").read_text())
         versions = json.loads((self.state / "desktop-versions.json").read_text())
+        if versions.get("mcp_sdk") != version("mcp"):
+            raise ValueError(
+                "Pinned MCP SDK version differs; requalify before connecting"
+            )
         current_transport = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
         if versions["files"]["transport"] != current_transport:
             raise ValueError(
                 "The pinned MCP bridge changed; requalify before connecting"
             )
+        if bool(versions.get("native_editor", False)) != native_editor:
+            raise ValueError(
+                "Native editor capability differs from the frozen configuration"
+            )
+        for name, file in (
+            ("native_source_tools", "native_source_tools.py"),
+            ("native_editor", "native-editor.html"),
+        ):
+            if (
+                name in versions["files"]
+                and versions["files"][name]
+                != hashlib.sha256(
+                    Path(__file__).with_name(file).read_bytes()
+                ).hexdigest()
+            ):
+                raise ValueError(
+                    "Pinned native editor bytes changed; requalify before connecting"
+                )
         self.client_id = str(uuid4())
         token_file = self.state / ".preview-api-token"
         if token_file.is_symlink() or token_file.stat().st_mode & 0o077:
@@ -137,8 +161,9 @@ class WrightDesktopClient:
             detail = document.get(
                 "detail", document.get("message", "Wright rejected this request")
             )
-            raise ValueError(
-                f"Wright rejected request ({response.status_code}): {detail}"
+            raise WrightRequestRejected(
+                response.status_code,
+                f"Wright rejected request ({response.status_code}): {detail}",
             )
         return response.json()
 
@@ -190,7 +215,7 @@ async def connection_lifespan(client):
                 await client.http.aclose()
 
 
-def server(client):
+def server(client, *, native_editor=False):
     @asynccontextmanager
     async def lifespan(_):
         async with connection_lifespan(client):
@@ -255,7 +280,7 @@ def server(client):
         """Create a fresh isolated Wright workspace bound to this desktop connection."""
         return await client.call("POST", "/api/desktop/workspaces", json={"name": name})
 
-    @mcp.tool(annotations=read)
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workflow_read(
         workspace_id: str, session_id: str, path: str
     ) -> dict:
@@ -467,11 +492,54 @@ def server(client):
             },
         )
 
+    if native_editor:
+        html = Path(__file__).with_name("native-editor.html").read_text()
+        uri = (
+            "ui://wright/workflow/"
+            + hashlib.sha256(html.encode()).hexdigest()
+            + ".html"
+        )
+
+        @mcp.resource(
+            uri,
+            title="Wright workflow editor",
+            mime_type="text/html;profile=mcp-app",
+            meta={"ui": {"csp": {"connectDomains": [], "resourceDomains": []}}},
+        )
+        async def native_editor_resource() -> str:
+            return html
+
+        @mcp.tool(
+            title="Open Wright workflow",
+            annotations=read,
+            structured_output=True,
+            meta={
+                "ui": {"resourceUri": uri, "visibility": ["model", "app"]},
+                "openai/ui": {"entrypoints": [{"type": "thread"}]},
+            },
+        )
+        async def wright_workflow_open(
+            workspace_id: str, session_id: str, path: str
+        ) -> dict[str, Any]:
+            """Open the shared editor for an exact saved workflow. This operation only reads."""
+            workspace = await client.scope(workspace_id, session_id)
+            document = await client.call(
+                "GET",
+                "/api/workspace/workflow-sources",
+                params={"session_id": session_id, "path": path},
+            )
+            return {"workspace": workspace, "document": document}
+
+        register_native_source_tools(mcp, client)
     return mcp
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
+    parser.add_argument("--native-editor", action="store_true")
     args = parser.parse_args()
-    server(WrightDesktopClient(args.state_dir)).run(transport="stdio")
+    server(
+        WrightDesktopClient(args.state_dir, native_editor=args.native_editor),
+        native_editor=args.native_editor,
+    ).run(transport="stdio")

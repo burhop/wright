@@ -1,0 +1,11 @@
+{
+  "boundary": "actual plugin tool in original desktop conversation",
+  "plugin": "wright-desktop-gb10-prototype",
+  "version": "0.2.0",
+  "tool": "wright_connection_status",
+  "connected": true,
+  "binding_id": "wright-desktop-prototype:d07f7af02a49b63b131d21139645ec127e254c791012ce4070f8b2f7124d3298",
+  "model_identity": "unreported",
+  "reported_app_build": null,
+  "observation": "Wright tools newly exposed in original conversation; read-only status call succeeded"
+}
