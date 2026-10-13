@@ -36,9 +36,12 @@ def main():
     parser.add_argument("--enable-desktop-bridge", action="store_true")
     parser.add_argument("--enable-confined-inspection", action="store_true")
     parser.add_argument("--enable-native-editor", action="store_true")
+    parser.add_argument("--enable-native-working-view", action="store_true")
     args = parser.parse_args()
     if args.enable_native_editor and not args.enable_desktop_bridge:
         parser.error("Native editor requires the opt-in desktop bridge")
+    if args.enable_native_working_view and not args.enable_native_editor:
+        parser.error("Native working view requires the opt-in native editor")
     if args.enable_confined_inspection and not args.enable_desktop_bridge:
         parser.error("Confined inspection requires the opt-in desktop bridge")
     state = args.state_dir.resolve()
@@ -94,6 +97,7 @@ def main():
             args.web_port,
             confined_inspection=args.enable_confined_inspection,
             native_editor=args.enable_native_editor,
+            native_working_view=args.enable_native_working_view,
         )
         app.state.agent_engine = desktop
         app.include_router(desktop.router())

@@ -241,8 +241,9 @@ evidence retains its stated scope. No push, merge or release performed.
 
 Next-slice work is isolated in `/tmp/wright-host-adaptive-native-working-view`,
 branch `codex/host-adaptive-native-working-view`, based at `72c4f86f`. The prepared
-0.3.0 candidate/worktree stays clean and unchanged; its live-update approval is
-still pending. No new process tool or resource is registered in that candidate.
+0.3.0 candidate/worktree stays clean and unchanged. The user subsequently approved
+and installed that exact candidate; see native-editor-evidence/native-installation-0.3.0.json.
+No new process tool or working-view resource is registered in the installed candidate.
 
 The common working view and existing public ProcessClient are reused. Two
 closed MCP ports separate reads from user-requested inputs/readiness/start/
@@ -301,3 +302,63 @@ requires no new docking or design system.
 Social caption: “From desktop conversation to a saved Wright workflow result.
 This text-only prototype proof shows the GB10 browser working view; native editor
 testing is next.” Suggested image: `working-view-evidence/browser-native-run-2/03b-owned-inspection-brief.png`.
+
+### Packaged editor/common-view composition, local only
+
+The next candidate now composes the preserved editor and common controller in
+one real MCP App resource. Save, then use **Run and results**; **Open workflow**
+returns to the still-mounted editor with its Undo state. Unsaved inputs, busy or
+uncertain mutations block switching. A changed accepted source blocks preparation;
+an explicitly saved revision creates a new process binding rather than redirecting
+an old run. There is no second chat, fake tab strip or executor. Host theme/font
+values apply to both frames; native working controls reuse the neutral palette.
+
+An explicit `--native-working-view` capability requires `--native-editor`, freezes
+the tool-file/resource hashes, and exposes one read-only primary-document opener
+plus two closed UI ports. The installed 0.3.0 tree/package remain untouched. New
+qualification state is `/tmp/wright-native-working-target-20261012-01` on API8123,
+Vite5223. No workflow was started there. Official MCP reads verified 18 tools,
+the exact immutable resource, wrong-workspace rejection and source-drift rejection.
+The current resource is about 2.18 MB with no external assets; binary/derived
+representation support remains explicitly unavailable.
+
+87 focused frontend checks and 59 backend/transport checks passed; the final
+bridge guard was rechecked in its 16-check subset. TypeScript, targeted ESLint,
+Ruff and `git diff --check` passed. Eight final packaged-panel browser checks exercised
+real source storage, Source/apply/save/layout/reload, neutral theme/narrow controls,
+common input preparation, dirty-input protection, return/reopen without replay,
+and retained stale drafts. The primary opener accepts a real preparation context
+with `run_id: null`; after an edit, a cached old digest is rejected and an explicit
+new-revision context reopens. Actual Undo/Redo after returning from the working
+view was also exercised. Its first stale continuation failure is retained; the
+scope guard was preserved. The fixture forwards preparation only, never runs,
+reviews or external actions. A separate sequential served-build capture entered
+through **Workflows**, read the exact saved process in the common view and closed
+its actual workspace tab. These are GB10 browser checks, not Windows acceptance.
+
+Failures are retained in the existing evidence index: a backend command omitted
+the repository PYTHONPATH, the first served Vite launch omitted the existing
+editor opt-in flags, and bundled shader whitespace failed the Git whitespace
+gate. The commands/build were corrected and affected checks passed; no gate or
+authority contract was weakened.
+
+Reproduce on the retained isolated service/state:
+
+```sh
+.venv/bin/python prototypes/desktop-harness/native_editor_probe.py --state-dir /tmp/wright-native-working-target-20261012-01 --phase resource --native-working-view
+node prototypes/desktop-harness/native_editor_acceptance.mjs /tmp/wright-native-working-target-20261012-01 --working --open-working
+node prototypes/desktop-harness/capture-preview.mjs /tmp/wright-native-working-target-20261012-01 /tmp/wright-working-readback-new preparation
+```
+
+The browser acceptance command deliberately changes only this isolated test
+source/inputs. Run it sequentially before the read-only served capture. Vite needs
+`VITE_WRIGHT_WORKFLOW_RECOVERY=true VITE_WRIGHT_WORKFLOW_COMPOSER=true` and its
+API proxy target `http://127.0.0.1:8123`. The evidence index records current hashes,
+versions, reports, screenshots and remaining gaps. Actual Windows edit/save/reopen
+and the complete native run/checkpoint/recovery journey remain unproven. The next
+working-view live update will need separate specific approval after qualification.
+
+Suggested caption: “One canvas for authoring, one working view for preparing the
+job. Wright’s neutral controls now fit the desktop-harness prototype.” Image:
+`working-view-evidence/browser-working-primary-final/native-working-preparation-fixture.png`.
+Label it **GB10 browser protocol prototype**, not a Windows desktop screenshot.

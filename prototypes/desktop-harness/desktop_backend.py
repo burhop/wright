@@ -52,7 +52,10 @@ class DesktopBackend:
         *,
         confined_inspection=False,
         native_editor=False,
+        native_working_view=False,
     ):
+        if native_working_view and not native_editor:
+            raise ValueError("Native working view requires the native editor resource")
         self.service = service
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
@@ -65,6 +68,7 @@ class DesktopBackend:
             "files": {},
             "confined_inspection": confined_inspection,
             "native_editor": native_editor,
+            "native_working_view": native_working_view,
             "connection_lease_seconds": CLIENT_LEASE_SECONDS,
             "heartbeat_interval_seconds": HEARTBEAT_INTERVAL_SECONDS,
         }
@@ -78,8 +82,14 @@ class DesktopBackend:
             ("transport", Path(__file__).with_name("mcp_bridge.py")),
         ):
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
-        for name, file in [("native_source_tools", "native_source_tools.py")] + (
-            [("native_editor", "native-editor.html")] if native_editor else []
+        for name, file in (
+            [("native_source_tools", "native_source_tools.py")]
+            + ([("native_editor", "native-editor.html")] if native_editor else [])
+            + (
+                [("native_process_tools", "native_process_tools.py")]
+                if native_working_view
+                else []
+            )
         ):
             runtime["files"][name] = hashlib.sha256(
                 Path(__file__).with_name(file).read_bytes()

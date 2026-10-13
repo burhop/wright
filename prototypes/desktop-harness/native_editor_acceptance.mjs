@@ -4,6 +4,9 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {chromium,expect} from '@playwright/test';
 const state=resolve(process.argv[2]);
+const working=process.argv.includes('--working');
+const openWorking=process.argv.includes('--open-working');
+if(openWorking&&!working)throw Error('Primary working-view check requires --working');
 const evidence=JSON.parse(readFileSync(resolve(state,'native-editor-reconciled.json')));
 const scope=evidence.scope;
 const preview=JSON.parse(readFileSync(resolve(state,'preview.json')));
@@ -11,13 +14,24 @@ const token=readFileSync(resolve(state,'.preview-api-token'),'utf8');
 const bundle=readFileSync('prototypes/desktop-harness/native-editor.html','utf8');
 const output=resolve(state,'browser-editor-'+Date.now());mkdirSync(output,{recursive:true});
 const safe=value=>JSON.stringify(value).replaceAll('<','\\u003c');
+let primaryArgs=scope;
+let primaryResult={workspace:evidence.workspace,working_view_enabled:working};
+async function workingContext(){
+ const current=await sourceCall('GET');if(!current.response.ok)throw Error('Cannot read current source for exact primary view');
+ const request={...scope,operation:'snapshot',expected_storage_digest:current.doc.storage_digest};
+ const url=new URL('/api/workspace/process-interfaces/interaction',preview.api_url);
+ for(const key of ['session_id','path','expected_storage_digest'])url.searchParams.set(key,request[key]);
+ const reply=await fetch(url,{headers:{Authorization:'Bearer '+token}});if(!reply.ok)throw Error('Cannot read exact primary process context');
+ return {arguments:{request},result:{content:[],structuredContent:{workspace:evidence.workspace,working_view_enabled:true,snapshot:await reply.json()}}};
+}
+if(openWorking){const context=await workingContext();primaryArgs=context.arguments;primaryResult=context.result.structuredContent;}
 const fixture=`<!doctype html><html><head><meta charset="utf-8"><title>Wright editor protocol fixture</title></head><body style="margin:0;background:#181818;color:#ddd;font:13px system-ui"><p style="margin:0;padding:10px">GB10 browser · simulated desktop host · real Wright source storage</p><iframe id="panel" title="Wright Workflows" style="border:0;width:100%;height:calc(100vh - 38px)"></iframe><script>
 const frame=document.getElementById('panel');window.calls=[];
 window.addEventListener('message',async event=>{
  if(event.source!==frame.contentWindow)return;
  const message=event.data;const send=data=>frame.contentWindow.postMessage({jsonrpc:'2.0',...data},'*');
  if(message.method==='ui/initialize')send({id:message.id,result:{protocolVersion:'2026-01-26',hostInfo:{name:'wright-browser-fixture',version:'0.1.0'},hostCapabilities:{serverTools:{}},hostContext:{theme:'dark'}}});
- if(message.method==='ui/notifications/initialized'){send({method:'ui/notifications/tool-input',params:{arguments:${safe(scope)}}});send({method:'ui/notifications/tool-result',params:{content:[],structuredContent:{workspace:${safe(evidence.workspace)}}}});}
+ if(message.method==='ui/notifications/initialized'){send({method:'ui/notifications/tool-input',params:{arguments:${safe(primaryArgs)}}});send({method:'ui/notifications/tool-result',params:{content:[],structuredContent:${safe(primaryResult)}}});}
  if(message.method==='tools/call'){window.calls.push(message.params);try{const response=await fetch('/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(message.params)});send({id:message.id,result:await response.json()});}catch{send({id:message.id,error:{code:-32000,message:'Fixture transport unavailable'}});}}
 });frame.srcdoc=${safe(bundle)};
 </script></body></html>`;
@@ -33,6 +47,19 @@ const server=createServer(async(request,response)=>{
  if(request.method==='POST'&&request.url==='/tool'){
  let text='';for await(const chunk of request)text+=chunk;
  const {name,arguments:args}=JSON.parse(text);
+ if(working&&['wright_process_ui_read','wright_process_ui_update'].includes(name)){
+   const req=args.request;
+   if(!req||Object.entries(scope).some(([key,value])=>req[key]!==value))throw Error('Fixture process scope denied');
+   const {workspace_id:_,operation,...body}=req;
+   const paths={snapshot:'/interaction',inputs:'/inputs',readiness:'/readiness'};
+   if(!paths[operation]||(name==='wright_process_ui_read')!==(operation==='snapshot'))throw Error('Fixture exposes preparation only; no run/action forwarding');
+   const method=operation==='snapshot'?'GET':'POST';
+   const url=new URL('/api/workspace/process-interfaces'+paths[operation],preview.api_url);
+   if(method==='GET')for(const [key,value] of Object.entries(body))url.searchParams.set(key,String(value));
+   const result=await fetch(url,{method,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},...(method==='POST'?{body:JSON.stringify(body)}:{})});
+   const doc=await result.json();
+   response.writeHead(200,{'Content-Type':'application/json'});response.end(JSON.stringify({content:[],structuredContent:result.ok?{ok:true,document:doc}:{ok:false,http_status:result.status,reason:{code:result.status===409?'SUBJECT_STALE':'CAPABILITY_UNAVAILABLE',message:'Wright did not confirm this preparation.',correction:'Inspect the exact source or connection.'}}}));return;
+ }
  if(!['wright_workflow_read','wright_workflow_save'].includes(name)||Object.entries(scope).some(([key,value])=>args[key]!==value))throw Error('Fixture scope denied');
  const method=name==='wright_workflow_read'?'GET':'PUT';const {workspace_id:_,...body}=args;
  const result=await sourceCall(method,body);
@@ -50,6 +77,7 @@ try{
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto(`http://127.0.0.1:${server.address().port}`);
  const frame=page.frameLocator('#panel');
+ if(openWorking){await expect(frame.getByTestId('common-process-view')).toBeVisible();await frame.getByRole('button',{name:'Open workflow',exact:true}).click();passed.push('primary process opener reads exact preparing context with null run id');}
  await expect(frame.getByTestId('workflow-recovery-source-editor')).toHaveCount(0);
  await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
  expect(await frame.locator('.native-workflow-panel').count()).toBe(1);
@@ -57,19 +85,59 @@ try{
  await frame.getByTestId('workflow-recovery-view-code').click();
  const editor=frame.getByTestId('workflow-recovery-source-editor');await expect(editor).toContainText('');
  const before=await editor.inputValue();
- const savedTitle=before.includes('name: \"Native panel saved edit\"')?'Saved panel workflow':'Native panel saved edit';
+ let savedTitle=before.includes('name: \"Native panel saved edit\"')?'Saved panel workflow':'Native panel saved edit';
  await editor.fill(before.replace(/^  name: \"[^\"]+\"/m, '  name: '+JSON.stringify(savedTitle)));
  await frame.getByTestId('workflow-recovery-source-apply').click();
  await expect(frame.getByTestId('workflow-recovery-save')).toBeEnabled();
  await frame.getByTestId('workflow-recovery-save').click();
  await expect(frame.getByTestId('workflow-recovery-save-status')).toHaveText('Saved');
- const accepted=await sourceCall('GET');expect(accepted.doc.source).toContain(savedTitle);expect(accepted.doc.layout_revision).toBeGreaterThan(0);
+ let accepted=await sourceCall('GET');expect(accepted.doc.source).toContain(savedTitle);expect(accepted.doc.layout_revision).toBeGreaterThan(0);
  passed.push('shared Source edit/apply/save and Wright source/layout readback');
- await page.reload();await frame.getByTestId('workflow-recovery-view-code').click();
+ await page.reload();
+ if(openWorking){
+   await expect(frame.getByText("This run's source changed. Reopen its exact accepted workflow; no action was repeated.",{exact:true})).toBeVisible();
+   const context=await workingContext();
+   await page.evaluate(context=>{const child=document.getElementById('panel').contentWindow;child.postMessage({jsonrpc:'2.0',method:'ui/notifications/tool-input',params:{arguments:context.arguments}},'*');child.postMessage({jsonrpc:'2.0',method:'ui/notifications/tool-result',params:context.result},'*');},context);
+   await expect(frame.getByTestId('common-process-view')).toBeVisible();await frame.getByRole('button',{name:'Open workflow',exact:true}).click();
+   passed.push('cached stale primary digest is rejected; explicit new source subject reopens');
+ }
+ await frame.getByTestId('workflow-recovery-view-code').click();
  await expect(editor).toHaveValue(accepted.doc.source);
  passed.push('panel reload restores exact accepted source without save replay');
  await frame.getByTestId('workflow-recovery-view-diagram').click();
  await page.screenshot({path:resolve(output,'shared-native-editor-fixture.png')});
+ if(working){
+   // Make an actual command after reload so return can prove retained Undo/Redo.
+   await frame.getByTestId('workflow-recovery-view-code').click();savedTitle+=' retained';
+   await editor.fill(accepted.doc.source.replace(/^  name: \"[^\"]+\"/m,'  name: '+JSON.stringify(savedTitle)));
+   await frame.getByTestId('workflow-recovery-source-apply').click();await frame.getByTestId('workflow-recovery-save').click();
+   await expect(frame.getByTestId('workflow-recovery-save-status')).toHaveText('Saved');accepted=await sourceCall('GET');
+   await frame.getByTestId('workflow-recovery-view-diagram').click();
+   await frame.getByRole('button',{name:'Run and results',exact:true}).click();
+   await expect(frame.getByTestId('common-process-view')).toBeVisible();
+   await frame.getByText('Saved defaults (1)',{exact:true}).click();
+   const input=frame.getByLabel('Brief (required)',{exact:true});
+   await expect(input).toBeVisible();await input.fill('A digital comparison for the saved native-panel workflow.');
+   await frame.getByRole('button',{name:'Open workflow',exact:true}).click();
+   await expect(frame.getByText('Finish or reconcile the pending change before leaving this working view.')).toBeVisible();
+   await frame.getByRole('button',{name:'Prepare and check inputs',exact:true}).click();
+   await expect.poll(()=>page.evaluate(()=>window.calls.filter(c=>c.name==='wright_process_ui_update'&&c.arguments.request.operation==='readiness').length)).toBe(1);
+   await expect(frame.getByRole('button',{name:'Prepare and check inputs',exact:true})).toBeEnabled();
+   await page.screenshot({path:resolve(output,'native-working-preparation-fixture.png')});
+   await frame.getByRole('button',{name:'Open workflow',exact:true}).click();
+   await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
+   await frame.getByRole('button',{name:'Run and results',exact:true}).click();
+   await expect(frame.getByTestId('common-process-view')).toBeVisible();
+   const calls=await page.evaluate(()=>window.calls);
+   expect(calls.filter(c=>c.name==='wright_process_ui_update').map(c=>c.arguments.request.operation)).toEqual(['inputs','readiness']);
+   await frame.getByRole('button',{name:'Open workflow',exact:true}).click();
+   await expect(frame.getByTestId('workflow-recovery-undo')).toBeEnabled();
+   await frame.getByTestId('workflow-recovery-undo').click();
+   await frame.getByTestId('workflow-recovery-redo').click();
+   await frame.getByTestId('workflow-recovery-view-code').click();
+   await expect(editor).toHaveValue(accepted.doc.source);
+   passed.push('saved editor to real common preparation, dirty-input guard, exact owner inputs/readiness, return/reopen without replay or run');
+ }
  await page.evaluate(()=>document.getElementById('panel').contentWindow.postMessage({jsonrpc:'2.0',method:'ui/notifications/host-context-changed',params:{theme:'light',styles:{variables:{'--color-background-primary':'#fff','--color-text-primary':'#202020'}}}},'*'));
  await expect.poll(()=>frame.locator('.native-workflow-panel').evaluate(el=>getComputedStyle(el).backgroundColor)).toBe('rgb(255, 255, 255)');
  await page.setViewportSize({width:700,height:800});

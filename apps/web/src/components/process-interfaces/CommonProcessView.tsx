@@ -51,6 +51,7 @@ export interface CommonProcessViewProps {
   readonly title?: string;
   readonly runId?: string;
   readonly readOnly?: boolean;
+  readonly onUnsavedChange?: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
   readonly recoveryStore?: ProcessViewRecoveryStore;
   readonly onUpload?: (
@@ -159,6 +160,7 @@ function CommonProcessController({
   title,
   runId,
   readOnly = false,
+  onUnsavedChange,
   theme,
   recoveryStore,
   onUpload,
@@ -985,6 +987,9 @@ function CommonProcessController({
       }
     : storageReason;
   const pendingStart = !!recovery?.start && !recovery.start.receipt;
+  useEffect(() => {
+    onUnsavedChange?.(dirty || !!busy || pendingStart || !!pendingInteraction);
+  }, [onUnsavedChange, dirty, busy, pendingStart, pendingInteraction]);
   const startDisabledReason: Reason | undefined = pendingStart
     ? {
         code: "OUTCOME_UNKNOWN",

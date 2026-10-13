@@ -6,13 +6,17 @@ import path from "node:path";
 const state = path.resolve(process.argv[2]);
 const output = path.resolve(process.argv[3]);
 const nativeConversation = process.argv[4] === "native-conversation";
+const preparation = process.argv[4] === "preparation";
 const nativeEvidence = nativeConversation ? JSON.parse(readFileSync(process.argv[5], "utf8")) : undefined;
 const connectedCheckpoint = process.argv[4] === "checkpoint-connected";
 const completedCheckpoint = process.argv[4] === "checkpoint-completed";
 const checkpoint = process.argv[4] === "checkpoint" || connectedCheckpoint || completedCheckpoint;
 const gateway = process.argv[4] === "gateway";
 let info;
-if (nativeConversation) {
+if (preparation) {
+  const evidence = JSON.parse(readFileSync(path.join(state,"native-working-protocol.json"),"utf8"));
+  info = {workspace_id:evidence.workspace.workspace_id,source_path:evidence.scope.path};
+} else if (nativeConversation) {
   info = {workspace_id:nativeEvidence.workspace.workspace_id,source_path:nativeEvidence.source.path,run_id:nativeEvidence.start.run_id};
 } else if (checkpoint) {
   const evidence = JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8"));
@@ -64,7 +68,29 @@ try {
   url.searchParams.set("workflow", "canonical");
   url.searchParams.set("workflowPath", info.source_path);
   await page.goto(url.toString());
-  if (completedCheckpoint || nativeConversation) {
+  if (preparation) {
+    await page.getByTestId("workflow-recovery-save").waitFor({timeout:10000});
+    const sourceUrl = new URL("/api/workspace/workflow-sources",preview.api_url);
+    sourceUrl.searchParams.set("session_id",JSON.parse(readFileSync(path.join(state,"native-working-protocol.json"))).scope.session_id);
+    sourceUrl.searchParams.set("path",info.source_path);
+    const reply = await fetch(sourceUrl,{headers:{Authorization:`Bearer ${token}`}});
+    if(!reply.ok)throw new Error("Cannot read the exact accepted source");
+    const source = await reply.json();
+    const view = new URL(url);
+    view.searchParams.set("processView","native-working-preparation-readback");
+    view.searchParams.set("processPath",info.source_path);
+    view.searchParams.set("processDigest",source.storage_digest);
+    await page.goto(view.toString());
+    await page.getByTestId("common-process-view").waitFor({timeout:10000});
+    await page.getByRole("button",{name:"Prepare and check inputs",exact:true}).waitFor({timeout:10000});
+    await page.screenshot({path:path.join(output,"03-common-preparation-readback.png")});
+    const tab = page.getByRole("tab",{selected:true});const identity = await tab.getAttribute("data-testid");
+    if(!identity)throw new Error("Cannot identify the exact working-view tab");
+    await tab.getByRole("button",{name:/^Close /}).click();
+    await page.getByTestId(identity).waitFor({state:"detached",timeout:10000});
+    uiContinuation = {readback_only:true,common_view_closed:true,source_digest:source.storage_digest};
+    await page.screenshot({path:path.join(output,"04-returned-editor.png")});
+  } else if (completedCheckpoint || nativeConversation) {
     const evidence = nativeConversation ? {...nativeEvidence,stage:nativeEvidence.snapshot.state,final_snapshot:nativeEvidence.snapshot} : JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8"));
     if (evidence.stage !== "completed" || evidence.final_snapshot.context.run_id !== info.run_id) throw new Error("Readback requires the exact recorded completed run");
     const view = new URL(url);

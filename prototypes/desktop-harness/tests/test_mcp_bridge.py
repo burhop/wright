@@ -276,3 +276,91 @@ def test_sdk_version_drift_is_denied_before_connecting(bridge, tmp_path):
     )
     with pytest.raises(ValueError, match="SDK version differs"):
         bridge.WrightDesktopClient(tmp_path, native_editor=True)
+
+
+def test_working_view_requires_opt_in_and_reuses_immutable_editor_resource(bridge):
+    client = SimpleNamespace(
+        scope=AsyncMock(
+            return_value={"workspace_id": "workspace", "session_id": "session"}
+        ),
+        call=AsyncMock(return_value={"context": {"run_id": "saved-run"}}),
+    )
+    with pytest.raises(ValueError, match="requires the native editor"):
+        bridge.server(client, native_working_view=True)
+    editor = bridge.server(client, native_editor=True)
+    assert "wright_process_view" not in {
+        t.name for t in asyncio.run(editor.list_tools())
+    }
+    native = bridge.server(client, native_editor=True, native_working_view=True)
+    tools = {t.name: t for t in asyncio.run(native.list_tools())}
+    assert len(tools) == 18
+    view = tools["wright_process_view"]
+    assert view.annotations.readOnlyHint is True
+    assert (
+        view.meta["ui"]["resourceUri"]
+        == tools["wright_workflow_open"].meta["ui"]["resourceUri"]
+    )
+    assert tools["wright_process_ui_update"].meta["ui"]["visibility"] == ["app"]
+    _, result = asyncio.run(
+        native.call_tool(
+            "wright_process_view",
+            {
+                "request": {
+                    "operation": "snapshot",
+                    "workspace_id": "workspace",
+                    "session_id": "session",
+                    "path": "workflows/test.wflow",
+                    "expected_storage_digest": "a" * 64,
+                    "run_id": "saved-run",
+                }
+            },
+        )
+    )
+    assert (
+        result["working_view_enabled"] is True
+        and result["snapshot"]["context"]["run_id"] == "saved-run"
+    )
+    assert client.call.await_count == 1
+    assert client.call.call_args.args == (
+        "GET",
+        "/api/workspace/process-interfaces/runs/saved-run",
+    )
+
+
+def test_working_view_configuration_drift_fails_before_connecting(bridge, tmp_path):
+    import hashlib
+
+    (tmp_path / "preview.json").write_text(
+        json.dumps({"api_url": "http://127.0.0.1:8122"})
+    )
+    (tmp_path / "desktop-binding.json").write_text("{}")
+    files = {
+        "transport": hashlib.sha256(Path(bridge.__file__).read_bytes()).hexdigest()
+    }
+    (tmp_path / "desktop-versions.json").write_text(
+        json.dumps(
+            {
+                "mcp_sdk": bridge.version("mcp"),
+                "native_editor": True,
+                "native_working_view": True,
+                "files": files,
+            }
+        )
+    )
+    with pytest.raises(ValueError, match="working view differs"):
+        bridge.WrightDesktopClient(tmp_path, native_editor=True)
+    files["native_process_tools"] = "0" * 64
+    (tmp_path / "desktop-versions.json").write_text(
+        json.dumps(
+            {
+                "mcp_sdk": bridge.version("mcp"),
+                "native_editor": True,
+                "native_working_view": True,
+                "files": files,
+            }
+        )
+    )
+    with pytest.raises(ValueError, match="bytes changed"):
+        bridge.WrightDesktopClient(
+            tmp_path, native_editor=True, native_working_view=True
+        )

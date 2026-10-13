@@ -95,7 +95,7 @@ WORKSPACE_PANEL_URI = (
 
 
 class WrightDesktopClient:
-    def __init__(self, state, *, native_editor=False):
+    def __init__(self, state, *, native_editor=False, native_working_view=False):
         self.state = Path(state).resolve(strict=True)
         preview = json.loads((self.state / "preview.json").read_text())
         url = preview["api_url"]
@@ -117,12 +117,22 @@ class WrightDesktopClient:
             raise ValueError(
                 "Native editor capability differs from the frozen configuration"
             )
+        if bool(versions.get("native_working_view", False)) != native_working_view:
+            raise ValueError(
+                "Native working view differs from the frozen configuration"
+            )
         for name, file in (
             ("native_source_tools", "native_source_tools.py"),
             ("native_editor", "native-editor.html"),
+            ("native_process_tools", "native_process_tools.py"),
         ):
             if (
-                name in versions["files"]
+                (
+                    native_working_view
+                    and name == "native_process_tools"
+                    and name not in versions["files"]
+                )
+                or name in versions["files"]
                 and versions["files"][name]
                 != hashlib.sha256(
                     Path(__file__).with_name(file).read_bytes()
@@ -215,7 +225,10 @@ async def connection_lifespan(client):
                 await client.http.aclose()
 
 
-def server(client, *, native_editor=False):
+def server(client, *, native_editor=False, native_working_view=False):
+    if native_working_view and not native_editor:
+        raise ValueError("Native working view requires the native editor resource")
+
     @asynccontextmanager
     async def lifespan(_):
         async with connection_lifespan(client):
@@ -528,9 +541,17 @@ def server(client, *, native_editor=False):
                 "/api/workspace/workflow-sources",
                 params={"session_id": session_id, "path": path},
             )
-            return {"workspace": workspace, "document": document}
+            return {
+                "workspace": workspace,
+                "document": document,
+                "working_view_enabled": native_working_view,
+            }
 
         register_native_source_tools(mcp, client)
+        if native_working_view:
+            from native_process_tools import register_native_process_tools
+
+            register_native_process_tools(mcp, client, resource_uri=uri)
     return mcp
 
 
@@ -538,8 +559,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
     parser.add_argument("--native-editor", action="store_true")
+    parser.add_argument("--native-working-view", action="store_true")
     args = parser.parse_args()
+    if args.native_working_view and not args.native_editor:
+        parser.error("Native working view requires the opt-in native editor")
     server(
-        WrightDesktopClient(args.state_dir, native_editor=args.native_editor),
+        WrightDesktopClient(
+            args.state_dir,
+            native_editor=args.native_editor,
+            native_working_view=args.native_working_view,
+        ),
         native_editor=args.native_editor,
+        native_working_view=args.native_working_view,
     ).run(transport="stdio")

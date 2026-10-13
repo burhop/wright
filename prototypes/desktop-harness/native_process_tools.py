@@ -1,6 +1,6 @@
 """Offline next-slice MCP ports over Wright's existing process API.
 
-Not registered by the installed plugin or the frozen 0.3.0 editor candidate.
+Opt-in only; not registered by the installed frozen 0.3.0 editor candidate.
 Closed request types, no arbitrary URL/method, no model call or executor.
 """
 
@@ -97,7 +97,7 @@ PanelUpdate = Annotated[
 BASE = "/api/workspace/process-interfaces"
 
 
-def register_native_process_tools(mcp, client):
+def register_native_process_tools(mcp, client, *, resource_uri=None):
     async def invoke(request, *, changes=False):
         owner_called = False
         try:
@@ -273,3 +273,31 @@ def register_native_process_tools(mcp, client):
     async def wright_process_ui_update(request: PanelUpdate) -> dict[str, Any]:
         """Submit a user-requested process operation to Wright's existing authority and recovery owners."""
         return await invoke(request, changes=True)
+
+    if resource_uri:
+
+        @mcp.tool(
+            title="Open Wright run and results",
+            structured_output=True,
+            annotations=ToolAnnotations(
+                readOnlyHint=True,
+                destructiveHint=False,
+                idempotentHint=True,
+                openWorldHint=False,
+            ),
+            meta={
+                "ui": {"resourceUri": resource_uri, "visibility": ["model", "app"]},
+                "openai/ui": {"entrypoints": [{"type": "thread"}]},
+            },
+        )
+        async def wright_process_view(request: PanelSnapshot) -> dict[str, Any]:
+            """Open an exact accepted process or durable run. Read only; never starts or resumes work."""
+            result = await invoke(request)
+            if not result["ok"]:
+                return result
+            workspace = await client.scope(request.workspace_id, request.session_id)
+            return {
+                "workspace": workspace,
+                "snapshot": result["document"],
+                "working_view_enabled": True,
+            }

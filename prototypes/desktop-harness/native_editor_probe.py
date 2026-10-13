@@ -177,7 +177,7 @@ async def reconcile(state, output):
     print(json.dumps({"passed": evidence["passed"], "state": str(state)}))
 
 
-async def inspect_resource(state):
+async def inspect_resource(state, *, native_working_view=False):
     parameters = StdioServerParameters(
         command=sys.executable,
         args=[
@@ -185,6 +185,7 @@ async def inspect_resource(state):
             "--state-dir",
             str(state),
             "--native-editor",
+            *(["--native-working-view"] if native_working_view else []),
         ],
     )
     record = {
@@ -208,6 +209,7 @@ async def inspect_resource(state):
                 resource_bytes=len(html.encode()),
                 tools=len(tools),
                 ui_save_visibility=["app"],
+                native_working_view=native_working_view,
             )
     (state / "native-editor-current-resource.json").write_text(
         json.dumps(record, indent=2)
@@ -221,5 +223,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--phase", choices=["qualify", "reconcile", "resource"], default="qualify"
     )
+    parser.add_argument("--native-working-view", action="store_true")
     args = parser.parse_args()
-    asyncio.run(qualify(args.state_dir, args.phase))
+    if args.native_working_view:
+        if args.phase != "resource":
+            parser.error("Working-view opt-in is available only for resource inspection")
+        asyncio.run(inspect_resource(args.state_dir, native_working_view=True))
+    else:
+        asyncio.run(qualify(args.state_dir, args.phase))

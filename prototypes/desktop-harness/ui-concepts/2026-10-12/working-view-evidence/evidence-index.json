@@ -1,5 +1,5 @@
 {
-  "status": "offline working-view code; not registered or installed",
+  "status": "local opt-in packaged editor/common-view composition qualified for preparation; not installed",
   "worktree": "/tmp/wright-host-adaptive-native-working-view",
   "base": "72c4f86f",
   "native_process_python_checks": 15,
@@ -18,11 +18,78 @@
     "desktop_reasoning_terminal_receipts": 1
   },
   "installed_target_pending_requests": 0,
-  "preserved_0_3_candidate": "72c4f86f, clean; approval remains pending",
+  "preserved_0_3_candidate": "72c4f86f, clean; user approved and installed exact 0.3.0; Windows edit/save/reopen pending",
   "files": {
     "apps/web/src/prototypes/desktop-panel/native-process-client.ts": "6f4320b799cb9a3486c2f6b9b9a6d71cd4d9efa8b1c4b304f3800323b8a91d5b",
-    "apps/web/src/prototypes/desktop-panel/NativeProcessPanel.tsx": "bb05e846db776455ed9c53757ba7e7152e16f6bbfecaaa6d48e3b90eaad32a21",
+    "apps/web/src/prototypes/desktop-panel/NativeProcessPanel.tsx": "4d1eb79145db383e57df3a7d97472aec72450a18908c76ec8a7b2113385a3fbc",
     "apps/web/src/services/desktop-reasoning-status.ts": "2cfccfd2ebd116112dd0c01693da26abaf2be24214061c375d01eaf1e7e9a2e0",
-    "prototypes/desktop-harness/native_process_tools.py": "174799886fdaa4ad92d0bec03f3a555ab27cd7145d8e03cf482146a0a5bb715a"
+    "prototypes/desktop-harness/native_process_tools.py": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc",
+    "apps/web/src/prototypes/desktop-panel/NativePanelContent.tsx": "11af13aca65343e9505fb594f3c7b98f750f7c37be0c75f1ef6b9411e092fd7d",
+    "apps/web/src/prototypes/desktop-panel/native-entry.tsx": "be1077a0d10dc6595555d93c273d4d4a2d6c4171835e0ad4020ec351bb493199",
+    "prototypes/desktop-harness/native-editor.html": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60"
+  },
+  "latest_composition": {
+    "state": "/tmp/wright-native-working-target-20261012-01",
+    "api_url": "http://127.0.0.1:8123",
+    "web_url": "http://127.0.0.1:5223",
+    "feature_flags": {
+      "VITE_WRIGHT_WORKFLOW_RECOVERY": true,
+      "VITE_WRIGHT_WORKFLOW_COMPOSER": true
+    },
+    "frontend_checks": 87,
+    "backend_checks": 59,
+    "final_bridge_guard_recheck": 16,
+    "typecheck": "pass",
+    "targeted_eslint": "pass",
+    "ruff": "pass",
+    "git_diff_check": "pass",
+    "browser_packaged_checks": 8,
+    "served_workflows_entry": "passed after enabling existing opt-in editor flags",
+    "tools": 18,
+    "resource": {
+      "boundary": "official MCP client; resource/source reads only, not Windows acceptance",
+      "resource_uri": "ui://wright/workflow/ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60.html",
+      "resource_sha256": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+      "resource_bytes": 2184542,
+      "tools": 18,
+      "ui_save_visibility": [
+        "app"
+      ],
+      "native_working_view": true
+    },
+    "runtime": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "4ea50e3b214c1b0879d986e7db5ad3b6cd35afc73b545d0d15891d34829e2f05",
+        "transport": "e2e67589be46747d0568487e61e3c15b179b75e754414ce19b9e315a39320dcd",
+        "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+        "native_editor": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+        "native_process_tools": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc"
+      },
+      "confined_inspection": false,
+      "native_editor": true,
+      "native_working_view": true,
+      "connection_lease_seconds": 30,
+      "heartbeat_interval_seconds": 5
+    },
+    "new_target_engineering_runs_started": 0,
+    "native_working_view_installed": false,
+    "failures_preserved": [
+      "First backend command omitted repository PYTHONPATH: 58 passed/1 import failed; corrected command: 59 passed.",
+      "First served-entry launch omitted workflow editor feature flags; Workflows control absent. Flags enabled on owned qualification Vite process; sequential read-only capture passed.",
+      "Generated Three shader whitespace failed git diff --check; deterministic packaging normalized line whitespace without disabling the gate, and final packaged/browser/resource checks passed.",
+      "Primary preparing context includes run_id:null. Entry comparison corrected to normalize absent/null run identity. First primary browser continuation reused its now-stale cached digest after save; retained failure and added explicit new-revision reopen rather than relaxing scope checks."
+    ],
+    "remaining": [
+      "Actual native Windows editor/working-view acceptance",
+      "Actual desktop checkpoint/gateway/native run journey",
+      "Cancellation/restart/uncertain-outcome live next-candidate qualification",
+      "Next named live update approval; no request while user away"
+    ],
+    "primary_working_opener": "real preparing context with null run id; cached stale primary rejected; explicit new source context reopens",
+    "actual_editor_undo_redo": "passed after returning from working view in final packaged browser",
+    "installed_plugin_preserved": "0.3.0 source remains exact approved original worktree; newer working-view not selected"
   }
 }
