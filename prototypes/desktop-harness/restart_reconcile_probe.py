@@ -16,13 +16,16 @@ import sys
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from checkpoint_probe import panel_request
 
 
-async def main(state):
+async def main(state, *, native_working_view=False):
     destination = state / "restart-reconciliation.json"
     if destination.exists():
         raise ValueError("Retain this observation; do not replay its late answer")
     original = json.loads((state / "protocol-probe.json").read_text())
+    if original.get("native_working_view", False) != native_working_view:
+        raise ValueError("Retain the original probe routing")
     fault = json.loads((state / "restart-fault.json").read_text())
     if fault["signal"] != "SIGKILL":
         raise ValueError("This probe requires the recorded abrupt API fault")
@@ -47,6 +50,11 @@ async def main(state):
                 str(Path(__file__).with_name("mcp_bridge.py")),
                 "--state-dir",
                 str(state),
+                *(
+                    ["--native-editor", "--native-working-view"]
+                    if native_working_view
+                    else []
+                ),
             ],
         )
     ) as (read, write):
@@ -54,9 +62,18 @@ async def main(state):
             await session.initialize()
 
             async def call(name, **arguments):
-                result = await session.call_tool(name, arguments)
+                actual, payload = (
+                    panel_request(name, arguments)
+                    if native_working_view
+                    else (name, arguments)
+                )
+                result = await session.call_tool(actual, payload)
                 evidence["calls"].append(
-                    {"tool": name, "is_error": bool(result.isError)}
+                    {
+                        "tool": actual,
+                        "logical_operation": name,
+                        "is_error": bool(result.isError),
+                    }
                 )
                 destination.write_text(json.dumps(evidence, indent=2))
                 if result.isError:
@@ -66,7 +83,14 @@ async def main(state):
                             item.model_dump(mode="json") for item in result.content
                         ],
                     }
-                return result.structuredContent or json.loads(result.content[0].text)
+                document = result.structuredContent or json.loads(
+                    result.content[0].text
+                )
+                if actual in ("wright_process_ui_read", "wright_process_ui_update"):
+                    if document.get("ok") is not True:
+                        return {"is_error": True, "content": document}
+                    return document["document"]
+                return document
 
             evidence["before_reply"] = await call("wright_process_read", **reference)
             assert evidence["before_reply"]["state"] == "reconciliation_required"
@@ -156,5 +180,13 @@ async def main(state):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
+    parser.add_argument("--native-working-view", action="store_true")
     options = parser.parse_args()
-    raise SystemExit(asyncio.run(main(options.state_dir.resolve(strict=True))))
+    raise SystemExit(
+        asyncio.run(
+            main(
+                options.state_dir.resolve(strict=True),
+                native_working_view=options.native_working_view,
+            )
+        )
+    )

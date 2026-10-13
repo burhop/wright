@@ -13,9 +13,10 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 from reasoning_probe import SOURCE
+from checkpoint_probe import panel_request
 
 
-async def main(state):
+async def main(state, *, native_working_view=False):
     probe_file = state / "protocol-probe.json"
     if probe_file.exists():
         raise ValueError("Use fresh protocol evidence; do not replay an existing probe")
@@ -25,11 +26,17 @@ async def main(state):
             str(Path(__file__).with_name("mcp_bridge.py")),
             "--state-dir",
             str(state),
+            *(
+                ["--native-editor", "--native-working-view"]
+                if native_working_view
+                else []
+            ),
         ],
     )
     evidence = {
         "transport": "MCP stdio protocol client; desktop plugin not installed",
         "calls": [],
+        "native_working_view": native_working_view,
     }
 
     async with stdio_client(parameters) as (read, write):
@@ -40,14 +47,30 @@ async def main(state):
             evidence["tools"] = [item.name for item in listed.tools]
 
             async def call(tool_name, **arguments):
-                result = await session.call_tool(tool_name, arguments)
+                name, payload = (
+                    panel_request(tool_name, arguments)
+                    if native_working_view
+                    else (tool_name, arguments)
+                )
+                result = await session.call_tool(name, payload)
                 evidence["calls"].append(
-                    {"tool": tool_name, "is_error": result.isError}
+                    {
+                        "tool": name,
+                        "logical_operation": tool_name,
+                        "is_error": result.isError,
+                    }
                 )
                 probe_file.write_text(json.dumps(evidence, indent=2))
                 if result.isError:
                     raise RuntimeError(str(result.content))
-                return result.structuredContent or json.loads(result.content[0].text)
+                document = result.structuredContent or json.loads(
+                    result.content[0].text
+                )
+                if name in ("wright_process_ui_read", "wright_process_ui_update"):
+                    if document.get("ok") is not True:
+                        raise RuntimeError("Wright rejected the closed UI operation")
+                    return document["document"]
+                return document
 
             workspace = await call(
                 "wright_workspace_create", name="Desktop MCP Inspection Proof"
@@ -145,5 +168,8 @@ async def main(state):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
+    parser.add_argument("--native-working-view", action="store_true")
     args = parser.parse_args()
-    asyncio.run(main(args.state_dir.resolve()))
+    asyncio.run(
+        main(args.state_dir.resolve(), native_working_view=args.native_working_view)
+    )

@@ -1,0 +1,32 @@
+{
+  "boundary": "Fault injected after owning API acknowledged start, before host acknowledged it to UI",
+  "accepted_receipt": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+      "source_path": "workflows/native-working.workflow.wflow",
+      "source_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+    "payload_digest": "afeb6dde97a386e60beefc76399e859d4eefefdfc65ec75ab9a1600ee64f6b45",
+    "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+    "input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+    "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+    "run_log_path": "runs/native-working/dde3ee0745954a27aad3a2d9eb2c1cf1.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-13T02:36:24.152784+00:00"
+  },
+  "start_request": {
+    "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+    "path": "workflows/native-working.workflow.wflow",
+    "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+    "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+    "expected_input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+    "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+    "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+    "operation": "start"
+  },
+  "automatic_retry": false
+}

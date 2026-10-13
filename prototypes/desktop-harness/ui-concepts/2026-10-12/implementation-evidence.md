@@ -412,3 +412,49 @@ Wright’s desktop-harness prototype now shows that loop working with digital te
 data.” Use `working-view-evidence/checkpoint-panel-scripted-input/native-test-choice-waiting-for-chat.png`
 or `checkpoint-panel-completed/native-completed-owned-result-fixture.png`; label
 these **GB10 browser protocol prototype**, not Windows desktop captures.
+
+### Lost acknowledgement and abrupt restart
+
+One bounded packaged-panel fault dropped the acknowledgement after Wright had
+accepted start `dde3ee0745954a27aad3a2d9eb2c1cf1`. Reload kept the unknown request
+and sent no start. An explicit **Reconcile start request** used identical saved
+arguments, attached the original receipt, and cancellation ended that exact run.
+Two HTTP start submissions created one durable reasoning request: the second
+was the explicit reconciliation, not an automatic retry. The fixture and private
+MCP lease guard against replaying this already-recorded control.
+
+Abrupt restart used a separate fresh target
+`/tmp/wright-native-working-restart-20261013-01`, API8124, one digital run
+`e6c08506e3d14f40be12bf0cff9f23c7`. Only that verified owned API received SIGKILL;
+its waiting probe was stopped, then the same profile was reopened. The original
+receipt, request digest, runtime versions and run-log bytes were retained. A late
+answer was rejected because no live consumer existed. The request remains
+deliberately retained and the run is **reconciliation_required**. Automatic
+reasoning restart is unsupported, not silently replaced or claimed recovered.
+The old MCP client's disconnect reported transport failure after the injected
+kill; this expected failure is recorded separately from successful observation.
+
+The packaged view rendered **Status needs reconciliation**, did not suggest
+continuing desktop chat, and reloaded without process effects or source writes.
+No replacement run/output was created. Existing qualification state and the
+installed 0.3.0 editor were untouched. All changes in this milestone are scoped
+test/capture helpers and evidence; production runtime/resource bytes are unchanged.
+Ruff, Python compilation, JavaScript syntax and Git whitespace checks passed.
+
+The supported desktop document-control tool returned no connected sessions.
+That did not qualify automated inspection of the Windows panel; firsthand native
+acceptance remains open. Current official [MCP UI guidance](https://developers.openai.com/plugins/build/chatgpt-ui)
+and [extension guidance](https://developers.openai.com/plugins/build/extensions)
+were fetched for this check. No new lifecycle or tab capability is claimed.
+
+Read-only reopening of the retained restart case:
+
+```sh
+node prototypes/desktop-harness/native_editor_acceptance.mjs /tmp/wright-native-working-restart-20261013-01 --restart
+```
+
+Do not rerun the recorded fault, producer, late-answer or uncertain-start writes.
+Exact receipts, calls, fault manifests and captures are in the existing evidence
+index. Remaining work is the next gateway profile, final adaptive-UI/regression
+review and Windows/native permission/lifecycle/usability acceptance; live update
+approval remains separate.

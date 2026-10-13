@@ -414,18 +414,48 @@ async def cancel_probe(state, *, native_working_view):
     )
 
 
+async def ui_lease(state, *, native_working_view):
+    """Keep an official MCP connection alive for one bounded browser fault test."""
+    evidence = {
+        "native_working_view": native_working_view,
+        "calls": [],
+        "purpose": "Lost-start-ack browser qualification; no model reply generator",
+    }
+    output = state / "lost-start-ack-lease.json"
+    done = state / "lost-start-ack-browser-done.json"
+    if output.exists() or done.exists():
+        raise ValueError("Retain this fault test; do not repeat its lease/start")
+    output.write_text(json.dumps(evidence, indent=2))
+    async with connection(state, evidence, output) as call:
+        evidence["status"] = await call("wright_connection_status")
+        evidence["stage"] = "connected_for_bounded_browser_test"
+        output.write_text(json.dumps(evidence, indent=2))
+        print(json.dumps({"stage": evidence["stage"]}), flush=True)
+        async with asyncio.timeout(240):
+            while not done.exists():
+                await asyncio.sleep(1)
+        evidence["browser_outcome"] = json.loads(done.read_text())
+    evidence["stage"] = "closed_after_browser_test"
+    output.write_text(json.dumps(evidence, indent=2))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", required=True, type=Path)
     parser.add_argument(
         "--phase",
-        choices=("start", "continue", "ui-continue", "cancel-test"),
+        choices=("start", "continue", "ui-continue", "cancel-test", "ui-lease"),
         required=True,
     )
     parser.add_argument("--native-working-view", action="store_true")
     args = parser.parse_args()
     asyncio.run(
-        cancel_probe(
+        ui_lease(
+            args.state_dir.resolve(strict=True),
+            native_working_view=args.native_working_view,
+        )
+        if args.phase == "ui-lease"
+        else cancel_probe(
             args.state_dir.resolve(strict=True),
             native_working_view=args.native_working_view,
         )

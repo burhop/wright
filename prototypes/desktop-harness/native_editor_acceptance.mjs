@@ -1,22 +1,27 @@
 // Simulated MCP App host with real isolated Wright source storage. Not Windows acceptance.
 import {createServer} from 'node:http';
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 import {chromium,expect} from '@playwright/test';
 const state=resolve(process.argv[2]);
 const checkpoint=process.argv.includes('--checkpoint');
+const restart=process.argv.includes('--restart');
+const lostStartAck=process.argv.includes('--lost-start-ack');
+if(lostStartAck&&(checkpoint||restart)||restart&&checkpoint)throw Error('Fault fixtures are separate');
+const faultDone=resolve(state,'lost-start-ack-browser-done.json');
+if(lostStartAck&&(existsSync(faultDone)||existsSync(resolve(state,'lost-start-ack-observation.json'))))throw Error('Retain fault evidence; do not replay its start');
 const completed=process.argv.includes('--completed');
 if(completed&&!checkpoint)throw Error('Completed readback requires the exact checkpoint fixture');
 const submitTestChoice=process.argv.includes('--submit-test-choice');
 if(submitTestChoice&&!checkpoint)throw Error('Test choice requires the exact checkpoint fixture');
 const testChoice=submitTestChoice?JSON.parse(readFileSync(resolve(state,'checkpoint-test-choice.json'))):undefined;
 if(submitTestChoice&&JSON.stringify(testChoice)!=='{"selection":"b"}')throw Error('This bounded test expects only synthetic selection b');
-const working=checkpoint||process.argv.includes('--working');
-const openWorking=checkpoint||process.argv.includes('--open-working');
+const working=checkpoint||restart||lostStartAck||process.argv.includes('--working');
+const openWorking=checkpoint||restart||lostStartAck||process.argv.includes('--open-working');
 if(openWorking&&!working)throw Error('Primary working-view check requires --working');
-const evidence=JSON.parse(readFileSync(resolve(state,checkpoint?'checkpoint-probe.json':'native-editor-reconciled.json')));
-const scope=checkpoint?{workspace_id:evidence.workspace.workspace_id,session_id:evidence.workspace.session_id,path:evidence.source.path}:evidence.scope;
+const evidence=JSON.parse(readFileSync(resolve(state,restart?'protocol-probe.json':checkpoint?'checkpoint-probe.json':'native-editor-reconciled.json')));
+const scope=checkpoint||restart?{workspace_id:evidence.workspace.workspace_id,session_id:evidence.workspace.session_id,path:evidence.source.path}:evidence.scope;
 const preview=JSON.parse(readFileSync(resolve(state,'preview.json')));
 const token=readFileSync(resolve(state,'.preview-api-token'),'utf8');
 const bundle=readFileSync('prototypes/desktop-harness/native-editor.html','utf8');
@@ -27,7 +32,7 @@ let primaryResult={workspace:evidence.workspace,working_view_enabled:working};
 async function workingContext(){
  const current=await sourceCall('GET');if(!current.response.ok)throw Error('Cannot read current source for exact primary view');
  const request={...scope,operation:'snapshot',expected_storage_digest:current.doc.storage_digest};
- if(checkpoint)request.run_id=evidence.start_receipt.run_id;
+ if(checkpoint||restart)request.run_id=evidence.start_receipt.run_id;
  const url=new URL('/api/workspace/process-interfaces'+(request.run_id?'/runs/'+encodeURIComponent(request.run_id):'/interaction'),preview.api_url);
  for(const key of ['session_id','path','expected_storage_digest'])url.searchParams.set(key,request[key]);
  const reply=await fetch(url,{headers:{Authorization:'Bearer '+token}});if(!reply.ok)throw Error('Cannot read exact primary process context');
@@ -51,14 +56,17 @@ async function sourceCall(method,body){
  const doc=await response.json();
  return {response,doc};
 }
+const ownerCalls=[];let droppedReceipt;
 const server=createServer(async(request,response)=>{
  try{
  if(request.method==='POST'&&request.url==='/tool'){
  let text='';for await(const chunk of request)text+=chunk;
  const {name,arguments:args}=JSON.parse(text);
+ ownerCalls.push({name,arguments:args});
  if(working&&['wright_process_ui_read','wright_process_ui_update'].includes(name)){
    const req=args.request;
    if(!req||Object.entries(scope).some(([key,value])=>req[key]!==value))throw Error('Fixture process scope denied');
+   if(restart&&(name!=='wright_process_ui_read'||req.run_id!==evidence.start_receipt.run_id))throw Error('Restart fixture permits exact retained-run reads only');
    if(checkpoint){
      const interaction=evidence.checkpoint_snapshot.interactions.find(item=>item.kind==='input'&&item.state==='waiting');
      const read=name==='wright_process_ui_read'&&req.run_id===evidence.start_receipt.run_id;
@@ -76,7 +84,8 @@ const server=createServer(async(request,response)=>{
      if(bytes.length>1048576||result.headers.get('content-length')!==String(bytes.length)||result.headers.get('x-content-type-options')!=='nosniff'||result.headers.get('x-wright-artifact-sha256')!==reference.sha256||createHash('sha256').update(bytes).digest('hex')!==reference.sha256||!['text/plain','text/markdown','text/csv','application/json'].includes(media))throw Error('Recorded text identity was not confirmed');
      response.writeHead(200,{'Content-Type':'application/json'});response.end(JSON.stringify({content:[],structuredContent:{ok:true,document:{bytes_base64:bytes.toString('base64'),sha256:reference.sha256,media_type:media,size_bytes:bytes.length}}}));return;
    }
-   if(checkpoint&&operation==='reasoning'){
+   if((checkpoint||lostStartAck)&&operation==='reasoning'){
+     if(lostStartAck&&run_id!==droppedReceipt?.run_id)throw Error('Fault observer changed run');
      const saved=new URL('/api/workspace/process-interfaces/runs/'+encodeURIComponent(run_id),preview.api_url);
      for(const [key,value] of Object.entries(body))saved.searchParams.set(key,String(value));
      const authorized=await fetch(saved,{headers:{Authorization:'Bearer '+token}});if(!authorized.ok)throw Error('Exact run read denied');
@@ -85,15 +94,22 @@ const server=createServer(async(request,response)=>{
      const tasks=(await read.json()).filter(row=>row.request?.run_id===run_id);
      response.writeHead(200,{'Content-Type':'application/json'});response.end(JSON.stringify({content:[],structuredContent:{ok:true,document:tasks}}));return;
    }
-   const paths={snapshot:run_id?'/runs/'+encodeURIComponent(run_id):'/interaction',inputs:'/inputs',readiness:'/readiness',...(submitTestChoice?{respond:'/interactions/'+encodeURIComponent(checkpoint_id)+'/response'}:{})};
+   const paths={snapshot:run_id?'/runs/'+encodeURIComponent(run_id):'/interaction',inputs:'/inputs',readiness:'/readiness',...(submitTestChoice?{respond:'/interactions/'+encodeURIComponent(checkpoint_id)+'/response'}:{}),...(lostStartAck?{start:'/runs',cancel:'/runs/'+encodeURIComponent(run_id)+'/cancel'}:{})};
+   if(lostStartAck&&operation==='cancel'&&run_id!==droppedReceipt?.run_id)throw Error('Fault cancellation changed run');
    if(!paths[operation]||(name==='wright_process_ui_read')!==(operation==='snapshot'))throw Error('Fixture exposes preparation only; no run/action forwarding');
    const method=operation==='snapshot'?'GET':'POST';
    const url=new URL('/api/workspace/process-interfaces'+paths[operation],preview.api_url);
    if(method==='GET')for(const [key,value] of Object.entries(body))url.searchParams.set(key,String(value));
    const result=await fetch(url,{method,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},...(method==='POST'?{body:JSON.stringify(body)}:{})});
    const doc=await result.json();
+   if(lostStartAck&&operation==='start'&&result.ok&&!droppedReceipt){
+     droppedReceipt=doc;
+     writeFileSync(resolve(state,'lost-start-ack-observation.json'),JSON.stringify({boundary:'Fault injected after owning API acknowledged start, before host acknowledged it to UI',accepted_receipt:doc,start_request:req,automatic_retry:false},null,2));
+     response.writeHead(200,{'Content-Type':'application/json'});response.end(JSON.stringify({content:[],isError:true}));return;
+   }
    response.writeHead(200,{'Content-Type':'application/json'});response.end(JSON.stringify({content:[],structuredContent:result.ok?{ok:true,document:doc}:{ok:false,http_status:result.status,reason:{code:result.status===409?'SUBJECT_STALE':'CAPABILITY_UNAVAILABLE',message:'Wright did not confirm this preparation.',correction:'Inspect the exact source or connection.'}}}));return;
  }
+ if(restart&&name!=='wright_workflow_read')throw Error('Restart fixture preserves accepted source');
  if(!['wright_workflow_read','wright_workflow_save'].includes(name)||Object.entries(scope).some(([key,value])=>args[key]!==value))throw Error('Fixture scope denied');
  const method=name==='wright_workflow_read'?'GET':'PUT';const {workspace_id:_,...body}=args;
  const result=await sourceCall(method,body);
@@ -111,7 +127,37 @@ try{
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto(`http://127.0.0.1:${server.address().port}`);
  const frame=page.frameLocator('#panel');
- if(checkpoint){
+ if(lostStartAck){
+   await expect(frame.getByTestId('common-process-view')).toBeVisible();
+   await frame.getByRole('button',{name:'Prepare and check inputs',exact:true}).click();
+   await expect(frame.getByRole('button',{name:'Start process',exact:true})).toBeEnabled();
+   await frame.getByRole('button',{name:'Start process',exact:true}).click();
+   await expect(frame.getByRole('button',{name:'Reconcile start request',exact:true})).toBeVisible();
+   await page.screenshot({path:resolve(output,'native-start-ack-unknown-fixture.png')});
+   expect(ownerCalls.filter(call=>call.arguments?.request?.operation==='start')).toHaveLength(1);
+   await page.reload();await expect(frame.getByRole('button',{name:'Reconcile start request',exact:true})).toBeVisible();
+   expect(ownerCalls.filter(call=>call.arguments?.request?.operation==='start')).toHaveLength(1);
+   await frame.getByRole('button',{name:'Reconcile start request',exact:true}).click();
+   await expect(frame.getByText('Waiting for desktop chat',{exact:true})).toBeVisible({timeout:15000});
+   const starts=ownerCalls.filter(call=>call.arguments?.request?.operation==='start');expect(starts).toHaveLength(2);expect(starts[1].arguments).toEqual(starts[0].arguments);
+   await frame.getByRole('button',{name:'Cancel this run',exact:true}).click();
+   await expect(frame.getByText('Process cancelled',{exact:true})).toBeVisible({timeout:15000});
+   expect(ownerCalls.filter(call=>call.arguments?.request?.operation==='cancel')).toHaveLength(1);expect(errors).toEqual([]);
+   passed.push('lost start acknowledgement retained across reload with no automatic replay; explicit same-request reconcile attaches original run; one exact-run cancellation');
+   const report={boundary:'GB10 browser simulated MCP App host and real owner; injected lost acknowledgement',native_desktop_verified:false,actual_user_input:false,engineering_approval:false,passed,scope,run_id:droppedReceipt.run_id,accepted_receipt:droppedReceipt,calls:ownerCalls,errors};
+   writeFileSync(resolve(output,'report.json'),JSON.stringify(report,null,2));writeFileSync(faultDone,JSON.stringify({status:'passed',run_id:droppedReceipt.run_id,output},null,2));console.log(JSON.stringify({passed,run_id:droppedReceipt.run_id,output}));
+ } else if(restart){
+   await expect(frame.getByTestId('common-process-view')).toBeVisible();
+   await expect(frame.getByText('Status needs reconciliation',{exact:true})).toBeVisible();
+   await expect(frame.getByText('Check the recorded outcome before repeating an action.',{exact:true})).toBeVisible();
+   await expect(frame.getByText('Waiting for desktop chat',{exact:true})).toHaveCount(0);
+   await page.screenshot({path:resolve(output,'native-restart-needs-reconciliation-fixture.png')});
+   await page.reload();await expect(frame.getByText('Status needs reconciliation',{exact:true})).toBeVisible();
+   const observed=await workingContext();const snapshot=observed.result.structuredContent.snapshot;
+   expect(snapshot.context.run_id).toBe(evidence.start_receipt.run_id);expect(snapshot.state).toBe('reconciliation_required');expect(snapshot.outputs).toEqual([]);expect(ownerCalls.some(call=>call.name==='wright_process_ui_update'||call.name==='wright_workflow_save')).toBe(false);expect(errors).toEqual([]);
+   passed.push('abrupt-restart retained run renders reconciliation, not chat continuation; reload never sends effects');
+   writeFileSync(resolve(output,'report.json'),JSON.stringify({boundary:'GB10 browser simulated MCP App host; exact interrupted owner state',native_desktop_verified:false,passed,scope,run_id:snapshot.context.run_id,calls:ownerCalls,errors},null,2));console.log(JSON.stringify({passed,output}));
+ } else if(checkpoint){
    await expect(frame.getByTestId('common-process-view')).toBeVisible();
    if(completed){
      await expect(frame.getByText('Process completed',{exact:true})).toBeVisible();
@@ -226,5 +272,5 @@ try{
  writeFileSync(resolve(output,'report.json'),JSON.stringify({boundary:'GB10 browser simulated MCP App host; real isolated Wright source owner',native_desktop_verified:false,passed,scope,errors},null,2));
  console.log(JSON.stringify({passed,output}));
  }
-}catch(error){if(page)await page.screenshot({path:resolve(output,'failure.png')});writeFileSync(resolve(output,'failure.json'),JSON.stringify({passed,error:String(error)},null,2));throw error;
+}catch(error){if(page)await page.screenshot({path:resolve(output,'failure.png')});writeFileSync(resolve(output,'failure.json'),JSON.stringify({passed,error:String(error),calls:ownerCalls},null,2));if(lostStartAck)writeFileSync(faultDone,JSON.stringify({status:'failed',run_id:droppedReceipt?.run_id??null,output,automatic_retry:false},null,2));throw error;
 }finally{await browser.close();await new Promise(done=>server.close(done));}

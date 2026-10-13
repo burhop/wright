@@ -91,7 +91,7 @@
     "primary_working_opener": "real preparing context with null run id; cached stale primary rejected; explicit new source context reopens",
     "actual_editor_undo_redo": "passed after returning from working view in final packaged browser",
     "installed_plugin_preserved": "0.3.0 source remains exact approved original worktree; newer working-view not selected",
-    "bounded_digital_runs_started_after_composition": 2
+    "bounded_digital_runs_started_after_composition": 3
   },
   "checkpoint_qualification": {
     "status": "local digital fixture completed; experimental package still uninstalled",
@@ -123,8 +123,69 @@
     "capture_side_effects": "Normal served Workflows control creates an isolated empty authoring draft; auth session is also established. Recorded POSTs are not workflow-run starts. Existing test source/output/run are unchanged by readback. Packaged readback uses reads only.",
     "remaining": [
       "actual Windows editor/save/reopen and working-view permission/lifecycle acceptance",
-      "abrupt restart and lost-ack uncertainty qualification for next resource",
       "gateway opt-in qualification for next candidate; original engineering providers unavailable"
     ]
+  },
+  "recovery_qualification": {
+    "lost_ack": {
+      "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+      "owner_start_http_calls": 2,
+      "durable_reasoning_requests": 1,
+      "terminal_outcome": "owner_interrupted",
+      "accepted_receipt": {
+        "principal_id": "local-control-plane",
+        "process": {
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "source_path": "workflows/native-working.workflow.wflow",
+          "source_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "semantic_digest": null,
+          "source_contract": "canonical-source"
+        },
+        "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+        "payload_digest": "afeb6dde97a386e60beefc76399e859d4eefefdfc65ec75ab9a1600ee64f6b45",
+        "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+        "input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+        "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+        "run_log_path": "runs/native-working/dde3ee0745954a27aad3a2d9eb2c1cf1.json",
+        "initial_outcome": "accepted",
+        "created_at": "2026-10-13T02:36:24.152784+00:00"
+      },
+      "automatic_start_replay_on_reload": false,
+      "actual_native_windows_verified": false
+    },
+    "lost_ack_status": "passed in packaged GB10 browser protocol fixture; explicit reconciliation only",
+    "restart_state": "/tmp/wright-native-working-restart-20261013-01",
+    "restart_api": "http://127.0.0.1:8124",
+    "restart_run": "e6c08506e3d14f40be12bf0cff9f23c7",
+    "restart_status": {
+      "same_run_no_replay": "passed",
+      "retained_pending_request": "passed",
+      "late_reply_to_dead_owner": "denied",
+      "automatic_reasoning_restart": "unsupported; requires reconciliation",
+      "installed_desktop_plugin": "unverified"
+    },
+    "restart_preserved_artifacts": true,
+    "restart_counts": {
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 0,
+      "desktop_reasoning_terminal_receipts": 0
+    },
+    "restart_pending_request": "retained deliberately; no live consumer; no automatic resume; late answer denied",
+    "actual_native_windows_acceptance": false,
+    "production_runtime_changed": false,
+    "installed_plugin_changed": false,
+    "limitations": [
+      "automatic reasoning restart unsupported; reconcile recorded outcome before any continuation",
+      "native Windows tool-call permissions/render/save/reopen remain unverified",
+      "generic document-control connection yielded no connected sessions; it did not qualify custom panel inspection"
+    ],
+    "failures": [
+      "After SIGKILL, the old MCP client reported transport/disconnect failure during its cleanup; expected fault evidence, not a successful continuation."
+    ],
+    "docs_recheck": {
+      "ui_bridge": "https://developers.openai.com/plugins/build/chatgpt-ui",
+      "extensions": "https://developers.openai.com/plugins/build/extensions",
+      "observation": "Official pages fetched; no automatic Windows renderer inspection capability qualified"
+    }
   }
 }
