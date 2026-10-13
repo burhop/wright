@@ -183,6 +183,11 @@ cancelled Strict Mode requests do not prove that a refresh occurred. Keep both
 last-valid evidence and no-prior-bundle assertions; do not widen their deadlines
 to accommodate an unobserved poll.
 
+Presentation tests return focus to Wright after inspecting a browser popup and
+wait for the exact presentation-close acknowledgement before checking removal.
+Close owned browser presentations through Wright before disposing test pages;
+retain the shared-instance and application-still-running assertions.
+
 Digest assertions over Git-managed text fixtures must likewise canonicalize
 checkout CRLF to committed LF before hashing. Keep binary fixture hashing byte
 exact; never apply text normalization to binary artifacts. This ensures the

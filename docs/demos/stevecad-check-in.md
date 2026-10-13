@@ -165,3 +165,12 @@ The test now advances the browser poll clock and waits for that exact failed
 response before checking last-valid evidence. It retains the original
 unavailable-state assertions and deadlines. All four program-status browser
 contracts pass after this test-only correction; full final gates remain pending.
+
+The next complete matrix retained 178 passes and 5 skips but failed the WebKit
+presentation-choice case: its trace contains no panel-close request before the
+test timeout. The corrected journey explicitly returns to Wright after viewing
+the popup and checks each exact DELETE acknowledgement before removing a view.
+It also closes the owned browser presentation through Wright before disposing
+the test page. Shared state and application-lifetime assertions remain intact.
+All eight presentation contracts pass across the four profiles. The last full
+gate remains red; this focused pass does not establish a green final gate.

@@ -76,13 +76,31 @@ test.describe("panel and browser presentation choice", () => {
       page.getByText(/preferred presentation: browser/i),
     ).toBeVisible();
 
+    await page.bringToFront();
+    const panelClosed = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname ===
+          "/api/workspace/surfaces/surface-app/presentations/presentation-1" &&
+        response.request().method() === "DELETE",
+    );
     await page.getByTestId("surface-close-panel").click();
+    expect((await panelClosed).status()).toBe(204);
     await expect(page.locator('iframe[title="Shareable app"]')).toHaveCount(0);
     await expect(popup.locator("#count")).toHaveText("1");
     await expect(page.getByTestId("surface-stop-application")).toBeVisible();
     await expect(
       page.getByText(/closing this view keeps.*running/i),
     ).toBeVisible();
+    const browserClosed = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname ===
+          "/api/workspace/surfaces/surface-app/presentations/presentation-2" &&
+        response.request().method() === "DELETE",
+    );
+    await page.getByTestId("surface-close-browser").click();
+    expect((await browserClosed).status()).toBe(204);
+    await expect(page.getByTestId("surface-close-browser")).toHaveCount(0);
+    await popup.close();
   });
 
   test("browser-open failure preserves an already active panel", async ({
@@ -111,8 +129,10 @@ test.describe("panel and browser presentation choice", () => {
         });
       },
     );
-    await page.route(`${workspaceSurfaceOrigin("s-panel.localhost")}/**`, (route) =>
-      route.fulfill({ contentType: "text/html", body: previewAppHtml }),
+    await page.route(
+      `${workspaceSurfaceOrigin("s-panel.localhost")}/**`,
+      (route) =>
+        route.fulfill({ contentType: "text/html", body: previewAppHtml }),
     );
     await page.route("**/presentations/*", (route) =>
       route.fulfill({ status: 204 }),
