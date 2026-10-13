@@ -1,16 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-import { mockRecoveryWorkspace } from "./fixtures/workflow-recovery";
+import {
+  mockRecoveryWorkspace,
+  openNewRecoveryEditor,
+} from "./fixtures/workflow-recovery";
 
 async function openTemplateEditor(
   page: import("@playwright/test").Page,
 ): Promise<void> {
-  await page.goto("/workspace/ws-recovery");
-  await page.getByTestId("activity-bar-workflows-btn").click();
-  await expect(page).toHaveURL(/\/workspace\/ws-recovery\?workflow=canonical$/);
-  await expect(page.getByTestId("workflow-recovery-canvas")).toBeVisible();
-  const collapseAgent = page.getByTitle("Collapse Agent Console");
-  if (await collapseAgent.isVisible()) await collapseAgent.click();
+  await openNewRecoveryEditor(page);
 }
 
 test("opens ten engineering templates from the workspace Workflows control", async ({
@@ -69,7 +67,7 @@ test("creates a fresh template copy and opens it in the established editor", asy
   await expect(createdEditor).toBeVisible();
   await expect(
     createdEditor.getByTestId("workflow-recovery-filebar"),
-  ).toContainText("Mounting bracket development");
+  ).toContainText("Bracket development");
   await expect(
     createdEditor.getByTestId("workflow-recovery-canvas"),
   ).toBeVisible();

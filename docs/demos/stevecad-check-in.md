@@ -126,3 +126,13 @@ reports zero High/Critical findings under CI's unchanged policy. Both local gate
 now include that same Node audit and reject missing/malformed inventories and
 service errors; focused audit and gate regressions pass. Fresh image and cumulative
 merge validation remain required before this candidate is integrated.
+
+The first browser gate exposed 14 legacy fixture failures at the workspace entry:
+the fixtures expected Workflows to create/open the bracket example implicitly.
+The current reviewed editor creates a uniquely named empty source explicitly,
+and existing designs open through Workspace Files. Tests now exercise those
+paths, retain per-file CAS checks, preserve the original saved design and verify
+that a passive missing-file link creates nothing. All 17 affected Chromium
+checks pass, including source/diagram edits, review, routing, layout and template
+navigation. The editor implementation is unchanged; full final gates remain
+required and superseded runs are not reported as complete.

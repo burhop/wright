@@ -147,6 +147,13 @@ Windows. Wait for asynchronous digests to reach their final value before
 capturing them. A focused Windows pass does not replace the Linux CI check for
 these portability-sensitive contracts.
 
+Keep browser fixtures aligned with the current workspace journey: Workflows
+explicitly creates a uniquely named empty source; Workspace Files opens an
+existing source with its exact `workflowPath`. A passive link to a missing file
+does not authorize creation. Mock storage must retain separate documents and
+enforce each file's CAS identity, including when multiple tabs remain mounted.
+Do not restore implicit example creation to satisfy an older browser fixture.
+
 Browser tests running against the managed frontend must send application API
 requests through same-origin `/api/...` paths. Do not hard-code the default
 backend port: both local gates intentionally support configurable API and UI
