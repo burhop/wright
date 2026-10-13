@@ -162,8 +162,10 @@ The dependency `uv.lock` also uses `text eol=lf`: native packaging hashes its
 actual bytes into the runtime-extra lock. A CRLF checkout would otherwise dirty
 that generated lock and give Windows and Linux different dependency identities.
 
-Accepted campaign-renewal inputs, their generated revision records, scenario
-manifests and the wall-dock R5 amendment also pin their committed LF bytes.
+Accepted campaign-renewal inputs, their generated revision records and the
+wall-dock R5 amendment also pin their committed LF bytes. The 30 qualified source
+packs preserve their captured mixed LF/CRLF bytes with `-text`; their complete
+264-file inventory retains its original hashes and lengths across platforms.
 Preserve their recorded hashes; do not regenerate engineering baselines to accept
 checkout conversion. Required retained-output regressions use the versioned,
 byte-exact `tests/fixtures/retained-process-validation` inputs instead of requiring

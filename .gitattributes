@@ -5,7 +5,8 @@ uv.lock text eol=lf
 # These accepted inputs and generated revision records carry recorded byte hashes.
 specs/082-output-content-validation/campaign-example-renewal*.json text eol=lf
 specs/082-output-content-validation/campaign-example-renewal*.md text eol=lf
-tests/datasets/engineering-workflows/**/scenario.json text eol=lf
+# Source packs retain the exact mixed LF/CRLF bytes in the qualified inventory.
+tests/datasets/engineering-workflows/scenarios/** -text -whitespace
 examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md text eol=lf
 
 # Read-only native regression fixtures retain the original captured bytes.

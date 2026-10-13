@@ -398,7 +398,6 @@ def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
         "uv.lock",
         "specs/082-output-content-validation/campaign-example-renewal*.json",
         "specs/082-output-content-validation/campaign-example-renewal*.md",
-        "tests/datasets/engineering-workflows/**/scenario.json",
         "examples/process-interfaces/sheet-metal-wall-dock/shelf-depth-revision-r5.md",
         "tests/fixtures/blender_mcp_5f8ddaf6/src/blender_mcp/safe_mode.py",
         "tests/datasets/engineering-workflows/scenarios/sheet-metal-supplier-handoff/**/*.csv",
@@ -409,6 +408,10 @@ def test_digest_protected_dataset_text_pins_lf_checkout_bytes() -> None:
         "tests/datasets/engineering-workflows/revisions/2026-09-12-sheet-capabilities-r4/**/*.json",
     ):
         assert f"{pattern} text eol=lf" in attributes
+    assert (
+        "tests/datasets/engineering-workflows/scenarios/** -text -whitespace"
+        in attributes
+    )
 
 
 def test_frontend_ci_reports_unit_and_browser_failures_in_parallel() -> None:

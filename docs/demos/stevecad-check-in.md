@@ -114,3 +114,7 @@ smaller budget, preserving complete page reconstruction and per-part limits.
 The accepted renewal record's 27 original CRLF manifest identities remain intact
 in a separate historical snapshot; generation verifies unchanged semantic inputs
 instead of rebasing their recorded byte hashes onto the current checkout.
+The qualified 264-file source-pack inventory also retains its recorded bytes.
+Its 204 CRLF text inputs are checked in byte-exactly, with normalized semantic
+content verified equal to their previous Git blobs; no qualification is rerun or
+assigned new credit by this encoding correction.
