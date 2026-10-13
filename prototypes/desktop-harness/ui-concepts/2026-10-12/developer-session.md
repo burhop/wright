@@ -27,9 +27,29 @@ frozen routing and run owners; the frontend is loopback5223.
 The browser retains Wright's authentication gate. A headless GB10 check used
 the existing private credential and verified workspace → Workflows → the saved
 copy, with no JavaScript errors. That does not authenticate the Windows browser.
-The desktop opening was queued; actual visibility, remote access and annotation
-support are awaiting user observation. Report **Unlock Wright** or a connection
-error if displayed; never send the access token in chat. No auth gate was disabled.
+The user confirmed the **Unlock Wright** screen in the Windows preview. This
+establishes that the preview reaches its authentication UI, not that the editor
+or annotations are accepted. No auth gate was disabled.
+
+## Unlock the Windows preview
+
+The user has the GB10 checkout mapped as `B:\repos\wright`. A private,
+Git-ignored handoff file is prepared there. Run in Windows PowerShell:
+
+```powershell
+Get-Content -Raw 'B:\repos\wright\.local-run\wright-ui-debug-handoff\preview-token.txt' | Set-Clipboard
+```
+
+Paste into **Access Token**, then click **Unlock**. The command sends the value
+directly to the clipboard; do not send it in chat. The handoff directory is
+Linux mode0700 and the file mode0600. It is a copy of the existing isolated
+preview credential, not a rotation or new permission grant. Remove this copied
+handoff file after browser authentication is confirmed; retain the original
+private API credential needed by the installed plugin. Existing browser-session
+validation, plugin settings and API configuration remain unchanged.
+
+The Docker wording on the unlock screen is misleading for this GB10 prototype
+and is recorded as a concrete UI issue.
 
 Session details and the labelled GB10 browser screenshot are in `ui-debug-evidence/`.
 The user's report is “Done. Lots of small bugs.” It is recorded as feedback,

@@ -1,0 +1,13 @@
+{
+  "triage_status": "Awaiting individual UI annotations; only the observed authentication handoff is detailed",
+  "issues": [
+    {
+      "id": "UI-DEBUG-001",
+      "component": "AuthGate",
+      "observed": "Windows developer preview prompts for Access Token; instructions say Docker container although this is a GB10 Python API prototype",
+      "expected": "Explain the actual preview credential/session and how to connect clearly",
+      "evidence": "User confirmed Unlock Wright; reviewed AuthGate.tsx; existing session owner qualified in GB10 browser",
+      "status": "Recorded; manual credential handoff prepared; no authentication bypass or UI code change"
+    }
+  ]
+}
