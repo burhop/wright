@@ -236,3 +236,68 @@ Validation: 41-check backend batch; 14 affected bridge checks after the SDK guar
 7 source-client checks; TypeScript/targeted ESLint/Ruff; final five-check packaged
 editor walkthrough; earlier served Workflows and existing-platform regression
 evidence retains its stated scope. No push, merge or release performed.
+
+## Offline working view and actual desktop-conversation run
+
+Next-slice work is isolated in `/tmp/wright-host-adaptive-native-working-view`,
+branch `codex/host-adaptive-native-working-view`, based at `72c4f86f`. The prepared
+0.3.0 candidate/worktree stays clean and unchanged; its live-update approval is
+still pending. No new process tool or resource is registered in that candidate.
+
+The common working view and existing public ProcessClient are reused. Two
+closed MCP ports separate reads from user-requested inputs/readiness/start/
+declared-response/cancellation. API request models are inherited, not another
+execution/validation implementation. No arbitrary URL/method, model call,
+executor, database or gateway changes. URI subjects are validated and encoded;
+scalar declared inputs work; automatic response attribution and review fields
+are rejected. Known denial remains distinct from uncertain effects, with stable
+request identities and no automatic write retry. Snapshot polling is explicitly
+separate from SSE/LLM streaming; event cursors are unavailable instead of ignored.
+
+Text representations up to 1 MiB reuse the existing owning reader, exact run/
+artifact references, nosniff/size/hash headers and actual byte hashing. Other
+media and derived previews remain explicit unavailable capabilities. Native
+review/external-action/navigation/upload ports are not exposed; no fake provider
+fallback. Generated process-UI authoring remains gated. The component/transport
+code is offline, **not a native working-view completion claim**.
+
+15 new Python boundary checks and 14 native client/component checks pass, plus
+TypeScript, targeted ESLint and Ruff. The 83-check combined common/status run
+included 72 existing checks and the then-11 native checks; the new file-reading
+cases and component were rechecked in the final 14-check batch. 78 existing
+public ProcessClient checks also passed. An initial DOM hook run used the wrong
+Node test environment; rerunning with the existing web config passed. The
+synthetic declared-input component proof is labelled synthetic and does not
+claim an actual human checkpoint was answered.
+
+Separately, the **actual installed 0.2.0 native tools in this desktop conversation**
+created a fresh workspace, accepted a versioned text-only workflow, prepared
+inputs, started one durable run, queued its bounded task and accepted this
+conversation's Markdown reply. Wright completed the same run and saved its
+1098-byte inspection brief. No SDK model worker, engineering tool, physical
+measurement/action or manufacturing release was involved. The source retains
+`reviewed_ai_suggestions: false`; no engineering approval is invented. Model and
+app identity remain unreported; task tools were empty but global native-tool
+isolation remains unverified.
+
+The owning representation API returned bytes matching the recorded SHA-256.
+The existing served browser capture harness entered through **Workflows**, opened
+the same completed run, displayed its actual saved file, reloaded and closed its
+common view. These are browser captures, **not Windows/native editor captures**.
+The old installed target now has one request/response/terminal receipt and zero
+pending tasks; earlier zero-count records remain historical evidence. No other
+workspace, run or configuration was removed or redirected.
+
+[Evidence index, source, task/receipt/snapshot, verified artifact and captures](working-view-evidence/evidence-index.json).
+The real checkpoint/gateway/native-panel journey remains a later qualification;
+the original manufacturing/Robot workflows' provider gates remain unchanged.
+
+Expert UX observation: the current browser working view spends much of its first
+viewport on progress metadata and a disabled cancellation control. In the native
+composition, prioritize the result or pending response and compact the surrounding
+status disclosure. This is an expert observation, not customer research, and
+requires no new docking or design system.
+
+Social caption: “From desktop conversation to a saved Wright workflow result.
+This text-only prototype proof shows the GB10 browser working view; native editor
+testing is next.” Suggested image: `working-view-evidence/browser-native-run-2/03b-owned-inspection-brief.png`.

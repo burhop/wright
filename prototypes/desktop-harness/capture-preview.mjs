@@ -5,12 +5,16 @@ import path from "node:path";
 
 const state = path.resolve(process.argv[2]);
 const output = path.resolve(process.argv[3]);
+const nativeConversation = process.argv[4] === "native-conversation";
+const nativeEvidence = nativeConversation ? JSON.parse(readFileSync(process.argv[5], "utf8")) : undefined;
 const connectedCheckpoint = process.argv[4] === "checkpoint-connected";
 const completedCheckpoint = process.argv[4] === "checkpoint-completed";
 const checkpoint = process.argv[4] === "checkpoint" || connectedCheckpoint || completedCheckpoint;
 const gateway = process.argv[4] === "gateway";
 let info;
-if (checkpoint) {
+if (nativeConversation) {
+  info = {workspace_id:nativeEvidence.workspace.workspace_id,source_path:nativeEvidence.source.path,run_id:nativeEvidence.start.run_id};
+} else if (checkpoint) {
   const evidence = JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8"));
   info = { workspace_id: evidence.workspace.workspace_id, source_path: evidence.source.path, run_id: evidence.start_receipt.run_id };
 } else {
@@ -60,8 +64,8 @@ try {
   url.searchParams.set("workflow", "canonical");
   url.searchParams.set("workflowPath", info.source_path);
   await page.goto(url.toString());
-  if (completedCheckpoint) {
-    const evidence = JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8"));
+  if (completedCheckpoint || nativeConversation) {
+    const evidence = nativeConversation ? {...nativeEvidence,stage:nativeEvidence.snapshot.state,final_snapshot:nativeEvidence.snapshot} : JSON.parse(readFileSync(path.join(state, "checkpoint-probe.json"), "utf8"));
     if (evidence.stage !== "completed" || evidence.final_snapshot.context.run_id !== info.run_id) throw new Error("Readback requires the exact recorded completed run");
     const view = new URL(url);
     view.searchParams.set("processView", "desktop-checkpoint-completed-readback");
@@ -72,6 +76,13 @@ try {
     await page.getByText("Process completed", { exact: true }).waitFor({ timeout: 30000 });
     if (new URL(page.url()).searchParams.get("processRun") !== info.run_id) throw new Error("Completed readback changed run identity");
     await page.screenshot({ path: path.join(output, "03-reopened-completed-run.png") });
+    if (nativeConversation) {
+      await page.getByRole("button", {name:"Open file",exact:true}).first().click();
+      const brief = page.getByRole("heading", {name:"Digital inspection brief",exact:true});
+      await brief.waitFor({timeout:10000});
+      await brief.scrollIntoViewIfNeeded();
+      await page.screenshot({path:path.join(output,"03b-owned-inspection-brief.png")});
+    }
     await page.reload();
     await page.getByText("Process completed", { exact: true }).waitFor({ timeout: 30000 });
     await page.screenshot({ path: path.join(output, "04-reloaded-completed-run.png") });

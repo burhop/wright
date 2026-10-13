@@ -1,0 +1,28 @@
+{
+  "status": "offline working-view code; not registered or installed",
+  "worktree": "/tmp/wright-host-adaptive-native-working-view",
+  "base": "72c4f86f",
+  "native_process_python_checks": 15,
+  "native_client_and_panel_checks": 14,
+  "shared_common_view_and_status_checks": "72 existing checks plus the then-11 native checks passed in the 83-check batch",
+  "public_process_client_regression": "78 existing checks passed in the initial combined 89-check batch; first DOM hook run lacked web config and was rerun successfully",
+  "typecheck": "pass",
+  "targeted_eslint": "pass",
+  "ruff": "pass",
+  "native_tool_run": "actual installed 0.2.0 tools in this desktop conversation; completed",
+  "actual_windows_working_view_verified": false,
+  "actual_windows_editor_verified": false,
+  "installed_target_reasoning_counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 1,
+    "desktop_reasoning_terminal_receipts": 1
+  },
+  "installed_target_pending_requests": 0,
+  "preserved_0_3_candidate": "72c4f86f, clean; approval remains pending",
+  "files": {
+    "apps/web/src/prototypes/desktop-panel/native-process-client.ts": "6f4320b799cb9a3486c2f6b9b9a6d71cd4d9efa8b1c4b304f3800323b8a91d5b",
+    "apps/web/src/prototypes/desktop-panel/NativeProcessPanel.tsx": "bb05e846db776455ed9c53757ba7e7152e16f6bbfecaaa6d48e3b90eaad32a21",
+    "apps/web/src/services/desktop-reasoning-status.ts": "2cfccfd2ebd116112dd0c01693da26abaf2be24214061c375d01eaf1e7e9a2e0",
+    "prototypes/desktop-harness/native_process_tools.py": "174799886fdaa4ad92d0bec03f3a555ab27cd7145d8e03cf482146a0a5bb715a"
+  }
+}

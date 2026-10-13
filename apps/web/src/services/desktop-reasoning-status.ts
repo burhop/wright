@@ -27,7 +27,14 @@ export async function readDesktopReasoningWait(
     { method: "GET", signal },
   );
   if (!response.ok) throw new Error(`AI handoff status could not be read (HTTP ${response.status}).`);
-  const rows: unknown = await response.json();
+  return desktopReasoningWait(await response.json(), scope);
+}
+
+/** Shared bounded status interpretation; transports never answer the task. */
+export function desktopReasoningWait(
+  rows: unknown,
+  scope: { workspaceId: string; sessionId: string; runId: string; workspaceName: string },
+): WorkflowReasoningWait | null {
   if (!Array.isArray(rows)) throw new Error("Wright returned invalid AI handoff status.");
   const matches: WorkflowReasoningWait[] = [];
   for (const row of rows) {
