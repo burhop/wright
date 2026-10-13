@@ -214,9 +214,11 @@ describe("native process bridge over the existing public client", () => {
   it("closes a snapshot observer without cancelling or restarting its run", async () => {
     const { client, call } = setup();
     const control = new AbortController();
-    const follow = client
-      .follow({ runId: "saved-run", signal: control.signal })
-      [Symbol.asyncIterator]();
+    const stream = client.follow({
+      runId: "saved-run",
+      signal: control.signal,
+    });
+    const follow = stream[Symbol.asyncIterator]();
     expect((await follow.next()).value?.type).toBe("connection");
     expect((await follow.next()).value?.type).toBe("snapshot");
     control.abort();
@@ -276,9 +278,11 @@ describe("native process bridge over the existing public client", () => {
   });
   it("does not silently substitute snapshot polling for an event cursor", async () => {
     const { client, call } = setup();
-    const follow = client
-      .follow({ runId: "saved-run", cursor: "saved-cursor" })
-      [Symbol.asyncIterator]();
+    const stream = client.follow({
+      runId: "saved-run",
+      cursor: "saved-cursor",
+    });
+    const follow = stream[Symbol.asyncIterator]();
     await expect(follow.next()).rejects.toMatchObject({
       reason: { code: "CAPABILITY_UNAVAILABLE" },
     });
