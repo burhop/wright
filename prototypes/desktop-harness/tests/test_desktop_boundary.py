@@ -184,3 +184,139 @@ def test_image_transport_is_opt_in_and_changes_frozen_connection(boundary):
     assert enabled.binding.image_input_profile == "inline-png-jpeg-v1"
     assert enabled.binding.connection_id != default.binding.connection_id
     assert enabled.binding.digest != default.binding.digest
+
+
+@pytest.fixture
+def enrolled_boundary(boundary):
+    from desktop_backend import DesktopBackend
+
+    default, service, source = boundary
+    enabled = DesktopBackend(service, default.state, 5201, enrolled_mcp_tasks=True)
+    service.workflow_sources.read.return_value.source = (
+        source.replace("wright-workspace-files", "qualified-provider")
+        .replace("inspect_file", "inspect_geometry")
+        .replace('"max_tool_calls":1', '"max_tool_calls":2')
+    )
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = [
+        {
+            "server_id": "qualified-provider",
+            "name": "qualified-provider__inspect_geometry",
+            "schema_digest": "d" * 64,
+        }
+    ]
+    return enabled, default, service
+
+
+def test_enrolled_tasks_are_separate_frozen_opt_in(enrolled_boundary):
+    enabled, default, service = enrolled_boundary
+    assert enabled.binding.digest != default.binding.digest
+    with pytest.raises(HTTPException) as failure:
+        check(default)
+    assert failure.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+    check(enabled)
+    service.workflow_integration_policies.get.assert_called_once_with("b" * 64)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("workspace_id", "other"),
+        ("source_path", "workflows/other.wflow"),
+        ("source_digest", "e" * 64),
+        ("approval_mode", "auto"),
+        ("allowed_tools", []),
+        (
+            "allowed_tools",
+            [
+                {
+                    "server_id": "qualified-provider",
+                    "name": "qualified-provider__write_geometry",
+                }
+            ],
+        ),
+    ],
+)
+def test_enrolled_tasks_reject_changed_manual_scope(enrolled_boundary, field, value):
+    enabled, _, service = enrolled_boundary
+    service.workflow_integration_policies.get.return_value[field] = value
+    with pytest.raises(HTTPException) as failure:
+        check(enabled)
+    assert failure.value.status_code == 403
+
+
+def test_enrolled_tasks_require_grant_and_preserve_image_gate(enrolled_boundary):
+    enabled, _, service = enrolled_boundary
+    with pytest.raises(HTTPException) as failure:
+        check(enabled, grant=False)
+    assert failure.value.status_code == 403
+    service.workflow_integration_policies.get.assert_not_called()
+    document = service.workflow_sources.read.return_value
+    document.source = document.source.replace(
+        '"kind":"engineering_document"', '"kind":"reference_images"', 2
+    )
+    with pytest.raises(HTTPException, match="image input"):
+        check(enabled)
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_enrolled_tasks_reject_extra_tool(enrolled_boundary):
+    enabled, _, service = enrolled_boundary
+    service.workflow_integration_policies.get.return_value["allowed_tools"].append(
+        {
+            "server_id": "qualified-provider",
+            "name": "qualified-provider__write_geometry",
+        }
+    )
+    with pytest.raises(HTTPException) as failure:
+        check(enabled)
+    assert failure.value.status_code == 403
+
+
+@pytest.mark.parametrize("invalidity", ["revoked", "expired", "unknown"])
+def test_enrolled_tasks_use_actual_policy_owner(
+    enrolled_boundary, monkeypatch, invalidity
+):
+    import time
+    from workspace_service.workflow_integration_policy import (
+        WorkflowIntegrationPolicyService,
+    )
+
+    enabled, _, service = enrolled_boundary
+    policy = WorkflowIntegrationPolicyService(service.db_path, enabled=True)
+    expiry = int(time.time()) + 60
+    digest = policy.enroll(
+        campaign_id="desktop-boundary-fixture",
+        dataset_id="synthetic",
+        dataset_digest="c" * 64,
+        workspace_id="workspace",
+        source_path="workflows/read.workflow.wflow",
+        source_digest="a" * 64,
+        input_files={"inputs/requirements.md": "c" * 64},
+        output_root="outputs/private",
+        allowed_tools=service.workflow_integration_policies.get.return_value[
+            "allowed_tools"
+        ],
+        expires_at=expiry,
+    )
+    service.workflow_integration_policies = policy
+    if invalidity == "revoked":
+        policy.revoke(digest)
+    elif invalidity == "expired":
+        monkeypatch.setattr(
+            "workspace_service.workflow_integration_policy.time.time", lambda: expiry
+        )
+    else:
+        digest = "0" * 64
+    with pytest.raises(HTTPException) as failure:
+        asyncio.run(
+            enabled.qualify_digital_source(
+                {
+                    "session_id": "session",
+                    "path": "workflows/read.workflow.wflow",
+                    "integration_policy_digest": digest,
+                },
+                operation="/api/workspace/process-interfaces/runs",
+            )
+        )
+    assert failure.value.status_code == 403

@@ -40,6 +40,11 @@ def main():
         help="Experimental reasoning transport only; engineering image readiness stays gated",
     )
     parser.add_argument("--enable-confined-inspection", action="store_true")
+    parser.add_argument(
+        "--enable-enrolled-mcp-tasks",
+        action="store_true",
+        help="Private exact-enrollment qualification; no automatic grants",
+    )
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
     args = parser.parse_args()
@@ -51,6 +56,8 @@ def main():
         parser.error("Native working view requires the opt-in native editor")
     if args.enable_confined_inspection and not args.enable_desktop_bridge:
         parser.error("Confined inspection requires the opt-in desktop bridge")
+    if args.enable_enrolled_mcp_tasks and not args.enable_desktop_bridge:
+        parser.error("Enrolled task qualification requires the opt-in desktop bridge")
     state = args.state_dir.resolve()
     database = state / "wright.sqlite"
     if args.enable_desktop_bridge and not database.exists():
@@ -96,7 +103,7 @@ def main():
 
         service = workspace_service()
         service.parent_dir_provider = lambda: str(state / "workspaces")
-        if args.enable_confined_inspection:
+        if args.enable_confined_inspection or args.enable_enrolled_mcp_tasks:
             service.workflow_integration_policies.enabled = True
         desktop = DesktopBackend(
             service,
@@ -104,6 +111,7 @@ def main():
             args.web_port,
             confined_inspection=args.enable_confined_inspection,
             image_inputs=args.enable_image_inputs,
+            enrolled_mcp_tasks=args.enable_enrolled_mcp_tasks,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
         )

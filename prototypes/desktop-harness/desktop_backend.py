@@ -72,6 +72,7 @@ class DesktopBackend:
         native_editor=False,
         native_working_view=False,
         image_inputs=False,
+        enrolled_mcp_tasks=False,
     ):
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
@@ -82,10 +83,12 @@ class DesktopBackend:
         self.oauth = DesktopOAuthPresentation()
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
+        self.enrolled_mcp_tasks = enrolled_mcp_tasks
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
             "image_inputs": image_inputs,
+            "enrolled_mcp_tasks": enrolled_mcp_tasks,
             "files": {},
             "confined_inspection": confined_inspection,
             "native_editor": native_editor,
@@ -651,6 +654,17 @@ class DesktopBackend:
                 "CAD, application, external-action and direct-tool execution remain unavailable in this prototype.",
             )
         tasks = [step for step in plan.steps if step.agent_task]
+        if tasks and self.enrolled_mcp_tasks:
+            if any(not step.task_tool_allowlist for step in tasks):
+                raise HTTPException(
+                    503, "Enrolled MCP tasks require explicit tool lists"
+                )
+            if operation in {
+                "/api/workspace/process-interfaces/runs",
+                "/api/workspace/workflow-sources/run",
+            }:
+                self.qualify_enrolled_tasks(tasks, document, row, body)
+            return
         if tasks and (
             not self.confined_inspection
             or any(
@@ -700,3 +714,35 @@ class DesktopBackend:
                     403,
                     "Confined inspection grant differs from the exact read-only scope",
                 )
+
+    def qualify_enrolled_tasks(self, tasks, document, workspace, body):
+        """Opt-in qualification only; the existing runtime/gateway still owns dispatch."""
+        from workspace_service.workflow_source_execution import (
+            WorkflowSourceExecutionError,
+        )
+
+        digest = body.get("integration_policy_digest")
+        if not digest:
+            raise HTTPException(
+                403, "MCP task qualification requires private enrollment"
+            )
+        try:
+            grant = self.service.workflow_integration_policies.get(digest)
+        except (KeyError, WorkflowSourceExecutionError) as error:
+            raise HTTPException(403, "MCP task enrollment is unavailable") from error
+        expected = {
+            (step.server_id, f"{step.server_id}__{name}")
+            for step in tasks
+            for name in step.task_tool_allowlist
+        }
+        actual = {(tool["server_id"], tool["name"]) for tool in grant["allowed_tools"]}
+        if (
+            grant["workspace_id"] != workspace["workspace_id"]
+            or grant["source_path"] != document.path
+            or grant["source_digest"] != document.storage_digest
+            or grant["approval_mode"] != "manual"
+            or actual != expected
+        ):
+            raise HTTPException(
+                403, "MCP task enrollment differs from the exact manual scope"
+            )

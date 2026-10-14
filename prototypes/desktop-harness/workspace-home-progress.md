@@ -943,3 +943,34 @@ The previous turn completed the authorized installation; this turn completed
 the qualified baseline merge and isolated subsequent engineering work.
 Both isolated dependency commands subsequently completed with exit 0. No lockfile
 or runtime source change resulted; the installed runtime remains frozen.
+
+## Off-by-default enrolled MCP-task boundary
+
+In the separate engineering-execution worktree, added an explicit
+`--enable-enrolled-mcp-tasks` qualification option. It changes the frozen runtime
+binding and requires the desktop bridge. Accepted task sources must enumerate
+their tools; starting requires an existing private enrollment whose workspace,
+source path/digest and exact tool set match, with manual approval mode. Existing
+policy storage validates immutable identity, expiry and revocation. The existing
+bounded task runtime and gateway retain schema/input/output checks and actual
+permission enforcement. This is test enrollment, not normal operator onboarding
+or engineering approval. No enrollment endpoint or automatic grant was added.
+
+Image/CAD/application/direct-tool/external-action gates remain in place. Installed
+0.7.0, its frozen checkout and running services were not changed. No SteveCAD
+sign-in or engineering action occurred. Actual multi-tool gateway execution,
+recovery and engineering acceptance remain unqualified for this new profile.
+
+Validation: the first boundary suite passed 22 tests. After adding excess-tool
+and actual policy-owner revoked/expired/unknown-grant checks, the boundary and
+existing integration-policy suites passed **76 tests in 1.34 seconds**. Ruff
+format/check passed. These are local automated contract tests, not native desktop
+or provider acceptance. The previously started test process was no longer
+available after context recovery; the suites were explicitly rerun as recorded.
+
+The user's existing SteveCAD account/terms confirmation is already retained.
+It does not replace interactive sign-in or establish a working Windows callback
+route. The pending Windows SSH-alias question remains relevant; no secrets were
+requested or copied. Post-merge checks on exact dev commit a6136138 currently show
+CodeQL/docs/release-drafter success; Python, frontend, Windows, public-alpha-safety
+and engineering images remain in progress. No deployment completion is claimed.
