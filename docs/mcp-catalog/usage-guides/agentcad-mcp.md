@@ -116,3 +116,21 @@ volume checks and mesh bytes were correct. All110 revision7 entries were
 reverified against exact native records; see `robot-arm-media/corrected-rev7/`
 `mesh-extent-field-addendum.json`. Do not use that original stale diagnostic field
 as a dimensional observation or blame this provider for our helper's mistake.
+
+## GB10 ARM64 prerequisite check, 14 October 2026
+
+The previously qualified source commit
+`2a377583d9d250971a584acb7b5ac6e2a75737c0` does not currently resolve on the tested
+Linux ARM64/Python 3.12.12 environment. Its `cadquery-ocp>=7.8,<7.9` dependency has
+no matching Linux ARM64 wheel in the observed resolver results. Available listed
+wheel platforms were Linux x64, macOS ARM64/x64 and Windows x64. This is a host
+prerequisite limitation, not evidence of a defect in a tool invocation.
+
+The bounded nonroot selected container exited 1 before imports, MCP initialization
+or native CAD calls. Original image and live host packages were unchanged. The
+[prerequisite receipt](../../../prototypes/desktop-harness/engineering-provider-prerequisites.json)
+records the exact source/image and retained resolver log. Do not infer ARM64
+support from earlier Windows-to-Linux x64 qualification, force an incompatible
+OCP version, or substitute a previously generated CAD artifact. The next viable
+candidate is an explicitly qualified x64 provider host; registering emulation or
+routing through another machine has not been done by this check.

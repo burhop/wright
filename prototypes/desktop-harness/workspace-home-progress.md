@@ -1293,3 +1293,23 @@ execution. Live AgentCAD/CalculiX enrollment, image-bearing canonical execution,
 genuine diagnosis review and full engineering outputs remain required. The legacy
 campaign report's automatic integration-test policy request is unchanged; it is
 not usable as a desktop manual-review enrollment or proof of human acceptance.
+
+## Actual GB10 CAD provider prerequisite outcome
+
+Fresh selected ARM64 container `wright-desktop-agentcad-provider-20261014-01`
+exited 1 during AgentCAD dependency resolution. Exact previously qualified
+upstream source requires cadquery-ocp 7.8, whose observed wheels exclude Linux
+ARM64. No native imports/MCP/tools ran, requirements were not relaxed and no
+vendor patch was introduced. The host binfmt listing showed no x86 interpreter
+registration; this is an inventory observation, not an emulation execution test.
+The usage guide and engineering-provider-prerequisites.json retain exact evidence.
+
+Separately inspected the immutable previously selected CalculiX 0.8.6 image
+manifest: it contains Linux ARM64 child digest
+11d7aa05f7f34b3ef6055ade51910dba899c58bf51e5e56ea6b2ea96b28c6ea0.
+This proves registry availability only; installation, startup, native solving and
+current desktop gateway qualification remain pending. No solver container was
+started. AgentCAD's limitation blocks that full Robot/STEP-production path on
+native GB10; it does not waive corrective CAD/FEA or block independent solver/UI
+qualification. A supported x64/Windows provider route needs explicit qualification
+before the complete demonstration; no previous engineering output substitution.
