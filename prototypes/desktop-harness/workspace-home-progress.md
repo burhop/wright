@@ -834,3 +834,29 @@ lifecycle or live CAD completion. No publication performed.
 Previous turn made progress through actual run navigation/source-drift proof;
 this turn adds and qualifies normal workspace creation. Baseline Windows backend
 CI was still in progress at the latest PR query. No push or merge attempted.
+
+## Consolidated continuation regression checkpoint
+
+At `ba35bda2`, all eight desktop-panel test files passed: 52 tests. The complete
+prototype backend tests plus durable desktop repository and workflow reasoning
+execution tests passed together: **127 tests in 4.70s**, log
+`/tmp/wright-desktop-combined-regression-20261014.log`.
+
+Retained limitations/failures: the initial command named a nonexistent adapter
+test file and collected no tests. The corrected restricted-sandbox invocation
+stopped producing progress around the API setup tests. Its exact live PID was
+inspected, interrupted and then explicitly terminated (exit 143); no unrelated
+service was touched. The identical suite with authorized local IPC access passed.
+This supports an environment-specific test-client limitation, not a new claim
+that every possible stall is harmless. No test or production contract was weakened.
+
+Added `desktop-capability-matrix.md` with local runtime versions, installed versus
+continuation distinctions, evidence boundaries and outstanding functionality.
+Model image perception, engineering providers, actual CAD/analysis demonstrations,
+genuine reviews, Windows UI acceptance and full repository/platform gates remain
+outstanding. The next candidate must preserve those gates. No plugin update was
+performed in this checkpoint. Baseline PR 153 still reported Windows backend CI
+in progress; no push/merge attempted.
+
+The previous turn was concrete workspace-creation implementation/qualification;
+this turn adds combined regression evidence and the required capability matrix.
