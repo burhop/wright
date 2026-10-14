@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeConnections } from "./NativeConnections";
+import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
 
 export interface DesktopWorkspace {
   workspace_id: string;
@@ -20,6 +21,7 @@ export type HomeCall = (
   name:
     | "wright_workspace_list"
     | "wright_workspace_files"
+    | "wright_workflow_history"
     | "wright_connections_list"
     | "wright_connection_plans"
     | "wright_connection_plan"
@@ -50,6 +52,7 @@ export function NativeHomePanel({
   openLink,
   initialSelection,
   onSelect,
+  onOpenRun,
 }: {
   readonly call: HomeCall;
   readonly initialSelection?: Pick<
@@ -57,6 +60,7 @@ export function NativeHomePanel({
     "workspace_id" | "session_id"
   >;
   readonly onSelect?: (workspace: DesktopWorkspace) => void;
+  readonly onOpenRun?: (workspace: DesktopWorkspace, path: string, run: RecordedRun) => Promise<void>;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
   readonly openLink?: (url: string) => Promise<void>;
 }) {
@@ -67,7 +71,7 @@ export function NativeHomePanel({
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
-  const [view, setView] = useState<"workflows" | "connections" | "files">("workflows");
+  const [view, setView] = useState<"workflows" | "connections" | "files" | "runs">("workflows");
   const [fileQuery, setFileQuery] = useState("");
   const workflowFiles = files.filter((file) => file.path.endsWith(".wflow"));
   const generation = useRef(0);
@@ -210,6 +214,7 @@ export function NativeHomePanel({
           <button onClick={() => setView("files")} disabled={opening}>
             Files
           </button>
+          <button onClick={() => setView("runs")} disabled={opening}>Recent runs</button>
         </nav>
       )}
       {selected && view === "connections" && (
@@ -220,6 +225,13 @@ export function NativeHomePanel({
           openLink={openLink}
         />
       )}
+      {selected && view === "runs" && <NativeRecentRuns
+        key={`${selected.workspace_id}:${selected.session_id}`}
+        workspace={selected} paths={workflowFiles.map((file) => file.path.replace(/^\//, ""))}
+        call={call} onOpen={onOpenRun ? async (path, run) => {
+          setOpening(true);
+          try { await onOpenRun(selected, path, run); } finally { setOpening(false); }
+        } : undefined} />}
       {selected && view === "files" && (
         <section aria-label="Files">
           <h2>Files</h2>

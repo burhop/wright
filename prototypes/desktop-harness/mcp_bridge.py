@@ -705,6 +705,42 @@ def server(client, *, native_editor=False, native_working_view=False):
             },
         )
 
+    @mcp.tool(annotations=read, structured_output=True)
+    async def wright_workflow_history(
+        workspace_id: str, session_id: str, path: str
+    ) -> dict[str, Any]:
+        """Read recent recorded runs for one exact workflow; never start or resume work."""
+        await client.scope(workspace_id, session_id)
+        document = await client.call(
+            "GET",
+            "/api/workspace/workflow-sources/runs",
+            params={"session_id": session_id, "path": path},
+        )
+        if (
+            document.get("workspace_id") != workspace_id
+            or document.get("workflow_path") != path
+            or not isinstance(document.get("runs"), list)
+            or len(document["runs"]) > 20
+        ):
+            raise ValueError("Run history scope or bound differs")
+        # Home needs recorder identities and state, not embedded result payloads.
+        fields = (
+            "run_id",
+            "path",
+            "status",
+            "started_at",
+            "completed_at",
+            "source_digest",
+        )
+        if any(not isinstance(row, dict) for row in document["runs"]):
+            raise ValueError("Run history record is unavailable")
+        return {
+            "workspace_id": workspace_id,
+            "session_id": session_id,
+            "workflow_path": path,
+            "runs": [{key: row.get(key) for key in fields} for row in document["runs"]],
+        }
+
     @mcp.tool(annotations=read)
     async def wright_reasoning_pending(workspace_id: str, session_id: str) -> dict:
         """Read bounded tasks for this workspace. Use their exact saved instructions and schemas."""

@@ -721,3 +721,39 @@ The first TypeScript check caught a test-only unsupported `exact` option on
 Testing Library's role query. Removed it; production UI behavior was unchanged.
 The subsequent complete TypeScript build check and targeted ESLint check passed.
 PR 153 still reports Windows backend tests in progress; no merge was attempted.
+
+## Recent runs — implementation and component qualification
+
+Located and reused `/api/workspace/workflow-sources/runs`, backed by the canonical
+source recorder's bounded `recent_workflow_runs` reader and existing review owner.
+The separate Rivet operations history is not the source of this panel's records.
+A new read-only `wright_workflow_history` port verifies workspace/session first,
+checks the returned exact source/workspace and bounded record list, and projects
+only run/source identities, timestamps and recorded state. It does not send
+embedded results into the home panel or invent execution status.
+
+Recent runs in home selects a workflow explicitly, loads its recent recorded
+history, distinguishes load failure from no records, and permits Inspect run only
+with recorded run and source identities. The action delegates to the existing
+`wright_process_view` read port. Existing process/source checks remain authority;
+there is no Start, Resume, approval, replay or current-source substitution.
+Older-source navigation remains constrained by the panel's existing revision gate.
+Successful older-revision inspection is not claimed.
+
+23 Python history/bridge tests passed, including denied-session no-read, wrong
+workspace/source/list bounds, preserved state and omitted embedded payloads.
+11 home/history component tests passed, including explicit navigation and a
+failed exact-run open without retry. TypeScript, targeted ESLint and Ruff passed.
+Initial failures are retained here: the pinned MCP SDK requires `dict[str, Any]`
+for forced structured output (bare `dict` failed registration); the new read port
+also requires the exact development inventory count to change from 30 to 31.
+Both were fixed without relaxing schema or inventory assertions.
+
+This new UI is not yet bundled, browser-qualified, installed or user-accepted.
+Next: prove actual recorded run discovery and exact-run opening through a fresh
+served home, including stale source and empty history. Existing 8134/8135 services
+were started with earlier frozen bridge bytes: do not reuse them as current-runtime
+qualification after this bridge edit. Installed 0.6.0 is separate and unchanged.
+The previous goal turn was progress (qualified Files implementation); this turn
+adds the run-history implementation. The outstanding Windows CI check was still
+in progress on the latest authoritative PR query; no merge or push attempted.
