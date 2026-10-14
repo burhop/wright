@@ -67,3 +67,21 @@ The script now records observed client OS/architecture/Python instead of inventi
 a container identity. This invocation used the feature worktree client, not a
 clean Wright container or a canonical desktop workflow. Stdio, field expansion,
 restart/reconciliation and engineering validation remain unqualified here.
+
+## Native stdio recovery failure, 14 October 2026
+
+Fresh sessions initialized protocol2025-11-25 with official Python MCP1.28.1 and
+listed all tools. `calculix_run_get` then failed client output validation:
+`'result' is a required property`. Native tools/list advertises an object with a
+required `result` containing the union schema, while the observed response is
+the unwrapped record. HTTP advertises the union directly. Do not infer stdio
+compatibility from the successful HTTP test or disable output validation.
+
+Two read-only attempts submitted zero solves. The second explicitly compared all
+non-lock durable files before/after and found no changes. Stdio containers exited0.
+The prior HTTP container was deliberately stopped after its solves completed;
+Docker reports exit133, so graceful HTTP shutdown is not qualified. All selected
+containers are stopped and preserved. See the
+[reproduction receipt](../../../prototypes/desktop-harness/calculix-stdio-recovery-evidence.json)
+and `prototypes/desktop-harness/calculix_recovery_probe.py`. No upstream report
+was submitted, provider patch applied or runtime compatibility shim introduced.

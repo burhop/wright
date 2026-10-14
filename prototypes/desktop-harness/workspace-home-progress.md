@@ -1336,3 +1336,24 @@ canonical desktop execution, force-balance/full engineering acceptance from this
 HTTP test. Py_compile/Ruff/whitespace passed for the metadata fix. No solver
 rerun was needed merely to correct attribution. Provider state is retained for
 subsequent explicit lifecycle qualification; no uncertain request was replayed.
+
+## Native solver recovery contract check
+
+Added a read-only actual SDK/provider probe for existing recorded runs and exact
+resource hashes. Stopped only the owned HTTP provider after both recorded solves
+completed; actual exit133 means graceful HTTP shutdown is not established.
+Fresh native stdio sessions001/002 negotiated2025-11-25 and listed tools, but
+calculix_run_get failed official SDK output validation before the first lookup
+could be accepted. Advertised native outputSchema requires a result wrapper;
+observed structuredContent is unwrapped. The HTTP schema is a direct union.
+
+Attempt001 retained its coarse task-group error;002 adds leaf diagnostics and
+before/after durable-file hashing. The latter confirms all non-lock records
+unchanged and zero solve calls. Both stdio containers exited0; all three owned
+provider containers are stopped/preserved. Evidence:
+`/tmp/wright-desktop-calculix-provider-20261014-01/arm64-stdio-recovery-002/`.
+Compact receipt: calculix-stdio-recovery-evidence.json. Ruff/whitespace pass.
+This is a failed compatibility/recovery qualification, not an engineering failure
+or a reason to replace the solver or weaken validation. No bug report submitted.
+Provider fix/qualified compatible transport remains required for dependent native
+workflow capabilities. Other UI and Wright recovery work remains independent.
