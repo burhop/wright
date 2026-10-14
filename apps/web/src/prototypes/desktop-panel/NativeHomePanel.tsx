@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
+import { NativeConnections } from "./NativeConnections";
 
 export interface DesktopWorkspace {
   workspace_id: string;
@@ -16,7 +17,10 @@ interface FileNode {
   children?: FileNode[];
 }
 export type HomeCall = (
-  name: "wright_workspace_list" | "wright_workspace_files",
+  name:
+    | "wright_workspace_list"
+    | "wright_workspace_files"
+    | "wright_connections_list",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 
@@ -47,6 +51,7 @@ export function NativeHomePanel({
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
+  const [view, setView] = useState<"workflows" | "connections">("workflows");
   const generation = useRef(0);
   useEffect(() => {
     let active = true;
@@ -155,6 +160,23 @@ export function NativeHomePanel({
         </p>
       )}
       {selected && (
+        <nav aria-label="Workspace views">
+          <button onClick={() => setView("workflows")} disabled={opening}>
+            Workflows
+          </button>
+          <button onClick={() => setView("connections")} disabled={opening}>
+            Connections
+          </button>
+        </nav>
+      )}
+      {selected && view === "connections" && (
+        <NativeConnections
+          key={selected.workspace_id}
+          workspace={selected}
+          call={call}
+        />
+      )}
+      {selected && view === "workflows" && (
         <section aria-label="Workflows">
           <h2>Workflows</h2>
           {!loading && !error && files.length === 0 && (

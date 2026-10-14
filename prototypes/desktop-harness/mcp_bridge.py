@@ -299,6 +299,49 @@ def server(client, *, native_editor=False, native_working_view=False):
         return await client.call("GET", "/api/desktop/workspaces")
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_connections_list(
+        workspace_id: str, session_id: str, search: str = "", cursor: str | None = None
+    ) -> dict[str, Any]:
+        """Inspect the existing MCP catalog and this workspace's membership. Does not connect or grant tools."""
+        from tool_registry.capability_models import CapabilityList
+
+        await client.scope(workspace_id, session_id)
+        params = {"search": search, "limit": 50}
+        if cursor is not None:
+            params["cursor"] = cursor
+        catalog = CapabilityList.model_validate(
+            await client.call("GET", "/api/mcp/capabilities", params=params)
+        )
+        return {
+            "workspace_id": workspace_id,
+            "session_id": session_id,
+            "snapshot": catalog.snapshot.model_dump(mode="json"),
+            "next_cursor": catalog.next_cursor,
+            "total": catalog.total,
+            "connections": [
+                {
+                    "capability_id": item.capability_id,
+                    "name": item.name,
+                    "description": item.description,
+                    "compatibility": item.compatibility.model_dump(mode="json"),
+                    "installed": item.user_state.installed,
+                    "active": item.user_state.active,
+                    "process_status": item.user_state.process_status,
+                    "installed_version": item.user_state.installed_version,
+                    "enabled_here": any(
+                        scope.get("workspace_id") == workspace_id
+                        for scope in item.user_state.enabled_workspaces
+                    ),
+                    "credentials_missing": any(
+                        not configured
+                        for configured in item.user_state.credentials_configured.values()
+                    ),
+                }
+                for item in catalog.capabilities
+            ],
+        }
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workspace_files(
         workspace_id: str, session_id: str
     ) -> dict[str, Any]:

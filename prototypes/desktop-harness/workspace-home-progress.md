@@ -104,3 +104,29 @@ Do not caption it as a completed CAD run or a Windows desktop capture.
 Next: qualify Connections through existing catalog/onboarding owners, preserving
 workspace scope and the return to the same workflow. Finish baseline gates and
 actual desktop acceptance independently; neither is implied by this browser pass.
+
+## Connections discovery slice — local candidate
+
+The home now has Workflows and Connections views within the selected workspace.
+`wright_connections_list` validates the exact workspace/session, then reads the
+existing `/api/mcp/capabilities` owner with search and cursor pagination. It
+validates that owner's typed response and projects only presentation fields:
+installation, activation, observed process status, compatibility, missing-credential
+boolean and membership in the selected workspace. Other workspace memberships,
+credential names and raw requirements are not returned. No provider is started,
+installed, authenticated, enabled or granted permission by this read.
+
+The panel distinguishes loading/failure/empty results, rejects mismatched scope,
+ignores obsolete responses, supports search and pagination, and labels setup
+and permission mutations as not yet available. An enabled entry is not described
+as connected or granted execution authority. Workspace selection and returning
+to Workflows retain the home state. Returning from an open editor to Connections
+with its exact document return target remains unfinished.
+
+Validation: 18 focused bridge tests passed; seven Connections/home component
+tests passed; TypeScript and focused Python lint passed. Native resource rebuilt
+with 657 modules. The source bridge exposes 22 tools in the editor/working profile.
+This is not installed, actual-host accepted, or live-catalog browser qualified.
+Next prove the current catalog through the official MCP client with matching
+fresh runtime assets; then expose the existing onboarding plan/authentication
+owners and their permission checks rather than adding a parallel setup executor.

@@ -1,0 +1,165 @@
+import { useEffect, useState } from "react";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { DesktopWorkspace } from "./NativeHomePanel";
+
+export type ConnectionsCall = (
+  name: "wright_connections_list",
+  args: Record<string, unknown>,
+) => Promise<CallToolResult>;
+interface Connection {
+  capability_id: string;
+  name: string;
+  description: string;
+  installed: boolean;
+  active: boolean;
+  enabled_here: boolean;
+  credentials_missing: boolean;
+  process_status: string;
+  installed_version: string | null;
+  compatibility: {
+    status: string;
+    reasons: { code: string; message: string; recovery: string }[];
+  };
+}
+
+export function NativeConnections({
+  workspace,
+  call,
+}: {
+  readonly workspace: DesktopWorkspace;
+  readonly call: ConnectionsCall;
+}) {
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [next, setNext] = useState<string | null>(null);
+  const [items, setItems] = useState<Connection[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setError(false);
+    void call("wright_connections_list", {
+      workspace_id: workspace.workspace_id,
+      session_id: workspace.session_id,
+      search: query,
+      ...(cursor ? { cursor } : {}),
+    })
+      .then((result) => {
+        const data = result.structuredContent;
+        if (
+          result.isError ||
+          !data ||
+          data.workspace_id !== workspace.workspace_id ||
+          data.session_id !== workspace.session_id ||
+          !Array.isArray(data.connections)
+        )
+          throw new Error("Unconfirmed connection scope");
+        if (!active) return;
+        setItems(data.connections as Connection[]);
+        setNext(typeof data.next_cursor === "string" ? data.next_cursor : null);
+      })
+      .catch(() => {
+        if (active) setError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [
+    call,
+    workspace.workspace_id,
+    workspace.session_id,
+    query,
+    cursor,
+    refresh,
+  ]);
+  return (
+    <section aria-label="Connections">
+      <h2>Connections</h2>
+      <p>
+        Engineering tools for {workspace.workspace_name}. Availability here does
+        not approve workflow actions.
+      </p>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          setCursor(null);
+          setQuery(search);
+          setRefresh((value) => value + 1);
+        }}
+      >
+        <label htmlFor="connection-search">Find an MCP</label>
+        <input
+          id="connection-search"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <button type="submit" disabled={loading}>
+          Search / refresh
+        </button>
+      </form>
+      {loading ? (
+        <p role="status">Loading connections…</p>
+      ) : error ? (
+        <p role="alert">
+          Connections could not be read. Search / refresh to retry; no settings
+          changed.
+        </p>
+      ) : (
+        <>
+          {!items.length && <p>No matching connections.</p>}
+          <ul>
+            {items.map((item) => (
+              <li key={item.capability_id}>
+                <strong>{item.name}</strong>
+                <p>{item.description}</p>
+                <p>
+                  {!item.installed
+                    ? "Setup needed"
+                    : item.credentials_missing
+                      ? "Sign-in or credentials needed"
+                      : !item.active
+                        ? "Inactive"
+                        : !item.enabled_here
+                          ? "Not enabled in this workspace"
+                          : "Enabled in this workspace"}
+                </p>
+                <details>
+                  <summary>Readiness details</summary>
+                  <p>
+                    Host compatibility: {item.compatibility.status}. Process:{" "}
+                    {item.process_status}.
+                  </p>
+                  <p>
+                    Installed version:{" "}
+                    {item.installed_version ?? "Not reported"}.
+                  </p>
+                  {item.compatibility.reasons.map((reason) => (
+                    <p key={reason.code}>
+                      {reason.message} {reason.recovery}
+                    </p>
+                  ))}
+                </details>
+              </li>
+            ))}
+          </ul>
+          {next && (
+            <button onClick={() => setCursor(next)}>Next connections</button>
+          )}
+          {cursor && (
+            <button onClick={() => setCursor(null)}>First connections</button>
+          )}
+        </>
+      )}
+      <p>
+        Connection setup and permission changes are not yet available in this
+        panel.
+      </p>
+    </section>
+  );
+}
