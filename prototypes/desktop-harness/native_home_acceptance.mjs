@@ -4,6 +4,8 @@ import { createServer } from 'node:http';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium, expect } from '@playwright/test';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const state = resolve(process.argv[2]);
 const evidence = JSON.parse(readFileSync(resolve(state, 'home-probe.json')));
@@ -13,6 +15,14 @@ const bundle = readFileSync('prototypes/desktop-harness/native-editor.html', 'ut
 const output = resolve(state, `browser-home-${Date.now()}`);
 mkdirSync(output);
 const calls = [];
+const mcp = new Client({name:'wright-home-browser-qualification',version:'0.1.0'});
+const transport = new StdioClientTransport({
+ command:resolve('.venv/bin/python'),
+ args:[resolve('prototypes/desktop-harness/mcp_bridge.py'),'--state-dir',state,'--native-editor','--native-working-view'],
+ stderr:'pipe',
+});
+// Keep transport diagnostics out of the browser and evidence; retain only test failures.
+await mcp.connect(transport);
 const safe = value => JSON.stringify(value).replaceAll('<', '\\u003c');
 async function get(path, params = {}) {
   const url = new URL(path, preview.api_url);
@@ -53,21 +63,16 @@ const server = createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
     const {name, arguments: args} = JSON.parse(body);
     calls.push({name, arguments:args});
-    let data;
-    if (name === 'wright_workspace_list') data = await get('/api/desktop/workspaces');
-    else {
-      if (args.workspace_id !== evidence.scope.workspace_id || args.session_id !== evidence.scope.session_id) throw Error('Fixture scope denied');
-      const workspace = await get(`/api/desktop/workspaces/${args.workspace_id}`, {session_id:args.session_id});
-      if (name === 'wright_workspace_files') data = await get(`/api/desktop/workspaces/${args.workspace_id}/files`, {session_id:args.session_id});
-      else {
-        if (args.path !== evidence.scope.path) throw Error('Fixture file denied');
-        if (name === 'wright_workflow_read') data = await source();
-        else if (name === 'wright_workflow_open') data = {workspace,document:await source(),working_view_enabled:true};
-        else throw Error('Read-only fixture denies this operation');
-      }
-    }
+    const allowed = new Set(['wright_workspace_list','wright_workspace_files','wright_workflow_read','wright_workflow_open','wright_connections_list','wright_connection_plans','wright_connection_plan_read']);
+    if (!allowed.has(name)) throw Error('Read-only fixture denies this operation');
+    if (name !== 'wright_workspace_list' &&
+        (args.workspace_id !== evidence.scope.workspace_id || args.session_id !== evidence.scope.session_id))
+      throw Error('Fixture scope denied');
+    if (name.startsWith('wright_workflow_') && args.path !== evidence.scope.path)
+      throw Error('Fixture file denied');
+    const result = await mcp.callTool({name,arguments:args});
     res.writeHead(200, {'Content-Type':'application/json'});
-    res.end(JSON.stringify({content:[],structuredContent:data}));
+    res.end(JSON.stringify(result));
   } catch (error) {
     res.writeHead(400, {'Content-Type':'application/json'});
     res.end(JSON.stringify({content:[{type:'text',text:error.message}],isError:true}));
@@ -96,6 +101,15 @@ try {
   await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(evidence.scope.workspace_id);
   await expect(workflow).toBeVisible();
   passed.push('home opens shared editor and Back restores exact workspace without mutation');
+  await frame.getByRole('button',{name:'Connections',exact:true}).click();
+  await frame.getByLabel('Find an MCP').fill('SteveCAD');
+  await frame.getByRole('button',{name:'Search / refresh',exact:true}).click();
+  await frame.getByRole('button',{name:/Saved setup for SteveCAD/i}).click();
+  await frame.getByRole('button',{name:/Open reviewable setup/}).first().click();
+  await expect(frame.getByText('Plan state: reviewable.',{exact:true})).toBeVisible();
+  await page.screenshot({path:resolve(output,'saved-setup.png')});
+  passed.push('real MCP catalog and saved-plan recovery; no setup mutations');
+  await frame.getByRole('button',{name:'Workflows',exact:true}).click();
   await page.setViewportSize({width:460,height:800});
   await frame.getByLabel('Workspace',{exact:true}).selectOption(evidence.scope.workspace_id);
   await expect(workflow).toBeVisible();
@@ -113,7 +127,7 @@ try {
   expect((await source()).storage_digest).toBe(before.storage_digest);
   expect(errors).toEqual([]);
   passed.push('accepted source unchanged and no browser errors');
-  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, real read-only Wright storage',native_desktop_verified:false,engineering_runs:0},null,2));
+  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge and real read-only Wright storage',native_desktop_verified:false,engineering_runs:0},null,2));
   console.log(JSON.stringify({output,passed}));
 } catch (error) {
   if (page) await page.screenshot({path:resolve(output,'failure.png')});
@@ -121,5 +135,6 @@ try {
   throw error;
 } finally {
   await browser.close();
+  await mcp.close();
   await new Promise(done => server.close(done));
 }

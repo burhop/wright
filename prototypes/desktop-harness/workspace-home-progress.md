@@ -430,3 +430,32 @@ Baseline PR 153 remains at bcf03161. Current-head checks except the Windows
 backend job have completed successfully. The specific job 116123620167 is still
 in_progress in its Run pytest step, verified via the GitHub job API. No restart,
 additional push or premature merge was performed.
+
+## Combined real-MCP browser qualification
+
+Created fresh isolated state at `/tmp/wright-desktop-combined-proof-20261014-01`
+and loopback API 8133 from feature db12003a (native editor/common working view
+enabled, MCP autostart disabled). Existing services/state/plugin remain untouched.
+The official MCP client created a new desktop-bound workspace and an unchanged
+copy of the existing SteveCAD native workflow; source SHA-256 remains
+`04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de`.
+Tool discovery reports 29 tools. A fresh setup plan records the user's existing
+publisher account confirmation and is reviewable; it was not approved/applied.
+Receipts: `home-probe.json`, `plan-confirmed-probe-02.json` and private service logs
+in that state directory. No provider call, sign-in, workspace grant or run began.
+
+Upgraded the existing browser acceptance harness to use the actual official MCP
+client/stdio bridge for all UI operations, instead of recreating their transport
+responses through direct HTTP reads. The simulated host fixture permits only
+specific read tools and exact source/workspace scope. Direct source-owner reads
+remain solely as before/after integrity checks. The MCP client closes on normal
+walkthrough cleanup.
+
+All combined checks passed in
+`/tmp/wright-desktop-combined-proof-20261014-01/browser-home-1792015977834/report.json`:
+workspace/source discovery, shared editor entry, exact workspace restoration,
+real catalog search and saved-plan reopening, narrow fit, draft protection,
+unchanged accepted source and zero browser errors. Screenshots include home,
+editor, saved setup and narrow home. Visually inspected the saved-setup image;
+it clearly labels the simulated desktop host and no engineering run. Windows
+rendering, actual sign-in/enablement and engineering outcomes remain separate.
