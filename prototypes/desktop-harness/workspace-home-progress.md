@@ -1462,3 +1462,20 @@ Desktop list_projects identifies the existing remote host as promaxgb10-9666
 to use that discovered host rather than asking the user for an alias.
 Discovery does not establish an active Windows forwarding tunnel. No real
 OAuth attempt, credential transfer or Windows setting change occurred.
+
+## Baseline CI completion and affected regression checkpoint
+
+Remote dev remains a61361384a3de15163fdb0a6b6a3da56ad92e673. GitHub
+post-merge checks are successful, including actual Windows Vitest/pytest and
+ARM64/x64 image build, smoke and registry publication-verification jobs.
+Detailed job/step receipts are in baseline-postmerge-ci.json. This closes the
+previous pending baseline CI observation, not newer local feature gates.
+
+Affected adapter, desktop, durable reasoning and non-Hermes activation suites:
+597 passed, 21 skipped in 22.90s. All skips require installed Hermes API source
+which is absent here; do not claim those paths passed. Raw log/XML retained in
+/tmp/wright-desktop-regression-20261014-01; digest and scope in
+affected-regression-evidence.json. Added explicit Pi unavailable/no-fallback
+coverage (including normalized selection); registry suite 9 passed. No adapter
+behavior changed. Embedded Codex pilot is absent from this checkout and retains
+a separate regression obligation; desktop bridge tests do not cover it.

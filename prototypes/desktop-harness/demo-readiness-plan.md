@@ -15,8 +15,8 @@ for these desktop demonstrations.
 
 Continue in `/tmp/wright-desktop-engineering-execution`, branch
 `codex/desktop-engineering-execution`. Baseline PR 153 is merged to dev at
-`a61361384a3de15163fdb0a6b6a3da56ad92e673`; its post-merge CI/deployment qualification
-is still being tracked. Historical baseline tables below retain their dated
+`a61361384a3de15163fdb0a6b6a3da56ad92e673`; its post-merge CI is now successful, including Windows frontend/backend and
+ARM64/x64 engineering-image smoke/publication jobs (baseline-postmerge-ci.json). Historical baseline tables below retain their dated
 planning context and are not current installation status.
 
 Named plugin 0.8.0 is installed and protocol-verified. Its frozen runtime checkout
