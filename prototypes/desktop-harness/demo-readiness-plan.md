@@ -13,22 +13,32 @@ for these desktop demonstrations.
 
 ## Current continuation checkpoint — 14 October 2026
 
-Continue the existing goal and implementation; do not restart from the historical
-planning baseline below. The dependent `codex/desktop-engineering-demos` worktree
-at `/tmp/wright-desktop-engineering-demos` contains local commit `8f66044f`:
-scoped workspace discovery, file listing and a compact native home. Its recorded
-65 backend/bridge tests and 31 native-panel tests are local evidence, not Windows
-acceptance. An official MCP-client probe against isolated real Wright storage
-created a workspace, saved the unchanged SteveCAD native source, and retrieved
-home/file metadata successfully. No engineering execution or desktop rendering
-was established by that probe. See [workspace-home-progress.md](workspace-home-progress.md).
+Continue in `/tmp/wright-desktop-engineering-execution`, branch
+`codex/desktop-engineering-execution`. Baseline PR 153 is merged to dev at
+`a61361384a3de15163fdb0a6b6a3da56ad92e673`; its post-merge CI/deployment qualification
+is still being tracked. Historical baseline tables below retain their dated
+planning context and are not current installation status.
 
-The baseline corrections are local at `e5b39c57`; qualification and corrected-head
-CI/integration must be reconciled before claiming a merged baseline. The current
-merge receipt has a start record but no completion result. Retain the failed
-browser-matrix attempt and the successful unchanged focused reproduction rather
-than reporting an unqualified suite pass. Installed 0.4.0 remains distinct from
-the source candidate. Recheck actual state before continuing any pending work.
+Named plugin 0.7.0 is installed and protocol-verified. Its frozen runtime checkout
+is `/tmp/wright-desktop-engineering-demos-next`; do not edit runtime files there.
+Home now includes workspace creation/selection, Workflows, Connections, Files
+metadata search and Recent runs. Browser-host checks do not establish Windows
+native acceptance. The short `desktop-07-walkthrough.md` covers that outstanding
+user observation. Installed engineering execution/image input remain gated.
+
+The separate execution checkout has an off-by-default exact-enrollment MCP-task
+qualification profile. Its boundary and existing policy-owner suites pass 76
+checks. A fresh actual MCP/HTTP/runtime/gateway run completed with a desktop-authored
+inspection proposal and completion, one observed gateway dispatch, unchanged
+input, and an explicit no-enrollment denial. This exercises the new profile with
+its old confined-inspection flag disabled; it does not establish arbitrary
+engineering providers or replace the required SteveCAD demonstrations.
+See `workspace-home-progress.md` for exact receipts and remaining limits.
+
+Existing SteveCAD account/terms setup is confirmed. The Windows-to-GB10 callback
+route and interactive sign-in still need qualification. Required image perception,
+CAD/direct-tool/export paths, genuine reviews and the multi-tool engineering
+runs remain open. Keep independent implementation moving while waiting on login.
 
 ### Priorities that keep this practical
 

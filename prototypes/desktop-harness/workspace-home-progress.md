@@ -974,3 +974,38 @@ route. The pending Windows SSH-alias question remains relevant; no secrets were
 requested or copied. Post-merge checks on exact dev commit a6136138 currently show
 CodeQL/docs/release-drafter success; Python, frontend, Windows, public-alpha-safety
 and engineering images remain in progress. No deployment completion is claimed.
+
+## Actual new-profile desktop proposal and gateway result
+
+Extended the existing MCP gateway probe with an explicit enrolled-task profile
+selection; the original confined profile remains its default. The source changes
+only the permitted call budget from one to two, retaining the instruction to
+inspect once. This deliberately crosses the former prototype budget gate without
+adding another executor, changing engineering instructions or performing extra
+calls. It does not qualify an arbitrary MCP provider.
+
+Started fresh loopback API 8138 from the separate execution checkout, state
+`/tmp/wright-desktop-enrolled-proof-20261014-01`. Runtime records
+`enrolled_mcp_tasks=true`, `confined_inspection=false`, image inputs false and no
+native UI. The official MCP client used the actual bridge and HTTP owners. This
+desktop conversation read both actual pending requests, authored the typed tool
+proposal, inspected Wright's returned tool result, and authored the completion.
+No hidden model worker, direct file inspection or provider substitution supplied
+the reasoning. Local fixture creation and private enrollment are explicitly test
+setup, not normal operator onboarding.
+
+Run `fcb9a7cb4e99416f9354fe236635072e` completed. Source digest
+`dade4100b353eeda07e92a194c5b9c5d4d4ef10b2251a7c427887529ccf3a94b`.
+The no-enrollment control returned HTTP 403; the successful enrolled run recorded
+exactly one successful gateway dispatch and unchanged input (267 bytes, SHA-256
+`0a232d5575829b90463ecc78396036894128fdd9f2ed06477a0c7ece8b360fea`).
+The actual result returned to the next desktop task before completion. Probe exit
+0. Receipts: `mcp-gateway-probe.json`, `mcp-gateway-audit.json`, `desktop-versions.json`,
+`desktop-gateway-action-1.json`, `desktop-gateway-action-2.json`, and retained
+`probe-output.log` in that state directory. No CAD measurement or approval claim.
+
+Ruff and whitespace checks passed for the probe extension. Installed 0.7.0 and
+its services remain unchanged. Actual Windows UI, arbitrary engineering tools,
+image perception, restart recovery for this profile and full engineering runs
+remain separate qualification work. This evidence advances the bounded desktop
+handoff requirement; it does not satisfy the engineering demonstration goal.
