@@ -53,7 +53,11 @@ def image_case(monkeypatch):
         "request_digest": request.digest,
         "binding_digest": request.binding.digest,
     }
-    client = SimpleNamespace(scope=AsyncMock(), call=AsyncMock(return_value=[item]))
+    client = SimpleNamespace(
+        scope=AsyncMock(),
+        call=AsyncMock(return_value=[item]),
+        binding=request.binding.model_dump(mode="json"),
+    )
     args = {
         "workspace_id": "workspace",
         "session_id": "session",
@@ -108,3 +112,11 @@ async def test_wrong_request_scope_digest_or_image_index_is_denied(image_case, p
     with pytest.raises(Exception):
         await server.call_tool("wright_reasoning_image", {**args, **patch})
     assert all(call.args[0] == "GET" for call in client.call.call_args_list)
+
+
+@pytest.mark.asyncio
+async def test_image_from_previous_connection_is_not_delivered(image_case):
+    server, client, _, args, _, _ = image_case
+    client.binding = {**client.binding, "connection_id": "replacement-connection"}
+    with pytest.raises(Exception, match="another frozen connection"):
+        await server.call_tool("wright_reasoning_image", args)

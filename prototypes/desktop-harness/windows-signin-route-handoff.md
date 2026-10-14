@@ -38,5 +38,7 @@ For the Windows agent:
 Retain separate evidence for synthetic route reachability, actual OAuth,
 protocol validation and Windows panel acceptance. If no working SSH path exists,
 report that limitation; do not invent a desktop forwarding API or switch accounts.
-The installed 0.4.0 plugin still needs a tested, scoped candidate update before
-these new sign-in controls are available in the actual desktop panel.
+The tested 0.6.0 candidate is now installed with these sign-in controls. This
+existing conversation still exposes the older tool connection; use a fresh
+conversation and verify the connection before testing. Actual Windows sign-in
+and panel acceptance remain unverified.

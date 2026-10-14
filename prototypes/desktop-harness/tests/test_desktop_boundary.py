@@ -171,3 +171,16 @@ def test_capability_flag_is_frozen_in_connection_identity(boundary):
     with pytest.raises(HTTPException) as failure:
         check(disabled)
     assert failure.value.status_code == 503
+
+
+def test_image_transport_is_opt_in_and_changes_frozen_connection(boundary):
+    from desktop_backend import DesktopBackend
+
+    default, service, _ = boundary
+    enabled = DesktopBackend(
+        service, default.state, 5201, confined_inspection=True, image_inputs=True
+    )
+    assert default.binding.image_input_profile == "unavailable"
+    assert enabled.binding.image_input_profile == "inline-png-jpeg-v1"
+    assert enabled.binding.connection_id != default.binding.connection_id
+    assert enabled.binding.digest != default.binding.digest

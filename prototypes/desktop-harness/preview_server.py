@@ -34,10 +34,17 @@ def main():
     parser.add_argument("--port", type=int, default=8097)
     parser.add_argument("--web-port", type=int, default=5197)
     parser.add_argument("--enable-desktop-bridge", action="store_true")
+    parser.add_argument(
+        "--enable-image-inputs",
+        action="store_true",
+        help="Experimental reasoning transport only; engineering image readiness stays gated",
+    )
     parser.add_argument("--enable-confined-inspection", action="store_true")
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
     args = parser.parse_args()
+    if args.enable_image_inputs and not args.enable_desktop_bridge:
+        parser.error("Image transport requires the opt-in desktop bridge")
     if args.enable_native_editor and not args.enable_desktop_bridge:
         parser.error("Native editor requires the opt-in desktop bridge")
     if args.enable_native_working_view and not args.enable_native_editor:
@@ -96,6 +103,7 @@ def main():
             state,
             args.web_port,
             confined_inspection=args.enable_confined_inspection,
+            image_inputs=args.enable_image_inputs,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
         )

@@ -633,3 +633,25 @@ the production return contract was not changed to satisfy the test. Ruff/diff
 checks passed. These are direct MCP-server function tests, not a wire/desktop
 perception proof. No installed profile selects the new 30-tool development bridge;
 installed 0.6.0 remains unchanged at 29 tools with image reasoning unavailable.
+
+## Image connection identity and opt-in composition
+
+The image read port now compares the pending request's full frozen binding with
+the live client binding, in addition to checking the supplied digests. A stale
+request from another connection is denied even when its own digests are valid.
+The preview composition exposes an explicit `--enable-image-inputs` flag that
+requires the desktop bridge; its value is included in the runtime identity and
+selects the typed image profile. It does not relax engineering source readiness.
+Installed 0.6.0 and all existing services remain unchanged.
+
+22 focused image/boundary tests passed (3.67s), including foreign-connection
+denial and default/opt-in frozen identity separation. Ruff and whitespace checks
+passed. Actual MCP wire delivery and desktop perception remain unverified; the
+flag is a development qualification option, not engineering-image acceptance.
+
+The repeated account response confirms the existing SteveCAD account prerequisite
+already recorded above. No sign-in, billing, workflow review or external-action
+approval is inferred. Corrected the Windows handoff's stale installed-version
+note to 0.6.0; callback routing and Windows observations are still pending.
+PR 153 remains draft with Windows backend CI in progress at this check; no merge
+or further push was attempted.

@@ -71,6 +71,7 @@ class DesktopBackend:
         confined_inspection=False,
         native_editor=False,
         native_working_view=False,
+        image_inputs=False,
     ):
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
@@ -84,6 +85,7 @@ class DesktopBackend:
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
+            "image_inputs": image_inputs,
             "files": {},
             "confined_inspection": confined_inspection,
             "native_editor": native_editor,
@@ -116,6 +118,7 @@ class DesktopBackend:
             ).hexdigest()
         self.binding = DesktopHarnessBinding(
             connection_id="wright-desktop-prototype:" + canonical_digest(runtime),
+            image_input_profile="inline-png-jpeg-v1" if image_inputs else "unavailable",
         )
         (self.state / "desktop-binding.json").write_text(
             self.binding.model_dump_json(indent=2)

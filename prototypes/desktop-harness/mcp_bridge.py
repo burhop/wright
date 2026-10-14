@@ -17,7 +17,11 @@ from urllib.parse import quote, urlsplit
 from uuid import uuid4
 from pydantic import TypeAdapter
 import anyio
-from core.desktop_reasoning import DesktopActionReply, DesktopReasoningRequest
+from core.desktop_reasoning import (
+    DesktopActionReply,
+    DesktopReasoningRequest,
+    DesktopHarnessBinding,
+)
 from core.process_validation import Identifier
 
 import httpx
@@ -744,6 +748,8 @@ def server(client, *, native_editor=False, native_working_view=False):
         request = DesktopReasoningRequest.model_validate_json(
             json.dumps(item["request"])
         )
+        if request.binding != DesktopHarnessBinding.model_validate(client.binding):
+            raise ValueError("Pending image belongs to another frozen connection")
         if request.digest != request_digest or request.binding.digest != binding_digest:
             raise ValueError("Frozen image request identity differs")
         images = reasoning_images(request)
