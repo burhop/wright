@@ -579,3 +579,14 @@ This composes actual upload/preparation/artifact owners with the native tool;
 it does not establish a live network, actual desktop UI or model image uptake.
 Combined with the separate real decoder fixture it strengthens local evidence,
 but cannot replace the required installed-host engineering demonstration.
+
+## Model-image handoff boundary audit
+
+The panel-image work does not enable model image tasks. Inspected the actual
+workflow reference, desktop adapter/request, pending-task tool and invocation
+redaction owners and recorded the concrete next spike in
+`model-image-handoff-spike.md`. Reuse inline references and existing durable
+request/evidence ownership with the unchanged 256 KiB total payload cap; do not
+remove rejection or invent an attachment store without qualification. Thirty-three
+existing desktop boundary/repository/execution tests passed together before any
+model-image change. Actual desktop image perception remains a required proof.
