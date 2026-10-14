@@ -1177,3 +1177,47 @@ not yet a rebuilt/served native-panel or Windows acceptance claim; actual review
 wait/decision/continuation and uncertain-ack browser proofs remain next work.
 TypeScript project build, scoped ESLint, Ruff and whitespace checks also passed.
 No native bundle or live plugin was updated in this checkpoint.
+
+## Actual native review wait, stale rejection and reopened decision
+
+Added `review_probe.py` over the existing MCP connection/probe helpers. The
+private fixture uses a saved indexed document and a manual artifact review,
+not an engineering approval. This desktop authored the requested inspection brief;
+Wright saved its exact output and persisted a real review wait. A second MCP
+process observed the same checkpoint, rejected a wrong subject (HTTP403), and
+submitted one explicitly synthetic changes-requested decision through the UI-only
+port. A third process read the exact recorded decision and original run.
+
+State `/tmp/wright-desktop-review-proof-20261014-02`, run
+`671f6851becd444b9469765cf3cfcb93`, checkpoint
+`d082b6e9208e44c692c9b3e65a4ff7dd`, reviewed-document SHA-256
+`dbf1e300ff246e4a4157668e72be5fa70042d61b43476e96f446a566d99caf90`.
+`review-probe.json` retains wait, denial, actor recorded by Wright, decision and
+reopen evidence. The run remains waiting_human; the changes request did not
+continue or replay work. The fixture's `integration_test:false` is the normal
+manual-owner attribution, not an assertion that this was a genuine engineering
+review. Its surrounding evidence explicitly labels the synthetic decision.
+
+Attempt01 correctly rejected the initial fixture because a manual review needs a
+saved indexed output. The first correction added indexing but omitted save_output;
+local compilation caught that before another run. The corrected fixture passed
+compilation and the actual run. Original failed state/log remains preserved.
+
+Rebuilt only this feature worktree's native resource (2,208,299 bytes, no external
+assets), leaving installed0.7.0 frozen. The actual native resource, MCP bridge and
+storage passed six browser-host checks through home Workflows/editor/Back/Files/
+Recent runs into this exact review, plus narrow/draft protection and source
+immutability. Evidence:
+`/tmp/wright-desktop-review-proof-20261014-02/browser-home-1792019930798/report.json`.
+Visually inspected `recorded-run.png`: the recorded changes request and exact file
+are visible. This is simulated-host browser proof, not Windows acceptance and not
+a browser-click mutation proof (the private decision used the real UI MCP port).
+
+Usability follow-up from the actual screenshot: after a recorded changes request,
+the generic heading still says “Review the result” and progress says waiting for
+review/response. Preserve the true backend state, but make the next-action guidance
+explain that changes were requested; do not imply another identical review is due.
+Actual approved local-review continuation and uncertain-ack browser scenarios also
+remain to be qualified. No real engineering decision or external dispatch occurred.
+The rebuilt resource/bridge and native-port regression passed 41 tests in1.74s;
+Ruff and whitespace checks passed. The probe exited0 and browser harness exited0.

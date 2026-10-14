@@ -157,7 +157,11 @@ try {
       await expect(frame.locator('.native-home')).toBeVisible();
       passed.push('changed source blocks exact-run navigation without substituting current source');
     } else {
-    await expect(frame.getByText('Process completed',{exact:true})).toBeVisible();
+    if (evidence.expected_review_decision) {
+      await expect(frame.getByText('Review recorded: ' + evidence.expected_review_decision,{exact:true})).toBeVisible();
+    } else {
+      await expect(frame.getByText('Process completed',{exact:true})).toBeVisible();
+    }
     await expect(frame.getByRole('button',{name:'Workspaces',exact:true})).toBeVisible();
     await expect(frame.locator('.native-home')).toHaveCount(0);
     await page.screenshot({path:resolve(output,'recorded-run.png')});
