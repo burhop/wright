@@ -1,6 +1,7 @@
 # Named experimental 0.7.0 update
 
-Prepared and protocol-qualified; not yet installed. Authorized within the saved
+Installed and independently protocol-verified on 14 October 2026. Receipts are
+indexed in `workspace-home-progress.md`; Windows acceptance remains pending. Authorized within the saved
 demo-readiness goal. Update only `wright-desktop-gb10-prototype`.
 
 Candidate marketplace:

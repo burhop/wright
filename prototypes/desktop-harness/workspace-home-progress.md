@@ -877,3 +877,32 @@ Installation still requires those local preflight/backup checks, followed by
 actual installed-byte/protocol verification. The saved goal already authorizes
 that named update; no new routine user approval is requested. Actual Windows
 behavior remains a distinct acceptance requirement.
+
+## Named 0.7.0 installed and independently verified
+
+Applied the saved-goal-authorized update after privately backing up configuration
+and the complete named cache under `/tmp/wright-desktop-plugin-update-20261014-02`
+(0700 directory, config copy 0600). The old 0.6.0 target had zero pending reasoning
+requests, zero native runs and zero canonical run-record files. Original services,
+workspaces and evidence were preserved.
+
+The three documented CLI commands succeeded. Semantic TOML comparison proves
+only the named marketplace source changed; the named plugin remains enabled and
+all unrelated settings match. CLI-evicted cache files for 0.3.0, 0.4.0 and 0.6.0
+were restored byte-exactly without changing the new selection. Installed 0.7.0
+manifest, MCP configuration and skill match the candidate. Private command and
+verification receipts are in the backup directory.
+
+The actual installed-package protocol check passed separately:
+`/tmp/wright-desktop-create-proof-20261014-01/installed-0.7.0.json`.
+It confirms 31 tools, the exact 2,208,170-byte resource and image-input profile
+`unavailable`. No desktop restart or provider sign-in occurred. This worktree now
+backs the installed runtime: **freeze runtime files here** and create a separate
+continuation checkout before more implementation. Documentation-only updates do
+not change the frozen runtime binding.
+
+Saved `desktop-07-walkthrough.md` for a fresh Windows desktop conversation on GB10.
+Installed-byte/protocol verification is complete; actual Windows rendering and
+user acceptance are still pending. The full engineering demonstration goal is
+not complete. The previous turn prepared/qualified the candidate; this turn
+changed the authorized named installation and verified its actual state.
