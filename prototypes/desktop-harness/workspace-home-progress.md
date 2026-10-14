@@ -655,3 +655,35 @@ approval is inferred. Corrected the Windows handoff's stale installed-version
 note to 0.6.0; callback routing and Windows observations are still pending.
 PR 153 remains draft with Windows backend CI in progress at this check; no merge
 or further push was attempted.
+
+## Actual MCP image wire and reconnect qualification
+
+Started a new loopback-only preview on port 8134 with isolated state
+`/tmp/wright-desktop-image-wire-20261014-01`, explicitly enabling image transport
+but no native editor, provider connections or engineering execution capability.
+The installed 0.6.0 service/plugin is unchanged. The previous turn made concrete
+progress (committed connection guards); this turn adds actual transport evidence.
+
+`image_wire_probe.py` creates a private workspace through the normal MCP tool,
+then inserts a clearly synthetic request through the existing durable request
+owner. It uses the retained 13,661-byte CAD capture, not a newly engineered result.
+The official Python MCP client starts the actual bridge process; that bridge calls
+the real authenticated HTTP service. Protocol 2025-11-25 delivered one PNG content
+block with exact SHA-256
+`b85a1e81d4e36cc2452df4f96a348e9e474c415207996b1884ddc312bd7a4adb`.
+The pending presentation omitted base64, a wrong digest returned an error without
+image content, and the original request remained unchanged. Receipt:
+`/tmp/wright-desktop-image-wire-20261014-01/image-wire.json`.
+
+`image_wire_lifecycle_probe.py` starts another actual MCP process against that
+same service/state and retrieves the identical image. It then cancels only this
+synthetic request through its existing repository owner: the same image call is
+denied and the original durable payload remains retained. Receipt:
+`/tmp/wright-desktop-image-wire-20261014-01/image-wire-lifecycle.json`.
+Both probes passed; Ruff passed. No model response was submitted, no engineering
+run exists, no workflow-cancel or API-restart claim is made. Actual desktop image
+perception, action-task image delivery and broader lifecycle qualification remain
+required before enabling dependent engineering tasks.
+
+The baseline Windows CI job 116123620167 was authoritatively confirmed still
+running its pytest step during this checkpoint. No cancellation/restart/merge.
