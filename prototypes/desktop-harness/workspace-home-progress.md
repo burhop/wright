@@ -860,3 +860,20 @@ in progress; no push/merge attempted.
 
 The previous turn was concrete workspace-creation implementation/qualification;
 this turn adds combined regression evidence and the required capability matrix.
+
+## Prepared 0.7.0 candidate, not installed
+
+Rechecked official plugin packaging and the installed CLI 0.159.2 add command.
+Used plugin-management, OpenAI Docs and skill-creator guidance for the scoped
+package and bundled instruction update. Prepared `native-home-07-candidate` while
+preserving the 0.6.0 package. Skill validation passed. The actual configured
+command passed `candidate_protocol_probe.py`: 31 tools, correct read/write/UI
+visibility, expected immutable resource and disabled model-image profile.
+Receipt: `/tmp/wright-desktop-create-proof-20261014-01/candidate-0.7.0.json`.
+
+`native-home-07-update.md` gives the exact update, backup/verification and scoped
+rollback to 0.6.0. No live plugin configuration changed in this checkpoint.
+Installation still requires those local preflight/backup checks, followed by
+actual installed-byte/protocol verification. The saved goal already authorizes
+that named update; no new routine user approval is requested. Actual Windows
+behavior remains a distinct acceptance requirement.

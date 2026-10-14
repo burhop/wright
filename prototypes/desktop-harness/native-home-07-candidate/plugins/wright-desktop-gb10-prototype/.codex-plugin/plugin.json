@@ -1,0 +1,21 @@
+{
+  "interface": {
+    "displayName": "Wright GB10 Prototype",
+    "shortDescription": "Engineering workflows beside your desktop conversation",
+    "longDescription": "Experimental Wright workspace creation, workflow editor, files discovery, recorded runs and scoped connection setup beside desktop chat. Wright retains execution and review authority.",
+    "developerName": "Wright",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Open Wright home so I can choose a workspace and inspect its workflows and connections."
+    ]
+  },
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "name": "wright-desktop-gb10-prototype",
+  "version": "0.7.0",
+  "description": "Experimental Wright bridge on an existing GB10-hosted desktop chat."
+}
