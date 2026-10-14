@@ -1241,3 +1241,32 @@ initially used the wrong working directory and made no edit; corrected afterward
 Whitespace check passed. Served/native browser verification of this correction
 is still pending. Installed 0.7.0, its frozen resource, services and saved review
 run were not changed. This is not engineering acceptance or full demo completion.
+
+## Served recorded-review guidance proof
+
+Rebuilt native-editor.html (2,208,736 bytes, zero external assets). Connecting
+that resource to the old private review service correctly failed with “Pinned
+native editor bytes changed; requalify before connecting”. The guard was retained.
+Created `/tmp/wright-desktop-review-display-20261014-01` as a private display-only
+copy, using SQLite backup and relocating only engineering_workspaces.local_path
+to the copied files. Historical synthetic decision/run identities are retained;
+this is not a continued or newly executed engineering run. The original state
+and service on 8148 remain unchanged. A separate service on 8149 records the new
+runtime/resource binding; this does not rewrite the historical run binding.
+
+Read-only browser walkthrough passed all six navigation/storage cases at
+`/tmp/wright-desktop-review-display-20261014-01/browser-home-1792020265835/`.
+It entered through Workflows, opened the shared editor, returned to the exact
+workspace, inspected Files and Recent runs, opened the same recorded decision,
+and checked narrow layout and unsaved-draft containment. Added assertions confirm
+Recorded review, absence of Your next step, paused checkpoint progress and explicit
+no-restart guidance. Accepted source is unchanged; no browser errors. The bridge
+fixture denies mutation tools, and the run was not resumed. Screenshot is actual
+browser rendering in a simulated host, not Windows acceptance. The first top-of-page
+capture omitted the lower review card; a separate scrolled capture was added.
+Installed named plugin remains 0.7.0; this candidate has not been installed.
+The scrolled review capture is
+`/tmp/wright-desktop-review-display-20261014-01/browser-home-1792020293390/recorded-review.png`;
+that read-only rerun passed the same six checks. Caption proposal: “Wright keeps
+review decisions and their evidence attached to the saved process. Browser
+prototype; private test fixture.” No external publication.

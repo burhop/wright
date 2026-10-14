@@ -159,12 +159,22 @@ try {
     } else {
     if (evidence.expected_review_decision) {
       await expect(frame.getByText('Review recorded: ' + evidence.expected_review_decision,{exact:true})).toBeVisible();
+      if (evidence.expected_review_decision === 'Changes requested') {
+        await expect(frame.getByRole('heading',{name:'Recorded review',exact:true})).toBeVisible();
+        await expect(frame.getByRole('heading',{name:'Your next step',exact:true})).toHaveCount(0);
+        await expect(frame.getByText('Paused at a review or response step',{exact:true})).toBeVisible();
+        await expect(frame.getByText(/does not itself revise or restart/)).toBeVisible();
+      }
     } else {
       await expect(frame.getByText('Process completed',{exact:true})).toBeVisible();
     }
     await expect(frame.getByRole('button',{name:'Workspaces',exact:true})).toBeVisible();
     await expect(frame.locator('.native-home')).toHaveCount(0);
     await page.screenshot({path:resolve(output,'recorded-run.png')});
+    if (evidence.expected_review_decision) {
+      await frame.getByRole('heading',{name:'Recorded review',exact:true}).scrollIntoViewIfNeeded();
+      await page.screenshot({path:resolve(output,'recorded-review.png')});
+    }
     await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
     await expect(workflow).toBeVisible();
     passed.push('recorded run discovered and exact working view opened without execution');
