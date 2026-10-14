@@ -1419,3 +1419,28 @@ Synthetic callback listener session43754 exited0 after its bounded120seconds.
 No receipt exists; desktop opening remained queued at the last observation.
 This is inconclusive for remote browser routing, not evidence that the callback
 route is working or broken. No real OAuth/sign-in or credential transfer occurred.
+
+## Frozen 0.8.0 command and copied-state qualification
+
+Frozen checkout `/tmp/wright-desktop-ui-files-candidate` at268bf094 is clean.
+Installed lockfile dependencies there with uv sync --frozen --all-packages
+--all-groups (initial root-only sync omitted workspace runtime dependencies).
+Service8151/session40685 uses `/tmp/wright-desktop-ui-files-state-20261014-01`.
+Before copying, verified old0.7 state had0 runs/approvals/reasoning requests. Copied
+workspace files and a consistent SQLite backup, relocating copied roots only;
+credential files/API token were excluded. Preserved old state/service/config.
+
+Exact package-command probe passed MCP2025-11-25,32tools, correct app-only preview
+visibility, image input unavailable and2210559-byte resource SHA
+86bebae5dd649f78213d48c910f9b27f2d38593bf30cfc88b77c4e46ff9bff2f.
+Receipt: candidate-0.8.0.json under new state. No enrolled/image flags enabled.
+
+First copied-state browser test incorrectly expected a text preview for the
+100583-byte SteveCAD source. The UI correctly returned its64KiB limit; retained
+failure browser-home-1792021380000. Corrected the fixture expectation, preserving
+that source and limit, and added a clearly labelled small UI note. Eight checks
+passed in browser-home-1792021428408: shared editor, Back, Files, explicit oversized
+handling, exact bounded note, saved setup recovery, narrow/draft behavior and
+unchanged source/no errors. Viewed file-preview.png. No setup or engineering action.
+The full SteveCAD source is available through the existing editor, not truncated.
+Named installation/backup and actual Windows acceptance remain pending.

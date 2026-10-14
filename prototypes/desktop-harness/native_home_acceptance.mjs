@@ -80,7 +80,7 @@ const server = createServer(async (req, res) => {
         (scoped.workspace_id !== evidence.scope.workspace_id || scoped.session_id !== evidence.scope.session_id) &&
         !(name === 'wright_workspace_files' && createdScope && scoped.workspace_id === createdScope.workspace_id && scoped.session_id === createdScope.session_id))
       throw Error('Fixture scope denied');
-    if (name === 'wright_workspace_file_preview' && args.path !== evidence.scope.path)
+    if (name === 'wright_workspace_file_preview' && ![evidence.scope.path, evidence.preview_path].includes(args.path))
       throw Error('Fixture preview file denied');
     if (name.startsWith('wright_workflow_') && args.path !== evidence.scope.path)
       throw Error('Fixture file denied');
@@ -138,8 +138,16 @@ try {
   await expect(frame.getByText('Text previews support files up to 64 KiB. Other file previews, upload and download are not available here yet.',{exact:true})).toBeVisible();
   await page.screenshot({path:resolve(output,'files.png')});
   passed.push('Files lists and filters real scoped storage; unavailable operations explicit');
-  if (evidence.preview_text !== undefined) {
+  if (evidence.expect_large_preview) {
     await frame.getByRole('button',{name:evidence.scope.path.split('/').at(-1),exact:true}).click();
+    await expect(frame.getByText('Text preview is unavailable. Choose an existing workspace text file up to 64 KiB.',{exact:true})).toBeVisible();
+    await frame.getByRole('button',{name:'Close preview',exact:true}).click();
+    passed.push('oversized source preview explicitly unavailable; full shared editor remains available');
+  }
+  if (evidence.preview_text !== undefined) {
+    const previewPath = evidence.preview_path ?? evidence.scope.path;
+    await frame.getByLabel('Find a file').fill(previewPath.split('/').at(-1));
+    await frame.getByRole('button',{name:previewPath.split('/').at(-1),exact:true}).click();
     await expect(frame.getByText('Read-only text preview · current saved file',{exact:true})).toBeVisible();
     expect(await frame.locator('section[aria-label="File preview"] pre').textContent()).toBe(evidence.preview_text);
     await page.screenshot({path:resolve(output,'file-preview.png')});
