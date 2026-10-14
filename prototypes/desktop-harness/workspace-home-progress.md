@@ -404,3 +404,29 @@ acceptance. No real workspace grant or engineering run was made. Installed
 plugin 0.4.0 and retained services remain unchanged. Returning after a full panel
 reload still needs durable plan discovery/recovery before a complete management
 claim; current mounted attempts intentionally do not offer automatic retries.
+
+## Reopen saved setup without recreating it
+
+The existing install-plan owner now provides a bounded read of the 20 newest
+plans for one exact workspace/provider. It queries the existing plan table;
+no new state store, scheduler or setup lifecycle was added. The scoped desktop
+endpoint filters exact identities again and returns only plan-list metadata.
+A UI-only transport operation and Saved setup control let the operator select
+an existing record and read its current full state through the existing owner.
+Opening history does not approve, apply, validate, enable or retry anything.
+Missing or unreadable history is distinct from an empty list. Expired or changed
+plans remain subject to existing mutation guards; reading history grants nothing.
+
+Verification: 87 existing install-plan/prototype tests passed, followed by the
+new endpoint scope-filtering test (passed). The owner test uses real isolated
+plan persistence and proves ordering, limit, workspace/provider exclusion and
+unchanged original records. Thirteen Connections/home UI tests passed, including
+reopening a completed plan using only catalog/list/read operations. Ruff,
+ESLint, TypeScript, diff checks and native bundle build passed (2,202,836 bytes,
+zero external assets). Real Windows reopening and provider authentication are
+still unverified; installed plugin/services were not changed.
+
+Baseline PR 153 remains at bcf03161. Current-head checks except the Windows
+backend job have completed successfully. The specific job 116123620167 is still
+in_progress in its Run pytest step, verified via the GitHub job API. No restart,
+additional push or premature merge was performed.

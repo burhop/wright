@@ -309,3 +309,46 @@ def test_plan_serialization_contains_no_import_secret(plan_database) -> None:
     )
     assert "super-secret" not in json.dumps(plan.model_dump(mode="json"))
     assert plan.requirements.credentials == ["API_TOKEN"]
+
+
+def test_saved_plan_discovery_is_bounded_and_workspace_provider_scoped(plan_database):
+    from tool_registry.install_plans import list_workspace_install_plans
+
+    database, snapshot, obs = plan_database
+    entry = next(
+        entry
+        for entry in load_canonical_entries()
+        if entry.id == "onshape-labs-featurescript-mcp"
+    )
+    plans = []
+    for workspace, scope in [
+        ("a", "workspace"),
+        ("a", "workspace"),
+        ("b", "workspace"),
+        (None, "global_registered"),
+    ]:
+        plans.append(
+            create_install_plan(
+                database,
+                snapshot_id=snapshot.snapshot_id,
+                observation=obs,
+                entry=entry,
+                actor="engineer",
+                requested_scope=scope,
+                workspace_id=workspace,
+                independently_completed_license=True,
+                now=NOW + timedelta(seconds=len(plans)),
+            )
+        )
+    found = list_workspace_install_plans(database, "a", plans[0].capability_id)
+    assert [plan.plan_id for plan in found] == [plans[1].plan_id, plans[0].plan_id]
+    assert (
+        len(
+            list_workspace_install_plans(database, "a", plans[0].capability_id, limit=1)
+        )
+        == 1
+    )
+    assert list_workspace_install_plans(database, "a", "other-provider") == []
+    assert get_install_plan(database, plans[0].plan_id) == plans[0]
+    with pytest.raises(ValueError):
+        list_workspace_install_plans(database, "a", plans[0].capability_id, limit=1000)

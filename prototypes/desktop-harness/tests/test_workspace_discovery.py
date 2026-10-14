@@ -412,3 +412,51 @@ async def test_workspace_enablement_retains_operator_scope_and_existing_owner(
         owner.enable_capability_for_workspace.assert_called_with("cad", "Alpha")
         owner.run_capability_validation.assert_not_called()
         owner.apply_install_plan.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_saved_setup_list_uses_exact_workspace_and_excludes_other_scopes(
+    discovery,
+):
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner = Mock()
+
+    def plan(workspace, capability, scope):
+        data = dict(
+            plan_id="saved",
+            capability_id=capability,
+            workspace_id=workspace,
+            state="completed",
+            created_at="2026-10-14",
+        )
+        return SimpleNamespace(
+            **data, requested_scope=scope, model_dump=lambda **_: data
+        )
+
+    owner.list_workspace_install_plans.return_value = [
+        plan("Alpha", "cad", "workspace"),
+        plan("Other", "cad", "workspace"),
+        plan("Alpha", "other", "workspace"),
+        plan("Alpha", "cad", "global_registered"),
+    ]
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.get(
+            "/api/desktop/connection-plans",
+            params={
+                "workspace_id": "Alpha",
+                "session_id": "desktop-Alpha",
+                "capability_id": "cad",
+            },
+        )
+    assert response.status_code == 200
+    assert len(response.json()["plans"]) == 1
+    assert response.json()["plans"][0]["workspace_id"] == "Alpha"
+    owner.list_workspace_install_plans.assert_called_once_with("Alpha", "cad")
+    owner.create_install_plan.assert_not_called()
+    owner.apply_install_plan.assert_not_called()

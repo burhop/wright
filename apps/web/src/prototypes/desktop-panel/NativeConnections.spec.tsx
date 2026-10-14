@@ -202,3 +202,56 @@ it("shows saved validation as historical evidence without retrying validation", 
   expect(call).toHaveBeenCalledTimes(1);
   expect(call.mock.calls[0][0]).toBe("wright_connections_list");
 });
+
+it("reopens an existing setup through reads only", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(reply())
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        capability_id: "cad",
+        plans: [
+          {
+            plan_id: "saved",
+            capability_id: "cad",
+            workspace_id: "a",
+            state: "completed",
+            created_at: "2026-10-14",
+          },
+        ],
+      },
+    })
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        plan: {
+          plan_id: "saved",
+          plan_digest: "a".repeat(64),
+          capability_id: "cad",
+          workspace_id: "a",
+          requested_scope: "workspace",
+          state: "completed",
+          effects: [],
+          blocking_reasons: [],
+        },
+      },
+    });
+  render(<NativeConnections workspace={workspace} call={call} />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Saved setup for CAD" }),
+  );
+  fireEvent.click(
+    await screen.findByRole("button", { name: /Open completed setup/ }),
+  );
+  expect(await screen.findByText("Plan state: completed.")).toBeVisible();
+  expect(call.mock.calls.map(([name]) => name)).toEqual([
+    "wright_connections_list",
+    "wright_connection_plans",
+    "wright_connection_plan_read",
+  ]);
+});

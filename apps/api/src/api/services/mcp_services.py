@@ -46,6 +46,7 @@ from tool_registry.install_plans import (
     approve_install_plan,
     create_install_plan,
     get_install_plan,
+    list_workspace_install_plans,
 )
 from tool_registry.onboarding import (
     apply_install_plan,
@@ -619,6 +620,9 @@ class McpApiService:
             independently_completed_license=independently_completed_license,
             now=self.capability_dependencies.clock(),
         )
+
+    def list_workspace_install_plans(self, workspace_id: str, capability_id: str):
+        return list_workspace_install_plans(self.db_path, workspace_id, capability_id)
 
     def get_install_plan(self, plan_id: str):
         return get_install_plan(self.db_path, plan_id)

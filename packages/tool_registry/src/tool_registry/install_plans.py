@@ -552,6 +552,22 @@ def create_install_plan(
     return plan
 
 
+def list_workspace_install_plans(
+    database_path: str | Path, workspace_id: str, capability_id: str, *, limit: int = 20
+) -> list[InstallPlan]:
+    """Read bounded saved plans for one exact workspace/provider; never resume work."""
+    if not 1 <= limit <= 50:
+        raise ValueError("plan history limit must be between 1 and 50")
+    with sqlite3.connect(str(database_path)) as connection:
+        rows = connection.execute(
+            """SELECT plan_json FROM mcp_install_plans
+               WHERE requested_scope='workspace' AND workspace_id=? AND capability_id=?
+               ORDER BY created_at DESC, plan_id DESC LIMIT ?""",
+            (workspace_id, capability_id, limit),
+        ).fetchall()
+    return [InstallPlan.model_validate_json(row[0]) for row in rows]
+
+
 def get_install_plan(database_path: str | Path, plan_id: str) -> InstallPlan:
     with sqlite3.connect(str(database_path)) as connection:
         row = connection.execute(

@@ -213,6 +213,38 @@ class DesktopBackend:
                 raise HTTPException(403, "Setup plan belongs to a different scope")
             return plan
 
+        @router.get("/connection-plans")
+        async def saved_connection_plans(
+            workspace_id: str,
+            session_id: str,
+            capability_id: str,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(workspace_id, session_id)
+            plans = service.list_workspace_install_plans(workspace_id, capability_id)
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "limit": 20,
+                "plans": [
+                    {
+                        key: plan.model_dump(mode="json")[key]
+                        for key in (
+                            "plan_id",
+                            "capability_id",
+                            "workspace_id",
+                            "state",
+                            "created_at",
+                        )
+                    }
+                    for plan in plans
+                    if plan.workspace_id == workspace_id
+                    and plan.requested_scope == "workspace"
+                    and plan.capability_id == capability_id
+                ],
+            }
+
         @router.get("/connection-plans/{plan_id}")
         async def read_connection_plan(
             plan_id: str,

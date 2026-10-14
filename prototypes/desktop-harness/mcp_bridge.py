@@ -387,6 +387,22 @@ def server(client, *, native_editor=False, native_working_view=False):
         )
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plans(
+        workspace_id: str, session_id: str, capability_id: str
+    ) -> dict[str, Any]:
+        """Find saved setup plans for this workspace/provider without creating or resuming setup."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-plans",
+            params={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+            },
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plan_read(
         workspace_id: str, session_id: str, plan_id: str
     ) -> dict[str, Any]:
