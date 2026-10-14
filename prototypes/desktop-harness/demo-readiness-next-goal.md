@@ -1,0 +1,20 @@
+/goal Continue and qualify Wright’s engineering-demo integration inside the OpenAI desktop harness using /tmp/wright-desktop-engineering-demos/prototypes/desktop-harness/demo-readiness-plan.md and the authorization, safeguards and completion criteria in its sibling demo-readiness-goal.md.
+
+Use the current continuation checkpoint, not the historical baseline. Reconcile the existing active goal rather than starting duplicate work. Work on GB10; the real desktop UI is Windows. Preserve all existing changes, worktrees, installed configurations, runs and evidence. Read AGENTS.md and its required documents. Recheck current source, services, plugin version and gate receipts before acting.
+
+Deliver in small, reviewable slices:
+1. Finish baseline qualification/integration and qualify the already implemented workspace-home candidate. Preserve its local work and reconcile its dependency on PR 153; do not rebuild it.
+2. Expose Connections using existing Wright catalog/custom-server setup, authentication, readiness and workspace permissions. Make sign-in/setup return to the exact workflow without copied identifiers.
+3. Complete the required desktop reasoning, Wright gateway and artifact paths for fresh copies of the existing SteveCAD native workflow. Prove the four-hole case and six-hole reuse of the same accepted source, with real deliverables and genuine review state.
+4. Complete Files, results, recent runs, declared reviews and reliable continuation. Preserve drafts, exact identities, permission boundaries and uncertain-outcome recovery. Opening or reconnecting must never replay an effect.
+5. Qualify the existing SteveCAD/OASiS multi-tool comparison with real artifact handoffs, original requirements and genuine engineering decisions. Regress changed shared mechanisms with Robot Tracking Diagnosis, affected manufacturing-preparation paths and existing platforms.
+
+Use one host chat and a compact contextual Wright panel. Preserve the shared neutral canvas and editor capabilities. Reuse the existing presentation adapter and backend owners. Qualify documented host entry/file hooks on the actual Windows build; use a single-panel selector and Back when native tabs are unavailable. Keep host-specific styling/navigation out of process execution. Do not build a new shell, generic host framework, database, scheduler, vendor MCP, or duplicate forms/services. Do not implement future harnesses now. Broad settings/Git parity must not delay the first complete engineering journey.
+
+Wright owns accepted processes, durable execution, validation, tool authority, reviews and recovery; the desktop supplies reasoning. Do not substitute another model worker or weaken the generated-UI no-tools gate. Show unsupported features honestly. Keep account consent, agent permissions, process inputs, engineering reviews and external-action approval distinct.
+
+Validate success, denial, stale configuration, cancellation, reconnect/restart, lost acknowledgements and uncertain effects. Verify both the normal Wright Workflows entry and the actual Windows panel; resolve the reported UI bugs through annotation. Use existing gates and evidence, rerunning checks when changes or failures warrant it. No successful engineering claim from mocked tools, fabricated acceptance or shell-prepared outputs.
+
+Use the full goal’s existing bounded implementation, named-plugin update and dev-integration authorization; no main/release, publishing, physical actions or protected campaigns. Ask only for genuinely missing login/consent, new billing, real engineering decisions or Windows observations. Continue independent work while waiting.
+
+At each useful milestone save a real screenshot, a short accurate social caption and a brief demo sequence; label browser previews and test fixtures and do not publish. Maintain the capability/evidence matrix. Finish with a repeatable desktop walkthrough, engineering artifacts, qualified code and explicit limitations. Keep the experimental label. Do not declare completion while a required live engineering or native-desktop proof is missing.

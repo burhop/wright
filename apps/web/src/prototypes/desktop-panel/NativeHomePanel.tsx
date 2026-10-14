@@ -170,7 +170,9 @@ export function NativeHomePanel({
                   onClick={() => {
                     setLoading(true);
                     setOpening(true);
-                    void onOpen(selected, file.path)
+                    // File-tree paths start at the workspace root; source identities
+                    // are relative to it. Preserve every other character exactly.
+                    void onOpen(selected, file.path.replace(/^\//, ""))
                       .catch(() =>
                         setError(
                           "The workflow could not be opened. Your saved source is unchanged.",

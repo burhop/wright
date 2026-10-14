@@ -35,7 +35,7 @@ const files = (workspace: typeof alpha, name: string) =>
     session_id: workspace.session_id,
     tree: {
       type: "directory",
-      children: [{ type: "file", name, path: `workflows/${name}` }],
+      children: [{ type: "file", name, path: `/workflows/${name}` }],
     },
   });
 

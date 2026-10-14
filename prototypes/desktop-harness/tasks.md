@@ -4,6 +4,10 @@ This record tracks verification, not product acceptance or release readiness.
 
 ## Next work — authorized 14 October 2026
 
+See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.md#current-continuation-checkpoint--14-october-2026)
+and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;
+finish the current home slice before duplicating implementation.
+
 The dependent feature worktree has an initial
 [workspace home slice](workspace-home-progress.md), with scoped backend and
 native-component checks. It is not installed and does not complete M1.

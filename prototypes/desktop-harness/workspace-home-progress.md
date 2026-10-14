@@ -64,3 +64,43 @@ General engineering and image gates remain in place. No engineering run occurred
 Dependency work uses a separate worktree so it cannot change the candidate under
 qualification or its active services. Its Python and Node dependencies are
 installed locally from the existing lockfiles; no global software was upgraded.
+
+## Real-storage browser qualification and path correction
+
+The official MCP client proof in
+`/tmp/wright-desktop-home-proof-20261014-01/home-probe.json` created one isolated
+workspace and saved an unchanged copy of the existing SteveCAD native workflow.
+List/home/file calls succeeded. This created source only, not an engineering run.
+
+The first browser probe found that file-tree paths have a leading slash while
+canonical workflow-source identities are relative. Home now removes that single
+root separator before opening; all remaining characters are preserved. The
+component fixture now uses actual file-tree path conventions. Five focused
+component tests pass; the rebuilt resource is 2,190,048 bytes with no external
+assets. A second browser attempt exposed a fixture mistake: at narrow width the
+editor uses its existing view selector, not the hidden wide-screen tab. The test
+now uses the visible selector; no editor capability or assertion was removed.
+
+The corrected `native_home_acceptance.mjs` probe passed against real isolated
+Wright owners. It verifies workspace discovery, source open, Back, narrow-home
+width, unsaved-draft navigation denial, unchanged accepted source digest and no
+browser errors. It only permits the four exact read operations and rejects any
+mutation. Evidence (including failed attempts) is retained under the state above;
+the passing report and screenshots are in `browser-home-1792013828358/`.
+
+This is a simulated MCP App host in Chromium on GB10, not Windows native
+acceptance, full editor responsive qualification, permission-prompt qualification
+or engineering execution. The server's frozen runtime predates the rebuilt UI;
+no run or continuation was attempted under that binding. Before further runtime
+qualification, use a new isolated candidate with matching recorded assets.
+
+Suggested social content, for review only:
+“Wright's workspace picker now opens a saved SteveCAD engineering workflow in our
+shared editor. This GB10 browser prototype also protects unsaved work when
+switching workspaces. Next: connection setup and real desktop-driven CAD runs.”
+Use `browser-home-1792013828358/editor.png` with its visible simulated-host label.
+Do not caption it as a completed CAD run or a Windows desktop capture.
+
+Next: qualify Connections through existing catalog/onboarding owners, preserving
+workspace scope and the return to the same workflow. Finish baseline gates and
+actual desktop acceptance independently; neither is implied by this browser pass.
