@@ -486,3 +486,27 @@ https://developers.openai.com/plugins/build/plugins
 
 Installed-package read-only protocol verification also passed: 29 tools and the
 exact resource hash, receipt `installed-0.6.0.json` in combined-proof state.
+
+## Continuation isolated from installed 0.6.0
+
+Further implementation now uses `/tmp/wright-desktop-engineering-demos-next`,
+branch `codex/desktop-engineering-demos-next`, based on 6e894f3d. Its locked
+`uv sync --frozen --all-packages --all-groups` completed in a separate environment.
+The selected plugin continues using the previous worktree and API8133 unchanged.
+This chat's actual connection-status tool still reports the preserved 0.4.0
+binding `115211f7574bf6f4a8b9dbb8866d9830825e182607fa470aee3e10e76799afed`,
+not API8133's `c94b7ca3a50b14a00a018c932b7781fb67fff5dba6fc63a5f804b56f37d43955`.
+Thus this chat's old tool inventory is confirmed, not inferred from a stale UI.
+Use the prepared fresh-chat walkthrough for actual Windows acceptance.
+
+The next engineering slice must qualify more than SteveCAD sign-in. Static
+inventory of the unchanged native workflow is retained in
+`engineering-dependency-inventory.json`: desktop AI responses, SteveCAD bounded
+agent/tool tasks, existing shell-backed transfer operations, document export and
+Blender rendering. Three saved provider UUIDs are local bindings, not portable
+capability identities. Do not silently remove those stages or replace their
+engineering outputs with text. Rebind through the existing accepted-source and
+readiness owners only after provider qualification. The current desktop adapter
+explicitly rejects image inputs, and the native representation port supports only
+bounded raw text; image/artifact handoff qualification is a real next requirement.
+No provider was installed/called and no source requirements changed in this audit.

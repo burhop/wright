@@ -1,0 +1,111 @@
+{
+  "source": "examples/stevecad-demonstrations/prompt-to-reviewed-cad/prompt-to-reviewed-cad-native.workflow.wflow",
+  "source_sha256": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+  "boundary": "static accepted-source dependency inventory; no provider use or execution",
+  "tasks": [
+    {
+      "authoring_template": "ai-prompt",
+      "output_format": "markdown"
+    },
+    {
+      "authoring_template": "ai-prompt",
+      "output_format": "markdown"
+    },
+    {
+      "authoring_template": "mcp-task",
+      "mcp_server": "stevecad-mcp",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-task",
+      "mcp_server": "stevecad-mcp",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "ai-prompt",
+      "output_format": "html"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4",
+      "mcp_tool": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4__shell_execute",
+      "mcp_schema_digest": "5be49730ebc2f82fddd46ef0284d05c3bc1e304c70dff4d0a6a4c1a0eb77327f",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "stevecad-mcp",
+      "mcp_tool": "stevecad-mcp__generate_model",
+      "mcp_schema_digest": "db316e0cade5a5632a2fb9afdac72b74d3ce18a7f69631dfd253559793e09b58",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4",
+      "mcp_tool": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4__shell_execute",
+      "mcp_schema_digest": "5be49730ebc2f82fddd46ef0284d05c3bc1e304c70dff4d0a6a4c1a0eb77327f",
+      "output_format": "text"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4",
+      "mcp_tool": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4__shell_execute",
+      "mcp_schema_digest": "5be49730ebc2f82fddd46ef0284d05c3bc1e304c70dff4d0a6a4c1a0eb77327f",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4",
+      "mcp_tool": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4__shell_execute",
+      "mcp_schema_digest": "5be49730ebc2f82fddd46ef0284d05c3bc1e304c70dff4d0a6a4c1a0eb77327f",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "8de879d3-9c37-463e-a289-3447cd2cd05d",
+      "mcp_tool": "8de879d3-9c37-463e-a289-3447cd2cd05d__export",
+      "mcp_schema_digest": "6265cab77cbdbfdb577066d35b0a8e32322b5010c0b121f3bf75af2dd1b374d8",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4",
+      "mcp_tool": "81be7bf8-1e8e-4a77-be0d-5acc6236a0b4__shell_execute",
+      "mcp_schema_digest": "5be49730ebc2f82fddd46ef0284d05c3bc1e304c70dff4d0a6a4c1a0eb77327f",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "18094520-ff0d-4647-92da-2ae2eda5419b",
+      "mcp_tool": "18094520-ff0d-4647-92da-2ae2eda5419b__execute_blender_code",
+      "mcp_schema_digest": "cc9a7a39a0b79505e5a2f53ac7c60a96ec9d5a587ff65296abe53a0d4db640f7",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "18094520-ff0d-4647-92da-2ae2eda5419b",
+      "mcp_tool": "18094520-ff0d-4647-92da-2ae2eda5419b__execute_blender_code",
+      "mcp_schema_digest": "cc9a7a39a0b79505e5a2f53ac7c60a96ec9d5a587ff65296abe53a0d4db640f7",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "18094520-ff0d-4647-92da-2ae2eda5419b",
+      "mcp_tool": "18094520-ff0d-4647-92da-2ae2eda5419b__execute_blender_code",
+      "mcp_schema_digest": "cc9a7a39a0b79505e5a2f53ac7c60a96ec9d5a587ff65296abe53a0d4db640f7",
+      "output_format": "json"
+    },
+    {
+      "authoring_template": "mcp-tool",
+      "mcp_server": "18094520-ff0d-4647-92da-2ae2eda5419b",
+      "mcp_tool": "18094520-ff0d-4647-92da-2ae2eda5419b__execute_blender_code",
+      "mcp_schema_digest": "cc9a7a39a0b79505e5a2f53ac7c60a96ec9d5a587ff65296abe53a0d4db640f7",
+      "output_format": "json"
+    }
+  ],
+  "limitations": [
+    "Provider UUIDs require deliberate local rebinding/qualification through existing owners",
+    "SteveCAD authentication alone does not qualify document export, rendering or image reasoning",
+    "Installed 0.6.0 keeps engineering execution gated"
+  ]
+}
