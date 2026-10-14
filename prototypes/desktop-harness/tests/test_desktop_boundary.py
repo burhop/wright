@@ -350,3 +350,61 @@ def test_image_input_profile_does_not_enable_generation(boundary):
     enabled = DesktopBackend(service, default.state, 5201, image_inputs=True)
     with pytest.raises(HTTPException, match="generation capabilities"):
         check(enabled)
+
+
+@pytest.fixture
+def direct_boundary(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_workflow_mcp_execution import (
+        mcp,
+        TOOL,
+        schema_digest,
+    )
+    from packages.workspace_service.tests.test_workflow_ai_task import source
+
+    default, service, _ = boundary
+    service.workflow_sources.read.return_value.source = source(mcp())
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = [
+        {
+            "server_id": TOOL.server_id,
+            "name": TOOL.name,
+            "schema_digest": schema_digest(TOOL),
+        }
+    ]
+    enabled = DesktopBackend(service, default.state, 5201, enrolled_mcp_tasks=True)
+    return default, enabled, service
+
+
+def test_direct_tool_requires_opt_in_and_exact_manual_enrollment(direct_boundary):
+    default, enabled, service = direct_boundary
+    with pytest.raises(HTTPException) as denied:
+        check(default)
+    assert denied.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+    with pytest.raises(HTTPException) as missing:
+        check(enabled, grant=False)
+    assert missing.value.status_code == 403
+    check(enabled)
+
+
+@pytest.mark.parametrize("changed", ["schema_digest", "name", "server_id"])
+def test_direct_tool_rejects_binding_drift(direct_boundary, changed):
+    _, enabled, service = direct_boundary
+    service.workflow_integration_policies.get.return_value["allowed_tools"][0][
+        changed
+    ] = "e" * 64
+    with pytest.raises(HTTPException) as denied:
+        check(enabled)
+    assert denied.value.status_code == 403
+
+
+def test_invalid_source_returns_structured_correction_without_policy_lookup(boundary):
+    backend, service, _ = boundary
+    service.workflow_sources.read.return_value.source = "not a workflow"
+    with pytest.raises(HTTPException) as denied:
+        check(backend)
+    assert denied.value.status_code == 400
+    assert denied.value.detail["code"]
+    assert denied.value.detail["message"]
+    assert denied.value.detail["correction"]
+    service.workflow_integration_policies.get.assert_not_called()

@@ -621,7 +621,10 @@ class DesktopBackend:
 
     async def qualify_digital_source(self, body, *, operation=""):
         """Prototype boundary: no physical or application execution capabilities."""
-        from workspace_service.workflow_source_execution import compile_prompt_workflow
+        from workspace_service.workflow_source_execution import (
+            compile_prompt_workflow,
+            WorkflowSourceExecutionError,
+        )
 
         if (
             not isinstance(body, dict)
@@ -637,7 +640,17 @@ class DesktopBackend:
         document = await self.service.workflow_sources.read(
             row["local_path"], body.get("path")
         )
-        plan = compile_prompt_workflow(document.source)
+        try:
+            plan = compile_prompt_workflow(document.source)
+        except WorkflowSourceExecutionError as error:
+            raise HTTPException(
+                400,
+                {
+                    "code": error.code,
+                    "message": str(error),
+                    "correction": error.correction,
+                },
+            ) from error
         if (
             not self.image_inputs
             and any(
@@ -650,15 +663,19 @@ class DesktopBackend:
                 503, "Desktop image input and generation capabilities are not qualified"
             )
         if any(
-            step.cad or step.application or step.external_action or step.tool_name
-            for step in plan.steps
+            step.cad or step.application or step.external_action for step in plan.steps
         ):
             raise HTTPException(
                 503,
-                "CAD, application, external-action and direct-tool execution remain unavailable in this prototype.",
+                "CAD, application and external-action execution remain unavailable in this prototype.",
             )
         tasks = [step for step in plan.steps if step.agent_task]
-        if tasks and self.enrolled_mcp_tasks:
+        direct = [step for step in plan.steps if step.tool_name]
+        if direct and not self.enrolled_mcp_tasks:
+            raise HTTPException(
+                503, "Direct-tool execution requires separate enrollment qualification"
+            )
+        if (tasks or direct) and self.enrolled_mcp_tasks:
             if any(not step.task_tool_allowlist for step in tasks):
                 raise HTTPException(
                     503, "Enrolled MCP tasks require explicit tool lists"
@@ -667,7 +684,7 @@ class DesktopBackend:
                 "/api/workspace/process-interfaces/runs",
                 "/api/workspace/workflow-sources/run",
             }:
-                self.qualify_enrolled_tasks(tasks, document, row, body)
+                self.qualify_enrolled_tasks(tasks, document, row, body, direct=direct)
             return
         if tasks and (
             not self.confined_inspection
@@ -719,7 +736,7 @@ class DesktopBackend:
                     "Confined inspection grant differs from the exact read-only scope",
                 )
 
-    def qualify_enrolled_tasks(self, tasks, document, workspace, body):
+    def qualify_enrolled_tasks(self, tasks, document, workspace, body, *, direct=()):
         """Opt-in qualification only; the existing runtime/gateway still owns dispatch."""
         from workspace_service.workflow_source_execution import (
             WorkflowSourceExecutionError,
@@ -739,13 +756,24 @@ class DesktopBackend:
             for step in tasks
             for name in step.task_tool_allowlist
         }
+        expected.update((step.server_id, step.tool_name) for step in direct)
         actual = {(tool["server_id"], tool["name"]) for tool in grant["allowed_tools"]}
+        schemas = {
+            (tool["server_id"], tool["name"]): tool.get("schema_digest")
+            for tool in grant["allowed_tools"]
+        }
+        direct_schemas_match = all(
+            step.schema_digest
+            and schemas.get((step.server_id, step.tool_name)) == step.schema_digest
+            for step in direct
+        )
         if (
             grant["workspace_id"] != workspace["workspace_id"]
             or grant["source_path"] != document.path
             or grant["source_digest"] != document.storage_digest
             or grant["approval_mode"] != "manual"
             or actual != expected
+            or not direct_schemas_match
         ):
             raise HTTPException(
                 403, "MCP task enrollment differs from the exact manual scope"

@@ -26,7 +26,12 @@ from checkpoint_probe import panel_request
 
 
 async def main(
-    state, qualified_read, *, native_working_view=False, enrolled_tasks=False
+    state,
+    qualified_read,
+    *,
+    native_working_view=False,
+    enrolled_tasks=False,
+    direct_tool=False,
 ):
     proof = state / "mcp-gateway-probe.json"
     if proof.exists():
@@ -46,11 +51,37 @@ async def main(
         if enrolled_tasks
         else SOURCE
     )
+    if direct_tool:
+        if not enrolled_tasks:
+            raise ValueError("Direct tool proof requires the explicit enrolled profile")
+        tool = established["allowed_tool"]
+        settings = {
+            "authoring_template": "mcp-tool",
+            "mcp_server": tool["server_id"],
+            "mcp_tool": tool["name"],
+            "mcp_schema_digest": tool["schema_digest"],
+            "mcp_arguments": json.dumps(
+                {"relativePath": "inputs/requirements.md", "includeText": True}
+            ),
+            "output_format": "json",
+            "output_filename": "outputs/probe/direct-inspection.json",
+        }
+        source += (
+            '\ntask direct_inspect\n  name: "Declared direct input inspection"\n'
+            '  purpose: "Inspect an exact enrolled input"\n  group: null\n  instructions: "Inspect only the specified file"\n'
+            "  step_type: work\n  performed_by: configured_tool\n  tool: null\n"
+            "  reusable_step: null\n  inputs: []\n"
+            '  outputs: [{"key":"result","name":"Inspection","kind":"structured_result","item":null,"required":true,"quantity":"one","description":"Observed file evidence"}]\n'
+            "  settings: " + json.dumps(settings) + "\nend\n"
+        )
+    if direct_tool:
+        source += '\nconnection inspect_then_direct\n  type: order\n  from: "inspect"\n  to: "direct_inspect"\n  label: "Then inspect the same enrolled input directly"\n  when: null\nend\n'
     evidence = {
         "transport": "MCP protocol client; installed desktop plugin unverified",
         "calls": [],
         "native_working_view": native_working_view,
         "qualification_profile": profile,
+        "direct_tool": direct_tool,
     }
     parameters = StdioServerParameters(
         command=sys.executable,
@@ -299,7 +330,7 @@ async def main(
             )
             if (
                 snapshot["state"] != "completed"
-                or evidence["dispatch_count"] != 1
+                or evidence["dispatch_count"] != (2 if direct_tool else 1)
                 or not evidence["input_unchanged"]
             ):
                 raise ValueError("The confined MCP journey was not qualified")
@@ -311,6 +342,7 @@ if __name__ == "__main__":
     parser.add_argument("--qualified-read", required=True, type=Path)
     parser.add_argument("--native-working-view", action="store_true")
     parser.add_argument("--enrolled-tasks", action="store_true")
+    parser.add_argument("--direct-tool", action="store_true")
     args = parser.parse_args()
     asyncio.run(
         main(
@@ -318,5 +350,6 @@ if __name__ == "__main__":
             args.qualified_read.resolve(strict=True),
             native_working_view=args.native_working_view,
             enrolled_tasks=args.enrolled_tasks,
+            direct_tool=args.direct_tool,
         )
     )

@@ -106,6 +106,6 @@
   "limitations": [
     "Provider UUIDs require deliberate local rebinding/qualification through existing owners",
     "SteveCAD authentication alone does not qualify document export, rendering or image reasoning",
-    "Installed 0.6.0 keeps engineering execution gated"
+    "Installed 0.7.0 keeps engineering execution gated; separate opt-in qualification now covers one actual image-input run and enrolled bounded/direct read-only gateway steps, not these providers"
   ]
 }

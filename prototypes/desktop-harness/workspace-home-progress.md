@@ -1046,3 +1046,46 @@ already freezes this option. 36 focused boundary/image tests passed in 3.86s;
 Ruff and whitespace checks passed. Installed 0.7.0 remains unchanged and gated.
 No engineering capture accuracy, automatic native delivery, image-action task,
 restart recovery or full SteveCAD demonstration is claimed. Those remain required.
+
+## Declared direct tools use the same exact enrolled gateway boundary
+
+Extended the existing off-by-default enrolled-task option to include declared
+`mcp-tool` steps. The start boundary now compares the union of bounded-task tool
+names and declared direct tools against the exact manual enrollment. Every direct
+step also needs the same schema digest as the enrollment. No new executor,
+provider wrapper, enrollment endpoint or automatic permission was introduced.
+Default installed behavior still denies direct tools. CAD/application/external
+steps and native image generation remain gated. Runtime/gateway owners retain
+actual dispatch, schema/input/permission checks and durable evidence.
+
+The existing MCP proof now optionally connects a declared direct inspection after
+the desktop-reasoned inspection. Both use the real read-only workspace inspection
+provider. Run `f2d81314bd2f4e38bbffdac2fd7faefc` completed through API8146 in fresh
+state `/tmp/wright-desktop-direct-proof-20261014-04`. Source digest
+`aef9a7a8c41ba7c6cb0d042cf11363d035d5259ea4e168dc273712e073c7cf95`.
+Actual audit: two successful gateway dispatches; no-enrollment start denied;
+input unchanged. The direct result has
+SHA-256 `6a43d80ec807b26f87077a03f6c4da442b0c1276a14ee78c7b82853538bcb966`;
+its parsed content records the same 267-byte input and observed hash/text. Exact
+receipts and both desktop decisions remain in that state's MCP probe/audit files.
+This is a shared transport qualification, not a SteveCAD/export/rendering proof.
+
+Attempt01 correctly rejected a disconnected fixture, exposing a prototype error
+translation bug: compiler errors escaped as non-JSON server errors. The boundary
+now returns structured HTTP400 with the existing code/message/correction, without
+changing compiler validation. Attempts02/03 rejected incomplete authoring fields;
+the first string edit did not apply, so the repeated rejection is retained rather
+than hidden. Attempt04 used verified complete fields and an explicit order edge.
+All attempt states/logs remain. These are fixture defects, not provider defects.
+
+33 focused boundary tests passed; the owning boundary/MCP-runtime/integration-
+policy regression then passed **95 tests in 1.31s** with local IPC access. The
+restricted run stalled at an asynchronous runtime case; only its identified PID
+1647651 was stopped (exit143) before the unchanged suite was run successfully.
+Ruff and whitespace checks passed. No installed plugin update or provider login.
+
+Exact merged-dev a6136138 post-merge checks now show Python/frontend/public-alpha,
+CodeQL/docs success. Windows and engineering-image jobs were still running at the
+last check; no deployment/health completion claim. SteveCAD login, real provider
+binding, engineering images, genuine reviews and the required different-workflow
+regressions remain open.
