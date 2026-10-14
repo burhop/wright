@@ -27,7 +27,10 @@ let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
 const processCall: NativeProcessCall = (name, request) =>
   app.callServerTool({ name, arguments: { request } });
 const homeCall: HomeCall = (name, arguments_) =>
-  app.callServerTool({ name, arguments: arguments_ });
+  app.callServerTool(
+    { name, arguments: arguments_ },
+    name === "wright_connection_validate" ? { timeout: 360_000 } : undefined,
+  );
 function home() {
   if (dirty) {
     notice.textContent =
@@ -40,6 +43,11 @@ function home() {
     root.render(
       <NativeHomePanel
         call={homeCall}
+        openLink={async (url) => {
+          const result = await app.openLink({ url });
+          if (result.isError)
+            throw new Error("Host declined sign-in navigation");
+        }}
         onOpen={async (workspace, path) => {
           const request = ++generation;
           const scope = {

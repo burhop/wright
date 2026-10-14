@@ -22,7 +22,7 @@ from core.process_validation import Identifier
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
 from mcp.server.fastmcp import FastMCP
-from mcp.types import ToolAnnotations
+from mcp.types import CallToolResult, TextContent, ToolAnnotations
 
 WORKSPACE_PANEL_HTML = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -383,6 +383,56 @@ def server(client, *, native_editor=False, native_working_view=False):
             "GET",
             "/api/desktop/connection-plans/" + quote(plan_id, safe=""),
             params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+
+    @mcp.tool(
+        annotations=read, structured_output=False, meta={"ui": {"visibility": ["app"]}}
+    )
+    async def wright_connection_signin(
+        workspace_id: str, session_id: str, plan_id: str
+    ) -> CallToolResult:
+        """Read operator sign-in presentation. Transient links are app-private, never model content."""
+        await client.scope(workspace_id, session_id)
+        data = await client.call(
+            "GET",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/signin",
+            params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+        public = {
+            key: data[key]
+            for key in ("workspace_id", "session_id", "plan_id", "presentation")
+        }
+        return CallToolResult(
+            content=[
+                TextContent(
+                    type="text",
+                    text="Operator sign-in status read. No login was started.",
+                )
+            ],
+            structuredContent=public,
+            _meta={
+                "wright/signin": {
+                    "authorization_url": data.get("authorization_url"),
+                    "callback_uri": data.get("callback_uri"),
+                }
+            },
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_validate(
+        workspace_id: str, session_id: str, plan_id: str, plan_digest: str
+    ) -> dict[str, Any]:
+        """Explicit operator protocol validation of installed setup; may await sign-in, never grants workflow tools."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/validate",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan_digest": plan_digest,
+            },
+            timeout=360,
         )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})

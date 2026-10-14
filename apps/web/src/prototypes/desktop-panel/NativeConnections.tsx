@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
+import { NativeSignin } from "./NativeSignin";
 
 export type ConnectionsCall = (
   name:
     | "wright_connections_list"
     | "wright_connection_plan"
     | "wright_connection_plan_read"
-    | "wright_connection_plan_update",
+    | "wright_connection_plan_update"
+    | "wright_connection_signin"
+    | "wright_connection_validate",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
@@ -41,9 +44,11 @@ interface SetupPlan {
 export function NativeConnections({
   workspace,
   call,
+  openLink,
 }: {
   readonly workspace: DesktopWorkspace;
   readonly call: ConnectionsCall;
+  readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
@@ -339,10 +344,20 @@ export function NativeConnections({
           )}
         </section>
       )}
-      <p>
-        Sign-in and workspace permission changes are not yet available in this
-        panel.
-      </p>
+      {plan?.state === "completed" && (
+        <NativeSignin
+          key={plan.plan_id}
+          scope={{
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            plan_id: plan.plan_id,
+            plan_digest: plan.plan_digest,
+          }}
+          call={call}
+          openLink={openLink}
+        />
+      )}
+      <p>Workspace permission changes are not yet available in this panel.</p>
     </section>
   );
 }

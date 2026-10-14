@@ -316,3 +316,33 @@ The new endpoints are not exposed as model tools or installed plugin controls.
 Next expose sensitive sign-in URLs only in app-private UI metadata, qualify long
 validation/readback/cancellation behavior, and establish the actual Windows-to-
 GB10 callback route. No real account login was started in this checkpoint.
+
+## Operator sign-in panel — local qualification
+
+The completed setup plan now offers explicit sign-in/protocol validation and
+read-only status controls. The MCP bridge puts transient authorization and callback
+URLs only in app-private metadata, never model-visible content/structured data.
+Private metadata is presentation, not access control: existing administrator,
+workspace/session, exact-plan and digest checks remain authoritative. The host
+opens the URL only after the operator clicks; no browser fallback or automatic
+validation retry is introduced. Workspace tool permission remains separate.
+
+The panel ignores late polling/manual status responses after validation finishes,
+clears pending links, and reports lost acknowledgements as unconfirmed. One
+validation request is allowed per mounted attempt. Host reload/recovery and the
+six-minute request timeout still need real-host qualification; this does not
+claim durable validation cancellation or safe automatic retry.
+
+Verification: all 76 prototype Python tests passed (4.54s, local IPC enabled).
+The restricted-sandbox attempt stopped progressing in endpoint tests and was
+interrupted; it is not a pass. Three frontend suites passed 12 tests, followed by
+all four sign-in tests after adding the late-manual-response regression. ESLint,
+TypeScript and diff whitespace checks passed. The native bundle rebuilt to
+2,199,676 bytes with zero external assets. An initial build command used the wrong
+script path and failed before building; rerunning apps/web/build-native-panel.mjs
+succeeded. These are synthetic/local checks, not Windows or SteveCAD acceptance.
+
+Installed plugin 0.4.0 and retained API services were not updated. The current
+candidate still requires a qualified Windows-to-GB10 callback route before real
+sign-in. Existing account/terms completion is confirmed by the user; no new
+account, billing choice, credentials, OAuth consent or engineering run is implied.

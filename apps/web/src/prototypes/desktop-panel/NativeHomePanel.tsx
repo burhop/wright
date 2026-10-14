@@ -23,7 +23,9 @@ export type HomeCall = (
     | "wright_connections_list"
     | "wright_connection_plan"
     | "wright_connection_plan_read"
-    | "wright_connection_plan_update",
+    | "wright_connection_plan_update"
+    | "wright_connection_signin"
+    | "wright_connection_validate",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 
@@ -43,9 +45,11 @@ function workflows(node: FileNode): FileNode[] {
 export function NativeHomePanel({
   call,
   onOpen,
+  openLink,
 }: {
   readonly call: HomeCall;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
+  readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [items, setItems] = useState<DesktopWorkspace[]>([]);
   const [selected, setSelected] = useState<DesktopWorkspace>();
@@ -177,6 +181,7 @@ export function NativeHomePanel({
           key={selected.workspace_id}
           workspace={selected}
           call={call}
+          openLink={openLink}
         />
       )}
       {selected && view === "workflows" && (

@@ -106,3 +106,37 @@ async def test_denied_scope_never_reads_catalog_and_invalid_catalog_is_not_empty
     client.scope.side_effect = None
     with pytest.raises(Exception, match="validation"):
         await bridge.call_tool("wright_connections_list", args)
+
+
+@pytest.mark.asyncio
+async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    private_url = "https://issuer.example/authorize?state=synthetic-private"
+    client = SimpleNamespace(
+        scope=AsyncMock(),
+        call=AsyncMock(
+            return_value={
+                "workspace_id": "w",
+                "session_id": "s",
+                "plan_id": "p",
+                "presentation": "awaiting_user",
+                "authorization_url": private_url,
+                "callback_uri": "http://127.0.0.1:9505/oauth/callback",
+            }
+        ),
+    )
+    bridge = server(client)
+    tool = next(
+        t for t in await bridge.list_tools() if t.name == "wright_connection_signin"
+    )
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    result = await bridge.call_tool(
+        "wright_connection_signin",
+        {"workspace_id": "w", "session_id": "s", "plan_id": "p"},
+    )
+    assert result.meta["wright/signin"]["authorization_url"] == private_url
+    assert private_url not in str(result.content)
+    assert private_url not in str(result.structuredContent)
+    assert "9505" not in str(result.structuredContent)
