@@ -10,6 +10,7 @@ import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeProcessCall } from "./native-process-client";
+import { NativeHomePanel, type HomeCall } from "./NativeHomePanel";
 
 const root = createRoot(document.getElementById("editor")!);
 const notice = document.getElementById("notice")!;
@@ -25,6 +26,40 @@ let dirty = false;
 let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
 const processCall: NativeProcessCall = (name, request) =>
   app.callServerTool({ name, arguments: { request } });
+const homeCall: HomeCall = (name, arguments_) =>
+  app.callServerTool({ name, arguments: arguments_ });
+function home() {
+  if (dirty) {
+    notice.textContent =
+      "Your draft is kept. Save it before changing workspace.";
+    return;
+  }
+  generation++;
+  notice.textContent = "";
+  renderCurrent = () =>
+    root.render(
+      <NativeHomePanel
+        call={homeCall}
+        onOpen={async (workspace, path) => {
+          const request = ++generation;
+          const scope = {
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            path,
+          };
+          const result = await app.callServerTool({
+            name: "wright_workflow_open",
+            arguments: scope,
+          });
+          if (request !== generation || dirty) return;
+          args = scope;
+          pending = result;
+          await open();
+        }}
+      />,
+    );
+  renderCurrent(app.getHostContext());
+}
 function theme(ctx?: McpUiHostContext) {
   if (!ctx) return;
   if (ctx.theme) applyDocumentTheme(ctx.theme);
@@ -56,6 +91,14 @@ async function open() {
       ? (args.request as Record<string, unknown>)
       : args),
   };
+  if (
+    pending?.structuredContent?.view === "home" &&
+    !pending.isError &&
+    typeof input.workspace_id !== "string"
+  ) {
+    home();
+    return;
+  }
   if (
     !pending ||
     typeof input.workspace_id !== "string" ||
@@ -133,23 +176,28 @@ async function open() {
     }
     renderCurrent = (context) =>
       root.render(
-        <NativePanelContent
-          key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
-          initial={document}
-          sourceClient={client}
-          call={processCall}
-          sessionId={String(input.session_id)}
-          workspaceName={data.workspace?.workspace_name ?? "Workspace"}
-          initialProcess={process}
-          initialRunId={
-            typeof input.run_id === "string" ? input.run_id : undefined
-          }
-          workingViewEnabled={data.working_view_enabled === true}
-          theme={context?.theme}
-          onDirty={(value) => {
-            dirty = value;
-          }}
-        />,
+        <div className="native-workspace-frame">
+          <nav aria-label="Wright navigation">
+            <button onClick={home}>Workspaces</button>
+          </nav>
+          <NativePanelContent
+            key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
+            initial={document}
+            sourceClient={client}
+            call={processCall}
+            sessionId={String(input.session_id)}
+            workspaceName={data.workspace?.workspace_name ?? "Workspace"}
+            initialProcess={process}
+            initialRunId={
+              typeof input.run_id === "string" ? input.run_id : undefined
+            }
+            workingViewEnabled={data.working_view_enabled === true}
+            theme={context?.theme}
+            onDirty={(value) => {
+              dirty = value;
+            }}
+          />
+        </div>,
       );
     renderCurrent(app.getHostContext());
     requestAnimationFrame(() => theme(app.getHostContext()));

@@ -4,6 +4,10 @@ This record tracks verification, not product acceptance or release readiness.
 
 ## Next work — authorized 14 October 2026
 
+The dependent feature worktree has an initial
+[workspace home slice](workspace-home-progress.md), with scoped backend and
+native-component checks. It is not installed and does not complete M1.
+
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its
 [baseline correction evidence](ui-concepts/2026-10-12/baseline-correction-20261014.md)

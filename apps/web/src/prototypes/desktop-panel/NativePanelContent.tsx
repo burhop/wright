@@ -118,7 +118,7 @@ export function NativePanelContent({
     setView("editor");
   };
   return (
-    <div style={{ height: "100dvh", minHeight: 0 }}>
+    <div style={{ height: "100%", minHeight: 0 }}>
       {notice && <p role="status">{notice}</p>}
       <div
         style={{

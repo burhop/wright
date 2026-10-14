@@ -294,6 +294,23 @@ def server(client, *, native_editor=False, native_working_view=False):
         return await client.call("POST", "/api/desktop/workspaces", json={"name": name})
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_workspace_list() -> dict[str, Any]:
+        """Find this connection's Wright workspaces without activating or rebinding sessions."""
+        return await client.call("GET", "/api/desktop/workspaces")
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_workspace_files(
+        workspace_id: str, session_id: str
+    ) -> dict[str, Any]:
+        """Browse scoped workspace file metadata without reading contents or running files."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            f"/api/desktop/workspaces/{workspace_id}/files",
+            params={"session_id": session_id},
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workflow_read(
         workspace_id: str, session_id: str, path: str
     ) -> dict:
@@ -521,6 +538,18 @@ def server(client, *, native_editor=False, native_working_view=False):
         )
         async def native_editor_resource() -> str:
             return html
+
+        @mcp.tool(
+            title="Open Wright",
+            annotations=read,
+            meta={"ui": {"resourceUri": uri, "visibility": ["model", "app"]}},
+        )
+        async def wright_home() -> dict[str, Any]:
+            """Open Wright's workspace picker beside this conversation. This only reads."""
+            return {
+                "view": "home",
+                **await client.call("GET", "/api/desktop/workspaces"),
+            }
 
         @mcp.tool(
             title="Open Wright workflow",

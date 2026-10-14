@@ -1,0 +1,161 @@
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, Mock
+
+from fastapi import FastAPI
+import httpx
+import pytest
+
+from data_vault import WorkspaceRepository, upgrade_database
+from workspace_service.use_cases.lifecycle import WorkspaceLifecycleUseCases
+
+
+@pytest.fixture
+def discovery(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from desktop_backend import DesktopBackend
+
+    database = str(tmp_path / "state.db")
+    upgrade_database(database)
+    secrets = Mock()
+    repository = WorkspaceRepository(database, secrets=secrets)
+    service = SimpleNamespace(
+        db_path=database,
+        repository=repository,
+        lifecycle=WorkspaceLifecycleUseCases(repository),
+        files=SimpleNamespace(
+            tree=AsyncMock(return_value={"type": "directory", "children": []})
+        ),
+    )
+    backend = DesktopBackend(service, tmp_path, 5207)
+    app = FastAPI()
+    app.state.desktop_service = service
+    app.include_router(backend.router())
+
+    def create(name, *, agent="openai-desktop-harness", outside=False, missing=False):
+        directory = tmp_path / ("outside" if outside else "workspaces") / name
+        if not missing:
+            directory.mkdir(parents=True)
+        session = "desktop-" + name
+        repository.create(name, session, str(directory), workspace_name=name)
+        repository.associate_session(name, session, agent_id=agent)
+        return directory
+
+    return app, repository, secrets, create, tmp_path
+
+
+async def read(app):
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        return await client.get("/api/desktop/workspaces")
+
+
+@pytest.mark.asyncio
+async def test_lists_only_owned_desktop_scopes_without_rebinding(discovery):
+    app, repository, secrets, create, _ = discovery
+    create("Zulu")
+    create("Alpha")
+    create("Hermes", agent="hermes")
+    create("Outside", outside=True)
+    repository.associate_session(
+        "Alpha", "new-hermes-default", agent_id="hermes", updated_at=9999999999
+    )
+    before = repository.list_all()
+    sessions = repository.list_sessions("Alpha")
+    response = await read(app)
+    assert response.status_code == 200
+    items = response.json()["workspaces"]
+    assert [item["workspace_name"] for item in items] == ["Alpha", "Zulu"]
+    assert items[0]["session_id"] == "desktop-Alpha"
+    assert all(item["available"] for item in items)
+    assert all("local_path" not in item and "git_token" not in item for item in items)
+    assert repository.list_all() == before
+    assert repository.list_sessions("Alpha") == sessions
+    assert not secrets.mock_calls
+
+
+@pytest.mark.asyncio
+async def test_missing_owned_workspace_is_visible_but_unavailable(discovery):
+    app, _, _, create, _ = discovery
+    create("Missing", missing=True)
+    response = await read(app)
+    assert response.json()["workspaces"] == [
+        {
+            "workspace_id": "Missing",
+            "session_id": "desktop-Missing",
+            "workspace_name": "Missing",
+            "available": False,
+            "reason": "Workspace directory is unavailable",
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_symlink_outside_connection_does_not_disclose_workspace(discovery):
+    app, _, _, create, root = discovery
+    directory = create("Escape")
+    directory.rmdir()
+    target = root / "unrelated"
+    target.mkdir()
+    directory.symlink_to(target, target_is_directory=True)
+    assert (await read(app)).json() == {"workspaces": []}
+
+
+@pytest.mark.asyncio
+async def test_catalog_failure_is_not_reported_as_empty_success(discovery, monkeypatch):
+    app, repository, _, _, _ = discovery
+    monkeypatch.setattr(
+        repository, "list_all", Mock(side_effect=RuntimeError("database unavailable"))
+    )
+    with pytest.raises(RuntimeError, match="database unavailable"):
+        await read(app)
+
+
+@pytest.mark.asyncio
+async def test_bridge_discovery_is_read_only_and_preserves_failure(monkeypatch):
+
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        call=AsyncMock(return_value={"workspaces": []}), scope=AsyncMock()
+    )
+    bridge = server(client)
+    tool = next(
+        tool
+        for tool in await bridge.list_tools()
+        if tool.name == "wright_workspace_list"
+    )
+    assert tool.annotations.readOnlyHint
+    assert tool.outputSchema["type"] == "object"
+    assert tool.meta["ui"]["visibility"] == ["model", "app"]
+    _, result = await bridge.call_tool("wright_workspace_list", {})
+    assert result == {"workspaces": []}
+    client.call.assert_awaited_once_with("GET", "/api/desktop/workspaces")
+    client.scope.assert_not_awaited()
+    client.call.side_effect = RuntimeError("connection unavailable")
+    with pytest.raises(Exception, match="connection unavailable"):
+        await bridge.call_tool("wright_workspace_list", {})
+
+
+@pytest.mark.asyncio
+async def test_file_tree_reuses_owner_and_denies_wrong_session_before_read(discovery):
+    app, _, _, create, _ = discovery
+    directory = create("Alpha")
+    files = app.state.desktop_service.files
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        denied = await client.get(
+            "/api/desktop/workspaces/Alpha/files", params={"session_id": "wrong"}
+        )
+        assert denied.status_code == 403
+        files.tree.assert_not_awaited()
+        response = await client.get(
+            "/api/desktop/workspaces/Alpha/files",
+            params={"session_id": "desktop-Alpha"},
+        )
+        assert response.status_code == 200
+        assert response.json()["session_id"] == "desktop-Alpha"
+        files.tree.assert_awaited_once_with(str(directory))

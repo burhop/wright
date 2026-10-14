@@ -252,6 +252,60 @@ class DesktopBackend:
                 "url": f"http://127.0.0.1:{self.web_port}/workspace/{workspace_id}?host=openai-desktop",
             }
 
+        @router.get("/workspaces")
+        async def list_workspaces():
+            items = []
+            for row in self.service.lifecycle.list_all():
+                root = Path(row["local_path"]).resolve()
+                if not root.is_relative_to(self.state / "workspaces"):
+                    continue
+                for session in self.service.repository.list_sessions(
+                    row["workspace_id"]
+                ):
+                    if session["agent_id"] != "openai-desktop-harness":
+                        continue
+                    available = root.is_dir()
+                    try:
+                        self.workspace(row["workspace_id"], session["session_id"])
+                    except HTTPException as error:
+                        if error.status_code != 403:
+                            raise
+                        continue
+                    except OSError:
+                        available = False
+                    items.append(
+                        {
+                            "workspace_id": row["workspace_id"],
+                            "session_id": session["session_id"],
+                            "workspace_name": row.get("workspace_name") or root.name,
+                            "available": available,
+                            "reason": None
+                            if available
+                            else "Workspace directory is unavailable",
+                        }
+                    )
+                    # The repository orders sessions by recency. Discovery offers
+                    # that explicit scope; it never activates or rebinds a session.
+                    break
+            return {
+                "workspaces": sorted(
+                    items,
+                    key=lambda item: (
+                        item["workspace_name"].casefold(),
+                        item["workspace_id"],
+                    ),
+                )
+            }
+
+        @router.get("/workspaces/{workspace_id}/files")
+        async def workspace_files(workspace_id: str, session_id: str):
+            row = self.workspace(workspace_id, session_id)
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "tree": await self.service.files.tree(row["local_path"]),
+            }
+
         @router.get("/reasoning")
         async def pending(workspace_id: str, session_id: str):
             self.workspace(workspace_id, session_id)
