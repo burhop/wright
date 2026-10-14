@@ -94,3 +94,26 @@ fix. The existing Docker security contract now retains the pin. No exception,
 host package installation or running-image change is made. Build and scan the
 new committed image before repeating the gate; x64 remains separately qualified
 by its CI build and checks.
+
+## Completed local qualification checkpoint
+
+Full `scripts/check-dev-merge.sh` passed on `e5b39c57` at 21:43 UTC,
+14 October 2026, with the isolated gate environment and exact patched image.
+Receipt/log are in `/tmp/wright-desktop-demo-baseline-20261014-02/merge-gate.json`
+and `merge-gate.log` (SHA-256
+`d6c4a03441f1cb3a4ff053909cf29e332b7d2a05b1740c47afdcbe25f6bed750`).
+The full gate explicitly skipped Playwright for the retained GB10 limitation.
+
+The separate supported browser matrix reported 159 passed, five skipped and one
+failed catalog test at `capability-library.spec.ts:406`. Its trace shows page
+module bootstrap unfinished before the API-response wait expired, with no API
+requests made. The unchanged exact test passed against fresh isolated state and
+ports in `/tmp/wright-desktop-demo-catalog-repro-20261014-01/host-browser.json`.
+Retain both attempts; this is not a claim that the original matrix was all green.
+Current-head hosted browser coverage including WebKit remains required.
+
+The build-generated web outputs were archived as `generated-web-after.tar`
+before restoring only the verified generated-file set; the clean pre-gate
+tracked version is also retained. No other worktree or live service was changed.
+The current documentation-only descendant does not change the tested image's
+build inputs. Required push gate and consolidated current-head CI are next.
