@@ -1313,3 +1313,26 @@ started. AgentCAD's limitation blocks that full Robot/STEP-production path on
 native GB10; it does not waive corrective CAD/FEA or block independent solver/UI
 qualification. A supported x64/Windows provider route needs explicit qualification
 before the complete demonstration; no previous engineering output substitution.
+
+## Actual ARM64 CalculiX direct/gateway solve
+
+Pulled the immutable0.8.6 image and generated a fresh20×10×4mm coupon with its
+actual Gmsh. Started isolated nonroot provider
+`wright-desktop-calculix-provider-20261014-01` on loopback3049, with readonly inputs,
+private recorded state and dropped capabilities. No existing workspace/provider
+registration or plugin changed. Actual Deno2.9.6/Gmsh4.12.1/CalculiX2.21 recorded.
+
+Existing HTTP2026 qualification probe completed two distinct solves, direct
+r-d5e413dc-075d-4f4c-be63-61aad4d64300 and gateway
+r-1d40f7c5-9d83-4a67-a2a5-c639d37689b7. Both observed identical1062-node/507-element
+mesh and metrics. Nine resources each passed byte/hash verification. Details and
+limits are in calculix-arm64-evidence.json and the new indexed usage guide.
+State/evidence: `/tmp/wright-desktop-calculix-provider-20261014-01`.
+
+Found and fixed stale hard-coded clean-client provenance in the reused probe.
+Its original output is preserved; the correction receipt identifies the actual
+current-worktree client. Do not claim clean-Wright-container, native stdio,
+canonical desktop execution, force-balance/full engineering acceptance from this
+HTTP test. Py_compile/Ruff/whitespace passed for the metadata fix. No solver
+rerun was needed merely to correct attribution. Provider state is retained for
+subsequent explicit lifecycle qualification; no uncertain request was replayed.

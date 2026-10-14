@@ -16,6 +16,9 @@ download tickets or private account state in a guide.
 
 ## Available guides
 
+- [Casys CalculiX MCP](calculix-mcp.md): recorded static solves, exact resources,
+  selected-container setup and host-specific qualification limits.
+
 - [ROSBag MCP](rosbag-mcp.md): original Robot Tracking Diagnosis data, offline
   bag inspection and measurement ownership; fresh GB10 ARM64 provider proof.
 
