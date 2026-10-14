@@ -1,0 +1,13 @@
+--- a/prototypes/desktop-harness/desktop_backend.py
++++ b/prototypes/desktop-harness/desktop_backend.py
+@@ -210,6 +210,10 @@
+                 if task.binding != self.binding:
+                     raise DesktopHandoffConflict(
+                         "The task belongs to another frozen connection"
++                    )
++                if not self.service.process_interfaces.runs.is_live(task.run_id):
++                    raise DesktopHandoffConflict(
++                        "The run has no live reasoning consumer; reconcile its retained request"
+                     )
+                 _, accepted = self.repository.submit_response(
+                     body.workspace_id, body.session_id, body.response

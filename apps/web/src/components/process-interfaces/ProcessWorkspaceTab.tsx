@@ -20,10 +20,12 @@ import { ProcessInterfaceView } from "./ProcessInterfaceView";
 import { workspaceService } from "../../services/workspace-service";
 import { recoveryWorkflowSourceTitle } from "../../prototypes/workflow-recovery/recovery-authoring";
 import "./process-workspace.css";
+import { readDesktopReasoningWait } from "../../services/desktop-reasoning-status";
 
 export interface ProcessWorkspaceTabProps {
   readonly tab: WorkingTab;
   readonly sessionId: string;
+  readonly desktopWorkspaceName?: string;
   readonly onRunAttached: (
     path: string,
     process: ProcessRef,
@@ -48,6 +50,7 @@ export interface ProcessWorkspaceTabProps {
 export function ProcessWorkspaceTab({
   tab,
   sessionId,
+  desktopWorkspaceName,
   onRunAttached,
   onOpenDefinition,
   onPrepareAnother,
@@ -131,6 +134,19 @@ export function ProcessWorkspaceTab({
         navigate: navigationHost.navigate,
       }),
     [process, sessionId, navigationHost],
+  );
+  const readReasoningStatus = useCallback(
+    (runId: string, signal: AbortSignal) =>
+      readDesktopReasoningWait(
+        {
+          workspaceId: workspace_id,
+          sessionId,
+          runId,
+          workspaceName: desktopWorkspaceName ?? "this workspace",
+        },
+        signal,
+      ),
+    [workspace_id, sessionId, desktopWorkspaceName],
   );
   const attached = useCallback(
     (runId: string) => onRunAttached(tab.path, process, runId),
@@ -250,6 +266,9 @@ export function ProcessWorkspaceTab({
       ) : (
         <CommonProcessView
           client={client}
+          readReasoningStatus={
+            desktopWorkspaceName ? readReasoningStatus : undefined
+          }
           sessionId={sessionId}
           title={
             acceptedTitle?.workspaceId === workspace_id &&

@@ -112,6 +112,27 @@ describe("WorkspacePage", () => {
     activationQueue = Promise.resolve();
   });
 
+  it("opens the exact desktop-hosted workspace without activating another agent session", async () => {
+    getWorkspace.mockResolvedValue({
+      workspace_id: "workspace-1",
+      session_id: "desktop-binding",
+      local_path: "/tmp/desktop-proof",
+    });
+    render(
+      <MemoryRouter
+        initialEntries={["/workspace/workspace-1?host=openai-desktop"]}
+      >
+        <Routes>
+          <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByTestId("workspace-panel-stub")).toHaveTextContent(
+      "/tmp/desktop-proof",
+    );
+    expect(activateWorkspace).not.toHaveBeenCalled();
+  });
+
   it("does not reload the workspace after activation", async () => {
     getWorkspace.mockResolvedValue({
       workspace_id: "workspace-1",

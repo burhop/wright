@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import Field, TypeAdapter, model_validator
 
 from .process_validation import Contract, Digest, Identifier, canonical_digest
+from .desktop_reasoning import DesktopHarnessBinding
 
 
 class _WorkflowTextResolution(Contract):
@@ -34,9 +35,26 @@ class WorkflowSdkTextResolution(_WorkflowTextResolution):
     sdk_digest: Digest
 
 
+class WorkflowDesktopTextResolution(Contract):
+    """Freeze an observable connection; it does not attest the selected model."""
+
+    adapter: Literal["openai-desktop-harness"] = "openai-desktop-harness"
+    binding: DesktopHarnessBinding
+    configuration_digest: Digest
+
+    @model_validator(mode="after")
+    def exact_configuration(self):
+        public = self.model_dump(mode="json", exclude={"configuration_digest"})
+        if canonical_digest(public) != self.configuration_digest:
+            raise ValueError("Desktop routing digest differs from its public binding")
+        return self
+
+
 def parse_workflow_text_resolution(value):
     return TypeAdapter(
-        WorkflowTextResolution | WorkflowSdkTextResolution
+        WorkflowTextResolution
+        | WorkflowSdkTextResolution
+        | WorkflowDesktopTextResolution
     ).validate_python(value)
 
 
@@ -44,7 +62,12 @@ class WorkflowModelRouting(Contract):
     schema_version: Literal["wright.workflow-model-routing/1"] = (
         "wright.workflow-model-routing/1"
     )
-    text: WorkflowTextResolution | WorkflowSdkTextResolution | None = None
+    text: (
+        WorkflowTextResolution
+        | WorkflowSdkTextResolution
+        | WorkflowDesktopTextResolution
+        | None
+    ) = None
     images: dict[Identifier, dict] = Field(default_factory=dict, max_length=32)
 
     @model_validator(mode="after")

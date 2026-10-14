@@ -1,0 +1,70 @@
+{
+  "boundary": "official MCP client to isolated Wright source owner; not desktop UI acceptance",
+  "calls": [
+    {
+      "tool": "wright_workspace_create",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_create",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_open",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_save",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_save",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_save",
+      "is_error": false
+    },
+    {
+      "tool": "wright_workflow_read",
+      "is_error": false
+    }
+  ],
+  "resource": {
+    "uri": "ui://wright/workflow/80a214c293c55303c728fa99d5a405dc965d7d5d0fb38a6774ae8601cdc17ab6.html",
+    "sha256": "80a214c293c55303c728fa99d5a405dc965d7d5d0fb38a6774ae8601cdc17ab6",
+    "bytes": 1326992
+  },
+  "workspace": {
+    "workspace_id": "c54dabc1-b560-4dfb-8197-f922e9ff6edf",
+    "session_id": "desktop-abbb5c26-d460-4a5c-a52b-ff905156c6ed",
+    "workspace_name": "Native editor qualification",
+    "url": "http://127.0.0.1:5222/workspace/c54dabc1-b560-4dfb-8197-f922e9ff6edf?host=openai-desktop"
+  },
+  "scope": {
+    "workspace_id": "c54dabc1-b560-4dfb-8197-f922e9ff6edf",
+    "session_id": "desktop-abbb5c26-d460-4a5c-a52b-ff905156c6ed",
+    "path": "workflows/native-editor.workflow.wflow"
+  },
+  "accepted": {
+    "workspace_id": "c54dabc1-b560-4dfb-8197-f922e9ff6edf",
+    "path": "workflows/native-editor.workflow.wflow",
+    "storage_revision": 2,
+    "storage_digest": "ae24e9f3a54363a6549b3ff72b9f544fcca943ca2e9bd6f31451849c39811ee7",
+    "definition_revision": 2,
+    "metadata_authority": "wright_host",
+    "size_bytes": 3265,
+    "source": "workflow test\n  name: \"Native editor proof\"\n  purpose: \"Prepared input fixture\"\n  discipline: \"engineering\"\n  reviewed_ai_suggestions: false\nend\ninput brief\n  name: \"Brief\"\n  purpose: \"Prepared input\"\n  group: null\n  provided_by: \"engineer\"\n  step_type: \"work\"\n  tool: null\n  reusable_step: null\n  instructions: \"Use exact input\"\n  inputs: []\n  outputs: [{\"key\": \"brief_out\", \"name\": \"brief_out\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\n  settings: {\"interaction_input\": {\"version\": 1, \"value_schema\": {\"type\": \"string\", \"minLength\": 1}, \"required\": true, \"default\": \"Compare a and b.\"}}\nend\ntask first\n  name: \"First\"\n  purpose: \"Use exact input\"\n  group: null\n  step_type: \"work\"\n  performed_by: \"ai_assisted\"\n  inputs: [{\"key\": \"first_in\", \"name\": \"first_in\", \"kind\": \"engineering_document\", \"item\": null, \"required\": true, \"quantity\": \"one\", \"description\": \"Document\"}]\n  outputs: [{\"key\": \"first_out\", \"name\": \"first_out\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\n  prompt: \"Prepare a result\"\n  tool: null\n  reusable_step: null\n  settings: {\"output_format\": \"text\", \"save_output\": true, \"output_filename\": \"first.txt\"}\nend\nconnection supplied\n  type: \"item\"\n  from: \"brief.brief_out\"\n  to: \"first.first_in\"\n  label: \"Input\"\n  when: null\nend\ntask choice\n  name: \"Select comparison\"\n  purpose: \"Declared input\"\n  step_type: \"work\"\n  group: null\n  performed_by: \"engineer\"\n  inputs: [{\"key\": \"choice_evidence\", \"name\": \"choice_evidence\", \"kind\": \"engineering_document\", \"item\": null, \"required\": true, \"quantity\": \"one\", \"description\": \"Document\"}]\n  outputs: [{\"key\": \"choice_response\", \"name\": \"choice_response\", \"kind\": \"structured_result\", \"item\": null, \"required\": true, \"quantity\": \"one\", \"description\": \"Document\"}]\n  instructions: \"Review the comparison before selecting.\"\n  tool: null\n  reusable_step: null\n  settings: {\"authoring_template\": \"human-input\", \"human_interaction\": {\"version\": 1, \"kind\": \"input\", \"instructions\": \"Choose the comparison to carry forward after reviewing the output.\", \"response_schema\": {\"type\": \"object\", \"properties\": {\"selection\": {\"type\": \"string\", \"enum\": [\"a\", \"b\"]}}, \"required\": [\"selection\"], \"additionalProperties\": false}, \"output_port\": \"choice_response\"}}\nend\ntask second\n  name: \"Use selection\"\n  purpose: \"Use declared response\"\n  step_type: \"work\"\n  group: null\n  performed_by: \"ai_assisted\"\n  inputs: [{\"key\": \"second_input\", \"name\": \"second_input\", \"kind\": \"structured_result\", \"item\": null, \"required\": true, \"quantity\": \"one\", \"description\": \"Document\"}]\n  outputs: [{\"key\": \"second_output\", \"name\": \"second_output\", \"kind\": \"engineering_document\", \"item\": null, \"required\": false, \"quantity\": \"one\", \"description\": \"Document\"}]\n  prompt: \"Use the supplied selection.\"\n  tool: null\n  reusable_step: null\n  settings: {\"output_format\": \"text\", \"output_filename\": \"second.txt\"}\nend\nconnection evidence\n  type: \"item\"\n  from: \"first.first_out\"\n  to: \"choice.choice_evidence\"\n  label: \"Declared dependency\"\n  when: null\nend\nconnection response\n  type: \"item\"\n  from: \"choice.choice_response\"\n  to: \"second.second_input\"\n  label: \"Declared dependency\"\n  when: null\nend\n",
+    "layout": null,
+    "layout_revision": 0,
+    "layout_status": "missing"
+  },
+  "reconciliation": "read only after probe result-decoding assertion failed; no mutation replay",
+  "passed": [
+    "versioned resource",
+    "source CAS save",
+    "stale rejection",
+    "wrong-scope denial",
+    "fresh connection exact accepted source"
+  ]
+}

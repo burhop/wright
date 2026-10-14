@@ -1,0 +1,83 @@
+{
+  "status": "approved plugin installed and enabled; MCP refresh queued; active desktop chat not yet connected",
+  "authorization": "User approved only wright-desktop-gb10-prototype on existing GB10 host",
+  "runtime": {
+    "cli": "0.159.2",
+    "running_app_server": "0.159.2",
+    "windows_gui_version": "unobserved"
+  },
+  "plugin": {
+    "name": "wright-desktop-gb10-prototype",
+    "marketplace": "wright-desktop-gb10-prototype",
+    "version": "0.1.1",
+    "server": "wright-desktop-gb10",
+    "installed_path": "/home/burhop/.codex/plugins/cache/wright-desktop-gb10-prototype/wright-desktop-gb10-prototype/0.1.1",
+    "source_matches_cache": true,
+    "files": {
+      ".mcp.json": "60791d162f0eb7ec0320f27d3278088797a002e77575830710fd4e201ad51afe",
+      ".codex-plugin/plugin.json": "8c498373c3b9a422263d1bd796beaf7e788e29e7ee526182422984f882010135",
+      "skills/wright-workflows/SKILL.md": "75eb2633a00c2b12fddee1720523688a70046235ed406346ab4fa6501c27e8c8"
+    }
+  },
+  "configuration": {
+    "before_sha256": "695791b28bbf618adb8d4dd7e7926fa7b5fd71a843b123b446456537310d75fb",
+    "after_sha256": "2056dbaf239dc1f64776e2baa97ce959de6b28bc3dfeeb839a7280fcb13f3da1",
+    "only_semantic_changes": [
+      "marketplaces.wright-desktop-gb10-prototype.source",
+      "marketplaces.wright-desktop-gb10-prototype.source_type",
+      "plugins.wright-desktop-gb10-prototype@wright-desktop-gb10-prototype.enabled"
+    ],
+    "compatibility_reinstall_changed_configuration": false,
+    "private_backup": "/tmp/wright-desktop-native-install-20261011-01/config.before.toml"
+  },
+  "preservation": {
+    "old_package_backup": "/tmp/wright-desktop-native-install-20261011-01/source-0.1.0",
+    "installer_removed_old_cache": true,
+    "old_windows_package_and_target": "unchanged",
+    "desktop_restarted": false,
+    "model_workers_started": false,
+    "new_model_turns_or_threads": false
+  },
+  "qualification": {
+    "portable_0_1_0": "skill discovered; bundled MCP names absent",
+    "portable_explicit_extension": "MCP names still absent",
+    "portable_with_compatibility_overlay": "MCP names still absent",
+    "compatibility_only": "skill and Wright MCP server discovered",
+    "installed_fresh_metadata_loader": {
+      "server": "wright-desktop-gb10",
+      "tools": 12,
+      "error": null,
+      "not_installed_desktop_acceptance": true
+    },
+    "existing_desktop_daemon": {
+      "plugin_read_installed": true,
+      "plugin_read_enabled": true,
+      "bundled_server_names": ["wright-desktop-gb10"],
+      "config_mcpServer_reload_accepted": true,
+      "active_chat_server_count_after_queue": 0,
+      "current_turn_wright_tool_inventory": 0
+    },
+    "prior_proxy_probe": "Raw JSON over byte proxy timed out; corrected documented WebSocket Unix socket metadata succeeds",
+    "windows_panel": "unverified"
+  },
+  "target": {
+    "state_dir": "/tmp/wright-desktop-native-host-target-20261011-01",
+    "api_port": 8116,
+    "web_port": 5216,
+    "profile": "wright-desktop-prototype:94544ecd94c725d808397776d6e8703cc6aa250656da6e7ee3afdb24b57ff522"
+  },
+  "raw_private_evidence": "/tmp/wright-desktop-native-install-20261011-01",
+  "sources": [
+    "https://developers.openai.com/plugins/build/plugins",
+    "https://developers.openai.com/api/docs/guides/agents-api/tools/plugins",
+    "https://learn.chatgpt.com/docs/app-server"
+  ],
+  "next_proof": "After queued refresh takes effect, use actual Wright tools in this existing chat, starting with read-only connection status; do not substitute a helper workflow journey for installed tools.",
+  "validation": {
+    "focused_bridge_tests": "6 passed",
+    "git_diff_check": "passed",
+    "json_formatting": "passed after formatting; cache synchronized",
+    "semantic_configuration_unchanged_on_reinstall": true,
+    "full_repository_gates": "not claimed; plugin packaging and prototype checks only"
+  }
+}

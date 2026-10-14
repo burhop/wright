@@ -5,3 +5,5 @@ paths-ignore:
   - integrations/rivet/runner/dist/**
   - integrations/rivet/runner/artifacts/**
   - src/wright_engineering/static/web/**
+  # Built by apps/web/build-native-panel.mjs from the scanned TS/TSX sources.
+  - prototypes/desktop-harness/native-editor.html

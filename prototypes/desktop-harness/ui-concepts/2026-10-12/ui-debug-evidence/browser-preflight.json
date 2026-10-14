@@ -1,0 +1,12 @@
+{
+  "boundary": "GB10 headless browser developer preview; not Windows/native panel or annotation acceptance",
+  "workspace_id": "1b212827-4eee-482f-a32c-7b18c26b3a33",
+  "source_path": "workflows/ui-bug-review.workflow.wflow",
+  "workspace_workflows_entry": true,
+  "accepted_source_open": true,
+  "existing_browser_auth_owner": true,
+  "page_errors": [],
+  "screenshot": "/home/burhop/.codex/worktrees/wright-ui-debug/wright/prototypes/desktop-harness/ui-concepts/2026-10-12/ui-debug-evidence/shared-editor-debug-preview.png",
+  "workflow_starts": 0,
+  "screenshot_sha256": "acf004641f149bcdb1a82bbccfa94a44e6aaaa9d759aca583ec02def077883d6"
+}

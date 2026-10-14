@@ -116,6 +116,8 @@ import {
   preferObservedRun,
   useWorkflowRunObserver,
 } from "./useWorkflowRunObserver";
+import { useWorkflowReasoningStatus } from "./useWorkflowReasoningStatus";
+import type { WorkflowReasoningStatusReader } from "../../services/desktop-reasoning-status";
 import {
   engineeringConnectionIssue,
   useEngineeringConnectionCapabilities,
@@ -149,6 +151,7 @@ import { BlockNameHeading, WorkflowNameHeading } from "./BlockNameHeading";
 import { cadOutputPresentation } from "./cad-output-presentation";
 import { workspaceContentUrl } from "../../services/viewer-panel/providers/workspace-content-url";
 import "./workflow-recovery.css";
+import "../../styles/workflow-canvas-theme.css";
 
 type ViewMode = "diagram" | "code" | "split";
 type InspectorTab =
@@ -228,6 +231,7 @@ export interface WorkflowRecoveryConceptProps {
   ) => Promise<WorkflowRecoveryRunResult>;
   readonly templateReadiness?: WorkspaceWorkflowSourceReadiness | null;
   readonly onRefreshTemplateReadiness?: () => void;
+  readonly onReadReasoningStatus?: WorkflowReasoningStatusReader;
 }
 
 export interface WorkflowRunOptions {
@@ -1579,6 +1583,7 @@ export function WorkflowRecoveryConcept({
   onReadStoredSource,
   onReloadStoredSource,
   onRun,
+  onReadReasoningStatus,
   templateReadiness,
   onRefreshTemplateReadiness,
   onOpenFile,
@@ -1672,6 +1677,7 @@ export function WorkflowRecoveryConcept({
       onReadStoredSource={onReadStoredSource}
       onReloadStoredSource={onReloadStoredSource}
       onRun={onRun}
+      onReadReasoningStatus={onReadReasoningStatus}
       templateReadiness={templateReadiness}
       onRefreshTemplateReadiness={onRefreshTemplateReadiness}
       onOpenFile={onOpenFile}
@@ -1730,8 +1736,8 @@ function useSha256(value: string): string {
     let current = true;
     setResult({ source: value, digest: "sha256:calculating" });
     const bytes = new TextEncoder().encode(value);
-    void crypto.subtle
-      .digest("SHA-256", bytes)
+    void Promise.resolve()
+      .then(() => crypto.subtle.digest("SHA-256", bytes))
       .then((buffer) => {
         if (!current) return;
         const hex = [...new Uint8Array(buffer)]
@@ -2189,6 +2195,7 @@ interface WorkflowRecoveryReadyConceptProps {
   ) => Promise<WorkflowRecoveryRunResult>;
   readonly templateReadiness?: WorkspaceWorkflowSourceReadiness | null;
   readonly onRefreshTemplateReadiness?: () => void;
+  readonly onReadReasoningStatus?: WorkflowReasoningStatusReader;
 }
 
 function WorkflowRecoveryReadyConcept({
@@ -2212,6 +2219,7 @@ function WorkflowRecoveryReadyConcept({
   onReadStoredSource,
   onReloadStoredSource,
   onRun,
+  onReadReasoningStatus,
   templateReadiness,
   onRefreshTemplateReadiness,
   onOpenFile,
@@ -2421,6 +2429,20 @@ function WorkflowRecoveryReadyConcept({
       ? { ...recordedRun, approval: approvalOverride }
       : recordedRun;
   const presentedPending = workflowRunPending || observed?.status === "running";
+  const reasoningRun = workflowRunPending
+    ? observer.record?.status === "running" &&
+      observer.record.path === nativeRunLogPath
+      ? observer.record
+      : null
+    : observed?.status === "running"
+      ? observed
+      : null;
+  const reasoning = useWorkflowReasoningStatus(
+    reasoningRun?.source_digest === storageDigest
+      ? (reasoningRun?.run_id ?? undefined)
+      : undefined,
+    !simulationPreview && onRun ? onReadReasoningStatus : undefined,
+  );
   const presentedInputWait = presentedRun?.status === "waiting_human";
   const inputWaitRunId = presentedInputWait ? presentedRun.runId : undefined;
   const inputWaitSourceDigest =
@@ -2512,6 +2534,11 @@ function WorkflowRecoveryReadyConcept({
   );
   const presentedStatus =
     observedStatus ??
+    (presentedPending && reasoning.wait
+      ? { label: reasoning.wait.label, detail: reasoning.wait.detail }
+      : presentedPending && reasoning.error
+        ? { label: "AI handoff status unavailable", detail: reasoning.error }
+        : null) ??
     (presentedPending || presentedError ? validationStatus : null);
   useEffect(() => {
     if (!simulationPreview) {
@@ -3499,6 +3526,7 @@ function WorkflowRecoveryReadyConcept({
               executionConfirmed = true;
               setNativeRunDispatchConfirmed(true);
               setNativeRunLogPath(event.run_log_path ?? "");
+              observer.refresh();
             }
             if (event.kind === "result_ready" && event.engineering_result) {
               const ready = event.engineering_result;
@@ -3916,6 +3944,36 @@ function WorkflowRecoveryReadyConcept({
           </div>
         )}
         <div className="recovery-toolbar">
+          <AuthoringCreateRail
+            onCreateServer={(server) => {
+              const commands = createMcpServerBlock(
+                server,
+                workflow,
+                layout,
+                selectedOwner?.id,
+              );
+              const add = commands[0];
+              if (add?.kind === "add_block" && applyCommands("graph", commands))
+                selectObject(add.block.id, "definition");
+            }}
+            sessionId={workspaceSessionId}
+            disabled={
+              proposal !== null ||
+              workflowRunPending ||
+              runStage > 0 ||
+              sourceDirty
+            }
+            onCreate={(templateId) => {
+              const command = createAuthoringObject(
+                templateId,
+                workflow,
+                layout,
+                { selectedBlockId: selectedOwner?.id },
+              );
+              if (applyCommands("graph", [command]))
+                selectObject(command.block.id, "definition");
+            }}
+          />
           <select
             className="recovery-view-select"
             data-testid="workflow-recovery-view-select"
@@ -4148,7 +4206,9 @@ function WorkflowRecoveryReadyConcept({
                 onRun
                   ? presentedInputWait
                     ? "Answer the pending question in the working view to continue this run"
-                    : "Run the saved workspace workflow"
+                    : onReadReasoningStatus
+                      ? "Start the saved workflow. AI steps wait for a reply in this desktop conversation."
+                      : "Run the saved workspace workflow"
                   : simulationPreview
                     ? canRun
                       ? "Run the fixed local example. No AI, CAD, or external tool is executed."
@@ -4158,7 +4218,9 @@ function WorkflowRecoveryReadyConcept({
               onClick={runStage === 0 ? () => void startRun() : undefined}
             >
               {presentedPending
-                ? "Running…"
+                ? reasoning.wait
+                  ? "Waiting for chat"
+                  : "Running…"
                 : onRun
                   ? semanticDirty || layoutDirty
                     ? "Save & run"
@@ -4173,6 +4235,51 @@ function WorkflowRecoveryReadyConcept({
         </div>
         {fileActions}
       </header>
+
+      {onRun && presentedPending && (reasoning.wait || reasoning.error) && (
+        <section
+          className="recovery-runbar recovery-native-run"
+          role="status"
+          data-testid="workflow-run-reasoning-wait"
+          data-run-id={reasoning.wait?.runId}
+        >
+          <div className="recovery-native-run__summary">
+            <b>{reasoning.wait?.label ?? "AI handoff status unavailable"}</b>
+            <span>
+              {reasoning.wait?.detail ??
+                `${reasoning.error} The saved run remains active; check its status before starting another run.`}
+            </span>
+            {reasoning.wait && (
+              <small aria-live="off">
+                Queued at{" "}
+                <time dateTime={reasoning.wait.queuedAt}>
+                  {new Date(reasoning.wait.queuedAt).toLocaleTimeString()}
+                </time>
+                {" · Last checked "}
+                <time dateTime={reasoning.checkedAt}>
+                  {new Date(reasoning.checkedAt).toLocaleTimeString()}
+                </time>
+              </small>
+            )}
+          </div>
+          {reasoning.wait && nativeRunBlock && !observedSourceMismatch && (
+            <button
+              type="button"
+              className="recovery-button recovery-button--secondary"
+              onClick={() => selectObject(nativeRunBlock.id, "overview")}
+            >
+              Show waiting task
+            </button>
+          )}
+          {reasoning.wait && (
+            <details>
+              <summary>Handoff details</summary>
+              <div>Run: {reasoning.wait.runId}</div>
+              <div>Request: {reasoning.wait.requestId}</div>
+            </details>
+          )}
+        </section>
+      )}
 
       {onRun && presentedInputWait && (
         <section
@@ -4262,37 +4369,6 @@ function WorkflowRecoveryReadyConcept({
       <div
         className={`recovery-workbench ${hasInspection ? "recovery-workbench--inspecting" : ""}${hasInspection && selectedResult ? " recovery-workbench--result-viewing" : ""}`}
       >
-        <AuthoringCreateRail
-          onCreateServer={(server) => {
-            const commands = createMcpServerBlock(
-              server,
-              workflow,
-              layout,
-              selectedOwner?.id,
-            );
-            const add = commands[0];
-            if (add?.kind === "add_block" && applyCommands("graph", commands))
-              selectObject(add.block.id, "definition");
-          }}
-          sessionId={workspaceSessionId}
-          disabled={
-            proposal !== null ||
-            workflowRunPending ||
-            runStage > 0 ||
-            sourceDirty
-          }
-          onCreate={(templateId) => {
-            const command = createAuthoringObject(
-              templateId,
-              workflow,
-              layout,
-              { selectedBlockId: selectedOwner?.id },
-            );
-            if (applyCommands("graph", [command]))
-              selectObject(command.block.id, "definition");
-          }}
-        />
-
         <div className={`recovery-stage recovery-stage--${view}`}>
           {view !== "code" && (
             <div className="recovery-canvas-tools">

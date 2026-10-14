@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "wright-desktop-prototype",
+  "version": "0.1.0",
+  "description": "Experimental local Wright workspace and desktop reasoning handoff.",
+  "extensions": {"com.openai": {"interface": {
+    "displayName": "Wright Prototype",
+    "shortDescription": "Engineering workflows beside your desktop conversation",
+    "longDescription": "Create isolated Wright workspaces, author workflows and supply bounded reasoning while Wright owns execution and evidence. Experimental local prototype; tool-task qualification is pending.",
+    "developerName": "Wright",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": ["Create a Wright workspace and prepare a small digital inspection workflow."]
+  }}}
+}

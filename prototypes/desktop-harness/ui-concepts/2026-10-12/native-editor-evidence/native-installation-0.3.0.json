@@ -1,0 +1,30 @@
+{
+  "installed_version": "0.3.0",
+  "config_semantic_delta": "only named marketplace source",
+  "named_plugin_enabled": true,
+  "package_files": {
+    ".mcp.json": "44464bd5e328cbce22d90c2e464102111eda74a5b78cc5beb5d1513280071057",
+    ".codex-plugin/plugin.json": "cfbffb0144b160174e047be220fca23ce6ff49a69bf5c175108ff4ca158fc8a8",
+    "skills/wright-workflows/SKILL.md": "939ba8ed2801e7866112f123cb2fe8e37be2e91445f8ca3886660cffdf31ce8f"
+  },
+  "config_after_sha256": "6074a7c33405cc141ebe2a0d5e9e81aa175b5396a46186ab3167bf25a9b5a65b",
+  "desktop_restart": false,
+  "windows_native_editor_acceptance": "pending",
+  "old_runtime_and_state": "preserved",
+  "approval": "Approve named 0.3.0 update",
+  "installed_source_commit": "72c4f86f3b6ab41e31da5613c8fbfce0c40253b5",
+  "installed_source_worktree": "/tmp/wright-host-adaptive-native-editor",
+  "private_backup": "/tmp/wright-native-editor-install-20261012-01",
+  "read_only_installed_package_verification": {
+    "boundary": "installed package via official MCP client; no Windows rendering or write",
+    "tool_count": 15,
+    "resource_uri": "ui://wright/workflow/ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e.html",
+    "resource_sha256": "ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e",
+    "resource_bytes": 1325752,
+    "ui_save_visibility": [
+      "app"
+    ],
+    "engineering_runs_started": 0
+  },
+  "newer_working_view_installed": false
+}

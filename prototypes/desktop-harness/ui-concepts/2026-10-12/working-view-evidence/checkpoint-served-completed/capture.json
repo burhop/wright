@@ -1,0 +1,196 @@
+{
+  "status": "passed",
+  "host": "GB10 browser preview, desktop chrome not verified",
+  "url": "http://127.0.0.1:5223/workspace/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b?host=openai-desktop&workflow=canonical&workflowPath=workflows%2Fdesktop-checkpoint.workflow.wflow",
+  "viewport": {
+    "width": 1600,
+    "height": 1000
+  },
+  "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+  "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+  "preserved_run_id": "92db9047617c48ec91a85dec3a3a0a1b",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b/tools"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b/tools"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b/events"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b/tools"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b/events"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/process-interfaces/runs/92db9047617c48ec91a85dec3a3a0a1b"
+    }
+  ],
+  "page_errors": [],
+  "ui_continuation": {
+    "readback_only": true,
+    "common_view_closed": true,
+    "run_id": "92db9047617c48ec91a85dec3a3a0a1b"
+  }
+}

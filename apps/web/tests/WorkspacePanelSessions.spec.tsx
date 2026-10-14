@@ -385,6 +385,32 @@ describe("WorkspacePanel session selection", () => {
     });
   });
 
+  it("keeps workspace navigation without mounting chat or selecting a model in desktop-hosted mode", async () => {
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel
+            workspaceId="workspace-1"
+            sessionId="desktop-binding"
+            desktopConversation
+          />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByTestId("activity-bar-explorer-btn"),
+    ).toBeVisible();
+    expect(screen.queryByTestId("agent-sidebar")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("agent-sidebar-toggle"),
+    ).not.toBeInTheDocument();
+    expect(mockSelectSession).not.toHaveBeenCalled();
+    expect(mockListHermesModels).not.toHaveBeenCalled();
+    expect(
+      mockUseChat.mock.results.at(-1)?.value.refreshSessions,
+    ).not.toHaveBeenCalled();
+  });
+
   it.each([10485760, 26738688, 1, null])(
     "round trips a byte threshold of %s through workspace settings",
     async (bytes) => {
@@ -1121,6 +1147,7 @@ describe("WorkspacePanel session selection", () => {
         <ViewerPanelProvider>
           <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
         </ViewerPanelProvider>
+        <LocationProbe />
       </MemoryRouter>,
     );
 
@@ -1156,11 +1183,17 @@ describe("WorkspacePanel session selection", () => {
     expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
     await waitFor(() =>
       expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
-        display: "none",
+        display: "flex",
       }),
     );
+    await waitFor(() =>
+      expect(screen.getByTestId("location-probe")).toHaveTextContent(
+        "workflow=canonical",
+      ),
+    );
+    fireEvent.click(screen.getByTitle("Collapse Agent Console"));
     const maximize = screen.getByTestId("workspace-tab-focus");
-    const openAgent = screen.getByTestId("agent-sidebar-toggle");
+    const openAgent = await screen.findByTestId("agent-sidebar-toggle");
     expect(openAgent.parentElement).toBe(maximize.parentElement);
     expect(openAgent.parentElement).toHaveStyle({ display: "flex" });
     expect(openAgent.style.position).not.toBe("absolute");
@@ -1212,36 +1245,39 @@ describe("WorkspacePanel session selection", () => {
     expect(mockEnsureDefaultRivetWorkflow).not.toHaveBeenCalled();
     await waitFor(() =>
       expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
-        display: "none",
+        display: "flex",
       }),
     );
   });
 
-  it("keeps an explicit workflow agent-pane preference separate from ordinary workspace layout", async () => {
-    vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
-    localStorage.setItem(
-      "wright-workspace-layout-workspace-1",
-      JSON.stringify({
-        isAgentCollapsed: true,
-        workflowAgentCollapsed: false,
-      }),
-    );
-    render(
-      <MemoryRouter
-        initialEntries={[
-          "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
-        ]}
-      >
-        <ViewerPanelProvider>
-          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
-        </ViewerPanelProvider>
-      </MemoryRouter>,
-    );
-    await screen.findByTestId("workspace-workflow-fixture");
-    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
-      display: "flex",
-    });
-  });
+  it.each([true, false])(
+    "preserves the explicit workflow chat collapse preference %s independently of ordinary layout",
+    async (collapsed) => {
+      vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
+      localStorage.setItem(
+        "wright-workspace-layout-workspace-1",
+        JSON.stringify({
+          isAgentCollapsed: true,
+          workflowAgentCollapsed: collapsed,
+        }),
+      );
+      render(
+        <MemoryRouter
+          initialEntries={[
+            "/workspace/workspace-1?workflow=canonical&workflowPath=workflows%2Fmounting-bracket.workflow.wflow",
+          ]}
+        >
+          <ViewerPanelProvider>
+            <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+          </ViewerPanelProvider>
+        </MemoryRouter>,
+      );
+      await screen.findByTestId("workspace-workflow-fixture");
+      expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+        display: collapsed ? "none" : "flex",
+      });
+    },
+  );
 
   it("opens an explicitly named workspace workflow without replacing the default path", async () => {
     vi.stubEnv("VITE_WRIGHT_WORKFLOW_RECOVERY", "true");
@@ -1420,7 +1456,9 @@ describe("WorkspacePanel session selection", () => {
     );
 
     await screen.findByTestId("workspace-workflow-fixture");
-    fireEvent.click(screen.getByTitle("Open Agent Console"));
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+      display: "flex",
+    });
     fireEvent.click(await screen.findByTestId("workspace-tab-focus"));
 
     await waitFor(() =>

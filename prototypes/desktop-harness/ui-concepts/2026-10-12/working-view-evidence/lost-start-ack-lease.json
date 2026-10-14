@@ -1,0 +1,38 @@
+{
+  "native_working_view": true,
+  "calls": [
+    {
+      "tool": "wright_connection_status",
+      "logical_operation": "wright_connection_status",
+      "is_error": false,
+      "owner_denied": false
+    }
+  ],
+  "purpose": "Lost-start-ack browser qualification; no model reply generator",
+  "connections": [
+    "2025-11-25"
+  ],
+  "status": {
+    "connected": true,
+    "binding": {
+      "schema_version": "wright.desktop-binding/1",
+      "connection_id": "wright-desktop-prototype:115211f7574bf6f4a8b9dbb8866d9830825e182607fa470aee3e10e76799afed",
+      "adapter": "openai-desktop-harness",
+      "requested_model": null,
+      "reported_model": null,
+      "model_identity_source": "unreported",
+      "reported_app_build": null,
+      "protocol_version": "wright.desktop-reasoning/1"
+    },
+    "model_identity": "unreported; not independently attested",
+    "native_tool_ceiling": "unverified; Wright enforces its own API/gateway authority",
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "stage": "closed_after_browser_test",
+  "browser_outcome": {
+    "status": "passed",
+    "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+    "output": "/tmp/wright-native-working-target-20261012-01/browser-editor-1791858981318"
+  }
+}

@@ -567,6 +567,27 @@ export async function mockRecoveryWorkspace(
   };
 }
 
+async function collapseAgentConsole(page: Page): Promise<void> {
+  const collapseAgent = page.getByTitle("Collapse Agent Console");
+  if (await collapseAgent.isVisible()) await collapseAgent.click();
+  await expect(page.getByTestId("agent-sidebar")).toBeHidden();
+  await expect
+    .poll(() =>
+      page
+        .getByTestId("workspace-panel")
+        .evaluate(
+          (element) =>
+            element
+              .getAnimations()
+              .filter(
+                (animation) =>
+                  animation.pending || animation.playState === "running",
+              ).length,
+        ),
+    )
+    .toBe(0);
+}
+
 export async function openRecoveryEditor(page: Page): Promise<void> {
   await page.goto(`/workspace/${WORKSPACE_ID}`);
   const files = page.getByTestId("activity-bar-explorer-btn");
@@ -592,8 +613,7 @@ export async function openRecoveryEditor(page: Page): Promise<void> {
       name: /Bracket development workflow workflows\/mounting-bracket\.workflow\.wflow/,
     }),
   ).toBeVisible();
-  const collapseAgent = page.getByTitle("Collapse Agent Console");
-  if (await collapseAgent.isVisible()) await collapseAgent.click();
+  await collapseAgentConsole(page);
 }
 
 export async function openNewRecoveryEditor(page: Page): Promise<void> {
@@ -610,6 +630,5 @@ export async function openNewRecoveryEditor(page: Page): Promise<void> {
       ),
   );
   await expect(page.getByTestId("workflow-recovery-canvas")).toBeVisible();
-  const collapseAgent = page.getByTitle("Collapse Agent Console");
-  if (await collapseAgent.isVisible()) await collapseAgent.click();
+  await collapseAgentConsole(page);
 }

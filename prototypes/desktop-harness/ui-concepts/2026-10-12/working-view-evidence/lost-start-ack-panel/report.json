@@ -1,0 +1,199 @@
+{
+  "boundary": "GB10 browser simulated MCP App host and real owner; injected lost acknowledgement",
+  "native_desktop_verified": false,
+  "actual_user_input": false,
+  "engineering_approval": false,
+  "passed": [
+    "lost start acknowledgement retained across reload with no automatic replay; explicit same-request reconcile attaches original run; one exact-run cancellation"
+  ],
+  "scope": {
+    "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+    "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+    "path": "workflows/native-working.workflow.wflow"
+  },
+  "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+  "accepted_receipt": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+      "source_path": "workflows/native-working.workflow.wflow",
+      "source_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+    "payload_digest": "afeb6dde97a386e60beefc76399e859d4eefefdfc65ec75ab9a1600ee64f6b45",
+    "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+    "input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+    "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+    "run_log_path": "runs/native-working/dde3ee0745954a27aad3a2d9eb2c1cf1.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-13T02:36:24.152784+00:00"
+  },
+  "calls": [
+    {
+      "name": "wright_workflow_read",
+      "arguments": {
+        "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+        "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+        "path": "workflows/native-working.workflow.wflow"
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "snapshot"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_update",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "bindings": [],
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "inputs"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_update",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "readiness"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "snapshot"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_update",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+          "expected_input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+          "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "start"
+        }
+      }
+    },
+    {
+      "name": "wright_workflow_read",
+      "arguments": {
+        "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+        "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+        "path": "workflows/native-working.workflow.wflow"
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "snapshot"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_update",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+          "expected_input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+          "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "start"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "snapshot",
+          "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "operation": "reasoning",
+          "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_update",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "request_id": "ui-cancel-21a026f3a9e78c75453c23bfaaf6512a026945542ba9d60755967dea8dc07a76",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "cancel",
+          "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1"
+        }
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-6ca23671-715d-4f00-aaaa-4277d8956371",
+          "path": "workflows/native-working.workflow.wflow",
+          "expected_storage_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "operation": "snapshot",
+          "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1"
+        }
+      }
+    }
+  ],
+  "errors": []
+}

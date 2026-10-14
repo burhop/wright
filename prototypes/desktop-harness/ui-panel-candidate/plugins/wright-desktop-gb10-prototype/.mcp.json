@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "wright-desktop-gb10": {
+      "command": "/tmp/wright-host-adaptive-ui-prototype/.venv/bin/python",
+      "args": [
+        "/tmp/wright-host-adaptive-ui-prototype/prototypes/desktop-harness/mcp_bridge.py",
+        "--state-dir",
+        "/tmp/wright-host-ui-target-20261012-01"
+      ]
+    }
+  }
+}

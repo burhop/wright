@@ -1,0 +1,333 @@
+{
+  "calls": [
+    {
+      "tool": "wright_process_ui_read",
+      "logical_operation": "wright_process_read",
+      "is_error": false
+    },
+    {
+      "tool": "wright_reasoning_pending",
+      "logical_operation": "wright_reasoning_pending",
+      "is_error": false
+    },
+    {
+      "tool": "wright_process_ui_update",
+      "logical_operation": "wright_process_start",
+      "is_error": false
+    },
+    {
+      "tool": "wright_reasoning_answer",
+      "logical_operation": "wright_reasoning_answer",
+      "is_error": true
+    },
+    {
+      "tool": "wright_process_ui_read",
+      "logical_operation": "wright_process_read",
+      "is_error": false
+    },
+    {
+      "tool": "wright_reasoning_pending",
+      "logical_operation": "wright_reasoning_pending",
+      "is_error": false
+    }
+  ],
+  "transport": "SDK MCP protocol; not installed desktop",
+  "before_reply": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+        "source_path": "workflows/desktop-inspection.workflow.wflow",
+        "source_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+      "input_snapshot_id": "inputs-656912469ab943418ccfae355ac37e00",
+      "input_digest": "aa8ffd3b8bfd997b0c22baec041149ad264d5c254fea0888d4c24662e4ef136a",
+      "cursor": 3,
+      "generated_at": "2026-10-13T02:44:14.953885+00:00"
+    },
+    "state": "reconciliation_required",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "4717046bdded0a67b23ebe174030f5348c31c2859e07797e00a575ce650e2739",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "reconciliation_required",
+        "observed_at": "2026-10-13T02:44:14.953885+00:00",
+        "stale_after": "2026-10-13T02:44:44.953885+00:00",
+        "operation_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 3,
+          "completed_steps": 0
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  "pending_before": {
+    "tasks": [
+      {
+        "request": {
+          "schema_version": "wright.desktop-reasoning/1",
+          "request_id": "304c4433-4aef-4c98-a28e-73412059eaf6",
+          "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+          "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+          "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+          "ordinal": 1,
+          "created_at": "2026-10-13T02:41:00.820795+00:00",
+          "kind": "response",
+          "output_format": "markdown",
+          "binding": {
+            "schema_version": "wright.desktop-binding/1",
+            "connection_id": "wright-desktop-prototype:115211f7574bf6f4a8b9dbb8866d9830825e182607fa470aee3e10e76799afed",
+            "adapter": "openai-desktop-harness",
+            "requested_model": null,
+            "reported_model": null,
+            "model_identity_source": "unreported",
+            "reported_app_build": null,
+            "protocol_version": "wright.desktop-reasoning/1"
+          },
+          "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+          "payload": {
+            "messages": [
+              {
+                "content": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return a Markdown document answering the prompt. Do not wrap the document in a code fence. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers).",
+                "role": "system"
+              },
+              {
+                "content": "Prepare a short digital inspection brief for a rectangular plate: length 120 mm, width 80 mm, thickness 6 mm, four mounting holes of diameter 8 mm. Identify the dimensions to check, distinguish supplied requirements from unspecified hole locations, and explain why no manufacturing release can be claimed. This task performs no physical action and no CAD measurement.\n\nwright_step_context: {\"outputs\": [{\"kind\": \"engineering_document\", \"output_id\": \"brief_response\"}], \"protected_requirement_identifiers\": [], \"step_id\": \"brief\"}",
+                "role": "user"
+              }
+            ],
+            "tool_choice": "none",
+            "tools": []
+          }
+        },
+        "request_digest": "0a60e29b33113ed71a449fae6d59a432234d34f3acfe1ba51594469fe6ea5972",
+        "binding_digest": "72d8c8f6b8b829f49a5dbc84dbfff84a43e9c32f03887edbae2f4fa4842f2748"
+      }
+    ]
+  },
+  "reattached_receipt": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+      "source_path": "workflows/desktop-inspection.workflow.wflow",
+      "source_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "desktop-mcp-inspection-start-01",
+    "payload_digest": "1a1b0bfcdd01dd837254046ec6381bc1a321a4c22de95742748084c6886d0f95",
+    "input_snapshot_id": "inputs-656912469ab943418ccfae355ac37e00",
+    "input_digest": "aa8ffd3b8bfd997b0c22baec041149ad264d5c254fea0888d4c24662e4ef136a",
+    "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+    "run_log_path": "runs/desktop-inspection/e6c08506e3d14f40be12bf0cff9f23c7.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-13T02:41:00.785603+00:00"
+  },
+  "late_reply": {
+    "is_error": true,
+    "content": [
+      {
+        "type": "text",
+        "text": "Error executing tool wright_reasoning_answer: Wright rejected request (409): The run has no live reasoning consumer; reconcile its retained request",
+        "annotations": null,
+        "meta": null
+      }
+    ]
+  },
+  "after_reply": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+        "source_path": "workflows/desktop-inspection.workflow.wflow",
+        "source_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+      "input_snapshot_id": "inputs-656912469ab943418ccfae355ac37e00",
+      "input_digest": "aa8ffd3b8bfd997b0c22baec041149ad264d5c254fea0888d4c24662e4ef136a",
+      "cursor": 3,
+      "generated_at": "2026-10-13T02:44:15.192652+00:00"
+    },
+    "state": "reconciliation_required",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "4717046bdded0a67b23ebe174030f5348c31c2859e07797e00a575ce650e2739",
+        "reasons": [
+          {
+            "code": "CAPABILITY_UNAVAILABLE",
+            "message": "This runtime has no active execution to cancel. Inspect the recorded outcome.",
+            "correction": "Inspect the exact run and provider observations; a local request cannot establish a remote outcome.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "reconciliation_required",
+        "observed_at": "2026-10-13T02:44:15.192652+00:00",
+        "stale_after": "2026-10-13T02:44:45.192652+00:00",
+        "operation_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 3,
+          "completed_steps": 0
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  "pending_after": {
+    "tasks": [
+      {
+        "request": {
+          "schema_version": "wright.desktop-reasoning/1",
+          "request_id": "304c4433-4aef-4c98-a28e-73412059eaf6",
+          "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+          "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+          "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+          "ordinal": 1,
+          "created_at": "2026-10-13T02:41:00.820795+00:00",
+          "kind": "response",
+          "output_format": "markdown",
+          "binding": {
+            "schema_version": "wright.desktop-binding/1",
+            "connection_id": "wright-desktop-prototype:115211f7574bf6f4a8b9dbb8866d9830825e182607fa470aee3e10e76799afed",
+            "adapter": "openai-desktop-harness",
+            "requested_model": null,
+            "reported_model": null,
+            "model_identity_source": "unreported",
+            "reported_app_build": null,
+            "protocol_version": "wright.desktop-reasoning/1"
+          },
+          "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+          "payload": {
+            "messages": [
+              {
+                "content": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return a Markdown document answering the prompt. Do not wrap the document in a code fence. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers).",
+                "role": "system"
+              },
+              {
+                "content": "Prepare a short digital inspection brief for a rectangular plate: length 120 mm, width 80 mm, thickness 6 mm, four mounting holes of diameter 8 mm. Identify the dimensions to check, distinguish supplied requirements from unspecified hole locations, and explain why no manufacturing release can be claimed. This task performs no physical action and no CAD measurement.\n\nwright_step_context: {\"outputs\": [{\"kind\": \"engineering_document\", \"output_id\": \"brief_response\"}], \"protected_requirement_identifiers\": [], \"step_id\": \"brief\"}",
+                "role": "user"
+              }
+            ],
+            "tool_choice": "none",
+            "tools": []
+          }
+        },
+        "request_digest": "0a60e29b33113ed71a449fae6d59a432234d34f3acfe1ba51594469fe6ea5972",
+        "binding_digest": "72d8c8f6b8b829f49a5dbc84dbfff84a43e9c32f03887edbae2f4fa4842f2748"
+      }
+    ]
+  },
+  "handoff_counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 0,
+    "desktop_reasoning_terminal_receipts": 0
+  },
+  "run_logs": [
+    "workspaces/desktop-mcp-inspection-proof/runs/desktop-inspection/e6c08506e3d14f40be12bf0cff9f23c7.json"
+  ],
+  "outputs": [],
+  "run_artifacts_unchanged": true,
+  "qualification": {
+    "same_run_no_replay": "passed",
+    "retained_pending_request": "passed",
+    "late_reply_to_dead_owner": "denied",
+    "automatic_reasoning_restart": "unsupported; requires reconciliation",
+    "installed_desktop_plugin": "unverified"
+  }
+}

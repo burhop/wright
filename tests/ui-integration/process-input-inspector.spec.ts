@@ -55,8 +55,10 @@ test("edits input and human declarations through the workspace inspector and pre
     "Review both measured comparison outputs before selecting.",
   );
   const declaration = page.getByTestId("workflow-human-input-json");
-  await page.getByTestId("workflow-human-input-editor")
-    .locator("summary", { hasText: "Advanced declaration (JSON)" }).click();
+  await page
+    .getByTestId("workflow-human-input-editor")
+    .locator("summary", { hasText: "Advanced declaration (JSON)" })
+    .click();
   await expect(declaration).toBeVisible();
   const human = JSON.parse(await declaration.inputValue());
   expect(human.output_port).toBe("choice_response");
@@ -128,6 +130,7 @@ test("creates a saveable draft user step without inventing a question or respons
   await page.setViewportSize({ width: 1440, height: 1000 });
   const fixture = await mockRecoveryWorkspace(page, { source });
   await openRecoveryEditor(page);
+  await page.getByTestId("workflow-recovery-add-step").click();
   await page.getByTestId("workflow-recovery-create-group-input").click();
   await page
     .getByTestId("workflow-recovery-create-template-human-input")

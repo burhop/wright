@@ -1,0 +1,9 @@
+{
+  "purpose": "Bounded digital integration mechanism test authorized by the submitted implementation goal",
+  "choice": {"selection":"b"},
+  "actor": "scripted browser qualification",
+  "actual_user_input": false,
+  "engineering_approval": false,
+  "external_action_approval": false,
+  "scope": "Only the existing synthetic comparison fixture and exact declared-input subject"
+}

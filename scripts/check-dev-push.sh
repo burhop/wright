@@ -323,7 +323,7 @@ while IFS= read -r changed_file; do
         tests/release/test_workflow_policy.py
       )
       ;;
-    .github/workflows/*|scripts/check-dev-*|Makefile|AGENTS.md)
+    .github/workflows/*|.github/codeql/*|scripts/check-dev-*|Makefile|AGENTS.md)
       CHECK_FRONTEND=1
       CHECK_PYTHON=1
       CHECK_DOCS=1

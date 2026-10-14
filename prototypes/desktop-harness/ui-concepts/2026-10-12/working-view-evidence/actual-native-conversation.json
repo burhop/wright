@@ -1,0 +1,247 @@
+{
+  "boundary": "Actual installed Wright 0.2.0 tools in this desktop conversation; no SDK model worker",
+  "thread_id": "01a12b7b-8589-7690-926f-7eaf2f959085",
+  "test_data": "Digital inspection brief fixture; no measurement, CAD/tool execution or manufacturing release",
+  "status": {
+    "connected": true,
+    "binding": {
+      "schema_version": "wright.desktop-binding/1",
+      "connection_id": "wright-desktop-prototype:d07f7af02a49b63b131d21139645ec127e254c791012ce4070f8b2f7124d3298",
+      "adapter": "openai-desktop-harness",
+      "requested_model": null,
+      "reported_model": null,
+      "model_identity_source": "unreported",
+      "reported_app_build": null,
+      "protocol_version": "wright.desktop-reasoning/1"
+    },
+    "model_identity": "unreported; not independently attested",
+    "native_tool_ceiling": "unverified; Wright enforces its own API/gateway authority",
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "workspace": {
+    "workspace_id": "e87fcb51-040d-4f27-ba03-5652ee4fdc6f",
+    "session_id": "desktop-79b5632c-7692-4d8e-bb1b-8f11a9e29fc0",
+    "workspace_name": "Desktop conversation UI qualification",
+    "url": "http://127.0.0.1:5220/workspace/e87fcb51-040d-4f27-ba03-5652ee4fdc6f?host=openai-desktop"
+  },
+  "source": {
+    "workspace_id": "e87fcb51-040d-4f27-ba03-5652ee4fdc6f",
+    "path": "workflows/desktop-conversation.workflow.wflow",
+    "storage_revision": 1,
+    "storage_digest": "3f41cb106ad0a342629488ea9be79beb4ddffbe70edd6d41f08734e97efeddbc",
+    "definition_revision": 1,
+    "metadata_authority": "wright_host",
+    "size_bytes": 30676,
+    "layout": null,
+    "layout_revision": 0,
+    "layout_status": "missing"
+  },
+  "input": {
+    "schema_version": "wright.process-input-snapshot/1",
+    "snapshot_id": "inputs-910925b2d3fc42df8806f941a04b20c9",
+    "process": {
+      "workspace_id": "e87fcb51-040d-4f27-ba03-5652ee4fdc6f",
+      "source_path": "workflows/desktop-conversation.workflow.wflow",
+      "source_digest": "3f41cb106ad0a342629488ea9be79beb4ddffbe70edd6d41f08734e97efeddbc",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "created_at": "2026-10-13T00:44:31.499290+00:00",
+    "bindings": [],
+    "digest": "fd0cc2095d0a490eb9ab1a9559641bc8d0da63d2e157c90b5ed5e5d485eef9e7"
+  },
+  "start": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "e87fcb51-040d-4f27-ba03-5652ee4fdc6f",
+      "source_path": "workflows/desktop-conversation.workflow.wflow",
+      "source_digest": "3f41cb106ad0a342629488ea9be79beb4ddffbe70edd6d41f08734e97efeddbc",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "native-desktop-ui-start-20261012-01",
+    "payload_digest": "1f01936cc58fbc5beb70b6c514274d69ff64c5d24d52861ec87249c0a2dd55a4",
+    "input_snapshot_id": "inputs-910925b2d3fc42df8806f941a04b20c9",
+    "input_digest": "fd0cc2095d0a490eb9ab1a9559641bc8d0da63d2e157c90b5ed5e5d485eef9e7",
+    "run_id": "b0434ec0145248f596573fa80f7cbfde",
+    "run_log_path": "runs/desktop-conversation/b0434ec0145248f596573fa80f7cbfde.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-13T00:44:31.623341+00:00"
+  },
+  "queued": {
+    "tasks": [
+      {
+        "request": {
+          "schema_version": "wright.desktop-reasoning/1",
+          "request_id": "ffb02a21-0ab3-4dbe-99d3-b21feca6bff0",
+          "workspace_id": "e87fcb51-040d-4f27-ba03-5652ee4fdc6f",
+          "session_id": "desktop-79b5632c-7692-4d8e-bb1b-8f11a9e29fc0",
+          "run_id": "b0434ec0145248f596573fa80f7cbfde",
+          "ordinal": 1,
+          "created_at": "2026-10-13T00:44:31.657388+00:00",
+          "kind": "response",
+          "output_format": "markdown",
+          "binding": {
+            "schema_version": "wright.desktop-binding/1",
+            "connection_id": "wright-desktop-prototype:d07f7af02a49b63b131d21139645ec127e254c791012ce4070f8b2f7124d3298",
+            "adapter": "openai-desktop-harness",
+            "requested_model": null,
+            "reported_model": null,
+            "model_identity_source": "unreported",
+            "reported_app_build": null,
+            "protocol_version": "wright.desktop-reasoning/1"
+          },
+          "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+          "payload": {
+            "messages": [
+              {
+                "content": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return a Markdown document answering the prompt. Do not wrap the document in a code fence. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers).",
+                "role": "system"
+              },
+              {
+                "content": "Prepare a short digital inspection brief for a rectangular plate: length 120 mm, width 80 mm, thickness 6 mm, four mounting holes of diameter 8 mm. Identify the dimensions to check, distinguish supplied requirements from unspecified hole locations, and explain why no manufacturing release can be claimed. This task performs no physical action and no CAD measurement.\n\nwright_step_context: {\"outputs\": [{\"kind\": \"engineering_document\", \"output_id\": \"brief_response\"}], \"protected_requirement_identifiers\": [], \"step_id\": \"brief\"}",
+                "role": "user"
+              }
+            ],
+            "tool_choice": "none",
+            "tools": []
+          }
+        },
+        "request_digest": "3138339207d75e7761d6c050c4865b3636bc6ec5e90005fed3ab99f45287e0ae",
+        "binding_digest": "b9e84dfa98645c09cd13464797eeaa1863a676b25e72a3528a9e62495df66e95"
+      }
+    ]
+  },
+  "reply": {
+    "version": "wright.unattended-step/1",
+    "status": "completed",
+    "reason": null,
+    "assumptions": [],
+    "response": "# Digital inspection brief\n\nThis is a proposed inspection plan for the supplied requirements, not evidence that a plate has been manufactured or measured.\n\n| Feature | Supplied requirement |\n| --- | --- |\n| Length | 120 mm |\n| Width | 80 mm |\n| Thickness | 6 mm |\n| Mounting holes | Four holes, each 8 mm in diameter |\n\nCheck the intended length, width and thickness; confirm four holes and record each hole's diameter. Once their requirements are defined, also check hole-center locations and their relationships to the specified datums. Keep the measured observations and acceptance criteria with each check.\n\nHole-center coordinates, spacing/pattern, datums, dimensional and positional tolerances, hole depth/through status and material are unspecified. Do not infer these from the nominal dimensions or invent a passing criterion. No additional values have been assumed.\n\nNo physical inspection, CAD measurement or tool execution occurred in this task. Manufacturing release cannot be claimed without defined acceptance criteria, actual measurement evidence and the required engineering review."
+  },
+  "answer": {
+    "accepted": true,
+    "response_id": "native-desktop-ui-answer-20261012-01"
+  },
+  "snapshot": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "e87fcb51-040d-4f27-ba03-5652ee4fdc6f",
+        "source_path": "workflows/desktop-conversation.workflow.wflow",
+        "source_digest": "3f41cb106ad0a342629488ea9be79beb4ddffbe70edd6d41f08734e97efeddbc",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "b0434ec0145248f596573fa80f7cbfde",
+      "input_snapshot_id": "inputs-910925b2d3fc42df8806f941a04b20c9",
+      "input_digest": "fd0cc2095d0a490eb9ab1a9559641bc8d0da63d2e157c90b5ed5e5d485eef9e7",
+      "cursor": 9,
+      "generated_at": "2026-10-13T00:45:25.639679+00:00"
+    },
+    "state": "completed",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "b0434ec0145248f596573fa80f7cbfde:brief:brief_response",
+        "step_id": "brief",
+        "port_id": "brief_response",
+        "role": "deliverable",
+        "title": "Prepare a digital inspection brief",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "inspection-brief.md",
+            "sha256": "cc34857c0ceb71e9822b58b126cbd789dd1236c246218caaa2c43d0a5d564993",
+            "media_type": null,
+            "result_id": "b0434ec0145248f596573fa80f7cbfde:brief:brief_response",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "5238b5a86440a2c0eea0c8d10b26cbdb20b039500126b254648dbf07458986f7",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This Wright run has completed; there is no active execution to cancel.",
+            "correction": "Open its saved results or prepare another run.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "completed",
+        "observed_at": "2026-10-13T00:45:25.639679+00:00",
+        "stale_after": "2026-10-13T00:45:55.639679+00:00",
+        "operation_id": "b0434ec0145248f596573fa80f7cbfde",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 9,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "b0434ec0145248f596573fa80f7cbfde",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "b0434ec0145248f596573fa80f7cbfde",
+        "result_id": "b0434ec0145248f596573fa80f7cbfde:brief:brief_response",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "b0434ec0145248f596573fa80f7cbfde",
+        "result_id": "b0434ec0145248f596573fa80f7cbfde:brief:brief_response",
+        "assessment_id": null,
+        "artifact_ref": "inspection-brief.md"
+      }
+    ],
+    "next_page": null
+  },
+  "native_editor_verified": false
+}

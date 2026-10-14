@@ -1,0 +1,26 @@
+{
+  "images": [
+    {
+      "file": "01-shared-neutral-canvas.png",
+      "source": "/tmp/wright-host-ui-authoring-20261012-10/screenshots/raw/desktop-saved-source-and-layout.png",
+      "sha256": "0d4eb77e7b97140361a0fe8deffa80ee301575dabf53f4e04a3f76b5cde290e4",
+      "title": "Saved shared canvas",
+      "boundary": "actual GB10 served browser; not Windows desktop native acceptance"
+    },
+    {
+      "file": "02-panel-bottom-inspector.png",
+      "source": "/tmp/wright-host-ui-authoring-20261012-10/screenshots/raw/desktop-bottom-inspector.png",
+      "sha256": "1a1d9071c828080e4cab2e5443d7847ed22410d3105b18bdfbf9d8004a29150b",
+      "title": "Panel-sized contextual inspector",
+      "boundary": "actual GB10 served browser; not Windows desktop native acceptance"
+    },
+    {
+      "file": "03-light-panel-inspector.png",
+      "source": "/tmp/wright-host-ui-authoring-20261012-10/screenshots/raw/desktop-light-bottom-inspector.png",
+      "sha256": "23837cc5979eb0d99402942445d0c49d7e73c47bd5ed25c9a2c44d2125c36c60",
+      "title": "Light shared canvas and controls",
+      "boundary": "actual GB10 served browser; not Windows desktop native acceptance"
+    }
+  ],
+  "native_desktop_verified": false
+}

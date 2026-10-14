@@ -1,0 +1,56 @@
+{
+  "status": "isolated candidate qualified for live-response admission and dead-owner denial; not promoted to Windows target",
+  "patch": "recovery-admission.patch",
+  "patch_sha256": "a22621d7f76e004c3b251f54d55cfc176e25500a1e6517a20f4dc6de26d621d9",
+  "candidate_profile": "wright-desktop-prototype:0449d2a3f8acb3fdf09d3e2717e9750a30ba67522bf49c6585efd360a4bc3856",
+  "runtime_versions": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "3e5e84a429d24cddedf25bb8c163658c04b7b2232d19d47930b9037941a7486d",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "86f777fcb478e1f8294c398629c2306ea65c685fda73242f4049fda2cf9fb79f",
+      "transport": "3f82f4337dcb9cb64708d36197c1d00801cfa83a1cfa368b89119cf596e04c0d"
+    },
+    "confined_inspection": false
+  },
+  "candidate_directory": "/tmp/wright-desktop-recovery-candidate-20261011-01",
+  "reproduction_directory": "/tmp/wright-desktop-recovery-candidate-20261011-02",
+  "reproduction": "all five temporary files reproduced byte-identically with prepare_recovery_candidate.py",
+  "positive": {
+    "run_id": "cf3a7242cfb0411dbb54e5f5c9036c33",
+    "state": "completed",
+    "answer": "authored by actual desktop conversation; SDK protocol relays it, no model worker",
+    "handoff_counts": {
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 1,
+      "desktop_reasoning_terminal_receipts": 1
+    },
+    "terminal": "consumed",
+    "raw_state": "/tmp/wright-desktop-recovery-positive-20261011-01"
+  },
+  "negative": {
+    "run_id": "f989a912113549f38ee7d326a174051a",
+    "fault": "verified owned API SIGKILL; observed exit 137",
+    "same_start_receipt": true,
+    "state_before": "reconciliation_required",
+    "state_after": "reconciliation_required",
+    "late_answer_http_status": 409,
+    "pending_request_retained": true,
+    "handoff_counts": {
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 0,
+      "desktop_reasoning_terminal_receipts": 0
+    },
+    "run_artifacts_unchanged": true,
+    "run_count": 1,
+    "outputs_created": [],
+    "raw_state": "/tmp/wright-desktop-recovery-negative-20261011-01"
+  },
+  "limits": [
+    "Main prepared Windows runtime remains unchanged and retains its recorded admission failure",
+    "No automatic continuation of interrupted reasoning",
+    "Native desktop identity and installed plugin not qualified",
+    "Action-task positive control not newly qualified for this changed profile",
+    "Abrupt MCP liveness/lease and uncertain-effect recovery remain separate"
+  ]
+}

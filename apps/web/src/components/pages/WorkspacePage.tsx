@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   workspaceService,
   type WorkspaceInfo,
@@ -10,6 +10,10 @@ import useLogger from "../../hooks/useLogger";
 export function WorkspacePage() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Presentation mode only; backend workspace scope still owns authorization.
+  const desktopConversation =
+    new URLSearchParams(location.search).get("host") === "openai-desktop";
   const logger = useLogger("WorkspacePage");
 
   const [workspace, setWorkspace] = useState<WorkspaceInfo | null>(null);
@@ -37,17 +41,22 @@ export function WorkspacePage() {
           );
         }
         // Activate the workspace session to ensure it is registered on the backend
-        const activated = await workspaceService.activateWorkspace(
-          ws.session_id,
-        );
-        if (!current) return;
-        if (!activated) {
-          throw new Error("Wright could not activate this workspace session.");
+        if (!desktopConversation) {
+          const activated = await workspaceService.activateWorkspace(
+            ws.session_id,
+          );
+          if (!current) return;
+          if (!activated) {
+            throw new Error(
+              "Wright could not activate this workspace session.",
+            );
+          }
         }
         setWorkspace(ws);
-        logger.info("Workspace loaded and activated", {
+        logger.info("Workspace loaded", {
           workspaceId,
           path: ws.local_path,
+          desktopConversation,
         });
       } catch (err) {
         if (!current) return;
@@ -64,7 +73,7 @@ export function WorkspacePage() {
     return () => {
       current = false;
     };
-  }, [workspaceId, navigate, logger]);
+  }, [workspaceId, navigate, logger, desktopConversation]);
 
   const currentWorkspace =
     workspace?.workspace_id === workspaceId ? workspace : null;
@@ -173,6 +182,7 @@ export function WorkspacePage() {
           sessionId={currentWorkspace.session_id}
           workspace={currentWorkspace}
           onSessionChange={handleSessionChange}
+          desktopConversation={desktopConversation}
         />
       </div>
     </div>

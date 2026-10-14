@@ -404,6 +404,7 @@ export function AuthoringCreateRail({
   sessionId?: string;
   onCreateServer?: (server: McpServerChoice) => void;
 }) {
+  const [open, setOpen] = useState(false);
   const [group, setGroup] = useState<string | null>(null);
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
   const [toolMessage, setToolMessage] = useState("");
@@ -438,150 +439,197 @@ export function AuthoringCreateRail({
       current = false;
     };
   }, [group, sessionId, serverReload]);
-  const rootRef = useRef<HTMLElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!group) return;
+    if (!open) return;
     rootRef.current
       ?.querySelector<HTMLButtonElement>(".recovery-create-template")
       ?.focus();
     const dismiss = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setGroup(null);
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setGroup(null);
+        setOpen(false);
+      }
     };
     document.addEventListener("pointerdown", dismiss);
     return () => document.removeEventListener("pointerdown", dismiss);
-  }, [group]);
+  }, [group, open]);
   return (
-    <aside
+    <div
       ref={rootRef}
-      className="recovery-create-rail"
+      className="recovery-add-step"
       aria-label="Create workflow objects"
       data-testid="workflow-recovery-palette"
       onKeyDown={(event) => {
         if (event.key === "Escape") {
           const id = group;
           setGroup(null);
+          if (!id) setOpen(false);
           rootRef.current
-            ?.querySelector<HTMLButtonElement>(`[data-group="${id}"]`)
+            ?.querySelector<HTMLButtonElement>(
+              id
+                ? `[data-group="${id}"]`
+                : "[data-testid=workflow-recovery-add-step]",
+            )
             ?.focus();
         }
       }}
     >
-      <div className="recovery-create-buttons">
-        <h2>
-          <span aria-hidden="true">＋</span> Create
-        </h2>
-        {AUTHORING_GROUPS.map((item) => (
-          <button
-            type="button"
-            key={item.id}
-            data-group={item.id}
-            className={`recovery-create-group ${group === item.id ? "is-selected" : ""}`}
-            aria-label={item.label}
-            aria-expanded={group === item.id}
-            aria-controls="recovery-create-options"
-            data-testid={`workflow-recovery-create-group-${item.id}`}
-            disabled={disabled}
-            title={item.description}
-            onClick={() =>
-              setGroup((current) => (current === item.id ? null : item.id))
-            }
-          >
-            <WorkflowObjectIcon kind={item.id} />
-            <b aria-hidden="true">{item.label}</b>
-          </button>
-        ))}
-      </div>
-      {group && (
-        <section
-          id="recovery-create-options"
-          className="recovery-create-popover"
-          aria-label={
-            group === "tool"
-              ? "Available MCP servers"
-              : `${AUTHORING_GROUPS.find((item) => item.id === group)?.label} templates`
-          }
-        >
-          <header>
-            <h3>{AUTHORING_GROUPS.find((item) => item.id === group)?.label}</h3>
-            <button
-              type="button"
-              data-testid="workflow-recovery-create-close"
-              aria-label="Close create menu"
-              onClick={() => setGroup(null)}
-            >
-              ×
-            </button>
-          </header>
-          <p>
-            {group === "tool"
-              ? "Choose a workspace MCP server, or add a task and choose its server later."
-              : "Add an object to this workflow. Nothing runs when you add it."}
-          </p>
-          {AUTHORING_TEMPLATES.filter(
-            (item) =>
-              item.group === group &&
-              !["mcp-tool", "mcp-task", "engineering-step"].includes(item.id),
-          ).map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              className="recovery-create-template"
-              data-testid={`workflow-recovery-create-template-${item.id}`}
-              onClick={() => {
-                onCreate(item.id);
-                setGroup(null);
-              }}
-            >
-              <b>{item.label}</b>
-              <span>{item.description}</span>
-            </button>
-          ))}
-          {group === "tool" && (
-            <>
+      <button
+        type="button"
+        className="recovery-button recovery-button--secondary"
+        data-testid="workflow-recovery-add-step"
+        aria-expanded={open}
+        aria-controls="recovery-add-step-options"
+        disabled={disabled}
+        onClick={() => {
+          setOpen(!open);
+          setGroup(null);
+        }}
+      >
+        <span aria-hidden="true">＋</span> Add step
+      </button>
+      {open && (
+        <div className="recovery-add-step-menu" id="recovery-add-step-options">
+          <div className="recovery-create-buttons">
+            {AUTHORING_GROUPS.map((item) => (
               <button
                 type="button"
-                className="recovery-create-template"
-                data-testid="workflow-recovery-create-template-mcp-task"
-                onClick={() => {
-                  onCreate("mcp-task");
-                  setGroup(null);
-                }}
+                key={item.id}
+                data-group={item.id}
+                className={`recovery-create-group ${group === item.id ? "is-selected" : ""}`}
+                aria-label={item.label}
+                aria-expanded={group === item.id}
+                aria-controls="recovery-create-options"
+                data-testid={`workflow-recovery-create-group-${item.id}`}
+                disabled={disabled}
+                title={item.description}
+                onClick={() =>
+                  setGroup((current) => (current === item.id ? null : item.id))
+                }
               >
-                <b>MCP task · choose server later</b>
-                <span>Select a server in the Inspector before running.</span>
+                <WorkflowObjectIcon kind={item.id} />
+                <b aria-hidden="true">{item.label}</b>
               </button>
-              {toolMessage && <p role="status">{toolMessage}</p>}
-              <button
-                type="button"
-                className="recovery-button recovery-button--secondary"
-                disabled={disabled || !sessionId}
-                onClick={() => setServerReload((value) => value + 1)}
-              >
-                Refresh servers
-              </button>
-              {mcpServerChoices(tools).map((server) => (
+            ))}
+          </div>
+          {group && (
+            <section
+              id="recovery-create-options"
+              className="recovery-create-popover"
+              aria-label={
+                group === "tool"
+                  ? "Available MCP servers"
+                  : `${AUTHORING_GROUPS.find((item) => item.id === group)?.label} templates`
+              }
+            >
+              <header>
+                <h3>
+                  {AUTHORING_GROUPS.find((item) => item.id === group)?.label}
+                </h3>
                 <button
                   type="button"
-                  key={server.id}
+                  data-testid="workflow-recovery-create-close"
+                  aria-label="Close create menu"
+                  onClick={() => setGroup(null)}
+                >
+                  ×
+                </button>
+              </header>
+              <p>
+                {group === "tool"
+                  ? "Choose a workspace MCP server, or add a task and choose its server later."
+                  : "Add an object to this workflow. Nothing runs when you add it."}
+              </p>
+              {AUTHORING_TEMPLATES.filter(
+                (item) =>
+                  item.group === group &&
+                  !["mcp-tool", "mcp-task", "engineering-step"].includes(
+                    item.id,
+                  ),
+              ).map((item) => (
+                <button
+                  type="button"
+                  key={item.id}
                   className="recovery-create-template"
-                  data-testid={`workflow-recovery-create-server-${server.id}`}
+                  data-testid={`workflow-recovery-create-template-${item.id}`}
                   onClick={() => {
-                    onCreateServer?.(server);
+                    onCreate(item.id);
                     setGroup(null);
+                    setOpen(false);
+                    rootRef.current
+                      ?.querySelector<HTMLButtonElement>(
+                        "[data-testid=workflow-recovery-add-step]",
+                      )
+                      ?.focus();
                   }}
                 >
-                  <b>{server.name}</b>
-                  <span>AI task</span>
+                  <b>{item.label}</b>
+                  <span>{item.description}</span>
                 </button>
               ))}
-              <a href="/tool-registry" target="_blank" rel="noreferrer">
-                Add or enable a server
-              </a>
-            </>
+              {group === "tool" && (
+                <>
+                  <button
+                    type="button"
+                    className="recovery-create-template"
+                    data-testid="workflow-recovery-create-template-mcp-task"
+                    onClick={() => {
+                      onCreate("mcp-task");
+                      setGroup(null);
+                      setOpen(false);
+                      rootRef.current
+                        ?.querySelector<HTMLButtonElement>(
+                          "[data-testid=workflow-recovery-add-step]",
+                        )
+                        ?.focus();
+                    }}
+                  >
+                    <b>MCP task · choose server later</b>
+                    <span>
+                      Select a server in the Inspector before running.
+                    </span>
+                  </button>
+                  {toolMessage && <p role="status">{toolMessage}</p>}
+                  <button
+                    type="button"
+                    className="recovery-button recovery-button--secondary"
+                    disabled={disabled || !sessionId}
+                    onClick={() => setServerReload((value) => value + 1)}
+                  >
+                    Refresh servers
+                  </button>
+                  {mcpServerChoices(tools).map((server) => (
+                    <button
+                      type="button"
+                      key={server.id}
+                      className="recovery-create-template"
+                      data-testid={`workflow-recovery-create-server-${server.id}`}
+                      onClick={() => {
+                        onCreateServer?.(server);
+                        setGroup(null);
+                        setOpen(false);
+                        rootRef.current
+                          ?.querySelector<HTMLButtonElement>(
+                            "[data-testid=workflow-recovery-add-step]",
+                          )
+                          ?.focus();
+                      }}
+                    >
+                      <b>{server.name}</b>
+                      <span>AI task</span>
+                    </button>
+                  ))}
+                  <a href="/tool-registry" target="_blank" rel="noreferrer">
+                    Add or enable a server
+                  </a>
+                </>
+              )}
+            </section>
           )}
-        </section>
+        </div>
       )}
-    </aside>
+    </div>
   );
 }
 

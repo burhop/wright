@@ -1,0 +1,20 @@
+{
+  "request_id": "0b0ea878-426c-49ca-b6ab-9ff52ee8d134",
+  "request_digest": "5eb2777d984242c550ad7a027ba33c1701503adaa6ab5774daf4c015f14baadf",
+  "binding_digest": "bcb0e1f54b6642a33c162e770c124cf80ce34f79de6b64ba8622eb9810f48ed5",
+  "response_id": "native-working-gateway-action-1-20261013-01",
+  "decision": {
+    "role": "assistant",
+    "content": null,
+    "tool_calls": [
+      {
+        "id": "native-working-inspection-proposal-20261013-01",
+        "type": "function",
+        "function": {
+          "name": "tool_0",
+          "arguments": "{\"schema_version\":\"wright.workflow-action-intent/1\",\"arguments\":{\"relativePath\":\"inputs/requirements.md\"},\"assumptions\":[],\"unresolved_required_information\":[]}"
+        }
+      }
+    ]
+  }
+}

@@ -34,7 +34,7 @@ export class LiveHealthService {
 
   private callbacks: Set<(statuses: ServiceStatus[]) => void> = new Set();
   private intervalId: ReturnType<typeof setInterval> | null = null;
-  private subscriberCount = 0;
+  private subscriptions = new Map<string, number>();
   private checksInFlight = new Set<string>();
 
   private async checkService(svc: ServiceStatus): Promise<void> {
@@ -92,24 +92,38 @@ export class LiveHealthService {
   }
 
   private runChecks(): void {
-    this.statuses.forEach((svc) => {
-      void this.checkService(svc);
-    });
+    this.statuses
+      .filter((svc) => this.subscriptions.has(svc.serviceId))
+      .forEach((svc) => {
+        void this.checkService(svc);
+      });
   }
 
-  startPolling(intervalMs: number = 15000): void {
-    this.subscriberCount++;
+  startPolling(
+    intervalMs: number = 15000,
+    serviceIds?: readonly string[],
+  ): void {
+    for (const svc of this.statuses) {
+      if (!serviceIds || serviceIds.includes(svc.serviceId)) {
+        this.subscriptions.set(
+          svc.serviceId,
+          (this.subscriptions.get(svc.serviceId) ?? 0) + 1,
+        );
+      }
+    }
     if (this.intervalId) return;
 
     this.runChecks();
     this.intervalId = setInterval(() => this.runChecks(), intervalMs);
   }
 
-  stopPolling(): void {
-    if (this.subscriberCount > 0) {
-      this.subscriberCount--;
+  stopPolling(serviceIds?: readonly string[]): void {
+    for (const [id, count] of this.subscriptions) {
+      if (serviceIds && !serviceIds.includes(id)) continue;
+      if (count > 1) this.subscriptions.set(id, count - 1);
+      else this.subscriptions.delete(id);
     }
-    if (this.subscriberCount === 0 && this.intervalId) {
+    if (this.subscriptions.size === 0 && this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }

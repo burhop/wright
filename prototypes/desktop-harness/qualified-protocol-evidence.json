@@ -1,0 +1,586 @@
+{
+  "protocol-probe": {
+    "transport": "MCP stdio protocol client; desktop plugin not installed",
+    "protocol_version": "2025-11-25",
+    "tools": [
+      "wright_connection_status",
+      "wright_workspace_create",
+      "wright_workflow_read",
+      "wright_workflow_create",
+      "wright_process_prepare",
+      "wright_process_start",
+      "wright_process_read",
+      "wright_process_respond",
+      "wright_process_cancel",
+      "wright_reasoning_pending",
+      "wright_reasoning_answer"
+    ],
+    "calls": [
+      {
+        "tool": "wright_workspace_create",
+        "is_error": false
+      },
+      {
+        "tool": "wright_workflow_create",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_prepare",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_start",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_pending",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_answer",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      }
+    ],
+    "workspace": {
+      "workspace_id": "59bc92bd-e5bb-4f52-9a9c-2dce30d05a43",
+      "session_id": "desktop-7d031b76-43c1-44a0-b6c8-57e470bb4b6b",
+      "workspace_name": "Desktop MCP Inspection Proof",
+      "url": "http://127.0.0.1:5199/workspace/59bc92bd-e5bb-4f52-9a9c-2dce30d05a43?host=openai-desktop"
+    },
+    "start_receipt": {
+      "principal_id": "local-control-plane",
+      "process": {
+        "workspace_id": "59bc92bd-e5bb-4f52-9a9c-2dce30d05a43",
+        "source_path": "workflows/desktop-inspection.workflow.wflow",
+        "source_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "request_id": "desktop-mcp-inspection-start-01",
+      "payload_digest": "02c37c40074fd728ea28330588785e8f42c18150fc059d3240af560053dc149b",
+      "input_snapshot_id": "inputs-1772523fece146478802164a373ca025",
+      "input_digest": "022597172885ac1075e77bd276b77c98e030e9825baddd0fcd1e5d4d8c8a605d",
+      "run_id": "ef1ba07937a74281a7fe165af18ef250",
+      "run_log_path": "runs/desktop-inspection/ef1ba07937a74281a7fe165af18ef250.json",
+      "initial_outcome": "accepted",
+      "created_at": "2026-10-11T20:49:26.866661+00:00"
+    },
+    "answer_receipt": {
+      "accepted": true,
+      "response_id": "desktop-mcp-answer-20261011-03"
+    },
+    "final_snapshot": {
+      "schema_version": "wright.process-interaction/1",
+      "context": {
+        "process": {
+          "workspace_id": "59bc92bd-e5bb-4f52-9a9c-2dce30d05a43",
+          "source_path": "workflows/desktop-inspection.workflow.wflow",
+          "source_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+          "semantic_digest": null,
+          "source_contract": "canonical-source"
+        },
+        "run_id": "ef1ba07937a74281a7fe165af18ef250",
+        "input_snapshot_id": "inputs-1772523fece146478802164a373ca025",
+        "input_digest": "022597172885ac1075e77bd276b77c98e030e9825baddd0fcd1e5d4d8c8a605d",
+        "cursor": 9,
+        "generated_at": "2026-10-11T20:50:58.832402+00:00"
+      },
+      "state": "completed",
+      "inputs": [],
+      "readiness": null,
+      "outputs": [
+        {
+          "result_id": "ef1ba07937a74281a7fe165af18ef250:brief:brief_response",
+          "step_id": "brief",
+          "port_id": "brief_response",
+          "role": "deliverable",
+          "title": "Prepare a digital inspection brief",
+          "producer_attempt": null,
+          "revision_id": null,
+          "representations": [
+            {
+              "artifact_ref": "inspection-brief.md",
+              "sha256": "3e9a74e02ce0446e3e35ff116087ab2059b2df4b3c30202be291a0bd60d10500",
+              "media_type": null,
+              "result_id": "ef1ba07937a74281a7fe165af18ef250:brief:brief_response",
+              "representation_id": null
+            }
+          ],
+          "assessments": [],
+          "supported_viewers": []
+        }
+      ],
+      "interactions": [],
+      "actions": [
+        {
+          "action_id": "cancel-run",
+          "operation": "cancel",
+          "title": "Cancel this run",
+          "enabled": false,
+          "subject_digest": "6b9b08144dd18102f12d79065ba66ca157ce0354fd6d19ff4d467ddd4f12e141",
+          "reasons": [
+            {
+              "code": "ACTION_NOT_PERMITTED",
+              "message": "This Wright run has completed; there is no active execution to cancel.",
+              "correction": "Open its saved results or prepare another run.",
+              "binding_id": null,
+              "step_id": null,
+              "navigation": null,
+              "technical_details_ref": null
+            }
+          ],
+          "checkpoint_id": null,
+          "idempotency_required": true
+        }
+      ],
+      "observations": [
+        {
+          "observation_id": "source-run",
+          "provider_binding": "wright-source-run",
+          "state": "completed",
+          "observed_at": "2026-10-11T20:50:58.832402+00:00",
+          "stale_after": "2026-10-11T20:51:28.832402+00:00",
+          "operation_id": "ef1ba07937a74281a7fe165af18ef250",
+          "activity": null,
+          "progress_percent": null,
+          "estimated_remaining_seconds": null,
+          "metrics": {
+            "recorded_events": 9,
+            "completed_steps": 1
+          },
+          "limitations": []
+        }
+      ],
+      "diagnostics": [],
+      "navigation": [
+        {
+          "kind": "process",
+          "block_id": null,
+          "run_id": null,
+          "result_id": null,
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "run",
+          "block_id": null,
+          "run_id": "ef1ba07937a74281a7fe165af18ef250",
+          "result_id": null,
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "result",
+          "block_id": null,
+          "run_id": "ef1ba07937a74281a7fe165af18ef250",
+          "result_id": "ef1ba07937a74281a7fe165af18ef250:brief:brief_response",
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "evidence",
+          "block_id": null,
+          "run_id": "ef1ba07937a74281a7fe165af18ef250",
+          "result_id": "ef1ba07937a74281a7fe165af18ef250:brief:brief_response",
+          "assessment_id": null,
+          "artifact_ref": "inspection-brief.md"
+        }
+      ],
+      "next_page": null
+    },
+    "evidence_path": "/tmp/wright-desktop-mcp-proof-20261011-03/protocol-probe.json"
+  },
+  "checkpoint-probe": {
+    "transport": "MCP stdio protocol client; installed desktop plugin unverified",
+    "calls": [
+      {
+        "tool": "wright_workspace_create",
+        "is_error": false
+      },
+      {
+        "tool": "wright_workflow_create",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_prepare",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_start",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_pending",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_answer",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_respond",
+        "is_error": true
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_respond",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_pending",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_pending",
+        "is_error": false
+      },
+      {
+        "tool": "wright_reasoning_answer",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      }
+    ],
+    "workspace": {
+      "workspace_id": "bb81ad0c-f02b-46f0-bfde-f8fe0fa36e1f",
+      "session_id": "desktop-d30f2857-eeec-4ca2-b774-ce14eaf62756",
+      "workspace_name": "Desktop Checkpoint Proof",
+      "url": "http://127.0.0.1:5199/workspace/bb81ad0c-f02b-46f0-bfde-f8fe0fa36e1f?host=openai-desktop"
+    },
+    "start_receipt": {
+      "principal_id": "local-control-plane",
+      "process": {
+        "workspace_id": "bb81ad0c-f02b-46f0-bfde-f8fe0fa36e1f",
+        "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+        "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "request_id": "desktop-checkpoint-start-01",
+      "payload_digest": "d0ce37b55c3f8f52319425e1eeae4916742f82b7529902c4d80dc15d4e140338",
+      "input_snapshot_id": "inputs-6d9e01d061784303bc2fcf47a7cd3c67",
+      "input_digest": "78821f4550a61aac924e48ca577234c4b6d33db2f132c562d45256275a03c7e5",
+      "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+      "run_log_path": "runs/desktop-checkpoint/6f7baf8d464b4241b6fe265acb85307b.json",
+      "initial_outcome": "accepted",
+      "created_at": "2026-10-11T20:58:48.028868+00:00"
+    },
+    "stage": "completed",
+    "connections": [
+      "2025-11-25",
+      "2025-11-25"
+    ],
+    "test_data": "Existing synthetic comparison fixture; no engineering approval",
+    "test_choice": {
+      "selection": "a"
+    },
+    "final_snapshot": {
+      "schema_version": "wright.process-interaction/1",
+      "context": {
+        "process": {
+          "workspace_id": "bb81ad0c-f02b-46f0-bfde-f8fe0fa36e1f",
+          "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+          "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+          "semantic_digest": null,
+          "source_contract": "canonical-source"
+        },
+        "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+        "input_snapshot_id": "inputs-6d9e01d061784303bc2fcf47a7cd3c67",
+        "input_digest": "78821f4550a61aac924e48ca577234c4b6d33db2f132c562d45256275a03c7e5",
+        "cursor": 21,
+        "generated_at": "2026-10-11T21:02:02.950516+00:00"
+      },
+      "state": "completed",
+      "inputs": [],
+      "readiness": null,
+      "outputs": [
+        {
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:first:first_out",
+          "step_id": "first",
+          "port_id": "first_out",
+          "role": "deliverable",
+          "title": "First",
+          "producer_attempt": null,
+          "revision_id": null,
+          "representations": [
+            {
+              "artifact_ref": "first.txt",
+              "sha256": "0b4a329a6925cbafe73113ed0d6f3b9613c7665824809a153f460ff07bedfd7e",
+              "media_type": null,
+              "result_id": "6f7baf8d464b4241b6fe265acb85307b:first:first_out",
+              "representation_id": null
+            }
+          ],
+          "assessments": [],
+          "supported_viewers": []
+        },
+        {
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:choice:choice_response",
+          "step_id": "choice",
+          "port_id": "choice_response",
+          "role": "intermediate",
+          "title": "Select comparison",
+          "producer_attempt": null,
+          "revision_id": null,
+          "representations": [],
+          "assessments": [],
+          "supported_viewers": []
+        },
+        {
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:second:second_output",
+          "step_id": "second",
+          "port_id": "second_output",
+          "role": "deliverable",
+          "title": "Use selection",
+          "producer_attempt": null,
+          "revision_id": null,
+          "representations": [
+            {
+              "artifact_ref": "second.txt",
+              "sha256": "2d2363341ee3c54bc9bbbefc0f7190daa3a259246d186913551c09cbb740917b",
+              "media_type": null,
+              "result_id": "6f7baf8d464b4241b6fe265acb85307b:second:second_output",
+              "representation_id": null
+            }
+          ],
+          "assessments": [],
+          "supported_viewers": []
+        }
+      ],
+      "interactions": [],
+      "actions": [
+        {
+          "action_id": "cancel-run",
+          "operation": "cancel",
+          "title": "Cancel this run",
+          "enabled": false,
+          "subject_digest": "0c6e8195053d44e42adb9fe6dfcc66c6901df308fd2799fa23379dfa590fdde6",
+          "reasons": [
+            {
+              "code": "ACTION_NOT_PERMITTED",
+              "message": "This Wright run has completed; there is no active execution to cancel.",
+              "correction": "Open its saved results or prepare another run.",
+              "binding_id": null,
+              "step_id": null,
+              "navigation": null,
+              "technical_details_ref": null
+            }
+          ],
+          "checkpoint_id": null,
+          "idempotency_required": true
+        }
+      ],
+      "observations": [
+        {
+          "observation_id": "source-run",
+          "provider_binding": "wright-source-run",
+          "state": "completed",
+          "observed_at": "2026-10-11T21:02:02.950516+00:00",
+          "stale_after": "2026-10-11T21:02:32.950516+00:00",
+          "operation_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "activity": null,
+          "progress_percent": null,
+          "estimated_remaining_seconds": null,
+          "metrics": {
+            "recorded_events": 21,
+            "completed_steps": 3
+          },
+          "limitations": []
+        }
+      ],
+      "diagnostics": [],
+      "navigation": [
+        {
+          "kind": "process",
+          "block_id": null,
+          "run_id": null,
+          "result_id": null,
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "run",
+          "block_id": null,
+          "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "result_id": null,
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "result",
+          "block_id": null,
+          "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:first:first_out",
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "evidence",
+          "block_id": null,
+          "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:first:first_out",
+          "assessment_id": null,
+          "artifact_ref": "first.txt"
+        },
+        {
+          "kind": "result",
+          "block_id": null,
+          "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:choice:choice_response",
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "result",
+          "block_id": null,
+          "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:second:second_output",
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        {
+          "kind": "evidence",
+          "block_id": null,
+          "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+          "result_id": "6f7baf8d464b4241b6fe265acb85307b:second:second_output",
+          "assessment_id": null,
+          "artifact_ref": "second.txt"
+        }
+      ],
+      "next_page": null
+    },
+    "reconnected_state": "waiting_human",
+    "evidence_path": "/tmp/wright-desktop-mcp-proof-20261011-03/checkpoint-probe.json"
+  },
+  "boundary-probe": {
+    "calls": [
+      {
+        "tool": "wright_workflow_read",
+        "is_error": true
+      },
+      {
+        "tool": "wright_reasoning_answer",
+        "is_error": true
+      },
+      {
+        "tool": "wright_reasoning_answer",
+        "is_error": true
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      },
+      {
+        "tool": "wright_process_read",
+        "is_error": false
+      }
+    ],
+    "connections": [
+      "2025-11-25"
+    ],
+    "status": "passed",
+    "unauthenticated_denial": 401,
+    "drift_denial": {
+      "status": 409,
+      "body": {
+        "error_code": "INTERNAL_ERROR",
+        "message": "Desktop bridge configuration changed",
+        "trace_id": "542cbb0cd0531b2f688d41e6a9297cfd",
+        "details": null
+      }
+    },
+    "evidence_path": "/tmp/wright-desktop-mcp-proof-20261011-03/boundary-probe.json"
+  },
+  "restart": {
+    "operation": "graceful restart of owned isolated prototype API at durable input wait",
+    "old_pid": 3050834,
+    "run_id": "6f7baf8d464b4241b6fe265acb85307b",
+    "observed_wait_state": "waiting_human",
+    "binding_before": {
+      "schema_version": "wright.desktop-binding/1",
+      "connection_id": "wright-desktop-prototype:fcfd6996e7414a0ef7bd53ca1e177cadbba70a927a22f2d554ed3d5e5d907eb5",
+      "adapter": "openai-desktop-harness",
+      "requested_model": null,
+      "reported_model": null,
+      "model_identity_source": "unreported",
+      "reported_app_build": null,
+      "protocol_version": "wright.desktop-reasoning/1"
+    },
+    "versions_before": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "3e5e84a429d24cddedf25bb8c163658c04b7b2232d19d47930b9037941a7486d",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "48a27728b7fd5a8f37859bd8c733be11108238e854c1502dd9a9cd7d332739e6",
+        "transport": "8473500ef0cd0283d569f8b1b6f5c70872ff3c7f62f77a6a6822b5ad8439cbc9"
+      }
+    },
+    "stopped_at": "2026-10-11T21:01:06.759989+00:00",
+    "connection_after": {
+      "connected": false,
+      "binding": {
+        "schema_version": "wright.desktop-binding/1",
+        "connection_id": "wright-desktop-prototype:fcfd6996e7414a0ef7bd53ca1e177cadbba70a927a22f2d554ed3d5e5d907eb5",
+        "adapter": "openai-desktop-harness",
+        "requested_model": null,
+        "reported_model": null,
+        "model_identity_source": "unreported",
+        "reported_app_build": null,
+        "protocol_version": "wright.desktop-reasoning/1"
+      },
+      "model_identity": "unreported; not independently attested",
+      "native_tool_ceiling": "unverified; Wright enforces its own API/gateway authority"
+    },
+    "versions_after": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "3e5e84a429d24cddedf25bb8c163658c04b7b2232d19d47930b9037941a7486d",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "48a27728b7fd5a8f37859bd8c733be11108238e854c1502dd9a9cd7d332739e6",
+        "transport": "8473500ef0cd0283d569f8b1b6f5c70872ff3c7f62f77a6a6822b5ad8439cbc9"
+      }
+    },
+    "binding_unchanged": true,
+    "runtime_unchanged": true,
+    "old_process_exit_code": 143,
+    "qualification_note": "The raw operation label says graceful, but observed exit was 143. Only controlled SIGTERM/restart at an input wait is qualified; graceful shutdown callbacks were not proved."
+  },
+  "versions": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "3e5e84a429d24cddedf25bb8c163658c04b7b2232d19d47930b9037941a7486d",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "48a27728b7fd5a8f37859bd8c733be11108238e854c1502dd9a9cd7d332739e6",
+      "transport": "8473500ef0cd0283d569f8b1b6f5c70872ff3c7f62f77a6a6822b5ad8439cbc9"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "wright-desktop-gb10": {
+      "command": "/tmp/wright-openai-desktop-harness-prototype-next/.venv/bin/python",
+      "args": [
+        "/tmp/wright-openai-desktop-harness-prototype-next/prototypes/desktop-harness/mcp_bridge.py",
+        "--state-dir",
+        "/tmp/wright-desktop-native-host-target-20261011-01"
+      ]
+    }
+  }
+}

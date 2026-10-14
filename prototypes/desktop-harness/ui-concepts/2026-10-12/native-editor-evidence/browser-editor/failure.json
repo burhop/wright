@@ -1,0 +1,6 @@
+{
+  "passed": [
+    "official App SDK initializes and reads accepted source"
+  ],
+  "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#panel').contentFrame().getByRole('button', { name: 'Source', exact: true })\u001b[22m\n"
+}

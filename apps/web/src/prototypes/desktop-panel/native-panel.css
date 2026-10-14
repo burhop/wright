@@ -1,0 +1,73 @@
+.native-workflow-panel[data-control-style] {
+  --color-neutral: var(--native-host-bg, #1c1c1c);
+  --color-primary: var(--native-host-fg, #eeeeee);
+  --color-text-muted: var(--native-host-muted, #b5b5b5);
+  --color-border: var(--native-host-border, #414141);
+  --font-ui: var(--native-host-font, system-ui, sans-serif);
+  height: 100dvh;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-primary);
+  background: var(--color-neutral);
+  font: 14px/1.4 var(--font-ui);
+}
+.native-workflow-panel__context {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+.native-workflow-panel__context small {
+  flex-basis: 100%;
+  color: var(--color-text-muted);
+}
+.native-workflow-panel__context > button {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.native-workflow-panel__context > button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.native-workflow-panel__context > button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+/* Keep the common kit, with the same surrounding neutral controls as the editor. */
+.native-process-panel .wright-process-ui {
+  --color-neutral: inherit;
+  --color-primary: inherit;
+  --color-surface: inherit;
+  --color-surface-elevated: inherit;
+  --color-surface-subtle: inherit;
+  --color-surface-hover: inherit;
+  --color-text-muted: inherit;
+  --color-border: inherit;
+  --color-border-hover: inherit;
+  --font-ui: inherit;
+  --color-secondary: var(--color-primary);
+}
+.native-workflow-panel__editor {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+}
+/* Suggestions come from the host conversation; internal demo proposals stay hidden. */
+.native-workflow-panel [data-testid="workflow-recovery-ai-request"] {
+  display: none;
+}
+/* This resource uses the owning common view for runs, not the editor's unbound start. */
+.native-workflow-panel[data-working-view="true"]
+  [data-testid="workflow-recovery-run-start"] {
+  display: none;
+}

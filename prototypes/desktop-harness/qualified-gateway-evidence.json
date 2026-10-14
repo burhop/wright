@@ -1,0 +1,105 @@
+{
+  "scope": "Actual desktop-authored decisions over local MCP protocol; installed desktop plugin and right-panel hosting unverified",
+  "state_dir": "/tmp/wright-desktop-mcp-proof-20261011-05",
+  "workspace": {
+    "workspace_id": "e279c78e-605e-4eff-ab34-5655c0fdd32d",
+    "session_id": "desktop-3b3df0e5-43b2-4d01-b791-acebc6df2d57",
+    "workspace_name": "Desktop MCP Gateway Proof",
+    "url": "http://127.0.0.1:5202/workspace/e279c78e-605e-4eff-ab34-5655c0fdd32d?host=openai-desktop"
+  },
+  "source_path": "workflows/desktop-gateway.workflow.wflow",
+  "source_digest": "aa44da2ceb058c7805277b07b71cd141a458aad58da8640ad2d95adf260e2013",
+  "run_id": "5a9f0dedc8b84aba931ad251e27ebf00",
+  "state": "completed",
+  "model_identity": "unreported; no provider attestation",
+  "protocol_version": "2025-11-25",
+  "tools": [
+    "wright_connection_status",
+    "wright_workspace_create",
+    "wright_workflow_read",
+    "wright_workflow_create",
+    "wright_process_prepare",
+    "wright_process_start",
+    "wright_process_read",
+    "wright_process_respond",
+    "wright_process_cancel",
+    "wright_reasoning_pending",
+    "wright_reasoning_answer",
+    "wright_reasoning_action"
+  ],
+  "binding": {
+    "schema_version": "wright.desktop-binding/1",
+    "connection_id": "wright-desktop-prototype:9c72a8e7389a3c04245fc1af4d89ceef115a943dcf31923dcd9fb9f19e0c0c1f",
+    "adapter": "openai-desktop-harness",
+    "requested_model": null,
+    "reported_model": null,
+    "model_identity_source": "unreported",
+    "reported_app_build": null,
+    "protocol_version": "wright.desktop-reasoning/1"
+  },
+  "versions": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "3e5e84a429d24cddedf25bb8c163658c04b7b2232d19d47930b9037941a7486d",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "f6ac9c5207a307959864a482ccd4880f47666366ef3b596e4fa8c409dca005a5",
+      "transport": "3f82f4337dcb9cb64708d36197c1d00801cfa83a1cfa368b89119cf596e04c0d"
+    },
+    "confined_inspection": true
+  },
+  "input_sha256": "0a232d5575829b90463ecc78396036894128fdd9f2ed06477a0c7ece8b360fea",
+  "input_unchanged": true,
+  "successful_gateway_dispatches": 1,
+  "no_grant_denial": [
+    {
+      "type": "text",
+      "text": "Error executing tool wright_process_start: Wright rejected request (403): Confined inspection requires an exact privately enrolled grant",
+      "annotations": null,
+      "meta": null
+    }
+  ],
+  "controls": {
+    "inspection_without_permit": {
+      "denied": true,
+      "error_code": "policy_denied",
+      "message": "Exact integration file observation authority is required"
+    },
+    "wrong_workspace": {
+      "denied": true,
+      "exception": "GatewayBindingError"
+    }
+  },
+  "outputs": [
+    {
+      "result_id": "5a9f0dedc8b84aba931ad251e27ebf00:inspect:inspection_note",
+      "step_id": "inspect",
+      "port_id": "inspection_note",
+      "role": "deliverable",
+      "title": "Inspect the enrolled requirements",
+      "producer_attempt": null,
+      "revision_id": null,
+      "representations": [
+        {
+          "artifact_ref": "outputs/probe/inspection-note.md",
+          "sha256": "1f6cad04d08ca5c8d75a5e00fdb51e2f0dacebacbd3aedd22ad2f31c3c570b38",
+          "media_type": null,
+          "result_id": "5a9f0dedc8b84aba931ad251e27ebf00:inspect:inspection_note",
+          "representation_id": null
+        }
+      ],
+      "assessments": [],
+      "supported_viewers": []
+    }
+  ],
+  "recovery": {
+    "before": "running",
+    "after": "completed",
+    "same_run": true,
+    "replayed_first_decision": false,
+    "boundary": "normal controller disconnect after accepted proposal; API remained live"
+  },
+  "tests": {
+    "focused_transport_authority_runtime_routing": "114 passed in 2.26s"
+  },
+  "served_capture": "gallery/gateway-capture.json"
+}

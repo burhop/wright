@@ -3,7 +3,10 @@ import healthService from "../services/health-service";
 import useLogger from "./useLogger";
 import type { ServiceStatus } from "../store/types";
 
-export function useHealthStatus(intervalMs: number = 15000) {
+export function useHealthStatus(
+  intervalMs: number = 15000,
+  includeAgent = true,
+) {
   const [statuses, setStatuses] = useState<ServiceStatus[]>(
     healthService.getStatuses(),
   );
@@ -11,7 +14,8 @@ export function useHealthStatus(intervalMs: number = 15000) {
 
   useEffect(() => {
     logger.info("Starting health status polling subscription");
-    healthService.startPolling(intervalMs);
+    const serviceIds = includeAgent ? undefined : ["wright-api"];
+    healthService.startPolling(intervalMs, serviceIds);
 
     const unsubscribe = healthService.onStatusChange((newStatuses) => {
       setStatuses(newStatuses);
@@ -20,12 +24,14 @@ export function useHealthStatus(intervalMs: number = 15000) {
 
     return () => {
       logger.info("Stopping health status polling subscription");
-      healthService.stopPolling();
+      healthService.stopPolling(serviceIds);
       unsubscribe();
     };
-  }, [intervalMs, logger]);
+  }, [intervalMs, logger, includeAgent]);
 
-  return statuses;
+  return includeAgent
+    ? statuses
+    : statuses.filter((svc) => svc.serviceId === "wright-api");
 }
 
 export default useHealthStatus;

@@ -1,0 +1,179 @@
+{
+  "status": "passed",
+  "host": "GB10 browser preview, desktop chrome not verified",
+  "url": "http://127.0.0.1:5208/workspace/5fa03efb-fbe0-42b2-98a8-b7ee46c98559?host=openai-desktop&workflow=canonical&workflowPath=workflows%2Fdesktop-gateway.workflow.wflow",
+  "viewport": {
+    "width": 1600,
+    "height": 1000
+  },
+  "workspace_id": "5fa03efb-fbe0-42b2-98a8-b7ee46c98559",
+  "source_path": "workflows/desktop-gateway.workflow.wflow",
+  "preserved_run_id": "627b7e77b21842cc871920c121fd5803",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/5fa03efb-fbe0-42b2-98a8-b7ee46c98559"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/5fa03efb-fbe0-42b2-98a8-b7ee46c98559/tools"
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/5fa03efb-fbe0-42b2-98a8-b7ee46c98559"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/5fa03efb-fbe0-42b2-98a8-b7ee46c98559/tools"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/tools"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/tools"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/runs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/workflow-sources/reviews"
+    }
+  ],
+  "page_errors": []
+}

@@ -1,0 +1,46 @@
+{
+  "boundary": "GB10 browser simulated MCP App host; completed actual digital fixture and saved output",
+  "native_desktop_verified": false,
+  "actual_user_input": false,
+  "engineering_approval": false,
+  "passed": [
+    "completed exact run, actual recorded text file displayed with verified bytes, reload without write/replay"
+  ],
+  "scope": {
+    "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+    "session_id": "desktop-afee602f-a641-4173-a80b-e69e0aa99233",
+    "path": "workflows/desktop-checkpoint.workflow.wflow"
+  },
+  "run_id": "92db9047617c48ec91a85dec3a3a0a1b",
+  "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+  "calls": [
+    {
+      "name": "wright_workflow_read",
+      "arguments": {
+        "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+        "session_id": "desktop-afee602f-a641-4173-a80b-e69e0aa99233",
+        "path": "workflows/desktop-checkpoint.workflow.wflow"
+      },
+      "_meta": {
+        "progressToken": 1
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-afee602f-a641-4173-a80b-e69e0aa99233",
+          "path": "workflows/desktop-checkpoint.workflow.wflow",
+          "expected_storage_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+          "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+          "operation": "snapshot",
+          "run_id": "92db9047617c48ec91a85dec3a3a0a1b"
+        }
+      },
+      "_meta": {
+        "progressToken": 2
+      }
+    }
+  ],
+  "errors": []
+}

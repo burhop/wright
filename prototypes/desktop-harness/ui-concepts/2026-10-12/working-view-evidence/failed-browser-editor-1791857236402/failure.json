@@ -1,0 +1,8 @@
+{
+  "passed": [
+    "primary process opener reads exact preparing context with null run id",
+    "official App SDK initializes and reads accepted source",
+    "shared Source edit/apply/save and Wright source/layout readback"
+  ],
+  "error": "TimeoutError: locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#panel').contentFrame().getByTestId('workflow-recovery-view-code')\u001b[22m\n"
+}

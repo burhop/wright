@@ -1,0 +1,54 @@
+{
+  "status": "current leased response profile qualified for preserved pending state and dead-owner late-answer denial; automatic continuation unsupported",
+  "worktree_checkpoint": "7d26dc4daf1473d2dbf4eaeaac9d42fa639bd4aa",
+  "profile": "wright-desktop-prototype:7f1e94190c9c8439dfba77fce919adb0ba1bb5ede6a3c89499b43144d84f381a",
+  "runtime": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "f7d34e438e85db4b3727e7a34199372a16b48c3d4408a3fb504ca1e77d241cc2",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "c2ec7eeac5051c586399c1a800b4a2c6a9bc4d9470bc5fd2d67272e2d103db40",
+      "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+    },
+    "confined_inspection": false,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "run_id": "c12b7de630f94a77ac57a1ba7a37d0c9",
+  "transport": "real SDK MCP protocol; replies authored by this desktop chat; not installed Windows plugin",
+  "fault": {
+    "signal": "SIGKILL",
+    "owned_api_pid": 3313355,
+    "observed_exit": 137,
+    "old_controller_exit": 130,
+    "reopened_api_exit": 0
+  },
+  "observations": {
+    "same_start_receipt": true,
+    "start_receipts": 1,
+    "pending_before_after_identical": true,
+    "late_reply_http_status": 409,
+    "handoff_counts": {
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 0,
+      "desktop_reasoning_terminal_receipts": 0
+    },
+    "run_state": "reconciliation_required",
+    "run_logs": 1,
+    "run_log_bytes_unchanged": true,
+    "outputs_created": []
+  },
+  "raw_evidence_directory": "/tmp/wright-desktop-leased-restart-proof-20261011-01",
+  "raw_evidence_sha256": {
+    "restart-fault.json": "c194f0f579420d1ffae0b5100776626383aa5131026175313d099d54c93bee7a",
+    "restart-reconciliation.json": "66b3296b549a71ab8f368450db4f1bdc5f03b24c9df210820cc81c25996e6eed",
+    "protocol-probe.json": "28de303f65b62d95263322cfa4a504209b7c1aa0adcfc08cf32dd7169fc56cd3"
+  },
+  "previous_failure_retained": "qualified-restart-evidence.json; frozen Windows baseline still retains the earlier limitation",
+  "limits": [
+    "No automatic in-flight reasoning resurrection or replacement run is implemented",
+    "No gateway effect was dispatched in this response-only proof",
+    "Actual installed Windows plugin, chat/panel closure and model attestation remain unverified",
+    "Windows target and live configuration unchanged"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "status": "local candidate; not installed",
+  "base": "814a763d",
+  "worktree": "/tmp/wright-host-adaptive-native-editor",
+  "state": "/tmp/wright-native-editor-target-20261012-02",
+  "native_readonly_panel_user_confirmation": "Wright panel with Refresh status",
+  "native_editor_windows_verified": false,
+  "backend_checks": 41,
+  "client_checks": 7,
+  "typescript": "pass",
+  "targeted_eslint": "pass",
+  "ruff": "pass",
+  "browser_checks": 5,
+  "browser_boundary": "simulated MCP App host with real isolated Wright source storage",
+  "runtime": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "624d2f84515530f611a2ab35f111c82468f884f4506b94f87a3b954271065d67",
+      "transport": "aaf6511ad519f81d58d107c295e9ad18bd500e8d4b9f5adf7469d7ad3bbf94e9",
+      "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+      "native_editor": "ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e"
+    },
+    "confined_inspection": false,
+    "native_editor": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "files": {
+    "prototypes/desktop-harness/native-editor.html": "ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e",
+    "prototypes/desktop-harness/mcp_bridge.py": "aaf6511ad519f81d58d107c295e9ad18bd500e8d4b9f5adf7469d7ad3bbf94e9",
+    "prototypes/desktop-harness/native_source_tools.py": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+    "apps/web/build-native-panel.mjs": "4fec938e17212409d0aa6e621252b1d1f5c805434e16e14b7d1067934637c979",
+    "package-lock.json": "b564c602f56f18caaf80254d35d2a435963daaa99ec8c8e147897fd6151cd247"
+  },
+  "final_resource": {
+    "boundary": "official MCP client; resource/source reads only, not Windows acceptance",
+    "resource_uri": "ui://wright/workflow/ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e.html",
+    "resource_sha256": "ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e",
+    "resource_bytes": 1325752,
+    "tools": 15,
+    "ui_save_visibility": [
+      "app"
+    ]
+  },
+  "final_browser_report": "browser-editor-1791850819099/report.json",
+  "zero_reasoning_requests": {
+    "installed_0_2_target": 0,
+    "candidate_0_3_target": 0
+  },
+  "candidate_files": {
+    "prototypes/desktop-harness/native-editor-candidate/README.md": "7d7148b5a568d4ca30f187b446c2d0b2f5254e82cc287748dc687da6a3e1a364",
+    "prototypes/desktop-harness/native-editor-candidate/.agents/plugins/marketplace.json": "f597b763083b273cca355d511ba91ea12c719677510c872150b4a8ef32baa262",
+    "prototypes/desktop-harness/native-editor-candidate/plugins/wright-desktop-gb10-prototype/.mcp.json": "44464bd5e328cbce22d90c2e464102111eda74a5b78cc5beb5d1513280071057",
+    "prototypes/desktop-harness/native-editor-candidate/plugins/wright-desktop-gb10-prototype/.codex-plugin/plugin.json": "cfbffb0144b160174e047be220fca23ce6ff49a69bf5c175108ff4ca158fc8a8",
+    "prototypes/desktop-harness/native-editor-candidate/plugins/wright-desktop-gb10-prototype/skills/wright-workflows/SKILL.md": "939ba8ed2801e7866112f123cb2fe8e37be2e91445f8ca3886660cffdf31ce8f"
+  },
+  "sdk_guard_recheck": {
+    "tests": 14,
+    "result": "pass",
+    "scope": "affected MCP bridge subset, including one additional SDK drift case"
+  }
+}

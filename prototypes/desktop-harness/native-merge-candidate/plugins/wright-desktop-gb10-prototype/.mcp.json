@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "wright-desktop-gb10": {
+      "command": "/home/burhop/.codex/worktrees/wright-stevecad-rebase/wright/.venv-dev-gate/bin/python",
+      "args": [
+        "/home/burhop/.codex/worktrees/wright-stevecad-rebase/wright/prototypes/desktop-harness/mcp_bridge.py",
+        "--state-dir",
+        "/tmp/wright-stevecad-candidate-20261013-01",
+        "--native-editor",
+        "--native-working-view"
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "candidate_version": "0.2.0",
+  "plugin": "wright-desktop-gb10-prototype",
+  "mcp_server": "wright-desktop-gb10",
+  "state_dir": "/tmp/wright-host-ui-target-20261012-01",
+  "new_capability": "one read-only MCP App tool and content-addressed resource",
+  "actual_native_rendering": "unverified",
+  "checks": {
+    "python": 11,
+    "frontend_regression": 69,
+    "browser_protocol_fixture": 6
+  },
+  "files": {
+    ".agents/plugins/marketplace.json": "f597b763083b273cca355d511ba91ea12c719677510c872150b4a8ef32baa262",
+    "README.md": "d6e66857b06ece8e923f44e6be1a64ed220dfa8a187502d32ee8896a7cbcbcc8",
+    "plugins/wright-desktop-gb10-prototype/.codex-plugin/plugin.json": "604287f8e6df883eb33318c8be7c0a7a63c5f7ea90a31fb53bfb863293bead48",
+    "plugins/wright-desktop-gb10-prototype/.mcp.json": "654f1423f847770df021fdf6d1f87ce088cc9042ba1990518901438064aeceb8",
+    "plugins/wright-desktop-gb10-prototype/skills/wright-workflows/SKILL.md": "29022eb2fc40b5ad76f95a6013ac9ed76c8d150f25f6aa062b63bd067a31bb2f"
+  }
+}

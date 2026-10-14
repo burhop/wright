@@ -1,0 +1,28 @@
+{
+  "signal": "SIGKILL",
+  "owned_api_pid": 1606527,
+  "owned_probe_pid": 1608461,
+  "versions": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "4ea50e3b214c1b0879d986e7db5ad3b6cd35afc73b545d0d15891d34829e2f05",
+      "transport": "e2e67589be46747d0568487e61e3c15b179b75e754414ce19b9e315a39320dcd",
+      "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+      "native_editor": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+      "native_process_tools": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc"
+    },
+    "confined_inspection": false,
+    "native_editor": true,
+    "native_working_view": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "request_digest": "0a60e29b33113ed71a449fae6d59a432234d34f3acfe1ba51594469fe6ea5972",
+  "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+  "run_artifacts_before": {
+    "workspaces/desktop-mcp-inspection-proof/runs/desktop-inspection/e6c08506e3d14f40be12bf0cff9f23c7.json": "689a881baa9a30682afe83ef89b87789bde0ec0d2dd6e91491284cc767d19ede"
+  },
+  "purpose": "Controlled abrupt restart, fresh digital fixture; no model reply or engineering effect"
+}

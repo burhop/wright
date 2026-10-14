@@ -1,0 +1,31 @@
+{
+  "status": "AI-generated UI concepts, not implemented or host-qualified",
+  "generation": "built-in image_gen; three independent prompts; no image postprocessing",
+  "review": "Visually inspected all three generated outputs. Concept labels visible; fictional content only. Host chrome is approximate. Simplified graphs, plotted values and tolerance fields are illustrative and not engineering requirements or results.",
+  "files": [
+    {
+      "file": "01-conversation-and-canvas.png",
+      "source": "/home/burhop/.codex/generated_images/01a12b7b-8589-7690-926f-7eaf2f959085/exec-9d0477e9-904e-4ea4-a922-cd75a0dd8bca.png",
+      "sha256": "750e5c47ae676e3f96a166507b8936efbc5c94728c47376b1a3fafe1dbc60239",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1523066
+    },
+    {
+      "file": "02-focused-authoring.png",
+      "source": "/home/burhop/.codex/generated_images/01a12b7b-8589-7690-926f-7eaf2f959085/exec-bfce3e10-ea1f-4ec8-89e5-979e6498ddce.png",
+      "sha256": "c08413908c9c4515b67b97af1bc1b9434d0cf70eeaeb0501e52ddece5cefb37d",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1651699
+    },
+    {
+      "file": "03-run-and-review.png",
+      "source": "/home/burhop/.codex/generated_images/01a12b7b-8589-7690-926f-7eaf2f959085/exec-2258e441-c2c6-4a76-a409-dec20a67d6d1.png",
+      "sha256": "cf8513a035d75128d18363aaaf99a007622b46ad51703ec15fc065b3406f10ff",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1454447
+    }
+  ]
+}

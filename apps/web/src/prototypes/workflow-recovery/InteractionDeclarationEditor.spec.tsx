@@ -600,6 +600,7 @@ describe("interaction declaration inspector", () => {
   it("lets an author choose Request input directly from the Input palette", () => {
     const onCreate = vi.fn();
     render(<AuthoringCreateRail disabled={false} onCreate={onCreate} />);
+    fireEvent.click(screen.getByRole("button", { name: "Add step" }));
     fireEvent.click(screen.getByRole("button", { name: "Input" }));
     const inputChoices = within(
       screen.getByRole("region", { name: "Input templates" }),

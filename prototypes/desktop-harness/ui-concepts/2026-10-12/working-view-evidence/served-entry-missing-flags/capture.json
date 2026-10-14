@@ -1,0 +1,75 @@
+{
+  "status": "failed",
+  "diagnostic": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /^Workflows?$/ })\u001b[22m\n",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/session/status"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/session"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/5f49f2f7-9a9c-4952-b178-43cb8e11b9a6"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/mcp/servers/installed"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/by-id/5f49f2f7-9a9c-4952-b178-43cb8e11b9a6/tools"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "method": "GET",
+      "path": "/api/workspace/files"
+    }
+  ],
+  "page_errors": []
+}

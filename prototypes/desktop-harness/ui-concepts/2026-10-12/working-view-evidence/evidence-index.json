@@ -1,0 +1,249 @@
+{
+  "status": "0.4.0 named update approved and installed on GB10; exact installed protocol reads qualified; actual Windows user walkthrough pending",
+  "worktree": "/tmp/wright-host-adaptive-native-working-view",
+  "base": "72c4f86f",
+  "native_process_python_checks": 15,
+  "native_client_and_panel_checks": 14,
+  "shared_common_view_and_status_checks": "72 existing checks plus the then-11 native checks passed in the 83-check batch",
+  "public_process_client_regression": "78 existing checks passed in the initial combined 89-check batch; first DOM hook run lacked web config and was rerun successfully",
+  "typecheck": "pass",
+  "targeted_eslint": "pass",
+  "ruff": "pass",
+  "native_tool_run": "actual installed 0.2.0 tools in this desktop conversation; completed",
+  "actual_windows_working_view_verified": false,
+  "actual_windows_editor_verified": false,
+  "installed_target_reasoning_counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 1,
+    "desktop_reasoning_terminal_receipts": 1
+  },
+  "installed_target_pending_requests": 0,
+  "preserved_0_3_candidate": "72c4f86f, clean; user approved and installed exact 0.3.0; Windows edit/save/reopen pending",
+  "files": {
+    "apps/web/src/prototypes/desktop-panel/native-process-client.ts": "6f4320b799cb9a3486c2f6b9b9a6d71cd4d9efa8b1c4b304f3800323b8a91d5b",
+    "apps/web/src/prototypes/desktop-panel/NativeProcessPanel.tsx": "4d1eb79145db383e57df3a7d97472aec72450a18908c76ec8a7b2113385a3fbc",
+    "apps/web/src/services/desktop-reasoning-status.ts": "2cfccfd2ebd116112dd0c01693da26abaf2be24214061c375d01eaf1e7e9a2e0",
+    "prototypes/desktop-harness/native_process_tools.py": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc",
+    "apps/web/src/prototypes/desktop-panel/NativePanelContent.tsx": "11af13aca65343e9505fb594f3c7b98f750f7c37be0c75f1ef6b9411e092fd7d",
+    "apps/web/src/prototypes/desktop-panel/native-entry.tsx": "be1077a0d10dc6595555d93c273d4d4a2d6c4171835e0ad4020ec351bb493199",
+    "prototypes/desktop-harness/native-editor.html": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60"
+  },
+  "latest_composition": {
+    "state": "/tmp/wright-native-working-target-20261012-01",
+    "api_url": "http://127.0.0.1:8123",
+    "web_url": "http://127.0.0.1:5223",
+    "feature_flags": {
+      "VITE_WRIGHT_WORKFLOW_RECOVERY": true,
+      "VITE_WRIGHT_WORKFLOW_COMPOSER": true
+    },
+    "frontend_checks": 87,
+    "backend_checks": 59,
+    "final_bridge_guard_recheck": 16,
+    "typecheck": "pass",
+    "targeted_eslint": "pass",
+    "ruff": "pass",
+    "git_diff_check": "pass",
+    "browser_packaged_checks": 8,
+    "served_workflows_entry": "passed after enabling existing opt-in editor flags",
+    "tools": 18,
+    "resource": {
+      "boundary": "official MCP client; resource/source reads only, not Windows acceptance",
+      "resource_uri": "ui://wright/workflow/ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60.html",
+      "resource_sha256": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+      "resource_bytes": 2184542,
+      "tools": 18,
+      "ui_save_visibility": [
+        "app"
+      ],
+      "native_working_view": true
+    },
+    "runtime": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "4ea50e3b214c1b0879d986e7db5ad3b6cd35afc73b545d0d15891d34829e2f05",
+        "transport": "e2e67589be46747d0568487e61e3c15b179b75e754414ce19b9e315a39320dcd",
+        "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+        "native_editor": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+        "native_process_tools": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc"
+      },
+      "confined_inspection": false,
+      "native_editor": true,
+      "native_working_view": true,
+      "connection_lease_seconds": 30,
+      "heartbeat_interval_seconds": 5
+    },
+    "new_target_engineering_runs_started": 0,
+    "native_working_view_installed": false,
+    "failures_preserved": [
+      "First backend command omitted repository PYTHONPATH: 58 passed/1 import failed; corrected command: 59 passed.",
+      "First served-entry launch omitted workflow editor feature flags; Workflows control absent. Flags enabled on owned qualification Vite process; sequential read-only capture passed.",
+      "Generated Three shader whitespace failed git diff --check; deterministic packaging normalized line whitespace without disabling the gate, and final packaged/browser/resource checks passed.",
+      "Primary preparing context includes run_id:null. Entry comparison corrected to normalize absent/null run identity. First primary browser continuation reused its now-stale cached digest after save; retained failure and added explicit new-revision reopen rather than relaxing scope checks."
+    ],
+    "remaining": [
+      "Actual native Windows editor/working-view acceptance",
+      "Actual desktop checkpoint/gateway/native run journey",
+      "Cancellation/restart/uncertain-outcome live next-candidate qualification",
+      "Next named live update approval; no request while user away"
+    ],
+    "primary_working_opener": "real preparing context with null run id; cached stale primary rejected; explicit new source context reopens",
+    "actual_editor_undo_redo": "passed after returning from working view in final packaged browser",
+    "installed_plugin_preserved": "0.3.0 source remains exact approved original worktree; newer working-view not selected",
+    "bounded_digital_runs_started_after_composition": 3
+  },
+  "checkpoint_qualification": {
+    "status": "local digital fixture completed; experimental package still uninstalled",
+    "desktop_reasoning": "this conversation wrote both replies; official MCP protocol client relayed them",
+    "actual_native_windows_acceptance": false,
+    "actual_user_checkpoint_response": false,
+    "scripted_choice": {
+      "selection": "b"
+    },
+    "engineering_approval": false,
+    "completed_run": "92db9047617c48ec91a85dec3a3a0a1b",
+    "cancelled_run": "342df43453134f80a4278b8ccf40b8be",
+    "runtime_configuration_unchanged": true,
+    "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+    "handoff_counts": {
+      "desktop_reasoning_requests": 3,
+      "desktop_reasoning_responses": 2,
+      "desktop_reasoning_terminal_receipts": 3,
+      "pending": 0
+    },
+    "proofs": [
+      "closed UI ports start/read; invalid selection rejected without advancing run",
+      "disconnect/reconnect retains exact waiting run and prior output",
+      "packaged common UI submits one exact-subject scripted input; same run visibly waits for desktop chat",
+      "same run completes after actual conversation reply; both raw output byte hashes verified via official MCP UI read port",
+      "packaged completed view/reload and served Workflows entry/common close preserve results",
+      "explicit duplicate stable start returns identical receipt; cancellation terminal; late answer denied with no new output"
+    ],
+    "capture_side_effects": "Normal served Workflows control creates an isolated empty authoring draft; auth session is also established. Recorded POSTs are not workflow-run starts. Existing test source/output/run are unchanged by readback. Packaged readback uses reads only.",
+    "remaining": [
+      "actual Windows editor/save/reopen and working-view permission/lifecycle acceptance",
+      "gateway opt-in qualification for next candidate; original engineering providers unavailable"
+    ]
+  },
+  "recovery_qualification": {
+    "lost_ack": {
+      "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+      "owner_start_http_calls": 2,
+      "durable_reasoning_requests": 1,
+      "terminal_outcome": "owner_interrupted",
+      "accepted_receipt": {
+        "principal_id": "local-control-plane",
+        "process": {
+          "workspace_id": "5f49f2f7-9a9c-4952-b178-43cb8e11b9a6",
+          "source_path": "workflows/native-working.workflow.wflow",
+          "source_digest": "ccbc7d690352c890aac6573417584999028040803c8108d561017a07db6e8754",
+          "semantic_digest": null,
+          "source_contract": "canonical-source"
+        },
+        "request_id": "ui-start-b4fec2093e4ade46a5cbc4055362d0bbd843c221c7b3b8a82a51700d6395b3a2",
+        "payload_digest": "afeb6dde97a386e60beefc76399e859d4eefefdfc65ec75ab9a1600ee64f6b45",
+        "input_snapshot_id": "inputs-5d4c532b70774bf896edc6e109d4e88c",
+        "input_digest": "31d4c989ac8eb716fc96c86c2c2a97f73cd9c4016c646b413241f2c88bda9b5e",
+        "run_id": "dde3ee0745954a27aad3a2d9eb2c1cf1",
+        "run_log_path": "runs/native-working/dde3ee0745954a27aad3a2d9eb2c1cf1.json",
+        "initial_outcome": "accepted",
+        "created_at": "2026-10-13T02:36:24.152784+00:00"
+      },
+      "automatic_start_replay_on_reload": false,
+      "actual_native_windows_verified": false
+    },
+    "lost_ack_status": "passed in packaged GB10 browser protocol fixture; explicit reconciliation only",
+    "restart_state": "/tmp/wright-native-working-restart-20261013-01",
+    "restart_api": "http://127.0.0.1:8124",
+    "restart_run": "e6c08506e3d14f40be12bf0cff9f23c7",
+    "restart_status": {
+      "same_run_no_replay": "passed",
+      "retained_pending_request": "passed",
+      "late_reply_to_dead_owner": "denied",
+      "automatic_reasoning_restart": "unsupported; requires reconciliation",
+      "installed_desktop_plugin": "unverified"
+    },
+    "restart_preserved_artifacts": true,
+    "restart_counts": {
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 0,
+      "desktop_reasoning_terminal_receipts": 0
+    },
+    "restart_pending_request": "retained deliberately; no live consumer; no automatic resume; late answer denied",
+    "actual_native_windows_acceptance": false,
+    "production_runtime_changed": false,
+    "installed_plugin_changed": false,
+    "limitations": [
+      "automatic reasoning restart unsupported; reconcile recorded outcome before any continuation",
+      "native Windows tool-call permissions/render/save/reopen remain unverified",
+      "generic document-control connection yielded no connected sessions; it did not qualify custom panel inspection"
+    ],
+    "failures": [
+      "After SIGKILL, the old MCP client reported transport/disconnect failure during its cleanup; expected fault evidence, not a successful continuation."
+    ],
+    "docs_recheck": {
+      "ui_bridge": "https://developers.openai.com/plugins/build/chatgpt-ui",
+      "extensions": "https://developers.openai.com/plugins/build/extensions",
+      "observation": "Official pages fetched; no automatic Windows renderer inspection capability qualified"
+    }
+  },
+  "gateway_qualification": {
+    "state": "/tmp/wright-native-working-gateway-20261013-01",
+    "api": "http://127.0.0.1:8125",
+    "run": "5eb37ae960e7451baa175b4dbddfa8f2",
+    "no_grant_http_status": 403,
+    "successful_dispatches": 1,
+    "input_unchanged": true,
+    "actual_conversation_proposals": 2,
+    "actual_windows_acceptance": false,
+    "private_enrollment_is_not_review_or_automatic_dispatch_authority": true,
+    "output_sha256": "168af6f832c3832b2b1dd8f5666f725a4dab3e94767c6a2bf40ebf96ed73b2cf",
+    "default_candidate_selects_gateway_profile": false
+  },
+  "prepared_candidate": "candidate-0.4.0.json + candidate-protocol-0.4.0.json retain historical prepared-package evidence; installed status in native-installation-0.4.0.json",
+  "review_packet": "../review-candidate.md",
+  "exact_update_and_rollback": "../native-working-update.md",
+  "completion_audit": {
+    "qualified_candidate_commit": "f2bfbc1e4a908b8984bdcd05e5c4aeac133b90da",
+    "inherited_dirty_files_unchanged": 22,
+    "candidate_hashes_unchanged": true,
+    "installed_selection": "0.3.0 original editor candidate",
+    "full_goal_achieved": false,
+    "audit": "../review-candidate.md#goal-audit-before-native-acceptance",
+    "dependent_next_step": "pending specific named0.4.0 live update approval, then actual Windows/GB10 user walkthrough",
+    "next_local_change": "only for a demonstrated gap; current audit found none replacing native acceptance"
+  },
+  "latest_native_installation": {
+    "version": "0.4.0",
+    "approval": "Approve named 0.4.0 update",
+    "evidence": "native-installation-0.4.0.json",
+    "preflight": "native-installation-0.4.0-preflight.json",
+    "walkthrough": "../quick-walkthrough.md",
+    "windows_native_acceptance": false,
+    "old_package": "restored byte-for-byte after CLI cache eviction; old state/source preserved",
+    "prior_sections": "Earlier installed-selection and qualification claims describe their recorded phase, not current selection"
+  },
+  "latest_source_rebase": {
+    "upstream_dev": "c1a8d00942d8a80ca6229ebed23d7b8f4153a7d9",
+    "branch": "codex/stevecad-ui-rebase",
+    "record": "source-rebase-20261013.json",
+    "tests": "source-rebase-20261013-tests.xml",
+    "summary": "../source-rebase-20261013.md",
+    "activation": "Source only; installed 0.4.0 and original preview preserved"
+  },
+  "current_merge_candidate": {
+    "version": "0.5.0",
+    "source": "merge-candidate-20261013.md",
+    "resource_sha256": "08f146c976f273936b218408edd380e6936860e38d10ce2e0d9f054a1f0906ca",
+    "resource_bytes": 2185196,
+    "sdk_js": "1.32.1",
+    "node": "22.22.2",
+    "mcp_python": "1.28.1",
+    "stevecad_source_ui": "stevecad-source-ui-0.5.0/report.json",
+    "prototype_checks": 71,
+    "installed": false,
+    "SteveCAD_execution": "gated; authorized connection and live qualification pending",
+    "push_merge": "user authorized 13October; repository gates/current-head CI required"
+  }
+}

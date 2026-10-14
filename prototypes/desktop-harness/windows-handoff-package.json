@@ -1,0 +1,26 @@
+{
+  "archive": "/tmp/wright-desktop-windows-handoff-20261011-04.zip",
+  "sha256": "35875210da76d928324bbeb5148c146d610e3e20cb14f4a16f61cac74da36a02",
+  "files": [
+    ".agents/plugins/marketplace.json",
+    "README.md",
+    "capabilities.md",
+    "gallery/05-gateway-workflow.png",
+    "gallery/06-gateway-result.png",
+    "gallery/gateway-capture.json",
+    "plugins/wright-desktop-windows-prototype/mcp.json",
+    "plugins/wright-desktop-windows-prototype/plugin.json",
+    "plugins/wright-desktop-windows-prototype/skills/wright-workflows/SKILL.md",
+    "qualified-gateway-evidence.json",
+    "qualified-restart-evidence.json",
+    "windows-handoff.md",
+    "windows-relay-prompt.txt",
+    "workflow-source-example.wflow"
+  ],
+  "previous_archive_retained": "/tmp/wright-desktop-windows-handoff-20261011-02.zip",
+  "invalid_intermediate_archive_retained": "/tmp/wright-desktop-windows-handoff-20261011-03.zip",
+  "invalid_intermediate_reason": "Archive 03 duplicated updated documents outside the package root; do not use it. Corrected root layout verified in 04.",
+  "status": "prepared; executable/SSH alias unresolved; not installed or Windows qualified",
+  "credential_scan": "9 known private proof tokens absent",
+  "change": "Added observed pending-reasoning restart failure and precise demo limit; runtime unchanged."
+}

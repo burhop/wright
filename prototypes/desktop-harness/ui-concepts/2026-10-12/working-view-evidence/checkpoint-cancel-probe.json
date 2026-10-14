@@ -1,0 +1,367 @@
+{
+  "native_working_view": true,
+  "calls": [
+    {
+      "tool": "wright_process_ui_update",
+      "logical_operation": "wright_process_start",
+      "is_error": false,
+      "owner_denied": false
+    },
+    {
+      "tool": "wright_process_ui_update",
+      "logical_operation": "wright_process_start",
+      "is_error": false,
+      "owner_denied": false
+    },
+    {
+      "tool": "wright_reasoning_pending",
+      "logical_operation": "wright_reasoning_pending",
+      "is_error": false,
+      "owner_denied": false
+    },
+    {
+      "tool": "wright_process_ui_update",
+      "logical_operation": "wright_process_cancel",
+      "is_error": false,
+      "owner_denied": false
+    },
+    {
+      "tool": "wright_process_ui_read",
+      "logical_operation": "wright_process_read",
+      "is_error": false,
+      "owner_denied": false
+    },
+    {
+      "tool": "wright_reasoning_answer",
+      "logical_operation": "wright_reasoning_answer",
+      "is_error": true,
+      "owner_denied": false
+    },
+    {
+      "tool": "wright_process_ui_read",
+      "logical_operation": "wright_process_read",
+      "is_error": false,
+      "owner_denied": false
+    }
+  ],
+  "test_data": "Synthetic fixture; no engineering/tool/physical action",
+  "runtime_versions": {
+    "mcp_sdk": "1.28.1",
+    "files": {
+      "adapter": "b8de803c0fabc81d7fd9bb912c0520886deab8cbd8f7c7a5c2930a2308034a59",
+      "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+      "backend": "4ea50e3b214c1b0879d986e7db5ad3b6cd35afc73b545d0d15891d34829e2f05",
+      "transport": "e2e67589be46747d0568487e61e3c15b179b75e754414ce19b9e315a39320dcd",
+      "native_source_tools": "ca8a1c1bd60dd56452cf3ea992ea18fc7f4f2d6eb632d450d8bd894d3714b219",
+      "native_editor": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+      "native_process_tools": "2c4821b8f6984a4e10e82f4433e9e2783b8aa06f917651c7ecee5b9b3e66c5fc"
+    },
+    "confined_inspection": false,
+    "native_editor": true,
+    "native_working_view": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "connections": [
+    "2025-11-25"
+  ],
+  "start_receipt": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+      "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+      "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "native-working-cancel-start-20261013-01",
+    "payload_digest": "bcef52d80f9d8ebd618c908d4e10aa10729d15f89b334227f7a3344f806fc4e2",
+    "input_snapshot_id": "inputs-acae045e087241bf85510621e167ec14",
+    "input_digest": "0df6596aa1f61bf5a425f9e73b5a52647b3f9b57f6dd98b7b79c1383b37d97c6",
+    "run_id": "342df43453134f80a4278b8ccf40b8be",
+    "run_log_path": "runs/desktop-checkpoint/342df43453134f80a4278b8ccf40b8be.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-13T02:22:33.966540+00:00"
+  },
+  "duplicate_receipt": {
+    "principal_id": "local-control-plane",
+    "process": {
+      "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+      "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+      "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+      "semantic_digest": null,
+      "source_contract": "canonical-source"
+    },
+    "request_id": "native-working-cancel-start-20261013-01",
+    "payload_digest": "bcef52d80f9d8ebd618c908d4e10aa10729d15f89b334227f7a3344f806fc4e2",
+    "input_snapshot_id": "inputs-acae045e087241bf85510621e167ec14",
+    "input_digest": "0df6596aa1f61bf5a425f9e73b5a52647b3f9b57f6dd98b7b79c1383b37d97c6",
+    "run_id": "342df43453134f80a4278b8ccf40b8be",
+    "run_log_path": "runs/desktop-checkpoint/342df43453134f80a4278b8ccf40b8be.json",
+    "initial_outcome": "accepted",
+    "created_at": "2026-10-13T02:22:33.966540+00:00"
+  },
+  "pending_before_cancel": {
+    "request": {
+      "schema_version": "wright.desktop-reasoning/1",
+      "request_id": "747a1f25-7d93-4ad0-b73a-5692cb6107ca",
+      "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+      "session_id": "desktop-afee602f-a641-4173-a80b-e69e0aa99233",
+      "run_id": "342df43453134f80a4278b8ccf40b8be",
+      "ordinal": 1,
+      "created_at": "2026-10-13T02:22:33.992850+00:00",
+      "kind": "response",
+      "output_format": "text",
+      "binding": {
+        "schema_version": "wright.desktop-binding/1",
+        "connection_id": "wright-desktop-prototype:115211f7574bf6f4a8b9dbb8866d9830825e182607fa470aee3e10e76799afed",
+        "adapter": "openai-desktop-harness",
+        "requested_model": null,
+        "reported_model": null,
+        "model_identity_source": "unreported",
+        "reported_app_build": null,
+        "protocol_version": "wright.desktop-reasoning/1"
+      },
+      "instruction_set_digest": "cf54f3b500b5f736dff77de69d09c91eb0f41af39043278a7d314cbd470891a1",
+      "payload": {
+        "messages": [
+          {
+            "content": "This is an unattended process step. Use the supplied requirements, explicit defaults and upstream evidence. Preserve every supplied requirement and protected value. You may choose reasonable values for otherwise unspecified design choices within the requested task. Document each choice as an assumption with its parameter, chosen value, units, rationale and affected output identifiers. Never present an assumption as a supplied fact, measured evidence or verified engineering requirement. In a text or MCP completion envelope, report the records in an optional assumptions array and mention the assumptions in the deliverable where appropriate. Do not ask the user questions or invent a human interaction. Wright handles later declared input and review steps. If a required choice is outside the delegated scope, return blocked with reason input_required and explain the dependency. Do not perform unrelated operations, claim unperformed work or authorize retries of completed operations.\n\nReturn only a JSON object with version, status, response and reason, and an optional assumptions array. version must be \"wright.unattended-step/1\". status is completed, blocked or error. For completed, reason is null and response is the requested document as a string. For blocked or error, reason is input_required, capability_unavailable or execution_failed and response explains the missing dependency or failure. Inside the response string for completed: Return plain text answering the prompt. Do not write files or call tools; Wright handles saving the response. Clearly label permitted assumptions and do not claim unperformed tool execution. Each assumptions entry contains exactly parameter, value (string), units (string), rationale (string) and affected_outputs (an array of output identifiers).",
+            "role": "system"
+          },
+          {
+            "content": "Prepare a result\n\nReference material \u2014 first_in:\nCompare a and b.\n\nwright_step_context: {\"outputs\": [{\"kind\": \"engineering_document\", \"output_id\": \"first_out\"}], \"protected_requirement_identifiers\": [], \"step_id\": \"first\"}",
+            "role": "user"
+          }
+        ],
+        "tool_choice": "none",
+        "tools": []
+      }
+    },
+    "request_digest": "fb9520e6e51c0a3ab26fc6204792696baf530ec47e7308f8defe1b2430c832c8",
+    "binding_digest": "72d8c8f6b8b829f49a5dbc84dbfff84a43e9c32f03887edbae2f4fa4842f2748"
+  },
+  "cancel_receipt": {
+    "request_id": "native-working-cancel-request-20261013-01",
+    "run_id": "342df43453134f80a4278b8ccf40b8be",
+    "state": "cancellation_requested"
+  },
+  "after_cancel": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+        "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+        "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "342df43453134f80a4278b8ccf40b8be",
+      "input_snapshot_id": "inputs-acae045e087241bf85510621e167ec14",
+      "input_digest": "0df6596aa1f61bf5a425f9e73b5a52647b3f9b57f6dd98b7b79c1383b37d97c6",
+      "cursor": 4,
+      "generated_at": "2026-10-13T02:22:34.135151+00:00"
+    },
+    "state": "cancelled",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "322286f433941c01d8ac3b9aca930cf81e5fcf97bc13b54fcc4041bcc4faa163",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This Wright run has cancelled; there is no active execution to cancel.",
+            "correction": "Open its saved results or prepare another run.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "cancelled",
+        "observed_at": "2026-10-13T02:22:34.135151+00:00",
+        "stale_after": "2026-10-13T02:23:04.135151+00:00",
+        "operation_id": "342df43453134f80a4278b8ccf40b8be",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 4,
+          "completed_steps": 0
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "EXECUTION_FAILED",
+        "message": "Cancelled; completed tool operations remain.",
+        "correction": "Inspect the recorded run and completed operations before starting another attempt.",
+        "binding_id": null,
+        "step_id": "first",
+        "navigation": {
+          "kind": "block",
+          "block_id": "first",
+          "run_id": "342df43453134f80a4278b8ccf40b8be",
+          "result_id": null,
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        "technical_details_ref": "runs/desktop-checkpoint/342df43453134f80a4278b8ccf40b8be.json"
+      }
+    ],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "342df43453134f80a4278b8ccf40b8be",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "first",
+        "run_id": "342df43453134f80a4278b8ccf40b8be",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  "late_answer_denial": {
+    "error": "Error executing tool wright_reasoning_answer: Wright rejected request (409): The run has no live reasoning consumer; reconcile its retained request"
+  },
+  "after_late_denial": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "d8497ee5-0ef9-4cfe-8f0c-10c609ddab0b",
+        "source_path": "workflows/desktop-checkpoint.workflow.wflow",
+        "source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "342df43453134f80a4278b8ccf40b8be",
+      "input_snapshot_id": "inputs-acae045e087241bf85510621e167ec14",
+      "input_digest": "0df6596aa1f61bf5a425f9e73b5a52647b3f9b57f6dd98b7b79c1383b37d97c6",
+      "cursor": 4,
+      "generated_at": "2026-10-13T02:22:34.201966+00:00"
+    },
+    "state": "cancelled",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [],
+    "interactions": [],
+    "actions": [
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": false,
+        "subject_digest": "322286f433941c01d8ac3b9aca930cf81e5fcf97bc13b54fcc4041bcc4faa163",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This Wright run has cancelled; there is no active execution to cancel.",
+            "correction": "Open its saved results or prepare another run.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "cancelled",
+        "observed_at": "2026-10-13T02:22:34.201966+00:00",
+        "stale_after": "2026-10-13T02:23:04.201966+00:00",
+        "operation_id": "342df43453134f80a4278b8ccf40b8be",
+        "activity": null,
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 4,
+          "completed_steps": 0
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "EXECUTION_FAILED",
+        "message": "Cancelled; completed tool operations remain.",
+        "correction": "Inspect the recorded run and completed operations before starting another attempt.",
+        "binding_id": null,
+        "step_id": "first",
+        "navigation": {
+          "kind": "block",
+          "block_id": "first",
+          "run_id": "342df43453134f80a4278b8ccf40b8be",
+          "result_id": null,
+          "assessment_id": null,
+          "artifact_ref": null
+        },
+        "technical_details_ref": "runs/desktop-checkpoint/342df43453134f80a4278b8ccf40b8be.json"
+      }
+    ],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "342df43453134f80a4278b8ccf40b8be",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "block",
+        "block_id": "first",
+        "run_id": "342df43453134f80a4278b8ccf40b8be",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  "stage": "cancelled_and_late_reply_denied"
+}

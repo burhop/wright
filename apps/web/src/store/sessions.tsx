@@ -670,7 +670,13 @@ interface ChatContextProps {
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
-export function ChatProvider({ children }: { children: ReactNode }) {
+export function ChatProvider({
+  children,
+  desktopConversation = false,
+}: {
+  children: ReactNode;
+  desktopConversation?: boolean;
+}) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const createSessionPromiseRef = useRef<Promise<string | undefined> | null>(
     null,
@@ -685,74 +691,78 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const refreshSessions = useCallback(async (workspaceId?: string) => {
-    try {
-      const compactSessions = await agentService.listSessions(workspaceId);
-      const localSessions = readCachedSessions();
+  const refreshSessions = useCallback(
+    async (workspaceId?: string) => {
+      if (desktopConversation) return;
+      try {
+        const compactSessions = await agentService.listSessions(workspaceId);
+        const localSessions = readCachedSessions();
 
-      const backendSessionIds = new Set(
-        compactSessions.map((session) => session.sessionId),
-      );
-      const sessions: ChatSession[] = compactSessions.map((cs) => {
-        const matched = Array.isArray(localSessions)
-          ? localSessions.find((ls) => ls?.sessionId === cs.sessionId)
-          : undefined;
-
-        const normalizedMatchedMessages = normalizeMessages(
-          matched?.messages || [],
+        const backendSessionIds = new Set(
+          compactSessions.map((session) => session.sessionId),
         );
-        let title = cleanSessionTitle(cs.title);
-        if (
-          title === "Untitled" &&
-          matched &&
-          cleanSessionTitle(matched.title) !== "Untitled"
-        ) {
-          title = cleanSessionTitle(matched.title);
-        }
-        if (title === "Untitled" && normalizedMatchedMessages.length > 0) {
-          title = titleFromMessages(normalizedMatchedMessages);
-        }
+        const sessions: ChatSession[] = compactSessions.map((cs) => {
+          const matched = Array.isArray(localSessions)
+            ? localSessions.find((ls) => ls?.sessionId === cs.sessionId)
+            : undefined;
 
-        return {
-          sessionId: cs.sessionId,
-          title,
-          createdAt: cs.createdAt,
-          updatedAt: cs.updatedAt,
-          messages: normalizedMatchedMessages,
-          isActive: matched ? matched.isActive : false,
-          workspaceId: workspaceId ?? matched?.workspaceId ?? null,
-          workspacePath: matched?.workspacePath ?? null,
-        };
-      });
+          const normalizedMatchedMessages = normalizeMessages(
+            matched?.messages || [],
+          );
+          let title = cleanSessionTitle(cs.title);
+          if (
+            title === "Untitled" &&
+            matched &&
+            cleanSessionTitle(matched.title) !== "Untitled"
+          ) {
+            title = cleanSessionTitle(matched.title);
+          }
+          if (title === "Untitled" && normalizedMatchedMessages.length > 0) {
+            title = titleFromMessages(normalizedMatchedMessages);
+          }
 
-      const locallyCachedOnlySessions = localSessions.filter((session) => {
-        if (!session?.sessionId || backendSessionIds.has(session.sessionId)) {
-          return false;
-        }
+          return {
+            sessionId: cs.sessionId,
+            title,
+            createdAt: cs.createdAt,
+            updatedAt: cs.updatedAt,
+            messages: normalizedMatchedMessages,
+            isActive: matched ? matched.isActive : false,
+            workspaceId: workspaceId ?? matched?.workspaceId ?? null,
+            workspacePath: matched?.workspacePath ?? null,
+          };
+        });
 
-        if (!workspaceId) return true;
-        return session.workspaceId === workspaceId;
-      });
+        const locallyCachedOnlySessions = localSessions.filter((session) => {
+          if (!session?.sessionId || backendSessionIds.has(session.sessionId)) {
+            return false;
+          }
 
-      dispatch({
-        type: "SET_SESSIONS",
-        sessions: dedupeSessionsById([
-          ...sessions,
-          ...locallyCachedOnlySessions,
-        ]),
-      });
-    } catch (err) {
-      console.error(
-        "Failed to sync sessions with backend, falling back to localStorage",
-        err,
-      );
-      const fallbackSessions = readCachedSessions().filter((session) => {
-        if (!workspaceId) return true;
-        return session.workspaceId === workspaceId;
-      });
-      dispatch({ type: "SET_SESSIONS", sessions: fallbackSessions });
-    }
-  }, []);
+          if (!workspaceId) return true;
+          return session.workspaceId === workspaceId;
+        });
+
+        dispatch({
+          type: "SET_SESSIONS",
+          sessions: dedupeSessionsById([
+            ...sessions,
+            ...locallyCachedOnlySessions,
+          ]),
+        });
+      } catch (err) {
+        console.error(
+          "Failed to sync sessions with backend, falling back to localStorage",
+          err,
+        );
+        const fallbackSessions = readCachedSessions().filter((session) => {
+          if (!workspaceId) return true;
+          return session.workspaceId === workspaceId;
+        });
+        dispatch({ type: "SET_SESSIONS", sessions: fallbackSessions });
+      }
+    },
+    [desktopConversation],
+  );
 
   useEffect(() => {
     // Workspace pages immediately request their scoped, locally persisted
@@ -763,7 +773,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [refreshSessions]);
 
   useEffect(() => {
-    if (!state.activeSessionId) return;
+    if (desktopConversation || !state.activeSessionId) return;
 
     const sessionId = state.activeSessionId;
     const restoreSession = async () => {
@@ -991,7 +1001,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
 
     void restoreSession();
-  }, [state.activeSessionId]);
+  }, [state.activeSessionId, desktopConversation]);
 
   const createSession = useCallback(
     async (workspace?: string, workspaceId?: string) => {
@@ -1350,6 +1360,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
+    if (desktopConversation) return;
     const nextPrompt = state.promptQueue.find(
       (prompt) => !state.streamStates[prompt.sessionId]?.isStreaming,
     );
@@ -1363,7 +1374,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       nextPrompt.sessionId,
       nextPrompt.uiContext,
     );
-  }, [state.promptQueue, state.streamStates, sendMessage]);
+  }, [state.promptQueue, state.streamStates, sendMessage, desktopConversation]);
 
   return (
     <ChatContext.Provider

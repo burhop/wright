@@ -1,0 +1,81 @@
+{
+  "installed_version": "0.4.0",
+  "installed_at_utc": "2026-10-13T11:25:59.353179+00:00",
+  "approval": "Approve named 0.4.0 update",
+  "config_semantic_delta": "only named marketplace source",
+  "named_plugin_enabled": true,
+  "package_files": {
+    ".mcp.json": "3f569ad77e062371bcd8f74a7f3218e3c6639f11a8189625f4d4e96f3dac0797",
+    ".codex-plugin/plugin.json": "2f4f6dbe9ebcff9e12c69a72a869f2eafcd82b36767119925a40c579cc55c1b2",
+    "skills/wright-workflows/SKILL.md": "856fb5422ca685b66387f52309b12ee592ad6501dccb0b491e137109c47c1a62"
+  },
+  "config_after_sha256": "d217700baf3ed6e294a4a9659c50165a48a50e0384f605f084e09f1ccf716ebe",
+  "private_backup": "/tmp/wright-native-working-install-20261013T112258Z",
+  "old_package_and_state": "preserved; old cache restored byte-for-byte from private backup",
+  "old_api_at_preflight": "already stopped; not restarted",
+  "candidate_api_pid": 2397235,
+  "candidate_api": "http://127.0.0.1:8123",
+  "candidate_profile": "digital text/checkpoints; confined gateway disabled",
+  "desktop_restart": false,
+  "all_chat_reload": false,
+  "windows_native_acceptance": "pending",
+  "engineering_runs_started": 0,
+  "commands_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "qualification_recovery": {
+    "failure": "Post-install assertion found CLI marketplace replacement removed cached 0.3.0",
+    "action": "Restored only cached 0.3.0 from private backup, verified exact bytes; did not replay update commands or change active 0.4.0 selection"
+  },
+  "read_only_installed_package_verification": {
+    "boundary": "Installed package through official MCP client; resource/status/saved-source/completed-run reads only; not Windows rendering",
+    "tool_count": 18,
+    "tool_names": [
+      "wright_connection_status",
+      "wright_process_cancel",
+      "wright_process_prepare",
+      "wright_process_read",
+      "wright_process_respond",
+      "wright_process_start",
+      "wright_process_ui_read",
+      "wright_process_ui_update",
+      "wright_process_view",
+      "wright_reasoning_action",
+      "wright_reasoning_answer",
+      "wright_reasoning_pending",
+      "wright_workflow_create",
+      "wright_workflow_open",
+      "wright_workflow_read",
+      "wright_workflow_save",
+      "wright_workspace_create",
+      "wright_workspace_panel"
+    ],
+    "protocol_version": "2025-11-25",
+    "resource_uri": "ui://wright/workflow/ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60.html",
+    "resource_sha256": "ed299bbd410908eb61e63d6314b97a616f8601a714b720a46aeca427b958ba60",
+    "resource_bytes": 2184542,
+    "ui_only_tools": [
+      "wright_workflow_save",
+      "wright_process_ui_read",
+      "wright_process_ui_update"
+    ],
+    "status_connected_during_client": true,
+    "saved_source_digest": "6cf626953a22f8eccf0f9721c69bbe6c6e88bd078707f38f5caeeafcea0fd789",
+    "completed_run_id": "92db9047617c48ec91a85dec3a3a0a1b",
+    "process_view_ok": true,
+    "observed_run_state": "completed",
+    "no_workflow_mutations_or_model_calls": true
+  },
+  "probe_corrections": [
+    {
+      "failure": "Restricted sandbox protocol probe did not complete; only that owned client was interrupted with exit 130",
+      "correction": "Loopback verification ran with reviewed network permission and a 55-second bound; no write replay"
+    },
+    {
+      "failure": "Verification script expected an ok field on the primary view; actual successful contract returns workspace, snapshot, working_view_enabled",
+      "correction": "Read-only verifier checks exact workspace/run identity, completed state and enabled view; runtime and protocol unchanged"
+    }
+  ]
+}

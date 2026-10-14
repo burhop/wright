@@ -1,0 +1,43 @@
+{
+  "status": "offline original assignment and binding audit; no execution, conversion, provider installation or campaign validation",
+  "raw_evidence": "/tmp/wright-desktop-original-readiness-20261011-02/original-readiness.json",
+  "sha256": "023ddbaafae159b355c8d0d0807cfabb8e035057114946036bd7c983b5fb96bd",
+  "source_checkpoint": "d8edeb090d0a6d0a7490cccacc7e50afd0b0403f",
+  "original_sources_and_scenario_copies_unchanged": true,
+  "isolated_provider_count": 0,
+  "catalog_compiler_blocks": [
+    {
+      "template": "printed-replacement-part",
+      "source_digest": "50e2533c314ccfbe0e2ba4dcfaf36d43f692d1bbde2fc4b01b72a79bd79780f8",
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Create source mesh needs a supported execution type."
+      }
+    },
+    {
+      "template": "robot-tracking-diagnosis",
+      "source_digest": "7715b4412eab489576fd5dfc6503a30edcb8a719123cd4ffe8a04e32def14520",
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Inspect bag and topic schemas needs a supported execution type."
+      }
+    }
+  ],
+  "manufacturing_specific_gaps": [
+    "Bind original 38 mm PNG/prompt/context instead of catalog 24 mm seed defaults",
+    "Desktop original-image handoff not qualified by current text-only callback",
+    "Qualify independent Blender construction/repair, measurement and slicer/provider schemas in private fresh state",
+    "Preserve PETG/P1S profiles; Windows .exe path in historical binding is not Linux ARM64 compatibility",
+    "Use exact declared review and simulated local transfer receipt; no physical printer destination or inherited approval",
+    "Retain original source/repaired/package handoffs and existing assessment authority; do not activate protected 081 content validation"
+  ],
+  "robot_specific_gaps": [
+    "Traceable original CSV-to-real-ROS2-bag conversion with original topic schemas/timestamps; CSVs are not a bag",
+    "Qualify existing independent bag provider and numeric operation bindings in fresh isolated state; do not reuse named protected campaign container",
+    "Freeze frames/interpolation/exclusions and independently compare metrics within original 1 percent tolerance and event timing within one sample",
+    "Bind timeline/plots/metrics into desktop diagnosis and declared engineering review; no fabricated slip diagnosis or controller changes"
+  ],
+  "next_experiment": "First qualify actual installed Windows chat/plugin/panel; then prepare an exact private-provider binding proposal for the full original assignments, retaining all stages and gates."
+}

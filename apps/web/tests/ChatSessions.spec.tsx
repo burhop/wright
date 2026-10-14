@@ -152,6 +152,47 @@ describe("ChatProvider session state", () => {
     });
   });
 
+  it("keeps cached standalone chat intact without restoring its agent in hosted mode", async () => {
+    const cached = makeSession({
+      sessionId: "hermes-retained",
+      title: "Retained chat",
+    });
+    localStorageMock.setItem("wright-chat-sessions", JSON.stringify([cached]));
+    function HostedHarness() {
+      const { state, selectSession, refreshSessions } = useChat();
+      return (
+        <>
+          <div data-testid="hosted-selection">{state.activeSessionId}</div>
+          <button onClick={() => selectSession("hermes-retained")}>
+            select retained
+          </button>
+          <button onClick={() => refreshSessions("workspace-1")}>
+            refresh hosted
+          </button>
+        </>
+      );
+    }
+    render(
+      <ChatProvider desktopConversation>
+        <HostedHarness />
+      </ChatProvider>,
+    );
+    fireEvent.click(screen.getByText("select retained"));
+    fireEvent.click(screen.getByText("refresh hosted"));
+    await waitFor(() =>
+      expect(screen.getByTestId("hosted-selection")).toHaveTextContent(
+        "hermes-retained",
+      ),
+    );
+    expect(agentService.listSessions).not.toHaveBeenCalled();
+    expect(agentService.getSessionHistory).not.toHaveBeenCalled();
+    expect(agentService.getStreamStatus).not.toHaveBeenCalled();
+    expect(agentService.attachStream).not.toHaveBeenCalled();
+    expect(
+      JSON.parse(localStorageMock.getItem("wright-chat-sessions")!),
+    ).toEqual([cached]);
+  });
+
   it("deduplicates sessions returned by backend refreshes", async () => {
     vi.mocked(agentService.listSessions).mockResolvedValue([
       {

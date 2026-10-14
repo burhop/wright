@@ -1,0 +1,58 @@
+{
+  "boundary": "GB10 browser simulated MCP App host; exact interrupted owner state",
+  "native_desktop_verified": false,
+  "passed": [
+    "abrupt-restart retained run renders reconciliation, not chat continuation; reload never sends effects"
+  ],
+  "scope": {
+    "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+    "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+    "path": "workflows/desktop-inspection.workflow.wflow"
+  },
+  "run_id": "e6c08506e3d14f40be12bf0cff9f23c7",
+  "calls": [
+    {
+      "name": "wright_workflow_read",
+      "arguments": {
+        "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+        "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+        "path": "workflows/desktop-inspection.workflow.wflow"
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+          "path": "workflows/desktop-inspection.workflow.wflow",
+          "expected_storage_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+          "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+          "operation": "snapshot",
+          "run_id": "e6c08506e3d14f40be12bf0cff9f23c7"
+        }
+      }
+    },
+    {
+      "name": "wright_workflow_read",
+      "arguments": {
+        "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+        "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+        "path": "workflows/desktop-inspection.workflow.wflow"
+      }
+    },
+    {
+      "name": "wright_process_ui_read",
+      "arguments": {
+        "request": {
+          "session_id": "desktop-be9a9962-afd9-4be1-a370-5d971e1b2ad1",
+          "path": "workflows/desktop-inspection.workflow.wflow",
+          "expected_storage_digest": "7b294246177afc6835f4a7738e6b72f5bf9e25c676381f61b9160f7852f9b7ba",
+          "workspace_id": "4d547ec3-c17a-4d6f-b46a-36ec5d401b7d",
+          "operation": "snapshot",
+          "run_id": "e6c08506e3d14f40be12bf0cff9f23c7"
+        }
+      }
+    }
+  ],
+  "errors": []
+}

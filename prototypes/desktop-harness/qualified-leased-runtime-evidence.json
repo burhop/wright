@@ -1,0 +1,78 @@
+{
+  "status": "development leased response/action profiles locally qualified at these boundaries; Windows checkpoint unchanged",
+  "lease_seconds": 30,
+  "heartbeat_interval_seconds": 5,
+  "lease": {
+    "state": "/tmp/wright-desktop-lease-proof-20261011-01",
+    "profile": "wright-desktop-prototype:7f1e94190c9c8439dfba77fce919adb0ba1bb5ede6a3c89499b43144d84f381a",
+    "runtime": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "f7d34e438e85db4b3727e7a34199372a16b48c3d4408a3fb504ca1e77d241cc2",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "c2ec7eeac5051c586399c1a800b4a2c6a9bc4d9470bc5fd2d67272e2d103db40",
+        "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+      },
+      "confined_inspection": false,
+      "connection_lease_seconds": 30,
+      "heartbeat_interval_seconds": 5
+    },
+    "run_id": "d26bfe2a22b8493ca6c92da05fdb2243",
+    "abrupt_mcp_loss": "owned child SIGKILL; terminal process observed",
+    "readiness_after_loss": false,
+    "mutation_denial": 503,
+    "pending_retained": true,
+    "pre_reconnect_counts": {
+      "engineering_workspaces": 1,
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 0,
+      "desktop_reasoning_terminal_receipts": 0
+    },
+    "run_artifacts_unchanged_before_answer": true,
+    "final_state": "completed",
+    "final_counts": {
+      "engineering_workspaces": 1,
+      "desktop_reasoning_requests": 1,
+      "desktop_reasoning_responses": 1,
+      "desktop_reasoning_terminal_receipts": 1
+    },
+    "reconnect": "same existing live run, no start/replay call",
+    "timing_limit": "first observer may start after preparation delay; this is not a measured expiry latency",
+    "observer_helper_failure": "wrong guessed table name before mutation; retained failure corrected to engineering_workspaces"
+  },
+  "gateway": {
+    "state": "/tmp/wright-desktop-leased-gateway-proof-20261011-01",
+    "profile": "wright-desktop-prototype:a59f068077b81464bc5b4211a7201569b437cfb455265e3f668286fbb1104dd7",
+    "runtime": {
+      "mcp_sdk": "1.28.1",
+      "files": {
+        "adapter": "f7d34e438e85db4b3727e7a34199372a16b48c3d4408a3fb504ca1e77d241cc2",
+        "dispatch": "6445d1e44f24c77457e0b4520f8a2bd9774809a8e02ce8ec61558618ca9eac17",
+        "backend": "c2ec7eeac5051c586399c1a800b4a2c6a9bc4d9470bc5fd2d67272e2d103db40",
+        "transport": "1c6dba2a74f47ef8eb15a510cb1631c5c9764d77cb8fa57413ef3d4a18c83058"
+      },
+      "confined_inspection": true,
+      "connection_lease_seconds": 30,
+      "heartbeat_interval_seconds": 5
+    },
+    "run_id": "627b7e77b21842cc871920c121fd5803",
+    "no_grant_start": 403,
+    "final_state": "completed",
+    "successful_dispatches": 1,
+    "input_unchanged": true,
+    "authority": "exact private local read-only enrollment; no engineering approval or generic tool authority"
+  },
+  "regression": {
+    "tests": 107,
+    "seconds": 5.88,
+    "lease_cases": 5,
+    "result": "passed"
+  },
+  "limits": [
+    "Installed Windows plugin/right panel and actual chat/panel closure remain unverified",
+    "MCP liveness is not upstream model readiness or an active conversation attestation",
+    "API restart during reasoning and uncertain tool outcomes require separate current-profile qualification",
+    "Automatic interrupted-reasoning continuation remains unsupported",
+    "Other tool scopes, physical actions and generated process-UI authoring remain gated"
+  ]
+}

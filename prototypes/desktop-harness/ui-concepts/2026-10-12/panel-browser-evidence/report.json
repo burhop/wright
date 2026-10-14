@@ -1,0 +1,12 @@
+{
+  "boundary": "GB10 browser with simulated MCP App host; real recorded Wright result",
+  "passed": [
+    "initial result",
+    "scoped refresh once",
+    "theme notification",
+    "narrow layout",
+    "untrusted frame rejected",
+    "error remains read-only"
+  ],
+  "native_desktop_verified": false
+}

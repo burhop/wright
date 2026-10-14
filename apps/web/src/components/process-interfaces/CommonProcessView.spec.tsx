@@ -561,6 +561,63 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+describe("desktop reasoning observation in the common view", () => {
+  it("shows the exact chat wait and detaches only its reader on close", async () => {
+    const { client, store } = fixture();
+    const read = vi.fn(async (_run: string, _signal: AbortSignal) => ({
+      runId: "run-one",
+      requestId: "request-chat",
+      queuedAt: input.created_at,
+      label: "Waiting for desktop chat",
+      detail: "Send Continue in the bound desktop conversation.",
+    }));
+    const view = render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        readReasoningStatus={read}
+      />,
+    );
+    const notice = await screen.findByTestId("process-desktop-reasoning-wait");
+    expect(notice).toHaveTextContent("Waiting for desktop chat");
+    expect(notice).toHaveTextContent("request-chat");
+    expect(read.mock.calls[0][0]).toBe("run-one");
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.respond).not.toHaveBeenCalled();
+    expect(client.decide).not.toHaveBeenCalled();
+    view.unmount();
+    expect(read.mock.calls[0][1].aborted).toBe(true);
+    expect(client.cancel).not.toHaveBeenCalled();
+  });
+
+  it("reports a mismatched handoff instead of presenting another run's wait", async () => {
+    const { client, store } = fixture();
+    const read = vi.fn(async () => ({
+      runId: "other-run",
+      requestId: "other-request",
+      queuedAt: input.created_at,
+      label: "Wrong run wait",
+      detail: "Do not present this.",
+    }));
+    render(
+      <CommonProcessView
+        client={client}
+        sessionId="session"
+        runId="run-one"
+        recoveryStore={store}
+        readReasoningStatus={read}
+      />,
+    );
+    const notice = await screen.findByTestId("process-desktop-reasoning-wait");
+    expect(notice).toHaveTextContent("AI handoff status unavailable");
+    expect(notice).not.toHaveTextContent("other-request");
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.respond).not.toHaveBeenCalled();
+  });
+});
+
 describe("common process preparation and authority", () => {
   it("shows an undeclared-input diagnostic and exact correction without inventing a response form", async () => {
     const { client, store } = fixture();

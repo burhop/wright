@@ -1,0 +1,464 @@
+{
+  "boundary": "compiled GB10 browser; no native Windows acceptance or engineering execution",
+  "commit": "9fc6ce9a1a17913702468fed9cd1083a8b98d774",
+  "build_flags": {
+    "VITE_WRIGHT_WORKFLOW_RECOVERY": "1"
+  },
+  "entries": [
+    {
+      "template_id": "printed-replacement-part",
+      "workspace_id": "34a24230-8159-4fd8-affa-e390e0dbd8e2",
+      "source_path": "workflows/printed-replacement-part.workflow.wflow",
+      "source_sha256": "03c4ddba4a5dce6b0ad228c03f9a083f74e8bf377f2fd2712349eba036bf46ec",
+      "exact_source_displayed_and_reopened": true,
+      "source_unchanged": true,
+      "entered_via_workflows": true,
+      "node_count": 9,
+      "catalog_readiness": {
+        "state": "setup_required",
+        "definition_valid": true,
+        "configured": false,
+        "qualified": false,
+        "available": false,
+        "verified_run": false,
+        "facts": [
+          {
+            "code": "definition-reviewed",
+            "label": "Starter definition reviewed",
+            "satisfied": true,
+            "evidence": []
+          },
+          {
+            "code": "adapters-qualified",
+            "label": "Image, slicer, and printer adapters qualified",
+            "satisfied": false,
+            "evidence": []
+          }
+        ],
+        "blocking_reasons": [
+          "Configure and qualify image-to-mesh, slicer, and Bambu P1S transfer adapters before a live run."
+        ]
+      },
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Create source mesh needs a supported execution type."
+      },
+      "engineering_run_started": false,
+      "forbidden_requests": [],
+      "requests": [
+        {
+          "path": "/api/auth/session/status",
+          "method": "GET"
+        },
+        {
+          "path": "/api/settings",
+          "method": "GET"
+        },
+        {
+          "path": "/api/auth/session",
+          "method": "POST"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/34a24230-8159-4fd8-affa-e390e0dbd8e2",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/files",
+          "method": "GET"
+        },
+        {
+          "path": "/api/mcp/servers/installed",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/34a24230-8159-4fd8-affa-e390e0dbd8e2/tools",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "POST"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "GET"
+        },
+        {
+          "path": "/api/auth/session/status",
+          "method": "GET"
+        },
+        {
+          "path": "/api/settings",
+          "method": "GET"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/34a24230-8159-4fd8-affa-e390e0dbd8e2",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/files",
+          "method": "GET"
+        },
+        {
+          "path": "/api/mcp/servers/installed",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/34a24230-8159-4fd8-affa-e390e0dbd8e2/tools",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/runs",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/reviews",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/readiness",
+          "method": "GET"
+        },
+        {
+          "path": "/api/auth/session/status",
+          "method": "GET"
+        },
+        {
+          "path": "/api/settings",
+          "method": "GET"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/34a24230-8159-4fd8-affa-e390e0dbd8e2",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/files",
+          "method": "GET"
+        },
+        {
+          "path": "/api/mcp/servers/installed",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/34a24230-8159-4fd8-affa-e390e0dbd8e2/tools",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/runs",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/reviews",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/readiness",
+          "method": "GET"
+        }
+      ],
+      "served_assets": [
+        {
+          "path": "/assets/index-DcOMoiTD.css",
+          "matches": true,
+          "sha256": "8a1a61f5f8b1137ce433c226de1e126e1065662387655ade891de9633d170fe7"
+        },
+        {
+          "path": "/assets/rolldown-runtime-Dd_uD5pT.js",
+          "matches": true,
+          "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+        },
+        {
+          "path": "/assets/index-DMBAMMMf.js",
+          "matches": true,
+          "sha256": "5692136c30826562b351ef2c344b6904fc3545b3455c5cb66eb22fb82aa37534"
+        },
+        {
+          "path": "/assets/index-DMBAMMMf.js",
+          "matches": true,
+          "sha256": "5692136c30826562b351ef2c344b6904fc3545b3455c5cb66eb22fb82aa37534"
+        },
+        {
+          "path": "/assets/rolldown-runtime-Dd_uD5pT.js",
+          "matches": true,
+          "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+        },
+        {
+          "path": "/assets/index-DcOMoiTD.css",
+          "matches": true,
+          "sha256": "8a1a61f5f8b1137ce433c226de1e126e1065662387655ade891de9633d170fe7"
+        },
+        {
+          "path": "/assets/index-DMBAMMMf.js",
+          "matches": true,
+          "sha256": "5692136c30826562b351ef2c344b6904fc3545b3455c5cb66eb22fb82aa37534"
+        },
+        {
+          "path": "/assets/rolldown-runtime-Dd_uD5pT.js",
+          "matches": true,
+          "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+        },
+        {
+          "path": "/assets/index-DcOMoiTD.css",
+          "matches": true,
+          "sha256": "8a1a61f5f8b1137ce433c226de1e126e1065662387655ade891de9633d170fe7"
+        }
+      ],
+      "node_count_in_source_view": 0,
+      "node_count_reconciled_by_readonly_reopen": true
+    },
+    {
+      "template_id": "robot-tracking-diagnosis",
+      "workspace_id": "edb72a7e-af6c-442a-b030-15aaa0f7f7fe",
+      "source_path": "workflows/robot-tracking-diagnosis.workflow.wflow",
+      "source_sha256": "61af6657d4163e436bcc84ef592831abb8b74601ad575ea6b7e8900498d90014",
+      "exact_source_displayed_and_reopened": true,
+      "source_unchanged": true,
+      "entered_via_workflows": true,
+      "node_count": 6,
+      "catalog_readiness": {
+        "state": "reference",
+        "definition_valid": true,
+        "configured": false,
+        "qualified": false,
+        "available": false,
+        "verified_run": false,
+        "facts": [
+          {
+            "code": "rosbag-retrieval",
+            "label": "Known-message retrieval qualified",
+            "satisfied": true,
+            "evidence": []
+          },
+          {
+            "code": "analysis-qualified",
+            "label": "Numeric alignment and metrics qualified",
+            "satisfied": false,
+            "evidence": []
+          }
+        ],
+        "blocking_reasons": [
+          "Numeric messages, independent alignment, plotting, and recovery behavior require qualification."
+        ]
+      },
+      "compiler": {
+        "status": "blocked",
+        "code": "WORKFLOW_NOT_READY",
+        "message": "Inspect bag and topic schemas needs a supported execution type."
+      },
+      "engineering_run_started": false,
+      "forbidden_requests": [],
+      "requests": [
+        {
+          "path": "/api/auth/session/status",
+          "method": "GET"
+        },
+        {
+          "path": "/api/settings",
+          "method": "GET"
+        },
+        {
+          "path": "/api/auth/session",
+          "method": "POST"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/edb72a7e-af6c-442a-b030-15aaa0f7f7fe",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/files",
+          "method": "GET"
+        },
+        {
+          "path": "/api/mcp/servers/installed",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/edb72a7e-af6c-442a-b030-15aaa0f7f7fe/tools",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "POST"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/runs",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/reviews",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/readiness",
+          "method": "GET"
+        },
+        {
+          "path": "/api/auth/session/status",
+          "method": "GET"
+        },
+        {
+          "path": "/api/settings",
+          "method": "GET"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/edb72a7e-af6c-442a-b030-15aaa0f7f7fe",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/files",
+          "method": "GET"
+        },
+        {
+          "path": "/api/mcp/servers/installed",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/edb72a7e-af6c-442a-b030-15aaa0f7f7fe/tools",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/runs",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/reviews",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/readiness",
+          "method": "GET"
+        },
+        {
+          "path": "/api/auth/session/status",
+          "method": "GET"
+        },
+        {
+          "path": "/api/settings",
+          "method": "GET"
+        },
+        {
+          "path": "/api/health",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/edb72a7e-af6c-442a-b030-15aaa0f7f7fe",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/files",
+          "method": "GET"
+        },
+        {
+          "path": "/api/mcp/servers/installed",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/by-id/edb72a7e-af6c-442a-b030-15aaa0f7f7fe/tools",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/runs",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/reviews",
+          "method": "GET"
+        },
+        {
+          "path": "/api/workspace/workflow-sources/readiness",
+          "method": "GET"
+        }
+      ],
+      "served_assets": [
+        {
+          "path": "/assets/index-DcOMoiTD.css",
+          "matches": true,
+          "sha256": "8a1a61f5f8b1137ce433c226de1e126e1065662387655ade891de9633d170fe7"
+        },
+        {
+          "path": "/assets/rolldown-runtime-Dd_uD5pT.js",
+          "matches": true,
+          "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+        },
+        {
+          "path": "/assets/index-DMBAMMMf.js",
+          "matches": true,
+          "sha256": "5692136c30826562b351ef2c344b6904fc3545b3455c5cb66eb22fb82aa37534"
+        },
+        {
+          "path": "/assets/index-DMBAMMMf.js",
+          "matches": true,
+          "sha256": "5692136c30826562b351ef2c344b6904fc3545b3455c5cb66eb22fb82aa37534"
+        },
+        {
+          "path": "/assets/rolldown-runtime-Dd_uD5pT.js",
+          "matches": true,
+          "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+        },
+        {
+          "path": "/assets/index-DcOMoiTD.css",
+          "matches": true,
+          "sha256": "8a1a61f5f8b1137ce433c226de1e126e1065662387655ade891de9633d170fe7"
+        },
+        {
+          "path": "/assets/index-DMBAMMMf.js",
+          "matches": true,
+          "sha256": "5692136c30826562b351ef2c344b6904fc3545b3455c5cb66eb22fb82aa37534"
+        },
+        {
+          "path": "/assets/rolldown-runtime-Dd_uD5pT.js",
+          "matches": true,
+          "sha256": "c5f0356f5d0918a3137e4e811fd18950efe8ac8f6bf84d1d4da7811c477a24d8"
+        },
+        {
+          "path": "/assets/index-DcOMoiTD.css",
+          "matches": true,
+          "sha256": "8a1a61f5f8b1137ce433c226de1e126e1065662387655ade891de9633d170fe7"
+        }
+      ],
+      "node_count_in_source_view": 0,
+      "node_count_reconciled_by_readonly_reopen": true
+    }
+  ],
+  "correction": "Initial report counted DOM nodes after switching to Source; graph counts were reconciled by read-only reopen. Original report preserved."
+}

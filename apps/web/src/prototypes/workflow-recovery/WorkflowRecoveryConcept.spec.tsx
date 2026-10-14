@@ -65,6 +65,123 @@ beforeAll(() => {
   vi.stubGlobal("ResizeObserver", MockResizeObserver);
 });
 
+it("keeps the editor usable when LAN HTTP has no Web Crypto digest", async () => {
+  const browserCrypto = globalThis.crypto;
+  vi.stubGlobal("crypto", { subtle: undefined });
+  try {
+    render(
+      <Editor
+        workflowSource={reportWorkflowSource}
+        workflowFilePath="workflows/lan-report.workflow.wflow"
+        storageDigest={"a".repeat(64)}
+        definitionRevision={1}
+      />,
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId("workflow-recovery-concept")).toHaveAttribute(
+        "data-semantic-digest",
+        "sha256:unavailable-in-this-browser",
+      ),
+    );
+    expect(screen.getByTestId("workflow-recovery-canvas")).toBeVisible();
+    expect(screen.getByTestId("workflow-recovery-concept")).toHaveAttribute(
+      "data-layout-digest",
+      "sha256:unavailable-in-this-browser",
+    );
+  } finally {
+    vi.stubGlobal("crypto", browserCrypto);
+  }
+});
+
+it("shows a queued desktop task on the exact active run and clears it on completion without dispatching", async () => {
+  const record: import("../../services/workspace-service").WorkspaceWorkflowRunSummary =
+    {
+      path: "runs/report/run-1.json",
+      run_id: "run-1",
+      status: "running",
+      started_at: "2026-10-12T01:09:23Z",
+      source_digest: "b".repeat(64),
+      source_matches_current: true,
+      results: [],
+      execution: {
+        active_task_id: "document_1",
+        completed_task_ids: [],
+        event_count: 3,
+        model_call_count: 1,
+        tool_call_count: 0,
+        tool_completed_count: 0,
+        revision_count: 0,
+        outputs: [],
+        last_progress: {
+          kind: "step_started",
+          task_title: "Create HTML report",
+        },
+        truncated: false,
+      },
+    };
+  const runs = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowRuns")
+    .mockResolvedValue([record]);
+  const reviews = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowReviews")
+    .mockResolvedValue([]);
+  const read = vi.fn().mockResolvedValue({
+    runId: "run-1",
+    requestId: "request-1",
+    queuedAt: record.started_at,
+    label: "Waiting for desktop chat",
+    detail:
+      "Send Continue the workflow in dave in the desktop chat to continue this same run.",
+  });
+  const onRun = vi.fn();
+  const props = {
+    workflowSource: reportWorkflowSource,
+    workspaceId: "workspace-1",
+    workspaceSessionId: "session-1",
+    workflowFilePath: "workflows/report.workflow.wflow",
+    storageDigest: record.source_digest,
+    definitionRevision: 1,
+    onRun,
+    onReadReasoningStatus: read,
+  };
+  const view = render(<Editor {...props} />);
+  try {
+    const banner = await screen.findByTestId("workflow-run-reasoning-wait");
+    expect(banner).toHaveTextContent("Waiting for desktop chat");
+    expect(banner).toHaveTextContent("Queued at");
+    expect(banner).toHaveTextContent("request-1");
+    expect(screen.getByTestId("workflow-recovery-run-start")).toHaveTextContent(
+      "Waiting for chat",
+    );
+    expect(screen.getByTestId("workflow-recovery-run-start")).toBeDisabled();
+    expect(
+      screen.getByTestId("workflow-recovery-run-details-toggle"),
+    ).toHaveTextContent("Waiting for desktop chat");
+    fireEvent.click(screen.getByRole("button", { name: "Show waiting task" }));
+    expect(screen.getByTestId("workflow-recovery-inspector")).toHaveTextContent(
+      "Create report.html",
+    );
+    expect(onRun).not.toHaveBeenCalled();
+    runs.mockResolvedValue([
+      { ...record, status: "completed", completed_at: "2026-10-12T01:10:23Z" },
+    ]);
+    view.rerender(<Editor {...props} reopenRequest={1} />);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId("workflow-run-reasoning-wait"),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByTestId("workflow-recovery-run-details-toggle"),
+    ).toHaveTextContent("Completed");
+    expect(onRun).not.toHaveBeenCalled();
+  } finally {
+    view.unmount();
+    runs.mockRestore();
+    reviews.mockRestore();
+  }
+});
+
 it.each([
   ["empty", () => blankWorkflowSource("Readiness check")],
   ["configured", () => reportWorkflowSource],
@@ -126,6 +243,7 @@ it("explains that input blocks alone do not make a runnable process", async () =
       onRun={onRun}
     />,
   );
+  fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
   fireEvent.click(screen.getByTestId("workflow-recovery-create-group-input"));
   fireEvent.click(
     screen.getByTestId("workflow-recovery-create-template-text-input"),
@@ -649,6 +767,7 @@ describe("WorkflowRecoveryConcept component states", () => {
         onRun={onRun}
       />,
     );
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     fireEvent.click(
       screen.getByTestId("workflow-recovery-create-group-document"),
     );
@@ -1998,6 +2117,7 @@ end`;
         storageDigest={"b".repeat(64)}
       />,
     );
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-document"),
     );
@@ -2145,6 +2265,7 @@ end`;
         onSave={onSave}
       />,
     );
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -2205,6 +2326,7 @@ end`;
       return { source, definition_revision: 8, storage_digest: "a".repeat(64) };
     });
     const first = render(<WorkflowRecoveryConcept onSave={onSave} />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     screen.getByTestId("workflow-recovery-create-group-input").focus();
     await userEvent.keyboard("{Enter}");
     screen.getByTestId("workflow-recovery-create-template-text-input").focus();
@@ -2225,6 +2347,7 @@ end`;
     expect(
       screen.getByTestId("workflow-recovery-inputs-toggle"),
     ).toHaveTextContent("1/4 configured");
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -2265,6 +2388,7 @@ end`;
   it("stores a workspace-relative file path and treats a bare filename as the workspace root", async () => {
     const onOpenFile = vi.fn();
     render(<WorkflowRecoveryConcept onOpenFile={onOpenFile} />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-input"),
     );
@@ -2301,6 +2425,7 @@ end`;
 
   it("edits unbound prompts and parameters, confirms deletion, and restores the full object with undo", async () => {
     render(<WorkflowRecoveryConcept />);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     await userEvent.click(
       screen.getByTestId("workflow-recovery-create-group-document"),
     );
@@ -2361,7 +2486,7 @@ end`;
     );
   });
 
-  it("renders the compact Create rail, transient Inputs and contextual Inspector with stable controls", async () => {
+  it("renders the compact Add step menu, transient Inputs and contextual Inspector with stable controls", async () => {
     const { container } = render(<WorkflowRecoveryConcept />);
     expect(screen.getByTestId("workflow-recovery-canvas")).toBeVisible();
     expect(screen.getByTestId("workflow-recovery-authority")).toHaveAttribute(
@@ -2377,6 +2502,10 @@ end`;
     expect(
       screen.queryByRole("heading", { name: "Three source inputs" }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryAllByTestId(/workflow-recovery-create-group-/),
+    ).toHaveLength(0);
+    fireEvent.click(screen.getByTestId("workflow-recovery-add-step"));
     expect(
       screen.getAllByTestId(/workflow-recovery-create-group-/),
     ).toHaveLength(4);

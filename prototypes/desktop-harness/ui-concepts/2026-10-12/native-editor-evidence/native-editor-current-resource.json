@@ -1,0 +1,10 @@
+{
+  "boundary": "official MCP client; resource/source reads only, not Windows acceptance",
+  "resource_uri": "ui://wright/workflow/ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e.html",
+  "resource_sha256": "ad4223e1c8e6d7039574c975925f33f327ca5c5dc92546c729142c92402d581e",
+  "resource_bytes": 1325752,
+  "tools": 15,
+  "ui_save_visibility": [
+    "app"
+  ]
+}

@@ -7,6 +7,7 @@ import {
   Outlet,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import AppShell from "./components/layout/AppShell";
 import DashboardPage from "./components/pages/DashboardPage";
@@ -40,6 +41,9 @@ const NativeProcessPage = lazy(
 );
 
 function AppContent() {
+  const location = useLocation();
+  const desktopConversation =
+    new URLSearchParams(location.search).get("host") === "openai-desktop";
   const content = (
     <ViewerPanelProvider>
       <ToolsProvider>
@@ -53,7 +57,7 @@ function AppContent() {
     </ViewerPanelProvider>
   );
   return (
-    <ChatProvider>
+    <ChatProvider desktopConversation={desktopConversation}>
       {workspaceSurfacesEnabled() ? (
         <SurfaceStateProvider>{content}</SurfaceStateProvider>
       ) : (
