@@ -179,10 +179,16 @@ export function createNativePanelProcessClient(options: {
       } else if (simple[url.pathname]) request.operation = simple[url.pathname];
       else {
         const answer = /^\/interactions\/([^/]+)\/response$/.exec(url.pathname);
+        const decision = /^\/interactions\/([^/]+)\/decision$/.exec(
+          url.pathname,
+        );
         const cancel = /^\/runs\/([^/]+)\/cancel$/.exec(url.pathname);
         if (answer) {
           request.operation = "respond";
           request.checkpoint_id = decodeURIComponent(answer[1]);
+        } else if (decision) {
+          request.operation = "decide";
+          request.checkpoint_id = decodeURIComponent(decision[1]);
         } else if (cancel) {
           request.operation = "cancel";
           request.run_id = decodeURIComponent(cancel[1]);

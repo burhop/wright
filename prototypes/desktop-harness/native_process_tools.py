@@ -16,6 +16,7 @@ from api.schemas.process_interfaces import (
     ProcessCancelRequest,
     ProcessInputResponseRequest,
     ProcessReadinessRequest,
+    ProcessReviewDecisionRequest,
     ProcessRepresentationRequest,
     ProcessRunRequest,
     ProcessSourceRequest,
@@ -80,6 +81,12 @@ class PanelResponse(ProcessInputResponseRequest):
     auto: Literal[False] = False
 
 
+class PanelDecision(ProcessReviewDecisionRequest):
+    workspace_id: Segment
+    operation: Literal["decide"]
+    checkpoint_id: Segment
+
+
 class PanelCancel(ProcessCancelRequest):
     workspace_id: Segment
     operation: Literal["cancel"]
@@ -91,7 +98,12 @@ PanelRead = Annotated[
     Field(discriminator="operation"),
 ]
 PanelUpdate = Annotated[
-    PanelInputs | PanelReadiness | PanelStart | PanelResponse | PanelCancel,
+    PanelInputs
+    | PanelReadiness
+    | PanelStart
+    | PanelResponse
+    | PanelDecision
+    | PanelCancel,
     Field(discriminator="operation"),
 ]
 BASE = "/api/workspace/process-interfaces"
@@ -199,16 +211,20 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                         if row.get("request", {}).get("run_id") == request.run_id
                     ]
             else:
-                if operation in ("respond", "cancel"):
+                if operation in ("respond", "decide", "cancel"):
                     subject = quote(
                         body.pop(
-                            "checkpoint_id" if operation == "respond" else "run_id"
+                            "checkpoint_id"
+                            if operation in ("respond", "decide")
+                            else "run_id"
                         ),
                         safe="",
                     )
                     path = BASE + (
-                        "/interactions/" + subject + "/response"
-                        if operation == "respond"
+                        "/interactions/"
+                        + subject
+                        + ("/decision" if operation == "decide" else "/response")
+                        if operation in ("respond", "decide")
                         else "/runs/" + subject + "/cancel"
                     )
                 else:

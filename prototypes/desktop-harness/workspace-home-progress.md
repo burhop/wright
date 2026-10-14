@@ -1135,3 +1135,45 @@ Next: bind fresh original Robot sources to isolated providers through existing
 workspace owners, drive the actual canonical tasks from desktop reasoning, and
 retain original validation/genuine review. SteveCAD OAuth remains independently
 pending. The goal is still active and incomplete.
+
+## Review decision port and full Robot requirements retained
+
+Inspection of the current Robot binding helper found that its accepted engineering
+journey extends beyond bag analysis: a genuine review precedes AgentCAD corrective
+hardware and CalculiX/field-export work, then validation and evidence collection.
+Those stages and their independently supplied requirements must remain. The prior
+three-case provider proof covers only the offline tracking providers. No fresh
+full Robot source was falsely marked ready, and no old campaign was resumed.
+Required additional bindings include AgentCAD context/docs/run, workspace document
+write/inspection, CalculiX mesh/solve/run retrieval and field/reaction export.
+The helper also needs visible exact per-task allowlists for the desktop enrolled
+profile; do not obtain a pass by removing stages or broadening available tools.
+
+Implemented a thin native UI `decide` operation using the existing
+ProcessReviewDecisionRequest and `/interactions/{checkpoint}/decision` owner.
+Workspace/session/source/checkpoint/subject/request identities remain exact;
+actor/automatic-review/dispatch fields are rejected. The shared common view's
+existing review controls now map through the native transport. External dispatch
+remains unavailable. Opening/reading does not review or continue a run.
+
+The opt-in enrolled qualification profile admits only Wright's exact fixed
+`local_review` binding/destination/review_only action shape and still requires
+manual exact-source enrollment at start. Default profile continues to reject
+these action-source steps. CAD/application/other external actions remain gated.
+This lets upcoming fresh private review tests use the actual common owner; it
+never records an engineering approval automatically. Source compiler errors still
+return their existing correction rather than generic non-JSON server failures.
+
+59 boundary/native-port tests and 25 actual existing review-owner tests passed;
+18 native-client/common-panel tests passed. The initial positive client fixture
+lacked the exact decision receipt; the existing client correctly reported unknown
+outcome. Corrected the fixture to supply the actual receipt shape, without
+weakening acknowledgement checks. The common-view test submits one synthetic
+changes-requested decision, preserves exact run/subject and sends no start,
+external action or cancellation. No real engineering decision was submitted.
+
+Installed0.7.0 and its frozen runtime/resource remain unchanged. This change is
+not yet a rebuilt/served native-panel or Windows acceptance claim; actual review
+wait/decision/continuation and uncertain-ack browser proofs remain next work.
+TypeScript project build, scoped ESLint, Ruff and whitespace checks also passed.
+No native bundle or live plugin was updated in this checkpoint.

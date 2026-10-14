@@ -146,7 +146,7 @@ def main():
                 "/api/workspace/workflow-sources/run",
             }
             or re.fullmatch(
-                r"/api/workspace/process-interfaces/(?:runs/[A-Za-z0-9._:-]+/cancel|interactions/[A-Za-z0-9._:-]+/response)",
+                r"/api/workspace/process-interfaces/(?:runs/[A-Za-z0-9._:-]+/cancel|interactions/[A-Za-z0-9._:-]+/(?:response|decision))",
                 path,
             )
             is not None

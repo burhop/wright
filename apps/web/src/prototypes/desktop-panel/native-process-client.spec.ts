@@ -185,20 +185,57 @@ describe("native process bridge over the existing public client", () => {
     });
     expect(call.mock.calls[0][1]).not.toHaveProperty("decision");
   });
-  it("reports unavailable review and external-action ports before sending anything", async () => {
+  it("submits an exact review decision without dispatching an action", async () => {
     const { client, call } = setup();
-    await expect(
-      client.decide({
-        checkpointId: "review",
-        subjectDigest: digest,
-        decision: "approved",
-        reason: "",
-        requestId: "review-request",
+    call.mockResolvedValueOnce(
+      result({
+        ok: true,
+        document: {
+          ...snapshot(),
+          interactions: [
+            {
+              checkpoint_id: "review:one",
+              step_id: "review",
+              kind: "action",
+              subject_digest: digest,
+              state: "responded",
+              instructions: "Private fixture",
+              decision: {
+                decision: "changes_requested",
+                actor: "server-owned",
+                request_id: "stable-review",
+                reason: "Missing measurement evidence",
+                integration_test: false,
+              },
+            },
+          ],
+        },
       }),
-    ).rejects.toMatchObject({
-      reason: { code: "CAPABILITY_UNAVAILABLE" },
-      uncertain: false,
+    );
+    await client.decide({
+      checkpointId: "review:one",
+      subjectDigest: digest,
+      decision: "changes_requested",
+      reason: "Missing measurement evidence",
+      requestId: "stable-review",
     });
+    expect(call).toHaveBeenCalledTimes(1);
+    expect(call.mock.calls[0][0]).toBe("wright_process_ui_update");
+    expect(call.mock.calls[0][1]).toMatchObject({
+      operation: "decide",
+      checkpoint_id: "review:one",
+      subject_digest: digest,
+      decision: "changes_requested",
+      reason: "Missing measurement evidence",
+      request_id: "stable-review",
+      workspace_id: "workspace",
+      expected_storage_digest: digest,
+    });
+    expect(call.mock.calls[0][1]).not.toHaveProperty("auto");
+    expect(call.mock.calls[0][1]).not.toHaveProperty("actor");
+  });
+  it("keeps external dispatch unavailable", async () => {
+    const { client, call } = setup();
     await expect(
       client.requestAction({
         actionId: "external",

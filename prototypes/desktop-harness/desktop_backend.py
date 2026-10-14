@@ -662,8 +662,21 @@ class DesktopBackend:
             raise HTTPException(
                 503, "Desktop image input and generation capabilities are not qualified"
             )
-        if any(
-            step.cad or step.application or step.external_action for step in plan.steps
+        from workspace_service.workflow_integration_policy import (
+            LOCAL_REVIEW_BINDING,
+            LOCAL_REVIEW_DESTINATION,
+        )
+
+        reviews = [step.external_action for step in plan.steps if step.external_action]
+        local_reviews_only = all(
+            action.get("action_kind") == "local_review"
+            and action.get("binding") == LOCAL_REVIEW_BINDING
+            and action.get("destination") == LOCAL_REVIEW_DESTINATION
+            and action.get("action") == {"kind": "local_review", "mode": "review_only"}
+            for action in reviews
+        )
+        if any(step.cad or step.application for step in plan.steps) or (
+            reviews and (not self.enrolled_mcp_tasks or not local_reviews_only)
         ):
             raise HTTPException(
                 503,
@@ -675,7 +688,7 @@ class DesktopBackend:
             raise HTTPException(
                 503, "Direct-tool execution requires separate enrollment qualification"
             )
-        if (tasks or direct) and self.enrolled_mcp_tasks:
+        if (tasks or direct or reviews) and self.enrolled_mcp_tasks:
             if any(not step.task_tool_allowlist for step in tasks):
                 raise HTTPException(
                     503, "Enrolled MCP tasks require explicit tool lists"

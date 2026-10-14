@@ -408,3 +408,29 @@ def test_invalid_source_returns_structured_correction_without_policy_lookup(boun
     assert denied.value.detail["message"]
     assert denied.value.detail["correction"]
     service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_only_exact_local_review_can_enter_enrolled_profile(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_process_review_decisions import (
+        review_source,
+    )
+
+    default, service, _ = boundary
+    source = review_source()
+    service.workflow_sources.read.return_value.source = source
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = []
+    with pytest.raises(HTTPException) as denied:
+        check(default)
+    assert denied.value.status_code == 503
+    enabled = DesktopBackend(service, default.state, 5201, enrolled_mcp_tasks=True)
+    check(enabled)
+    with pytest.raises(HTTPException) as missing:
+        check(enabled, grant=False)
+    assert missing.value.status_code == 403
+    changed = source.replace('"server": "wright"', '"server": "other"')
+    assert changed != source
+    service.workflow_sources.read.return_value.source = changed
+    with pytest.raises(HTTPException) as foreign:
+        check(enabled)
+    assert foreign.value.status_code == 503
