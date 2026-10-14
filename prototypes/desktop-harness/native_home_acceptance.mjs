@@ -65,7 +65,7 @@ const server = createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
     const {name, arguments: args} = JSON.parse(body);
     calls.push({name, arguments:args});
-    const allowed = new Set(['wright_workspace_list','wright_workspace_files','wright_workflow_read','wright_workflow_open','wright_connections_list','wright_connection_plans','wright_connection_plan_read','wright_workflow_history','wright_process_view','wright_process_ui_read']);
+    const allowed = new Set(['wright_workspace_list','wright_workspace_files','wright_workspace_file_preview','wright_workflow_read','wright_workflow_open','wright_connections_list','wright_connection_plans','wright_connection_plan_read','wright_workflow_history','wright_process_view','wright_process_ui_read']);
     if (name === 'wright_workspace_create') {
       if (!evidence.create_workspace || createSubmitted || args.name !== evidence.create_workspace)
         throw Error('Fixture creation denied');
@@ -80,6 +80,8 @@ const server = createServer(async (req, res) => {
         (scoped.workspace_id !== evidence.scope.workspace_id || scoped.session_id !== evidence.scope.session_id) &&
         !(name === 'wright_workspace_files' && createdScope && scoped.workspace_id === createdScope.workspace_id && scoped.session_id === createdScope.session_id))
       throw Error('Fixture scope denied');
+    if (name === 'wright_workspace_file_preview' && args.path !== evidence.scope.path)
+      throw Error('Fixture preview file denied');
     if (name.startsWith('wright_workflow_') && args.path !== evidence.scope.path)
       throw Error('Fixture file denied');
     if (name.startsWith('wright_process_') &&
@@ -136,6 +138,15 @@ try {
   await expect(frame.getByText('Text previews support files up to 64 KiB. Other file previews, upload and download are not available here yet.',{exact:true})).toBeVisible();
   await page.screenshot({path:resolve(output,'files.png')});
   passed.push('Files lists and filters real scoped storage; unavailable operations explicit');
+  if (evidence.preview_text !== undefined) {
+    await frame.getByRole('button',{name:evidence.scope.path.split('/').at(-1),exact:true}).click();
+    await expect(frame.getByText('Read-only text preview · current saved file',{exact:true})).toBeVisible();
+    expect(await frame.locator('section[aria-label="File preview"] pre').textContent()).toBe(evidence.preview_text);
+    await page.screenshot({path:resolve(output,'file-preview.png')});
+    await frame.getByRole('button',{name:'Close preview',exact:true}).click();
+    await expect(frame.locator('section[aria-label="File preview"]')).toHaveCount(0);
+    passed.push('explicit bounded text preview matches real saved bytes and closes without mutation');
+  }
   if (!evidence.skip_connections) {
   await frame.getByRole('button',{name:'Connections',exact:true}).click();
   await frame.getByLabel('Find an MCP').fill('SteveCAD');

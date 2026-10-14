@@ -1395,3 +1395,27 @@ failure or working OAuth. The listener uses no credentials, no real OAuth code,
 and closes itself. Evidence/script under
 `/tmp/wright-desktop-callback-route-20261014-01/`. Actual SteveCAD sign-in has not
 started. Do not request the SSH alias again or copy credentials as a workaround.
+
+## Served file-preview proof and 0.8.0 preparation
+
+Fresh display copy `/tmp/wright-desktop-file-preview-20261014-01`, API8150,
+retains the private review snapshot and relocates only copied workspace roots.
+Updated read-only browser fixture admits only the exact selected file preview.
+Seven checks passed at
+`/tmp/wright-desktop-file-preview-20261014-01/browser-home-1792021221172/`:
+normal Workflows/shared editor/Back, metadata search, exact text-content equality,
+close preview, recorded-run view, narrow/unsaved behavior and unchanged source/no
+browser errors. Viewed file-preview.png; it is an actual GB10 browser rendering
+inside the simulated host, not Windows desktop acceptance. No work was resumed.
+
+Prepared native-home-08-candidate and concrete update/rollback instructions.
+0.8.0 adds the UI-only preview port (32 tools), retains the common editor and
+existing default execution gates, and describes recorded reviews accurately.
+Package probe now explicitly verifies 0.7.0/31 or 0.8.0/32 tools and the new port's
+read-only/app-only metadata. Frozen candidate worktree/state/package qualification
+and installation are still pending. Installed0.7.0 unchanged.
+
+Synthetic callback listener session43754 exited0 after its bounded120seconds.
+No receipt exists; desktop opening remained queued at the last observation.
+This is inconclusive for remote browser routing, not evidence that the callback
+route is working or broken. No real OAuth/sign-in or credential transfer occurred.

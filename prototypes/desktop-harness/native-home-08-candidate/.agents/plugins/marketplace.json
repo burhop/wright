@@ -1,0 +1,20 @@
+{
+  "name": "wright-desktop-gb10-prototype",
+  "interface": {
+    "displayName": "Wright GB10 Prototype"
+  },
+  "plugins": [
+    {
+      "name": "wright-desktop-gb10-prototype",
+      "source": {
+        "source": "local",
+        "path": "./plugins/wright-desktop-gb10-prototype"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
