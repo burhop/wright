@@ -1009,3 +1009,40 @@ its services remain unchanged. Actual Windows UI, arbitrary engineering tools,
 image perception, restart recovery for this profile and full engineering runs
 remain separate qualification work. This evidence advances the bounded desktop
 handoff requirement; it does not satisfy the engineering demonstration goal.
+
+## Actual supervised image perception and saved output
+
+Added `image_perception_probe.py`, a randomized three-shape synthetic fixture
+whose ground truth is retained privately and compared after the desktop reply.
+It creates a source/input through existing owners, starts a canonical durable
+run, reads the real pending request, delivers its exact MCP image content to this
+desktop conversation, and submits the desktop-authored response through the normal
+MCP reply tool. No alternate model, direct provider call or synthetic reply.
+Fixture construction is explicit test setup, not an engineering deliverable.
+
+Fresh state `/tmp/wright-desktop-image-perception-20261014-04`, loopback API8142,
+run `cdfbe5b7969745c39cdede500e38c60d` completed with matching perception and saved
+output. The 1,419-byte PNG's SHA-256 is
+`f38558c5a1b59ea26c40f0c5efc44c76235d361ad7f1fb517c1526b658590a28`.
+The returned image was actually viewed, then the desktop identified left-to-right
+blue triangle, green square, red circle. Output is 116 bytes, SHA-256
+`d175a40360988e58f4600077157572d5b1c225f858c8f46dd54e3cb9f5060000`.
+`image-perception.json` records the completed run; the separate
+`saved-output-verification.json` verifies the on-disk result against the answer
+and hidden truth. The probe now performs that saved-output check itself as well;
+that final verifier change was checked against the retained output, not a claim
+of a second complete run. Pending instructions, exact MCP image content, fixture,
+answer and process logs are retained alongside both receipts.
+
+The original standalone adapter fixture failed the live-consumer guard (HTTP409),
+correctly. Attempt01 also exposed an absent structuredContent fallback, and
+attempt03 failed the required source filename contract. All four state directories
+remain, logs unmodified. Attempt02 established image delivery/perception only, not
+an accepted response. Attempt04 is the real supervised proof. No guard was weakened.
+
+The off-by-default image-input profile now admits reference-image tasks for local
+qualification; generation remains blocked even when enabled. Runtime identity
+already freezes this option. 36 focused boundary/image tests passed in 3.86s;
+Ruff and whitespace checks passed. Installed 0.7.0 remains unchanged and gated.
+No engineering capture accuracy, automatic native delivery, image-action task,
+restart recovery or full SteveCAD demonstration is claimed. Those remain required.

@@ -84,6 +84,7 @@ class DesktopBackend:
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
         self.enrolled_mcp_tasks = enrolled_mcp_tasks
+        self.image_inputs = image_inputs
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
@@ -637,10 +638,13 @@ class DesktopBackend:
             row["local_path"], body.get("path")
         )
         plan = compile_prompt_workflow(document.source)
-        if any(
-            port.get("kind") == "reference_images"
-            for fields in plan.inputs.values()
-            for port in fields.get("outputs", [])
+        if (
+            not self.image_inputs
+            and any(
+                port.get("kind") == "reference_images"
+                for fields in plan.inputs.values()
+                for port in fields.get("outputs", [])
+            )
         ) or any(step.native_image_format for step in plan.steps):
             raise HTTPException(
                 503, "Desktop image input and generation capabilities are not qualified"

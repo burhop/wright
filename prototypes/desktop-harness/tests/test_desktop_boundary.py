@@ -320,3 +320,33 @@ def test_enrolled_tasks_use_actual_policy_owner(
             )
         )
     assert failure.value.status_code == 403
+
+
+def test_image_input_qualification_requires_explicit_profile(boundary):
+    from desktop_backend import DesktopBackend
+
+    default, service, source = boundary
+    service.workflow_sources.read.return_value.source = source.replace(
+        '"kind":"engineering_document"', '"kind":"reference_images"', 2
+    )
+    with pytest.raises(HTTPException, match="image input"):
+        check(default)
+    enabled = DesktopBackend(
+        service, default.state, 5201, confined_inspection=True, image_inputs=True
+    )
+    check(enabled)
+    assert enabled.binding.digest != default.binding.digest
+
+
+def test_image_input_profile_does_not_enable_generation(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_workflow_image_outputs import image_task
+    from packages.workspace_service.tests.test_workflow_ai_task import source
+
+    default, service, _ = boundary
+    service.workflow_sources.read.return_value.source = source(
+        image_task(authoring_template="ai-prompt", mcp_server="")
+    )
+    enabled = DesktopBackend(service, default.state, 5201, image_inputs=True)
+    with pytest.raises(HTTPException, match="generation capabilities"):
+        check(enabled)

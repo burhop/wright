@@ -37,7 +37,7 @@ def main():
     parser.add_argument(
         "--enable-image-inputs",
         action="store_true",
-        help="Experimental reasoning transport only; engineering image readiness stays gated",
+        help="Opt-in bounded image-input qualification; image generation remains gated",
     )
     parser.add_argument("--enable-confined-inspection", action="store_true")
     parser.add_argument(
