@@ -906,3 +906,40 @@ Installed-byte/protocol verification is complete; actual Windows rendering and
 user acceptance are still pending. The full engineering demonstration goal is
 not complete. The previous turn prepared/qualified the candidate; this turn
 changed the authorized named installation and verified its actual state.
+
+## Baseline PR integrated; new engineering continuation
+
+PR 153's current-head CI finished: all required checks succeeded, including the
+Windows backend job. PR deployment was the expected skipped job. Re-fetched
+remote dev (`c1a8d009`), confirmed it was an ancestor, and verified the clean feature
+head `bcf03161`. Full merge-gate and push-gate receipt/log hashes were rechecked;
+the only change after full-gate head `e5b39c57` was its qualification document.
+Hosted browser coverage passed, retaining the documented local GB10 WebKit limit.
+
+Updated the PR description to the final scope and evidence, marked it ready and
+merged through GitHub with an exact-head match. GitHub confirms PR 153 MERGED at
+22:52:07 UTC, 14 October 2026, merge commit
+`a61361384a3de15163fdb0a6b6a3da56ad92e673` on **dev**. No main merge or release.
+The CLI body edit hit a deprecated Projects GraphQL field; the supported REST
+body update succeeded before merging. The attached PR remains the review artifact.
+
+Created `/tmp/wright-desktop-engineering-execution`, branch
+`codex/desktop-engineering-execution`, from installed checkpoint `753e6238`, then
+merged current remote dev cleanly at `14f95d5c`. Only the baseline qualification
+document was added by that merge. The original checkout, both installed-runtime
+worktrees, configurations, services and evidence remain untouched. **Continue
+runtime implementation here; do not edit installed 0.7.0 runtime sources in
+`/tmp/wright-desktop-engineering-demos-next`.**
+
+Separate locked Python/frontend dependencies are being prepared in this new
+worktree; logs are `/tmp/wright-desktop-engineering-execution-python.log` and
+`/tmp/wright-desktop-engineering-execution-node.log`. No shared dependency upgrade.
+Post-merge development workflows for the exact merge commit are running; merge
+success is not a deployment/health/browser-smoke completion claim. Track those
+before claiming development-ready. Full engineering demonstrations and the
+follow-on feature's own integration gates remain outstanding.
+
+The previous turn completed the authorized installation; this turn completed
+the qualified baseline merge and isolated subsequent engineering work.
+Both isolated dependency commands subsequently completed with exit 0. No lockfile
+or runtime source change resulted; the installed runtime remains frozen.
