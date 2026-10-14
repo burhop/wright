@@ -1089,3 +1089,49 @@ CodeQL/docs success. Windows and engineering-image jobs were still running at th
 last check; no deployment/health completion claim. SteveCAD login, real provider
 binding, engineering images, genuine reviews and the required different-workflow
 regressions remain open.
+
+## Fresh Robot Tracking provider proof on GB10 ARM64
+
+Inspected the existing Robot Tracking Diagnosis template and retained campaign
+binding helpers. The template needs visible local provider bindings; it is not
+an already configured run. No protected campaign/container was resumed. Added a
+discoverable ROSBag usage guide linked to existing setup and historical x64
+qualification, and a small reproducible selected-container launcher.
+
+Actual fresh provider qualification passed all three original datasets using
+`scripts/qualify-robot-campaign.py` unchanged. Container
+`wright-desktop-robot-provider-20261014-03` exited0. Base image
+`sha256:6c5ebe4d1812e9bc4f6fc7d857a21ee2ad6488f63c0128dabc12fc9535d9b99f`,
+ARM64, Python3.12.12, pinned rosbag-mcp0.2.0/MCP1.28.1/rosbags0.11.5/NumPy2.5.3/
+Matplotlib3.11.1/Pillow12.3.0. Installations lived only in private container tmpfs;
+the base/root/repository stayed read-only, non-root, bounded and without devices,
+Docker socket or old campaign mounts. Full freeze retained in state `versions.txt`.
+
+The existing offline operations produced actual ROS2 bags; independent ROSBag MCP
+read metadata/schema/five-topic samples; existing operations computed aligned
+metrics, timeline and plots. All original counts and 1% comparison bounds passed.
+Case03 retained 56 external samples and the 13.5–16.5s missing interval; no gap
+filling. Event-to-sample differences were zero. See `robot-provider-arm64-evidence.json`
+and `/tmp/wright-desktop-robot-provider-20261014-03/provider-proof/evidence.json`.
+This is provider preparation for the substantially different workflow proof,
+not a desktop-driven canonical run, causal conclusion or genuine human review.
+
+Attempts01/02 failed before provider execution due to the read-only uv runtime
+location and nonexecutable temporary runtime respectively. Both terminal attempts
+are preserved. The third used an explicitly private executable tmpfs, leaving
+other isolation restrictions unchanged. No host dependency changes occurred.
+
+Rendered the actual case01 SVG with existing `rsvg-convert` and visually inspected
+`/tmp/wright-desktop-robot-provider-20261014-03/floor-seam-plot.png`: legible plot,
+45mm observed peak deviation, 95mm wheel-estimated peak, 14.1mm RMS, clear synthetic
+and noncausal limitations. Chromium screenshot initially timed out after fonts
+loaded; vector rasterization is an export, not native-panel acceptance. No plot
+data was changed. Candidate social caption: “Preparing Wright's next desktop
+engineering demo: real ROS2 bag analysis from our synthetic robot datasets, with
+measured tracking error and explicit limits on what it proves.” Do not call this
+an end-to-end Codex run yet; nothing was published.
+
+Next: bind fresh original Robot sources to isolated providers through existing
+workspace owners, drive the actual canonical tasks from desktop reasoning, and
+retain original validation/genuine review. SteveCAD OAuth remains independently
+pending. The goal is still active and incomplete.
