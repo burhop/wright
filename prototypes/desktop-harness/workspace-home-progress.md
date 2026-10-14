@@ -459,3 +459,30 @@ unchanged accepted source and zero browser errors. Screenshots include home,
 editor, saved setup and narrow home. Visually inspected the saved-setup image;
 it clearly labels the simulated desktop host and no engineering run. Windows
 rendering, actual sign-in/enablement and engineering outcomes remain separate.
+
+## Named 0.6.0 installed — Windows acceptance pending
+
+Applied the saved goal's authorization to update only the named prototype after
+package/MCP/browser qualification and preparing `native-home-update.md` with
+scoped rollback. Private backup/receipts:
+`/tmp/wright-desktop-plugin-update-20261014-01/`. Semantic config comparison proves
+only the named marketplace source changed. Installed 0.6.0 files match the
+candidate exactly. Earlier cached 0.3.0/0.4.0 bytes were preserved/restored; existing
+services and old source/state remain unchanged. The old selected state had no
+native process run rows. No desktop restart or unrelated setting change.
+
+The selected service is API8133, runtime feature db12003a with identical later
+documentation/package checkpoints, and isolated combined-proof state. Preserve
+this served runtime: do further runtime work in a separate checkout/state until
+another deliberate qualified update. `desktop-home-walkthrough.md` gives a short
+read-only fresh-chat Windows check. Fresh-chat rendering, host permissions,
+OAuth navigation and actual engineering runs are not established by installation.
+
+The current official plugin packaging documentation still supports the legacy
+compatibility manifest and local marketplace source; installed CLI0.159.2's
+scoped commands were locally verified rather than assuming all current desktop
+surfaces share the same lifecycle. Documentation reference:
+https://developers.openai.com/plugins/build/plugins
+
+Installed-package read-only protocol verification also passed: 29 tools and the
+exact resource hash, receipt `installed-0.6.0.json` in combined-proof state.
