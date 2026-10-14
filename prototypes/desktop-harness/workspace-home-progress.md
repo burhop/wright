@@ -1270,3 +1270,26 @@ The scrolled review capture is
 that read-only rerun passed the same six checks. Caption proposal: “Wright keeps
 review decisions and their evidence attached to the saved process. Browser
 prototype; private test fixture.” No external publication.
+
+## Full Robot source tool-scope preparation
+
+The existing Robot preparer now writes explicit `mcp_task_tools` for each of its
+nine MCP tasks, retaining the original instructions, requirements, full corrective
+CAD/FEA stages, review, output contracts and validator. Normalization, inspection,
+metrics, CAD project inspection, source writing, CAD build, solver calls, field
+export and evidence inspection each receive their declared tool names. The
+preparation receipt selects the exact union from the compiled source, diagnoses
+missing/ambiguous registrations and no longer requires unused get_message_at_time.
+This uses the existing compiler/runtime tool-selection contract; no executor,
+provider implementation or automatic grant was added. Existing saved sources
+and campaign evidence were not edited.
+
+Five preparation tests passed (2.23s), covering all three current Robot scenarios,
+exact manifest-count handoff, corrective STEP/measurement/request output bindings,
+full validator roles, per-task scopes, exact report/tool union and missing or
+duplicate required CAD registration. Ruff and whitespace checks passed. Test tool
+schemas are explicit fixtures, not actual provider qualification or engineering
+execution. Live AgentCAD/CalculiX enrollment, image-bearing canonical execution,
+genuine diagnosis review and full engineering outputs remain required. The legacy
+campaign report's automatic integration-test policy request is unchanged; it is
+not usable as a desktop manual-review enrollment or proof of human acceptance.
