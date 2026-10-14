@@ -324,6 +324,19 @@ def server(client, *, native_editor=False, native_working_view=False):
                     "name": item.name,
                     "description": item.description,
                     "compatibility": item.compatibility.model_dump(mode="json"),
+                    "local_validation": (
+                        {
+                            key: item.local_validation.get(key)
+                            for key in (
+                                "evidence_id",
+                                "state",
+                                "observed_at",
+                                "reason_codes",
+                            )
+                        }
+                        if item.local_validation is not None
+                        else None
+                    ),
                     "installed": item.user_state.installed,
                     "active": item.user_state.active,
                     "process_status": item.user_state.process_status,
@@ -433,6 +446,22 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "plan_digest": plan_digest,
             },
             timeout=360,
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_enable(
+        workspace_id: str, session_id: str, plan_id: str, plan_digest: str
+    ) -> dict[str, Any]:
+        """Explicit operator workspace enablement; owner requires current validation, never approves invocation."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/enable",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan_digest": plan_digest,
+            },
         )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})

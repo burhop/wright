@@ -10,13 +10,20 @@ export type ConnectionsCall = (
     | "wright_connection_plan_read"
     | "wright_connection_plan_update"
     | "wright_connection_signin"
-    | "wright_connection_validate",
+    | "wright_connection_validate"
+    | "wright_connection_enable",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
   capability_id: string;
   name: string;
   description: string;
+  local_validation?: {
+    evidence_id: string;
+    state: string;
+    observed_at: string;
+    reason_codes: string[];
+  } | null;
   installed: boolean;
   active: boolean;
   enabled_here: boolean;
@@ -237,6 +244,27 @@ export function NativeConnections({
                     Host compatibility: {item.compatibility.status}. Process:{" "}
                     {item.process_status}.
                   </p>
+                  {item.local_validation ? (
+                    <div>
+                      <p>
+                        Last recorded protocol validation:{" "}
+                        {item.local_validation.state}.
+                      </p>
+                      <p>
+                        Observed: {item.local_validation.observed_at}. Evidence:{" "}
+                        {item.local_validation.evidence_id}.
+                      </p>
+                      {item.local_validation.reason_codes.map((reason) => (
+                        <p key={reason}>{reason.replaceAll("_", " ")}</p>
+                      ))}
+                      <p>
+                        This record does not confirm current readiness or grant
+                        workflow actions.
+                      </p>
+                    </div>
+                  ) : (
+                    <p>No local protocol validation recorded.</p>
+                  )}
                   <p>
                     Installed version:{" "}
                     {item.installed_version ?? "Not reported"}.
@@ -357,7 +385,10 @@ export function NativeConnections({
           openLink={openLink}
         />
       )}
-      <p>Workspace permission changes are not yet available in this panel.</p>
+      <p>
+        Workspace availability never approves individual tool actions or
+        engineering reviews.
+      </p>
     </section>
   );
 }

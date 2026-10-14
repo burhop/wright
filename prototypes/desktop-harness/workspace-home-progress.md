@@ -369,3 +369,38 @@ Suggested social caption (not published): “Wright workflows alongside desktop
 chat: choose a workspace, open the engineering canvas, and return without losing
 your place. This is a local browser prototype; the full engineering demo is next.”
 Use the real home/editor screenshots with the visible simulated-host label.
+
+## Saved validation readback and explicit workspace enablement
+
+Connections now projects the existing catalog owner's last local validation
+identity, state, timestamp and reason codes. It deliberately labels that record
+as historical evidence: catalog readback is not a full current-configuration
+revalidation and cannot grant an action. A lost validation acknowledgement can
+be investigated through Search / refresh without repeating validation. Unrelated
+metadata and other-workspace membership remain excluded.
+
+A separate operator-only enable operation requires the exact desktop scope,
+completed setup plan and reviewed digest, then calls the existing capability
+workspace-enable endpoint. That owner requires current passed validation against
+its captured configuration and changes only the chosen workspace membership.
+No registry/gateway policy was relaxed. A successful protocol check reveals an
+explicit Enable in this workspace button; it is never called automatically.
+An uncertain enable response disables the attempt and directs read-only catalog
+refresh, without retry. Invocation approval and engineering reviews remain separate.
+
+Verification: combined prototype/existing capability-enablement tests had 82 pass
+and one new test fail because its assertion used the main application's normalized
+error key rather than this small FastAPI fixture's raw detail.code. The assertion
+was corrected to the existing route contract; that exact test then passed. The
+existing owner tests cover absent/stale validation, exact workspace membership
+and role enforcement. Four bridge catalog tests passed. Frontend suites passed
+16 tests with one failure exposing stale unavailable-feature copy; corrected copy
+then passed all five connection tests. Five sign-in and seven home tests passed
+in the combined run. TypeScript, ESLint, Ruff and the rebuilt native bundle passed;
+the final bundle has 2,201,327 bytes and zero external assets.
+
+These are isolated fixtures/owner regressions, not SteveCAD OAuth or desktop
+acceptance. No real workspace grant or engineering run was made. Installed
+plugin 0.4.0 and retained services remain unchanged. Returning after a full panel
+reload still needs durable plan discovery/recovery before a complete management
+claim; current mounted attempts intentionally do not offer automatic retries.

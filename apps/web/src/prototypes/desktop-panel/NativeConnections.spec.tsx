@@ -39,7 +39,9 @@ it("shows catalog state without implying workspace grant or live health", async 
   ).toBeVisible();
   fireEvent.click(screen.getByText("Readiness details"));
   expect(screen.getByText(/Process: stopped/)).toBeVisible();
-  expect(screen.getByText(/not yet available in this panel/)).toBeVisible();
+  expect(
+    screen.getByText(/never approves individual tool actions/),
+  ).toBeVisible();
   expect(call).toHaveBeenCalledWith("wright_connections_list", {
     workspace_id: "a",
     session_id: "chat-a",
@@ -177,4 +179,26 @@ it("reconciles a lost apply acknowledgement with reads only", async () => {
     session_id: "chat-a",
     plan_id: "p",
   });
+});
+
+it("shows saved validation as historical evidence without retrying validation", async () => {
+  const data = reply();
+  Object.assign(data.structuredContent.connections[0], {
+    local_validation: {
+      evidence_id: "v1",
+      state: "passed",
+      observed_at: "2026-10-14T00:00:00Z",
+      reason_codes: [],
+    },
+  });
+  const call = vi.fn().mockResolvedValue(data);
+  render(<NativeConnections workspace={workspace} call={call} />);
+  await screen.findByText("CAD");
+  fireEvent.click(screen.getByText("Readiness details"));
+  expect(
+    screen.getByText("Last recorded protocol validation: passed."),
+  ).toBeVisible();
+  expect(screen.getByText(/does not confirm current readiness/)).toBeVisible();
+  expect(call).toHaveBeenCalledTimes(1);
+  expect(call.mock.calls[0][0]).toBe("wright_connections_list");
 });

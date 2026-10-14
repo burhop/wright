@@ -347,3 +347,68 @@ async def test_operator_signin_is_scoped_and_cleared_without_workspace_grant(dis
             )
         ).json()["authorization_url"] is None
         owner.enable_capability_for_workspace.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_workspace_enablement_retains_operator_scope_and_existing_owner(
+    discovery,
+):
+    from api.services.mcp_services import get_mcp_api_service
+    from tool_registry.validation_evidence import ValidationEvidenceError
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    app.state.security_settings = SimpleNamespace(enforced=True)
+
+    @app.middleware("http")
+    async def principal(request, call_next):
+        request.state.principal_role = request.headers.get("test-role", "viewer")
+        return await call_next(request)
+
+    owner = Mock()
+    plan = SimpleNamespace(
+        workspace_id="Alpha",
+        requested_scope="workspace",
+        capability_id="cad",
+        state="completed",
+        plan_digest="a" * 64,
+    )
+    owner.get_install_plan.return_value = plan
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    path = "/api/desktop/connection-plans/p/enable"
+    body = {
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "plan_digest": "a" * 64,
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        assert (await client.post(path, json=body)).status_code == 403
+        headers = {"test-role": "admin"}
+        assert (
+            await client.post(
+                path, json={**body, "plan_digest": "b" * 64}, headers=headers
+            )
+        ).status_code == 409
+        plan.workspace_id = "Other"
+        assert (await client.post(path, json=body, headers=headers)).status_code == 403
+        owner.enable_capability_for_workspace.assert_not_called()
+        plan.workspace_id = "Alpha"
+        owner.enable_capability_for_workspace.side_effect = ValidationEvidenceError(
+            "validation_required", "Current validation required"
+        )
+        denied = await client.post(path, json=body, headers=headers)
+        assert denied.status_code == 409
+        assert denied.json()["detail"]["code"] == "validation_required"
+        owner.enable_capability_for_workspace.side_effect = None
+        owner.enable_capability_for_workspace.return_value = {
+            "enabled": True,
+            "invocation_approved": False,
+        }
+        response = await client.post(path, json=body, headers=headers)
+        assert response.status_code == 200
+        assert response.json()["enablement"]["invocation_approved"] is False
+        owner.enable_capability_for_workspace.assert_called_with("cad", "Alpha")
+        owner.run_capability_validation.assert_not_called()
+        owner.apply_install_plan.assert_not_called()

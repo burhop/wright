@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 export type SigninCall = (
-  name: "wright_connection_signin" | "wright_connection_validate",
+  name:
+    | "wright_connection_signin"
+    | "wright_connection_validate"
+    | "wright_connection_enable",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 export function NativeSignin({
@@ -19,6 +22,9 @@ export function NativeSignin({
   readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [pending, setPending] = useState(false);
+  const [validated, setValidated] = useState(false);
+  const [enableAttempted, setEnableAttempted] = useState(false);
+  const enabling = useRef(false);
   const [attempted, setAttempted] = useState(false);
   const [message, setMessage] = useState("");
   const [url, setUrl] = useState<string>();
@@ -111,6 +117,7 @@ export function NativeSignin({
       )
         throw Error("Unconfirmed validation");
       const validation = data.validation as { state?: string } | undefined;
+      setValidated(validation?.state === "passed");
       setMessage(
         validation?.state === "passed"
           ? "Protocol validation passed. Workspace permission is still separate."
@@ -126,6 +133,33 @@ export function NativeSignin({
       setPending(false);
       setUrl(undefined);
       setCallback(undefined);
+    }
+  }
+  async function enable() {
+    if (!validated || enabling.current) return;
+    enabling.current = true;
+    setEnableAttempted(true);
+    try {
+      const result = await call("wright_connection_enable", scope);
+      const data = result.structuredContent;
+      const enabled = data?.enablement as
+        { enabled?: boolean; invocation_approved?: boolean } | undefined;
+      if (
+        result.isError ||
+        data?.workspace_id !== scope.workspace_id ||
+        data?.session_id !== scope.session_id ||
+        data?.plan_id !== scope.plan_id ||
+        enabled?.enabled !== true ||
+        enabled.invocation_approved !== false
+      )
+        throw Error("Unconfirmed workspace availability");
+      setMessage(
+        "Enabled in this workspace. Individual tool actions and engineering reviews remain separate.",
+      );
+    } catch {
+      setMessage(
+        "Workspace availability was not confirmed. Refresh Connections to read saved status; no enable request was repeated.",
+      );
     }
   }
   return (
@@ -150,6 +184,11 @@ export function NativeSignin({
       >
         Check sign-in status
       </button>
+      {validated && (
+        <button disabled={enableAttempted} onClick={() => void enable()}>
+          Enable in this workspace
+        </button>
+      )}
       {message && <p role="status">{message}</p>}
       {url && (
         <button

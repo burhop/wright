@@ -111,3 +111,36 @@ it("discards a pending manual status read when validation finishes", async () =>
     screen.queryByRole("button", { name: "Open provider sign-in" }),
   ).toBeNull();
 });
+
+it("requires a separate enable click and does not repeat an uncertain grant", async () => {
+  const call = vi.fn(async (name: string) => {
+    if (name === "wright_connection_enable")
+      throw Error("lost acknowledgement");
+    return {
+      content: [],
+      structuredContent: { ...scope, validation: { state: "passed" } },
+    };
+  });
+  render(<NativeSignin scope={scope} call={call} />);
+  expect(
+    screen.queryByRole("button", { name: "Enable in this workspace" }),
+  ).toBeNull();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Sign in and validate provider" }),
+  );
+  const enable = await screen.findByRole("button", {
+    name: "Enable in this workspace",
+  });
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_enable"),
+  ).toHaveLength(0);
+  fireEvent.click(enable);
+  expect(
+    await screen.findByText(/Workspace availability was not confirmed/),
+  ).toBeVisible();
+  expect(enable).toBeDisabled();
+  fireEvent.click(enable);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_enable"),
+  ).toHaveLength(1);
+});

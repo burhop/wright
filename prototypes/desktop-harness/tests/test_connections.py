@@ -140,3 +140,32 @@ async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
     assert private_url not in str(result.content)
     assert private_url not in str(result.structuredContent)
     assert "9505" not in str(result.structuredContent)
+
+
+@pytest.mark.asyncio
+async def test_connection_readback_exposes_saved_validation_without_repeating_it(
+    monkeypatch,
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    data = catalog()
+    evidence = {
+        "evidence_id": "v1",
+        "state": "stale",
+        "observed_at": "2026-10-14T00:00:00Z",
+        "reason_codes": ["validation_evidence_expired"],
+    }
+    data["capabilities"][0]["local_validation"] = {
+        **evidence,
+        "unrelated_private_field": "do not disclose",
+    }
+    client = SimpleNamespace(scope=AsyncMock(), call=AsyncMock(return_value=data))
+    _, result = await server(client).call_tool(
+        "wright_connections_list", {"workspace_id": "w", "session_id": "s"}
+    )
+    assert result["connections"][0]["local_validation"] == evidence
+    assert "do not disclose" not in str(result)
+    client.call.assert_awaited_once_with(
+        "GET", "/api/mcp/capabilities", params={"search": "", "limit": 50}
+    )

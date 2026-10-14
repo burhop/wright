@@ -384,6 +384,39 @@ class DesktopBackend:
             finally:
                 self.oauth.clear(server_id)
 
+        @router.post(
+            "/connection-plans/{plan_id}/enable",
+            dependencies=[Depends(require_admin)],
+        )
+        async def enable_connection(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            if plan.state != "completed" or plan.plan_digest != body.plan_digest:
+                raise HTTPException(
+                    409, "Read the exact completed setup plan before enabling"
+                )
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+            from api.routers.mcp import enable_capability_for_workspace_endpoint
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            # The existing owner revalidates current evidence/configuration and
+            # grants only workspace availability, never invocation approval.
+            result = await enable_capability_for_workspace_endpoint(
+                body.workspace_id, server_id, request, service
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "plan_id": plan_id,
+                "enablement": result,
+            }
+
         @router.get("/connection")
         async def connection():
             return {
