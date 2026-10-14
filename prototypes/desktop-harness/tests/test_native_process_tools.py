@@ -319,3 +319,46 @@ def test_review_cannot_supply_authority_or_dispatch(panel, extra):
             ),
         )
     client.call.assert_not_awaited()
+
+
+def test_continuation_delegates_once_to_exact_action_owner(panel):
+    server, client = panel
+    run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "continue",
+            action_id="continue-checkpoint",
+            subject_digest="b" * 64,
+            request_id="same-continuation",
+        ),
+    )
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/workspace/process-interfaces/actions/continue-checkpoint",
+        json={
+            "session_id": "session",
+            "path": "workflows/example.wflow",
+            "expected_storage_digest": "a" * 64,
+            "subject_digest": "b" * 64,
+            "request_id": "same-continuation",
+        },
+    )
+
+
+@pytest.mark.parametrize("action", ["dispatch", "continue-", "continue-../other"])
+def test_continuation_rejects_non_declared_or_path_injected_action(panel, action):
+    server, client = panel
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_update",
+            scope(
+                "continue",
+                action_id=action,
+                subject_digest="b" * 64,
+                request_id="same-continuation",
+            ),
+        )
+    client.call.assert_not_awaited()

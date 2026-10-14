@@ -183,6 +183,7 @@ export function createNativePanelProcessClient(options: {
           url.pathname,
         );
         const cancel = /^\/runs\/([^/]+)\/cancel$/.exec(url.pathname);
+        const continuation = /^\/actions\/(continue-[^/]+)$/.exec(url.pathname);
         if (answer) {
           request.operation = "respond";
           request.checkpoint_id = decodeURIComponent(answer[1]);
@@ -192,6 +193,9 @@ export function createNativePanelProcessClient(options: {
         } else if (cancel) {
           request.operation = "cancel";
           request.run_id = decodeURIComponent(cancel[1]);
+        } else if (continuation) {
+          request.operation = "continue";
+          request.action_id = decodeURIComponent(continuation[1]);
         } else return denied(unavailable, 501);
       }
     } else return denied(unavailable, 501);

@@ -13,6 +13,7 @@ from mcp.types import ToolAnnotations
 from pydantic import Field, AfterValidator
 
 from api.schemas.process_interfaces import (
+    ProcessActionRequest,
     ProcessCancelRequest,
     ProcessInputResponseRequest,
     ProcessReadinessRequest,
@@ -93,6 +94,12 @@ class PanelCancel(ProcessCancelRequest):
     run_id: Segment
 
 
+class PanelContinue(ProcessActionRequest):
+    workspace_id: Segment
+    operation: Literal["continue"]
+    action_id: Segment = Field(pattern=r"^continue-.+")
+
+
 PanelRead = Annotated[
     PanelSnapshot | PanelReasoning | PanelRepresentation,
     Field(discriminator="operation"),
@@ -103,6 +110,7 @@ PanelUpdate = Annotated[
     | PanelStart
     | PanelResponse
     | PanelDecision
+    | PanelContinue
     | PanelCancel,
     Field(discriminator="operation"),
 ]
@@ -211,7 +219,9 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                         if row.get("request", {}).get("run_id") == request.run_id
                     ]
             else:
-                if operation in ("respond", "decide", "cancel"):
+                if operation == "continue":
+                    path = BASE + "/actions/" + quote(body.pop("action_id"), safe="")
+                elif operation in ("respond", "decide", "cancel"):
                     subject = quote(
                         body.pop(
                             "checkpoint_id"

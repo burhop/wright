@@ -1530,3 +1530,30 @@ protection; accepted-source digest unchanged and no browser errors. Viewed actua
 file-preview.png. Detailed receipt/digests: refresh-served-evidence.json.
 This is simulated-host GB10 browser evidence, not Windows native acceptance.
 No workflow run or setup mutation; installed0.8.0 unchanged.
+
+## Explicit continuation transport over the existing run owner
+
+Found a real demo-path gap: the desktop port could save a review decision but
+rejected the separate permitted Continue action. Added a closed `continue`
+request using existing ProcessActionRequest, exact action/subject/request/source
+identities and workspace/session check. It delegates once to the existing
+process action owner; it neither decides a review nor executes a workflow itself.
+The preview boundary now subjects this route to the same source qualification
+and exact enrollment gates. External-action workflows remain gated; only the
+existing opted, exact local-review profile can pass those gates. Generic actions,
+path injection, automatic approval and actor overrides are not admitted.
+
+The shared process client now transports explicit continue-* actions while
+retaining its uncertain-outcome behavior and no automatic retry. No new tool,
+executor, state owner or grant mechanism. Decisions and Continue remain separate.
+113 backend boundary/review/run/port tests pass (5.93s);17 client tests pass,
+including a lost continuation acknowledgement with exactly one call. TypeScript,
+scoped ESLint, Ruff and diff checks pass. Backend log:
+/tmp/wright-desktop-continuation-tests-20261014.log. Rebuilt resource2,210,801bytes,
+zero external assets. No live review decision or continuation was performed.
+
+A fresh private synthetic approved-review/same-run continuation probe and served
+button qualification are still required. Do not infer that proof from the prior
+changes-requested review or component tests. Installed0.8.0 and its frozen runtime
+are unchanged. The prior refresh browser proof remains evidence for its recorded
+bundle; these new runtime bytes require new connection qualification.

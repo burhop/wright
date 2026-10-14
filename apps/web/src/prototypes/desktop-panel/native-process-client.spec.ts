@@ -363,3 +363,22 @@ describe("native process bridge over the existing public client", () => {
     expect(call.mock.calls[0][0]).toBe("wright_process_ui_read");
   });
 });
+
+it("routes explicit continuation once and preserves an uncertain owner outcome", async () => {
+  const { client, call } = setup();
+  call.mockResolvedValue(result({ ok: false, http_status: 503, reason: {
+    code: "OUTCOME_UNKNOWN", message: "Continuation acknowledgement lost",
+    correction: "Inspect this same run before another action.",
+  } }));
+  await expect(client.requestAction({ actionId: "continue-checkpoint", subjectDigest: digest,
+    requestId: "stable-continuation" })).rejects.toMatchObject({
+      reason: { code: "OUTCOME_UNKNOWN" }, uncertain: true,
+    });
+  expect(call).toHaveBeenCalledTimes(1);
+  expect(call.mock.calls[0][1]).toMatchObject({ operation: "continue",
+    action_id: "continue-checkpoint", subject_digest: digest,
+    request_id: "stable-continuation", workspace_id: "workspace",
+    expected_storage_digest: digest });
+  expect(call.mock.calls[0][1]).not.toHaveProperty("decision");
+  expect(call.mock.calls[0][1]).not.toHaveProperty("auto");
+});
