@@ -257,3 +257,29 @@ Use an explicit presentation callback attached to the existing transport/startup
 path; do not patch the browser module globally or invent another OAuth client.
 A Windows-browser/GB10-loopback callback route must be qualified before promising
 one-click sign-in. No provider authentication attempt has yet started.
+
+## Headless OAuth presentation hook — transport qualification
+
+Added an optional async authorization presenter to the existing remote MCP
+runner, passed through both coordinated and legacy manager construction paths.
+It receives server identity, authorization URL and the actual loopback callback
+URI. A `None` URL clears the presentation. When supplied, it replaces only the
+browser-opening step: SDK OAuth discovery, PKCE, state processing, secret storage
+and callback handling remain in the existing transport. The default browser
+path remains unchanged. No global browser monkeypatch or second OAuth client.
+
+Pending presentation clears after callback receipt, timeout, cancellation or
+close. A failed presenter propagates rather than silently opening another browser.
+31 transport/lifecycle tests passed, including synthetic real-loopback callback,
+completion, timeout, cancellation, presentation failure, default-browser behavior
+and existing lifecycle regressions. Focused Ruff passed. These tests do not prove
+provider login, valid OAuth state acceptance by the upstream SDK, remote callback
+routing or Windows UI behavior; the callback tests use explicit synthetic values.
+
+The hook is not yet selected by the installed plugin or prototype API. Next wire
+an authenticated, workspace-scoped ephemeral sign-in presentation into the owned
+prototype backend and existing validation/startup service. Keep authorization URLs
+out of model output and evidence, clear them on completion/expiry, and preserve
+actual callback port identity. Qualify the Windows-to-GB10 callback route before
+starting a real SteveCAD sign-in. Ordinary workflow tools must not acquire an
+operator authentication or approval capability from this UI integration.
