@@ -134,3 +134,10 @@ support from earlier Windows-to-Linux x64 qualification, force an incompatible
 OCP version, or substitute a previously generated CAD artifact. The next viable
 candidate is an explicitly qualified x64 provider host; registering emulation or
 routing through another machine has not been done by this check.
+
+Current upstream rechecked at commit
+`4f19a5e37b9c6e76cd77af19f546022dd8442a23` (package0.7.0): its exact
+pyproject retains the same build123d/OCP bounds. An AgentCAD-only upgrade is
+therefore not a resolution of the observed ARM64 prerequisite. No new install
+was attempted or dependencies overridden. See
+[current upstream evidence](../../../prototypes/desktop-harness/agentcad-current-upstream-evidence.json).

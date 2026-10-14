@@ -1479,3 +1479,19 @@ affected-regression-evidence.json. Added explicit Pi unavailable/no-fallback
 coverage (including normalized selection); registry suite 9 passed. No adapter
 behavior changed. Embedded Codex pilot is absent from this checkout and retains
 a separate regression obligation; desktop bridge tests do not cover it.
+
+## Preserved embedded pilot and current AgentCAD upstream
+
+Located separate pilot at /tmp/wright-codex-platform-integration, HEAD25f807f2.
+Its adapter/transport/policy suites pass40 tests in2.56s using its own environment.
+Original dirty planning diff SHA matches before/after; untracked planning document
+remains. No authenticated model calls, pilot installation changes or branch
+integration. Exact scope/receipt digest: embedded-pilot-regression-evidence.json.
+
+Primary upstream AgentCAD HEAD4f19a5e37b9c6e76cd77af19f546022dd8442a23
+now reports0.7.0 but retains build123d>=0.10,<0.11 and cadquery-ocp>=7.8,<7.9.
+Read exact pinned pyproject after resolving HEAD. Upgrading AgentCAD alone does
+not remove the observed ARM64 dependency blocker. No repeated installation or
+dependency overrides. Current host has only local default Docker context and
+the previously unreachable dell2 SSH entry; no usable x64 provider execution
+host established. See agentcad-current-upstream-evidence.json.

@@ -1,0 +1,26 @@
+{
+  "source_worktree": "/tmp/wright-codex-platform-integration",
+  "source_commit": "25f807f22bf099f8b98796fdd5f09e85ba06d75e",
+  "suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "40",
+    "time": "2.557",
+    "timestamp": "2026-10-14T19:50:11.183785-04:00",
+    "hostname": "promaxgb10-9666"
+  },
+  "scope": [
+    "test_codex_adapter.py",
+    "test_codex_transport.py",
+    "test_codex_policy.py"
+  ],
+  "junit_path": "/tmp/wright-embedded-pilot-regression-20261014-01/results.xml",
+  "junit_sha256": "69215e519fc772a402b087eb081c01f9f86400365f915da6381326b281f8b34f",
+  "existing_tracked_diff_sha256_before_and_after": "79cfbb7e78f48cedb7489f128f16d4c2d0a8183cf7bf60256cc308bf359c3d01",
+  "limits": [
+    "Deterministic tests only; no live authenticated calls, installation changes or integration into the desktop branch.",
+    "Original chat-native-tool exception and authoring/workflow gates remain in force."
+  ]
+}
