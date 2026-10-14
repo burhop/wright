@@ -468,3 +468,23 @@ original durable workflow review. It resolves the sampled numerical evidence
 gap without changing CAD; it does not prove continuous collision freedom,
 physical fit or hardware stack completion. Never relax a declared clearance or
 invent intended contacts to make a measured interference disappear.
+
+## GB10 desktop prototype setup boundary — 14 October 2026
+
+A fresh isolated desktop-prototype workspace exercised Wright's existing catalog
+and scoped setup-plan owner through the official MCP client. The initial plan
+correctly blocked on `external_license_incomplete`. After the user confirmed
+existing publisher/account setup, a new plan became reviewable and exact digest
+readback passed. The isolated registry-only plan was approved and applied under
+the prototype's installation authorization; catalog readback shows installed,
+inactive, and not enabled in the workspace.
+
+This is **registration evidence only**: no SteveCAD OAuth/protocol call or CAD
+operation occurred. Do not use it as provider readiness or engineering evidence.
+The existing OAuth runner opens the authorization page on the execution host;
+a GB10 backend with a Windows desktop still needs a qualified sign-in handoff.
+Do not copy browser cookies or equate desktop browser login with MCP consent.
+Private, credential-free setup receipts are retained under
+`/tmp/wright-desktop-setup-proof-20261014-01/` (`plan-probe.json`,
+`plan-confirmed-probe-02.json`, `apply-probe.json`). Source/evidence continuation
+is indexed in `prototypes/desktop-harness/workspace-home-progress.md`.

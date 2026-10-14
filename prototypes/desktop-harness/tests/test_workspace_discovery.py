@@ -202,3 +202,63 @@ async def test_connection_plan_reuses_owner_with_exact_scope_and_no_apply(discov
         assert (
             await client.post("/api/desktop/connection-plans", json=body)
         ).status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_setup_actions_require_admin_exact_scope_and_owner_digest(discovery):
+    from api.services.mcp_services import get_mcp_api_service
+    from tool_registry.install_plans import InstallPlanError
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    app.state.security_settings = SimpleNamespace(enforced=True)
+
+    @app.middleware("http")
+    async def test_principal(request, call_next):
+        request.state.principal_role = request.headers.get("test-role", "viewer")
+        return await call_next(request)
+
+    owner = Mock()
+    owner.get_install_plan.return_value = SimpleNamespace(
+        workspace_id="Alpha", requested_scope="workspace"
+    )
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    body = {
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "plan_digest": "a" * 64,
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        for operation in ("approve", "apply"):
+            path = "/api/desktop/connection-plans/plan/" + operation
+            assert (await client.post(path, json=body)).status_code == 403
+            owner.get_install_plan.assert_not_called()
+            owner.get_install_plan.return_value.workspace_id = "Other"
+            assert (
+                await client.post(path, json=body, headers={"test-role": "admin"})
+            ).status_code == 403
+            owner.approve_install_plan.assert_not_called()
+            owner.apply_install_plan.assert_not_called()
+            owner.get_install_plan.reset_mock()
+        owner.get_install_plan.return_value.workspace_id = "Alpha"
+        owner.approve_install_plan.side_effect = InstallPlanError(
+            "plan_digest_mismatch", "Stale plan"
+        )
+        response = await client.post(
+            "/api/desktop/connection-plans/plan/approve",
+            json=body,
+            headers={"test-role": "admin"},
+        )
+        assert response.status_code >= 400
+        owner.approve_install_plan.assert_called_once()
+        assert owner.approve_install_plan.call_args.args == ("plan", "a" * 64)
+        owner.apply_install_plan.assert_not_called()
+        read = await client.get(
+            "/api/desktop/connection-plans/plan",
+            params={"workspace_id": "Alpha", "session_id": "desktop-Alpha"},
+        )
+        assert read.status_code == 200
+        assert read.json()["plan"]["workspace_id"] == "Alpha"
+        owner.apply_install_plan.assert_not_called()

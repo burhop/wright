@@ -20,6 +20,7 @@ from data_vault.desktop_reasoning_repository import (
 )
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
 from api.services.mcp_services import McpApiService, get_mcp_api_service
+from api.security import require_admin
 
 
 CLIENT_LEASE_SECONDS = 30
@@ -50,6 +51,13 @@ class ConnectionPlanRequest(BaseModel):
     session_id: str
     capability_id: str = Field(min_length=1, max_length=256)
     independently_completed_license: bool = False
+
+
+class ConnectionPlanAction(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
 
 
 class DesktopBackend:
@@ -192,6 +200,84 @@ class DesktopBackend:
 
     def router(self):
         router = APIRouter(prefix="/api/desktop")
+
+        async def scoped_plan(workspace_id, session_id, plan_id, request, service):
+            self.workspace(workspace_id, session_id)
+            from api.routers.mcp import get_mcp_install_plan
+
+            plan = await get_mcp_install_plan(plan_id, request, service)
+            if plan.workspace_id != workspace_id or plan.requested_scope != "workspace":
+                raise HTTPException(403, "Setup plan belongs to a different scope")
+            return plan
+
+        @router.get("/connection-plans/{plan_id}")
+        async def read_connection_plan(
+            plan_id: str,
+            workspace_id: str,
+            session_id: str,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                workspace_id, session_id, plan_id, request, service
+            )
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan": plan,
+            }
+
+        @router.post(
+            "/connection-plans/{plan_id}/approve", dependencies=[Depends(require_admin)]
+        )
+        async def approve_connection_plan(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            from api.routers.mcp import PlanDigestRequest, approve_mcp_install_plan
+
+            plan = await approve_mcp_install_plan(
+                plan_id,
+                PlanDigestRequest(plan_digest=body.plan_digest),
+                request,
+                service,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "plan": plan,
+            }
+
+        @router.post(
+            "/connection-plans/{plan_id}/apply", dependencies=[Depends(require_admin)]
+        )
+        async def apply_connection_plan(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            from api.routers.mcp import PlanDigestRequest, apply_mcp_install_plan
+
+            run = await apply_mcp_install_plan(
+                plan_id,
+                PlanDigestRequest(plan_digest=body.plan_digest),
+                request,
+                service,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "onboarding_run": run,
+            }
 
         @router.post("/connection-plans")
         async def connection_plan(

@@ -10,9 +10,9 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from importlib.metadata import version
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 from uuid import uuid4
 from pydantic import TypeAdapter
 import anyio
@@ -370,6 +370,41 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "session_id": session_id,
                 "capability_id": capability_id,
                 "independently_completed_license": independently_completed_license,
+            },
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plan_read(
+        workspace_id: str, session_id: str, plan_id: str
+    ) -> dict[str, Any]:
+        """Read the exact saved setup plan without approving or applying it."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe=""),
+            params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plan_update(
+        workspace_id: str,
+        session_id: str,
+        plan_id: str,
+        plan_digest: str,
+        operation: Literal["approve", "apply"],
+    ) -> dict[str, Any]:
+        """Explicit operator setup approval/application against a reviewed plan digest; never a workflow grant."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans/"
+            + quote(plan_id, safe="")
+            + "/"
+            + operation,
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan_digest": plan_digest,
             },
         )
 

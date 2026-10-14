@@ -194,3 +194,40 @@ checkpoint `bcf03161` records its receipt and the retained browser limitation.
 The required push gate is running in isolated state at
 `/tmp/wright-desktop-demo-push-20261014-01`; no correction push or merge has yet
 occurred. Keep the dependent feature branch separate until baseline CI/integration.
+
+## Scoped setup lifecycle and real isolated registration
+
+User confirmation received: use the existing SteveCAD account; publisher setup
+is complete. The new `plan-confirmed-probe-02.json` in the 8132 proof state records
+that explicit answer, a reviewable plan with no blockers, and exact digest readback.
+The first confirmed-plan attempt failed before MCP connection while the owned
+backend was starting; its failure was retained and no plan call reached the API.
+Only then was a separate attempt made. Original blocked plan and evidence remain.
+
+Added read/approve/apply desktop setup ports over the existing onboarding owner.
+Backend checks the exact desktop workspace/session and the persisted plan's
+workspace scope; approval/application retain the existing administrator dependency
+and owner digest validation. UI-only visibility is not the authority. Viewing a
+plan is read-only. No automatic retry or workflow-tool grant is introduced.
+The new ports are not yet wired to frontend approval/application controls.
+
+`apply-probe.json` records real official-MCP-client exact read → approve → apply →
+readback → catalog checks, under the submitted isolated-install authorization.
+The reviewed effect registers SteveCAD locally only. The catalog confirms installed,
+inactive and not enabled in this workspace. Registry validation explicitly does
+not establish protocol readiness, OAuth authentication or engineering use.
+The setup proof backend was the only restarted process; pre-restart binding,
+version and preview files were archived under `before-plan-recovery/`, old logs
+retained, and no engineering runs existed in that state.
+
+Eight scoped backend tests and 18 bridge/catalog tests passed. They cover
+non-admin denial before plan access, cross-workspace plan denial, stale-digest
+propagation to the existing owner, read without apply and explicit publisher
+completion. Focused Python lint passed. Tool count is now 25 in source.
+Next: visible setup action/reconciliation controls, provider sign-in handoff,
+protocol readiness and explicit workspace permission qualification.
+
+Baseline push gate passed on `bcf03161`, receipt/log in
+`/tmp/wright-desktop-demo-push-20261014-01`. Remote dev remained `c1a8d009` at fetch.
+The single consolidated correction push to PR 153 was initiated after both
+local gates; current-head CI and its result must be checked before merge.
