@@ -234,3 +234,41 @@ it("does not redirect a restored selection to a replacement desktop session", as
   expect(screen.getByLabelText("Workspace")).toHaveValue("");
   expect(call).toHaveBeenCalledTimes(1);
 });
+
+it("refreshes the exact selected scope while keeping the Files view", async () => {
+  const call = vi.fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha] }))
+    .mockResolvedValueOnce(files(alpha, "before.wflow"))
+    .mockResolvedValueOnce(result({ workspaces: [beta, alpha] }))
+    .mockResolvedValueOnce(files(alpha, "after.wflow"));
+  const onOpen = vi.fn();
+  render(<NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />);
+  await screen.findByRole("button", { name: "before.wflow" });
+  fireEvent.click(screen.getByRole("button", { name: "Files" }));
+  fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
+  await screen.findByRole("button", { name: "after.wflow" });
+  expect(screen.getByLabelText("Workspace")).toHaveValue("a");
+  expect(screen.getByLabelText("Find a file")).toBeVisible();
+  expect(screen.queryByText("before.wflow")).not.toBeInTheDocument();
+  expect(call.mock.calls).toEqual([
+    ["wright_workspace_list", {}],
+    ["wright_workspace_files", { workspace_id: "a", session_id: "a-chat" }],
+    ["wright_workspace_list", {}],
+    ["wright_workspace_files", { workspace_id: "a", session_id: "a-chat" }],
+  ]);
+  expect(onOpen).not.toHaveBeenCalled();
+});
+
+it("does not redirect refreshed selection to a changed session", async () => {
+  const call = vi.fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha] }))
+    .mockResolvedValueOnce(files(alpha, "part.wflow"))
+    .mockResolvedValueOnce(result({ workspaces: [{ ...alpha, session_id: "replacement" }, beta] }));
+  render(<NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />);
+  await screen.findByRole("button", { name: "part.wflow" });
+  fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("no longer available");
+  expect(screen.getByLabelText("Workspace")).toHaveValue("");
+  expect(call).toHaveBeenCalledTimes(3);
+  expect(screen.queryByRole("button", { name: "part.wflow" })).not.toBeInTheDocument();
+});

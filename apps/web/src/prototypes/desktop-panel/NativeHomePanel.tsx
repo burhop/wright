@@ -166,6 +166,7 @@ export function NativeHomePanel({
         item.session_id === saved.session_id,
     );
     if (workspace) void select(workspace);
+    else setError("The selected workspace or session is no longer available. Choose a workspace to continue.");
   }, [items, loading, error, select]);
 
   const createWorkspace = async () => {
@@ -205,7 +206,10 @@ export function NativeHomePanel({
         <h1>Wright</h1>
         <button
           disabled={opening || creating}
-          onClick={() => setRefresh((value) => value + 1)}
+          onClick={() => {
+            restore.current = selected ?? restore.current;
+            setRefresh((value) => value + 1);
+          }}
         >
           Refresh
         </button>

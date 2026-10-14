@@ -1495,3 +1495,20 @@ not remove the observed ARM64 dependency blocker. No repeated installation or
 dependency overrides. Current host has only local default Docker context and
 the previously unreachable dell2 SSH entry; no usable x64 provider execution
 host established. See agentcad-current-upstream-evidence.json.
+
+## Preserve exact selection when refreshing Home
+
+Found and corrected a panel navigation defect: Refresh previously cleared the
+selected workspace, requiring another selection even when discovery returned the
+same identity. The refresh now retains the exact workspace/session for discovery
+reconciliation and keeps the selected workspace view. If discovery reports a
+changed session or missing/unavailable workspace, it leaves selection empty and
+shows an actionable message instead of selecting another session or workspace.
+No workflow opens, resumes, or runs as part of refresh.
+
+Home component suite:12 passed, including exact scope after reordered discovery,
+Files view continuity, refreshed file inventory and changed-session rejection.
+TypeScript build, scoped ESLint and git diff --check pass. These are source-level
+checks only. Native bundle rebuild, served workspace walkthrough and Windows
+acceptance are pending; installed frozen0.8.0 is unchanged. Include this fix in
+the next qualified candidate rather than modifying its installed runtime.
