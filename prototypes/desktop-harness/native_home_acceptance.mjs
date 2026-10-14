@@ -133,7 +133,7 @@ try {
   await expect(frame.getByText('No files match this search.',{exact:true})).toBeVisible();
   await frame.getByLabel('Find a file').fill(evidence.scope.path.split('/').at(-1));
   await expect(frame.getByText('/'+evidence.scope.path,{exact:true})).toBeVisible();
-  await expect(frame.getByText('File preview, upload and download are not available in this panel yet.',{exact:true})).toBeVisible();
+  await expect(frame.getByText('Text previews support files up to 64 KiB. Other file previews, upload and download are not available here yet.',{exact:true})).toBeVisible();
   await page.screenshot({path:resolve(output,'files.png')});
   passed.push('Files lists and filters real scoped storage; unavailable operations explicit');
   if (!evidence.skip_connections) {

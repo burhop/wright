@@ -460,3 +460,83 @@ async def test_saved_setup_list_uses_exact_workspace_and_excludes_other_scopes(
     owner.list_workspace_install_plans.assert_called_once_with("Alpha", "cad")
     owner.create_install_plan.assert_not_called()
     owner.apply_install_plan.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_preview_reuses_bounded_owner_and_checks_scope_first(discovery):
+    app, _, _, create, _ = discovery
+    directory = create("Preview")
+    files = app.state.desktop_service.files
+    files.read = AsyncMock(
+        return_value=SimpleNamespace(
+            binary=False, content=b"<script>not executed</script>"
+        )
+    )
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        denied = await client.get(
+            "/api/desktop/workspaces/Preview/file-preview",
+            params={"session_id": "other", "path": "notes.md"},
+        )
+        assert denied.status_code == 403
+        files.read.assert_not_awaited()
+        response = await client.get(
+            "/api/desktop/workspaces/Preview/file-preview",
+            params={"session_id": "desktop-Preview", "path": "notes.md"},
+        )
+        assert response.json()["content"] == "<script>not executed</script>"
+        files.read.assert_awaited_once_with(str(directory), "notes.md", max_bytes=65536)
+        files.read.side_effect = ValueError("File exceeds the preview byte limit")
+        unsupported = await client.get(
+            "/api/desktop/workspaces/Preview/file-preview",
+            params={"session_id": "desktop-Preview", "path": "large.txt"},
+        )
+        assert unsupported.json()["supported"] is False
+        assert "content" not in unsupported.json()
+
+
+def test_bounded_file_owner_preserves_limits_and_confinement(tmp_path):
+    from workspace_service.adapters.filesystem import LocalWorkspaceFiles
+
+    root = tmp_path / "workspace"
+    root.mkdir()
+    files = LocalWorkspaceFiles(str(root))
+    (root / "note.txt").write_bytes(b"hello")
+    assert files.read("note.txt", max_bytes=5)[1] == b"hello"
+    with pytest.raises(ValueError, match="preview byte limit"):
+        files.read("note.txt", max_bytes=4)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("private")
+    (root / "linked.txt").symlink_to(outside)
+    for path in ("../outside.txt", str(outside), "linked.txt"):
+        with pytest.raises(ValueError):
+            files.read(path, max_bytes=64)
+    assert outside.read_text() == "private"
+
+
+@pytest.mark.asyncio
+async def test_preview_bridge_is_ui_only_and_read_only(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        call=AsyncMock(return_value={"supported": False}), scope=AsyncMock()
+    )
+    bridge = server(client)
+    tool = next(
+        tool
+        for tool in await bridge.list_tools()
+        if tool.name == "wright_workspace_file_preview"
+    )
+    assert tool.annotations.readOnlyHint
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    await bridge.call_tool(
+        tool.name, {"workspace_id": "a", "session_id": "chat-a", "path": "notes.md"}
+    )
+    client.scope.assert_awaited_once_with("a", "chat-a")
+    client.call.assert_awaited_once_with(
+        "GET",
+        "/api/desktop/workspaces/a/file-preview",
+        params={"session_id": "chat-a", "path": "notes.md"},
+    )

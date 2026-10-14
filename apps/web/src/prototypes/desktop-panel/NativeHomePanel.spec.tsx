@@ -62,7 +62,7 @@ it("lists and filters workspace files without opening or executing them", async 
   expect(screen.queryByText("part.wflow")).not.toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Find a file"), { target: { value: "missing" } });
   expect(screen.getByText("No files match this search.")).toBeVisible();
-  expect(screen.getByText(/File preview, upload and download are not available/)).toBeVisible();
+  expect(screen.getByText(/Other file previews, upload and download are not available/)).toBeVisible();
   expect(call).toHaveBeenCalledTimes(2);
   expect(onOpen).not.toHaveBeenCalled();
 });

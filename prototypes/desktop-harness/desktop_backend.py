@@ -578,6 +578,38 @@ class DesktopBackend:
                 "tree": await self.service.files.tree(row["local_path"]),
             }
 
+        @router.get("/workspaces/{workspace_id}/file-preview")
+        async def workspace_file_preview(workspace_id: str, session_id: str, path: str):
+            row = self.workspace(workspace_id, session_id)
+            scope = {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "path": path,
+            }
+            try:
+                result = await self.service.files.read(
+                    row["local_path"], path, max_bytes=65536
+                )
+            except (ValueError, FileNotFoundError, PermissionError):
+                return {
+                    **scope,
+                    "supported": False,
+                    "reason": "Text preview is unavailable. Choose an existing workspace text file up to 64 KiB.",
+                }
+            if result.binary or result.content is None:
+                return {
+                    **scope,
+                    "supported": False,
+                    "reason": "This file type has no preview here yet. Inspect run artifacts in Run and results.",
+                }
+            return {
+                **scope,
+                "supported": True,
+                "content": result.content.decode("utf-8"),
+                "sha256": hashlib.sha256(result.content).hexdigest(),
+                "bytes": len(result.content),
+            }
+
         @router.get("/reasoning")
         async def pending(workspace_id: str, session_id: str):
             self.workspace(workspace_id, session_id)

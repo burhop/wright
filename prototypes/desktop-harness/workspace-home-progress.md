@@ -1357,3 +1357,41 @@ This is a failed compatibility/recovery qualification, not an engineering failur
 or a reason to replace the solver or weaken validation. No bug report submitted.
 Provider fix/qualified compatible transport remains required for dependent native
 workflow capabilities. Other UI and Wright recovery work remains independent.
+
+## Bounded workspace text preview candidate
+
+Files now offers an explicit read-only text preview through one UI-only typed
+MCP tool and the existing workspace file owner. The owner accepts an optional
+byte limit and reads at most limit+1 bytes; existing callers retain their original
+behavior. The desktop route limits previews to64KiB and returns unsupported-file
+reasons without content for binary/oversized/unavailable files. Content is rendered
+as React text, never HTML, with returned file digest. Exact workspace/session/path
+matching, component scope keys and discarded late replies prevent old reads from
+appearing under a new selection. Upload/download/other previews remain explicit
+limitations. Current saved file preview is distinct from exact run evidence.
+
+Validation:14 workspace boundary/owner/tool tests,26 bridge/source tests,13
+home/preview component tests and7 existing shared file/workspace tests passed
+(60 total). TypeScript, scoped ESLint, Ruff and whitespace passed. One original
+bridge test expected31 tools; updated to32 for the explicit UI-only read port,
+then reran successfully. Initial restricted pytest stalled after6 tests; stopped
+only inspected PID1698415 and reran unchanged with local IPC available. No gate
+was disabled. Rebuilt resource2210559bytes/zero external assets. Served native
+preview verification and named plugin installation remain pending.
+
+## Callback-route discovery following user correction
+
+The user said to discover the Windows connection without requesting its alias.
+Inspected only connection metadata: saved dell2 points at an unreachable old
+address; active GB10 SMB/SSH connections identify the current Windows client.
+An outbound SSH check to that client, retaining the saved host-key verification,
+timed out. No SSH config, key, Windows setting or live plugin was changed.
+
+Consulted official Browser/remote guidance via the OpenAI Docs skill. Started a
+120-second loopback-only synthetic redirect/callback listener on GB10 port49417
+and requested that page through open_in_codex. The app returned queued; no callback
+had been observed at this checkpoint. This does not establish rendering, route
+failure or working OAuth. The listener uses no credentials, no real OAuth code,
+and closes itself. Evidence/script under
+`/tmp/wright-desktop-callback-route-20261014-01/`. Actual SteveCAD sign-in has not
+started. Do not request the SSH alias again or copy credentials as a workaround.

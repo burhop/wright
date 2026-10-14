@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
+import { NativeFilePreview } from "./NativeFilePreview";
 import { NativeConnections } from "./NativeConnections";
 import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
 
@@ -22,6 +23,7 @@ export type HomeCall = (
     | "wright_workspace_list"
     | "wright_workspace_create"
     | "wright_workspace_files"
+    | "wright_workspace_file_preview"
     | "wright_workflow_history"
     | "wright_connections_list"
     | "wright_connection_plans"
@@ -80,6 +82,7 @@ export function NativeHomePanel({
   const [refresh, setRefresh] = useState(0);
   const [view, setView] = useState<"workflows" | "connections" | "files" | "runs">("workflows");
   const [fileQuery, setFileQuery] = useState("");
+  const [previewPath, setPreviewPath] = useState<string>();
   const workflowFiles = files.filter((file) => file.path.endsWith(".wflow"));
   const generation = useRef(0);
   const restore = useRef(initialSelection);
@@ -121,6 +124,7 @@ export function NativeHomePanel({
       setSelected(workspace);
       onSelect?.(workspace);
       setFiles([]);
+      setPreviewPath(undefined);
       setFileQuery("");
       setError("");
       setLoading(true);
@@ -294,12 +298,13 @@ export function NativeHomePanel({
           <ul>
             {files.filter((file) => file.path.toLowerCase().includes(fileQuery.toLowerCase())).map((file) => (
               <li key={file.path}>
-                <span>{file.name}</span>
+                <button type="button" onClick={() => setPreviewPath(file.path.replace(/^\//, ""))}>{file.name}</button>
                 <small>{file.path}</small>
               </li>
             ))}
           </ul>
-          <p>File preview, upload and download are not available in this panel yet.</p>
+          <p>Text previews support files up to 64 KiB. Other file previews, upload and download are not available here yet.</p>
+          {previewPath && <NativeFilePreview key={`${selected.workspace_id}:${selected.session_id}:${previewPath}`} call={call} workspace={selected} path={previewPath} onClose={() => setPreviewPath(undefined)} />}
         </section>
       )}
       {selected && view === "workflows" && (
