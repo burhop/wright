@@ -100,7 +100,7 @@ describe("private desktop web entry", () => {
   it("uses the existing session endpoint and bootstraps the page without exposing the API token", async () => {
     const directory = mkdtempSync(path.join(tmpdir(), "wright-lan-session-"));
     const tokenFile = path.join(directory, "token");
-    writeFileSync(tokenFile, "private-api-fixture", { mode: 0o600 });
+    writeFileSync(tokenFile, "fake-private-api-fixture", { mode: 0o600 });
     const exchange = vi
       .fn()
       .mockResolvedValue(
@@ -126,7 +126,7 @@ describe("private desktop web entry", () => {
         "http://127.0.0.1:8116/api/auth/session",
       );
       expect(JSON.parse(exchange.mock.calls[0][1].body)).toEqual({
-        token: "private-api-fixture",
+        token: "fake-private-api-fixture",
       });
       const middleware = use.mock.calls[0][0];
       const result = { setHeader: vi.fn(), end: vi.fn(), statusCode: 200 };
@@ -134,7 +134,7 @@ describe("private desktop web entry", () => {
       middleware(request(), result, next);
       expect(result.setHeader).toHaveBeenCalledWith("Set-Cookie", cookie);
       expect(JSON.stringify(result.setHeader.mock.calls)).not.toContain(
-        "private-api-fixture",
+        "fake-private-api-fixture",
       );
       expect(next).toHaveBeenCalledOnce();
       const write = {

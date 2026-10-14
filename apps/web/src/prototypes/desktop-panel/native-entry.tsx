@@ -50,7 +50,7 @@ function theme(ctx?: McpUiHostContext) {
   }
 }
 async function open() {
-  const token = ++generation;
+  const openGeneration = ++generation;
   const input = {
     ...(args.request && typeof args.request === "object"
       ? (args.request as Record<string, unknown>)
@@ -125,7 +125,7 @@ async function open() {
   notice.textContent = "Opening the accepted workflow…";
   try {
     const document = await client.read(); // Cached tool results are not durable restoration authority.
-    if (token !== generation || dirty) return;
+    if (openGeneration !== generation || dirty) return;
     if (process && document.storage_digest !== process.source_digest) {
       notice.textContent =
         "This run's source changed. Reopen its exact accepted workflow; no action was repeated.";
@@ -155,7 +155,7 @@ async function open() {
     requestAnimationFrame(() => theme(app.getHostContext()));
     notice.textContent = "";
   } catch {
-    if (token === generation)
+    if (openGeneration === generation)
       notice.textContent =
         "Wright could not open this workflow. Your saved work is unchanged; no operation was repeated.";
   }

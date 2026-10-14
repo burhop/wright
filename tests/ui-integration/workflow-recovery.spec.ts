@@ -318,17 +318,21 @@ test("keeps the canvas-first editor bounded with an optional inspector at 1070 b
   expect(paletteBox).not.toBeNull();
   expect(canvasBox).not.toBeNull();
   expect(inspectorBox).not.toBeNull();
-  expect(paletteBox!.y).toBe(inspectorBox!.y);
-  expect(paletteBox!.x + paletteBox!.width).toBeLessThanOrEqual(
-    canvasBox!.x + 1,
+  expect(paletteBox!.y + paletteBox!.height).toBeLessThanOrEqual(
+    canvasBox!.y + 1,
   );
+  expect(paletteBox!.x).toBeGreaterThanOrEqual(0);
+  expect(paletteBox!.x + paletteBox!.width).toBeLessThanOrEqual(1070);
+  expect(canvasBox!.y).toBe(inspectorBox!.y);
   expect(canvasBox!.x + canvasBox!.width).toBeLessThanOrEqual(
     inspectorBox!.x + 1,
   );
   expect(canvasBox!.width).toBeGreaterThanOrEqual(500);
-  expect(paletteBox!.width).toBeLessThanOrEqual(96);
+  expect(paletteBox!.width).toBeLessThanOrEqual(180);
   expect(inspectorBox!.y + inspectorBox!.height).toBeLessThanOrEqual(791);
 
+  await page.getByTestId("workflow-recovery-add-step").click();
+  await expect(page.locator(".recovery-add-step-menu")).toBeVisible();
   const overflow = await page.evaluate(() => {
     const select = (selector: string) =>
       document.querySelector<HTMLElement>(selector)!;
@@ -345,7 +349,7 @@ test("keeps the canvas-first editor bounded with an optional inspector at 1070 b
       page: metric(select('[data-testid="page-workflow-recovery"]')),
       concept: metric(select('[data-testid="workflow-recovery-concept"]')),
       workbench: metric(select(".recovery-workbench")),
-      palette: metric(select(".recovery-create-buttons")),
+      palette: metric(select(".recovery-add-step-menu")),
       inspector: metric(select(".recovery-inspector__body")),
     };
   });
@@ -364,6 +368,8 @@ test("keeps the canvas-first editor bounded with an optional inspector at 1070 b
   expect(overflow.workspace.overflowY).toBe("hidden");
   expect(overflow.palette.overflowY).toBe("auto");
   expect(overflow.inspector.overflowY).toBe("auto");
+  await page.getByTestId("workflow-recovery-add-step").press("Escape");
+  await expect(page.locator(".recovery-add-step-menu")).toHaveCount(0);
   await closeInspector(page);
   expect((await canvas.boundingBox())!.width).toBeGreaterThan(canvasBox!.width);
 });
@@ -480,6 +486,7 @@ test("keeps one accepted definition across canvas, source, and AI review", async
       "workflow-recovery-block-block.create-design-specification",
     ),
   ).toContainText("Create and review design specification");
+  await page.getByTestId("workflow-recovery-add-step").click();
   await expect(page.getByTestId("workflow-recovery-palette")).toContainText(
     "AI prompt",
   );
@@ -515,6 +522,7 @@ test("keeps one accepted definition across canvas, source, and AI review", async
   await expect(
     page.getByTestId("workflow-recovery-palette-search"),
   ).toHaveCount(0);
+  await page.getByTestId("workflow-recovery-add-step").click();
   await page.getByTestId("workflow-recovery-create-group-input").click();
   await page
     .getByTestId("workflow-recovery-create-template-text-input")

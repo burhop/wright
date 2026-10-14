@@ -99,6 +99,7 @@ it("offers server tasks without exposing any individual tool as a block", async 
       onCreateServer={onCreateServer}
     />,
   );
+  fireEvent.click(screen.getByRole("button", { name: "Add step" }));
   fireEvent.click(screen.getByRole("button", { name: "MCP servers" }));
   const primary = await screen.findByTestId(
     `workflow-recovery-create-server-${serverId}`,
@@ -149,6 +150,7 @@ it("keeps internal Wright services out of the MCP server palette and allows defe
       onCreateServer={vi.fn()}
     />,
   );
+  fireEvent.click(screen.getByRole("button", { name: "Add step" }));
   fireEvent.click(screen.getByRole("button", { name: "MCP servers" }));
   await screen.findByTestId(`workflow-recovery-create-server-${serverId}`);
   expect(
@@ -177,6 +179,7 @@ it("clears the previous server choices when the workspace scope disappears", asy
       onCreateServer={onCreateServer}
     />,
   );
+  fireEvent.click(screen.getByRole("button", { name: "Add step" }));
   fireEvent.click(screen.getByRole("button", { name: "MCP servers" }));
   await screen.findByTestId(`workflow-recovery-create-server-${serverId}`);
   view.rerender(
