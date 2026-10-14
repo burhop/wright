@@ -130,6 +130,11 @@ try {
   await expect(workflow).toBeVisible();
   passed.push('home opens shared editor and Back restores exact workspace without mutation');
   await frame.getByRole('button',{name:'Files',exact:true}).click();
+  await frame.getByRole('button',{name:'Refresh',exact:true}).click();
+  await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(evidence.scope.workspace_id);
+  await expect(workflow).toBeVisible();
+  await expect(frame.getByLabel('Find a file')).toBeVisible();
+  passed.push('Refresh reconciles exact workspace/session and retains Files view without execution');
   await expect(frame.getByText('/'+evidence.scope.path,{exact:true})).toBeVisible();
   await frame.getByLabel('Find a file').fill('no-such-file-in-this-proof');
   await expect(frame.getByText('No files match this search.',{exact:true})).toBeVisible();

@@ -1512,3 +1512,21 @@ TypeScript build, scoped ESLint and git diff --check pass. These are source-leve
 checks only. Native bundle rebuild, served workspace walkthrough and Windows
 acceptance are pending; installed frozen0.8.0 is unchanged. Include this fix in
 the next qualified candidate rather than modifying its installed runtime.
+
+## Served refresh qualification
+
+Rebuilt native resource:2,210,680 bytes, no external assets. Fresh state
+/tmp/wright-desktop-refresh-proof-20261014-01 uses a consistent SQLite backup
+and workspace copy, relocating only copied workspace registrations; credentials
+and API token not copied. Loopback preview8152/session75675 serves the current
+resource with engineering/image enrollment flags off. Old installed runtime and
+services remain unchanged.
+
+Read-only browser harness through real MCP/API owners passed9 checks in
+browser-home-1792022005979: normal Workflows/shared editor/Back; exact selection
+and Files view retained on Refresh; scoped file filtering; explicit oversized
+preview; exact saved text preview; saved setup readback; narrow layout; draft
+protection; accepted-source digest unchanged and no browser errors. Viewed actual
+file-preview.png. Detailed receipt/digests: refresh-served-evidence.json.
+This is simulated-host GB10 browser evidence, not Windows native acceptance.
+No workflow run or setup mutation; installed0.8.0 unchanged.
