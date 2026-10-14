@@ -76,3 +76,21 @@ unverified. The observed 0.4.0 runtime remains on port 8123. A retained candidat
 service on port 8126 uses `.venv-dev-gate`; therefore the new gate must use a fresh
 isolated `WRIGHT_GATE_VENV` instead of reinstalling packages under that live service.
 No service was stopped or restarted.
+
+
+## Fresh security-database failure and correction
+
+The full gate at `4747cb7c` stopped at the exact-image scan. Trivy's 14 October
+19:14 UTC database reports CVE-2026-8286, CVE-2026-8927 and CVE-2026-92392 against
+both curl and libcurl4t64 8.14.1-2+deb13u5, fixed in 8.14.1-2+deb13u7. The image
+had reused a cached APT layer from the earlier qualified build. Its failing
+receipt/log and public scan projection are retained, not overwritten.
+
+A disposable container refreshed Debian's signed package indexes and confirmed
+8.14.1-2+deb13u7 as the trixie-security candidate for both packages on ARM64.
+Pin curl to that version in both existing Docker stages to invalidate those
+cached layers; its exact-version libcurl dependency supplies the corresponding
+fix. The existing Docker security contract now retains the pin. No exception,
+host package installation or running-image change is made. Build and scan the
+new committed image before repeating the gate; x64 remains separately qualified
+by its CI build and checks.

@@ -58,7 +58,7 @@ ENV HERMES_HOME=/home/agent/.hermes
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     ca-certificates \
-    curl \
+    curl=8.14.1-2+deb13u7 \
     git \
     libblkid1 \
     liblastlog2-2 \
@@ -143,7 +143,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     bzip2 \
     ca-certificates \
-    curl \
+    curl=8.14.1-2+deb13u7 \
     gzip \
     libblkid1 \
     liblastlog2-2 \

@@ -197,6 +197,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "npm install --global npm@12.0.2" in dockerfile
     assert "util-linux" in dockerfile
     assert "openssl-provider-legacy" in dockerfile
+    assert dockerfile.count("curl=8.14.1-2+deb13u7") == 2
     assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
     assert "reconcile_hermes_pip_check.py" in smoke
     assert "scripts/check-hermes-jwt-compatibility.py" in smoke
