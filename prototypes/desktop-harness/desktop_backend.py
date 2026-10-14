@@ -49,6 +49,7 @@ class ConnectionPlanRequest(BaseModel):
     workspace_id: str
     session_id: str
     capability_id: str = Field(min_length=1, max_length=256)
+    independently_completed_license: bool = False
 
 
 class DesktopBackend:
@@ -208,6 +209,7 @@ class DesktopBackend:
                     capability_id=body.capability_id,
                     requested_scope="workspace",
                     workspace_id=body.workspace_id,
+                    independently_completed_license=body.independently_completed_license,
                 ),
                 request,
                 service,

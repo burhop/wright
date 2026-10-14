@@ -109,6 +109,16 @@ it("prepares a workspace plan only after an explicit click without applying it",
     workspace_id: "a",
     session_id: "chat-a",
     capability_id: "cad",
+    independently_completed_license: false,
   });
   expect(call).toHaveBeenCalledTimes(2);
+  fireEvent.click(screen.getByRole("checkbox"));
+  fireEvent.click(screen.getByRole("button", { name: "Review setup for CAD" }));
+  expect(call).toHaveBeenLastCalledWith("wright_connection_plan", {
+    workspace_id: "a",
+    session_id: "chat-a",
+    capability_id: "cad",
+    independently_completed_license: true,
+  });
+  await screen.findByRole("alert");
 });

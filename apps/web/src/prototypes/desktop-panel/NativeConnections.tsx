@@ -27,6 +27,8 @@ interface SetupPlan {
   workspace_id: string;
   requested_scope: string;
   state: string;
+  requirements?: { license?: { reference: string | null } };
+  approval_gates?: string[];
   blocking_reasons: { code: string; message: string; recovery: string }[];
   effects: { step_id: string; description: string }[];
 }
@@ -49,6 +51,9 @@ export function NativeConnections({
   const [planning, setPlanning] = useState(false);
   const [plan, setPlan] = useState<SetupPlan>();
   const [planError, setPlanError] = useState(false);
+  const [licenseCapability, setLicenseCapability] = useState<string | null>(
+    null,
+  );
   async function prepare(capabilityId: string) {
     setPlanning(true);
     setPlan(undefined);
@@ -58,6 +63,7 @@ export function NativeConnections({
         workspace_id: workspace.workspace_id,
         session_id: workspace.session_id,
         capability_id: capabilityId,
+        independently_completed_license: licenseCapability === capabilityId,
       });
       const data = result.structuredContent;
       const candidate = data?.plan as SetupPlan | undefined;
@@ -215,6 +221,31 @@ export function NativeConnections({
           <h3>Review setup</h3>
           <p>
             Plan state: {plan.state}. Nothing has been installed or approved.
+          </p>
+          {plan.requirements?.license?.reference && (
+            <p>{plan.requirements.license.reference}</p>
+          )}
+          {(plan.approval_gates ?? []).map((gate) => (
+            <p key={gate}>
+              Separate setup approval required: {gate.replaceAll("_", " ")}
+            </p>
+          ))}
+          <label>
+            <input
+              type="checkbox"
+              checked={licenseCapability === plan.capability_id}
+              onChange={(event) =>
+                setLicenseCapability(
+                  event.target.checked ? plan.capability_id : null,
+                )
+              }
+            />
+            I have independently completed the publisher account and terms setup
+            for this provider.
+          </label>
+          <p>
+            This records existing completion only; it does not purchase a
+            subscription or sign in. Review setup again to create a new plan.
           </p>
           {plan.effects.map((effect) => (
             <p key={effect.step_id}>{effect.description}</p>

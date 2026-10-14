@@ -355,7 +355,10 @@ def server(client, *, native_editor=False, native_working_view=False):
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plan(
-        workspace_id: str, session_id: str, capability_id: str
+        workspace_id: str,
+        session_id: str,
+        capability_id: str,
+        independently_completed_license: bool = False,
     ) -> dict[str, Any]:
         """Prepare a reviewable catalog setup plan. Does not approve, install, authenticate or grant tools."""
         await client.scope(workspace_id, session_id)
@@ -366,6 +369,7 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "capability_id": capability_id,
+                "independently_completed_license": independently_completed_license,
             },
         )
 

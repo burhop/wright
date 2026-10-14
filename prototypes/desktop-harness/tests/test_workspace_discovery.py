@@ -188,6 +188,16 @@ async def test_connection_plan_reuses_owner_with_exact_scope_and_no_apply(discov
         assert kwargs["independently_completed_license"] is False
         owner.approve_install_plan.assert_not_called()
         owner.apply_install_plan.assert_not_called()
+        body["independently_completed_license"] = True
+        assert (
+            await client.post("/api/desktop/connection-plans", json=body)
+        ).status_code == 200
+        assert (
+            owner.create_install_plan.call_args.kwargs[
+                "independently_completed_license"
+            ]
+            is True
+        )
         body["requested_scope"] = "global_registered"
         assert (
             await client.post("/api/desktop/connection-plans", json=body)

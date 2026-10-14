@@ -163,3 +163,34 @@ surface the pending sign-in through an explicitly qualified host handoff; browse
 login alone is not MCP authorization. Reuse the existing transport rather than
 introducing a second OAuth implementation. The provider recipe, qualification
 follow-up and usage guide were read; no credentials were requested or exposed.
+
+## Live setup-plan proof and explicit publisher completion
+
+The existing setup owner was exercised through the official MCP client on a fresh
+matching-assets backend at 8132, state `/tmp/wright-desktop-setup-proof-20261014-01`.
+`plan-probe.json` records an exact workspace-scoped SteveCAD plan in `blocked`
+state, with `external_license_incomplete`; no approve/apply or provider operation
+was called. It preserves the actual cloud-data/network approval gates and remote
+registration effect. This is successful qualification of blocked setup, not
+successful installation or authentication.
+
+The user was asked whether publisher account/terms setup is already complete;
+that answer is pending. A further local candidate exposes an unchecked explicit
+publisher-completion checkbox scoped to the selected capability. Its value is
+forwarded to the existing owner only when preparing a new plan. Switching to a
+different provider does not reuse that confirmation. The UI displays publisher
+context and separate setup approval requirements. It never infers completion
+from an installed app, browser session or an agent's plan. Purchase, OAuth sign-in,
+setup approval and workflow grants remain distinct. No actual confirmation was
+submitted in the real probe.
+
+After this addition: 25 backend/bridge tests and three Connections UI tests pass;
+TypeScript and Python lint passed. The native bundle is 2,194,848 bytes, no
+external assets. Live installation is unchanged. The updated checkbox candidate
+still needs matching-assets served/native qualification before installation.
+
+Baseline PR work: full merge gate passed on `e5b39c57`; documentation-only
+checkpoint `bcf03161` records its receipt and the retained browser limitation.
+The required push gate is running in isolated state at
+`/tmp/wright-desktop-demo-push-20261014-01`; no correction push or merge has yet
+occurred. Keep the dependent feature branch separate until baseline CI/integration.
