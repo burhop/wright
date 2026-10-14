@@ -101,10 +101,12 @@ export function createNativePanelProcessClient(options: {
           "text/markdown",
           "text/csv",
           "application/json",
+          "image/png",
+          "image/jpeg",
         ].includes(file.media_type)
       )
         throw new Error(
-          "Wright did not confirm a bounded text representation.",
+          "Wright did not confirm a bounded text or image representation.",
         );
       const bytes = Uint8Array.from(atob(file.bytes_base64), (character) =>
         character.charCodeAt(0),

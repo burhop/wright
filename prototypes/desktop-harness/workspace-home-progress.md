@@ -510,3 +510,24 @@ readiness owners only after provider qualification. The current desktop adapter
 explicitly rejects image inputs, and the native representation port supports only
 bounded raw text; image/artifact handoff qualification is a real next requirement.
 No provider was installed/called and no source requirements changed in this audit.
+
+## Bounded PNG/JPEG representation transport — development only
+
+The continuation worktree's existing native representation port now admits raw
+PNG/JPEG alongside its existing passive text formats. It reuses the existing
+scoped process representation owner, exact run/source/reference request, response
+hash/nosniff headers, streamed byte count and SHA-256 verification. The unchanged
+1 MiB transport ceiling remains explicit; SVG and other unsupported formats or
+oversize files return capability-unavailable. No arbitrary URL/file access,
+derived renderer, executor or independent artifact owner was added. The shared
+process client/UI kit already has passive image rendering; its native transport
+can now carry the same bounded bytes and media type.
+
+21 Python port tests and 15 native-client tests passed, including altered-byte
+rejection for both image media types, explicit SVG/oversize rejection, exact
+run/reference requests and existing text/permission behavior. Ruff, ESLint and
+TypeScript passed. These tests prove transport contracts using synthetic bytes;
+they do not prove image decoding, actual CAD-image presentation, native desktop
+payload limits or model image reasoning. Actual browser/desktop image proofs,
+large artifacts and model-input handoff remain qualification work. No resource
+bundle or installed package was replaced; 0.6.0 remains frozen on API8133.

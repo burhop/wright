@@ -226,34 +226,37 @@ describe("native process bridge over the existing public client", () => {
     expect(call).toHaveBeenCalledTimes(1);
     expect(call.mock.calls[0][0]).toBe("wright_process_ui_read");
   });
-  it("reads the exact text artifact through the read-only port", async () => {
-    const { client, call } = setup();
-    const bytes = "Recorded result";
-    const hash = "c".repeat(64);
-    call.mockResolvedValueOnce(
-      result({
-        ok: true,
-        document: {
-          bytes_base64: btoa(bytes),
-          sha256: hash,
-          media_type: "text/markdown",
-          size_bytes: bytes.length,
-        },
-      }),
-    );
-    const blob = await client.getRepresentation(
-      { artifact_ref: "result.md", sha256: hash },
-      { runId: "saved-run" },
-    );
-    expect(await blob.text()).toBe(bytes);
-    expect(blob.type).toBe("text/markdown");
-    expect(call.mock.calls[0][0]).toBe("wright_process_ui_read");
-    expect(call.mock.calls[0][1]).toMatchObject({
-      operation: "representation",
-      run_id: "saved-run",
-      reference: { artifact_ref: "result.md", sha256: hash },
-    });
-  });
+  it.each(["text/markdown", "image/png", "image/jpeg"])(
+    "reads exact %s bytes through the read-only port",
+    async (media) => {
+      const { client, call } = setup();
+      const bytes = "Recorded result";
+      const hash = "c".repeat(64);
+      call.mockResolvedValueOnce(
+        result({
+          ok: true,
+          document: {
+            bytes_base64: btoa(bytes),
+            sha256: hash,
+            media_type: media,
+            size_bytes: bytes.length,
+          },
+        }),
+      );
+      const blob = await client.getRepresentation(
+        { artifact_ref: "result.md", sha256: hash },
+        { runId: "saved-run" },
+      );
+      expect(await blob.text()).toBe(bytes);
+      expect(blob.type).toBe(media);
+      expect(call.mock.calls[0][0]).toBe("wright_process_ui_read");
+      expect(call.mock.calls[0][1]).toMatchObject({
+        operation: "representation",
+        run_id: "saved-run",
+        reference: { artifact_ref: "result.md", sha256: hash },
+      });
+    },
+  );
   it("rejects a truncated file instead of presenting its declared hash as proof", async () => {
     const { client, call } = setup();
     const hash = "c".repeat(64);

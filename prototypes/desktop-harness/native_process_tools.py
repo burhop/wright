@@ -135,6 +135,8 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                             "text/markdown",
                             "text/csv",
                             "application/json",
+                            "image/png",
+                            "image/jpeg",
                         }
                         or not size.isdecimal()
                         or int(size) > 1048576
@@ -144,7 +146,7 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                             "http_status": 415,
                             "reason": {
                                 "code": "CAPABILITY_UNAVAILABLE",
-                                "message": "This native view supports text files up to 1 MiB.",
+                                "message": "This native view supports text, PNG and JPEG files up to 1 MiB.",
                                 "correction": "Open this representation in Wright's existing working view.",
                             },
                         }
