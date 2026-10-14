@@ -93,7 +93,9 @@ try {
   await page.screenshot({path:resolve(output, 'editor.png')});
   await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
   await expect(frame.getByLabel('Workspace',{exact:true})).toBeVisible();
-  passed.push('home opens shared editor and Back returns without mutation');
+  await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(evidence.scope.workspace_id);
+  await expect(workflow).toBeVisible();
+  passed.push('home opens shared editor and Back restores exact workspace without mutation');
   await page.setViewportSize({width:460,height:800});
   await frame.getByLabel('Workspace',{exact:true}).selectOption(evidence.scope.workspace_id);
   await expect(workflow).toBeVisible();

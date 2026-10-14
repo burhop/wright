@@ -346,3 +346,26 @@ Installed plugin 0.4.0 and retained API services were not updated. The current
 candidate still requires a qualified Windows-to-GB10 callback route before real
 sign-in. Existing account/terms completion is confirmed by the user; no new
 account, billing choice, credentials, OAuth consent or engineering run is implied.
+
+## Return to the same workspace — navigation correction
+
+Returning from the shared editor now restores the previously selected workspace
+only when the refreshed list still contains its exact workspace/session pair and
+marks it available. A replacement session is not substituted. This is in-memory
+panel navigation context, not a new workspace/run owner or durable host session.
+It does not open a workflow automatically. Draft navigation protection remains.
+
+Seven home component tests passed, including exact restoration and rejection of
+a replaced session; focused lint and TypeScript passed. Built-panel browser
+walkthrough against the retained isolated read-only API passed at
+`/tmp/wright-desktop-home-proof-20261014-01/browser-home-1792015489306/report.json`:
+real source discovery, editor entry, exact workspace return, narrow layout,
+unsaved-draft containment and unchanged accepted source. Screenshots are in the
+same directory. A subsequent behavior-preserving cleanup of generation invalidation
+removed a lint warning; seven tests and build passed again (2,200,021-byte bundle,
+zero external assets). Installed Windows acceptance remains outstanding.
+
+Suggested social caption (not published): “Wright workflows alongside desktop
+chat: choose a workspace, open the engineering canvas, and return without losing
+your place. This is a local browser prototype; the full engineering demo is next.”
+Use the real home/editor screenshots with the visible simulated-host label.

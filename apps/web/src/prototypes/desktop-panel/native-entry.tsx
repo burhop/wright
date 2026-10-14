@@ -10,7 +10,11 @@ import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeProcessCall } from "./native-process-client";
-import { NativeHomePanel, type HomeCall } from "./NativeHomePanel";
+import {
+  NativeHomePanel,
+  type HomeCall,
+  type DesktopWorkspace,
+} from "./NativeHomePanel";
 
 const root = createRoot(document.getElementById("editor")!);
 const notice = document.getElementById("notice")!;
@@ -23,6 +27,10 @@ let args: Record<string, unknown> = {};
 let pending: CallToolResult | undefined;
 let generation = 0;
 let dirty = false;
+let selectedWorkspace: DesktopWorkspace | undefined;
+const rememberWorkspace = (workspace: DesktopWorkspace) => {
+  selectedWorkspace = workspace;
+};
 let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
 const processCall: NativeProcessCall = (name, request) =>
   app.callServerTool({ name, arguments: { request } });
@@ -43,6 +51,8 @@ function home() {
     root.render(
       <NativeHomePanel
         call={homeCall}
+        initialSelection={selectedWorkspace}
+        onSelect={rememberWorkspace}
         openLink={async (url) => {
           const result = await app.openLink({ url });
           if (result.isError)

@@ -120,24 +120,50 @@ it("reports a failed workspace load separately from an empty catalog", async () 
 });
 
 it("keeps unavailable workspaces visible and does not automatically open anything", async () => {
-  const call = vi
-    .fn()
-    .mockResolvedValue(
-      result({
-        workspaces: [
-          {
-            ...alpha,
-            available: false,
-            reason: "Workspace directory is unavailable",
-          },
-        ],
-      }),
-    );
+  const call = vi.fn().mockResolvedValue(
+    result({
+      workspaces: [
+        {
+          ...alpha,
+          available: false,
+          reason: "Workspace directory is unavailable",
+        },
+      ],
+    }),
+  );
   const onOpen = vi.fn();
   render(<NativeHomePanel call={call} onOpen={onOpen} />);
   expect(
     await screen.findByRole("option", { name: "Alpha — unavailable" }),
   ).toBeDisabled();
   expect(onOpen).not.toHaveBeenCalled();
+  expect(call).toHaveBeenCalledTimes(1);
+});
+
+it("restores the exact prior workspace/session without opening a workflow", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha, beta] }))
+    .mockResolvedValueOnce(files(beta, "part.wflow"));
+  const onOpen = vi.fn();
+  render(
+    <NativeHomePanel call={call} onOpen={onOpen} initialSelection={beta} />,
+  );
+  await screen.findByRole("button", { name: "part.wflow" });
+  expect(screen.getByLabelText("Workspace")).toHaveValue("b");
+  expect(onOpen).not.toHaveBeenCalled();
+});
+
+it("does not redirect a restored selection to a replacement desktop session", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValue(
+      result({ workspaces: [{ ...alpha, session_id: "replacement" }] }),
+    );
+  render(
+    <NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />,
+  );
+  await screen.findByRole("option", { name: "Alpha" });
+  expect(screen.getByLabelText("Workspace")).toHaveValue("");
   expect(call).toHaveBeenCalledTimes(1);
 });

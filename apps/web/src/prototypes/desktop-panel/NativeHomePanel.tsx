@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeConnections } from "./NativeConnections";
@@ -46,8 +46,15 @@ export function NativeHomePanel({
   call,
   onOpen,
   openLink,
+  initialSelection,
+  onSelect,
 }: {
   readonly call: HomeCall;
+  readonly initialSelection?: Pick<
+    DesktopWorkspace,
+    "workspace_id" | "session_id"
+  >;
+  readonly onSelect?: (workspace: DesktopWorkspace) => void;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
   readonly openLink?: (url: string) => Promise<void>;
 }) {
@@ -60,9 +67,13 @@ export function NativeHomePanel({
   const [refresh, setRefresh] = useState(0);
   const [view, setView] = useState<"workflows" | "connections">("workflows");
   const generation = useRef(0);
+  const restore = useRef(initialSelection);
+  const invalidate = useCallback(() => {
+    generation.current++;
+  }, []);
   useEffect(() => {
     let active = true;
-    generation.current++;
+    invalidate();
     setLoading(true);
     setError("");
     setSelected(undefined);
@@ -85,40 +96,57 @@ export function NativeHomePanel({
       });
     return () => {
       active = false;
-      generation.current++;
+      invalidate();
     };
-  }, [call, refresh]);
+  }, [call, refresh, invalidate]);
 
-  async function select(workspace: DesktopWorkspace) {
-    const request = ++generation.current;
-    setSelected(workspace);
-    setFiles([]);
-    setError("");
-    setLoading(true);
-    try {
-      const data = payload(
-        await call("wright_workspace_files", {
-          workspace_id: workspace.workspace_id,
-          session_id: workspace.session_id,
-        }),
-      );
-      if (request !== generation.current) return;
-      if (
-        data.workspace_id !== workspace.workspace_id ||
-        data.session_id !== workspace.session_id ||
-        !data.tree
-      )
-        throw new Error("Workspace scope differs.");
-      setFiles(workflows(data.tree as FileNode));
-    } catch {
-      if (request === generation.current)
-        setError(
-          "This workspace could not be read. Refresh to retry; no workflow was opened or run.",
+  const select = useCallback(
+    async (workspace: DesktopWorkspace) => {
+      const request = ++generation.current;
+      setSelected(workspace);
+      onSelect?.(workspace);
+      setFiles([]);
+      setError("");
+      setLoading(true);
+      try {
+        const data = payload(
+          await call("wright_workspace_files", {
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+          }),
         );
-    } finally {
-      if (request === generation.current) setLoading(false);
-    }
-  }
+        if (request !== generation.current) return;
+        if (
+          data.workspace_id !== workspace.workspace_id ||
+          data.session_id !== workspace.session_id ||
+          !data.tree
+        )
+          throw new Error("Workspace scope differs.");
+        setFiles(workflows(data.tree as FileNode));
+      } catch {
+        if (request === generation.current)
+          setError(
+            "This workspace could not be read. Refresh to retry; no workflow was opened or run.",
+          );
+      } finally {
+        if (request === generation.current) setLoading(false);
+      }
+    },
+    [call, onSelect],
+  );
+
+  useEffect(() => {
+    if (loading || !restore.current || error) return;
+    const saved = restore.current;
+    restore.current = undefined;
+    const workspace = items.find(
+      (item) =>
+        item.available &&
+        item.workspace_id === saved.workspace_id &&
+        item.session_id === saved.session_id,
+    );
+    if (workspace) void select(workspace);
+  }, [items, loading, error, select]);
 
   return (
     <main className="native-home" data-control-style="neutral">
