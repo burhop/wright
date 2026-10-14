@@ -1026,7 +1026,13 @@ function CommonProcessController({
       : startAction.reasons,
   };
 
-  const needsResponse = snapshot?.state === "waiting_human";
+  const needsResponse = snapshot?.state === "waiting_human" && (
+    snapshot.interactions?.some((interaction) =>
+      interaction.state === "waiting" && !interaction.decision,
+    ) || snapshot.actions?.some((action) =>
+      action.enabled && ["respond", "review", "action"].includes(action.operation),
+    )
+  );
   const interactionPanel = snapshot && !!snapshot.interactions?.length && (
     <Section
       title={needsResponse ? "Your next step" : "Questions and decisions"}

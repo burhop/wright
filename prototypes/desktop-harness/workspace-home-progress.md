@@ -1221,3 +1221,23 @@ Actual approved local-review continuation and uncertain-ack browser scenarios al
 remain to be qualified. No real engineering decision or external dispatch occurred.
 The rebuilt resource/bridge and native-port regression passed 41 tests in1.74s;
 Ruff and whitespace checks passed. The probe exited0 and browser harness exited0.
+
+## Recorded review guidance correction
+
+The saved private review browser proof showed “Your next step / Review the
+result” after a changes-requested decision, although its canonical run correctly
+remained waiting_human. The common view now reserves next-step placement for
+unanswered waiting interactions or enabled declared response/review/action
+controls. Recorded decisions appear under Questions and decisions with a
+Recorded review heading. Changes-requested guidance explains that recording the
+decision does not itself revise or restart work. Progress says “Paused at a
+review or response step”; backend state and execution authority are unchanged.
+
+Validation: 61 common-view and 87 UI-kit tests passed; TypeScript build and
+scoped ESLint passed. The decision test checks the recorded guidance and retains
+no-start/no-action assertions. Initial ESLint invocation used the wrong binary
+location; rerunning the repository-root binary succeeded. A formatting script
+initially used the wrong working directory and made no edit; corrected afterward.
+Whitespace check passed. Served/native browser verification of this correction
+is still pending. Installed 0.7.0, its frozen resource, services and saved review
+run were not changed. This is not engineering acceptance or full demo completion.
