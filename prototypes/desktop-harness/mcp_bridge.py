@@ -351,7 +351,7 @@ def server(client, *, native_editor=False, native_working_view=False):
         """Read connection readiness and honest model/tool qualification limits."""
         return await client.call("GET", "/api/desktop/connection")
 
-    @mcp.tool(annotations=write)
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workspace_create(name: str) -> dict:
         """Create a fresh isolated Wright workspace bound to this desktop connection."""
         return await client.call("POST", "/api/desktop/workspaces", json={"name": name})

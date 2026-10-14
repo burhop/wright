@@ -15,6 +15,8 @@ const bundle = readFileSync('prototypes/desktop-harness/native-editor.html', 'ut
 const output = resolve(state, `browser-home-${Date.now()}`);
 mkdirSync(output);
 const calls = [];
+let createdScope;
+let createSubmitted = false;
 const mcp = new Client({name:'wright-home-browser-qualification',version:'0.1.0'});
 const transport = new StdioClientTransport({
  command:resolve('.venv/bin/python'),
@@ -64,10 +66,19 @@ const server = createServer(async (req, res) => {
     const {name, arguments: args} = JSON.parse(body);
     calls.push({name, arguments:args});
     const allowed = new Set(['wright_workspace_list','wright_workspace_files','wright_workflow_read','wright_workflow_open','wright_connections_list','wright_connection_plans','wright_connection_plan_read','wright_workflow_history','wright_process_view','wright_process_ui_read']);
+    if (name === 'wright_workspace_create') {
+      if (!evidence.create_workspace || createSubmitted || args.name !== evidence.create_workspace)
+        throw Error('Fixture creation denied');
+      createSubmitted = true;
+      const result = await mcp.callTool({name,arguments:args});
+      if (!result.isError) createdScope = result.structuredContent ?? JSON.parse(result.content[0].text);
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
+    }
     if (!allowed.has(name)) throw Error('Read-only fixture denies this operation');
     const scoped = args.request ?? args;
     if (name !== 'wright_workspace_list' &&
-        (scoped.workspace_id !== evidence.scope.workspace_id || scoped.session_id !== evidence.scope.session_id))
+        (scoped.workspace_id !== evidence.scope.workspace_id || scoped.session_id !== evidence.scope.session_id) &&
+        !(name === 'wright_workspace_files' && createdScope && scoped.workspace_id === createdScope.workspace_id && scoped.session_id === createdScope.session_id))
       throw Error('Fixture scope denied');
     if (name.startsWith('wright_workflow_') && args.path !== evidence.scope.path)
       throw Error('Fixture file denied');
@@ -92,6 +103,17 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`http://127.0.0.1:${server.address().port}`);
   const frame = page.frameLocator('#panel');
+  if (evidence.create_workspace) {
+    await frame.getByRole('button',{name:'New workspace',exact:true}).click();
+    await frame.getByLabel('Workspace name',{exact:true}).fill(evidence.create_workspace);
+    await frame.getByRole('button',{name:'Create workspace',exact:true}).click();
+    await expect(frame.getByText('No saved workflows here yet. Ask this conversation to create one.',{exact:true})).toBeVisible();
+    expect(createdScope).toBeTruthy();
+    await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(createdScope.workspace_id);
+    expect(calls.filter(call=>call.name==='wright_workspace_create')).toHaveLength(1);
+    await page.screenshot({path:resolve(output,'created-workspace.png')});
+    passed.push('explicit UI workspace creation once, discovered exact session, no workflow execution');
+  }
   await frame.getByLabel('Workspace', {exact:true}).selectOption(evidence.scope.workspace_id);
   const workflow = frame.getByRole('button', {name:evidence.scope.path.split('/').at(-1),exact:true});
   await expect(workflow).toBeVisible();
@@ -162,7 +184,7 @@ try {
   expect((await source()).storage_digest).toBe(before.storage_digest);
   expect(errors).toEqual([]);
   passed.push('accepted source unchanged and no browser errors');
-  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge and real read-only Wright storage',native_desktop_verified:false,engineering_runs:0},null,2));
+  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace creation',native_desktop_verified:false,engineering_runs:0,workspace_created:createdScope??null},null,2));
   console.log(JSON.stringify({output,passed}));
 } catch (error) {
   if (page) await page.screenshot({path:resolve(output,'failure.png')});

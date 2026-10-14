@@ -88,6 +88,45 @@ it("opens a selected workflow with the exact workspace and desktop session", asy
   ]);
 });
 
+it("creates once and selects only the discovered exact workspace/session", async () => {
+  const call = vi.fn()
+    .mockResolvedValueOnce(result({ workspaces: [] }))
+    .mockResolvedValueOnce(result(alpha))
+    .mockResolvedValueOnce(result({ workspaces: [alpha] }))
+    .mockResolvedValueOnce(files(alpha, "part.wflow"));
+  const onSelect = vi.fn();
+  render(<NativeHomePanel call={call} onOpen={vi.fn()} onSelect={onSelect} />);
+  await screen.findByText(/No Wright workspaces yet/);
+  fireEvent.click(screen.getByRole("button", { name: "New workspace" }));
+  fireEvent.change(screen.getByLabelText("Workspace name"), { target: { value: "Alpha" } });
+  const button = screen.getByRole("button", { name: "Create workspace" });
+  fireEvent.click(button);
+  fireEvent.click(button);
+  await screen.findByRole("button", { name: "part.wflow" });
+  expect(onSelect).toHaveBeenCalledWith(alpha);
+  expect(call.mock.calls.filter(([name]) => name === "wright_workspace_create")).toEqual([
+    ["wright_workspace_create", { name: "Alpha" }],
+  ]);
+});
+
+it("does not repeat uncertain creation and allows read-only discovery", async () => {
+  const call = vi.fn()
+    .mockResolvedValueOnce(result({ workspaces: [] }))
+    .mockRejectedValueOnce(new Error("lost acknowledgement"))
+    .mockResolvedValueOnce(result({ workspaces: [alpha] }));
+  render(<NativeHomePanel call={call} onOpen={vi.fn()} />);
+  await screen.findByText(/No Wright workspaces yet/);
+  fireEvent.click(screen.getByRole("button", { name: "New workspace" }));
+  fireEvent.change(screen.getByLabelText("Workspace name"), { target: { value: "Alpha" } });
+  fireEvent.click(screen.getByRole("button", { name: "Create workspace" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("will not repeat");
+  expect(screen.getByRole("button", { name: "Create workspace" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
+  await screen.findByRole("option", { name: "Alpha" });
+  expect(screen.getByRole("button", { name: "New workspace" })).toBeDisabled();
+  expect(call.mock.calls.filter(([name]) => name === "wright_workspace_create")).toHaveLength(1);
+});
+
 it("ignores a previous workspace's late file response", async () => {
   let finishAlpha!: (value: CallToolResult) => void;
   const call = vi

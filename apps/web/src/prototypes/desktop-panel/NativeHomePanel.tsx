@@ -20,6 +20,7 @@ interface FileNode {
 export type HomeCall = (
   name:
     | "wright_workspace_list"
+    | "wright_workspace_create"
     | "wright_workspace_files"
     | "wright_workflow_history"
     | "wright_connections_list"
@@ -69,6 +70,12 @@ export function NativeHomePanel({
   const [files, setFiles] = useState<FileNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [opening, setOpening] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [createVisible, setCreateVisible] = useState(false);
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [createNotice, setCreateNotice] = useState("");
+  const [createUncertain, setCreateUncertain] = useState(false);
+  const createFlight = useRef(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
   const [view, setView] = useState<"workflows" | "connections" | "files" | "runs">("workflows");
@@ -157,12 +164,43 @@ export function NativeHomePanel({
     if (workspace) void select(workspace);
   }, [items, loading, error, select]);
 
+  const createWorkspace = async () => {
+    const name = workspaceName.trim();
+    if (!name || createFlight.current || createUncertain) return;
+    createFlight.current = true;
+    setCreating(true);
+    setCreateNotice("");
+    try {
+      const created = payload(await call("wright_workspace_create", { name }));
+      if (typeof created.workspace_id !== "string" || typeof created.session_id !== "string")
+        throw new Error("Creation receipt unavailable");
+      // Reconcile the recorded identity through discovery before selecting it.
+      const discovered = payload(await call("wright_workspace_list", {}));
+      if (!Array.isArray(discovered.workspaces)) throw new Error("Discovery unavailable");
+      const workspaces = discovered.workspaces as DesktopWorkspace[];
+      const workspace = workspaces.find((item) => item.available &&
+        item.workspace_id === created.workspace_id && item.session_id === created.session_id);
+      if (!workspace) throw new Error("Created workspace unavailable");
+      setItems(workspaces);
+      setWorkspaceName("");
+      setCreateVisible(false);
+      setView("workflows");
+      await select(workspace);
+    } catch {
+      setCreateUncertain(true);
+      setCreateNotice("Workspace creation was not fully confirmed. Refresh the workspace list and check for the new workspace; this form will not repeat the request.");
+    } finally {
+      setCreating(false);
+      createFlight.current = false;
+    }
+  };
+
   return (
     <main className="native-home" data-control-style="neutral">
       <header>
         <h1>Wright</h1>
         <button
-          disabled={opening}
+          disabled={opening || creating}
           onClick={() => setRefresh((value) => value + 1)}
         >
           Refresh
@@ -172,7 +210,7 @@ export function NativeHomePanel({
       <label htmlFor="wright-workspace">Workspace</label>
       <select
         id="wright-workspace"
-        disabled={opening}
+        disabled={opening || creating}
         value={selected?.workspace_id ?? ""}
         onChange={(event) => {
           const workspace = items.find(
@@ -195,26 +233,36 @@ export function NativeHomePanel({
           </option>
         ))}
       </select>
+      <button disabled={opening || creating || loading || createUncertain}
+        onClick={() => setCreateVisible((value) => !value)}>New workspace</button>
+      {createVisible && <form onSubmit={(event) => { event.preventDefault(); void createWorkspace(); }}>
+        <label htmlFor="wright-new-workspace">Workspace name</label>
+        <input id="wright-new-workspace" value={workspaceName} disabled={creating || createUncertain}
+          onChange={(event) => setWorkspaceName(event.target.value)} required />
+        <button type="submit" disabled={creating || createUncertain || !workspaceName.trim()}>
+          {creating ? "Creating workspace…" : "Create workspace"}
+        </button>
+      </form>}
+      {createNotice && <p role="alert">{createNotice}</p>}
       {error && <p role="alert">{error}</p>}
       {loading && <p role="status">Loading…</p>}
       {!loading && !error && items.length === 0 && (
         <p>
-          No Wright workspaces yet. Ask this conversation to create one, then
-          refresh.
+          No Wright workspaces yet. Choose New workspace to get started.
         </p>
       )}
       {selected && (
         <nav aria-label="Workspace views">
-          <button onClick={() => setView("workflows")} disabled={opening}>
+          <button onClick={() => setView("workflows")} disabled={opening || creating}>
             Workflows
           </button>
-          <button onClick={() => setView("connections")} disabled={opening}>
+          <button onClick={() => setView("connections")} disabled={opening || creating}>
             Connections
           </button>
-          <button onClick={() => setView("files")} disabled={opening}>
+          <button onClick={() => setView("files")} disabled={opening || creating}>
             Files
           </button>
-          <button onClick={() => setView("runs")} disabled={opening}>Recent runs</button>
+          <button onClick={() => setView("runs")} disabled={opening || creating}>Recent runs</button>
         </nav>
       )}
       {selected && view === "connections" && (
@@ -266,7 +314,7 @@ export function NativeHomePanel({
             {workflowFiles.map((file) => (
               <li key={file.path}>
                 <button
-                  disabled={loading}
+                  disabled={loading || creating}
                   onClick={() => {
                     setLoading(true);
                     setOpening(true);

@@ -801,3 +801,36 @@ during navigation. Suggested screenshot/caption: `browser-home-1792017656281/rec
 — “Wright prototype: revisit a recorded process from the desktop-side panel.
 This local demonstration is a text-only inspection brief; live CAD qualification
 is still ahead.” Prepared only, not published.
+
+## Create a workspace from home
+
+Home now offers an explicit New workspace form using the existing
+`wright_workspace_create` tool and workspace service. The tool's UI visibility
+is explicit for app/model; its backend behavior and grants are unchanged.
+Creation uses a single-flight guard. Success is reconciled through discovery and
+selects only the exact returned workspace/session before reading files. Lost or
+incomplete confirmation leaves a persistent notice and disables further creation
+in that form; Refresh only rereads discovery and never retries the write. Source
+navigation and selection are disabled while creation is pending.
+
+Ten home tests passed, including duplicate clicks, exact identity selection and
+lost-acknowledgement discovery without replay. TypeScript, targeted ESLint and
+Ruff passed. The native bundle is 2,208,170 bytes with no external assets.
+Fresh isolated state `/tmp/wright-desktop-create-proof-20261014-01` on port 8137
+contains a UI-test workflow copy and unapplied setup plan. The existing browser
+harness permits exactly one named creation for this case, then only scoped reads.
+All seven checks passed in `browser-home-1792017850982/report.json`: actual UI
+creation/discovery/selection, existing Workflows/editor/Back, Files, Connections,
+narrow layout, draft protection and source integrity; zero browser errors.
+`created-workspace.png` was visually inspected. No engineering run or provider
+connection was started. This is actual MCP plus browser-host simulation, not
+Windows acceptance. The installed plugin is still unchanged at 0.6.0.
+
+Suggested progress image: that `created-workspace.png`, caption “Create a Wright
+workspace directly beside the desktop conversation. Prototype navigation now
+groups workflows, connections, files and recorded runs.” Do not imply full file
+lifecycle or live CAD completion. No publication performed.
+
+Previous turn made progress through actual run navigation/source-drift proof;
+this turn adds and qualifies normal workspace creation. Baseline Windows backend
+CI was still in progress at the latest PR query. No push or merge attempted.
