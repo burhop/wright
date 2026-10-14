@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import time
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
@@ -19,6 +19,7 @@ from data_vault.desktop_reasoning_repository import (
     DesktopReasoningRepository,
 )
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
+from api.services.mcp_services import McpApiService, get_mcp_api_service
 
 
 CLIENT_LEASE_SECONDS = 30
@@ -41,6 +42,13 @@ class AnswerRequest(BaseModel):
     workspace_id: str
     session_id: str
     response: DesktopReasoningResponse
+
+
+class ConnectionPlanRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    capability_id: str = Field(min_length=1, max_length=256)
 
 
 class DesktopBackend:
@@ -183,6 +191,32 @@ class DesktopBackend:
 
     def router(self):
         router = APIRouter(prefix="/api/desktop")
+
+        @router.post("/connection-plans")
+        async def connection_plan(
+            body: ConnectionPlanRequest,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(body.workspace_id, body.session_id)
+            # Delegate to the existing owner and its error mapping. This records
+            # a reviewable plan only; approval, apply and grants remain separate.
+            from api.routers.mcp import InstallPlanRequest, create_mcp_install_plan
+
+            plan = await create_mcp_install_plan(
+                InstallPlanRequest(
+                    capability_id=body.capability_id,
+                    requested_scope="workspace",
+                    workspace_id=body.workspace_id,
+                ),
+                request,
+                service,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "plan": plan,
+            }
 
         @router.get("/connection")
         async def connection():

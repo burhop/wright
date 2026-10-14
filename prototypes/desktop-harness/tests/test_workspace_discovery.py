@@ -159,3 +159,36 @@ async def test_file_tree_reuses_owner_and_denies_wrong_session_before_read(disco
         assert response.status_code == 200
         assert response.json()["session_id"] == "desktop-Alpha"
         files.tree.assert_awaited_once_with(str(directory))
+
+
+@pytest.mark.asyncio
+async def test_connection_plan_reuses_owner_with_exact_scope_and_no_apply(discovery):
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner = Mock()
+    owner.create_install_plan.return_value = {"plan_id": "reviewable"}
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        body = {"workspace_id": "Alpha", "session_id": "wrong", "capability_id": "cad"}
+        assert (
+            await client.post("/api/desktop/connection-plans", json=body)
+        ).status_code == 403
+        owner.create_install_plan.assert_not_called()
+        body["session_id"] = "desktop-Alpha"
+        response = await client.post("/api/desktop/connection-plans", json=body)
+        assert response.status_code == 200
+        assert response.json()["workspace_id"] == "Alpha"
+        kwargs = owner.create_install_plan.call_args.kwargs
+        assert kwargs["requested_scope"] == "workspace"
+        assert kwargs["workspace_id"] == "Alpha"
+        assert kwargs["independently_completed_license"] is False
+        owner.approve_install_plan.assert_not_called()
+        owner.apply_install_plan.assert_not_called()
+        body["requested_scope"] = "global_registered"
+        assert (
+            await client.post("/api/desktop/connection-plans", json=body)
+        ).status_code == 422

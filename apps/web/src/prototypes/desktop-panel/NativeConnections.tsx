@@ -3,7 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 
 export type ConnectionsCall = (
-  name: "wright_connections_list",
+  name: "wright_connections_list" | "wright_connection_plan",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
@@ -21,6 +21,15 @@ interface Connection {
     reasons: { code: string; message: string; recovery: string }[];
   };
 }
+interface SetupPlan {
+  plan_id: string;
+  capability_id: string;
+  workspace_id: string;
+  requested_scope: string;
+  state: string;
+  blocking_reasons: { code: string; message: string; recovery: string }[];
+  effects: { step_id: string; description: string }[];
+}
 
 export function NativeConnections({
   workspace,
@@ -37,6 +46,38 @@ export function NativeConnections({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const [planning, setPlanning] = useState(false);
+  const [plan, setPlan] = useState<SetupPlan>();
+  const [planError, setPlanError] = useState(false);
+  async function prepare(capabilityId: string) {
+    setPlanning(true);
+    setPlan(undefined);
+    setPlanError(false);
+    try {
+      const result = await call("wright_connection_plan", {
+        workspace_id: workspace.workspace_id,
+        session_id: workspace.session_id,
+        capability_id: capabilityId,
+      });
+      const data = result.structuredContent;
+      const candidate = data?.plan as SetupPlan | undefined;
+      if (
+        result.isError ||
+        data?.workspace_id !== workspace.workspace_id ||
+        data?.session_id !== workspace.session_id ||
+        !candidate ||
+        candidate.workspace_id !== workspace.workspace_id ||
+        candidate.requested_scope !== "workspace" ||
+        candidate.capability_id !== capabilityId
+      )
+        throw new Error("Unconfirmed plan");
+      setPlan(candidate);
+    } catch {
+      setPlanError(true);
+    } finally {
+      setPlanning(false);
+    }
+  }
   useEffect(() => {
     let active = true;
     setLoading(true);
@@ -145,6 +186,12 @@ export function NativeConnections({
                     </p>
                   ))}
                 </details>
+                <button
+                  disabled={planning}
+                  onClick={() => void prepare(item.capability_id)}
+                >
+                  Review setup for {item.name}
+                </button>
               </li>
             ))}
           </ul>
@@ -156,9 +203,32 @@ export function NativeConnections({
           )}
         </>
       )}
+      {planning && <p role="status">Preparing setup plan…</p>}
+      {planError && (
+        <p role="alert">
+          The setup plan was not confirmed. No installation or permission change
+          was requested.
+        </p>
+      )}
+      {plan && (
+        <section aria-label="Setup plan">
+          <h3>Review setup</h3>
+          <p>
+            Plan state: {plan.state}. Nothing has been installed or approved.
+          </p>
+          {plan.effects.map((effect) => (
+            <p key={effect.step_id}>{effect.description}</p>
+          ))}
+          {plan.blocking_reasons.map((reason) => (
+            <p key={reason.code}>
+              {reason.message} {reason.recovery}
+            </p>
+          ))}
+        </section>
+      )}
       <p>
-        Connection setup and permission changes are not yet available in this
-        panel.
+        Installation, sign-in and permission changes are not yet available in
+        this panel.
       </p>
     </section>
   );

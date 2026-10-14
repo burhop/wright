@@ -130,3 +130,36 @@ This is not installed, actual-host accepted, or live-catalog browser qualified.
 Next prove the current catalog through the official MCP client with matching
 fresh runtime assets; then expose the existing onboarding plan/authentication
 owners and their permission checks rather than adding a parallel setup executor.
+
+## Actual catalog and setup-plan continuation
+
+A fresh current-assets backend on loopback 8131 uses isolated state
+`/tmp/wright-desktop-connections-proof-20261014-01`. The official MCP-client
+`connections_probe.py` passed against its real bundled catalog and rejected the
+wrong desktop session before catalog access. Receipt:
+`connections-probe-1792014067299778403.json`. It found `stevecad-mcp`, not installed,
+not enabled, and compatibility uncertain because no machine observation existed.
+No provider was contacted or engineering task executed. The fresh source-only
+workspace and unchanged SteveCAD source have their separate `home-probe.json`.
+
+The next local candidate adds an explicit UI-only `wright_connection_plan` port.
+Its desktop endpoint checks the exact workspace/session and delegates to the
+existing install-plan API owner with workspace scope. It cannot request global
+scope or assert independent license completion. The UI renders the plan effects
+and blockers; installation, authentication and permission mutation remain unavailable.
+No approve/apply/grant operation is invoked by plan creation. This addition is
+not yet served by the 8131 backend and needs a matching-assets live qualification.
+
+Validation: 25 scoped backend/bridge tests passed outside the sandbox; the sandbox
+attempt was interrupted after stalling at the synchronous FastAPI dependency test.
+This is a host-boundary observation, not proof of its exact cause. Eight home/
+Connections UI tests, TypeScript and focused Python lint passed. The rebuilt native
+resource is 2,194,170 bytes with zero external assets; editor/working tool count 23.
+
+OAuth investigation: the existing remote MCP runner owns discovery, PKCE, secret
+storage and loopback callback, but `_OAuthCallbackServer.open_authorization_url`
+currently invokes `webbrowser.open` on the execution host. GB10/Windows setup must
+surface the pending sign-in through an explicitly qualified host handoff; browser
+login alone is not MCP authorization. Reuse the existing transport rather than
+introducing a second OAuth implementation. The provider recipe, qualification
+follow-up and usage guide were read; no credentials were requested or exposed.

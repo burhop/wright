@@ -68,3 +68,47 @@ it("rejects mismatched scope and permits an explicit search retry", async () => 
     search: "CAD",
   });
 });
+
+it("prepares a workspace plan only after an explicit click without applying it", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(reply())
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        plan: {
+          plan_id: "plan",
+          capability_id: "cad",
+          workspace_id: "a",
+          requested_scope: "workspace",
+          state: "blocked",
+          effects: [],
+          blocking_reasons: [
+            {
+              code: "login",
+              message: "Account sign-in required",
+              recovery: "Use the account setup",
+            },
+          ],
+        },
+      },
+    });
+  render(<NativeConnections workspace={workspace} call={call} />);
+  const button = await screen.findByRole("button", {
+    name: "Review setup for CAD",
+  });
+  expect(call).toHaveBeenCalledTimes(1);
+  fireEvent.click(button);
+  expect(
+    await screen.findByText(/Nothing has been installed or approved/),
+  ).toBeVisible();
+  expect(screen.getByText(/Account sign-in required/)).toBeVisible();
+  expect(call).toHaveBeenLastCalledWith("wright_connection_plan", {
+    workspace_id: "a",
+    session_id: "chat-a",
+    capability_id: "cad",
+  });
+  expect(call).toHaveBeenCalledTimes(2);
+});

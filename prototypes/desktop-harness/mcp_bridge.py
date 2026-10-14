@@ -353,6 +353,22 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={"session_id": session_id},
         )
 
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plan(
+        workspace_id: str, session_id: str, capability_id: str
+    ) -> dict[str, Any]:
+        """Prepare a reviewable catalog setup plan. Does not approve, install, authenticate or grant tools."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+            },
+        )
+
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workflow_read(
         workspace_id: str, session_id: str, path: str

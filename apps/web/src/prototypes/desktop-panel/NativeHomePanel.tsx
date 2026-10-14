@@ -20,7 +20,8 @@ export type HomeCall = (
   name:
     | "wright_workspace_list"
     | "wright_workspace_files"
-    | "wright_connections_list",
+    | "wright_connections_list"
+    | "wright_connection_plan",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 
