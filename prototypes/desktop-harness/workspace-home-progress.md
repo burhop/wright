@@ -611,3 +611,25 @@ Ruff passed. No preview composition selects the new profile, and the installed
 0.6.0 runtime is unchanged. MCP image-content delivery, actual desktop perception,
 action-image success and continuation/failure qualification remain required
 before dependent engineering image tasks can be enabled.
+
+## Exact pending-image MCP port — development only
+
+Added a read-only pending-image tool to the continuation bridge. It reads only
+from the existing scoped pending-request owner, reconstructs the typed request,
+verifies original request/binding digests and requires the opt-in image profile
+and exact image index. It emits one standard MCP image content block plus identity
+metadata. No file/URL lookup, state mutation, response submission or dispatch.
+The ordinary pending view replaces image bytes with indexed hash/media/size
+references and explicitly identifies itself as a presentation projection; the
+original request digest still identifies the original durable bytes. Projection
+uses a fresh parsed copy and does not modify the owner payload.
+
+Seven new tests pass: exact PNG content, no base64 in text/structured metadata,
+nonmutating projection, wrong request/binding/scope/index denial. Sixteen existing
+bridge tests also passed. The initial new test assumed the pending tool had a
+structured-result tuple; it actually retains its existing text JSON result.
+Correcting that test to inspect the real return contract resolved the failure;
+the production return contract was not changed to satisfy the test. Ruff/diff
+checks passed. These are direct MCP-server function tests, not a wire/desktop
+perception proof. No installed profile selects the new 30-tool development bridge;
+installed 0.6.0 remains unchanged at 29 tools with image reasoning unavailable.

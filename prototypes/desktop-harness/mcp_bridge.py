@@ -5,6 +5,7 @@ or automatic retries. The API's existing services own all workflow behavior.
 """
 
 import argparse
+import base64
 import hashlib
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -16,13 +17,71 @@ from urllib.parse import quote, urlsplit
 from uuid import uuid4
 from pydantic import TypeAdapter
 import anyio
-from core.desktop_reasoning import DesktopActionReply
+from core.desktop_reasoning import DesktopActionReply, DesktopReasoningRequest
 from core.process_validation import Identifier
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
 from mcp.server.fastmcp import FastMCP
-from mcp.types import CallToolResult, TextContent, ToolAnnotations
+from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
+
+
+def reasoning_images(request):
+    from agent_adapters.desktop_reasoning import desktop_inline_image
+
+    images = []
+    for message in request.payload.get("messages", []):
+        content = message.get("content") if isinstance(message, dict) else None
+        if not isinstance(content, list):
+            continue
+        for index, part in enumerate(content):
+            if isinstance(part, dict) and part.get("type") in {
+                "image_url",
+                "image",
+                "input_image",
+            }:
+                if request.binding.image_input_profile != "inline-png-jpeg-v1":
+                    raise ValueError("Image handoff profile unavailable")
+                if part.get("type") != "image_url" or not isinstance(
+                    part.get("image_url"), dict
+                ):
+                    raise ValueError("Unsupported image handoff shape")
+                media, data = desktop_inline_image(part["image_url"].get("url"))
+                images.append((content, index, media, data))
+    return images
+
+
+def task_presentation(item, workspace_id, session_id):
+    request = DesktopReasoningRequest.model_validate_json(json.dumps(item["request"]))
+    if (
+        request.workspace_id != workspace_id
+        or request.session_id != session_id
+        or item["request_digest"] != request.digest
+        or item["binding_digest"] != request.binding.digest
+    ):
+        raise ValueError("Pending request identity differs")
+    # Parse a fresh copy: projection never changes the durable request or its digest.
+    images = reasoning_images(request)
+    references = []
+    for ordinal, (content, index, media, data) in enumerate(images):
+        reference = {
+            "type": "image_reference",
+            "image_index": ordinal,
+            "media_type": media,
+            "size_bytes": len(data),
+            "sha256": hashlib.sha256(data).hexdigest(),
+        }
+        content[index] = reference
+        references.append(reference)
+    if not references:
+        return item
+    return {
+        **item,
+        "request": request.model_dump(mode="json"),
+        "image_references": references,
+        "presentation": "image-reference projection; request_digest identifies the original durable request",
+    }
+
 
 WORKSPACE_PANEL_HTML = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -651,7 +710,66 @@ def server(client, *, native_editor=False, native_working_view=False):
             "/api/desktop/reasoning",
             params={"workspace_id": workspace_id, "session_id": session_id},
         )
-        return {"tasks": items}
+        return {
+            "tasks": [
+                task_presentation(item, workspace_id, session_id) for item in items
+            ]
+        }
+
+    @mcp.tool(annotations=read, structured_output=False)
+    async def wright_reasoning_image(
+        workspace_id: str,
+        session_id: str,
+        request_id: str,
+        request_digest: str,
+        binding_digest: str,
+        image_index: int,
+    ) -> CallToolResult:
+        """Read one exact pending task image as MCP image content; never answer or execute a task."""
+        await client.scope(workspace_id, session_id)
+        items = await client.call(
+            "GET",
+            "/api/desktop/reasoning",
+            params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+        matches = [
+            item
+            for item in items
+            if item.get("request", {}).get("request_id") == request_id
+        ]
+        if len(matches) != 1:
+            raise ValueError("Exact pending request unavailable")
+        item = matches[0]
+        task_presentation(item, workspace_id, session_id)
+        request = DesktopReasoningRequest.model_validate_json(
+            json.dumps(item["request"])
+        )
+        if request.digest != request_digest or request.binding.digest != binding_digest:
+            raise ValueError("Frozen image request identity differs")
+        images = reasoning_images(request)
+        if type(image_index) is not int or not 0 <= image_index < len(images):
+            raise ValueError("Exact image index unavailable")
+        _, _, media, data = images[image_index]
+        identity = {
+            "request_id": request_id,
+            "request_digest": request_digest,
+            "binding_digest": binding_digest,
+            "image_index": image_index,
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "size_bytes": len(data),
+            "media_type": media,
+        }
+        return CallToolResult(
+            content=[
+                TextContent(type="text", text=json.dumps(identity)),
+                ImageContent(
+                    type="image",
+                    mimeType=media,
+                    data=base64.b64encode(data).decode("ascii"),
+                ),
+            ],
+            structuredContent=identity,
+        )
 
     @mcp.tool(annotations=write)
     async def wright_reasoning_answer(
