@@ -1444,3 +1444,21 @@ handling, exact bounded note, saved setup recovery, narrow/draft behavior and
 unchanged source/no errors. Viewed file-preview.png. No setup or engineering action.
 The full SteveCAD source is available through the existing editor, not truncated.
 Named installation/backup and actual Windows acceptance remain pending.
+
+## Installed 0.8.0 verification and connection discovery
+
+The authorized named-plugin update completed. Private backup and receipts:
+`/tmp/wright-desktop-plugin-update-20261014-03/`. Semantic TOML comparison
+confirmed only the named marketplace source changed; 12 previous cache files
+were restored and verified byte-for-byte. No desktop restart or workflow run.
+Installed-package protocol probe passed: 0.8.0, MCP2025-11-25, 32 tools,
+resource SHA86bebae5dd649f78213d48c910f9b27f2d38593bf30cfc88b77c4e46ff9bff2f,
+2210559 bytes, image profile unavailable. See installed-protocol.json and
+verification.json in the backup directory. Actual Windows acceptance remains
+separate; desktop-08-walkthrough.md is ready.
+
+Desktop list_projects identifies the existing remote host as promaxgb10-9666
+(hostId remote-ssh-discovered:promaxgb10-9666). Updated the callback handoff
+to use that discovered host rather than asking the user for an alias.
+Discovery does not establish an active Windows forwarding tunnel. No real
+OAuth attempt, credential transfer or Windows setting change occurred.

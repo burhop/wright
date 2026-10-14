@@ -19,11 +19,11 @@ Continue in `/tmp/wright-desktop-engineering-execution`, branch
 is still being tracked. Historical baseline tables below retain their dated
 planning context and are not current installation status.
 
-Named plugin 0.7.0 is installed and protocol-verified. Its frozen runtime checkout
-is `/tmp/wright-desktop-engineering-demos-next`; do not edit runtime files there.
+Named plugin 0.8.0 is installed and protocol-verified. Its frozen runtime checkout
+is `/tmp/wright-desktop-ui-files-candidate`; do not edit runtime files there.
 Home now includes workspace creation/selection, Workflows, Connections, Files
-metadata search and Recent runs. Browser-host checks do not establish Windows
-native acceptance. The short `desktop-07-walkthrough.md` covers that outstanding
+metadata search, bounded read-only UTF-8 text preview and Recent runs. Browser-host checks do not establish Windows
+native acceptance. The short `desktop-08-walkthrough.md` covers that outstanding
 user observation. Installed engineering execution/image input remain gated.
 
 The separate execution checkout has an off-by-default exact-enrollment MCP-task

@@ -11,14 +11,15 @@ private token store; do not copy cookies or tokens or accept callbacks manually.
 
 For the Windows agent:
 
-1. Identify the user's existing GB10 SSH alias. Do not edit SSH configuration or
-   create credentials. Coordinate with the GB10 agent to start a bounded, plain
+1. Use `promaxgb10-9666`, the remote connection identified by the desktop's
+   project list on 14 October. No user-supplied alias is needed. Verify its
+   existing SSH configuration on Windows; do not edit it or create credentials. Coordinate with the GB10 agent to start a bounded, plain
    HTTP loopback probe on an available port. The probe must use a non-OAuth path,
    contain no credentials and record only whether the exact request arrived.
 2. In a dedicated Windows terminal, run:
 
    ```powershell
-   ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:<port>:127.0.0.1:<port> <existing-GB10-alias>
+   ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:<port>:127.0.0.1:<port> promaxgb10-9666
    ```
 
    Substitute the confirmed port in both places. Stop if Windows cannot bind it;
@@ -38,7 +39,12 @@ For the Windows agent:
 Retain separate evidence for synthetic route reachability, actual OAuth,
 protocol validation and Windows panel acceptance. If no working SSH path exists,
 report that limitation; do not invent a desktop forwarding API or switch accounts.
-The tested 0.6.0 candidate is now installed with these sign-in controls. This
+The tested 0.8.0 candidate is now installed with these sign-in controls. This
 existing conversation still exposes the older tool connection; use a fresh
 conversation and verify the connection before testing. Actual Windows sign-in
 and panel acceptance remain unverified.
+
+Connection discovery is verified; Windows forwarding is not. GB10 observed
+an active Windows SMB connection, but reverse SSH to Windows timed out. That
+does not test Windows-to-GB10 SSH. The earlier synthetic browser request was
+queued and expired without a receipt; it is inconclusive, not an OAuth failure.
