@@ -100,6 +100,7 @@ def main():
             native_working_view=args.enable_native_working_view,
         )
         app.state.agent_engine = desktop
+        app.state.mcp_authorization_presenter = desktop.oauth.present
         app.include_router(desktop.router())
         # The normal app already ends with a GET frontend fallback. Newly
         # included API routes must precede it rather than returning HTML 200.

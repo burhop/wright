@@ -283,3 +283,36 @@ out of model output and evidence, clear them on completion/expiry, and preserve
 actual callback port identity. Qualify the Windows-to-GB10 callback route before
 starting a real SteveCAD sign-in. Ordinary workflow tools must not acquire an
 operator authentication or approval capability from this UI integration.
+
+## Scoped sign-in presentation and existing validation owner
+
+The opt-in preview now supplies the OAuth presenter when the normal API lifespan
+constructs its MCP engine. Ordinary API deployments retain the default browser
+behavior. `DesktopOAuthPresentation` keeps only an ephemeral authorization URL,
+actual loopback callback URI and exact workspace/session/plan binding; no tokens,
+codes or URLs are persisted to evidence. HTTPS authorization and the existing
+127.0.0.1 callback path are required; embedded credentials and alternate callback
+hosts/paths are rejected. Presentation expires after the bounded sign-in window.
+Expiry removes the URL but does not unlock a second validation while the original
+operation is pending; only operation cleanup releases that binding.
+
+New operator endpoints validate a completed exact-digest setup plan, bind its
+server to that scope, and delegate to the existing capability-validation owner.
+They do not add a workflow executor or grant a workspace tool. Readback requires
+administrator authorization, exact plan scope and returns `Cache-Control: no-store`.
+The owner retains OAuth/protocol/validation outcomes and existing cleanup; transient
+presentation is not authentication or validation authority. Cleanup removes the
+binding on success/failure/cancellation. Restart has no presentation to restore;
+it must not trigger automatic sign-in or validation replay.
+
+All 75 prototype tests passed, including a synthetic pending validation: real
+FastAPI administrator enforcement, cross-plan denial, duplicate validation refusal,
+exact transient read, cleanup and no workspace enable call. Additional tests cover
+expiry, clean restart, malicious address rejection and retained single-flight
+binding after expiry. Focused lint passed. These are local synthetic transport/
+owner tests, not actual SteveCAD authentication or Windows acceptance.
+
+The new endpoints are not exposed as model tools or installed plugin controls.
+Next expose sensitive sign-in URLs only in app-private UI metadata, qualify long
+validation/readback/cancellation behavior, and establish the actual Windows-to-
+GB10 callback route. No real account login was started in this checkpoint.

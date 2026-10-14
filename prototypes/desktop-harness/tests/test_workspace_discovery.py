@@ -30,6 +30,7 @@ def discovery(tmp_path, monkeypatch):
     backend = DesktopBackend(service, tmp_path, 5207)
     app = FastAPI()
     app.state.desktop_service = service
+    app.state.desktop_backend = backend
     app.include_router(backend.router())
 
     def create(name, *, agent="openai-desktop-harness", outside=False, missing=False):
@@ -262,3 +263,87 @@ async def test_setup_actions_require_admin_exact_scope_and_owner_digest(discover
         assert read.status_code == 200
         assert read.json()["plan"]["workspace_id"] == "Alpha"
         owner.apply_install_plan.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_operator_signin_is_scoped_and_cleared_without_workspace_grant(discovery):
+    import asyncio
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    backend = app.state.desktop_backend
+    app.state.security_settings = SimpleNamespace(enforced=True)
+
+    @app.middleware("http")
+    async def test_principal(request, call_next):
+        request.state.principal_role = request.headers.get("test-role", "viewer")
+        return await call_next(request)
+
+    owner = Mock()
+    owner.get_install_plan.return_value = SimpleNamespace(
+        workspace_id="Alpha",
+        requested_scope="workspace",
+        capability_id="cad",
+        state="completed",
+        plan_digest="a" * 64,
+    )
+    ready, finish = asyncio.Event(), asyncio.Event()
+
+    async def validate(server_id, **kwargs):
+        assert server_id == "cad"
+        await backend.oauth.present(
+            "cad",
+            "https://issuer.example/auth?state=synthetic",
+            "http://127.0.0.1:9505/oauth/callback",
+        )
+        ready.set()
+        await finish.wait()
+        return {"state": "passed", "boundary": "synthetic validator"}
+
+    owner.run_capability_validation = AsyncMock(side_effect=validate)
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    scope = {"workspace_id": "Alpha", "session_id": "desktop-Alpha"}
+    path = "/api/desktop/connection-plans/p"
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        assert (await client.get(path + "/signin", params=scope)).status_code == 403
+        task = asyncio.create_task(
+            client.post(
+                path + "/validate",
+                json={**scope, "plan_digest": "a" * 64},
+                headers={"test-role": "admin"},
+            )
+        )
+        try:
+            await asyncio.wait_for(ready.wait(), 5)
+            response = await client.get(
+                path + "/signin", params=scope, headers={"test-role": "admin"}
+            )
+            assert response.headers["cache-control"] == "no-store"
+            assert response.json()["presentation"] == "awaiting_user"
+            assert (
+                await client.get(
+                    "/api/desktop/connection-plans/other/signin",
+                    params=scope,
+                    headers={"test-role": "admin"},
+                )
+            ).status_code == 403
+            duplicate = await client.post(
+                path + "/validate",
+                json={**scope, "plan_digest": "a" * 64},
+                headers={"test-role": "admin"},
+            )
+            assert duplicate.status_code == 409
+            owner.run_capability_validation.assert_awaited_once()
+        finally:
+            finish.set()
+            result = await asyncio.wait_for(task, 5)
+        assert result.status_code == 200
+        assert (
+            await client.get(
+                path + "/signin", params=scope, headers={"test-role": "admin"}
+            )
+        ).json()["authorization_url"] is None
+        owner.enable_capability_for_workspace.assert_not_called()

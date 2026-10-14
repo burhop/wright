@@ -21,6 +21,7 @@ from data_vault.desktop_reasoning_repository import (
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
 from api.services.mcp_services import McpApiService, get_mcp_api_service
 from api.security import require_admin
+from desktop_oauth import DesktopOAuthPresentation
 
 
 CLIENT_LEASE_SECONDS = 30
@@ -77,6 +78,7 @@ class DesktopBackend:
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
         self.clients = {}
+        self.oauth = DesktopOAuthPresentation()
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
         self.repository = DesktopReasoningRepository(service.db_path)
@@ -101,6 +103,7 @@ class DesktopBackend:
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
         for name, file in (
             [("native_source_tools", "native_source_tools.py")]
+            + [("desktop_oauth", "desktop_oauth.py")]
             + ([("native_editor", "native-editor.html")] if native_editor else [])
             + (
                 [("native_process_tools", "native_process_tools.py")]
@@ -305,6 +308,81 @@ class DesktopBackend:
                 "session_id": body.session_id,
                 "plan": plan,
             }
+
+        @router.get(
+            "/connection-plans/{plan_id}/signin", dependencies=[Depends(require_admin)]
+        )
+        async def read_signin(
+            plan_id: str,
+            workspace_id: str,
+            session_id: str,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                workspace_id, session_id, plan_id, request, service
+            )
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            try:
+                pending = self.oauth.read(server_id, workspace_id, session_id, plan_id)
+            except ValueError:
+                raise HTTPException(
+                    403, "Sign-in presentation belongs to another scope"
+                ) from None
+            # Sensitive transient URL: served only to the authenticated operator.
+            from starlette.responses import JSONResponse
+
+            return JSONResponse(
+                {
+                    "workspace_id": workspace_id,
+                    "session_id": session_id,
+                    "plan_id": plan_id,
+                    **pending,
+                },
+                headers={"Cache-Control": "no-store"},
+            )
+
+        @router.post(
+            "/connection-plans/{plan_id}/validate",
+            dependencies=[Depends(require_admin)],
+        )
+        async def validate_connection(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            if plan.state != "completed" or plan.plan_digest != body.plan_digest:
+                raise HTTPException(
+                    409, "Read the exact completed setup plan before validation"
+                )
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+            from api.routers.mcp import run_capability_validation_endpoint
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            try:
+                self.oauth.bind(server_id, body.workspace_id, body.session_id, plan_id)
+            except ValueError:
+                raise HTTPException(
+                    409, "A sign-in operation is already pending"
+                ) from None
+            try:
+                validation = await run_capability_validation_endpoint(
+                    server_id, request, service
+                )
+                return {
+                    "workspace_id": body.workspace_id,
+                    "session_id": body.session_id,
+                    "plan_id": plan_id,
+                    "validation": validation,
+                }
+            finally:
+                self.oauth.clear(server_id)
 
         @router.get("/connection")
         async def connection():
