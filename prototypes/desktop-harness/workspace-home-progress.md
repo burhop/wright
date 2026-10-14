@@ -231,3 +231,29 @@ Baseline push gate passed on `bcf03161`, receipt/log in
 `/tmp/wright-desktop-demo-push-20261014-01`. Remote dev remained `c1a8d009` at fetch.
 The single consolidated correction push to PR 153 was initiated after both
 local gates; current-head CI and its result must be checked before merge.
+
+## Explicit setup controls and lost-acknowledgement UI
+
+Connections now exposes the qualified plan read/approve/apply ports. Approval
+and application are separate explicit controls, shown only for reviewable and
+approved plans respectively. Each successful mutation is followed by a read of
+the exact durable plan. A failed/unconfirmed response disables mutations and
+new plan creation in that view, offers “Check saved setup status”, and performs
+no automatic mutation retry. Readback verifies workspace, session, plan,
+capability and workspace scope. Completed registration is labeled separately
+from sign-in, protocol validation and workspace permission. Catalog status is
+refreshed after confirmed completion.
+
+Nine home/Connections component tests pass, including a forced lost apply
+acknowledgement: exactly one apply request, disabled apply, explicit read-only
+reconciliation, then observed completed state without another mutation. TypeScript
+and focused ESLint passed. Native resource rebuilt; this remains a source candidate,
+not installed-host or real-browser qualification of the new controls.
+
+Next OAuth boundary: the existing runner owns PKCE, secrets and its loopback
+callback. Its lifecycle coordinator does not expose a runner until startup
+completes, so polling `runner_for` cannot retrieve an in-progress sign-in request.
+Use an explicit presentation callback attached to the existing transport/startup
+path; do not patch the browser module globally or invent another OAuth client.
+A Windows-browser/GB10-loopback callback route must be qualified before promising
+one-click sign-in. No provider authentication attempt has yet started.

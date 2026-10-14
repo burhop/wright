@@ -3,7 +3,11 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 
 export type ConnectionsCall = (
-  name: "wright_connections_list" | "wright_connection_plan",
+  name:
+    | "wright_connections_list"
+    | "wright_connection_plan"
+    | "wright_connection_plan_read"
+    | "wright_connection_plan_update",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
@@ -23,6 +27,7 @@ interface Connection {
 }
 interface SetupPlan {
   plan_id: string;
+  plan_digest: string;
   capability_id: string;
   workspace_id: string;
   requested_scope: string;
@@ -51,6 +56,8 @@ export function NativeConnections({
   const [planning, setPlanning] = useState(false);
   const [plan, setPlan] = useState<SetupPlan>();
   const [planError, setPlanError] = useState(false);
+  const [acting, setActing] = useState(false);
+  const [uncertain, setUncertain] = useState(false);
   const [licenseCapability, setLicenseCapability] = useState<string | null>(
     null,
   );
@@ -58,6 +65,7 @@ export function NativeConnections({
     setPlanning(true);
     setPlan(undefined);
     setPlanError(false);
+    setUncertain(false);
     try {
       const result = await call("wright_connection_plan", {
         workspace_id: workspace.workspace_id,
@@ -82,6 +90,48 @@ export function NativeConnections({
       setPlanError(true);
     } finally {
       setPlanning(false);
+    }
+  }
+  async function planAction(operation: "read" | "approve" | "apply") {
+    if (!plan || acting) return;
+    setActing(true);
+    try {
+      const scope = {
+        workspace_id: workspace.workspace_id,
+        session_id: workspace.session_id,
+        plan_id: plan.plan_id,
+      };
+      if (operation !== "read") {
+        const result = await call("wright_connection_plan_update", {
+          ...scope,
+          operation,
+          plan_digest: plan.plan_digest,
+        });
+        if (result.isError) throw new Error("Setup response not confirmed");
+        // Re-read the durable owner after any mutation. Never repeat a mutation
+        // to determine whether its response was lost.
+      }
+      const result = await call("wright_connection_plan_read", scope);
+      const data = result.structuredContent;
+      const current = data?.plan as SetupPlan | undefined;
+      if (
+        result.isError ||
+        data?.workspace_id !== workspace.workspace_id ||
+        data?.session_id !== workspace.session_id ||
+        !current ||
+        current.plan_id !== plan.plan_id ||
+        current.workspace_id !== workspace.workspace_id ||
+        current.requested_scope !== "workspace" ||
+        current.capability_id !== plan.capability_id
+      )
+        throw new Error("Plan identity not confirmed");
+      setPlan(current);
+      setUncertain(false);
+      if (current.state === "completed") setRefresh((value) => value + 1);
+    } catch {
+      setUncertain(true);
+    } finally {
+      setActing(false);
     }
   }
   useEffect(() => {
@@ -193,7 +243,7 @@ export function NativeConnections({
                   ))}
                 </details>
                 <button
-                  disabled={planning}
+                  disabled={planning || acting || uncertain}
                   onClick={() => void prepare(item.capability_id)}
                 >
                   Review setup for {item.name}
@@ -219,9 +269,16 @@ export function NativeConnections({
       {plan && (
         <section aria-label="Setup plan">
           <h3>Review setup</h3>
-          <p>
-            Plan state: {plan.state}. Nothing has been installed or approved.
-          </p>
+          <p>Plan state: {plan.state}.</p>
+          {["blocked", "reviewable", "draft"].includes(plan.state) && (
+            <p>Nothing has been installed or approved by this plan.</p>
+          )}
+          {plan.state === "completed" && (
+            <p>
+              Registration completed. Sign-in, protocol validation and workspace
+              permission still need their own checks.
+            </p>
+          )}
           {plan.requirements?.license?.reference && (
             <p>{plan.requirements.license.reference}</p>
           )}
@@ -255,11 +312,36 @@ export function NativeConnections({
               {reason.message} {reason.recovery}
             </p>
           ))}
+          {uncertain && (
+            <p role="alert">
+              Setup outcome is not confirmed. Check saved status before taking
+              another action; nothing will be repeated automatically.
+            </p>
+          )}
+          <button disabled={acting} onClick={() => void planAction("read")}>
+            Check saved setup status
+          </button>
+          {plan.state === "reviewable" && (
+            <button
+              disabled={acting || uncertain}
+              onClick={() => void planAction("approve")}
+            >
+              Approve this setup plan
+            </button>
+          )}
+          {plan.state === "approved" && (
+            <button
+              disabled={acting || uncertain}
+              onClick={() => void planAction("apply")}
+            >
+              Apply approved setup
+            </button>
+          )}
         </section>
       )}
       <p>
-        Installation, sign-in and permission changes are not yet available in
-        this panel.
+        Sign-in and workspace permission changes are not yet available in this
+        panel.
       </p>
     </section>
   );

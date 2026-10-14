@@ -21,7 +21,9 @@ export type HomeCall = (
     | "wright_workspace_list"
     | "wright_workspace_files"
     | "wright_connections_list"
-    | "wright_connection_plan",
+    | "wright_connection_plan"
+    | "wright_connection_plan_read"
+    | "wright_connection_plan_update",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 

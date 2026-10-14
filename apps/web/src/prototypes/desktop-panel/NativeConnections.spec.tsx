@@ -122,3 +122,59 @@ it("prepares a workspace plan only after an explicit click without applying it",
   });
   await screen.findByRole("alert");
 });
+
+it("reconciles a lost apply acknowledgement with reads only", async () => {
+  const plan = {
+    plan_id: "p",
+    plan_digest: "a".repeat(64),
+    capability_id: "cad",
+    workspace_id: "a",
+    requested_scope: "workspace",
+    state: "approved",
+    effects: [],
+    blocking_reasons: [],
+  };
+  const scoped = (value: typeof plan) => ({
+    content: [],
+    structuredContent: { workspace_id: "a", session_id: "chat-a", plan: value },
+  });
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(reply())
+    .mockResolvedValueOnce(scoped(plan))
+    .mockRejectedValueOnce(Error("acknowledgement lost"))
+    .mockResolvedValueOnce(scoped({ ...plan, state: "completed" }))
+    .mockResolvedValue(reply());
+  render(<NativeConnections workspace={workspace} call={call} />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Review setup for CAD" }),
+  );
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Apply approved setup" }),
+  );
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "outcome is not confirmed",
+  );
+  expect(
+    screen.getByRole("button", { name: "Apply approved setup" }),
+  ).toBeDisabled();
+  expect(
+    call.mock.calls.filter(
+      (args) => args[0] === "wright_connection_plan_update",
+    ),
+  ).toHaveLength(1);
+  fireEvent.click(
+    screen.getByRole("button", { name: "Check saved setup status" }),
+  );
+  expect(await screen.findByText(/Registration completed/)).toBeVisible();
+  expect(
+    call.mock.calls.filter(
+      (args) => args[0] === "wright_connection_plan_update",
+    ),
+  ).toHaveLength(1);
+  expect(call).toHaveBeenCalledWith("wright_connection_plan_read", {
+    workspace_id: "a",
+    session_id: "chat-a",
+    plan_id: "p",
+  });
+});
