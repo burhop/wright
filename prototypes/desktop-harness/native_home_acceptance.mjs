@@ -101,6 +101,15 @@ try {
   await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(evidence.scope.workspace_id);
   await expect(workflow).toBeVisible();
   passed.push('home opens shared editor and Back restores exact workspace without mutation');
+  await frame.getByRole('button',{name:'Files',exact:true}).click();
+  await expect(frame.getByText('/'+evidence.scope.path,{exact:true})).toBeVisible();
+  await frame.getByLabel('Find a file').fill('no-such-file-in-this-proof');
+  await expect(frame.getByText('No files match this search.',{exact:true})).toBeVisible();
+  await frame.getByLabel('Find a file').fill('stevecad');
+  await expect(frame.getByText('/'+evidence.scope.path,{exact:true})).toBeVisible();
+  await expect(frame.getByText('File preview, upload and download are not available in this panel yet.',{exact:true})).toBeVisible();
+  await page.screenshot({path:resolve(output,'files.png')});
+  passed.push('Files lists and filters real scoped storage; unavailable operations explicit');
   await frame.getByRole('button',{name:'Connections',exact:true}).click();
   await frame.getByLabel('Find an MCP').fill('SteveCAD');
   await frame.getByRole('button',{name:'Search / refresh',exact:true}).click();

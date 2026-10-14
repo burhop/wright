@@ -38,9 +38,9 @@ function payload(result: CallToolResult): Record<string, unknown> {
   if (!text || text.type !== "text") throw new Error("No workspace record.");
   return JSON.parse(text.text);
 }
-function workflows(node: FileNode): FileNode[] {
-  if (node.type === "file") return node.path.endsWith(".wflow") ? [node] : [];
-  return (node.children ?? []).flatMap(workflows);
+function workspaceFiles(node: FileNode): FileNode[] {
+  if (node.type === "file") return [node];
+  return (node.children ?? []).flatMap(workspaceFiles);
 }
 
 /** Navigation only: backend reads establish scope; choosing a view never starts work. */
@@ -67,7 +67,9 @@ export function NativeHomePanel({
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
-  const [view, setView] = useState<"workflows" | "connections">("workflows");
+  const [view, setView] = useState<"workflows" | "connections" | "files">("workflows");
+  const [fileQuery, setFileQuery] = useState("");
+  const workflowFiles = files.filter((file) => file.path.endsWith(".wflow"));
   const generation = useRef(0);
   const restore = useRef(initialSelection);
   const invalidate = useCallback(() => {
@@ -108,6 +110,7 @@ export function NativeHomePanel({
       setSelected(workspace);
       onSelect?.(workspace);
       setFiles([]);
+      setFileQuery("");
       setError("");
       setLoading(true);
       try {
@@ -124,7 +127,7 @@ export function NativeHomePanel({
           !data.tree
         )
           throw new Error("Workspace scope differs.");
-        setFiles(workflows(data.tree as FileNode));
+        setFiles(workspaceFiles(data.tree as FileNode));
       } catch {
         if (request === generation.current)
           setError(
@@ -204,6 +207,9 @@ export function NativeHomePanel({
           <button onClick={() => setView("connections")} disabled={opening}>
             Connections
           </button>
+          <button onClick={() => setView("files")} disabled={opening}>
+            Files
+          </button>
         </nav>
       )}
       {selected && view === "connections" && (
@@ -214,16 +220,38 @@ export function NativeHomePanel({
           openLink={openLink}
         />
       )}
+      {selected && view === "files" && (
+        <section aria-label="Files">
+          <h2>Files</h2>
+          <p>Saved workspace files. Inspect run outputs and their evidence in the workflow’s working view.</p>
+          <label htmlFor="wright-file-search">Find a file</label>
+          <input id="wright-file-search" type="search" value={fileQuery}
+            onChange={(event) => setFileQuery(event.target.value)} />
+          {!loading && !error && files.length === 0 && <p>No saved files here yet.</p>}
+          {!loading && !error && files.length > 0 &&
+            !files.some((file) => file.path.toLowerCase().includes(fileQuery.toLowerCase())) &&
+            <p>No files match this search.</p>}
+          <ul>
+            {files.filter((file) => file.path.toLowerCase().includes(fileQuery.toLowerCase())).map((file) => (
+              <li key={file.path}>
+                <span>{file.name}</span>
+                <small>{file.path}</small>
+              </li>
+            ))}
+          </ul>
+          <p>File preview, upload and download are not available in this panel yet.</p>
+        </section>
+      )}
       {selected && view === "workflows" && (
         <section aria-label="Workflows">
           <h2>Workflows</h2>
-          {!loading && !error && files.length === 0 && (
+          {!loading && !error && workflowFiles.length === 0 && (
             <p>
               No saved workflows here yet. Ask this conversation to create one.
             </p>
           )}
           <ul>
-            {files.map((file) => (
+            {workflowFiles.map((file) => (
               <li key={file.path}>
                 <button
                   disabled={loading}

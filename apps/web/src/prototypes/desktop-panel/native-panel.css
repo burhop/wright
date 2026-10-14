@@ -108,7 +108,8 @@
 .native-home small {
   display: block;
 }
-.native-home select {
+.native-home select,
+.native-home input {
   width: 100%;
   margin: 8px 0;
 }
@@ -125,6 +126,7 @@
 }
 .native-home button,
 .native-home select,
+.native-home input,
 .native-workspace-frame > nav button {
   font: inherit;
   color: inherit;

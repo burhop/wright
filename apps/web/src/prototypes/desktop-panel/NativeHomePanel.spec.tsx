@@ -39,6 +39,34 @@ const files = (workspace: typeof alpha, name: string) =>
     },
   });
 
+it("lists and filters workspace files without opening or executing them", async () => {
+  const call = vi.fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha] }))
+    .mockResolvedValueOnce(result({
+      workspace_id: alpha.workspace_id, session_id: alpha.session_id,
+      tree: { type: "directory", children: [
+        { type: "file", name: "part.wflow", path: "/workflows/part.wflow" },
+        { type: "directory", children: [
+          { type: "file", name: "plate.step", path: "/outputs/plate.step" },
+        ] },
+      ] },
+    }));
+  const onOpen = vi.fn();
+  render(<NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />);
+  await screen.findByRole("button", { name: "part.wflow" });
+  expect(screen.queryByText("plate.step")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Files" }));
+  expect(screen.getByText("/outputs/plate.step")).toBeVisible();
+  fireEvent.change(screen.getByLabelText("Find a file"), { target: { value: "PLATE" } });
+  expect(screen.getByText("plate.step")).toBeVisible();
+  expect(screen.queryByText("part.wflow")).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Find a file"), { target: { value: "missing" } });
+  expect(screen.getByText("No files match this search.")).toBeVisible();
+  expect(screen.getByText(/File preview, upload and download are not available/)).toBeVisible();
+  expect(call).toHaveBeenCalledTimes(2);
+  expect(onOpen).not.toHaveBeenCalled();
+});
+
 it("opens a selected workflow with the exact workspace and desktop session", async () => {
   const call = vi
     .fn()

@@ -687,3 +687,37 @@ required before enabling dependent engineering tasks.
 
 The baseline Windows CI job 116123620167 was authoritatively confirmed still
 running its pytest step during this checkpoint. No cancellation/restart/merge.
+
+## Files discovery in the native home
+
+The shared home now offers Files alongside Workflows and Connections, using the
+same exact workspace/session file-tree read already owned by Wright. Files lists
+all saved file metadata and filters by path; Workflows retains its `.wflow`
+filter and existing editor entry. Selection clears old files and the query;
+existing stale-response and foreign-scope checks remain in force. There is no
+new file service, content read, executable tool or automatic open. Preview,
+upload and download are explicitly unavailable, not represented as completed.
+Recent runs and the remaining file lifecycle still need implementation.
+
+Eight home component tests passed, including nested non-workflow discovery and
+filtering with no additional tool calls. The rebuilt native resource is 2,203,940
+bytes with no external assets. A fresh isolated service on 8135 and workspace
+`7d4ed5ed-6f02-479c-95a3-c6432893af52` use an unchanged SteveCAD workflow copy and
+an unapplied reviewable setup plan. No provider or engineering run was started.
+All six existing/extended browser acceptance checks passed through the actual
+MCP bridge: home/Workflows/editor/Back, Files filtering, saved setup recovery,
+narrow layout, draft protection and unchanged accepted source with zero errors.
+
+Report and screenshots:
+`/tmp/wright-desktop-files-proof-20261014-01/browser-home-1792017344207/`.
+Visually inspected `files.png`: scoped selection, compact controls, search and
+explicit limitations are legible. This is a simulated desktop host on GB10,
+not Windows acceptance or an installed plugin update. Suggested progress caption:
+“Wright prototype: find workspace files beside engineering workflows. Local
+integration preview; file transfers and live engineering qualification are next.”
+No publication performed.
+
+The first TypeScript check caught a test-only unsupported `exact` option on
+Testing Library's role query. Removed it; production UI behavior was unchanged.
+The subsequent complete TypeScript build check and targeted ESLint check passed.
+PR 153 still reports Windows backend tests in progress; no merge was attempted.
