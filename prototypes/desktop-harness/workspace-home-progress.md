@@ -590,3 +590,24 @@ request/evidence ownership with the unchanged 256 KiB total payload cap; do not
 remove rejection or invent an attachment store without qualification. Thirty-three
 existing desktop boundary/repository/execution tests passed together before any
 model-image change. Actual desktop image perception remains a required proof.
+
+## Opt-in model-image request profile — not served
+
+The isolated continuation now adds `image_input_profile` to the frozen desktop
+binding, defaulting to `unavailable`. The opt-in `inline-png-jpeg-v1` path admits
+bounded inline PNG/JPEG data in response requests and validates canonical image
+parts in bounded-action requests. No URL/file fetch, image resizing, skipped
+input or alternate model path is introduced. Media signatures and base64 encoding
+are checked; full decoding remains the existing reference-reader responsibility
+and separate qualification, not a claim made by the transport signature check.
+The existing 256 KiB aggregate request guard still runs before persistence.
+
+39 desktop boundary/repository/execution tests passed. New cases prove exact
+image retention in a real isolated durable request, distinct frozen resolution,
+redacted invocation observations, rejection of URL/SVG/bad encoding/media
+signature, and rejection of aggregate oversize. The reply is explicitly synthetic
+and establishes no image perception. Existing default image denial remains green.
+Ruff passed. No preview composition selects the new profile, and the installed
+0.6.0 runtime is unchanged. MCP image-content delivery, actual desktop perception,
+action-image success and continuation/failure qualification remain required
+before dependent engineering image tasks can be enabled.
