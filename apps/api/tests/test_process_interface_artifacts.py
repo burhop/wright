@@ -504,3 +504,87 @@ def test_native_navigation_resolves_source_and_rejects_foreign_intents(
     )
     assert not (c.root / "state.db").exists()
     assert not (c.root / "runs").exists()
+
+
+@pytest.mark.parametrize(
+    "artifact_case",
+    [
+        source(file="capture.png").replace(
+            '"kind": "engineering_document"', '"kind": "reference_images"', 2
+        )
+    ],
+    indirect=True,
+)
+def test_native_image_port_reads_real_prepared_artifact_and_rejects_changed_bytes(
+    sync_client, artifact_case, monkeypatch
+):
+    """Actual artifact/upload owners plus native tool; HTTP transport is in-process."""
+    import base64
+    from pathlib import Path
+    from unittest.mock import AsyncMock
+    import httpx
+    from mcp.server.fastmcp import FastMCP
+
+    root = Path(__file__).resolve().parents[3]
+    monkeypatch.syspath_prepend(str(root / "prototypes/desktop-harness"))
+    from native_process_tools import register_native_process_tools
+
+    content = (
+        root
+        / "artifacts/stevecad-demonstrations/qualification/native/06-inspect-coupon-1.png"
+    ).read_bytes()
+    c = artifact_case
+    uploaded = upload(sync_client, c, content=content, name="capture.png")
+    assert uploaded.status_code == 200, uploaded.text
+    reference = uploaded.json()
+    assert reference["media_type"] == "image/png"
+    prepared = prepare(sync_client, c, reference)
+    requests = []
+
+    def owner_transport(request):
+        assert request.method == "POST"
+        assert request.url.path == PREFIX + "/representations/read"
+        body = json.loads(request.content)
+        requests.append(body)
+        response = sync_client.post(request.url.path, json=body)
+        return httpx.Response(
+            response.status_code,
+            headers=response.headers,
+            content=response.content,
+            request=request,
+        )
+
+    async def exercise():
+        async with httpx.AsyncClient(
+            base_url="http://owner", transport=httpx.MockTransport(owner_transport)
+        ) as http:
+            client = SimpleNamespace(scope=AsyncMock(), http=http)
+            server = FastMCP("native-image-owner-test")
+            register_native_process_tools(server, client)
+            request = {
+                **c.query,
+                "workspace_id": "workspace",
+                "operation": "representation",
+                "input_snapshot_id": prepared,
+                "reference": reference,
+            }
+            _, result = await server.call_tool(
+                "wright_process_ui_read", {"request": request}
+            )
+            assert result["ok"] is True
+            assert result["document"]["media_type"] == "image/png"
+            assert base64.b64decode(result["document"]["bytes_base64"]) == content
+            assert result["document"]["sha256"] == hashlib.sha256(content).hexdigest()
+            client.scope.assert_awaited_once_with("workspace", "owned-session")
+            # Change only the isolated uploaded copy, preserving the historical source.
+            (c.root / reference["artifact_ref"]).write_bytes(b"changed")
+            _, denied = await server.call_tool(
+                "wright_process_ui_read", {"request": request}
+            )
+            assert denied["ok"] is False
+            assert denied["reason"]["code"] == "SUBJECT_STALE"
+
+    asyncio.run(exercise())
+    assert len(requests) == 2
+    assert all(item["input_snapshot_id"] == prepared for item in requests)
+    assert not (c.root / "runs").exists()

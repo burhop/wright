@@ -559,3 +559,23 @@ Optional progress caption, not published: “Checking CAD image inspection in
 Wright's desktop integration. This local display test uses a retained historical
 capture; the new end-to-end engineering run is still ahead.” Prefer real workflow
 screenshots for a fuller milestone; do not market this fixture as a fresh design.
+
+## Native image read against the real artifact owner
+
+Added an integration case in the existing authenticated artifact API suite. It
+uploads a copy of the historical PNG through the real input owner, prepares its
+exact file binding, then invokes the actual native MCP tool against the real
+representation endpoint through an in-process HTTP transport. The image bytes,
+media type and SHA-256 match; changing only the isolated uploaded copy produces
+SUBJECT_STALE. Both reads retain the exact prepared-input identity and no run
+is created. The original historical capture remains untouched.
+
+The first fixture correctly failed because it declared an engineering-document
+input and attempted to supply a bitmap. The revised private fixture declares
+reference_images on the input output and its consumer input. No production
+readiness rule was changed. The focused integration test then passed (4.28s).
+Existing Starlette/httpx deprecation warnings remain unrelated to the result.
+This composes actual upload/preparation/artifact owners with the native tool;
+it does not establish a live network, actual desktop UI or model image uptake.
+Combined with the separate real decoder fixture it strengthens local evidence,
+but cannot replace the required installed-host engineering demonstration.
