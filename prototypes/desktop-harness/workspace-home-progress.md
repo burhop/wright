@@ -757,3 +757,47 @@ qualification after this bridge edit. Installed 0.6.0 is separate and unchanged.
 The previous goal turn was progress (qualified Files implementation); this turn
 adds the run-history implementation. The outstanding Windows CI check was still
 in progress on the latest authoritative PR query; no merge or push attempted.
+
+## Recent runs served qualification — real digital recorder entry
+
+Rebuilt the native resource (2,206,768 bytes, no external assets) and started fresh
+isolated service 8136/state `/tmp/wright-desktop-history-proof-20261014-01` with
+the native editor/common working view. Used the existing protocol probe to run
+the bounded inspection-brief fixture. This desktop conversation read the exact
+pending instructions and authored the response; the existing MCP transport
+submitted it and Wright saved/completed the run. No API model, Hermes worker,
+provider invocation, CAD measurement, review or manufacturing release occurred.
+Run `626df06a391f45589a590212d2210da0` completed; exact request/reply and owner
+receipts remain in that state's `protocol-probe.json` and answer file.
+
+Extended the existing browser harness to permit only the scoped history read and
+exact-run snapshot ports. It entered through home, discovered the actual recorder
+entry, opened its shared working view and verified “Process completed,” returned
+to the same workspace, and retained editor/draft/narrow/Files checks. Six checks
+passed in `browser-home-1792017656281/report.json`; the earlier initial navigation
+pass is retained in `browser-home-1792017621727/`. Visually inspected the actual
+working-view screenshot. The fixture banner correctly identifies a simulated
+desktop host; no Windows user-acceptance claim is made.
+
+Then saved a comment-only new revision of this isolated text workflow through
+the normal source CAS tool. Original run/output and source revision are retained;
+`history-drift.json` records before/after digests. Opening its older run correctly
+kept the home history visible and displayed the existing exact-source warning.
+The initial browser assertion incorrectly expected the component's local alert;
+the warning actually resides in the panel's top-level status area. Failure and
+screenshot retained in `browser-home-1792017688563/`; no production guard was
+changed. Corrected the assertion to require that exact rendered warning and
+continued qualification. This confirms a safe limitation, not successful viewing
+of arbitrary historical source revisions. Full older-revision navigation remains
+work to assess against the existing historical recorder adapter.
+
+This text-only run is navigation evidence, not a replacement for SteveCAD,
+OASiS, Robot Tracking Diagnosis or manufacturing-preparation qualification.
+Installed 0.6.0 remains unchanged. Windows CI job 116123620167 remained in progress
+at the authoritative check during this turn.
+The corrected stale-source walkthrough passed all six checks in
+`browser-home-1792017716545/report.json`, with zero browser errors and no mutation
+during navigation. Suggested screenshot/caption: `browser-home-1792017656281/recorded-run.png`
+— “Wright prototype: revisit a recorded process from the desktop-side panel.
+This local demonstration is a text-only inspection brief; live CAD qualification
+is still ahead.” Prepared only, not published.
