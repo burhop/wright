@@ -531,3 +531,31 @@ they do not prove image decoding, actual CAD-image presentation, native desktop
 payload limits or model image reasoning. Actual browser/desktop image proofs,
 large artifacts and model-input handoff remain qualification work. No resource
 bundle or installed package was replaced; 0.6.0 remains frozen on API8133.
+
+## Actual browser image decode and fallback
+
+`native_image_acceptance.mjs` builds the real native process client and shared
+RepresentationViewer into a local browser fixture. Its tool reply is controlled;
+it is not an API, actual MCP transport or Windows-host proof. The fixture uses
+only representation reads. The retained historical CAD capture
+`artifacts/stevecad-demonstrations/qualification/native/06-inspect-coupon-1.png`
+(13,661 bytes, SHA-256
+`b85a1e81d4e36cc2452df4f96a348e9e474c415207996b1884ddc312bd7a4adb`)
+decoded at its actual 800×640 dimensions through the native client and shared
+viewer. A deliberately malformed bitmap then reached the existing explicit
+fallback without another request. The malformed reply is a decoder fixture,
+not a claim that corrupt bytes passed the backend hash guard.
+
+Evidence: `/tmp/wright-desktop-image-display-20261014-01/report.json` and
+`historical-image.png`. Visually inspected the screenshot; the historical part
+is visible and the fixture/no-new-run label is explicit. The initial harness
+attempt failed before launch because React's Vite plugin is installed in the
+web workspace; resolving it from that workspace fixed the harness without a
+dependency change. No source artifact, installed runtime or live configuration
+was modified. Real owner-to-MCP-to-native rendering and JPEG decoding remain
+separate qualification work, as does model image reasoning.
+
+Optional progress caption, not published: “Checking CAD image inspection in
+Wright's desktop integration. This local display test uses a retained historical
+capture; the new end-to-end engineering run is still ahead.” Prefer real workflow
+screenshots for a fuller milestone; do not market this fixture as a fresh design.
