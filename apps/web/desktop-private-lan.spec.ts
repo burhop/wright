@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { mkdtempSync, writeFileSync, chmodSync, rmSync } from "node:fs";
+import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { EventEmitter } from "node:events";
@@ -7,6 +8,23 @@ import {
   privateLanRequestAllowed,
   privateLanWebPlugin,
 } from "../../prototypes/desktop-harness/private-lan.vite.config";
+
+// Vite configurations use native imports, outside Vitest's module mocks. Install
+// the exact fixture's stat override before that configuration captures the export.
+const permissionFixture = vi.hoisted(() => {
+  const fs = process.getBuiltinModule("fs") as typeof import("node:fs");
+  const originalStat = fs.lstatSync;
+  const fixture = { path: "", mode: 0o600 };
+  vi.spyOn(fs, "lstatSync").mockImplementation((...args) => {
+    const metadata = originalStat(...args);
+    if (args[0] === fixture.path) {
+      metadata.mode = (Number(metadata.mode) & ~0o777) | fixture.mode;
+    }
+    return metadata;
+  });
+  process.getBuiltinModule("module").syncBuiltinESMExports();
+  return fixture;
+});
 
 const origin = new URL("http://192.168.1.170:5216");
 const request = (
@@ -24,7 +42,12 @@ const clientAddress = "192.168.1.20";
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  permissionFixture.path = "";
+});
+
+afterAll(() => {
   vi.restoreAllMocks();
+  syncBuiltinESMExports();
 });
 
 describe("private desktop web entry", () => {
@@ -101,6 +124,10 @@ describe("private desktop web entry", () => {
     const directory = mkdtempSync(path.join(tmpdir(), "wright-lan-session-"));
     const tokenFile = path.join(directory, "token");
     writeFileSync(tokenFile, "fake-private-api-fixture", { mode: 0o600 });
+    // The server runs on POSIX GB10. Windows chmod cannot supply its permission
+    // bits, so control only stat metadata; keep the real file read and guard.
+    permissionFixture.path = tokenFile;
+    permissionFixture.mode = 0o600;
     const exchange = vi
       .fn()
       .mockResolvedValue(
@@ -148,11 +175,13 @@ describe("private desktop web entry", () => {
       middleware(request({ origin: "http://other.example" }), result, deny);
       expect(result.statusCode).toBe(403);
       expect(deny).not.toHaveBeenCalled();
-      chmodSync(tokenFile, 0o644);
+      permissionFixture.mode = 0o644;
+      const exchangesBeforeDeniedFile = exchange.mock.calls.length;
       await expect(install.call({} as never, server as never)).rejects.toThrow(
         "private regular file",
       );
-      chmodSync(tokenFile, 0o600);
+      expect(exchange).toHaveBeenCalledTimes(exchangesBeforeDeniedFile);
+      permissionFixture.mode = 0o600;
       exchange.mockResolvedValue(new Response(null, { status: 401 }));
       await expect(install.call({} as never, server as never)).rejects.toThrow(
         "did not establish",

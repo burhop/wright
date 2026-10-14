@@ -400,3 +400,21 @@ accepted hashes merely to match a platform checkout. When correcting a byte
 binding, compare the committed blob with its recorded hash and run baseline and
 coverage reproducibility checks from a clean Git archive. A Windows worktree
 pass alone can conceal Git line-ending conversion in Linux CI.
+
+
+### Generated desktop panel scanner coverage
+
+The minified `prototypes/desktop-harness/native-editor.html` is a generated
+resource from `apps/web/build-native-panel.mjs`, not maintained application source.
+CodeQL excludes that exact resource, as it does the existing built web/Rivet
+assets. Keep the builder, native TS/TSX entry, shared components, Python MCP bridge
+and backend in analysis; do not exclude the prototype directory or disable query
+families. Dependency audits remain required. Changes to `.github/codeql/*` select
+the gate/workflow policy checks, including the maintained-source coverage guard.
+Review each finding against its original source before classifying bundle alerts;
+an exclusion does not establish that a dependency is safe.
+
+The private-LAN frontend fixture controls POSIX stat permission bits explicitly
+on all platforms while retaining real token-file reads. Windows chmod does not
+model GB10 permissions. Keep the production private-file rejection, forbidden
+origin/peer checks, credential non-disclosure and denied-file/no-login assertions.

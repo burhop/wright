@@ -1,5 +1,11 @@
 # Capability and version matrix
 
+**Historical qualification record.** For the 14 October 2026 baseline and
+proposed capability work, read [demo-readiness-plan.md](demo-readiness-plan.md).
+The early uninstalled/Windows-unverified entries below are date-scoped evidence,
+not a claim that the subsequently approved 0.4.0 plugin is still uninstalled.
+Do not broaden these tests into qualification of general engineering execution.
+
 Qualification date: 11 October 2026. Experimental prototype. "Verified" below
 refers only to its specified local boundary, not arbitrary provider compatibility.
 

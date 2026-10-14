@@ -1,9 +1,26 @@
 # Shared Wright UI in agent desktop hosts
 
-12 October 2026 — implementation in progress under the submitted goal, following
-the user's review of the three [UI concepts](README.md).
+Design approved 12 October 2026 following the user's review of the three
+[UI concepts](README.md). Forward-plan checkpoint updated 14 October 2026.
 
-## Current tasks and evidence
+## Current forward plan
+
+Continue with [Desktop engineering-demo readiness](../../demo-readiness-plan.md)
+and its [proposed goal](../../demo-readiness-goal.md). The shared neutral canvas,
+minimal host separation and retained authoring capabilities below remain the
+approved design. The new sequence adds routine workspace/MCP/file management and
+real engineering execution needed for complete desktop demonstrations.
+
+The approved 0.4.0 plugin is installed. Native panel rendering and the user
+walkthrough were reported, with UI bugs still to annotate and fix. The 0.5.0
+candidate is uninstalled; PR 153 is draft and still has Windows frontend/CodeQL
+failures. General engineering tasks, native document lifecycle and automatic
+background continuation are not qualified merely by the existing panel proof.
+
+## Historical 12 October tasks and evidence
+
+The following table and checkpoint prose are preserved as history, not current
+installation status. Later evidence and the forward plan take precedence.
 
 | Task | Current state | Next boundary |
 | --- | --- | --- |

@@ -4,6 +4,7 @@ from fnmatch import fnmatchcase
 from pathlib import Path
 
 import pytest
+import yaml
 
 from scripts.release.scan_image import BUILD_INPUTS
 
@@ -468,7 +469,34 @@ def test_codeql_cancels_superseded_runs_and_skips_generated_bundles() -> None:
         "integrations/rivet/runner/dist/**",
         "integrations/rivet/runner/artifacts/**",
         "src/wright_engineering/static/web/**",
+        "prototypes/desktop-harness/native-editor.html",
     ):
         assert generated_path in config
     assert "apps/web/src" not in config
     assert "apps/api" not in config
+
+
+def test_native_panel_codeql_exclusion_keeps_maintained_sources_scannable() -> None:
+    config = yaml.safe_load(_read(".github/codeql/codeql-config.yml"))
+    ignored = config["paths-ignore"]
+    assert "paths" not in config, "Do not restrict analysis to only panel sources"
+    generated = "prototypes/desktop-harness/native-editor.html"
+    assert generated in ignored
+    # A broad prototype/UI exclusion would hide the bridge or maintained editor.
+    maintained = [
+        ROOT / "apps/web/build-native-panel.mjs",
+        *ROOT.glob("apps/web/src/**/*.ts"),
+        *ROOT.glob("apps/web/src/**/*.tsx"),
+        *ROOT.glob("prototypes/desktop-harness/*.py"),
+        *ROOT.glob("prototypes/desktop-harness/*.ts"),
+    ]
+    assert maintained
+    for source in maintained:
+        relative = source.relative_to(ROOT).as_posix()
+        assert not any(fnmatchcase(relative, pattern) for pattern in ignored), relative
+    builder = _read("apps/web/build-native-panel.mjs")
+    assert "apps/web/src/prototypes/desktop-panel/native-entry.tsx" in builder
+    assert generated in builder
+    assert "minify: true" in builder
+    gate = _read("scripts/check-dev-push.sh")
+    assert ".github/codeql/*" in gate

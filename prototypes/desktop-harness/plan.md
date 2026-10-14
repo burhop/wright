@@ -1,7 +1,14 @@
 # Wright inside the OpenAI desktop harness
 
-Status: local prototype in progress. This is separate from the Codex-inside-Wright
-chat pilot. No workflow capability is enabled in user configuration.
+**Forward plan, updated 14 October 2026:** see
+[Desktop engineering-demo readiness](demo-readiness-plan.md) and its
+[proposed implementation goal](demo-readiness-goal.md).
+
+The remainder of this file records the initial prototype plan and checkpoints.
+Its installation, branch and authorization statements are historical; they are
+not the current baseline. The approved 0.4.0 desktop plugin is installed, and
+PR 153 contains the later integration candidate. Preserve this record and the
+separate Codex-inside-Wright chat pilot.
 
 ## Baseline and authority
 

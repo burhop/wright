@@ -2,6 +2,30 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
+## Next work — authorized 14 October 2026
+
+Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
+The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its
+[baseline correction evidence](ui-concepts/2026-10-12/baseline-correction-20261014.md)
+records actual checks separately from remaining qualification.
+
+- [ ] M0: qualify/merge the existing baseline and resolve critical desktop,
+      reasoning/action, image/artifact and headless-auth uncertainties.
+- [ ] M1: deliver workspace/workflow/connection entry and a real desktop-driven
+      SteveCAD four-hole run, then six-hole reuse of the same accepted process.
+- [ ] M2: complete routine management, file/results/history and trustworthy
+      continuation/reviews; fix observed Windows UI problems.
+- [ ] M3: qualify the fresh SteveCAD/OASiS engineering comparison, different-workflow
+      regressions, actual desktop acceptance and repository integration gates.
+- [ ] Retain exact capability/version evidence and real milestone screenshots,
+      captions and demo instructions, without publishing externally.
+
+## Historical prototype checks
+
+The entries below retain their original checkpoint context. In particular,
+early unchecked installation and connection tasks are not a current status
+report; later installation/UI evidence and the forward plan take precedence.
+
 - [x] Inspect and preserve old checkout, current-dev worktree and earlier pilot.
 - [x] Read current architectural/editor instructions and official plugin docs.
 - [x] Install locked dependencies only in the feature worktree/private caches.
