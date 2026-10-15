@@ -362,3 +362,126 @@ def test_continuation_rejects_non_declared_or_path_injected_action(panel, action
             ),
         )
     client.call.assert_not_awaited()
+
+
+def test_upload_delegates_exact_bytes_and_declared_scope_to_existing_owner(panel):
+    import base64
+
+    server, client = panel
+    content = b"time,error_mm\n0,0.25\n1,0.5\n"
+    run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "upload",
+            input_id="measurements",
+            filename="tracking.csv",
+            bytes_base64=base64.b64encode(content).decode(),
+        ),
+    )
+    client.scope.assert_awaited_once_with("workspace", "session")
+    assert client.call.call_args.args == (
+        "POST",
+        "/api/workspace/process-interfaces/inputs/upload",
+    )
+    assert client.call.call_args.kwargs == {
+        "data": {
+            "session_id": "session",
+            "path": "workflows/example.wflow",
+            "expected_storage_digest": "a" * 64,
+            "input_id": "measurements",
+        },
+        "files": {"file": ("tracking.csv", content, "application/octet-stream")},
+    }
+
+
+@pytest.mark.parametrize("encoded", ["", "!!!!", "YQ==garbage", "☃☃☃☃"])
+def test_upload_malformed_encoding_never_reaches_owner(panel, encoded):
+    server, client = panel
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_update",
+            scope(
+                "upload",
+                input_id="measurements",
+                filename="tracking.csv",
+                bytes_base64=encoded,
+            ),
+        )
+    client.call.assert_not_awaited()
+
+
+def test_upload_lost_owner_acknowledgement_is_uncertain_and_not_retried(panel):
+    from native_source_tools import WrightRequestRejected
+
+    server, client = panel
+    client.call.side_effect = WrightRequestRejected(503, "owner acknowledgement lost")
+    reply = run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "upload",
+            input_id="measurements",
+            filename="tracking.csv",
+            bytes_base64="YQ==",
+        ),
+    )
+    assert reply["reason"]["code"] == "OUTCOME_UNKNOWN"
+    client.call.assert_awaited_once()
+
+
+def test_upload_cannot_use_readonly_port_or_expand_to_arbitrary_url(panel):
+    server, client = panel
+    request = scope(
+        "upload", input_id="measurements", filename="data.csv", bytes_base64="YQ=="
+    )
+    with pytest.raises(Exception):
+        run(server, "wright_process_ui_read", request)
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_update",
+            {**request, "url": "https://example.com/file"},
+        )
+    client.call.assert_not_awaited()
+
+
+def test_upload_scope_denial_does_not_send_file_bytes_to_owner(panel):
+    from native_source_tools import WrightRequestRejected
+
+    server, client = panel
+    client.scope.side_effect = WrightRequestRejected(403, "foreign workspace")
+    reply = run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "upload",
+            input_id="measurements",
+            filename="data.csv",
+            bytes_base64="YQ==",
+        ),
+    )
+    assert reply["reason"]["code"] == "SCOPE_DENIED"
+    client.call.assert_not_awaited()
+
+
+def test_upload_decoded_size_cannot_exceed_existing_owner_limit(panel):
+    import base64
+
+    server, client = panel
+    # 32 MiB + 1 shares the same encoded length as the allowed maximum.
+    # The decoded bound must still reject it, before any owner write.
+    encoded = base64.b64encode(b"x" * 33_554_433).decode()
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_update",
+            scope(
+                "upload",
+                input_id="measurements",
+                filename="data.csv",
+                bytes_base64=encoded,
+            ),
+        )
+    client.call.assert_not_awaited()

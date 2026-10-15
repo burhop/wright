@@ -160,6 +160,13 @@ def main():
             is not None
         )
         browser_auth = path == "/api/auth/session"
+        # File input storage is a scoped owner operation, not execution. Its
+        # multipart body is validated by the existing authenticated upload route.
+        input_upload = (
+            args.enable_native_working_view
+            and request.method == "POST"
+            and path == "/api/workspace/process-interfaces/inputs/upload"
+        )
         process_operation = (
             path
             in {
@@ -177,7 +184,7 @@ def main():
             is not None
         )
         desktop_operation = desktop is not None and (
-            path.startswith("/api/desktop/") or process_operation
+            path.startswith("/api/desktop/") or process_operation or input_upload
         )
         if agent_call or (
             request.method not in {"GET", "HEAD", "OPTIONS"}

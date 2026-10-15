@@ -5,7 +5,7 @@ import type {
   InputDefinition,
   JsonValue,
 } from "@wright/process-client";
-import { assertContract } from "@wright/process-client";
+import { assertContract, ProcessClientError } from "@wright/process-client";
 
 export type ValueSchema = Readonly<Record<string, JsonValue>>;
 const schemaKeys = new Set([
@@ -589,10 +589,12 @@ export function InputEditor({
                   reference,
                   provenance: "supplied",
                 });
-            } catch {
+            } catch (failure) {
               if (active === generation.current) {
                 setError(
-                  "The file could not be prepared. Try uploading it again.",
+                  failure instanceof ProcessClientError
+                    ? `${failure.reason.message} ${failure.reason.correction}`
+                    : "The file upload could not be confirmed. Check the saved input before trying again.",
                 );
                 onChange(null);
               }
@@ -603,14 +605,20 @@ export function InputEditor({
         />
         {uploading && <p role="status">Preparing file…</p>}
         {error && <p role="alert">{error}</p>}
-        {(file || preview) && (
+        {(file || preview)?.type.startsWith("image/") && (
           <ImageThumbnail
             blob={file || preview!}
             title={file ? `Selected reference: ${file.name}` : definition.title}
           />
         )}
         {current?.kind === "file" && (
-          <p className="wp-muted">{current.reference.artifact_ref}</p>
+          <div>
+            <p className="wp-muted">File attached{file ? `: ${file.name}` : ""}</p>
+            <details>
+              <summary>File details</summary>
+              <p className="wp-muted">{current.reference.artifact_ref}</p>
+            </details>
+          </div>
         )}
         {!onUpload && (
           <p className="wp-muted">File upload is unavailable in this view.</p>

@@ -16,6 +16,8 @@ const output = resolve(state, `browser-home-${Date.now()}`);
 mkdirSync(output);
 const calls = [];
 let createdScope;
+let uploadedInput;
+let uploadSubmitted = false;
 let createSubmitted = false;
 let createdWorkflow;
 let workflowSubmitted = false;
@@ -90,6 +92,20 @@ const server = createServer(async (req, res) => {
         throw Error('Fixture template copy denied');
       const result = await mcp.callTool({name,arguments:args});
       if (!result.isError) templateCopies.set(args.template_id, result.structuredContent ?? JSON.parse(result.content[0].text));
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
+    }
+    if (name === 'wright_process_ui_update' && evidence.input_upload) {
+      const r = args.request;
+      const expected = { ...evidence.scope, expected_storage_digest: before.storage_digest,
+        operation:'upload', input_id:evidence.input_upload.input_id,
+        filename:evidence.input_upload.filename,
+        bytes_base64:Buffer.from(evidence.input_upload.text).toString('base64') };
+      if (uploadSubmitted || !r || Object.keys(r).length !== Object.keys(expected).length ||
+          Object.entries(expected).some(([key,value]) => r[key] !== value))
+        throw Error('Fixture permits one exact synthetic declared-input upload');
+      uploadSubmitted = true;
+      const result = await mcp.callTool({name,arguments:args});
+      if (!result.isError && result.structuredContent?.ok) uploadedInput = result.structuredContent.document;
       res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
     }
     if (!allowed.has(name)) throw Error('Read-only fixture denies this operation');
@@ -289,7 +305,33 @@ try {
   expect((await source()).storage_digest).toBe(before.storage_digest);
   expect(errors).toEqual([]);
   passed.push('accepted source unchanged and no browser errors');
-  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace/workflow creation',native_desktop_verified:false,engineering_runs:0,template_copies:[...templateCopies.values()].map(copy=>({path:copy.path,storage_digest:copy.storage_digest,template:copy.template})),workspace_created:createdScope??null,workflow_created:createdWorkflow?{workspace_id:createdWorkflow.workspace_id,path:createdWorkflow.path,storage_digest:createdWorkflow.storage_digest}:null},null,2));
+  if (evidence.input_upload) {
+    // Start a fresh observer after the synthetic unsaved-draft guard test.
+    // Replacing editor text is itself an edit, not an implicit discard action.
+    await page.reload();
+    await frame.getByLabel('Workspace',{exact:true}).selectOption(evidence.scope.workspace_id);
+    await workflow.click();
+    const working = frame.getByRole('button',{name:'Run and results',exact:true});
+    await expect(working).toBeEnabled();
+    await working.click();
+    const picker = frame.getByLabel(evidence.input_upload.label,{exact:true});
+    await expect(picker).toBeEnabled();
+    await picker.setInputFiles({name:evidence.input_upload.filename,mimeType:'text/plain',buffer:Buffer.from(evidence.input_upload.text)});
+    await expect.poll(() => uploadedInput?.artifact_ref).toMatch(/^\.wright\/process-inputs\//);
+    await expect(frame.getByText('File attached: '+evidence.input_upload.filename,{exact:true})).toBeVisible();
+    await expect(frame.getByText(/bitmap preview/i)).toHaveCount(0);
+    await expect(frame.getByText(uploadedInput.artifact_ref,{exact:true})).not.toBeVisible();
+    await frame.getByText('File details',{exact:true}).click();
+    await expect(frame.getByText(uploadedInput.artifact_ref,{exact:true})).toBeVisible();
+    await frame.getByText('File details',{exact:true}).click();
+    // Recorded input identity is checked below; this proof never starts a process.
+    expect(calls.filter(call=>call.name==='wright_process_ui_update')).toHaveLength(1);
+    expect((await source()).storage_digest).toBe(before.storage_digest);
+    expect(errors).toEqual([]);
+    await page.screenshot({path:resolve(output,'declared-input-upload.png')});
+    passed.push('existing common-view file picker uploads once, displays exact owner reference and preserves source; no process start');
+  }
+  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,uploaded_input:uploadedInput??null,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace/workflow creation',native_desktop_verified:false,engineering_runs:0,template_copies:[...templateCopies.values()].map(copy=>({path:copy.path,storage_digest:copy.storage_digest,template:copy.template})),workspace_created:createdScope??null,workflow_created:createdWorkflow?{workspace_id:createdWorkflow.workspace_id,path:createdWorkflow.path,storage_digest:createdWorkflow.storage_digest}:null},null,2));
   console.log(JSON.stringify({output,passed}));
 } catch (error) {
   if (page) await page.screenshot({path:resolve(output,'failure.png')});
