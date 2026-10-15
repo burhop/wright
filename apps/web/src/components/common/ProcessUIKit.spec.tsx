@@ -40,6 +40,8 @@ import type {
   OutputRef,
 } from "@wright/process-client";
 
+import { ProcessClientError } from "@wright/process-client";
+
 const hash = "a".repeat(64);
 const input: InputDefinition = {
   input_id: "prompt",
@@ -776,6 +778,39 @@ describe("schema and provider-backed input controls", () => {
       }),
     );
   });
+  it("keeps an uncertain upload unbound without retrying or exposing a bitmap warning", async () => {
+    const onChange = vi.fn();
+    const onUpload = vi.fn().mockRejectedValue(
+      new ProcessClientError({
+        code: "OUTCOME_UNKNOWN",
+        message: "The upload acknowledgement was lost.",
+        correction: "Inspect the saved input before another upload.",
+      }),
+    );
+    render(
+      <InputEditor
+        definition={{ ...input, binding_kind: "file" }}
+        onChange={onChange}
+        onUpload={onUpload}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText(/What should Wright make/), {
+      target: {
+        files: [
+          new File(["requirements"], "requirements.txt", {
+            type: "text/plain",
+          }),
+        ],
+      },
+    });
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The upload acknowledgement was lost. Inspect the saved input before another upload.",
+    );
+    expect(onUpload).toHaveBeenCalledTimes(1);
+    expect(onChange.mock.calls.every(([value]) => value === null)).toBe(true);
+    expect(screen.queryByText(/bitmap preview/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/File attached/)).not.toBeInTheDocument();
+  });
   it("shows a prepared file reference with an omitted default discriminator", () => {
     const onUpload = vi.fn();
     render(
@@ -793,6 +828,9 @@ describe("schema and provider-backed input controls", () => {
         onUpload={onUpload}
       />,
     );
+    expect(screen.getByText("File attached")).toBeVisible();
+    expect(screen.getByText("inputs/prepared.png")).not.toBeVisible();
+    fireEvent.click(screen.getByText("File details"));
     expect(screen.getByText("inputs/prepared.png")).toBeVisible();
     expect(onUpload).not.toHaveBeenCalled();
   });
@@ -832,6 +870,9 @@ describe("schema and provider-backed input controls", () => {
         onUpload={onUpload}
       />,
     );
+    expect(screen.getByText("File attached")).toBeVisible();
+    expect(screen.getByText("inputs/default.png")).not.toBeVisible();
+    fireEvent.click(screen.getByText("File details"));
     expect(screen.getByText("inputs/default.png")).toBeVisible();
     expect(onUpload).not.toHaveBeenCalled();
     view.rerender(

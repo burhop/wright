@@ -588,20 +588,11 @@ class WorkflowBundleService:
             imported = []
             # Existing pinned-directory write-once primitive owns reservation,
             # reparse-point checks and no-overwrite publication on every platform.
-            for asset in accepted.assets:
-                store._write_once(paths.resolve(asset.path), asset.decoded())
-                imported.append(asset.path)
             slug = Path(destination_path).name.removesuffix(".workflow.wflow")
-            for ui in accepted.interfaces:
-                candidate = (
-                    f"imported-assets/{slug}/interfaces/{ui.manifest.ui_id}.json"
-                )
-                portable_path(candidate)
-                store._write_once(
-                    paths.resolve(candidate), canonical_json(ui).encode("utf-8")
-                )
-                imported.append(candidate)
             receipt_path = f"imported-assets/{slug}/manifest.json"
+            # Reserve this exact import before publishing any asset. The manifest
+            # records intent, not completion; it survives partial writes and makes
+            # the existing inspection reject replay after a client/owner restart.
             store._write_once(
                 paths.resolve(receipt_path),
                 canonical_json(
@@ -616,6 +607,18 @@ class WorkflowBundleService:
                     }
                 ).encode("utf-8"),
             )
+            for asset in accepted.assets:
+                store._write_once(paths.resolve(asset.path), asset.decoded())
+                imported.append(asset.path)
+            for ui in accepted.interfaces:
+                candidate = (
+                    f"imported-assets/{slug}/interfaces/{ui.manifest.ui_id}.json"
+                )
+                portable_path(candidate)
+                store._write_once(
+                    paths.resolve(candidate), canonical_json(ui).encode("utf-8")
+                )
+                imported.append(candidate)
             imported.append(receipt_path)
             # Deliberately bypass NEW-draft defaults: exact portable instruction
             # bodies remain accepted bytes even on a differently configured host.

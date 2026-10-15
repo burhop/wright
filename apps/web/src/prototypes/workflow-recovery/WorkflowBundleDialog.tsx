@@ -3,12 +3,14 @@ import {
   workflowBundles,
   parseWorkflowBundleFile,
   type WorkflowBundleInspection,
+  type WorkflowBundleClient,
 } from "../../services/workflow-bundles";
 import {
   workspaceService,
   type WorkspaceWorkflowSourceDocument,
 } from "../../services/workspace-service";
 import { createInterfaceAuthoringClient } from "../../services/process-ui-authoring";
+import type { ProcessUI } from "@wright/process-client";
 import "./workflow-recovery.css";
 
 export function WorkflowBundleDialog({
@@ -16,11 +18,19 @@ export function WorkflowBundleDialog({
   sessionId,
   onClose,
   onImported,
+  transfer = workflowBundles,
+  listFiles,
+  listInterfaces,
+  onOpenDestination,
 }: {
   document: WorkspaceWorkflowSourceDocument;
   sessionId: string;
   onClose: () => void;
-  onImported: (path: string) => void;
+  onImported: (path: string) => void | Promise<void>;
+  onOpenDestination?: (path: string) => Promise<void>;
+  transfer?: WorkflowBundleClient;
+  listFiles?: () => Promise<Array<{ path: string; name: string }>>;
+  listInterfaces?: () => Promise<readonly ProcessUI[]>;
 }) {
   const [mode, setMode] = useState<"source" | "bundle">("source");
   const [files, setFiles] = useState<Array<{ path: string; name: string }>>([]);
@@ -35,6 +45,9 @@ export function WorkflowBundleDialog({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [attemptedDestination, setAttemptedDestination] = useState<
+    string | null
+  >(null);
   const requestRevision = useRef(0);
   const dialogRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -69,7 +82,7 @@ export function WorkflowBundleDialog({
     setReport(null);
   };
   const download = async () => {
-    const exported = await workflowBundles.export(
+    const exported = await transfer.export(
       sessionId,
       document.path,
       document.storage_digest,
@@ -90,7 +103,7 @@ export function WorkflowBundleDialog({
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
     setMessage(
-      "Workflow transfer downloaded. Saved instructions are included; execution and approvals are not transferred.",
+      "Download requested. Check your downloads for the workflow transfer. Saved instructions are included; execution and approvals are not transferred.",
     );
   };
   return (
@@ -174,18 +187,50 @@ export function WorkflowBundleDialog({
                 onClick={() =>
                   void perform(async () => {
                     const outcomes = await Promise.allSettled([
-                      workspaceService.getWorkspaceWorkflowInputFiles(
-                        sessionId,
-                        document.workspace_id,
-                      ),
-                      createInterfaceAuthoringClient(
-                        {
-                          workspace_id: document.workspace_id,
-                          source_path: document.path,
-                          source_digest: document.storage_digest,
-                        },
-                        sessionId,
-                      ).interfaces(),
+                      (async () => {
+                        const [available, exported] = await Promise.all([
+                          listFiles
+                            ? listFiles()
+                            : workspaceService.getWorkspaceWorkflowInputFiles(
+                                sessionId,
+                                document.workspace_id,
+                              ),
+                          transfer.export(
+                            sessionId,
+                            document.path,
+                            document.storage_digest,
+                            "source",
+                            [],
+                            [],
+                          ),
+                        ]);
+                        const dependencies = exported.bundle.dependencies;
+                        if (!Array.isArray(dependencies))
+                          throw new Error("Reference manifest unavailable.");
+                        const declared = new Set(
+                          dependencies
+                            .filter(
+                              (item) =>
+                                item &&
+                                item.category === "reference" &&
+                                typeof item.identity === "string",
+                            )
+                            .map((item) => item.identity),
+                        );
+                        return available.filter((file) =>
+                          declared.has(file.path),
+                        );
+                      })(),
+                      listInterfaces
+                        ? listInterfaces()
+                        : createInterfaceAuthoringClient(
+                            {
+                              workspace_id: document.workspace_id,
+                              source_path: document.path,
+                              source_digest: document.storage_digest,
+                            },
+                            sessionId,
+                          ).interfaces(),
                     ]);
                     if (outcomes[0].status === "fulfilled")
                       setFiles(
@@ -333,7 +378,7 @@ export function WorkflowBundleDialog({
               void perform(async () => {
                 if (!bundle) return;
                 const revision = requestRevision.current;
-                const inspection = await workflowBundles.inspect(
+                const inspection = await transfer.inspect(
                   sessionId,
                   bundle,
                   destination,
@@ -399,7 +444,8 @@ export function WorkflowBundleDialog({
                 onClick={() =>
                   void perform(async () => {
                     if (!bundle || !report.can_import) return;
-                    const imported = await workflowBundles.import(
+                    setAttemptedDestination(destination);
+                    const imported = await transfer.import(
                       sessionId,
                       bundle,
                       destination,
@@ -416,7 +462,7 @@ export function WorkflowBundleDialog({
                       `Imported ${imported.source.path}. Local setup and reviews remain required.`,
                     );
                     setReport(null);
-                    onImported(imported.source.path);
+                    await onImported(imported.source.path);
                   })
                 }
               >
@@ -425,6 +471,17 @@ export function WorkflowBundleDialog({
             </section>
           )}
           {error && <p role="alert">{error}</p>}
+          {error && attemptedDestination && onOpenDestination && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void perform(() => onOpenDestination(attemptedDestination))
+              }
+            >
+              Open saved destination
+            </button>
+          )}
           {message && <p role="status">{message}</p>}
         </div>
       </section>

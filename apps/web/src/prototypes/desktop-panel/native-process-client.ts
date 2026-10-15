@@ -49,6 +49,32 @@ function envelope(result: CallToolResult): {
   return JSON.parse(content.text);
 }
 
+function encodeFile(file: File, signal?: AbortSignal): Promise<string> {
+  signal?.throwIfAborted();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    const abort = () => reader.abort();
+    const cleanup = () => signal?.removeEventListener("abort", abort);
+    reader.onload = () => {
+      cleanup();
+      const value = reader.result;
+      if (typeof value !== "string" || !value.includes(";base64,"))
+        reject(new Error("The selected file could not be encoded."));
+      else resolve(value.slice(value.indexOf(",") + 1));
+    };
+    reader.onerror = () => {
+      cleanup();
+      reject(new Error("The selected file could not be read."));
+    };
+    reader.onabort = () => {
+      cleanup();
+      reject(new DOMException("Input read cancelled", "AbortError"));
+    };
+    signal?.addEventListener("abort", abort, { once: true });
+    reader.readAsDataURL(file);
+  });
+}
+
 /** Existing public client validation/recovery, with a closed MCP transport.
  * The synthetic address is never fetched. Only the named operations below can
  * cross the host bridge; no arbitrary URL, method, model or tool is forwarded.
@@ -136,6 +162,51 @@ export function createNativePanelProcessClient(options: {
     const url = new URL(String(input));
     const method = init.method ?? "GET";
     if (url.origin !== base || url.hash) return denied(unavailable);
+    if (method === "POST" && url.pathname === "/inputs/upload" && !url.search) {
+      const form = init.body;
+      if (
+        !(form instanceof FormData) ||
+        [...form.keys()].sort().join(",") !==
+          "expected_storage_digest,file,input_id,path,session_id" ||
+        Object.entries(scope).some(
+          ([key, value]) => key !== "workspace_id" && form.get(key) !== value,
+        )
+      )
+        return denied({
+          code: "SCOPE_DENIED",
+          message: "The upload changed its bound process scope.",
+          correction: "Reopen the exact saved process. No upload was sent.",
+        });
+      const file = form.get("file");
+      const inputId = form.get("input_id");
+      if (
+        !(file instanceof File) ||
+        typeof inputId !== "string" ||
+        file.size < 1 ||
+        file.size > 33_554_432
+      )
+        return denied(
+          {
+            code: "RESPONSE_INVALID",
+            message: "Choose an input file of at most 32 MiB.",
+            correction: "Use a file supported by the declared input.",
+          },
+          422,
+        );
+      const signal = init.signal ?? undefined;
+      const encoded = await encodeFile(file, signal);
+      return invoke(
+        "wright_process_ui_update",
+        {
+          ...scope,
+          operation: "upload",
+          input_id: inputId,
+          filename: file.name,
+          bytes_base64: encoded,
+        },
+        signal,
+      );
+    }
     const data =
       method === "GET"
         ? Object.fromEntries(url.searchParams)

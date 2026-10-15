@@ -399,3 +399,114 @@ it("routes explicit continuation once and preserves an uncertain owner outcome",
   expect(call.mock.calls[0][1]).not.toHaveProperty("decision");
   expect(call.mock.calls[0][1]).not.toHaveProperty("auto");
 });
+
+it("uploads a selected file through the declared input owner with exact scope and bytes", async () => {
+  const { client, call } = setup();
+  const reference = {
+    artifact_ref: `.wright/process-inputs/${digest}/uploaded.csv`,
+    sha256: "b".repeat(64),
+  };
+  call.mockResolvedValue(result({ ok: true, document: reference }));
+  const file = new File(["time,error_mm\n0,0.25\n"], "tracking.csv", {
+    type: "text/csv",
+  });
+  await expect(client.uploadInput("measurements", file)).resolves.toEqual(
+    reference,
+  );
+  expect(call).toHaveBeenCalledTimes(1);
+  expect(call.mock.calls[0].slice(0, 2)).toEqual([
+    "wright_process_ui_update",
+    {
+      operation: "upload",
+      workspace_id: "workspace",
+      session_id: "session",
+      path: process.source_path,
+      expected_storage_digest: digest,
+      input_id: "measurements",
+      filename: "tracking.csv",
+      bytes_base64: btoa("time,error_mm\n0,0.25\n"),
+    },
+  ]);
+});
+
+it("rejects an upload reference from another source without preparing or starting", async () => {
+  const { client, call } = setup();
+  call.mockResolvedValue(
+    result({
+      ok: true,
+      document: {
+        artifact_ref: `.wright/process-inputs/${"c".repeat(64)}/file.csv`,
+        sha256: digest,
+      },
+    }),
+  );
+  await expect(
+    client.uploadInput("measurements", new File(["a"], "data.csv")),
+  ).rejects.toMatchObject({ reason: { code: "SCOPE_DENIED" } });
+  expect(call).toHaveBeenCalledTimes(1);
+});
+
+it("does not replay an upload after an uncertain acknowledgement", async () => {
+  const { client, call } = setup();
+  call.mockResolvedValue(
+    result({
+      ok: false,
+      http_status: 503,
+      reason: {
+        code: "OUTCOME_UNKNOWN",
+        message: "Upload not confirmed",
+        correction: "Inspect saved state before another upload.",
+      },
+    }),
+  );
+  await expect(
+    client.uploadInput("measurements", new File(["a"], "data.csv")),
+  ).rejects.toMatchObject({ reason: { code: "OUTCOME_UNKNOWN" } });
+  expect(call).toHaveBeenCalledTimes(1);
+});
+
+it("sends no upload when cancelled before reading the selected file", async () => {
+  const { client, call } = setup();
+  const controller = new AbortController();
+  controller.abort();
+  await expect(
+    client.uploadInput("measurements", new File(["a"], "data.csv"), {
+      signal: controller.signal,
+    }),
+  ).rejects.toBeDefined();
+  expect(call).not.toHaveBeenCalled();
+});
+
+it("does not bind or retry a late upload receipt after cancellation", async () => {
+  const { client, call } = setup();
+  let release!: (value: CallToolResult) => void;
+  let started!: () => void;
+  const sent = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  call.mockImplementation(() => {
+    started();
+    return new Promise<CallToolResult>((resolve) => {
+      release = resolve;
+    });
+  });
+  const control = new AbortController();
+  const pending = client.uploadInput(
+    "measurements",
+    new File(["a"], "data.csv"),
+    { signal: control.signal },
+  );
+  await sent;
+  control.abort();
+  release(
+    result({
+      ok: true,
+      document: {
+        artifact_ref: `.wright/process-inputs/${digest}/late.csv`,
+        sha256: digest,
+      },
+    }),
+  );
+  await expect(pending).rejects.toMatchObject({ name: "AbortError" });
+  expect(call).toHaveBeenCalledTimes(1);
+});

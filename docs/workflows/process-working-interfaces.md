@@ -88,6 +88,11 @@ reference, validation and UI dependencies. Inspect the package before importing;
 configure missing capabilities in the receiving workspace. Credentials, live
 runs, prior answers, approval authority and trusted UI builds do not transfer.
 Imported UI source requires local compatibility checking, rebuild and review.
+If an import is interrupted, inspect its destination and retained files before
+another attempt. Wright reserves the import manifest before writing assets and
+publishes the workflow source last. A manifest records the intended transfer;
+it does not prove completion. An existing manifest blocks another import at that
+destination, including after restart. Partial files are retained for reconciliation.
 
 ## Open an existing run
 

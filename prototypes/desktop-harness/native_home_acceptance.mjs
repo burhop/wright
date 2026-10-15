@@ -8,7 +8,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const state = resolve(process.argv[2]);
-const evidence = JSON.parse(readFileSync(resolve(state, 'home-probe.json')));
+const evidence = JSON.parse(readFileSync(resolve(state, process.argv[3] ?? 'home-probe.json')));
 const preview = JSON.parse(readFileSync(resolve(state, 'preview.json')));
 const token = readFileSync(resolve(state, '.preview-api-token'), 'utf8');
 const bundle = readFileSync('prototypes/desktop-harness/native-editor.html', 'utf8');
@@ -16,14 +16,18 @@ const output = resolve(state, `browser-home-${Date.now()}`);
 mkdirSync(output);
 const calls = [];
 let createdScope;
+let uploadedInput;
+let uploadSubmitted = false;
+let transferSubmitted = false;
+let transferredWorkflow;
 let createSubmitted = false;
 let createdWorkflow;
 let workflowSubmitted = false;
 const templateCopies = new Map();
 const mcp = new Client({name:'wright-home-browser-qualification',version:'0.1.0'});
 const transport = new StdioClientTransport({
- command:resolve('.venv/bin/python'),
- args:[resolve('prototypes/desktop-harness/mcp_bridge.py'),'--state-dir',state,'--native-editor','--native-working-view'],
+ command:process.env.WRIGHT_PROBE_PYTHON ?? resolve('.venv/bin/python'),
+ args:[resolve('prototypes/desktop-harness/mcp_bridge.py'),'--state-dir',state,'--native-editor',...(evidence.native_working_view === false ? [] : ['--native-working-view'])],
  stderr:'pipe',
 });
 // Keep transport diagnostics out of the browser and evidence; retain only test failures.
@@ -92,6 +96,43 @@ const server = createServer(async (req, res) => {
       if (!result.isError) templateCopies.set(args.template_id, result.structuredContent ?? JSON.parse(result.content[0].text));
       res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
     }
+    if (name === 'wright_process_ui_update' && evidence.input_upload) {
+      const r = args.request;
+      const expected = { ...evidence.scope, expected_storage_digest: before.storage_digest,
+        operation:'upload', input_id:evidence.input_upload.input_id,
+        filename:evidence.input_upload.filename,
+        bytes_base64:Buffer.from(evidence.input_upload.text).toString('base64') };
+      if (uploadSubmitted || !r || Object.keys(r).length !== Object.keys(expected).length ||
+          Object.entries(expected).some(([key,value]) => r[key] !== value))
+        throw Error('Fixture permits one exact synthetic declared-input upload');
+      uploadSubmitted = true;
+      const result = await mcp.callTool({name,arguments:args});
+      if (!result.isError && result.structuredContent?.ok) uploadedInput = result.structuredContent.document;
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
+    }
+    if (evidence.transfer_destination && ['wright_workflow_export','wright_workflow_transfer_assets','wright_workflow_import_inspect','wright_workflow_import'].includes(name)) {
+      const r = args.request;
+      if (!r || r.workspace_id !== evidence.scope.workspace_id || r.session_id !== evidence.scope.session_id)
+        throw Error('Transfer fixture scope denied');
+      if (['wright_workflow_export','wright_workflow_transfer_assets'].includes(name) &&
+          (r.path !== evidence.scope.path || r.expected_storage_digest !== before.storage_digest))
+        throw Error('Transfer fixture source denied');
+      if (['wright_workflow_import_inspect','wright_workflow_import'].includes(name) &&
+          (r.destination_path !== evidence.transfer_destination || r.bundle?.source !== before.source))
+        throw Error('Transfer fixture destination or source denied');
+      if (name === 'wright_workflow_import') {
+        if (transferSubmitted) throw Error('Transfer fixture denies repeated import');
+        transferSubmitted = true;
+      }
+      const result = await mcp.callTool({name,arguments:args});
+      if (name === 'wright_workflow_import' && result.structuredContent?.ok)
+        transferredWorkflow = result.structuredContent.document.source;
+      if (name === 'wright_workflow_import' && transferredWorkflow && evidence.lose_import_reply) {
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({content:[{type:'text',text:'Private fixture: import reply lost'}],isError:true})); return;
+      }
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
+    }
     if (!allowed.has(name)) throw Error('Read-only fixture denies this operation');
     const scoped = args.request ?? args;
     if (name !== 'wright_workspace_list' &&
@@ -100,7 +141,7 @@ const server = createServer(async (req, res) => {
       throw Error('Fixture scope denied');
     if (name === 'wright_workspace_file_preview' && ![evidence.scope.path, evidence.preview_path].includes(args.path))
       throw Error('Fixture preview file denied');
-    if (name.startsWith('wright_workflow_') && name !== 'wright_workflow_templates' && args.path !== evidence.scope.path && args.path !== createdWorkflow?.path && ![...templateCopies.values()].some(copy => copy.path === args.path))
+    if (name.startsWith('wright_workflow_') && name !== 'wright_workflow_templates' && args.path !== evidence.scope.path && args.path !== transferredWorkflow?.path && args.path !== createdWorkflow?.path && ![...templateCopies.values()].some(copy => copy.path === args.path))
       throw Error('Fixture file denied');
     if (name.startsWith('wright_process_') &&
         (scoped.path !== evidence.scope.path || scoped.operation !== 'snapshot' || scoped.run_id !== evidence.run_id))
@@ -191,6 +232,57 @@ try {
   await workflow.click();
   await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
   await page.screenshot({path:resolve(output, 'editor.png')});
+  if (evidence.transfer_destination) {
+    await frame.getByRole('button',{name:'Export / import workflow',exact:true}).click();
+    const dialog = frame.getByTestId('workflow-transfer-dialog');
+    await expect(dialog).toBeVisible();
+    for (const width of [460, 1100]) {
+      await page.setViewportSize({width,height:820});
+      expect(await dialog.evaluate(el => el.scrollWidth > el.clientWidth + 1)).toBe(false);
+      await expect(frame.getByTestId('workflow-transfer-close')).toBeInViewport();
+      await page.screenshot({path:resolve(output,'transfer-'+width+'.png')});
+    }
+    await frame.getByTestId('workflow-transfer-mode').selectOption('bundle');
+    await frame.getByTestId('workflow-transfer-list-assets').click();
+    await expect(frame.getByTestId('workflow-transfer-list-assets')).toBeEnabled();
+    await expect(frame.getByTestId('workflow-transfer-file-inputs/private-transfer-proof.txt')).toHaveCount(0);
+    await frame.getByTestId('workflow-transfer-mode').selectOption('source');
+    const downloadEvent = page.waitForEvent('download');
+    await frame.getByTestId('workflow-transfer-export').click();
+    const download = await downloadEvent;
+    const transferPath = resolve(output,download.suggestedFilename());
+    await download.saveAs(transferPath);
+    const exported = JSON.parse(readFileSync(transferPath,'utf8'));
+    expect(exported.bundle.source).toBe(before.source);
+    await frame.getByTestId('workflow-transfer-upload').setInputFiles(transferPath);
+    await frame.getByTestId('workflow-transfer-destination').fill(evidence.transfer_destination);
+    await frame.getByTestId('workflow-transfer-inspect').click();
+    await expect(frame.getByText('Definition can be imported',{exact:true})).toBeVisible();
+    await page.screenshot({path:resolve(output,'transfer-inspected.png')});
+    await frame.getByTestId('workflow-transfer-import').click();
+    if (evidence.lose_import_reply) {
+      await expect(frame.getByRole('button',{name:'Open saved destination',exact:true})).toBeVisible();
+      await expect(frame.getByTestId('workflow-transfer-import')).toBeEnabled();
+      await frame.getByTestId('workflow-transfer-import').click();
+      await expect(frame.getByRole('alert')).toContainText('no import was repeated');
+      expect(calls.filter(call=>call.name==='wright_workflow_import')).toHaveLength(1);
+      await page.screenshot({path:resolve(output,'transfer-uncertain-reply.png')});
+      await frame.getByRole('button',{name:'Open saved destination',exact:true}).click();
+      passed.push('lost import acknowledgement retained; repeat submission blocked locally; explicit read-only destination recovery without replay');
+    }
+    await expect(dialog).toHaveCount(0);
+    await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
+    await expect.poll(() => transferredWorkflow?.path).toBe(evidence.transfer_destination);
+    const stored = await get('/api/workspace/workflow-sources',{session_id:evidence.scope.session_id,path:evidence.transfer_destination});
+    expect(stored.source).toBe(before.source);
+    expect(calls.filter(call=>call.name==='wright_workflow_import')).toHaveLength(1);
+    expect(calls.some(call=>call.name==='wright_workflow_open' && call.arguments.path===evidence.transfer_destination)).toBe(true);
+    await page.screenshot({path:resolve(output,'transfer-imported-editor.png')});
+    passed.push('native transfer dialog fits narrow host; real browser download, unrelated reference excluded, inspection and one import return to exact saved source; Windows delivery unverified');
+    await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+    await workflow.click();
+    await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
+  }
   await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
   await expect(frame.getByLabel('Workspace',{exact:true})).toBeVisible();
   await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(evidence.scope.workspace_id);
@@ -289,7 +381,33 @@ try {
   expect((await source()).storage_digest).toBe(before.storage_digest);
   expect(errors).toEqual([]);
   passed.push('accepted source unchanged and no browser errors');
-  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace/workflow creation',native_desktop_verified:false,engineering_runs:0,template_copies:[...templateCopies.values()].map(copy=>({path:copy.path,storage_digest:copy.storage_digest,template:copy.template})),workspace_created:createdScope??null,workflow_created:createdWorkflow?{workspace_id:createdWorkflow.workspace_id,path:createdWorkflow.path,storage_digest:createdWorkflow.storage_digest}:null},null,2));
+  if (evidence.input_upload) {
+    // Start a fresh observer after the synthetic unsaved-draft guard test.
+    // Replacing editor text is itself an edit, not an implicit discard action.
+    await page.reload();
+    await frame.getByLabel('Workspace',{exact:true}).selectOption(evidence.scope.workspace_id);
+    await workflow.click();
+    const working = frame.getByRole('button',{name:'Run and results',exact:true});
+    await expect(working).toBeEnabled();
+    await working.click();
+    const picker = frame.getByLabel(evidence.input_upload.label,{exact:true});
+    await expect(picker).toBeEnabled();
+    await picker.setInputFiles({name:evidence.input_upload.filename,mimeType:'text/plain',buffer:Buffer.from(evidence.input_upload.text)});
+    await expect.poll(() => uploadedInput?.artifact_ref).toMatch(/^\.wright\/process-inputs\//);
+    await expect(frame.getByText('File attached: '+evidence.input_upload.filename,{exact:true})).toBeVisible();
+    await expect(frame.getByText(/bitmap preview/i)).toHaveCount(0);
+    await expect(frame.getByText(uploadedInput.artifact_ref,{exact:true})).not.toBeVisible();
+    await frame.getByText('File details',{exact:true}).click();
+    await expect(frame.getByText(uploadedInput.artifact_ref,{exact:true})).toBeVisible();
+    await frame.getByText('File details',{exact:true}).click();
+    // Recorded input identity is checked below; this proof never starts a process.
+    expect(calls.filter(call=>call.name==='wright_process_ui_update')).toHaveLength(1);
+    expect((await source()).storage_digest).toBe(before.storage_digest);
+    expect(errors).toEqual([]);
+    await page.screenshot({path:resolve(output,'declared-input-upload.png')});
+    passed.push('existing common-view file picker uploads once, displays exact owner reference and preserves source; no process start');
+  }
+  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,uploaded_input:uploadedInput??null,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace/workflow creation',native_desktop_verified:false,engineering_runs:0,template_copies:[...templateCopies.values()].map(copy=>({path:copy.path,storage_digest:copy.storage_digest,template:copy.template})),workspace_created:createdScope??null,workflow_created:createdWorkflow?{workspace_id:createdWorkflow.workspace_id,path:createdWorkflow.path,storage_digest:createdWorkflow.storage_digest}:null},null,2));
   console.log(JSON.stringify({output,passed}));
 } catch (error) {
   if (page) await page.screenshot({path:resolve(output,'failure.png')});

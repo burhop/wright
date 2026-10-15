@@ -22,6 +22,7 @@ const document = {
 const bundle = {
   schema_version: "wright.workflow-bundle/1",
   source: "exact saved source",
+  dependencies: [{ category: "reference", identity: "images/reference.png" }],
 };
 const inspection = {
   bundle_digest: "b".repeat(64),
@@ -53,6 +54,81 @@ function upload() {
     target: { files: [file] },
   });
 }
+
+it("opens only the attempted destination after an uncertain import without repeating it", async () => {
+  const transfer = {
+    export: vi.fn(),
+    inspect: vi.fn().mockResolvedValue(inspection),
+    import: vi.fn().mockRejectedValue(new Error("Import outcome unknown")),
+  };
+  const onOpenDestination = vi.fn().mockResolvedValue(undefined);
+  render(
+    <WorkflowBundleDialog
+      document={document}
+      sessionId="session"
+      onClose={vi.fn()}
+      onImported={vi.fn()}
+      transfer={transfer}
+      onOpenDestination={onOpenDestination}
+    />,
+  );
+  upload();
+  await waitFor(() =>
+    expect(screen.getByTestId("workflow-transfer-inspect")).not.toBeDisabled(),
+  );
+  fireEvent.click(screen.getByTestId("workflow-transfer-inspect"));
+  await screen.findByText("Definition can be imported");
+  fireEvent.click(screen.getByTestId("workflow-transfer-import"));
+  await screen.findByText("Import outcome unknown");
+  fireEvent.change(screen.getByTestId("workflow-transfer-destination"), {
+    target: { value: "workflows/other.workflow.wflow" },
+  });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Open saved destination" }),
+  );
+  await waitFor(() =>
+    expect(onOpenDestination).toHaveBeenCalledExactlyOnceWith(
+      "workflows/imported-process.workflow.wflow",
+    ),
+  );
+  expect(transfer.import).toHaveBeenCalledOnce();
+});
+it("uses the injected transfer owner without falling back to the web transport", async () => {
+  const webInspect = vi.spyOn(workflowBundles, "inspect");
+  const transfer = {
+    export: vi.fn(),
+    inspect: vi.fn().mockResolvedValue(inspection),
+    import: vi.fn().mockResolvedValue({
+      source: {
+        ...document,
+        path: "workflows/imported-process.workflow.wflow",
+      },
+      imported_paths: [],
+      inspection,
+    }),
+  };
+  const onImported = vi.fn();
+  render(
+    <WorkflowBundleDialog
+      document={document}
+      sessionId="session"
+      onClose={vi.fn()}
+      onImported={onImported}
+      transfer={transfer}
+    />,
+  );
+  upload();
+  await waitFor(() =>
+    expect(screen.getByTestId("workflow-transfer-inspect")).not.toBeDisabled(),
+  );
+  fireEvent.click(screen.getByTestId("workflow-transfer-inspect"));
+  await screen.findByText("Definition can be imported");
+  fireEvent.click(screen.getByTestId("workflow-transfer-import"));
+  await waitFor(() => expect(onImported).toHaveBeenCalledOnce());
+  expect(transfer.inspect).toHaveBeenCalledOnce();
+  expect(transfer.import).toHaveBeenCalledOnce();
+  expect(webInspect).not.toHaveBeenCalled();
+});
 it("requires uploaded definition inspection before explicit import and rechecks after destination edits", async () => {
   const inspect = vi
     .spyOn(workflowBundles, "inspect")
@@ -133,6 +209,7 @@ it("exports only selected files and active interfaces on the exact saved revisio
   ).mockResolvedValue([
     { path: "images/reference.png", name: "reference.png" },
     { path: "runs/history.json", name: "history.json" },
+    { path: "images/unrelated.png", name: "unrelated.png" },
   ]);
   mocks.interfaces.mockResolvedValue([
     {
@@ -178,6 +255,16 @@ it("exports only selected files and active interfaces on the exact saved revisio
   fireEvent.click(screen.getByTestId("workflow-transfer-list-assets"));
   await screen.findByLabelText("images/reference.png");
   expect(screen.queryByText("runs/history.json")).toBeNull();
+  expect(screen.queryByText("images/unrelated.png")).toBeNull();
+  expect(exportFile).toHaveBeenCalledExactlyOnceWith(
+    "session",
+    document.path,
+    document.storage_digest,
+    "source",
+    [],
+    [],
+  );
+  exportFile.mockClear();
   expect(screen.queryByLabelText("Old interface")).toBeNull();
   fireEvent.click(screen.getByLabelText("images/reference.png"));
   fireEvent.click(screen.getByLabelText("Current interface"));
@@ -192,7 +279,7 @@ it("exports only selected files and active interfaces on the exact saved revisio
       ["ui-current"],
     ),
   );
-  await screen.findByText(/Workflow transfer downloaded/);
+  await screen.findByText(/Download requested. Check your downloads/);
 });
 
 it("names exact dependencies beside their findings and keeps diagnostic codes in details", async () => {
@@ -256,4 +343,34 @@ it("names exact dependencies beside their findings and keeps diagnostic codes in
   expect(details).toHaveTextContent("external_dependency");
   expect(screen.getByTestId("workflow-transfer-import")).toBeDisabled();
   expect(apply).not.toHaveBeenCalled();
+});
+
+it("does not offer workspace files when the owner dependency manifest is unavailable", async () => {
+  const transfer = {
+    export: vi.fn().mockRejectedValue(new Error("Manifest unavailable")),
+    inspect: vi.fn(),
+    import: vi.fn(),
+  };
+  render(
+    <WorkflowBundleDialog
+      document={document}
+      sessionId="session"
+      onClose={vi.fn()}
+      onImported={vi.fn()}
+      transfer={transfer}
+      listFiles={async () => [
+        { path: "images/unrelated.png", name: "unrelated.png" },
+      ]}
+      listInterfaces={async () => []}
+    />,
+  );
+  fireEvent.change(screen.getByTestId("workflow-transfer-mode"), {
+    target: { value: "bundle" },
+  });
+  fireEvent.click(screen.getByTestId("workflow-transfer-list-assets"));
+  await screen.findByText(
+    /Some selectable files or interfaces could not be loaded/,
+  );
+  expect(screen.queryByLabelText("images/unrelated.png")).toBeNull();
+  expect(transfer.import).not.toHaveBeenCalled();
 });

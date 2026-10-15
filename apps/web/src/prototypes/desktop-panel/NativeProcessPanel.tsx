@@ -60,6 +60,9 @@ export function NativeProcessPanel({
           readOnly={readOnly}
           theme={theme}
           canReadRepresentations
+          onUpload={(file, definition) =>
+            client.uploadInput(definition.input_id, file)
+          }
           onRunAttached={onRunAttached}
           onPrepareAnother={onPrepareAnother}
           onUnsavedChange={onDirty}

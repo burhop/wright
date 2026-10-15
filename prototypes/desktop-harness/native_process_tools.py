@@ -10,7 +10,7 @@ from typing import Annotated, Any, Literal
 from urllib.parse import quote
 
 from mcp.types import ToolAnnotations
-from pydantic import Field, AfterValidator
+from pydantic import Field, AfterValidator, field_validator
 
 from api.schemas.process_interfaces import (
     ProcessActionRequest,
@@ -64,6 +64,22 @@ class PanelInputs(SetProcessInputsRequest):
     operation: Literal["inputs"]
 
 
+class PanelUpload(ProcessSourceRequest):
+    workspace_id: Segment
+    operation: Literal["upload"]
+    input_id: Identifier
+    filename: str = Field(min_length=1, max_length=160)
+    bytes_base64: str = Field(min_length=4, max_length=44_739_244)
+
+    @field_validator("bytes_base64")
+    @classmethod
+    def bounded_file(cls, value):
+        content = base64.b64decode(value, validate=True)
+        if not 0 < len(content) <= 33_554_432:
+            raise ValueError("Input files must contain at most 32 MiB")
+        return value
+
+
 class PanelReadiness(ProcessReadinessRequest):
     workspace_id: Segment
     operation: Literal["readiness"]
@@ -106,6 +122,7 @@ PanelRead = Annotated[
 ]
 PanelUpdate = Annotated[
     PanelInputs
+    | PanelUpload
     | PanelReadiness
     | PanelStart
     | PanelResponse
@@ -196,6 +213,16 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                         "media_type": media,
                         "size_bytes": len(parts),
                     }
+            elif operation == "upload":
+                content = base64.b64decode(body.pop("bytes_base64"), validate=True)
+                filename = body.pop("filename")
+                owner_called = True
+                document = await client.call(
+                    "POST",
+                    BASE + "/inputs/upload",
+                    data=body,
+                    files={"file": (filename, content, "application/octet-stream")},
+                )
             elif operation in ("snapshot", "reasoning"):
                 run = body.pop("run_id", None)
                 path = BASE + (
@@ -251,6 +278,12 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
             return {"ok": True, "document": document}
         except WrightRequestRejected as failure:
             uncertain = changes and owner_called and failure.status_code >= 500
+            if not uncertain and failure.reason is not None:
+                return {
+                    "ok": False,
+                    "http_status": failure.status_code,
+                    "reason": failure.reason.model_dump(mode="json", exclude_none=True),
+                }
             code = (
                 "OUTCOME_UNKNOWN"
                 if uncertain

@@ -15,6 +15,7 @@ import type { NativeProcessPanel } from "./NativeProcessPanel";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeProcessCall } from "./native-process-client";
+import type { NativeTransferCall } from "./native-transfer-client";
 
 const original: WorkspaceWorkflowSourceDocument = {
   workspace_id: "workspace",
@@ -37,6 +38,14 @@ vi.mock("./NativeWorkflowPanel", () => ({
     const [draft, setDraft] = useState("");
     return (
       <section aria-label="Editor">
+        {props.onOpenTransfer && (
+          <button
+            onClick={props.onOpenTransfer}
+            disabled={props.transferDisabled}
+          >
+            Export / import workflow
+          </button>
+        )}
         <input
           aria-label="Retained editor state"
           value={draft}
@@ -80,6 +89,47 @@ vi.mock("./NativeProcessPanel", () => ({
   ),
 }));
 afterEach(() => cleanup());
+
+it("opens transfer only for a saved source and keeps editor drafts and run controls guarded", async () => {
+  const transferCall = vi.fn<NativeTransferCall>();
+  const { read, call, onDirty } = setup({
+    transferCall,
+    onOpenTransferred: vi.fn(),
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Unsaved source" }));
+  expect(
+    screen.getByRole("button", { name: "Export / import workflow" }),
+  ).toBeDisabled();
+  expect(read).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Accepted save" }));
+  read.mockResolvedValue({ content: [], structuredContent: saved });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Export / import workflow" }),
+  );
+  await screen.findByRole("dialog", { name: "Export or import a workflow" });
+  expect(onDirty).toHaveBeenLastCalledWith(true);
+  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  expect(screen.queryByRole("region", { name: "Working view" })).toBeNull();
+  expect(call).not.toHaveBeenCalled();
+  expect(transferCall).not.toHaveBeenCalled();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Close workflow transfer" }),
+  );
+  expect(onDirty).toHaveBeenLastCalledWith(false);
+});
+
+it("rejects stale transfer source before opening the dialog", async () => {
+  const transferCall = vi.fn<NativeTransferCall>();
+  const { read, onDirty } = setup({ transferCall, onOpenTransferred: vi.fn() });
+  read.mockResolvedValue({ content: [], structuredContent: saved });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Export / import workflow" }),
+  );
+  await screen.findByText(/Reload it before transferring/);
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(transferCall).not.toHaveBeenCalled();
+  expect(onDirty).toHaveBeenLastCalledWith(false);
+});
 function setup(extra: Partial<ComponentProps<typeof NativePanelContent>> = {}) {
   const read = vi
     .fn()

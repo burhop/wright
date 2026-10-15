@@ -10,6 +10,7 @@ import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeProcessCall } from "./native-process-client";
+import type { NativeTransferCall } from "./native-transfer-client";
 import {
   NativeHomePanel,
   type HomeCall,
@@ -34,6 +35,31 @@ const rememberWorkspace = (workspace: DesktopWorkspace) => {
 let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
 const processCall: NativeProcessCall = (name, request) =>
   app.callServerTool({ name, arguments: { request } });
+const transferCall: NativeTransferCall = (name, arguments_) =>
+  app.callServerTool({ name, arguments: arguments_ });
+
+async function openSavedWorkflow(
+  workspaceId: string,
+  sessionId: string,
+  path: string,
+) {
+  if (dirty)
+    throw new Error("Save or reconcile the current change before navigating.");
+  const request = ++generation;
+  const scope = { workspace_id: workspaceId, session_id: sessionId, path };
+  const result = await app.callServerTool({
+    name: "wright_workflow_open",
+    arguments: scope,
+  });
+  if (request !== generation || dirty) return;
+  if (result.isError)
+    throw new Error(
+      "The saved destination is unavailable. No import was repeated.",
+    );
+  args = scope;
+  pending = result;
+  await open();
+}
 const homeCall: HomeCall = (name, arguments_) =>
   app.callServerTool(
     { name, arguments: arguments_ },
@@ -80,20 +106,11 @@ function home() {
             throw new Error("Host declined sign-in navigation");
         }}
         onOpen={async (workspace, path) => {
-          const request = ++generation;
-          const scope = {
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
+          await openSavedWorkflow(
+            workspace.workspace_id,
+            workspace.session_id,
             path,
-          };
-          const result = await app.callServerTool({
-            name: "wright_workflow_open",
-            arguments: scope,
-          });
-          if (request !== generation || dirty) return;
-          args = scope;
-          pending = result;
-          await open();
+          );
         }}
       />,
     );
@@ -224,6 +241,14 @@ async function open() {
             initial={document}
             sourceClient={client}
             call={processCall}
+            transferCall={transferCall}
+            onOpenTransferred={(path) =>
+              openSavedWorkflow(
+                String(input.workspace_id),
+                String(input.session_id),
+                path,
+              )
+            }
             sessionId={String(input.session_id)}
             workspaceName={data.workspace?.workspace_name ?? "Workspace"}
             initialProcess={process}

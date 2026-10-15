@@ -5,6 +5,11 @@ import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-autho
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
 import { NativeSourceClient } from "./native-source-client";
+import { WorkflowBundleDialog } from "../workflow-recovery/WorkflowBundleDialog";
+import {
+  createNativeTransferClient,
+  type NativeTransferCall,
+} from "./native-transfer-client";
 import {
   createNativePanelProcessClient,
   type NativeProcessCall,
@@ -22,6 +27,8 @@ export function NativePanelContent({
   workingViewEnabled,
   onDirty,
   theme,
+  transferCall,
+  onOpenTransferred,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
@@ -33,6 +40,8 @@ export function NativePanelContent({
   readonly workingViewEnabled: boolean;
   readonly onDirty: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
+  readonly transferCall?: NativeTransferCall;
+  readonly onOpenTransferred?: (path: string) => Promise<void>;
 }) {
   const [accepted, setAccepted] = useState(initial);
   const [view, setView] = useState<"editor" | "working">(
@@ -50,6 +59,21 @@ export function NativePanelContent({
   const [sourceDirty, setSourceDirty] = useState(false);
   const [workingDirty, setWorkingDirty] = useState(false);
   const [notice, setNotice] = useState("");
+  const [transferDocument, setTransferDocument] =
+    useState<WorkspaceWorkflowSourceDocument | null>(null);
+  const [openingTransfer, setOpeningTransfer] = useState(false);
+  const transfer = useMemo(
+    () =>
+      transferCall
+        ? createNativeTransferClient(
+            initial.workspace_id,
+            sessionId,
+            transferCall,
+          )
+        : undefined,
+    [initial.workspace_id, sessionId, transferCall],
+  );
+  const transferPending = openingTransfer || !!transferDocument;
   const native = useMemo(
     () =>
       createNativePanelProcessClient({
@@ -63,20 +87,20 @@ export function NativePanelContent({
   const sourceChange = useCallback(
     (pending: boolean) => {
       setSourceDirty(pending);
-      onDirty(pending || workingDirty);
+      onDirty(pending || workingDirty || transferPending);
     },
-    [onDirty, workingDirty],
+    [onDirty, workingDirty, transferPending],
   );
   const workingChange = useCallback(
     (pending: boolean) => {
       setWorkingDirty(pending);
       if (!pending) setNotice("");
-      onDirty(pending || sourceDirty);
+      onDirty(pending || sourceDirty || transferPending);
     },
-    [onDirty, sourceDirty],
+    [onDirty, sourceDirty, transferPending],
   );
   const openWorking = async () => {
-    if (sourceDirty || workingDirty) return;
+    if (sourceDirty || workingDirty || transferPending) return;
     try {
       const stored = await sourceClient.read();
       if (stored.storage_digest !== accepted.storage_digest) {
@@ -117,9 +141,66 @@ export function NativePanelContent({
     setNotice("");
     setView("editor");
   };
+  const openTransferred = async (path: string) => {
+    setTransferDocument(null);
+    onDirty(sourceDirty || workingDirty);
+    try {
+      await onOpenTransferred?.(path);
+    } catch {
+      setNotice(
+        "The saved destination is unavailable. Inspect retained import files before another attempt; no import was repeated.",
+      );
+    }
+  };
+  const openTransfer = () => {
+    setOpeningTransfer(true);
+    onDirty(true);
+    void sourceClient
+      .read()
+      .then((observed) => {
+        if (observed.storage_digest !== accepted.storage_digest)
+          throw new Error(
+            "The saved workflow changed. Reload it before transferring.",
+          );
+        setTransferDocument(observed);
+        setOpeningTransfer(false);
+      })
+      .catch(() => {
+        setNotice(
+          "Wright could not confirm the current saved workflow. Reload it before transferring; your draft is kept.",
+        );
+        setOpeningTransfer(false);
+        onDirty(sourceDirty || workingDirty);
+      });
+  };
   return (
     <div style={{ height: "100%", minHeight: 0 }}>
       {notice && <p role="status">{notice}</p>}
+      {transferDocument && transfer && onOpenTransferred && (
+        <WorkflowBundleDialog
+          document={transferDocument}
+          sessionId={sessionId}
+          transfer={transfer}
+          listFiles={() =>
+            transfer.listFiles(
+              transferDocument.path,
+              transferDocument.storage_digest,
+            )
+          }
+          listInterfaces={() =>
+            transfer.listInterfaces(
+              transferDocument.path,
+              transferDocument.storage_digest,
+            )
+          }
+          onClose={() => {
+            setTransferDocument(null);
+            onDirty(sourceDirty || workingDirty);
+          }}
+          onImported={openTransferred}
+          onOpenDestination={openTransferred}
+        />
+      )}
       <div
         style={{
           display: view === "editor" ? "block" : "none",
@@ -130,6 +211,10 @@ export function NativePanelContent({
           initial={initial}
           client={sourceClient}
           workspaceName={workspaceName}
+          onOpenTransfer={
+            transfer && onOpenTransferred ? openTransfer : undefined
+          }
+          transferDisabled={sourceDirty || workingDirty || transferPending}
           onDirty={sourceChange}
           onAccepted={setAccepted}
           onOpenWorkingView={

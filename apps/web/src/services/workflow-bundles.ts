@@ -78,71 +78,85 @@ function inspection(value: Record<string, unknown>): WorkflowBundleInspection {
     throw new Error("Wright returned invalid transfer diagnostics.");
   return value as unknown as WorkflowBundleInspection;
 }
-export const workflowBundles = {
-  async export(
-    sessionId: string,
-    path: string,
-    expectedStorageDigest: string,
-    mode: "source" | "bundle",
-    selectedReferencePaths: string[],
-    selectedUiIds: string[],
-  ) {
-    const value = await request("export", {
-      session_id: sessionId,
-      path,
-      expected_storage_digest: expectedStorageDigest,
-      mode,
-      selected_reference_paths: selectedReferencePaths,
-      selected_ui_ids: selectedUiIds,
-    });
-    if (
-      !record(value.bundle) ||
-      value.bundle.schema_version !== "wright.workflow-bundle/1" ||
-      typeof value.bundle_digest !== "string" ||
-      !/^[a-f0-9]{64}$/.test(value.bundle_digest)
-    )
-      throw new Error("Wright returned an invalid workflow export.");
-    return { bundle: value.bundle, bundle_digest: value.bundle_digest };
-  },
-  async inspect(
-    sessionId: string,
-    bundle: Record<string, unknown>,
-    destinationPath: string,
-  ) {
-    return inspection(
-      await request("inspect", {
+export type WorkflowBundleRequest = (
+  operation: "export" | "inspect" | "import",
+  body: Record<string, unknown>,
+) => Promise<Record<string, unknown>>;
+
+export function createWorkflowBundleClient(
+  send: WorkflowBundleRequest = request,
+) {
+  return {
+    async export(
+      sessionId: string,
+      path: string,
+      expectedStorageDigest: string,
+      mode: "source" | "bundle",
+      selectedReferencePaths: string[],
+      selectedUiIds: string[],
+    ) {
+      const value = await send("export", {
+        session_id: sessionId,
+        path,
+        expected_storage_digest: expectedStorageDigest,
+        mode,
+        selected_reference_paths: selectedReferencePaths,
+        selected_ui_ids: selectedUiIds,
+      });
+      if (
+        !record(value.bundle) ||
+        value.bundle.schema_version !== "wright.workflow-bundle/1" ||
+        typeof value.bundle_digest !== "string" ||
+        !/^[a-f0-9]{64}$/.test(value.bundle_digest)
+      )
+        throw new Error("Wright returned an invalid workflow export.");
+      return { bundle: value.bundle, bundle_digest: value.bundle_digest };
+    },
+    async inspect(
+      sessionId: string,
+      bundle: Record<string, unknown>,
+      destinationPath: string,
+    ) {
+      return inspection(
+        await send("inspect", {
+          session_id: sessionId,
+          bundle,
+          destination_path: destinationPath,
+        }),
+      );
+    },
+    async import(
+      sessionId: string,
+      bundle: Record<string, unknown>,
+      destinationPath: string,
+      expectedBundleDigest: string,
+    ) {
+      const value = await send("import", {
         session_id: sessionId,
         bundle,
         destination_path: destinationPath,
-      }),
-    );
-  },
-  async import(
-    sessionId: string,
-    bundle: Record<string, unknown>,
-    destinationPath: string,
-    expectedBundleDigest: string,
-  ) {
-    const value = await request("import", {
-      session_id: sessionId,
-      bundle,
-      destination_path: destinationPath,
-      expected_bundle_digest: expectedBundleDigest,
-    });
-    if (
-      !record(value.source) ||
-      typeof value.source.path !== "string" ||
-      typeof value.source.workspace_id !== "string" ||
-      typeof value.source.source !== "string" ||
-      typeof value.source.storage_digest !== "string" ||
-      !Array.isArray(value.imported_paths) ||
-      !record(value.inspection)
-    )
-      throw new Error("Wright returned an invalid workflow import.");
-    return {
-      source: value.source as unknown as WorkspaceWorkflowSourceDocument,
-      imported_paths: value.imported_paths as string[],
-      inspection: inspection(value.inspection),
-    };
-  },
-};
+        expected_bundle_digest: expectedBundleDigest,
+      });
+      if (
+        !record(value.source) ||
+        typeof value.source.path !== "string" ||
+        typeof value.source.workspace_id !== "string" ||
+        typeof value.source.source !== "string" ||
+        typeof value.source.storage_digest !== "string" ||
+        !Array.isArray(value.imported_paths) ||
+        !record(value.inspection)
+      )
+        throw new Error("Wright returned an invalid workflow import.");
+      return {
+        source: value.source as unknown as WorkspaceWorkflowSourceDocument,
+        imported_paths: value.imported_paths as string[],
+        inspection: inspection(value.inspection),
+      };
+    },
+  };
+}
+
+export const workflowBundles = createWorkflowBundleClient();
+export type WorkflowBundleClient = ReturnType<
+  typeof createWorkflowBundleClient
+>;

@@ -1,6 +1,5 @@
 """Nonphysical provider fixture through actual canonical preparation/run records."""
 
-from datetime import datetime, timezone
 import asyncio
 import json
 
@@ -19,25 +18,45 @@ from packages.workspace_service.tests.test_workflow_async_operations import remo
 from workspace_service.workflow_mcp_execution import schema_digest
 from workspace_service.workflow_source_execution import _parse
 from workspace_service.process_interfaces.errors import ProcessInterfaceError
+from workspace_service import workflow_async_operations
 
 
 @pytest.mark.parametrize("outcome", ["cancelled", "completed", "failed", "working"])
 @pytest.mark.parametrize("lost_observer", [False, True])
 @pytest.mark.asyncio
 async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
-    tmp_path, outcome, lost_observer, publication_fails=False
+    tmp_path, monkeypatch, outcome, lost_observer, publication_fails=False
 ):
     gateway, unused_runtime, _, tools = remote(("working",))
     tools[0].input_schema.update(
         properties={"requirements": {"type": "string"}}, required=["requirements"]
     )
     tools[0].upstream_meta["wright/operation"].update(
-        # Confirmation includes durable observations. Keep the provider window
-        # below the 3s wakeup assertion without making 80ms disk latency a gate.
+        # Cancellation must wake this poll; disk publication and provider
+        # confirmation are verified separately from the wakeup itself.
         poll_seconds=30,
         cancel_confirm_seconds=1,
     )
     entered = asyncio.Event()
+    poll_waiting, poll_woken = asyncio.Event(), asyncio.Event()
+    cancellation_type = workflow_async_operations.OperationCancellation
+
+    def observe_cancellation(*args, **kwargs):
+        cancellation = cancellation_type(*args, **kwargs)
+        wait = cancellation.changed.wait
+
+        async def observe_wait():
+            assert not cancellation.changed.is_set()
+            poll_waiting.set()
+            await wait()
+            poll_woken.set()
+
+        monkeypatch.setattr(cancellation.changed, "wait", observe_wait)
+        return cancellation
+
+    monkeypatch.setattr(
+        workflow_async_operations, "OperationCancellation", observe_cancellation
+    )
     cancelled = False
     original = gateway.call_tool
 
@@ -98,8 +117,9 @@ async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
             gateway=gateway,
             session_id="fixture",
         )
-        await asyncio.wait_for(entered.wait(), 2)
-        requested_at = datetime.now(timezone.utc)
+        await asyncio.wait_for(entered.wait(), 15)
+        # Establish the actual waiting interleaving before requesting cancel.
+        await asyncio.wait_for(poll_waiting.wait(), 15)
         command = app.runs.cancel(
             scope("process.read", "process.cancel"),
             reference,
@@ -135,7 +155,7 @@ async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
 
             owned.emit = defer_ack
             observer = asyncio.create_task(command)
-            await asyncio.wait_for(saved.wait(), 2)
+            await asyncio.wait_for(saved.wait(), 15)
             assert not any(n == "fea__cancel" for n, _ in gateway.calls)
             observer.cancel()
             with pytest.raises(asyncio.CancelledError):
@@ -144,12 +164,11 @@ async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
         else:
             requested = await command
             assert requested["state"] == "cancellation_requested"
+        # A missed signal cannot pass by waiting out the 30s provider poll.
+        await asyncio.wait_for(poll_woken.wait(), 5)
         actual = await asyncio.wait_for(
-            app.runs.wait(scope(), reference, receipt.run_id), 3
+            app.runs.wait(scope(), reference, receipt.run_id), 15
         )
-        assert (
-            datetime.now(timezone.utc) - requested_at
-        ).total_seconds() < 3  # Wakes a 30s poll.
         assert actual["status"] == (
             "failed"
             if publication_fails
@@ -185,9 +204,11 @@ async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
 @pytest.mark.asyncio
 async def test_uncertain_cancellation_publication_blocks_following_work_without_remote_mutation(
     tmp_path,
+    monkeypatch,
 ):
     await test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
         tmp_path,
+        monkeypatch,
         "working",
         False,
         publication_fails=True,
