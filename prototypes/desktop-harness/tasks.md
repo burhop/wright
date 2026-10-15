@@ -217,3 +217,24 @@ assertions with a 1s confirmation window. All12 focused cancellation/concurrency
 36 gate-contract and five onboarding browser checks pass. The normal frontend
 gate now includes the live read-only onboarding check. Corrected full gates and
 current-head Windows CI remain required before the second push/merge.
+
+## PR156 integration packaging correction — 15 October 2026
+
+The integration-sync head 3f7ad9b2 passed local gates but its x64 engineering
+image download failed with curl TLS error 56 twice (one bounded CI retry).
+A local interrupted-body reproducer showed that the existing curl retry option
+did not retry partial transfers and left a truncated file. The release-asset
+installer now retains five retries, retries transfer failures and removes failed
+partial output. This applies only to build-time GETs, not workflow actions.
+The actual embedded installer passes local recover-on-second-request and
+exhaust-after-six-attempts tests; all 31 Docker bundle tests pass. The test is
+already included in the container push slice and full merge gate.
+
+Evidence: /tmp/wright-artifact-download-recovery-20261015/result.json and
+installer-qualification.json. The local HTTP proof is not an exact reproduction
+of TLS56 or qualification of SourceForge. Native x64 image CI remains required.
+The pending Windows backend check must reach a terminal state before any new
+push. A fourth push would be an exceptional consolidated packaging correction
+after the independently merged image capability, not another blind CI retry.
+Current-candidate gates, CI and dev integration remain pending; no plugin update
+or engineering run follows from these unit checks.

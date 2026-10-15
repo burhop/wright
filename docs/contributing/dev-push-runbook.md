@@ -339,6 +339,13 @@ authoritative in CI when a local Docker host is unavailable.
 
 ## CI failure protocol
 
+Engineering-image release assets use bounded retries for interrupted build-time
+GET downloads and remove incomplete output on terminal failure. The Docker bundle
+test, selected by the container slice of the push gate and the full merge gate,
+guards this contract. This does not permit retrying workflow external actions.
+The local HTTP partial-body fault probe reproduces the interrupted-transfer class;
+the native image CI remains the proof for the actual publisher and architecture.
+
 PR #133 exposed a Python dependency-audit gap: an exact-image scan does not
 replace the runtime environment audit performed by public-alpha CI. The full
 merge gate and Python slice of the fast gate now run
@@ -422,3 +429,14 @@ The private-LAN frontend fixture controls POSIX stat permission bits explicitly
 on all platforms while retaining real token-file reads. Windows chmod does not
 model GB10 permissions. Keep the production private-file rejection, forbidden
 origin/peer checks, credential non-disclosure and denied-file/no-login assertions.
+
+### Windows run-record read contention
+
+The workspace-service suite exercises bounded retry of Windows access-denied
+reads during durable-record observation, plus permanent denial and malformed
+record failures. Native Windows tests hold actual exclusive file handles and
+verify recovery after release and failure while a lock persists. Linux fault
+injection is not native Windows qualification. Both normal Python gate slices
+already collect this suite; keep the Windows backend CI tests required. These
+retries only read the same exact record and never resubmit cancellation, replay
+a tool or replace an unreadable record with a successful outcome.

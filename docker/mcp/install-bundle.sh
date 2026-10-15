@@ -133,7 +133,13 @@ for asset in assets:
     url = asset["url"]
     target = Path(asset["target"])
     target.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["curl", "-fL", "--retry", "5", "-o", str(target), url], check=True)
+    # These are build-time GETs to regular files, so retrying cannot repeat an
+    # engineering action. Discard partial downloads when recovery is exhausted.
+    subprocess.run(
+        ["curl", "-fL", "--retry", "5", "--retry-all-errors", "--remove-on-error",
+         "-o", str(target), url],
+        check=True,
+    )
     target.chmod(0o755)
     if asset.get("extract_appimage"):
         extract_dir = target.parent / "squashfs-root"
