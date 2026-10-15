@@ -8,7 +8,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const state = resolve(process.argv[2]);
-const evidence = JSON.parse(readFileSync(resolve(state, 'home-probe.json')));
+const evidence = JSON.parse(readFileSync(resolve(state, process.argv[3] ?? 'home-probe.json')));
 const preview = JSON.parse(readFileSync(resolve(state, 'preview.json')));
 const token = readFileSync(resolve(state, '.preview-api-token'), 'utf8');
 const bundle = readFileSync('prototypes/desktop-harness/native-editor.html', 'utf8');
@@ -127,6 +127,10 @@ const server = createServer(async (req, res) => {
       const result = await mcp.callTool({name,arguments:args});
       if (name === 'wright_workflow_import' && result.structuredContent?.ok)
         transferredWorkflow = result.structuredContent.document.source;
+      if (name === 'wright_workflow_import' && transferredWorkflow && evidence.lose_import_reply) {
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({content:[{type:'text',text:'Private fixture: import reply lost'}],isError:true})); return;
+      }
       res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
     }
     if (!allowed.has(name)) throw Error('Read-only fixture denies this operation');
@@ -256,6 +260,16 @@ try {
     await expect(frame.getByText('Definition can be imported',{exact:true})).toBeVisible();
     await page.screenshot({path:resolve(output,'transfer-inspected.png')});
     await frame.getByTestId('workflow-transfer-import').click();
+    if (evidence.lose_import_reply) {
+      await expect(frame.getByRole('button',{name:'Open saved destination',exact:true})).toBeVisible();
+      await expect(frame.getByTestId('workflow-transfer-import')).toBeEnabled();
+      await frame.getByTestId('workflow-transfer-import').click();
+      await expect(frame.getByRole('alert')).toContainText('no import was repeated');
+      expect(calls.filter(call=>call.name==='wright_workflow_import')).toHaveLength(1);
+      await page.screenshot({path:resolve(output,'transfer-uncertain-reply.png')});
+      await frame.getByRole('button',{name:'Open saved destination',exact:true}).click();
+      passed.push('lost import acknowledgement retained; repeat submission blocked locally; explicit read-only destination recovery without replay');
+    }
     await expect(dialog).toHaveCount(0);
     await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
     await expect.poll(() => transferredWorkflow?.path).toBe(evidence.transfer_destination);

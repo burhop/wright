@@ -10,6 +10,23 @@ WorkflowBundleDialog and authenticated workflow-bundles owners. Keep the neutral
 editor, draft guards, workspace identity and common-view fallback. V1–V7 apply.
 Export is not a run, engineering review, provider grant or confirmed host save.
 
+## Lost acknowledgement qualification
+
+The actual MCP/browser harness now deliberately withholds one successful private
+import reply. A second click is blocked by the native client without another MCP
+import call; explicit **Open saved destination** reads and opens the exact saved
+copy. Eight browser checks pass, including the original navigation/draft checks:
+`/tmp/wright-desktop-workflow-transfer-state-20261015-06/browser-home-1792061268549/report.json`.
+No engineering run starts. This tests reply loss after successful publication,
+not process termination during partial publication; the latter has separate
+owner-level reservation tests, and full host close/restart UI acceptance remains.
+
+The first lost-reply test stopped because its assertion expected different error
+wording. Its actual saved copy and failure evidence were retained; the completed
+proof used a distinct, explicitly named test destination. Neither import was
+replayed. Logs: `/tmp/wright-transfer-lost-reply-20261015.log` and `-02.log`.
+The installed plugin is unchanged.
+
 ## Served transfer journey — 15 October
 
 The existing native-home browser harness now exercises workflow transfer through
