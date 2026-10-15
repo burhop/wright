@@ -167,6 +167,11 @@ def main():
             and request.method == "POST"
             and path == "/api/workspace/process-interfaces/inputs/upload"
         )
+        workflow_export = (
+            args.enable_native_editor
+            and request.method == "POST"
+            and path == "/api/workspace/workflow-bundles/export"
+        )
         process_operation = (
             path
             in {
@@ -184,7 +189,10 @@ def main():
             is not None
         )
         desktop_operation = desktop is not None and (
-            path.startswith("/api/desktop/") or process_operation or input_upload
+            path.startswith("/api/desktop/")
+            or process_operation
+            or input_upload
+            or workflow_export
         )
         if agent_call or (
             request.method not in {"GET", "HEAD", "OPTIONS"}

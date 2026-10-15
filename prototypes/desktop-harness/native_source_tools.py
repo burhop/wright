@@ -4,10 +4,29 @@ Local next-slice code, not enabled in the installed 0.2.0 plugin. No execution,
 model selection, generic proxy or retry. UI tool visibility grants no authority.
 """
 
-from typing import Any
+from typing import Annotated, Any, Literal
 
 import httpx
 from mcp.types import ToolAnnotations
+from pydantic import Field, StrictStr
+
+from core.process_validation import Contract, Digest, Identifier, canonical_digest
+from core.workflow_bundle import WorkflowBundle
+
+
+class ExportRequest(Contract):
+    workspace_id: Identifier
+    session_id: Identifier
+    path: Annotated[StrictStr, Field(max_length=256)]
+    expected_storage_digest: Digest
+    mode: Literal["source", "bundle"] = "source"
+    selected_reference_paths: tuple[StrictStr, ...] = Field(default=(), max_length=64)
+    selected_ui_ids: tuple[Identifier, ...] = Field(default=(), max_length=16)
+
+
+class ExportResponse(Contract):
+    bundle: WorkflowBundle
+    bundle_digest: Digest
 
 
 class WrightRequestRejected(ValueError):
@@ -20,6 +39,43 @@ class WrightRequestRejected(ValueError):
 
 
 def register_native_source_tools(mcp, client):
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        ),
+        structured_output=True,
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workflow_export(request: ExportRequest) -> dict[str, Any]:
+        """Read an exact definition-only export; this does not save a host file."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            result = await client.call(
+                "POST",
+                "/api/workspace/workflow-bundles/export",
+                json=request.model_dump(mode="json", exclude={"workspace_id"}),
+            )
+            exported = ExportResponse.model_validate(result)
+            if (
+                canonical_digest(exported.bundle) != exported.bundle_digest
+                or exported.bundle.source_digest != request.expected_storage_digest
+                or exported.bundle.mode != request.mode
+            ):
+                raise ValueError("Export bytes differ from their recorded digest")
+        except (httpx.HTTPError, WrightRequestRejected, ValueError, PermissionError):
+            return {
+                "ok": False,
+                "error": {
+                    "code": "EXPORT_UNAVAILABLE",
+                    "outcome_known": True,
+                    "message": "Wright could not validate this export. Reopen the saved workflow and check its dependencies. No download is confirmed.",
+                },
+            }
+        return {"ok": True, **exported.model_dump(mode="json")}
+
     @mcp.tool(
         annotations=ToolAnnotations(
             readOnlyHint=False,
