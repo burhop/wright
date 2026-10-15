@@ -161,5 +161,46 @@
       "passed": 5,
       "source_commit": "df58aba8"
     }
+  },
+  "status_copy_reopen": {
+    "report": "/tmp/wright-desktop-custom-https-state-20261015-01/status-copy-reopen-1792038999212/report.json",
+    "sha256": "a0dd4e7ec0365e42f876315ff97075aeaeff300872d2b6df5243db024ec5e8ad",
+    "passed": true,
+    "checks": [
+      "recover exact completed setup without registration or approval replay",
+      "completed setup no longer describes reviewed permissions or later checks as outstanding",
+      "reopening makes read-only calls only",
+      "saved setup discovery from workspace UI",
+      "460px panel has no horizontal overflow"
+    ],
+    "calls": [
+      {
+        "name": "wright_workspace_list"
+      },
+      {
+        "name": "wright_workspace_files"
+      },
+      {
+        "name": "wright_connections_list"
+      },
+      {
+        "name": "wright_connection_plans"
+      },
+      {
+        "name": "wright_connection_plan_read"
+      },
+      {
+        "name": "wright_connection_plans"
+      }
+    ],
+    "errors": [],
+    "saved_plan_id": "plan-6ba3c03e754da2566159",
+    "scope": "Actual MCP/API/storage in simulated desktop browser; read-only reopening of exact completed private HTTPS setup; no validation, enablement, engineering invocation or approval replay"
+  },
+  "full_gate": {
+    "receipt": "/tmp/wright-desktop-custom-connections-evidence-20261015/merge-828f992e-receipt.json",
+    "head": "828f992e",
+    "status": "passed",
+    "limitation": "SKIP_PLAYWRIGHT=1 for GB10 WebKit; subsequent two-label correction separately tested"
   }
 }

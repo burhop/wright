@@ -11,7 +11,46 @@ old delivery sequence, not its design decisions or historical evidence. Keep
 the separate Codex-inside-Wright chat pilot. It is not the execution mechanism
 for these desktop demonstrations.
 
-## Current continuation checkpoint — 14 October 2026
+## Current continuation checkpoint — 15 October 2026, after PR155
+
+PR154 and PR155 are merged. Current verified merged baseline is
+`20a743ec01abd0a1ac3fa414f70c17bea7a5fa6f` (PR155), with all pre-merge checks green.
+Its development ARM64/AMD64 image publication passed. An isolated ARM64 deployment
+passed normal workspace creation, Workflows entry, source save and exact reload.
+The OCI revision label is `unknown`; that failed label check is retained. Source
+identity was independently checked using the exact CI checkout/digest and 503
+runtime source/dependency files matching the merge tree. See
+`/tmp/wright-dev-20a743ec-deployment-evidence/deployment.json` for the bounded proof.
+This is shared web UI qualification, not Windows native plugin acceptance.
+
+The named plugin remains **0.10.0**, frozen at `/tmp/wright-desktop-template-entry`.
+The current conversation reports connected, image input unavailable and model/app
+identity unreported. Do not infer its loaded package version from that status.
+The embedded Codex chat pilot and authoring/workflow gates remain separate.
+
+The active custom-connection candidate is `/tmp/wright-desktop-custom-connections`,
+branch `codex/desktop-custom-connections`. Its full local gate passed at828f992e
+with the documented GB10 WebKit exception. A subsequent two-label presentation
+correction and rebuilt native panel passed eight component and five read-only
+served-browser checks; these are distinct from that earlier full gate. Generated
+distributed assets, current-dev reconciliation, final push checks and CI remain.
+See [custom connection plan](custom-connections-plan.md) and its evidence index.
+No custom-connection push or installed plugin update has occurred.
+
+New private fault proofs retain the same run after an image-bearing pending
+request and after a real enrolled file inspection whose receipt was withheld.
+Both require reconciliation; no automatic continuation is claimed. These are
+read-only fixture checks, not uncertain external-write qualification or fresh CAD.
+See pending-action-restart-evidence.json and dispatch-restart-evidence.json.
+
+Next: finish the coherent custom-connection candidate and named update; qualify
+Windows callback routing using the already discovered `promaxgb10-9666` alias and
+obtain the existing account's genuine SteveCAD sign-in. Then complete the original
+four/six-hole CAD and heat-spreader multi-tool runs with exact outputs and genuine
+reviews, plus Robot/manufacturing regressions. Image/action profiles need their
+own qualification; management tests do not satisfy engineering acceptance.
+
+## Historical continuation checkpoint — 14 October 2026
 
 Continue in `/tmp/wright-desktop-engineering-execution`, branch
 `codex/desktop-engineering-execution`. Baseline PR 153 is merged to dev at

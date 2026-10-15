@@ -363,8 +363,8 @@ export function NativeConnections({
           )}
           {plan.state === "completed" && (
             <p>
-              Registration completed. Sign-in, protocol validation and workspace
-              permission still need their own checks.
+              Registration completed. Connection status and workspace access are
+              shown below.
             </p>
           )}
           {plan.requirements?.license?.reference && (
@@ -372,7 +372,7 @@ export function NativeConnections({
           )}
           {(plan.approval_gates ?? []).map((gate) => (
             <p key={gate}>
-              Separate setup approval required: {gate.replaceAll("_", " ")}
+              Setup permissions: {gate.replaceAll("_", " ")}
             </p>
           ))}
           {plan.capability_id.startsWith("import:") ? (
