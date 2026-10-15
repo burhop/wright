@@ -7,9 +7,10 @@ from pathlib import Path
 from types import SimpleNamespace
 import time
 from uuid import uuid4
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
 from core.desktop_reasoning import DesktopHarnessBinding, DesktopReasoningResponse
@@ -54,6 +55,33 @@ class ConnectionPlanRequest(BaseModel):
     independently_completed_license: bool = False
 
 
+class RemoteConnectionPreviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    name: str = Field(min_length=1, max_length=100)
+    url: str = Field(min_length=1, max_length=2048)
+
+    @field_validator("url")
+    @classmethod
+    def public_endpoint(cls, value: str) -> str:
+        parsed = urlsplit(value)
+        if (parsed.scheme != "https" or not parsed.hostname or parsed.username
+                or parsed.password or parsed.query or parsed.fragment):
+            raise ValueError("Use a public HTTPS MCP endpoint without credentials, query or fragment")
+        return value
+
+
+class ImportedConnectionPlanRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    preview_token: str = Field(min_length=1, max_length=128)
+    draft_id: str = Field(min_length=1, max_length=128)
+    draft_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    independently_completed_license: bool = False
+
+
 class ConnectionPlanAction(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -81,6 +109,7 @@ class DesktopBackend:
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
         self.clients = {}
+        self.import_scopes = {}
         self.oauth = DesktopOAuthPresentation()
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
@@ -323,6 +352,58 @@ class DesktopBackend:
                 "session_id": body.session_id,
                 "onboarding_run": run,
             }
+
+        @router.post("/connection-imports/preview")
+        async def preview_remote_connection(
+            body: RemoteConnectionPreviewRequest,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(body.workspace_id, body.session_id)
+            from api.routers.mcp import ImportPreviewRequest, preview_mcp_import
+
+            now = self._now()
+            self.import_scopes = {
+                key: item for key, item in self.import_scopes.items()
+                if item[3] > now
+            }
+            if len(self.import_scopes) >= 128:
+                raise HTTPException(429, "Too many active previews; wait for previews to expire")
+            preview = await preview_mcp_import(
+                ImportPreviewRequest(configuration=json.dumps({
+                    "name": body.name, "type": "http", "url": body.url,
+                })), request, service,
+            )
+            token = str(uuid4())
+            self.import_scopes[token] = (
+                body.workspace_id, body.session_id, preview["preview_id"], now + 900,
+            )
+            return {"workspace_id": body.workspace_id, "session_id": body.session_id,
+                    "preview_token": token, "preview": preview}
+
+        @router.post("/connection-imports/plan")
+        async def plan_imported_connection(
+            body: ImportedConnectionPlanRequest,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(body.workspace_id, body.session_id)
+            saved = self.import_scopes.get(body.preview_token)
+            if (saved is None or saved[:2] != (body.workspace_id, body.session_id)
+                    or saved[3] <= self._now()):
+                raise HTTPException(409, "Preview unavailable for this workspace; explicitly preview again")
+            from api.routers.mcp import InstallPlanRequest, create_mcp_install_plan
+
+            plan = await create_mcp_install_plan(
+                InstallPlanRequest(
+                    import_preview_id=saved[2], draft_id=body.draft_id,
+                    draft_digest=body.draft_digest, requested_scope="workspace",
+                    workspace_id=body.workspace_id,
+                    independently_completed_license=body.independently_completed_license,
+                ), request, service,
+            )
+            return {"workspace_id": body.workspace_id, "session_id": body.session_id,
+                    "plan": plan}
 
         @router.post("/connection-plans")
         async def connection_plan(

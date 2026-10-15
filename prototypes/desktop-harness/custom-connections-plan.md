@@ -92,3 +92,40 @@ error during collection, corrected before rerun. Eight Connections UI tests, Typ
 Saved setup control is implemented; custom-source preview/creation remains
 unimplemented. These are owner, HTTP, transport and component checks, not
 served-panel or Windows acceptance. Installed 0.10.0 is untouched.
+
+## Custom HTTPS preview and plan checkpoint
+
+Implemented the first custom-source form, using existing preview and plan owners.
+Two app-visible tools expose only typed public HTTPS endpoint preview and exact
+preview/draft plan creation. No arbitrary REST/command bridge. Desktop preview
+identity is ephemeral, bounded to 128 active entries and 15 minutes, and bound to
+workspace/session. Owner expiry and digest checks remain authoritative. Restart
+requires a new explicit preview; saved plans remain in the existing durable owner.
+Publisher completion defaults false; the form does not approve/apply or grant tools.
+Uncertain plan creation stops and points to bounded saved-plan recovery.
+
+Credentials, query/fragment/userinfo URLs, local commands and full configuration
+imports are explicitly unavailable in this form. This is an incremental remote
+source path, not completion of all MCP management or engineering readiness.
+
+Validation: 20 HTTP scope/expiry/owner tests and 11 form/connections component
+tests pass; TypeScript and focused ESLint/Ruff pass. Initial bridge regression
+reported the old 34-tool count against the intended two additions; the maintained
+count is now 36 with explicit new-tool assertions; all 25 connection/bridge
+tests pass. A synchronous in-flight guard prevents duplicate preview/plan calls
+before React updates disabled controls; the form test double-clicks plan review.
+Served panel, exact draft mismatch against real owner, restart with actual backend,
+and installed/Windows acceptance still require qualification. Installed runtime
+remains unchanged; no real connection, install or engineering run occurred.
+
+### Shared-owner blocker found before installation qualification
+
+`install_plans._license_requirement(entry=None)` always returns license_unknown,
+even when independently_completed_license is true. No supported imported-license
+review action was found in the owner/API. Therefore this remote-source slice
+currently previews and saves a blocked plan; it does not enable custom installation.
+The form now says so. Do not edit stored plans or equate the account/terms checkbox
+with a source-license grant. Next work must define the smallest explicit review
+record in the existing owner, bind it to exact imported source/draft and review
+identity, invalidate on source changes and requalify through approval/apply.
+This is shared onboarding debt, not a SteveCAD-specific workaround.

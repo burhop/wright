@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
+import { NativeCustomConnection } from "./NativeCustomConnection";
 import { NativeSignin } from "./NativeSignin";
 
 export type ConnectionsCall = (
@@ -8,6 +9,8 @@ export type ConnectionsCall = (
     | "wright_connections_list"
     | "wright_connection_plans"
     | "wright_connection_plan"
+    | "wright_connection_preview"
+    | "wright_connection_import_plan"
     | "wright_connection_plan_read"
     | "wright_connection_plan_update"
     | "wright_connection_signin"
@@ -36,7 +39,7 @@ interface Connection {
     reasons: { code: string; message: string; recovery: string }[];
   };
 }
-interface SetupPlan {
+export interface SetupPlan {
   plan_id: string;
   plan_digest: string;
   capability_id: string;
@@ -261,6 +264,13 @@ export function NativeConnections({
         Engineering tools for {workspace.workspace_name}. Availability here does
         not approve workflow actions.
       </p>
+      <NativeCustomConnection
+        workspace={workspace}
+        call={call}
+        disabled={planning || acting || uncertain}
+        onBusy={setPlanning}
+        onPlan={setPlan}
+      />
       <form
         onSubmit={(event) => {
           event.preventDefault();
