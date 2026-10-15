@@ -2,7 +2,45 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
-## Current checkpoint — 15 October 2026
+## Current local follow-on checkpoint — 15 October 2026
+
+This section supersedes the older checkpoint below; historical evidence remains
+intact. Complete engineering demonstrations and Windows acceptance are unfinished.
+
+| Area | Observed state | Next required evidence |
+| --- | --- | --- |
+| Installed named plugin |0.11.0, retained isolated runtime; no new installation | Actual Windows walkthrough and exact next-candidate qualification |
+| Engineering image transport | PR157 merged to dev a4e80d66; six-image desktop reply and same-run continuation qualified in isolated0.12 candidate | Reconcile candidate with integrated runtime; install only after gates, then Windows observation |
+| Connections integration | PR156 still open at pushed3f7ad9b2;26 CI successes,1 skip,2 failures | Local consolidated dab89787 corrects interrupted asset download and bounded Windows record reads; full gate currently running, then push gate/current CI/dev deployment |
+| Declared file inputs |75ad57dd local implementation and seven actual-owner browser checks; exact small/32 MiB wire proof | Original prepared workflow declarations, repository gates and actual Windows limits/interaction |
+| Public readiness messages |3e771584 local correction,74 transport tests and actual owning rejection observed | Remains separate from successful upload, execution or Windows acceptance |
+| SteveCAD four-/six-hole and heat-spreader demos | Existing requirements/evidence retained; no new desktop-driven full engineering run | Windows callback route, account consent, current provider discovery, exact grants, real outputs and genuine reviews |
+| Robot Tracking Diagnosis | Full corrective-CAD/FEA requirements retained; independent recording tools qualified in isolated state | Exact AgentCAD platform and CalculiX transport/field capability; no simplified workflow substitution |
+| Manufacturing preparation | Original requirements/profiles and protected campaigns retained | Independent mesh/slicer bindings and exact PETG HF/P1S profile qualification, then fresh digital regression |
+
+The upload state03 browser screenshot is an actual GB10 preview with a simulated
+host and synthetic inputs, not a completed engineering demonstration. The newer
+state05 proves the real standardized readiness reason reaches MCP, with accepted
+source unchanged and zero uploads/runs. An unbound library template is correctly
+rejected before input upload; its original diagnostic remains failed.
+
+Current evidence owners (private local paths, no credentials):
+
+- /tmp/wright-desktop-custom-connections-evidence-20261015/combined-integration-checkpoint.json
+- /tmp/wright-run-record-read-recovery-20261015/checkpoint.json
+- /tmp/wright-desktop-input-upload-evidence-20261015/checkpoint.json
+- /tmp/wright-desktop-images-012-evidence/checkpoint.json
+- /tmp/wright-windows-callback-handoff-20261015/WINDOWS-STEPS.md
+
+The sole callback receipt is tied to local-self-check.json and is not Windows
+reachability evidence. Desktop reasoning remains the requested harness; no model,
+authentication route, provider or engineering assignment was substituted.
+Generic workspace file download, portable export/import and remaining routine
+management still require implementation/qualification; image display and declared
+input upload do not establish them. Generated process-UI authoring stays gated.
+No new push, merge, release, external post or plugin update accompanies this index.
+
+## Earlier checkpoint — 15 October 2026
 
 Named0.11 is installed and protocol/resource verified. Its custom HTTPS connection
 flow, explicit source review and saved-plan discovery have isolated qualification.
