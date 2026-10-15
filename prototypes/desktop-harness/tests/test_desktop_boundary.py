@@ -434,3 +434,81 @@ def test_only_exact_local_review_can_enter_enrolled_profile(boundary):
     with pytest.raises(HTTPException) as foreign:
         check(enabled)
     assert foreign.value.status_code == 503
+
+
+@pytest.fixture
+def local_review_boundary(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_process_review_decisions import (
+        review_source,
+    )
+
+    default, service, _ = boundary
+    service.workflow_sources.read.return_value.source = review_source()
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = []
+    enabled = DesktopBackend(service, default.state, 5201, local_reviews=True)
+    assert enabled.binding.digest != default.binding.digest
+    assert not enabled.enrolled_mcp_tasks and not enabled.confined_inspection
+    return enabled, service
+
+
+def test_local_review_opt_in_requires_exact_manual_empty_tool_grant(
+    local_review_boundary,
+):
+    enabled, service = local_review_boundary
+    with pytest.raises(HTTPException) as missing:
+        check(enabled, grant=False)
+    assert missing.value.status_code == 403
+    check(enabled)
+    service.workflow_integration_policies.get.assert_called_once_with("b" * 64)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("workspace_id", "other"),
+        ("source_path", "workflows/other.wflow"),
+        ("source_digest", "f" * 64),
+        ("approval_mode", "integration_test_auto"),
+        ("allowed_tools", [{"server_id": "provider", "name": "provider__write"}]),
+    ],
+)
+def test_local_review_rejects_changed_or_expanded_grant(
+    local_review_boundary, field, value
+):
+    enabled, service = local_review_boundary
+    service.workflow_integration_policies.get.return_value[field] = value
+    with pytest.raises(HTTPException) as denied:
+        check(enabled)
+    assert denied.value.status_code == 403
+
+
+def test_local_review_does_not_enable_foreign_actions_or_agent_tools(
+    local_review_boundary,
+):
+    from gateway_probe import SOURCE
+
+    enabled, service = local_review_boundary
+    document = service.workflow_sources.read.return_value
+    changed = document.source.replace('"server": "wright"', '"server": "other"')
+    assert changed != document.source
+    document.source = changed
+    with pytest.raises(HTTPException) as denied:
+        check(enabled)
+    assert denied.value.status_code == 503
+    document.source = SOURCE
+    with pytest.raises(HTTPException) as denied:
+        check(enabled)
+    assert denied.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_local_review_does_not_enable_direct_tools(direct_boundary):
+    from desktop_backend import DesktopBackend
+
+    default, _, service = direct_boundary
+    enabled = DesktopBackend(service, default.state, 5201, local_reviews=True)
+    with pytest.raises(HTTPException) as denied:
+        check(enabled)
+    assert denied.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()

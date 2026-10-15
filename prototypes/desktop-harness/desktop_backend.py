@@ -73,6 +73,7 @@ class DesktopBackend:
         native_working_view=False,
         image_inputs=False,
         enrolled_mcp_tasks=False,
+        local_reviews=False,
     ):
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
@@ -84,12 +85,14 @@ class DesktopBackend:
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
         self.enrolled_mcp_tasks = enrolled_mcp_tasks
+        self.local_reviews = local_reviews
         self.image_inputs = image_inputs
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
             "image_inputs": image_inputs,
             "enrolled_mcp_tasks": enrolled_mcp_tasks,
+            "local_reviews": local_reviews,
             "files": {},
             "confined_inspection": confined_inspection,
             "native_editor": native_editor,
@@ -708,7 +711,11 @@ class DesktopBackend:
             for action in reviews
         )
         if any(step.cad or step.application for step in plan.steps) or (
-            reviews and (not self.enrolled_mcp_tasks or not local_reviews_only)
+            reviews
+            and (
+                not (self.enrolled_mcp_tasks or self.local_reviews)
+                or not local_reviews_only
+            )
         ):
             raise HTTPException(
                 503,
@@ -720,6 +727,15 @@ class DesktopBackend:
             raise HTTPException(
                 503, "Direct-tool execution requires separate enrollment qualification"
             )
+        if reviews and self.local_reviews and not tasks and not direct:
+            if operation in {
+                "/api/workspace/process-interfaces/runs",
+                "/api/workspace/workflow-sources/run",
+            }:
+                # Reuse the exact manual policy owner with an empty tool set.
+                # Local review opt-in cannot grant a tool or external dispatch.
+                self.qualify_enrolled_tasks([], document, row, body)
+            return
         if (tasks or direct or reviews) and self.enrolled_mcp_tasks:
             if any(not step.task_tool_allowlist for step in tasks):
                 raise HTTPException(
