@@ -1588,3 +1588,27 @@ That added crash guard is not itself qualified by this completed run. Ruff and
 syntax checks pass. Native Windows button/served-review UI qualification remains
 open, as do genuine engineering reviews and all complete engineering demos.
 Installed0.8.0 remains unchanged.
+
+## Full-gate preparation and formatting correction
+
+Started the authoritative full merge gate on6a16d143 with dedicated .venv-dev-gate
+and unused ports18154/15154. Python runtime dependency audit reported no known
+vulnerabilities; Node dependency audit passed. Gate stopped at required exact-image
+security scan because WRIGHT_GATE_DOCKER_IMAGE was not supplied. This is a failed
+prerequisite, not a gate pass or Docker-host exception. Log and raw/public scan
+failure retained under /tmp/wright-desktop-gates-20261015-01 and test-results.
+
+Built clean git archive6a16d143 as local ARM64 wright-desktop-gate:6a16d143,
+image sha256:b02e102b7f80cd8e0a970d3534e3c81bddacebfd67754e9b3b6ab7809727b124.
+No publication or existing service replacement. The build is successful but its
+security scan and full gate remain pending.
+
+Full frontend formatting check exposed10 changed files. Applied only Prettier to
+those branch-owned files, preserving preformat bytes/logs. Full formatting now
+passes;121 affected UI tests pass. Rebuilt native panel is byte-identical:
+SHA81213e889e67ac41310b76be60a381472a8f30fc9ff777613bfc86a106fd9f2c,
+2210801bytes. Earlier transpiled-text/token comparisons were not equivalent and
+are retained as inconclusive checks, not correctness claims; the actual bundled
+artifact comparison and tests are the relevant evidence. Source formatting
+changes invalidate the prior image source binding despite identical panel bytes:
+build a corrected-revision image before rerunning the full gate. No push/merge.

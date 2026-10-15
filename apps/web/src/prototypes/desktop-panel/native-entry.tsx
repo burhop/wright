@@ -56,12 +56,16 @@ function home() {
         onOpenRun={async (workspace, path, run) => {
           const request = ++generation;
           const scope = {
-            operation: "snapshot", workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id, path,
-            expected_storage_digest: run.source_digest, run_id: run.run_id,
+            operation: "snapshot",
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            path,
+            expected_storage_digest: run.source_digest,
+            run_id: run.run_id,
           };
           const result = await app.callServerTool({
-            name: "wright_process_view", arguments: { request: scope },
+            name: "wright_process_view",
+            arguments: { request: scope },
           });
           if (request !== generation || dirty) return;
           if (result.isError || !result.structuredContent?.snapshot)

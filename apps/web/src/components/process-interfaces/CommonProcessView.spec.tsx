@@ -337,10 +337,18 @@ describe("declared review and action controls", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Request changes" }));
     await screen.findByText("Review recorded: Changes requested");
-    expect(screen.getByRole("heading", { name: "Recorded review" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Questions and decisions" })).toBeVisible();
-    expect(screen.queryByRole("heading", { name: "Your next step" })).toBeNull();
-    expect(screen.getByText("Paused at a review or response step")).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Recorded review" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Questions and decisions" }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("heading", { name: "Your next step" }),
+    ).toBeNull();
+    expect(
+      screen.getByText("Paused at a review or response step"),
+    ).toBeVisible();
     expect(screen.getByText(/does not itself revise or restart/)).toBeVisible();
     expect(client.decide).toHaveBeenCalledTimes(1);
     expect(client.decide).toHaveBeenCalledWith(

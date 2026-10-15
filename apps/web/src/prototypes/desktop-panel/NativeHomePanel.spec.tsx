@@ -40,29 +40,53 @@ const files = (workspace: typeof alpha, name: string) =>
   });
 
 it("lists and filters workspace files without opening or executing them", async () => {
-  const call = vi.fn()
+  const call = vi
+    .fn()
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
-    .mockResolvedValueOnce(result({
-      workspace_id: alpha.workspace_id, session_id: alpha.session_id,
-      tree: { type: "directory", children: [
-        { type: "file", name: "part.wflow", path: "/workflows/part.wflow" },
-        { type: "directory", children: [
-          { type: "file", name: "plate.step", path: "/outputs/plate.step" },
-        ] },
-      ] },
-    }));
+    .mockResolvedValueOnce(
+      result({
+        workspace_id: alpha.workspace_id,
+        session_id: alpha.session_id,
+        tree: {
+          type: "directory",
+          children: [
+            { type: "file", name: "part.wflow", path: "/workflows/part.wflow" },
+            {
+              type: "directory",
+              children: [
+                {
+                  type: "file",
+                  name: "plate.step",
+                  path: "/outputs/plate.step",
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    );
   const onOpen = vi.fn();
-  render(<NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />);
+  render(
+    <NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />,
+  );
   await screen.findByRole("button", { name: "part.wflow" });
   expect(screen.queryByText("plate.step")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
   expect(screen.getByText("/outputs/plate.step")).toBeVisible();
-  fireEvent.change(screen.getByLabelText("Find a file"), { target: { value: "PLATE" } });
+  fireEvent.change(screen.getByLabelText("Find a file"), {
+    target: { value: "PLATE" },
+  });
   expect(screen.getByText("plate.step")).toBeVisible();
   expect(screen.queryByText("part.wflow")).not.toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText("Find a file"), { target: { value: "missing" } });
+  fireEvent.change(screen.getByLabelText("Find a file"), {
+    target: { value: "missing" },
+  });
   expect(screen.getByText("No files match this search.")).toBeVisible();
-  expect(screen.getByText(/Other file previews, upload and download are not available/)).toBeVisible();
+  expect(
+    screen.getByText(
+      /Other file previews, upload and download are not available/,
+    ),
+  ).toBeVisible();
   expect(call).toHaveBeenCalledTimes(2);
   expect(onOpen).not.toHaveBeenCalled();
 });
@@ -89,7 +113,8 @@ it("opens a selected workflow with the exact workspace and desktop session", asy
 });
 
 it("creates once and selects only the discovered exact workspace/session", async () => {
-  const call = vi.fn()
+  const call = vi
+    .fn()
     .mockResolvedValueOnce(result({ workspaces: [] }))
     .mockResolvedValueOnce(result(alpha))
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
@@ -98,33 +123,42 @@ it("creates once and selects only the discovered exact workspace/session", async
   render(<NativeHomePanel call={call} onOpen={vi.fn()} onSelect={onSelect} />);
   await screen.findByText(/No Wright workspaces yet/);
   fireEvent.click(screen.getByRole("button", { name: "New workspace" }));
-  fireEvent.change(screen.getByLabelText("Workspace name"), { target: { value: "Alpha" } });
+  fireEvent.change(screen.getByLabelText("Workspace name"), {
+    target: { value: "Alpha" },
+  });
   const button = screen.getByRole("button", { name: "Create workspace" });
   fireEvent.click(button);
   fireEvent.click(button);
   await screen.findByRole("button", { name: "part.wflow" });
   expect(onSelect).toHaveBeenCalledWith(alpha);
-  expect(call.mock.calls.filter(([name]) => name === "wright_workspace_create")).toEqual([
-    ["wright_workspace_create", { name: "Alpha" }],
-  ]);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_workspace_create"),
+  ).toEqual([["wright_workspace_create", { name: "Alpha" }]]);
 });
 
 it("does not repeat uncertain creation and allows read-only discovery", async () => {
-  const call = vi.fn()
+  const call = vi
+    .fn()
     .mockResolvedValueOnce(result({ workspaces: [] }))
     .mockRejectedValueOnce(new Error("lost acknowledgement"))
     .mockResolvedValueOnce(result({ workspaces: [alpha] }));
   render(<NativeHomePanel call={call} onOpen={vi.fn()} />);
   await screen.findByText(/No Wright workspaces yet/);
   fireEvent.click(screen.getByRole("button", { name: "New workspace" }));
-  fireEvent.change(screen.getByLabelText("Workspace name"), { target: { value: "Alpha" } });
+  fireEvent.change(screen.getByLabelText("Workspace name"), {
+    target: { value: "Alpha" },
+  });
   fireEvent.click(screen.getByRole("button", { name: "Create workspace" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("will not repeat");
-  expect(screen.getByRole("button", { name: "Create workspace" })).toBeDisabled();
+  expect(
+    screen.getByRole("button", { name: "Create workspace" }),
+  ).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
   await screen.findByRole("option", { name: "Alpha" });
   expect(screen.getByRole("button", { name: "New workspace" })).toBeDisabled();
-  expect(call.mock.calls.filter(([name]) => name === "wright_workspace_create")).toHaveLength(1);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_workspace_create"),
+  ).toHaveLength(1);
 });
 
 it("ignores a previous workspace's late file response", async () => {
@@ -236,13 +270,16 @@ it("does not redirect a restored selection to a replacement desktop session", as
 });
 
 it("refreshes the exact selected scope while keeping the Files view", async () => {
-  const call = vi.fn()
+  const call = vi
+    .fn()
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
     .mockResolvedValueOnce(files(alpha, "before.wflow"))
     .mockResolvedValueOnce(result({ workspaces: [beta, alpha] }))
     .mockResolvedValueOnce(files(alpha, "after.wflow"));
   const onOpen = vi.fn();
-  render(<NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />);
+  render(
+    <NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />,
+  );
   await screen.findByRole("button", { name: "before.wflow" });
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
   fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
@@ -260,15 +297,24 @@ it("refreshes the exact selected scope while keeping the Files view", async () =
 });
 
 it("does not redirect refreshed selection to a changed session", async () => {
-  const call = vi.fn()
+  const call = vi
+    .fn()
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
     .mockResolvedValueOnce(files(alpha, "part.wflow"))
-    .mockResolvedValueOnce(result({ workspaces: [{ ...alpha, session_id: "replacement" }, beta] }));
-  render(<NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />);
+    .mockResolvedValueOnce(
+      result({ workspaces: [{ ...alpha, session_id: "replacement" }, beta] }),
+    );
+  render(
+    <NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />,
+  );
   await screen.findByRole("button", { name: "part.wflow" });
   fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
-  expect(await screen.findByRole("alert")).toHaveTextContent("no longer available");
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "no longer available",
+  );
   expect(screen.getByLabelText("Workspace")).toHaveValue("");
   expect(call).toHaveBeenCalledTimes(3);
-  expect(screen.queryByRole("button", { name: "part.wflow" })).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "part.wflow" }),
+  ).not.toBeInTheDocument();
 });
