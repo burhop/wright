@@ -540,3 +540,55 @@ async def test_preview_bridge_is_ui_only_and_read_only(monkeypatch):
         "/api/desktop/workspaces/a/file-preview",
         params={"session_id": "chat-a", "path": "notes.md"},
     )
+
+
+@pytest.mark.asyncio
+async def test_saved_plan_discovery_requires_session_scope_and_filters_owner_output(
+    discovery,
+):
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    create("Beta")
+
+    def plan(workspace, scope, capability):
+        fields = dict(
+            plan_id=f"plan-{workspace}-{scope}",
+            workspace_id=workspace,
+            requested_scope=scope,
+            capability_id=capability,
+            state="blocked",
+            created_at="2026-10-15T00:00:00Z",
+        )
+        return SimpleNamespace(**fields, model_dump=lambda **kwargs: fields)
+
+    owner = SimpleNamespace(
+        list_workspace_install_plans=Mock(
+            return_value=[
+                plan("Alpha", "workspace", "import:custom"),
+                plan("Beta", "workspace", "import:private"),
+                plan("Alpha", "global_registered", "import:global"),
+            ]
+        )
+    )
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.get(
+            "/api/desktop/connection-plans",
+            params={"workspace_id": "Alpha", "session_id": "desktop-Alpha"},
+        )
+        assert response.status_code == 200
+        assert [item["capability_id"] for item in response.json()["plans"]] == [
+            "import:custom"
+        ]
+        owner.list_workspace_install_plans.assert_called_once_with("Alpha", None)
+        owner.list_workspace_install_plans.reset_mock()
+        denied = await client.get(
+            "/api/desktop/connection-plans",
+            params={"workspace_id": "Alpha", "session_id": "desktop-Beta"},
+        )
+        assert denied.status_code in (403, 404)
+        owner.list_workspace_install_plans.assert_not_called()

@@ -352,3 +352,55 @@ def test_saved_plan_discovery_is_bounded_and_workspace_provider_scoped(plan_data
     assert get_install_plan(database, plans[0].plan_id) == plans[0]
     with pytest.raises(ValueError):
         list_workspace_install_plans(database, "a", plans[0].capability_id, limit=1000)
+
+
+def test_workspace_discovery_recovers_imported_plan_without_provider_identity(
+    plan_database,
+):
+    from tool_registry.install_plans import list_workspace_install_plans
+
+    database, snapshot, observation = plan_database
+    plans = []
+    for workspace, scope in [
+        ("a", "workspace"),
+        ("b", "workspace"),
+        (None, "global_registered"),
+        ("a", "workspace"),
+    ]:
+        draft = preview_configuration(
+            {
+                "name": f"remote-{len(plans)}",
+                "type": "http",
+                "url": "https://example.invalid/mcp",
+            },
+            now=NOW,
+        )["drafts"][0]
+        plans.append(
+            create_install_plan(
+                database,
+                snapshot_id=snapshot.snapshot_id,
+                observation=observation,
+                import_draft=draft,
+                actor="engineer",
+                requested_scope=scope,
+                workspace_id=workspace,
+                now=NOW + timedelta(seconds=len(plans)),
+            )
+        )
+    # Simulate losing the create response: discovery needs only the workspace.
+    found = list_workspace_install_plans(database, "a")
+    assert [plan.plan_id for plan in found] == [plans[3].plan_id, plans[0].plan_id]
+    assert all(plan.capability_id.startswith("import:") for plan in found)
+    assert all(plan.state == "blocked" for plan in found)
+    assert [
+        plan.plan_id for plan in list_workspace_install_plans(database, "a", limit=1)
+    ] == [plans[3].plan_id]
+    assert list_workspace_install_plans(database, "missing") == []
+    assert list_workspace_install_plans(database, "a", "") == []
+    assert list_workspace_install_plans(database, "a", plans[0].capability_id) == [
+        plans[0]
+    ]
+    assert get_install_plan(database, plans[0].plan_id) == plans[0]
+    for limit in (0, -1, 51):
+        with pytest.raises(ValueError):
+            list_workspace_install_plans(database, "a", limit=limit)

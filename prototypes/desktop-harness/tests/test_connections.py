@@ -169,3 +169,24 @@ async def test_connection_readback_exposes_saved_validation_without_repeating_it
     client.call.assert_awaited_once_with(
         "GET", "/api/mcp/capabilities", params={"search": "", "limit": 50}
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("capability", [None, "import:custom"])
+async def test_saved_plan_discovery_can_omit_provider_but_always_scopes_workspace(
+    monkeypatch, capability
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"plans": []})
+    )
+    args = {"workspace_id": "workspace", "session_id": "session"}
+    if capability is not None:
+        args["capability_id"] = capability
+    await server(client).call_tool("wright_connection_plans", args)
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "GET", "/api/desktop/connection-plans", params=args
+    )

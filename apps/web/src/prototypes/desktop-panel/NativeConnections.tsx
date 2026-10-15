@@ -68,11 +68,16 @@ export function NativeConnections({
   const [refresh, setRefresh] = useState(0);
   const [planning, setPlanning] = useState(false);
   const [saved, setSaved] = useState<{
-    capabilityId: string;
-    plans: { plan_id: string; state: string; created_at: string }[];
+    capabilityId: string | null;
+    plans: {
+      plan_id: string;
+      capability_id: string;
+      state: string;
+      created_at: string;
+    }[];
   } | null>(null);
   const [savedError, setSavedError] = useState(false);
-  async function savedPlans(capabilityId: string, planId?: string) {
+  async function savedPlans(capabilityId: string | null, planId?: string) {
     if (planning || acting) return;
     setPlanning(true);
     setSavedError(false);
@@ -82,7 +87,11 @@ export function NativeConnections({
         {
           workspace_id: workspace.workspace_id,
           session_id: workspace.session_id,
-          ...(planId ? { plan_id: planId } : { capability_id: capabilityId }),
+          ...(planId
+            ? { plan_id: planId }
+            : capabilityId === null
+              ? {}
+              : { capability_id: capabilityId }),
         },
       );
       const data = result.structuredContent;
@@ -111,7 +120,8 @@ export function NativeConnections({
           data.plans.some(
             (item) =>
               item.workspace_id !== workspace.workspace_id ||
-              item.capability_id !== capabilityId,
+              typeof item.capability_id !== "string" ||
+              (capabilityId !== null && item.capability_id !== capabilityId),
           )
         )
           throw Error("Unconfirmed saved plan list");
@@ -269,6 +279,12 @@ export function NativeConnections({
           Search / refresh
         </button>
       </form>
+      <button
+        disabled={planning || acting}
+        onClick={() => void savedPlans(null)}
+      >
+        Saved setup in this workspace
+      </button>
       {loading ? (
         <p role="status">Loading connections…</p>
       ) : error ? (
@@ -365,17 +381,18 @@ export function NativeConnections({
         <section aria-label="Saved setup plans">
           <h3>Saved setup plans</h3>
           <p>
-            Up to 20 most recent plans for this provider in this workspace.
+            Up to 20 most recent plans{" "}
+            {saved.capabilityId ? "for this provider " : ""}in this workspace.
             Opening one does not resume setup.
           </p>
           {saved.plans.length === 0 && (
-            <p>No saved setup plans for this provider.</p>
+            <p>No saved setup plans for this selection.</p>
           )}
           {saved.plans.map((item) => (
             <button
               key={item.plan_id}
-              disabled={planning || acting || uncertain}
-              onClick={() => void savedPlans(saved.capabilityId, item.plan_id)}
+              disabled={planning || acting}
+              onClick={() => void savedPlans(item.capability_id, item.plan_id)}
             >
               Open {item.state} setup — {item.created_at}
             </button>

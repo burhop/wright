@@ -227,7 +227,7 @@ class DesktopBackend:
         async def saved_connection_plans(
             workspace_id: str,
             session_id: str,
-            capability_id: str,
+            capability_id: str | None = None,
             service: McpApiService = Depends(get_mcp_api_service),
         ):
             self.workspace(workspace_id, session_id)
@@ -251,7 +251,7 @@ class DesktopBackend:
                     for plan in plans
                     if plan.workspace_id == workspace_id
                     and plan.requested_scope == "workspace"
-                    and plan.capability_id == capability_id
+                    and (capability_id is None or plan.capability_id == capability_id)
                 ],
             }
 

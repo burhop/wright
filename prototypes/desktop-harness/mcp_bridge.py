@@ -463,9 +463,9 @@ def server(client, *, native_editor=False, native_working_view=False):
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plans(
-        workspace_id: str, session_id: str, capability_id: str
+        workspace_id: str, session_id: str, capability_id: str | None = None
     ) -> dict[str, Any]:
-        """Find saved setup plans for this workspace/provider without creating or resuming setup."""
+        """Find saved setup plans for this workspace, optionally filtered by provider without creating or resuming setup."""
         await client.scope(workspace_id, session_id)
         return await client.call(
             "GET",
@@ -473,7 +473,7 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={
                 "workspace_id": workspace_id,
                 "session_id": session_id,
-                "capability_id": capability_id,
+                **({"capability_id": capability_id} if capability_id is not None else {}),
             },
         )
 
