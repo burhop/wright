@@ -1,0 +1,91 @@
+# Next bounded demo slice: retrieve engineering files
+
+Initial investigation, 15 October 2026. Superseded by the implementation checkpoint below; not installed.
+
+The goal requires inspecting and retrieving real engineering deliverables. Native
+Files currently offers metadata and 64 KiB text previews; STEP, meshes and PDFs
+have no download control. Definition export in PR158 does not close this gap.
+
+Reuse `WorkspaceFileUseCases.read_bytes(workspace_dir, path, maximum_bytes=...)`
+in `packages/workspace_service/src/workspace_service/use_cases/files.py`. It
+already owns bounded binary/text reads through the workspace path resolver and
+bounded executor. Do not add another file service or arbitrary filesystem proxy.
+The ordinary API `/api/workspace/files/content` returns binary FileResponse but
+text JSON; it is not itself a uniform byte-download contract.
+
+Proposed minimal follow-on after the current candidate is isolated: one app-only
+native download port, exact workspace/session/path, explicit finite payload limit,
+bytes plus SHA-256 and safe basename. Reuse existing native transport and local
+Blob download pattern. Validate response identity, size and computed digest before
+creating a download. Download as attachment; do not execute or inline arbitrary
+HTML/SVG. Clear old preview state on file/workspace changes and discard late replies.
+Use the existing owner scope and protected-path policies; inspect those policies
+before implementation, including hidden/private state and symlink/reparse rejection.
+Do not assume UI-only tool metadata grants authority.
+
+Label this as the current saved file, distinct from exact recorded run evidence.
+Run artifacts retain their owning digest/review checks. Never call a browser
+request a confirmed Windows download. Unsupported/oversized files need a clear
+reason; do not silently truncate or substitute another route.
+
+Qualification: actual scoped owner bytes for existing retained CAD and a
+substantially different Robot diagnostic artifact, exact hashes, denied traversal,
+symlink/cross-session/private paths, malformed/oversized replies, workspace change
+during read, and actual browser attachment. Retained files prove transport only,
+not new engineering output. Windows native delivery remains a separate user test.
+No provider/auth/grant change is needed or implied by this slice. Full SteveCAD,
+Robot and manufacturing demonstrations remain required.
+
+## Baseline and inspected access boundaries
+
+Branch `codex/desktop-file-download` starts at `0da734d0`, currently PR158's
+unmerged head. Reconcile with integrated dev before delivery. No existing
+worktree, installed plugin, state, run or configuration was changed.
+
+`WorkspacePath.resolve` rejects traversal, absolute/drive/UNC paths, ADS,
+symlinks and reparse points. It does not reject dot paths. The current file tree
+hides dot entries and `freecad_mcp_work`; this is presentation filtering, not
+download authorization. The new port must reject hidden/private/reserved paths
+explicitly before reading, keeping advertised file visibility and access aligned.
+Only explicit UI requests may download current workspace files; model tools
+receive no new file-read capability. Run artifact evidence keeps its own owner.
+
+Tasks: inspect current required guidance and existing tests; implement the one
+bounded UI port and Download control; prove byte/scoping/error/race contracts;
+exercise actual MCP and browser on retained CAD/Robot files with honest labels;
+reconcile dev and use repository gates; qualify named candidate before any
+installation; retain actual Windows delivery as a separate acceptance check.
+
+Evidence index: `/tmp/wright-desktop-file-download-evidence-20261015/`.
+No current implementation or download qualification is claimed.
+
+## Local implementation checkpoint — 15 October 2026
+
+Implemented one app-only read port and a Download file control in the existing
+Files preview. The port reuses the bounded file owner with a 16 MiB limit and
+checks workspace/session and visible relative paths. The client checks scope,
+size, basename and SHA-256 before requesting an attachment; closing the keyed
+file view discards late replies. No run, review, provider or model authority changes.
+
+Verification: 34 backend discovery/download checks, 26 focused UI checks,
+TypeScript and lint pass. The same 26 UI checks pass after isolated `npm ci`;
+Wright's Node dependency audit passes. Original dependency-setup, outdated-copy
+test and sandbox AnyIO stall attempts are retained. The identical stalled test
+and complete affected suite pass outside the sandbox.
+
+Actual MCP and browser downloads preserve unchanged retained heat-spreader STEP
+and Robot Tracking telemetry bytes. Hidden/traversal/symlink/oversized/wrong-session
+requests are denied. Empty and 16 MiB synthetic files also pass actual MCP byte
+verification. These are transport proofs, not new engineering outputs or runs.
+A browser fixture's missing UTF-8 header was corrected after screenshot review;
+both captures are retained. The rebuilt native resource has no external assets.
+
+Evidence: `mcp-proof.json`, `mcp-boundary-proof.json`,
+`browser-1792069211887/report.json`, `implementation-checkpoint.json` and
+`social-preview.md` under the external evidence directory above. No content was
+published. Actual Windows download delivery remains unverified.
+
+Remaining: reconcile integrated dev, repository gates and full shared UI
+regression, named-candidate package qualification/rollback before installation,
+and Windows acceptance. PR158's current-head Windows backend CI is still running.
+Full SteveCAD, Robot and manufacturing process acceptance remains incomplete.

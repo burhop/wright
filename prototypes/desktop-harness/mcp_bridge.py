@@ -461,6 +461,18 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={"session_id": session_id, "path": path},
         )
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_workspace_file_download(
+        workspace_id: str, session_id: str, path: str
+    ) -> dict[str, Any]:
+        """Read exact bounded current-file bytes for an explicit UI download."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            f"/api/desktop/workspaces/{workspace_id}/file-download",
+            params={"session_id": session_id, "path": path},
+        )
+
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plan(
         workspace_id: str,

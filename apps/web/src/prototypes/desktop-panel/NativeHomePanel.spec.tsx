@@ -83,9 +83,7 @@ it("lists and filters workspace files without opening or executing them", async 
   });
   expect(screen.getByText("No files match this search.")).toBeVisible();
   expect(
-    screen.getByText(
-      /Other file previews, upload and download are not available/,
-    ),
+    screen.getByText(/downloads support visible files up to 16 MiB/),
   ).toBeVisible();
   expect(call).toHaveBeenCalledTimes(2);
   expect(onOpen).not.toHaveBeenCalled();

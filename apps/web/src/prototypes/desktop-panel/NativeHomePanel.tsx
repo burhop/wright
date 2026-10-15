@@ -30,6 +30,7 @@ export type HomeCall = (
     | "wright_workflow_template_create"
     | "wright_workspace_files"
     | "wright_workspace_file_preview"
+    | "wright_workspace_file_download"
     | "wright_workflow_history"
     | "wright_connections_list"
     | "wright_connection_plans"
@@ -405,8 +406,8 @@ export function NativeHomePanel({
               ))}
           </ul>
           <p>
-            Text previews support files up to 64 KiB. Other file previews,
-            upload and download are not available here yet.
+            Text previews support files up to 64 KiB; downloads support visible
+            files up to 16 MiB. Other previews and uploads are unavailable here.
           </p>
           {previewPath && (
             <NativeFilePreview
