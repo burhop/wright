@@ -11,6 +11,95 @@ old delivery sequence, not its design decisions or historical evidence. Keep
 the separate Codex-inside-Wright chat pilot. It is not the execution mechanism
 for these desktop demonstrations.
 
+## Current continuation checkpoint — 14 October 2026
+
+Continue in `/tmp/wright-desktop-engineering-execution`, branch
+`codex/desktop-engineering-execution`. Baseline PR 153 is merged to dev at
+`a61361384a3de15163fdb0a6b6a3da56ad92e673`; its post-merge CI is now successful, including Windows frontend/backend and
+ARM64/x64 engineering-image smoke/publication jobs (baseline-postmerge-ci.json). Historical baseline tables below retain their dated
+planning context and are not current installation status.
+
+Named plugin 0.8.0 is installed and protocol-verified. Its frozen runtime checkout
+is `/tmp/wright-desktop-ui-files-candidate`; do not edit runtime files there.
+Home now includes workspace creation/selection, Workflows, Connections, Files
+metadata search, bounded read-only UTF-8 text preview and Recent runs. Browser-host checks do not establish Windows
+native acceptance. The short `desktop-08-walkthrough.md` covers that outstanding
+user observation. Installed engineering execution/image input remain gated.
+
+The separate execution checkout has an off-by-default exact-enrollment MCP-task
+qualification profile. Its boundary and existing policy-owner suites pass 76
+checks. A fresh actual MCP/HTTP/runtime/gateway run completed with a desktop-authored
+inspection proposal and completion, one observed gateway dispatch, unchanged
+input, and an explicit no-enrollment denial. This exercises the new profile with
+its old confined-inspection flag disabled; it does not establish arbitrary
+engineering providers or replace the required SteveCAD demonstrations.
+See `workspace-home-progress.md` for exact receipts and remaining limits.
+
+Existing SteveCAD account/terms setup is confirmed. The Windows-to-GB10 callback
+route and interactive sign-in still need qualification. Required image perception,
+CAD/direct-tool/export paths, genuine reviews and the multi-tool engineering
+runs remain open. Keep independent implementation moving while waiting on login.
+
+### Priorities that keep this practical
+
+1. **Finish and expose the existing home slice.** Qualify workspace selection,
+   workflow open, Back, draft protection and narrow-panel rendering. Do not
+   rebuild these features because they are absent from the installed version.
+2. **Connect a real engineering workspace.** Add Connections using existing
+   catalog, custom-server, authentication, health and grant owners. Show a simple
+   summary (Connected / Sign in / Setup needed / Unavailable), with technical
+   details on demand. Provider installation and workflow permission are separate.
+   Preserve the exact return destination through sign-in and setup.
+3. **Finish one engineering journey.** Prioritize the reasoning/action and
+   artifact paths required by the existing SteveCAD native workflow, then prove
+   four-hole and six-hole runs. Do this before broad settings or Git parity.
+4. **Make returning and reviewing effortless.** Add recent runs, files/results,
+   declared reviews and explicit same-run continuation. Include required file
+   inputs and result previews in the first slice when its workflow needs them;
+   they must not wait for a later cosmetic management milestone.
+5. **Demonstrate the connected engineering chain.** Complete the existing
+   SteveCAD/OASiS comparison with exact handoffs and genuine decisions, then
+   finish remaining routine management and the affected-platform regressions.
+
+These priorities refine M0–M3 sequencing, not their engineering requirements or
+completion criteria. A login or real review can pause its dependent path while
+unrelated implementation continues. Do not turn an external wait into another
+architecture project.
+
+### Concrete host presentation decisions
+
+- One desktop conversation supplies reasoning. Wright home contains Workflows,
+  Connections, Files and Recent runs; workspace selection stays visible. Keep
+  engineering names in the main view and identifiers in optional diagnostics.
+- Use the same editor, neutral canvas and process/result components in each
+  harness. Keep only theme, placement, navigation and host file/conversation
+  hooks in the existing presentation adapter. Hermes may use a different shell;
+  future harnesses do not need speculative implementations now.
+- Prefer a documented conversation entry and supported file handler. Test a
+  sidebar entry only to improve discoverability. Native document tabs require
+  actual Windows proof; otherwise retain one panel with selection and Back.
+- Panel actions have clear loading, success, waiting and failure states. Use one
+  obvious next action, preserve unsaved edits, and return from Connections or an
+  evidence viewer to the exact source/run. Opening a view never executes work.
+- Model selection and general chat controls belong to the host. Wright settings
+  cover its workspace, connections, process instructions and diagnostics. Do not
+  offer controls that pretend to alter unobservable host settings.
+- Use host-provided theme values and shared components first. Do not add another
+  UI library or styling framework merely to imitate the host. Verify keyboard,
+  focus, dark/light themes, resize and zoom in the actual desktop.
+
+Official [extensions](https://developers.openai.com/plugins/build/extensions),
+[UI guidance](https://developers.openai.com/plugins/concepts/ui-guidelines) and
+[bridge reference](https://developers.openai.com/plugins/reference) were reopened
+for this review. They document integration choices, not availability in this
+particular Windows build. Optional file helpers require feature detection.
+Computer use may assist testing if available; it is not a required engineering
+execution path. Keep browser proof, native-host proof and user acceptance separate.
+
+Use the short [continuation prompt](demo-readiness-next-goal.md) with the existing
+[full execution scope](demo-readiness-goal.md). No new goal is necessary in the
+current thread: its implementation goal is already active.
+
 ## Outcome and recommended approach
 
 A user can stay in Codex to select or create a Wright workspace, connect its

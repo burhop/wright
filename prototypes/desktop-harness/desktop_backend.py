@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import time
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
@@ -19,6 +19,9 @@ from data_vault.desktop_reasoning_repository import (
     DesktopReasoningRepository,
 )
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
+from api.services.mcp_services import McpApiService, get_mcp_api_service
+from api.security import require_admin
+from desktop_oauth import DesktopOAuthPresentation
 
 
 CLIENT_LEASE_SECONDS = 30
@@ -43,6 +46,21 @@ class AnswerRequest(BaseModel):
     response: DesktopReasoningResponse
 
 
+class ConnectionPlanRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    capability_id: str = Field(min_length=1, max_length=256)
+    independently_completed_license: bool = False
+
+
+class ConnectionPlanAction(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
 class DesktopBackend:
     def __init__(
         self,
@@ -53,6 +71,8 @@ class DesktopBackend:
         confined_inspection=False,
         native_editor=False,
         native_working_view=False,
+        image_inputs=False,
+        enrolled_mcp_tasks=False,
     ):
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
@@ -60,11 +80,16 @@ class DesktopBackend:
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
         self.clients = {}
+        self.oauth = DesktopOAuthPresentation()
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
+        self.enrolled_mcp_tasks = enrolled_mcp_tasks
+        self.image_inputs = image_inputs
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
+            "image_inputs": image_inputs,
+            "enrolled_mcp_tasks": enrolled_mcp_tasks,
             "files": {},
             "confined_inspection": confined_inspection,
             "native_editor": native_editor,
@@ -84,6 +109,7 @@ class DesktopBackend:
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
         for name, file in (
             [("native_source_tools", "native_source_tools.py")]
+            + [("desktop_oauth", "desktop_oauth.py")]
             + ([("native_editor", "native-editor.html")] if native_editor else [])
             + (
                 [("native_process_tools", "native_process_tools.py")]
@@ -96,6 +122,7 @@ class DesktopBackend:
             ).hexdigest()
         self.binding = DesktopHarnessBinding(
             connection_id="wright-desktop-prototype:" + canonical_digest(runtime),
+            image_input_profile="inline-png-jpeg-v1" if image_inputs else "unavailable",
         )
         (self.state / "desktop-binding.json").write_text(
             self.binding.model_dump_json(indent=2)
@@ -184,6 +211,251 @@ class DesktopBackend:
     def router(self):
         router = APIRouter(prefix="/api/desktop")
 
+        async def scoped_plan(workspace_id, session_id, plan_id, request, service):
+            self.workspace(workspace_id, session_id)
+            from api.routers.mcp import get_mcp_install_plan
+
+            plan = await get_mcp_install_plan(plan_id, request, service)
+            if plan.workspace_id != workspace_id or plan.requested_scope != "workspace":
+                raise HTTPException(403, "Setup plan belongs to a different scope")
+            return plan
+
+        @router.get("/connection-plans")
+        async def saved_connection_plans(
+            workspace_id: str,
+            session_id: str,
+            capability_id: str,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(workspace_id, session_id)
+            plans = service.list_workspace_install_plans(workspace_id, capability_id)
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "limit": 20,
+                "plans": [
+                    {
+                        key: plan.model_dump(mode="json")[key]
+                        for key in (
+                            "plan_id",
+                            "capability_id",
+                            "workspace_id",
+                            "state",
+                            "created_at",
+                        )
+                    }
+                    for plan in plans
+                    if plan.workspace_id == workspace_id
+                    and plan.requested_scope == "workspace"
+                    and plan.capability_id == capability_id
+                ],
+            }
+
+        @router.get("/connection-plans/{plan_id}")
+        async def read_connection_plan(
+            plan_id: str,
+            workspace_id: str,
+            session_id: str,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                workspace_id, session_id, plan_id, request, service
+            )
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan": plan,
+            }
+
+        @router.post(
+            "/connection-plans/{plan_id}/approve", dependencies=[Depends(require_admin)]
+        )
+        async def approve_connection_plan(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            from api.routers.mcp import PlanDigestRequest, approve_mcp_install_plan
+
+            plan = await approve_mcp_install_plan(
+                plan_id,
+                PlanDigestRequest(plan_digest=body.plan_digest),
+                request,
+                service,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "plan": plan,
+            }
+
+        @router.post(
+            "/connection-plans/{plan_id}/apply", dependencies=[Depends(require_admin)]
+        )
+        async def apply_connection_plan(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            from api.routers.mcp import PlanDigestRequest, apply_mcp_install_plan
+
+            run = await apply_mcp_install_plan(
+                plan_id,
+                PlanDigestRequest(plan_digest=body.plan_digest),
+                request,
+                service,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "onboarding_run": run,
+            }
+
+        @router.post("/connection-plans")
+        async def connection_plan(
+            body: ConnectionPlanRequest,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(body.workspace_id, body.session_id)
+            # Delegate to the existing owner and its error mapping. This records
+            # a reviewable plan only; approval, apply and grants remain separate.
+            from api.routers.mcp import InstallPlanRequest, create_mcp_install_plan
+
+            plan = await create_mcp_install_plan(
+                InstallPlanRequest(
+                    capability_id=body.capability_id,
+                    requested_scope="workspace",
+                    workspace_id=body.workspace_id,
+                    independently_completed_license=body.independently_completed_license,
+                ),
+                request,
+                service,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "plan": plan,
+            }
+
+        @router.get(
+            "/connection-plans/{plan_id}/signin", dependencies=[Depends(require_admin)]
+        )
+        async def read_signin(
+            plan_id: str,
+            workspace_id: str,
+            session_id: str,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                workspace_id, session_id, plan_id, request, service
+            )
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            try:
+                pending = self.oauth.read(server_id, workspace_id, session_id, plan_id)
+            except ValueError:
+                raise HTTPException(
+                    403, "Sign-in presentation belongs to another scope"
+                ) from None
+            # Sensitive transient URL: served only to the authenticated operator.
+            from starlette.responses import JSONResponse
+
+            return JSONResponse(
+                {
+                    "workspace_id": workspace_id,
+                    "session_id": session_id,
+                    "plan_id": plan_id,
+                    **pending,
+                },
+                headers={"Cache-Control": "no-store"},
+            )
+
+        @router.post(
+            "/connection-plans/{plan_id}/validate",
+            dependencies=[Depends(require_admin)],
+        )
+        async def validate_connection(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            if plan.state != "completed" or plan.plan_digest != body.plan_digest:
+                raise HTTPException(
+                    409, "Read the exact completed setup plan before validation"
+                )
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+            from api.routers.mcp import run_capability_validation_endpoint
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            try:
+                self.oauth.bind(server_id, body.workspace_id, body.session_id, plan_id)
+            except ValueError:
+                raise HTTPException(
+                    409, "A sign-in operation is already pending"
+                ) from None
+            try:
+                validation = await run_capability_validation_endpoint(
+                    server_id, request, service
+                )
+                return {
+                    "workspace_id": body.workspace_id,
+                    "session_id": body.session_id,
+                    "plan_id": plan_id,
+                    "validation": validation,
+                }
+            finally:
+                self.oauth.clear(server_id)
+
+        @router.post(
+            "/connection-plans/{plan_id}/enable",
+            dependencies=[Depends(require_admin)],
+        )
+        async def enable_connection(
+            plan_id: str,
+            body: ConnectionPlanAction,
+            request: Request,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            plan = await scoped_plan(
+                body.workspace_id, body.session_id, plan_id, request, service
+            )
+            if plan.state != "completed" or plan.plan_digest != body.plan_digest:
+                raise HTTPException(
+                    409, "Read the exact completed setup plan before enabling"
+                )
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+            from api.routers.mcp import enable_capability_for_workspace_endpoint
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            # The existing owner revalidates current evidence/configuration and
+            # grants only workspace availability, never invocation approval.
+            result = await enable_capability_for_workspace_endpoint(
+                body.workspace_id, server_id, request, service
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "plan_id": plan_id,
+                "enablement": result,
+            }
+
         @router.get("/connection")
         async def connection():
             return {
@@ -252,6 +524,92 @@ class DesktopBackend:
                 "url": f"http://127.0.0.1:{self.web_port}/workspace/{workspace_id}?host=openai-desktop",
             }
 
+        @router.get("/workspaces")
+        async def list_workspaces():
+            items = []
+            for row in self.service.lifecycle.list_all():
+                root = Path(row["local_path"]).resolve()
+                if not root.is_relative_to(self.state / "workspaces"):
+                    continue
+                for session in self.service.repository.list_sessions(
+                    row["workspace_id"]
+                ):
+                    if session["agent_id"] != "openai-desktop-harness":
+                        continue
+                    available = root.is_dir()
+                    try:
+                        self.workspace(row["workspace_id"], session["session_id"])
+                    except HTTPException as error:
+                        if error.status_code != 403:
+                            raise
+                        continue
+                    except OSError:
+                        available = False
+                    items.append(
+                        {
+                            "workspace_id": row["workspace_id"],
+                            "session_id": session["session_id"],
+                            "workspace_name": row.get("workspace_name") or root.name,
+                            "available": available,
+                            "reason": None
+                            if available
+                            else "Workspace directory is unavailable",
+                        }
+                    )
+                    # The repository orders sessions by recency. Discovery offers
+                    # that explicit scope; it never activates or rebinds a session.
+                    break
+            return {
+                "workspaces": sorted(
+                    items,
+                    key=lambda item: (
+                        item["workspace_name"].casefold(),
+                        item["workspace_id"],
+                    ),
+                )
+            }
+
+        @router.get("/workspaces/{workspace_id}/files")
+        async def workspace_files(workspace_id: str, session_id: str):
+            row = self.workspace(workspace_id, session_id)
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "tree": await self.service.files.tree(row["local_path"]),
+            }
+
+        @router.get("/workspaces/{workspace_id}/file-preview")
+        async def workspace_file_preview(workspace_id: str, session_id: str, path: str):
+            row = self.workspace(workspace_id, session_id)
+            scope = {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "path": path,
+            }
+            try:
+                result = await self.service.files.read(
+                    row["local_path"], path, max_bytes=65536
+                )
+            except (ValueError, FileNotFoundError, PermissionError):
+                return {
+                    **scope,
+                    "supported": False,
+                    "reason": "Text preview is unavailable. Choose an existing workspace text file up to 64 KiB.",
+                }
+            if result.binary or result.content is None:
+                return {
+                    **scope,
+                    "supported": False,
+                    "reason": "This file type has no preview here yet. Inspect run artifacts in Run and results.",
+                }
+            return {
+                **scope,
+                "supported": True,
+                "content": result.content.decode("utf-8"),
+                "sha256": hashlib.sha256(result.content).hexdigest(),
+                "bytes": len(result.content),
+            }
+
         @router.get("/reasoning")
         async def pending(workspace_id: str, session_id: str):
             self.workspace(workspace_id, session_id)
@@ -295,7 +653,10 @@ class DesktopBackend:
 
     async def qualify_digital_source(self, body, *, operation=""):
         """Prototype boundary: no physical or application execution capabilities."""
-        from workspace_service.workflow_source_execution import compile_prompt_workflow
+        from workspace_service.workflow_source_execution import (
+            compile_prompt_workflow,
+            WorkflowSourceExecutionError,
+        )
 
         if (
             not isinstance(body, dict)
@@ -311,24 +672,65 @@ class DesktopBackend:
         document = await self.service.workflow_sources.read(
             row["local_path"], body.get("path")
         )
-        plan = compile_prompt_workflow(document.source)
-        if any(
-            port.get("kind") == "reference_images"
-            for fields in plan.inputs.values()
-            for port in fields.get("outputs", [])
+        try:
+            plan = compile_prompt_workflow(document.source)
+        except WorkflowSourceExecutionError as error:
+            raise HTTPException(
+                400,
+                {
+                    "code": error.code,
+                    "message": str(error),
+                    "correction": error.correction,
+                },
+            ) from error
+        if (
+            not self.image_inputs
+            and any(
+                port.get("kind") == "reference_images"
+                for fields in plan.inputs.values()
+                for port in fields.get("outputs", [])
+            )
         ) or any(step.native_image_format for step in plan.steps):
             raise HTTPException(
                 503, "Desktop image input and generation capabilities are not qualified"
             )
-        if any(
-            step.cad or step.application or step.external_action or step.tool_name
-            for step in plan.steps
+        from workspace_service.workflow_integration_policy import (
+            LOCAL_REVIEW_BINDING,
+            LOCAL_REVIEW_DESTINATION,
+        )
+
+        reviews = [step.external_action for step in plan.steps if step.external_action]
+        local_reviews_only = all(
+            action.get("action_kind") == "local_review"
+            and action.get("binding") == LOCAL_REVIEW_BINDING
+            and action.get("destination") == LOCAL_REVIEW_DESTINATION
+            and action.get("action") == {"kind": "local_review", "mode": "review_only"}
+            for action in reviews
+        )
+        if any(step.cad or step.application for step in plan.steps) or (
+            reviews and (not self.enrolled_mcp_tasks or not local_reviews_only)
         ):
             raise HTTPException(
                 503,
-                "CAD, application, external-action and direct-tool execution remain unavailable in this prototype.",
+                "CAD, application and external-action execution remain unavailable in this prototype.",
             )
         tasks = [step for step in plan.steps if step.agent_task]
+        direct = [step for step in plan.steps if step.tool_name]
+        if direct and not self.enrolled_mcp_tasks:
+            raise HTTPException(
+                503, "Direct-tool execution requires separate enrollment qualification"
+            )
+        if (tasks or direct or reviews) and self.enrolled_mcp_tasks:
+            if any(not step.task_tool_allowlist for step in tasks):
+                raise HTTPException(
+                    503, "Enrolled MCP tasks require explicit tool lists"
+                )
+            if operation in {
+                "/api/workspace/process-interfaces/runs",
+                "/api/workspace/workflow-sources/run",
+            }:
+                self.qualify_enrolled_tasks(tasks, document, row, body, direct=direct)
+            return
         if tasks and (
             not self.confined_inspection
             or any(
@@ -378,3 +780,46 @@ class DesktopBackend:
                     403,
                     "Confined inspection grant differs from the exact read-only scope",
                 )
+
+    def qualify_enrolled_tasks(self, tasks, document, workspace, body, *, direct=()):
+        """Opt-in qualification only; the existing runtime/gateway still owns dispatch."""
+        from workspace_service.workflow_source_execution import (
+            WorkflowSourceExecutionError,
+        )
+
+        digest = body.get("integration_policy_digest")
+        if not digest:
+            raise HTTPException(
+                403, "MCP task qualification requires private enrollment"
+            )
+        try:
+            grant = self.service.workflow_integration_policies.get(digest)
+        except (KeyError, WorkflowSourceExecutionError) as error:
+            raise HTTPException(403, "MCP task enrollment is unavailable") from error
+        expected = {
+            (step.server_id, f"{step.server_id}__{name}")
+            for step in tasks
+            for name in step.task_tool_allowlist
+        }
+        expected.update((step.server_id, step.tool_name) for step in direct)
+        actual = {(tool["server_id"], tool["name"]) for tool in grant["allowed_tools"]}
+        schemas = {
+            (tool["server_id"], tool["name"]): tool.get("schema_digest")
+            for tool in grant["allowed_tools"]
+        }
+        direct_schemas_match = all(
+            step.schema_digest
+            and schemas.get((step.server_id, step.tool_name)) == step.schema_digest
+            for step in direct
+        )
+        if (
+            grant["workspace_id"] != workspace["workspace_id"]
+            or grant["source_path"] != document.path
+            or grant["source_digest"] != document.storage_digest
+            or grant["approval_mode"] != "manual"
+            or actual != expected
+            or not direct_schemas_match
+        ):
+            raise HTTPException(
+                403, "MCP task enrollment differs from the exact manual scope"
+            )

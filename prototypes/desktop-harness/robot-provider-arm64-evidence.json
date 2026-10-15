@@ -1,0 +1,81 @@
+{
+  "status": "passed",
+  "scope": "Actual selected-container provider calls on original offline datasets; not desktop workflow acceptance",
+  "platform": "linux_arm64",
+  "python": "3.12.12",
+  "image": "sha256:6c5ebe4d1812e9bc4f6fc7d857a21ee2ad6488f63c0128dabc12fc9535d9b99f",
+  "observed_at": "2026-10-14T23:10:58.894389+00:00",
+  "finished_at": "2026-10-14T23:11:14.248013+00:00",
+  "evidence_sha256": "c3ea34c0749e8d7a8f460e4e4616f30978abef508baf94e9c358b3f23163d0cb",
+  "versions_sha256": "5806b3b0651eb00f8b71a25bdc05da0f4ff5adeda5e2eef950ba8dcab113f6c0",
+  "cases": [
+    {
+      "scenario": "robot-tracking-diagnosis-01",
+      "position_rmse_m": 0.014113165506822019,
+      "retained_samples": 61,
+      "independent_relative_difference": [
+        0.0,
+        0.0
+      ],
+      "events": [
+        {
+          "event_id": "E01",
+          "operator_note": "Front caster crossed taped floor seam",
+          "time_s": "15",
+          "bag_elapsed_s": 15.0,
+          "nearest_odometry_time_s": 15.0,
+          "difference_s": 0.0
+        }
+      ],
+      "missing_intervals": [],
+      "outputs": 12
+    },
+    {
+      "scenario": "robot-tracking-diagnosis-02",
+      "position_rmse_m": 0.10613942977788116,
+      "retained_samples": 61,
+      "independent_relative_difference": [
+        2.6150108092452754e-16,
+        1.082189309709628e-15
+      ],
+      "events": [
+        {
+          "event_id": "E01",
+          "operator_note": "Robot reached marked corner entry",
+          "time_s": "12",
+          "bag_elapsed_s": 12.0,
+          "nearest_odometry_time_s": 12.0,
+          "difference_s": 0.0
+        }
+      ],
+      "missing_intervals": [],
+      "outputs": 12
+    },
+    {
+      "scenario": "robot-tracking-diagnosis-03",
+      "position_rmse_m": 0.008614542537186748,
+      "retained_samples": 56,
+      "independent_relative_difference": [
+        2.013715143303844e-16,
+        0.0
+      ],
+      "events": [
+        {
+          "event_id": "E01",
+          "operator_note": "Tall tote passed between camera and tracking marker",
+          "time_s": "14",
+          "bag_elapsed_s": 14.0,
+          "nearest_odometry_time_s": 14.0,
+          "difference_s": 0.0
+        }
+      ],
+      "missing_intervals": [
+        [
+          13.5,
+          16.5
+        ]
+      ],
+      "outputs": 12
+    }
+  ]
+}

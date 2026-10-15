@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+
+import pytest
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -51,12 +54,13 @@ def _tools() -> list[dict[str, str]]:
     ]
 
 
-def test_conversion_counts_are_available_to_bag_inspection(tmp_path):
+@pytest.mark.parametrize("scenario_prefix", ["01-", "02-", "03-"])
+def test_conversion_counts_are_available_to_bag_inspection(tmp_path, scenario_prefix):
     scenario = next(
         (
             ROOT
             / "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis"
-        ).glob("01-*")
+        ).glob(scenario_prefix + "*")
     )
     result = PREPARER.prepare(
         SimpleNamespace(
@@ -67,7 +71,7 @@ def test_conversion_counts_are_available_to_bag_inspection(tmp_path):
             server_map=None,
         ),
         scenario,
-        _tools(),
+        [tool for tool in _tools() if tool["tool_name"] != "get_message_at_time"],
     )
     plan = compile_prompt_workflow(Path(result["draft"]).read_text(encoding="utf-8"))
     normalize = next(step for step in plan.steps if step.id.startswith("normalize_csv_"))
@@ -97,3 +101,43 @@ def test_conversion_counts_are_available_to_bag_inspection(tmp_path):
         "corrective_fea",
         "commissioning",
     } <= {role for role, _ in validator.validation_sources}
+
+    expected = {
+        "normalize_csv": {"normalize_csv_to_ros2"},
+        "inspect_bag": {"bag_info", "get_topic_schema", "get_messages_in_range"},
+        "align_and_measure": {"calculate_tracking_metrics"},
+        "preflight_corrective_cad": {"context", "docs"},
+        "author_corrective_cad_source": {"write_text_document"},
+        "build_corrective_hardware": {"run"},
+        "solve_corrective_hardware": {"calculix_mesh_preflight", "calculix_solve_static_recorded", "calculix_run_get"},
+        "export_corrective_fields": {"export_recorded_fields_and_reactions"},
+        "verify_corrective_design": {"inspect_file"},
+    }
+    tasks = [step for step in plan.steps if step.agent_task]
+    assert len(tasks) == len(expected)
+    for prefix, tools in expected.items():
+        step = next(step for step in tasks if step.id.startswith(prefix + "_"))
+        assert set(step.task_tool_allowlist) == tools
+    receipt = json.loads(Path(result["draft"]).with_name("staging-manifest.json").read_text())
+    assert {(t["server_id"], t["tool_name"]) for t in receipt["tool_allowlist"]} == {
+        (step.server_id, name) for step in tasks for name in step.task_tool_allowlist
+    }
+    assert all(t["tool_name"] != "get_message_at_time" for t in receipt["tool_allowlist"])
+
+
+@pytest.mark.parametrize("fault", ["missing", "duplicate"])
+def test_required_corrective_tool_registration_fails_closed(tmp_path, fault):
+    tools = _tools()
+    required = next(tool for tool in tools if tool["tool_name"] == "run")
+    if fault == "missing":
+        tools.remove(required)
+    else:
+        tools.append(dict(required))
+    scenario = next((ROOT / "tests/datasets/engineering-workflows/scenarios/robot-tracking-diagnosis").glob("01-*"))
+    with pytest.raises(ValueError, match="unavailable or ambiguous: agentcad/run"):
+        PREPARER.prepare(
+            SimpleNamespace(workspace_root=str(tmp_path / "workspace"), draft_root=str(tmp_path / "draft"), attempt="registration-fault", instance_source=None, server_map=None),
+            scenario,
+            tools,
+        )
+    assert not list((tmp_path / "draft").rglob("bound.workflow.wflow"))

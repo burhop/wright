@@ -5,24 +5,87 @@ or automatic retries. The API's existing services own all workflow behavior.
 """
 
 import argparse
+import base64
 import hashlib
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from importlib.metadata import version
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 from uuid import uuid4
 from pydantic import TypeAdapter
 import anyio
-from core.desktop_reasoning import DesktopActionReply
+from core.desktop_reasoning import (
+    DesktopActionReply,
+    DesktopReasoningRequest,
+    DesktopHarnessBinding,
+)
 from core.process_validation import Identifier
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
 from mcp.server.fastmcp import FastMCP
-from mcp.types import ToolAnnotations
+from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
+
+
+def reasoning_images(request):
+    from agent_adapters.desktop_reasoning import desktop_inline_image
+
+    images = []
+    for message in request.payload.get("messages", []):
+        content = message.get("content") if isinstance(message, dict) else None
+        if not isinstance(content, list):
+            continue
+        for index, part in enumerate(content):
+            if isinstance(part, dict) and part.get("type") in {
+                "image_url",
+                "image",
+                "input_image",
+            }:
+                if request.binding.image_input_profile != "inline-png-jpeg-v1":
+                    raise ValueError("Image handoff profile unavailable")
+                if part.get("type") != "image_url" or not isinstance(
+                    part.get("image_url"), dict
+                ):
+                    raise ValueError("Unsupported image handoff shape")
+                media, data = desktop_inline_image(part["image_url"].get("url"))
+                images.append((content, index, media, data))
+    return images
+
+
+def task_presentation(item, workspace_id, session_id):
+    request = DesktopReasoningRequest.model_validate_json(json.dumps(item["request"]))
+    if (
+        request.workspace_id != workspace_id
+        or request.session_id != session_id
+        or item["request_digest"] != request.digest
+        or item["binding_digest"] != request.binding.digest
+    ):
+        raise ValueError("Pending request identity differs")
+    # Parse a fresh copy: projection never changes the durable request or its digest.
+    images = reasoning_images(request)
+    references = []
+    for ordinal, (content, index, media, data) in enumerate(images):
+        reference = {
+            "type": "image_reference",
+            "image_index": ordinal,
+            "media_type": media,
+            "size_bytes": len(data),
+            "sha256": hashlib.sha256(data).hexdigest(),
+        }
+        content[index] = reference
+        references.append(reference)
+    if not references:
+        return item
+    return {
+        **item,
+        "request": request.model_dump(mode="json"),
+        "image_references": references,
+        "presentation": "image-reference projection; request_digest identifies the original durable request",
+    }
+
 
 WORKSPACE_PANEL_HTML = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -288,10 +351,232 @@ def server(client, *, native_editor=False, native_working_view=False):
         """Read connection readiness and honest model/tool qualification limits."""
         return await client.call("GET", "/api/desktop/connection")
 
-    @mcp.tool(annotations=write)
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workspace_create(name: str) -> dict:
         """Create a fresh isolated Wright workspace bound to this desktop connection."""
         return await client.call("POST", "/api/desktop/workspaces", json={"name": name})
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_workspace_list() -> dict[str, Any]:
+        """Find this connection's Wright workspaces without activating or rebinding sessions."""
+        return await client.call("GET", "/api/desktop/workspaces")
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_connections_list(
+        workspace_id: str, session_id: str, search: str = "", cursor: str | None = None
+    ) -> dict[str, Any]:
+        """Inspect the existing MCP catalog and this workspace's membership. Does not connect or grant tools."""
+        from tool_registry.capability_models import CapabilityList
+
+        await client.scope(workspace_id, session_id)
+        params = {"search": search, "limit": 50}
+        if cursor is not None:
+            params["cursor"] = cursor
+        catalog = CapabilityList.model_validate(
+            await client.call("GET", "/api/mcp/capabilities", params=params)
+        )
+        return {
+            "workspace_id": workspace_id,
+            "session_id": session_id,
+            "snapshot": catalog.snapshot.model_dump(mode="json"),
+            "next_cursor": catalog.next_cursor,
+            "total": catalog.total,
+            "connections": [
+                {
+                    "capability_id": item.capability_id,
+                    "name": item.name,
+                    "description": item.description,
+                    "compatibility": item.compatibility.model_dump(mode="json"),
+                    "local_validation": (
+                        {
+                            key: item.local_validation.get(key)
+                            for key in (
+                                "evidence_id",
+                                "state",
+                                "observed_at",
+                                "reason_codes",
+                            )
+                        }
+                        if item.local_validation is not None
+                        else None
+                    ),
+                    "installed": item.user_state.installed,
+                    "active": item.user_state.active,
+                    "process_status": item.user_state.process_status,
+                    "installed_version": item.user_state.installed_version,
+                    "enabled_here": any(
+                        scope.get("workspace_id") == workspace_id
+                        for scope in item.user_state.enabled_workspaces
+                    ),
+                    "credentials_missing": any(
+                        not configured
+                        for configured in item.user_state.credentials_configured.values()
+                    ),
+                }
+                for item in catalog.capabilities
+            ],
+        }
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_workspace_files(
+        workspace_id: str, session_id: str
+    ) -> dict[str, Any]:
+        """Browse scoped workspace file metadata without reading contents or running files."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            f"/api/desktop/workspaces/{workspace_id}/files",
+            params={"session_id": session_id},
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_workspace_file_preview(
+        workspace_id: str, session_id: str, path: str
+    ) -> dict[str, Any]:
+        """Read a bounded workspace text preview. Never executes or edits the file."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            f"/api/desktop/workspaces/{workspace_id}/file-preview",
+            params={"session_id": session_id, "path": path},
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plan(
+        workspace_id: str,
+        session_id: str,
+        capability_id: str,
+        independently_completed_license: bool = False,
+    ) -> dict[str, Any]:
+        """Prepare a reviewable catalog setup plan. Does not approve, install, authenticate or grant tools."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "independently_completed_license": independently_completed_license,
+            },
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plans(
+        workspace_id: str, session_id: str, capability_id: str
+    ) -> dict[str, Any]:
+        """Find saved setup plans for this workspace/provider without creating or resuming setup."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-plans",
+            params={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+            },
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plan_read(
+        workspace_id: str, session_id: str, plan_id: str
+    ) -> dict[str, Any]:
+        """Read the exact saved setup plan without approving or applying it."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe=""),
+            params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+
+    @mcp.tool(
+        annotations=read, structured_output=False, meta={"ui": {"visibility": ["app"]}}
+    )
+    async def wright_connection_signin(
+        workspace_id: str, session_id: str, plan_id: str
+    ) -> CallToolResult:
+        """Read operator sign-in presentation. Transient links are app-private, never model content."""
+        await client.scope(workspace_id, session_id)
+        data = await client.call(
+            "GET",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/signin",
+            params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+        public = {
+            key: data[key]
+            for key in ("workspace_id", "session_id", "plan_id", "presentation")
+        }
+        return CallToolResult(
+            content=[
+                TextContent(
+                    type="text",
+                    text="Operator sign-in status read. No login was started.",
+                )
+            ],
+            structuredContent=public,
+            _meta={
+                "wright/signin": {
+                    "authorization_url": data.get("authorization_url"),
+                    "callback_uri": data.get("callback_uri"),
+                }
+            },
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_validate(
+        workspace_id: str, session_id: str, plan_id: str, plan_digest: str
+    ) -> dict[str, Any]:
+        """Explicit operator protocol validation of installed setup; may await sign-in, never grants workflow tools."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/validate",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan_digest": plan_digest,
+            },
+            timeout=360,
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_enable(
+        workspace_id: str, session_id: str, plan_id: str, plan_digest: str
+    ) -> dict[str, Any]:
+        """Explicit operator workspace enablement; owner requires current validation, never approves invocation."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/enable",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan_digest": plan_digest,
+            },
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_plan_update(
+        workspace_id: str,
+        session_id: str,
+        plan_id: str,
+        plan_digest: str,
+        operation: Literal["approve", "apply"],
+    ) -> dict[str, Any]:
+        """Explicit operator setup approval/application against a reviewed plan digest; never a workflow grant."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-plans/"
+            + quote(plan_id, safe="")
+            + "/"
+            + operation,
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "plan_digest": plan_digest,
+            },
+        )
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workflow_read(
@@ -432,6 +717,42 @@ def server(client, *, native_editor=False, native_working_view=False):
             },
         )
 
+    @mcp.tool(annotations=read, structured_output=True)
+    async def wright_workflow_history(
+        workspace_id: str, session_id: str, path: str
+    ) -> dict[str, Any]:
+        """Read recent recorded runs for one exact workflow; never start or resume work."""
+        await client.scope(workspace_id, session_id)
+        document = await client.call(
+            "GET",
+            "/api/workspace/workflow-sources/runs",
+            params={"session_id": session_id, "path": path},
+        )
+        if (
+            document.get("workspace_id") != workspace_id
+            or document.get("workflow_path") != path
+            or not isinstance(document.get("runs"), list)
+            or len(document["runs"]) > 20
+        ):
+            raise ValueError("Run history scope or bound differs")
+        # Home needs recorder identities and state, not embedded result payloads.
+        fields = (
+            "run_id",
+            "path",
+            "status",
+            "started_at",
+            "completed_at",
+            "source_digest",
+        )
+        if any(not isinstance(row, dict) for row in document["runs"]):
+            raise ValueError("Run history record is unavailable")
+        return {
+            "workspace_id": workspace_id,
+            "session_id": session_id,
+            "workflow_path": path,
+            "runs": [{key: row.get(key) for key in fields} for row in document["runs"]],
+        }
+
     @mcp.tool(annotations=read)
     async def wright_reasoning_pending(workspace_id: str, session_id: str) -> dict:
         """Read bounded tasks for this workspace. Use their exact saved instructions and schemas."""
@@ -441,7 +762,68 @@ def server(client, *, native_editor=False, native_working_view=False):
             "/api/desktop/reasoning",
             params={"workspace_id": workspace_id, "session_id": session_id},
         )
-        return {"tasks": items}
+        return {
+            "tasks": [
+                task_presentation(item, workspace_id, session_id) for item in items
+            ]
+        }
+
+    @mcp.tool(annotations=read, structured_output=False)
+    async def wright_reasoning_image(
+        workspace_id: str,
+        session_id: str,
+        request_id: str,
+        request_digest: str,
+        binding_digest: str,
+        image_index: int,
+    ) -> CallToolResult:
+        """Read one exact pending task image as MCP image content; never answer or execute a task."""
+        await client.scope(workspace_id, session_id)
+        items = await client.call(
+            "GET",
+            "/api/desktop/reasoning",
+            params={"workspace_id": workspace_id, "session_id": session_id},
+        )
+        matches = [
+            item
+            for item in items
+            if item.get("request", {}).get("request_id") == request_id
+        ]
+        if len(matches) != 1:
+            raise ValueError("Exact pending request unavailable")
+        item = matches[0]
+        task_presentation(item, workspace_id, session_id)
+        request = DesktopReasoningRequest.model_validate_json(
+            json.dumps(item["request"])
+        )
+        if request.binding != DesktopHarnessBinding.model_validate(client.binding):
+            raise ValueError("Pending image belongs to another frozen connection")
+        if request.digest != request_digest or request.binding.digest != binding_digest:
+            raise ValueError("Frozen image request identity differs")
+        images = reasoning_images(request)
+        if type(image_index) is not int or not 0 <= image_index < len(images):
+            raise ValueError("Exact image index unavailable")
+        _, _, media, data = images[image_index]
+        identity = {
+            "request_id": request_id,
+            "request_digest": request_digest,
+            "binding_digest": binding_digest,
+            "image_index": image_index,
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "size_bytes": len(data),
+            "media_type": media,
+        }
+        return CallToolResult(
+            content=[
+                TextContent(type="text", text=json.dumps(identity)),
+                ImageContent(
+                    type="image",
+                    mimeType=media,
+                    data=base64.b64encode(data).decode("ascii"),
+                ),
+            ],
+            structuredContent=identity,
+        )
 
     @mcp.tool(annotations=write)
     async def wright_reasoning_answer(
@@ -521,6 +903,18 @@ def server(client, *, native_editor=False, native_working_view=False):
         )
         async def native_editor_resource() -> str:
             return html
+
+        @mcp.tool(
+            title="Open Wright",
+            annotations=read,
+            meta={"ui": {"resourceUri": uri, "visibility": ["model", "app"]}},
+        )
+        async def wright_home() -> dict[str, Any]:
+            """Open Wright's workspace picker beside this conversation. This only reads."""
+            return {
+                "view": "home",
+                **await client.call("GET", "/api/desktop/workspaces"),
+            }
 
         @mcp.tool(
             title="Open Wright workflow",

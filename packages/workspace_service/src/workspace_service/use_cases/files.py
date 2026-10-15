@@ -72,11 +72,17 @@ class WorkspaceFileUseCases:
         )
 
     async def read(
-        self, workspace_dir: str, relative_path: str, backup_id: str | None = None
+        self,
+        workspace_dir: str,
+        relative_path: str,
+        backup_id: str | None = None,
+        *,
+        max_bytes: int | None = None,
     ) -> FileReadResult:
         def work() -> FileReadResult:
+            options = {} if max_bytes is None else {"max_bytes": max_bytes}
             absolute, content = self._files_factory(workspace_dir).read(
-                relative_path, backup_id
+                relative_path, backup_id, **options
             )
             binary = absolute.suffix.lower() in BINARY_EXTENSIONS
             if not binary:

@@ -34,16 +34,30 @@ def main():
     parser.add_argument("--port", type=int, default=8097)
     parser.add_argument("--web-port", type=int, default=5197)
     parser.add_argument("--enable-desktop-bridge", action="store_true")
+    parser.add_argument(
+        "--enable-image-inputs",
+        action="store_true",
+        help="Opt-in bounded image-input qualification; image generation remains gated",
+    )
     parser.add_argument("--enable-confined-inspection", action="store_true")
+    parser.add_argument(
+        "--enable-enrolled-mcp-tasks",
+        action="store_true",
+        help="Private exact-enrollment qualification; no automatic grants",
+    )
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
     args = parser.parse_args()
+    if args.enable_image_inputs and not args.enable_desktop_bridge:
+        parser.error("Image transport requires the opt-in desktop bridge")
     if args.enable_native_editor and not args.enable_desktop_bridge:
         parser.error("Native editor requires the opt-in desktop bridge")
     if args.enable_native_working_view and not args.enable_native_editor:
         parser.error("Native working view requires the opt-in native editor")
     if args.enable_confined_inspection and not args.enable_desktop_bridge:
         parser.error("Confined inspection requires the opt-in desktop bridge")
+    if args.enable_enrolled_mcp_tasks and not args.enable_desktop_bridge:
+        parser.error("Enrolled task qualification requires the opt-in desktop bridge")
     state = args.state_dir.resolve()
     database = state / "wright.sqlite"
     if args.enable_desktop_bridge and not database.exists():
@@ -89,17 +103,20 @@ def main():
 
         service = workspace_service()
         service.parent_dir_provider = lambda: str(state / "workspaces")
-        if args.enable_confined_inspection:
+        if args.enable_confined_inspection or args.enable_enrolled_mcp_tasks:
             service.workflow_integration_policies.enabled = True
         desktop = DesktopBackend(
             service,
             state,
             args.web_port,
             confined_inspection=args.enable_confined_inspection,
+            image_inputs=args.enable_image_inputs,
+            enrolled_mcp_tasks=args.enable_enrolled_mcp_tasks,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
         )
         app.state.agent_engine = desktop
+        app.state.mcp_authorization_presenter = desktop.oauth.present
         app.include_router(desktop.router())
         # The normal app already ends with a GET frontend fallback. Newly
         # included API routes must precede it rather than returning HTML 200.
@@ -129,7 +146,7 @@ def main():
                 "/api/workspace/workflow-sources/run",
             }
             or re.fullmatch(
-                r"/api/workspace/process-interfaces/(?:runs/[A-Za-z0-9._:-]+/cancel|interactions/[A-Za-z0-9._:-]+/response)",
+                r"/api/workspace/process-interfaces/(?:runs/[A-Za-z0-9._:-]+/cancel|interactions/[A-Za-z0-9._:-]+/(?:response|decision)|actions/continue-[A-Za-z0-9._:-]+)",
                 path,
             )
             is not None

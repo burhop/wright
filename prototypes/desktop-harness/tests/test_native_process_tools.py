@@ -180,8 +180,9 @@ def test_chat_wait_read_first_authorizes_exact_run_and_does_not_answer(panel):
     assert all(call.args[0] == "GET" for call in client.call.call_args_list)
 
 
+@pytest.mark.parametrize("media", ["text/markdown", "image/png", "image/jpeg"])
 @pytest.mark.parametrize("changed", [False, True])
-def test_text_reader_requires_owner_headers_and_actual_recorded_hash(panel, changed):
+def test_reader_requires_owner_headers_and_actual_recorded_hash(panel, changed, media):
     import base64
     import hashlib
     import httpx
@@ -195,7 +196,7 @@ def test_text_reader_requires_owner_headers_and_actual_recorded_hash(panel, chan
             200,
             content=b"changed" if changed else body,
             headers={
-                "content-type": "text/markdown",
+                "content-type": media,
                 "content-length": str(len(body)),
                 "x-wright-artifact-sha256": digest,
                 "x-content-type-options": "nosniff",
@@ -217,6 +218,7 @@ def test_text_reader_requires_owner_headers_and_actual_recorded_hash(panel, chan
     else:
         assert base64.b64decode(result["document"]["bytes_base64"]) == body
         assert result["document"]["sha256"] == digest
+        assert result["document"]["media_type"] == media
 
 
 def test_native_reader_reports_unsupported_preview_before_reading_file(panel):
@@ -233,4 +235,130 @@ def test_native_reader_reports_unsupported_preview_before_reading_file(panel):
         ),
     )
     assert result["reason"]["code"] == "CAPABILITY_UNAVAILABLE"
+    client.call.assert_not_awaited()
+
+
+@pytest.mark.parametrize("media,size", [("image/svg+xml", 5), ("image/png", 1048577)])
+def test_image_transport_keeps_active_content_and_size_limits(panel, media, size):
+    import httpx
+
+    server, client = panel
+    client.http = httpx.AsyncClient(
+        base_url="http://private",
+        transport=httpx.MockTransport(
+            lambda request: httpx.Response(
+                200,
+                content=b"bytes",
+                headers={
+                    "content-type": media,
+                    "content-length": str(size),
+                    "x-wright-artifact-sha256": "b" * 64,
+                    "x-content-type-options": "nosniff",
+                },
+                request=request,
+            )
+        ),
+    )
+    result = run(
+        server,
+        "wright_process_ui_read",
+        scope(
+            "representation",
+            run_id="saved-run",
+            reference={"artifact_ref": "result.image", "sha256": "b" * 64},
+        ),
+    )
+    assert result["ok"] is False
+    assert result["reason"]["code"] == "CAPABILITY_UNAVAILABLE"
+
+
+def test_review_decision_uses_existing_exact_subject_owner(panel):
+    server, client = panel
+    run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "decide",
+            checkpoint_id="review",
+            subject_digest="b" * 64,
+            decision="changes_requested",
+            reason="Inspect the missing evidence",
+            request_id="review-request",
+        ),
+    )
+    client.scope.assert_awaited_once_with("workspace", "session")
+    assert client.call.call_args.args == (
+        "POST",
+        "/api/workspace/process-interfaces/interactions/review/decision",
+    )
+    body = client.call.call_args.kwargs["json"]
+    assert body["decision"] == "changes_requested"
+    assert body["subject_digest"] == "b" * 64
+    assert body["expected_storage_digest"] == "a" * 64
+    assert body["request_id"] == "review-request"
+    assert "auto" not in body and "actor" not in body
+
+
+@pytest.mark.parametrize(
+    "extra", [{"auto": True}, {"actor": "engineer"}, {"action": "dispatch"}]
+)
+def test_review_cannot_supply_authority_or_dispatch(panel, extra):
+    server, client = panel
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_update",
+            scope(
+                "decide",
+                checkpoint_id="review",
+                subject_digest="b" * 64,
+                decision="approved",
+                reason="Private test fixture only",
+                request_id="review-request",
+                **extra,
+            ),
+        )
+    client.call.assert_not_awaited()
+
+
+def test_continuation_delegates_once_to_exact_action_owner(panel):
+    server, client = panel
+    run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "continue",
+            action_id="continue-checkpoint",
+            subject_digest="b" * 64,
+            request_id="same-continuation",
+        ),
+    )
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/workspace/process-interfaces/actions/continue-checkpoint",
+        json={
+            "session_id": "session",
+            "path": "workflows/example.wflow",
+            "expected_storage_digest": "a" * 64,
+            "subject_digest": "b" * 64,
+            "request_id": "same-continuation",
+        },
+    )
+
+
+@pytest.mark.parametrize("action", ["dispatch", "continue-", "continue-../other"])
+def test_continuation_rejects_non_declared_or_path_injected_action(panel, action):
+    server, client = panel
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_update",
+            scope(
+                "continue",
+                action_id=action,
+                subject_digest="b" * 64,
+                request_id="same-continuation",
+            ),
+        )
     client.call.assert_not_awaited()

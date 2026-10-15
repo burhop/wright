@@ -7,7 +7,7 @@ from .models import McpServer, McpTool
 from .db import get_server, get_servers, update_server, insert_tools, clear_server_tools
 from .runners.base import BaseRunner, ProgressCallback
 from .runners.stdio import StdioRunner
-from .runners.sse import SseRunner
+from .runners.sse import OAuthPresentation, SseRunner
 from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials
 from .lifecycle import McpLifecycleCoordinator
@@ -20,7 +20,13 @@ logger = get_logger(__name__)
 class McpEngine:
     """Manager class coordinating the lifecycle, database status, and JSON-RPC dispatch of active MCP servers."""
 
-    def __init__(self, db_path: str, *, operation_timeout: float = 30.0):
+    def __init__(
+        self,
+        db_path: str,
+        *,
+        operation_timeout: float = 30.0,
+        authorization_presenter: OAuthPresentation | None = None,
+    ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
@@ -28,6 +34,7 @@ class McpEngine:
         self._lifecycle_adapter = DatabaseLifecycleAdapter(
             db_path,
             operation_timeout=operation_timeout,
+            authorization_presenter=authorization_presenter,
         )
         self.lifecycle = McpLifecycleCoordinator(
             self._lifecycle_adapter.build_runner,
@@ -259,6 +266,7 @@ class McpEngine:
                 server.command,
                 server_id=server_id,
                 operation_timeout=self._lifecycle_adapter.operation_timeout,
+                authorization_presenter=self._lifecycle_adapter.authorization_presenter,
             )
         elif server.type == "webmcp":
             # webmcp servers represent client-side DOM connections managed via websockets in apps/web.

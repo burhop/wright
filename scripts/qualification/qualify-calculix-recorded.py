@@ -7,6 +7,7 @@ import base64
 import hashlib
 import importlib.util
 import json
+import platform
 from pathlib import Path
 import time
 import urllib.request
@@ -120,8 +121,8 @@ async def run(args):
         dat = (target / "job.dat").read_text()
         assert "displacements" in dat and "stresses" in dat
         outcomes.append({"route": route, "run_id": structured["run"]["runId"], "artifacts": artifacts})
-    evidence = {"status": "passed", "scope": "clean Wright HTTP2026 direct and GatewayService recorded static/resources",
-                "clean_wright_image": "sha256:512b001cbffd0551969630eaf618d9d4fb72987bdfb6422d9d444d8ad2e8ee73",
+    evidence = {"status": "passed", "scope": "HTTP2026 direct and GatewayService recorded static/resources",
+                "client_environment": {"system": platform.system(), "machine": platform.machine(), "python": platform.python_version()},
                 "selected_image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
                 "discovery": discovery, "tool_count": len(tools), "outcomes": outcomes, "campaign_runs": 0,
                 "limitations": ["Qualification-only current-protocol adapter, production integration uses upstream compatible stdio.",

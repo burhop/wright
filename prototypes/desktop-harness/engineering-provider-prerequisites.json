@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-14",
+  "scope": "GB10 Linux ARM64 selected-provider prerequisites only",
+  "agentcad": {
+    "status": "dependency_resolution_failed",
+    "source_commit": "2a377583d9d250971a584acb7b5ac6e2a75737c0",
+    "python": "3.12.12",
+    "requested_build123d": "0.10.0",
+    "requested_numpy": "2.5.2",
+    "requested_mcp": "1.28.1",
+    "blocker": "AgentCAD requires cadquery-ocp>=7.8,<7.9; resolver found no compatible Linux ARM64 wheel.",
+    "container": "wright-desktop-agentcad-provider-20261014-01",
+    "container_exit_code": 1,
+    "base_image": "sha256:6c5ebe4d1812e9bc4f6fc7d857a21ee2ad6488f63c0128dabc12fc9535d9b99f",
+    "log": "/tmp/wright-desktop-agentcad-provider-20261014-01/container.log",
+    "log_sha256": "3d1ffff1b960b636fc44cbb5ed7d290529dfdc47b3328e138a71a6a98cedbbf6",
+    "native_calls": 0,
+    "tool_calls": 0,
+    "provider_bug_claimed": false
+  },
+  "calculix": {
+    "status": "immutable_image_manifest_verified_not_installed",
+    "image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+    "platforms": [
+      {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "size": 2008,
+        "digest": "sha256:d60afe3eecbe49fbc961cd4470504754c51eac0318ef0361016779b0bdc63d5b",
+        "platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        }
+      },
+      {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "size": 2008,
+        "digest": "sha256:11d7aa05f7f34b3ef6055ade51910dba899c58bf51e5e56ea6b2ea96b28c6ea0",
+        "platform": {
+          "architecture": "arm64",
+          "os": "linux"
+        }
+      }
+    ],
+    "manifest_sha256": "fe2e94dc9bd97d046085e5a56dd1c17071f508a4cc171a5bb4b0af59f9d5a333"
+  },
+  "limits": [
+    "No x86 emulation registration was found in the inspected host binfmt listing; native x64 execution not tested.",
+    "No requirements loosened, provider source patched, live settings changed or engineering run started.",
+    "Windows/x64 qualification remains separate from GB10 support."
+  ]
+}

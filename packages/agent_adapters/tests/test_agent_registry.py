@@ -82,3 +82,16 @@ def test_openclaw_stub_is_selectable_without_hermes():
 def test_registry_requires_single_default_provider():
     with pytest.raises(ValueError):
         AgentEngineRegistry([])
+
+
+@pytest.mark.parametrize("selection", ["pi", " Pi "])
+def test_unavailable_pi_never_falls_back_to_default(selection, monkeypatch):
+    def unexpected_hermes(*args, **kwargs):
+        pytest.fail("Unavailable Pi selection must not construct Hermes")
+
+    monkeypatch.setattr("agent_adapters.hermes.HermesAdapter", unexpected_hermes)
+    registry = default_agent_registry()
+    assert "pi" in registry.known_names()
+    assert "pi" not in registry.supported_names()
+    with pytest.raises(UnsupportedAgentRuntimeError, match="known but not implemented"):
+        registry.create_engine(selection, db_path="test.db")

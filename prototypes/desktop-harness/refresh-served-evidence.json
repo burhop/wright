@@ -1,0 +1,24 @@
+{
+  "source_commit_before_bundle": "1bc80ec8",
+  "state": "/tmp/wright-desktop-refresh-proof-20261014-01",
+  "api_port": 8152,
+  "report": "/tmp/wright-desktop-refresh-proof-20261014-01/browser-home-1792022005979/report.json",
+  "report_sha256": "088a790f04f23e512b5d09aa795ce393574047891b824de37b79a19b464b4044",
+  "bundle_bytes": 2210680,
+  "bundle_sha256": "d2526e2fdc7f22e449d0d819ef5b1d7c084390d09451e00112390ea256c2b179",
+  "checks": [
+    "real isolated workspace and saved workflow source discovered",
+    "home opens shared editor and Back restores exact workspace without mutation",
+    "Refresh reconciles exact workspace/session and retains Files view without execution",
+    "Files lists and filters real scoped storage; unavailable operations explicit",
+    "oversized source preview explicitly unavailable; full shared editor remains available",
+    "explicit bounded text preview matches real saved bytes and closes without mutation",
+    "real MCP catalog and saved-plan recovery; no setup mutations",
+    "narrow home fits; unsaved source draft prevents workspace navigation",
+    "accepted source unchanged and no browser errors"
+  ],
+  "boundary": "simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace creation",
+  "native_desktop_verified": false,
+  "engineering_runs": 0,
+  "installed_plugin_changed": false
+}

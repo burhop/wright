@@ -171,3 +171,266 @@ def test_capability_flag_is_frozen_in_connection_identity(boundary):
     with pytest.raises(HTTPException) as failure:
         check(disabled)
     assert failure.value.status_code == 503
+
+
+def test_image_transport_is_opt_in_and_changes_frozen_connection(boundary):
+    from desktop_backend import DesktopBackend
+
+    default, service, _ = boundary
+    enabled = DesktopBackend(
+        service, default.state, 5201, confined_inspection=True, image_inputs=True
+    )
+    assert default.binding.image_input_profile == "unavailable"
+    assert enabled.binding.image_input_profile == "inline-png-jpeg-v1"
+    assert enabled.binding.connection_id != default.binding.connection_id
+    assert enabled.binding.digest != default.binding.digest
+
+
+@pytest.fixture
+def enrolled_boundary(boundary):
+    from desktop_backend import DesktopBackend
+
+    default, service, source = boundary
+    enabled = DesktopBackend(service, default.state, 5201, enrolled_mcp_tasks=True)
+    service.workflow_sources.read.return_value.source = (
+        source.replace("wright-workspace-files", "qualified-provider")
+        .replace("inspect_file", "inspect_geometry")
+        .replace('"max_tool_calls":1', '"max_tool_calls":2')
+    )
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = [
+        {
+            "server_id": "qualified-provider",
+            "name": "qualified-provider__inspect_geometry",
+            "schema_digest": "d" * 64,
+        }
+    ]
+    return enabled, default, service
+
+
+def test_enrolled_tasks_are_separate_frozen_opt_in(enrolled_boundary):
+    enabled, default, service = enrolled_boundary
+    assert enabled.binding.digest != default.binding.digest
+    with pytest.raises(HTTPException) as failure:
+        check(default)
+    assert failure.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+    check(enabled)
+    service.workflow_integration_policies.get.assert_called_once_with("b" * 64)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("workspace_id", "other"),
+        ("source_path", "workflows/other.wflow"),
+        ("source_digest", "e" * 64),
+        ("approval_mode", "auto"),
+        ("allowed_tools", []),
+        (
+            "allowed_tools",
+            [
+                {
+                    "server_id": "qualified-provider",
+                    "name": "qualified-provider__write_geometry",
+                }
+            ],
+        ),
+    ],
+)
+def test_enrolled_tasks_reject_changed_manual_scope(enrolled_boundary, field, value):
+    enabled, _, service = enrolled_boundary
+    service.workflow_integration_policies.get.return_value[field] = value
+    with pytest.raises(HTTPException) as failure:
+        check(enabled)
+    assert failure.value.status_code == 403
+
+
+def test_enrolled_tasks_require_grant_and_preserve_image_gate(enrolled_boundary):
+    enabled, _, service = enrolled_boundary
+    with pytest.raises(HTTPException) as failure:
+        check(enabled, grant=False)
+    assert failure.value.status_code == 403
+    service.workflow_integration_policies.get.assert_not_called()
+    document = service.workflow_sources.read.return_value
+    document.source = document.source.replace(
+        '"kind":"engineering_document"', '"kind":"reference_images"', 2
+    )
+    with pytest.raises(HTTPException, match="image input"):
+        check(enabled)
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_enrolled_tasks_reject_extra_tool(enrolled_boundary):
+    enabled, _, service = enrolled_boundary
+    service.workflow_integration_policies.get.return_value["allowed_tools"].append(
+        {
+            "server_id": "qualified-provider",
+            "name": "qualified-provider__write_geometry",
+        }
+    )
+    with pytest.raises(HTTPException) as failure:
+        check(enabled)
+    assert failure.value.status_code == 403
+
+
+@pytest.mark.parametrize("invalidity", ["revoked", "expired", "unknown"])
+def test_enrolled_tasks_use_actual_policy_owner(
+    enrolled_boundary, monkeypatch, invalidity
+):
+    import time
+    from workspace_service.workflow_integration_policy import (
+        WorkflowIntegrationPolicyService,
+    )
+
+    enabled, _, service = enrolled_boundary
+    policy = WorkflowIntegrationPolicyService(service.db_path, enabled=True)
+    expiry = int(time.time()) + 60
+    digest = policy.enroll(
+        campaign_id="desktop-boundary-fixture",
+        dataset_id="synthetic",
+        dataset_digest="c" * 64,
+        workspace_id="workspace",
+        source_path="workflows/read.workflow.wflow",
+        source_digest="a" * 64,
+        input_files={"inputs/requirements.md": "c" * 64},
+        output_root="outputs/private",
+        allowed_tools=service.workflow_integration_policies.get.return_value[
+            "allowed_tools"
+        ],
+        expires_at=expiry,
+    )
+    service.workflow_integration_policies = policy
+    if invalidity == "revoked":
+        policy.revoke(digest)
+    elif invalidity == "expired":
+        monkeypatch.setattr(
+            "workspace_service.workflow_integration_policy.time.time", lambda: expiry
+        )
+    else:
+        digest = "0" * 64
+    with pytest.raises(HTTPException) as failure:
+        asyncio.run(
+            enabled.qualify_digital_source(
+                {
+                    "session_id": "session",
+                    "path": "workflows/read.workflow.wflow",
+                    "integration_policy_digest": digest,
+                },
+                operation="/api/workspace/process-interfaces/runs",
+            )
+        )
+    assert failure.value.status_code == 403
+
+
+def test_image_input_qualification_requires_explicit_profile(boundary):
+    from desktop_backend import DesktopBackend
+
+    default, service, source = boundary
+    service.workflow_sources.read.return_value.source = source.replace(
+        '"kind":"engineering_document"', '"kind":"reference_images"', 2
+    )
+    with pytest.raises(HTTPException, match="image input"):
+        check(default)
+    enabled = DesktopBackend(
+        service, default.state, 5201, confined_inspection=True, image_inputs=True
+    )
+    check(enabled)
+    assert enabled.binding.digest != default.binding.digest
+
+
+def test_image_input_profile_does_not_enable_generation(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_workflow_image_outputs import image_task
+    from packages.workspace_service.tests.test_workflow_ai_task import source
+
+    default, service, _ = boundary
+    service.workflow_sources.read.return_value.source = source(
+        image_task(authoring_template="ai-prompt", mcp_server="")
+    )
+    enabled = DesktopBackend(service, default.state, 5201, image_inputs=True)
+    with pytest.raises(HTTPException, match="generation capabilities"):
+        check(enabled)
+
+
+@pytest.fixture
+def direct_boundary(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_workflow_mcp_execution import (
+        mcp,
+        TOOL,
+        schema_digest,
+    )
+    from packages.workspace_service.tests.test_workflow_ai_task import source
+
+    default, service, _ = boundary
+    service.workflow_sources.read.return_value.source = source(mcp())
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = [
+        {
+            "server_id": TOOL.server_id,
+            "name": TOOL.name,
+            "schema_digest": schema_digest(TOOL),
+        }
+    ]
+    enabled = DesktopBackend(service, default.state, 5201, enrolled_mcp_tasks=True)
+    return default, enabled, service
+
+
+def test_direct_tool_requires_opt_in_and_exact_manual_enrollment(direct_boundary):
+    default, enabled, service = direct_boundary
+    with pytest.raises(HTTPException) as denied:
+        check(default)
+    assert denied.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+    with pytest.raises(HTTPException) as missing:
+        check(enabled, grant=False)
+    assert missing.value.status_code == 403
+    check(enabled)
+
+
+@pytest.mark.parametrize("changed", ["schema_digest", "name", "server_id"])
+def test_direct_tool_rejects_binding_drift(direct_boundary, changed):
+    _, enabled, service = direct_boundary
+    service.workflow_integration_policies.get.return_value["allowed_tools"][0][
+        changed
+    ] = "e" * 64
+    with pytest.raises(HTTPException) as denied:
+        check(enabled)
+    assert denied.value.status_code == 403
+
+
+def test_invalid_source_returns_structured_correction_without_policy_lookup(boundary):
+    backend, service, _ = boundary
+    service.workflow_sources.read.return_value.source = "not a workflow"
+    with pytest.raises(HTTPException) as denied:
+        check(backend)
+    assert denied.value.status_code == 400
+    assert denied.value.detail["code"]
+    assert denied.value.detail["message"]
+    assert denied.value.detail["correction"]
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_only_exact_local_review_can_enter_enrolled_profile(boundary):
+    from desktop_backend import DesktopBackend
+    from packages.workspace_service.tests.test_process_review_decisions import (
+        review_source,
+    )
+
+    default, service, _ = boundary
+    source = review_source()
+    service.workflow_sources.read.return_value.source = source
+    service.workflow_integration_policies.get.return_value["allowed_tools"] = []
+    with pytest.raises(HTTPException) as denied:
+        check(default)
+    assert denied.value.status_code == 503
+    enabled = DesktopBackend(service, default.state, 5201, enrolled_mcp_tasks=True)
+    check(enabled)
+    with pytest.raises(HTTPException) as missing:
+        check(enabled, grant=False)
+    assert missing.value.status_code == 403
+    changed = source.replace('"server": "wright"', '"server": "other"')
+    assert changed != source
+    service.workflow_sources.read.return_value.source = changed
+    with pytest.raises(HTTPException) as foreign:
+        check(enabled)
+    assert foreign.value.status_code == 503

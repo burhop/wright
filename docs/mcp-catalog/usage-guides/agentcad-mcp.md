@@ -116,3 +116,28 @@ volume checks and mesh bytes were correct. All110 revision7 entries were
 reverified against exact native records; see `robot-arm-media/corrected-rev7/`
 `mesh-extent-field-addendum.json`. Do not use that original stale diagnostic field
 as a dimensional observation or blame this provider for our helper's mistake.
+
+## GB10 ARM64 prerequisite check, 14 October 2026
+
+The previously qualified source commit
+`2a377583d9d250971a584acb7b5ac6e2a75737c0` does not currently resolve on the tested
+Linux ARM64/Python 3.12.12 environment. Its `cadquery-ocp>=7.8,<7.9` dependency has
+no matching Linux ARM64 wheel in the observed resolver results. Available listed
+wheel platforms were Linux x64, macOS ARM64/x64 and Windows x64. This is a host
+prerequisite limitation, not evidence of a defect in a tool invocation.
+
+The bounded nonroot selected container exited 1 before imports, MCP initialization
+or native CAD calls. Original image and live host packages were unchanged. The
+[prerequisite receipt](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/engineering-provider-prerequisites.json)
+records the exact source/image and retained resolver log. Do not infer ARM64
+support from earlier Windows-to-Linux x64 qualification, force an incompatible
+OCP version, or substitute a previously generated CAD artifact. The next viable
+candidate is an explicitly qualified x64 provider host; registering emulation or
+routing through another machine has not been done by this check.
+
+Current upstream rechecked at commit
+`4f19a5e37b9c6e76cd77af19f546022dd8442a23` (package0.7.0): its exact
+pyproject retains the same build123d/OCP bounds. An AgentCAD-only upgrade is
+therefore not a resolution of the observed ARM64 prerequisite. No new install
+was attempted or dependencies overridden. See
+[current upstream evidence](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/agentcad-current-upstream-evidence.json).

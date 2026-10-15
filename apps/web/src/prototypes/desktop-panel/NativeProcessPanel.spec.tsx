@@ -129,3 +129,94 @@ it("submits the common declared input against its exact subject and retains the 
     ),
   ).toBe(false);
 });
+
+it("records a common-view review against its exact subject without continuing the run", async () => {
+  let current: InteractionSnapshot = {
+    ...waiting,
+    interactions: [
+      {
+        checkpoint_id: "review",
+        step_id: "review",
+        kind: "action",
+        subject_digest: hash,
+        state: "waiting",
+        instructions: "Inspect the private test evidence",
+        decisions: ["approved", "changes_requested"],
+      },
+    ],
+    actions: [
+      {
+        action_id: "review-action",
+        operation: "review",
+        title: "Review findings",
+        enabled: true,
+        checkpoint_id: "review",
+        subject_digest: hash,
+      },
+    ],
+  };
+  const call = vi
+    .fn<NativeProcessCall>()
+    .mockImplementation(async (tool, request) => {
+      if (tool === "wright_process_ui_update") {
+        expect(request.operation).toBe("decide");
+        expect(request.checkpoint_id).toBe("review");
+        expect(request.subject_digest).toBe(hash);
+        expect(request.decision).toBe("changes_requested");
+        current = {
+          ...current,
+          interactions: [
+            {
+              ...current.interactions![0],
+              state: "responded",
+              decision: {
+                decision: "changes_requested",
+                actor: "owner-recorded",
+                request_id: String(request.request_id),
+                reason: String(request.reason),
+                integration_test: false,
+              },
+            },
+          ],
+          actions: [],
+        };
+      }
+      return {
+        content: [],
+        structuredContent: { ok: true, document: current },
+      };
+    });
+  const native = createNativePanelProcessClient({
+    process,
+    sessionId: "native-session",
+    workspaceName: "Prototype",
+    call,
+  });
+  const view = render(
+    <NativeProcessPanel
+      {...native}
+      sessionId="native-session"
+      workspaceName="Prototype"
+      title="Review fixture"
+      runId="saved-run"
+    />,
+  );
+  const reason = await screen.findByLabelText("Review reason");
+  expect(
+    screen.getByRole("button", { name: "Request changes" }),
+  ).toBeDisabled();
+  fireEvent.change(reason, {
+    target: { value: "Missing independent measurement" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Request changes" }));
+  await screen.findByText("Review recorded: Changes requested");
+  expect(
+    call.mock.calls.filter(([tool]) => tool === "wright_process_ui_update"),
+  ).toHaveLength(1);
+  expect(
+    call.mock.calls.some(([, request]) =>
+      ["start", "action", "cancel"].includes(String(request.operation)),
+    ),
+  ).toBe(false);
+  view.unmount();
+});

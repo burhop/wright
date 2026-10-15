@@ -1,0 +1,16 @@
+{
+  "source_commit": "4f19a5e37b9c6e76cd77af19f546022dd8442a23",
+  "source_url": "https://github.com/jdilla1277/agentcad/blob/4f19a5e37b9c6e76cd77af19f546022dd8442a23/pyproject.toml",
+  "package_version": "0.7.0",
+  "requires_python": ">=3.10,<3.13",
+  "dependencies": [
+    "tomli>=2; python_version < '3.11'",
+    "click>=8.0",
+    "build123d>=0.10,<0.11",
+    "cadquery-ocp>=7.8,<7.9",
+    "ocp_gordon<0.3"
+  ],
+  "pyproject_sha256": "9f3c9f81f7812ce787d546d0ef87269e15147b2ff738e6ffcd3d687c9c5b66f9",
+  "conclusion": "Current upstream retains build123d<0.11 and cadquery-ocp<7.9; upgrading AgentCAD alone does not remove the previously observed ARM64 wheel prerequisite. No new install attempted.",
+  "host_discovery": "Only default local Docker context and existing dell2 SSH target are configured; no usable x64 execution host established."
+}

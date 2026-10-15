@@ -1,0 +1,75 @@
+{
+  "scope": "Isolated selected-provider GB10 Linux ARM64 prerequisites and read-only native MCP probe",
+  "provider_revision": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+  "image": "sha256:4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af",
+  "blender": "4.3.2",
+  "mcp_reported_version": "1.30.0",
+  "tools_discovered": 28,
+  "scene_read": "passed: three factory-scene objects",
+  "failures_retained": [
+    "Bootstrap unnecessarily started a second listener after addon.register automatically started the first; second listener readiness assertion failed. Existing native listener proved via subsequent MCP read.",
+    "Initial probe filename inspect.py shadowed standard-library inspect; failed before MCP initialization.",
+    "First get_scene_info omitted required user_prompt; schema rejected before native scene read."
+  ],
+  "limits": [
+    "No full workflow, desktop acceptance, workspace enrollment, manufacturing assignment or recovery proof.",
+    "Native qualification container stopped and retained.",
+    "Selected-provider ARM64 qualification with host GatewayService, not full clean Intel Linux catalog qualification."
+  ],
+  "evidence_hashes": {
+    "install.log": "b8e55fa83a292f1d11736c75e1715ae52a8775e64e1ff418668702cb526e90ff",
+    "initialize.json": "90d52ed6e28904014f8afa88d018e1c3fbbed83a639949f7a453e1b62c720c51",
+    "tools.json": "83cea39a22465df7eef2a7960064bd3ed3262799c9d7fd2be0be2e2c3a9c6078",
+    "scene-info.json": "458ffdc1061e4e51a01696741a6d9e328bd9d5288a175ce9ab1de45524a84323",
+    "protocol-inspect-03.log": "bdd3b46267221836443730f236861bd8ad4a35e9e0642048b2be82cc6003f432"
+  },
+  "geometry_check": {
+    "triangles": 12,
+    "bytes": 684,
+    "sha256": "95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae",
+    "bounds": [
+      [
+        -5.0,
+        -4.0,
+        -3.0
+      ],
+      [
+        5.0,
+        4.0,
+        3.0
+      ]
+    ],
+    "dimensions": [
+      10.0,
+      8.0,
+      6.0
+    ],
+    "volume": 480.0,
+    "units": "unitless STL model coordinates; not physical verification",
+    "status": "passed"
+  },
+  "gateway_scope": "Actual GatewayService with qualification fixture catalog/workspace/audit; no durable workspace enrollment or workflow grant",
+  "gateway_evidence_sha256": "263cba246ed8fc9ba9ab22e4b97dbda784a9afd12483b468477080afc3529dfe",
+  "native_container_state": {
+    "status": "exited",
+    "exit_code": 143
+  },
+  "artifact_reopen": {
+    "status": "passed",
+    "scope": "Fresh native process imports retained artifact without replaying export; not durable workflow recovery",
+    "world_bounds": [
+      [
+        -5.0,
+        -4.0,
+        -3.0
+      ],
+      [
+        5.0,
+        4.0,
+        3.0
+      ]
+    ],
+    "input_hash_unchanged": true
+  },
+  "second_native_container_state": "exited"
+}

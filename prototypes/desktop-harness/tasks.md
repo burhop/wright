@@ -4,6 +4,17 @@ This record tracks verification, not product acceptance or release readiness.
 
 ## Next work — authorized 14 October 2026
 
+See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.md#current-continuation-checkpoint--14-october-2026)
+and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;
+finish the current home slice before duplicating implementation.
+
+The feature worktree contains the [workspace home slice](workspace-home-progress.md).
+Named plugin 0.8.0 is installed from its frozen runtime; local browser/protocol
+checks pass, while Windows acceptance and the real engineering runs remain open.
+The execution candidate at 37746c7b has passed all Python and 1,874 frontend tests.
+Its full merge gate stopped on seven strict-docs links; the links are corrected
+prospectively and live browser checks remain pending. This does not complete M1.
+
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its
 [baseline correction evidence](ui-concepts/2026-10-12/baseline-correction-20261014.md)

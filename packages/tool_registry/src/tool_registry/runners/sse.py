@@ -3,6 +3,8 @@ import json
 import logging
 import hashlib
 import webbrowser
+from collections.abc import Awaitable, Callable
+from functools import partial
 from typing import List, Dict, Any, Optional
 from urllib.parse import parse_qs, urljoin, urlsplit
 
@@ -21,6 +23,7 @@ from ..secrets import read_secrets, write_secrets
 
 logger = logging.getLogger(__name__)
 _OAUTH_CALLBACK_TIMEOUT = 300.0
+OAuthPresentation = Callable[[str, str | None, str | None], Awaitable[None]]
 
 
 class _WrightOAuthTokenStorage:
@@ -70,8 +73,16 @@ class _WrightOAuthTokenStorage:
 class _OAuthCallbackServer:
     """Small loopback receiver for an interactive OAuth authorization code."""
 
-    def __init__(self, *, timeout: float = _OAUTH_CALLBACK_TIMEOUT) -> None:
+    def __init__(
+        self,
+        *,
+        timeout: float = _OAUTH_CALLBACK_TIMEOUT,
+        presenter: Callable[[str | None, str | None], Awaitable[None]] | None = None,
+    ) -> None:
         self.timeout = timeout
+        self.presenter = presenter
+        self.redirect_uri: str | None = None
+        self.presentation_pending = False
         self.server: asyncio.AbstractServer | None = None
         self.future: asyncio.Future[tuple[str, str | None]] | None = None
 
@@ -84,9 +95,16 @@ class _OAuthCallbackServer:
         )
         socket = self.server.sockets[0]
         port = socket.getsockname()[1]
-        return f"http://127.0.0.1:{port}/oauth/callback"
+        self.redirect_uri = f"http://127.0.0.1:{port}/oauth/callback"
+        return self.redirect_uri
 
     async def open_authorization_url(self, url: str) -> None:
+        if self.presenter is not None:
+            # Presentation only. The SDK retains PKCE/state/token authority and
+            # the original loopback receiver still handles the callback.
+            self.presentation_pending = True
+            await self.presenter(url, self.redirect_uri)
+            return
         try:
             opened = webbrowser.open(url, new=2)
             if not opened:
@@ -106,7 +124,13 @@ class _OAuthCallbackServer:
             await self.close()
             raise
         self.future = asyncio.get_running_loop().create_future()
+        await self._clear_presentation()
         return result
+
+    async def _clear_presentation(self) -> None:
+        if self.presentation_pending and self.presenter is not None:
+            self.presentation_pending = False
+            await self.presenter(None, self.redirect_uri)
 
     async def _handle_connection(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
@@ -213,6 +237,7 @@ class _OAuthCallbackServer:
             self.server = None
         if self.future is not None and not self.future.done():
             self.future.cancel()
+        await self._clear_presentation()
 
 
 class SseRunner(BaseRunner):
@@ -226,6 +251,7 @@ class SseRunner(BaseRunner):
         server_id: str | None = None,
         oauth_enabled: bool = True,
         operation_timeout: float = 60.0,
+        authorization_presenter: OAuthPresentation | None = None,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
@@ -234,6 +260,7 @@ class SseRunner(BaseRunner):
             server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
         )
         self.oauth_enabled = oauth_enabled
+        self.authorization_presenter = authorization_presenter
         self.operation_timeout = operation_timeout
         self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
@@ -294,7 +321,12 @@ class SseRunner(BaseRunner):
             }
             auth = None
             if self.oauth_enabled:
-                self._oauth_callback = _OAuthCallbackServer()
+                presenter = (
+                    partial(self.authorization_presenter, self.server_id)
+                    if self.authorization_presenter
+                    else None
+                )
+                self._oauth_callback = _OAuthCallbackServer(presenter=presenter)
                 oauth_storage = _WrightOAuthTokenStorage(self.server_id)
                 stored_client = await oauth_storage.get_client_info()
                 try:
@@ -305,7 +337,7 @@ class SseRunner(BaseRunner):
                     if stored_client is not None:
                         oauth_storage.clear_oauth_state()
                     await self._oauth_callback.close()
-                    self._oauth_callback = _OAuthCallbackServer()
+                    self._oauth_callback = _OAuthCallbackServer(presenter=presenter)
                     redirect_uri = await self._oauth_callback.start()
                 metadata = OAuthClientMetadata(
                     redirect_uris=[redirect_uri],

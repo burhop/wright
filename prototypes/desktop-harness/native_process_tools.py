@@ -13,9 +13,11 @@ from mcp.types import ToolAnnotations
 from pydantic import Field, AfterValidator
 
 from api.schemas.process_interfaces import (
+    ProcessActionRequest,
     ProcessCancelRequest,
     ProcessInputResponseRequest,
     ProcessReadinessRequest,
+    ProcessReviewDecisionRequest,
     ProcessRepresentationRequest,
     ProcessRunRequest,
     ProcessSourceRequest,
@@ -80,10 +82,22 @@ class PanelResponse(ProcessInputResponseRequest):
     auto: Literal[False] = False
 
 
+class PanelDecision(ProcessReviewDecisionRequest):
+    workspace_id: Segment
+    operation: Literal["decide"]
+    checkpoint_id: Segment
+
+
 class PanelCancel(ProcessCancelRequest):
     workspace_id: Segment
     operation: Literal["cancel"]
     run_id: Segment
+
+
+class PanelContinue(ProcessActionRequest):
+    workspace_id: Segment
+    operation: Literal["continue"]
+    action_id: Segment = Field(pattern=r"^continue-.+")
 
 
 PanelRead = Annotated[
@@ -91,7 +105,13 @@ PanelRead = Annotated[
     Field(discriminator="operation"),
 ]
 PanelUpdate = Annotated[
-    PanelInputs | PanelReadiness | PanelStart | PanelResponse | PanelCancel,
+    PanelInputs
+    | PanelReadiness
+    | PanelStart
+    | PanelResponse
+    | PanelDecision
+    | PanelContinue
+    | PanelCancel,
     Field(discriminator="operation"),
 ]
 BASE = "/api/workspace/process-interfaces"
@@ -135,6 +155,8 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                             "text/markdown",
                             "text/csv",
                             "application/json",
+                            "image/png",
+                            "image/jpeg",
                         }
                         or not size.isdecimal()
                         or int(size) > 1048576
@@ -144,7 +166,7 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                             "http_status": 415,
                             "reason": {
                                 "code": "CAPABILITY_UNAVAILABLE",
-                                "message": "This native view supports text files up to 1 MiB.",
+                                "message": "This native view supports text, PNG and JPEG files up to 1 MiB.",
                                 "correction": "Open this representation in Wright's existing working view.",
                             },
                         }
@@ -197,16 +219,22 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                         if row.get("request", {}).get("run_id") == request.run_id
                     ]
             else:
-                if operation in ("respond", "cancel"):
+                if operation == "continue":
+                    path = BASE + "/actions/" + quote(body.pop("action_id"), safe="")
+                elif operation in ("respond", "decide", "cancel"):
                     subject = quote(
                         body.pop(
-                            "checkpoint_id" if operation == "respond" else "run_id"
+                            "checkpoint_id"
+                            if operation in ("respond", "decide")
+                            else "run_id"
                         ),
                         safe="",
                     )
                     path = BASE + (
-                        "/interactions/" + subject + "/response"
-                        if operation == "respond"
+                        "/interactions/"
+                        + subject
+                        + ("/decision" if operation == "decide" else "/response")
+                        if operation in ("respond", "decide")
                         else "/runs/" + subject + "/cancel"
                     )
                 else:

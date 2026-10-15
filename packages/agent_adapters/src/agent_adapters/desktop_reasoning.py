@@ -7,6 +7,8 @@ connection authentication and run authority belong to the composition layer.
 from __future__ import annotations
 
 import asyncio
+import base64
+import binascii
 from datetime import datetime, timezone
 from typing import Protocol
 from uuid import uuid4
@@ -25,6 +27,23 @@ from .workflow_instructions import (
     workflow_response_instructions,
     validate_workflow_assumptions,
 )
+
+
+def desktop_inline_image(url):
+    """Decode bounded inline transport only; no URL/file fetch or image transformation."""
+    if not isinstance(url, str) or len(url) > 262144:
+        raise ValueError("Desktop inline image exceeds the handoff bound")
+    prefix, separator, encoded = url.partition(";base64,")
+    if not separator or prefix not in {"data:image/png", "data:image/jpeg"}:
+        raise ValueError("Desktop images require inline PNG or JPEG")
+    try:
+        data = base64.b64decode(encoded, validate=True)
+    except (ValueError, binascii.Error):
+        raise ValueError("Desktop inline image encoding is invalid") from None
+    signature = b"\x89PNG\r\n\x1a\n" if prefix == "data:image/png" else b"\xff\xd8\xff"
+    if not data.startswith(signature):
+        raise ValueError("Desktop image media signature differs")
+    return prefix.removeprefix("data:"), data
 
 
 class DesktopReasoningPort(Protocol):
@@ -197,8 +216,17 @@ class DesktopWorkflowReasoner:
         invocation_observer=None,
         expected_resolution=None,
     ):
-        if images or output_format not in {"text", "markdown", "html", "json"}:
+        if (
+            images and self.binding.image_input_profile == "unavailable"
+        ) or output_format not in {"text", "markdown", "html", "json"}:
             raise ValueError("Desktop image inputs and generation are not qualified")
+        content = prompt
+        if images:
+            for image in images:
+                desktop_inline_image(image)
+            content = [{"type": "text", "text": prompt}] + [
+                {"type": "image_url", "image_url": {"url": image}} for image in images
+            ]
         instructions = embedded_instruction_set(instruction_set)
         resolved = workflow_response_instructions(
             output_format,
@@ -208,7 +236,7 @@ class DesktopWorkflowReasoner:
         payload = {
             "messages": [
                 {"role": "system", "content": resolved.text},
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": content},
             ],
             "tools": [],
             "tool_choice": "none",
@@ -251,7 +279,7 @@ class DesktopWorkflowReasoner:
         invocation_observer=None,
         expected_resolution=None,
     ):
-        if any(
+        has_images = any(
             isinstance(message, dict)
             and isinstance(message.get("content"), list)
             and any(
@@ -260,8 +288,31 @@ class DesktopWorkflowReasoner:
                 for part in message["content"]
             )
             for message in messages
-        ):
-            raise ValueError("Desktop image inputs are not qualified")
+        )
+        if has_images:
+            if self.binding.image_input_profile == "unavailable":
+                raise ValueError("Desktop image inputs are not qualified")
+            for message in messages:
+                if not isinstance(message, dict) or not isinstance(
+                    message.get("content"), list
+                ):
+                    continue
+                for part in message["content"]:
+                    if isinstance(part, dict) and part.get("type") in {
+                        "image_url",
+                        "image",
+                        "input_image",
+                    }:
+                        if (
+                            set(part) != {"type", "image_url"}
+                            or part["type"] != "image_url"
+                            or not isinstance(part["image_url"], dict)
+                            or set(part["image_url"]) != {"url"}
+                        ):
+                            raise ValueError(
+                                "Desktop image parts require the exact inline image contract"
+                            )
+                        desktop_inline_image(part["image_url"]["url"])
         instructions = embedded_instruction_set(instruction_set)
         # Existing runtime already resolves saved task/recovery instructions and
         # constructs the precise schema/context. Retain that request unchanged.

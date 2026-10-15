@@ -16,6 +16,12 @@ download tickets or private account state in a guide.
 
 ## Available guides
 
+- [Casys CalculiX MCP](calculix-mcp.md): recorded static solves, exact resources,
+  selected-container setup and host-specific qualification limits.
+
+- [ROSBag MCP](rosbag-mcp.md): original Robot Tracking Diagnosis data, offline
+  bag inspection and measurement ownership; fresh GB10 ARM64 provider proof.
+
 - [SteveCAD](stevecad-mcp.md): editable CAD, revision-bound measurements, returned
   images, known authoring mistakes and carefully evidenced bug reports.
 - [KiCad MCP](kicad-mcp.md): native CM5 IO Board mounting references, container

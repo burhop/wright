@@ -23,6 +23,7 @@ class DesktopHarnessBinding(Contract):
     schema_version: Literal["wright.desktop-binding/1"] = "wright.desktop-binding/1"
     connection_id: Identifier
     adapter: Literal["openai-desktop-harness"] = "openai-desktop-harness"
+    image_input_profile: Literal["unavailable", "inline-png-jpeg-v1"] = "unavailable"
     requested_model: Identifier | None = None
     reported_model: Identifier | None = None
     model_identity_source: Literal["unreported", "client_reported"] = "unreported"
@@ -63,9 +64,7 @@ class DesktopReasoningRequest(Contract):
     @model_validator(mode="after")
     def bounded_payload(self):
         if len(canonical_json(self.payload).encode()) > 262144:
-            raise ValueError(
-                "Desktop task exceeds 256 KiB; image handoff is not qualified"
-            )
+            raise ValueError("Desktop task exceeds the 256 KiB handoff limit")
         return self
 
     @property

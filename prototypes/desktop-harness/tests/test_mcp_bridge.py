@@ -293,7 +293,8 @@ def test_working_view_requires_opt_in_and_reuses_immutable_editor_resource(bridg
     }
     native = bridge.server(client, native_editor=True, native_working_view=True)
     tools = {t.name: t for t in asyncio.run(native.list_tools())}
-    assert len(tools) == 18
+    assert len(tools) == 32
+    assert tools["wright_workflow_history"].annotations.readOnlyHint is True
     view = tools["wright_process_view"]
     assert view.annotations.readOnlyHint is True
     assert (

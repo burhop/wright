@@ -279,7 +279,7 @@ const stateLabels: Record<InteractionSnapshot["state"], string> = {
   preparing: "Preparing",
   ready: "Ready",
   running: "Running",
-  waiting_human: "Waiting for your review or response",
+  waiting_human: "Paused at a review or response step",
   waiting_external: "Waiting for an external operation",
   reconciliation_required: "Status needs reconciliation",
   completed: "Process completed",
@@ -627,11 +627,13 @@ export function CheckpointCard({
   return (
     <article className="wp-checkpoint">
       <h3>
-        {interaction.kind === "input"
-          ? "Provide the declared response"
-          : interaction.kind === "review"
-            ? "Review the result"
-            : "Review the next action"}
+        {interaction.decision
+          ? "Recorded review"
+          : interaction.kind === "input"
+            ? "Provide the declared response"
+            : interaction.kind === "review"
+              ? "Review the result"
+              : "Review the next action"}
       </h3>
       <p>{interaction.instructions}</p>
       {interaction.decision && (
@@ -645,6 +647,13 @@ export function CheckpointCard({
               : "Changes requested"}
           </p>
           {interaction.decision.reason && <p>{interaction.decision.reason}</p>}
+          {interaction.decision.decision === "changes_requested" && (
+            <p>
+              The requested changes are recorded for this result. Check the
+              workflow and its review notes before deciding how to proceed.
+              Recording this decision does not itself revise or restart the work.
+            </p>
+          )}
         </div>
       )}
       {interaction.action_receipt && (

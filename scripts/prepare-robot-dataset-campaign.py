@@ -434,39 +434,39 @@ def prepare(args, directory, available):
             "when": "pass",
         },
     })
+    # Freeze each task's declared capability scope in the new source revision.
+    # Tool registration and execution permission still belong to their owners.
+    for task, names in (
+        (normalize, ("normalize_csv_to_ros2",)),
+        (stages["inspect_bag"], ("bag_info", "get_topic_schema", "get_messages_in_range")),
+        (stages["align_and_measure"], ("calculate_tracking_metrics",)),
+        (preflight_cad, ("context", "docs")),
+        (author_cad, ("write_text_document",)),
+        (build_cad, ("run",)),
+        (solve, ("calculix_mesh_preflight", "calculix_solve_static_recorded", "calculix_run_get")),
+        (expand, ("export_recorded_fields_and_reactions",)),
+        (fea_report, ("inspect_file",)),
+    ):
+        task["fields"]["settings"]["mcp_task_tools"] = list(names)
     result = helpers.render(sections)
     validate_workspace_authoring_shape(result)
     plan = compile_prompt_workflow(result)
     if any(edge not in sections for edge in edges):
         raise ValueError("Original robot control edges changed")
+    declared = {
+        (step.server_id, name)
+        for step in plan.steps if step.agent_task
+        for name in step.task_tool_allowlist
+    }
     selected = []
-    for server, names in config["allowed_tools"].items():
-        for name in names:
-            matches = [tool for tool in available if tool["server_id"] == server and tool["tool_name"] == name]
-            if len(matches) != 1:
-                raise ValueError("Required selected workspace tool unavailable: " + server + "/" + name)
-            selected.append(matches[0])
-    for server, names in {
-        agentcad_server: ("context", "docs", "run"),
-        file_server: ("write_text_document", "inspect_file"),
-        solver_server: (
-            "calculix_mesh_preflight",
-            "calculix_solve_static_recorded",
-            "calculix_run_get",
-        ),
-        field_server: ("export_recorded_fields_and_reactions",),
-    }.items():
-        for name in names:
-            matches = [
-                tool
-                for tool in available
-                if tool["server_id"] == server and tool["tool_name"] == name
-            ]
-            if len(matches) != 1:
-                raise ValueError(
-                    "Required corrective-design tool unavailable: " + server + "/" + name
-                )
-            selected.append(matches[0])
+    for server, name in sorted(declared):
+        matches = [
+            tool for tool in available
+            if tool["server_id"] == server and tool["tool_name"] == name
+        ]
+        if len(matches) != 1:
+            raise ValueError("Required selected workspace tool unavailable or ambiguous: " + server + "/" + name)
+        selected.append(matches[0])
     draft.mkdir(parents=True)
     target = draft / "bound.workflow.wflow"
     target.write_text(result, encoding="utf-8")

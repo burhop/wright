@@ -262,3 +262,122 @@ async def test_stdio_transport_close_fails_pending_operations() -> None:
     with pytest.raises(RuntimeError, match="transport closed"):
         await pending
     assert runner._pending_requests == {}
+
+
+@pytest.mark.asyncio
+async def test_headless_oauth_presenter_uses_same_receiver_and_clears_request(
+    monkeypatch,
+):
+    from unittest.mock import Mock
+
+    browser = Mock()
+    monkeypatch.setattr("tool_registry.runners.sse.webbrowser.open", browser)
+    observed = []
+
+    async def present(url, redirect):
+        observed.append((url, redirect))
+
+    callback = _OAuthCallbackServer(timeout=5, presenter=present)
+    redirect = await callback.start()
+    try:
+        await callback.open_authorization_url(
+            "https://issuer.example/authorize?state=fixture"
+        )
+        assert observed == [
+            ("https://issuer.example/authorize?state=fixture", redirect)
+        ]
+        browser.assert_not_called()
+        port = int(redirect.split(":", 2)[2].split("/", 1)[0])
+        result = asyncio.create_task(callback.wait_for_callback())
+        reader, writer = await asyncio.open_connection("127.0.0.1", port)
+        writer.write(
+            b"GET /oauth/callback?code=fixture-code&state=fixture-state HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n"
+        )
+        await writer.drain()
+        assert await result == ("fixture-code", "fixture-state")
+        await reader.read()
+        writer.close()
+        await writer.wait_closed()
+        assert observed[-1] == (None, redirect)
+    finally:
+        await callback.close()
+    assert len(observed) == 2
+
+
+@pytest.mark.asyncio
+async def test_headless_oauth_timeout_clears_without_browser_fallback(monkeypatch):
+    from unittest.mock import Mock
+
+    browser = Mock()
+    monkeypatch.setattr("tool_registry.runners.sse.webbrowser.open", browser)
+    observed = []
+
+    async def present(url, redirect):
+        observed.append(url)
+
+    callback = _OAuthCallbackServer(timeout=0.01, presenter=present)
+    await callback.start()
+    await callback.open_authorization_url("https://issuer.example/authorize")
+    with pytest.raises(TimeoutError):
+        await callback.wait_for_callback()
+    assert observed == ["https://issuer.example/authorize", None]
+    assert callback.server is None
+    browser.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_default_oauth_presentation_preserves_existing_browser(monkeypatch):
+    from unittest.mock import Mock
+
+    browser = Mock(return_value=True)
+    monkeypatch.setattr("tool_registry.runners.sse.webbrowser.open", browser)
+    callback = _OAuthCallbackServer()
+    await callback.open_authorization_url("https://issuer.example/authorize")
+    browser.assert_called_once_with("https://issuer.example/authorize", new=2)
+    await callback.close()
+
+
+@pytest.mark.asyncio
+async def test_headless_presenter_failure_does_not_fall_back_or_leave_pending(
+    monkeypatch,
+):
+    from unittest.mock import Mock
+
+    browser = Mock()
+    monkeypatch.setattr("tool_registry.runners.sse.webbrowser.open", browser)
+    cleared = []
+
+    async def present(url, redirect):
+        if url is not None:
+            raise RuntimeError("desktop disconnected")
+        cleared.append(redirect)
+
+    callback = _OAuthCallbackServer(presenter=present)
+    redirect = await callback.start()
+    try:
+        with pytest.raises(RuntimeError, match="desktop disconnected"):
+            await callback.open_authorization_url("https://issuer.example/authorize")
+    finally:
+        await callback.close()
+    browser.assert_not_called()
+    assert cleared == [redirect]
+    assert callback.server is None
+
+
+@pytest.mark.asyncio
+async def test_headless_oauth_cancel_clears_request():
+    observed = []
+
+    async def present(url, redirect):
+        observed.append(url)
+
+    callback = _OAuthCallbackServer(presenter=present)
+    await callback.start()
+    await callback.open_authorization_url("https://issuer.example/authorize")
+    task = asyncio.create_task(callback.wait_for_callback())
+    await asyncio.sleep(0)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert observed == ["https://issuer.example/authorize", None]
+    assert callback.server is None

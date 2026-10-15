@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "status": "failed_schema_contract",
+  "scope": "actual native stdio recovery with official Python MCP1.28.1",
+  "protocol": "2025-11-25",
+  "provider": {
+    "name": "mcp-calculix",
+    "title": null,
+    "version": "0.8.6",
+    "websiteUrl": null,
+    "icons": null
+  },
+  "diagnostic": "Invalid structured content returned by tool calculix_run_get: 'result' is a required property",
+  "native_schema_required": [
+    "result"
+  ],
+  "native_schema_properties": [
+    "result"
+  ],
+  "http_schema_keys": [
+    "oneOf"
+  ],
+  "calls_completed": [],
+  "durable_files_unchanged": true,
+  "solve_calls": 0,
+  "provider_image": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+  "evidence_root": "/tmp/wright-desktop-calculix-provider-20261014-01/arm64-stdio-recovery-002",
+  "native_tools_sha256": "2d2b67f18a3d678c14c513fddfa8aa3317cd6a37dca0672cc7f8c5ba59dd4bdb",
+  "external_bug_report_submitted": false,
+  "workaround_applied": false,
+  "limits": [
+    "Native stdio tools/list declares structured result wrapper; calculix_run_get returns unwrapped result rejected by client validation.",
+    "HTTP direct/gateway success does not establish native stdio compatibility.",
+    "Do not disable validation, use another solver, or replay an uncertain effect to pass qualification."
+  ]
+}

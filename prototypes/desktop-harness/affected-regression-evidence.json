@@ -1,0 +1,31 @@
+{
+  "source_commit": "ae236d7f161d7bd56eb2c48ea677120eb379101b",
+  "scope": [
+    "packages/agent_adapters/tests",
+    "packages/workspace_service/tests/test_non_hermes_activation.py",
+    "packages/workspace_service/tests/test_desktop_reasoning_execution.py",
+    "packages/data_vault/tests/test_desktop_reasoning_repository.py",
+    "prototypes/desktop-harness/tests"
+  ],
+  "testsuite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "21",
+    "tests": "618",
+    "time": "22.893",
+    "timestamp": "2026-10-14T19:48:39.362309-04:00",
+    "hostname": "promaxgb10-9666"
+  },
+  "skipped_reasons": {
+    "Installed Hermes API source is unavailable on this host": 21
+  },
+  "junit_path": "/tmp/wright-desktop-regression-20261014-01/results.xml",
+  "junit_sha256": "cd1d1093fe3908f9efbb6ffc9260b5a0ee722a0a9f49789b94e3209a19b41b93",
+  "additional_check": "Added explicit Pi unavailable/no-Hermes-fallback regression; registry suite 9 passed.",
+  "limits": [
+    "No live Hermes API source installed: 21 skipped checks are unverified.",
+    "No native Windows desktop or complete engineering workflow acceptance claimed.",
+    "Separate embedded Codex pilot is not present in this checkout; its original worktree must be inspected and regressed separately."
+  ]
+}

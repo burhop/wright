@@ -101,10 +101,12 @@ export function createNativePanelProcessClient(options: {
           "text/markdown",
           "text/csv",
           "application/json",
+          "image/png",
+          "image/jpeg",
         ].includes(file.media_type)
       )
         throw new Error(
-          "Wright did not confirm a bounded text representation.",
+          "Wright did not confirm a bounded text or image representation.",
         );
       const bytes = Uint8Array.from(atob(file.bytes_base64), (character) =>
         character.charCodeAt(0),
@@ -177,13 +179,23 @@ export function createNativePanelProcessClient(options: {
       } else if (simple[url.pathname]) request.operation = simple[url.pathname];
       else {
         const answer = /^\/interactions\/([^/]+)\/response$/.exec(url.pathname);
+        const decision = /^\/interactions\/([^/]+)\/decision$/.exec(
+          url.pathname,
+        );
         const cancel = /^\/runs\/([^/]+)\/cancel$/.exec(url.pathname);
+        const continuation = /^\/actions\/(continue-[^/]+)$/.exec(url.pathname);
         if (answer) {
           request.operation = "respond";
           request.checkpoint_id = decodeURIComponent(answer[1]);
+        } else if (decision) {
+          request.operation = "decide";
+          request.checkpoint_id = decodeURIComponent(decision[1]);
         } else if (cancel) {
           request.operation = "cancel";
           request.run_id = decodeURIComponent(cancel[1]);
+        } else if (continuation) {
+          request.operation = "continue";
+          request.action_id = decodeURIComponent(continuation[1]);
         } else return denied(unavailable, 501);
       }
     } else return denied(unavailable, 501);

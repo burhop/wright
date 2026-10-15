@@ -1,0 +1,15 @@
+{
+  "source_revision": "3a1a2007",
+  "scope": "Previously unreached Playwright stage from check-dev-merge.sh, run separately after docs-only correction",
+  "passed": 161,
+  "skipped": 5,
+  "failed": 18,
+  "failures": "All 18 webkit-workspace-surfaces cases failed before page creation on missing libgstcodecparsers-1.0.so.0",
+  "private_dependency_followup": "Unpacked four Ubuntu ARM64 libraries; unchanged private WebKit copy still aborts in libWPEWebKit before page creation. Root cause not established. No sandbox/rendering policy weakened.",
+  "host_page_size_bytes": 65536,
+  "full_merge_gate_pass": false,
+  "logs": {
+    "browser-stage.log": "2d56aaba10a6ed514c19b8d88f0638fb0c32cf66098a14a804c5d06675976025",
+    "browser-stage-report.tar.gz": "e045052eea15477ab9c11e34a54d9b35b7940282732f1c67608526f8e3dba9f4"
+  }
+}

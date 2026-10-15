@@ -421,3 +421,84 @@ def test_uncertain_provider_effect_stops_desktop_decision_loop_without_replay(
         == 1
     )
     assert not (tmp_path / "research.txt").exists()
+
+
+def test_opt_in_image_request_retains_exact_bytes_and_redacted_evidence(tmp_path):
+    import base64
+    from pathlib import Path
+
+    data = (
+        Path(__file__).resolve().parents[3]
+        / "artifacts/stevecad-demonstrations/qualification/native/06-inspect-coupon-1.png"
+    ).read_bytes()
+    inline = "data:image/png;base64," + base64.b64encode(data).decode()
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo, image_input_profile="inline-png-jpeg-v1")
+    assert desktop.resolution() != reasoner(repo).resolution()
+    observed = []
+
+    async def observe(value):
+        observed.append(value)
+
+    async def exercise():
+        task = asyncio.create_task(
+            desktop.generate_response(
+                "Inspect this recorded image",
+                "text",
+                images=[inline],
+                invocation_observer=observe,
+            )
+        )
+        try:
+            request = await pending(repo)
+            assert request.binding.image_input_profile == "inline-png-jpeg-v1"
+            assert request.payload["messages"][-1]["content"][1] == {
+                "type": "image_url",
+                "image_url": {"url": inline},
+            }
+            assert inline not in json.dumps(observed)
+            answer(repo, request, "Synthetic response, not image perception evidence")
+            assert (
+                await asyncio.wait_for(task, 2)
+                == "Synthetic response, not image perception evidence"
+            )
+        finally:
+            if not task.done():
+                task.cancel()
+                await asyncio.gather(task, return_exceptions=True)
+
+    asyncio.run(exercise())
+
+
+@pytest.mark.parametrize(
+    "image",
+    [
+        "https://example.invalid/image.png",
+        "data:image/svg+xml;base64,PHN2Zz4=",
+        "data:image/png;base64,***",
+        "data:image/png;base64,YmFk",
+    ],
+)
+def test_opt_in_image_rejects_noninline_unsupported_or_malformed_before_request(
+    tmp_path, image
+):
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo, image_input_profile="inline-png-jpeg-v1")
+    with pytest.raises(ValueError):
+        asyncio.run(desktop.generate_response("Inspect", "text", images=[image]))
+    assert repo.pending("workspace-1", "session-1") == []
+
+
+def test_opt_in_image_does_not_relax_total_payload_bound(tmp_path):
+    import base64
+
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo, image_input_profile="inline-png-jpeg-v1")
+    # Transport signature fixture; this is not a decoded-image qualification.
+    inline = (
+        "data:image/png;base64,"
+        + base64.b64encode(b"\x89PNG\r\n\x1a\n" + b"x" * 100).decode()
+    )
+    with pytest.raises(ValueError, match="256 KiB"):
+        asyncio.run(desktop.generate_response("x" * 262144, "text", images=[inline]))
+    assert repo.pending("workspace-1", "session-1") == []

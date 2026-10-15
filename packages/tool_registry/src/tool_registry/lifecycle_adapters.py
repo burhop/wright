@@ -13,7 +13,7 @@ from .db import clear_server_tools, get_server, insert_tools, update_server
 from .launch_templates import render_launch_configuration
 from .models import EnvVarDefinition, McpTool
 from .runners.base import BaseRunner, ProgressCallback
-from .runners.sse import SseRunner
+from .runners.sse import OAuthPresentation, SseRunner
 from .runners.stdio import StdioRunner
 from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials, read_secrets, value_for_credential
@@ -108,11 +108,18 @@ class MockRunner(BaseRunner):
 
 
 class DatabaseLifecycleAdapter:
-    def __init__(self, db_path: str, *, operation_timeout: float = 30.0) -> None:
+    def __init__(
+        self,
+        db_path: str,
+        *,
+        operation_timeout: float = 30.0,
+        authorization_presenter: OAuthPresentation | None = None,
+    ) -> None:
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
         self.operation_timeout = operation_timeout
+        self.authorization_presenter = authorization_presenter
 
     def build_runner(
         self,
@@ -189,6 +196,7 @@ class DatabaseLifecycleAdapter:
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
                 server_id=server_id,
                 operation_timeout=self.operation_timeout,
+                authorization_presenter=self.authorization_presenter,
             )
         raise ValueError(f"Unsupported coordinated server type: {server.type}")
 

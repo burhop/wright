@@ -248,3 +248,22 @@ See [plan.md](plan.md), [tasks.md](tasks.md), [evidence.md](evidence.md),
 [capabilities.md](capabilities.md) and [gallery/README.md](gallery/README.md).
 The retained protocol summary is [qualified-protocol-evidence.json](qualified-protocol-evidence.json).
 Do not publish, push, merge, release or perform physical actions from this prototype.
+
+### GB10 browser qualification limitation — 15 October 2026
+
+At 3a1a2007, the remaining full-gate Playwright stage completed with 161 passed,
+5 skipped and 18 WebKit launch failures. All 18 failed before page creation: the
+installed WebKit 2336 binary lacked `libgstcodecparsers-1.0.so.0` (and dependency
+inspection also found missing libavif). Four Ubuntu ARM64 libraries were unpacked
+only into `/tmp/wright-webkit-runtime-20261015-01`; an unchanged private browser
+copy then aborted with SIGABRT inside libWPEWebKit before opening a test page.
+The backtrace and failed attempts remain. The host uses 65536-byte pages; that is
+an observed property, not a proven cause. No system package, installed browser
+cache, sandbox setting or rendering policy was changed to obtain a pass.
+
+This is not a WebKit pass or a complete green merge-gate receipt. Chromium,
+Firefox and desktop-profile results do not qualify WebKit or actual Windows
+native-panel acceptance. Current-head CI on a supported host remains required.
+See `browser-gate-evidence.json`; raw traces/report archive and retained backend
+state are under `/tmp/wright-desktop-gates-20261015-01`. The strict-docs failure
+was separately corrected and verified; all Python and 1874frontend tests passed.

@@ -39,16 +39,30 @@ class LocalWorkspaceFiles:
         return self.manager.get_workspace_tree()
 
     def read(
-        self, relative_path: str, backup_id: str | None = None
+        self,
+        relative_path: str,
+        backup_id: str | None = None,
+        *,
+        max_bytes: int | None = None,
     ) -> tuple[Path, bytes]:
         if backup_id:
             absolute = WorkspacePath(self.workspace_dir).backup(
                 backup_id, must_exist=True
             )
-            return absolute, absolute.read_bytes()
-        absolute = Path(self.manager.sanitize_path(relative_path))
+            if max_bytes is None:
+                return absolute, absolute.read_bytes()
+        else:
+            absolute = Path(self.manager.sanitize_path(relative_path))
         if not absolute.is_file():
             raise FileNotFoundError(relative_path)
+        if max_bytes is not None:
+            if max_bytes < 1:
+                raise ValueError("Read limit must be positive")
+            with absolute.open("rb") as stream:
+                content = stream.read(max_bytes + 1)
+            if len(content) > max_bytes:
+                raise ValueError("File exceeds the preview byte limit")
+            return absolute, content
         return absolute, self.manager.read_file_content(relative_path)
 
     def create(self, path: str, node_type: str) -> dict[str, Any]:
