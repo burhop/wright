@@ -1,6 +1,6 @@
 # Named 0.10.0 candidate qualification and rollback
 
-Prepared, not installed. The saved goal authorizes this named update after exact
+Installed and exact-package verified; Windows acceptance pending. The saved goal authorizes this named update after exact
 qualification and private backup. No other plugin, setting or service changes.
 
 Candidate runtime: /tmp/wright-desktop-template-entry, code ab3ba5f7.
@@ -53,4 +53,6 @@ Eleven actual MCP/browser checks passed with no browser errors, including Robot
 and manufacturing template copies at narrow/wide widths. The combined profile
 also completed a fresh private synthetic review/continue run across reconnects;
 a stale subject was denied. See native-home-010-evidence.json.
-No live plugin update has been applied. Repository qualification is separate.
+Named update applied with private backup and all 18 old cache files preserved.
+Installed protocol/resource/package hashes match the tested candidate. No unrelated
+configuration changed. See installed-010-evidence.json. Repository qualification is separate.

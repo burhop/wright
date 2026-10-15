@@ -136,3 +136,7 @@ The read-only proof does not qualify arbitrary tools or installed desktop loadin
   and fresh private review/same-run continuation pass. See
   `native-home-010-evidence.json` and `native-home-010-update.md`.
 - Installed plugin remains 0.9. No live update or Windows acceptance claim.
+
+- Named 0.10 installed; actual installed 34-tool/resource/package verification passed.
+  All 18 prior cache files retained, only named marketplace source changed.
+  See `installed-010-evidence.json` and `desktop-010-walkthrough.md`.

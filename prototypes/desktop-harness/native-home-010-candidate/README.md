@@ -1,6 +1,6 @@
 # Named experimental 0.10.0 candidate
 
-Prepared; not installed. Combines New workflow and the shared template picker
+Installed and package-verified; Windows acceptance pending. Combines New workflow and the shared template picker
 with the existing 0.9 local-review/continuation profile. Uses fresh isolated
 state /tmp/wright-desktop-home-010-state-20261015-01 and loopback API 8163.
 
