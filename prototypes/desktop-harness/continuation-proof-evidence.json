@@ -1,0 +1,231 @@
+{
+  "state": "passed",
+  "scope": "private synthetic local-review continuation; no engineering acceptance",
+  "run_id": "2d225376c93b4cebb2fef991146c53b6",
+  "completed_same_run": true,
+  "sqlite_counts": {
+    "native_process_runs": 0,
+    "workspace_workflow_runs": 0,
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 1
+  },
+  "source_digest": "55a967ebbe42ce78d5be8f7692e1cc5b3cd68275025bf11f6152f4273b7b97c9",
+  "output_sha256": "16fc02e5c7a2ae5042e25ec085856404d1cab1bd3841ee8b374d32239de2908d",
+  "output_unchanged_across_review": true,
+  "stale_subject_denied": {
+    "error": {
+      "ok": false,
+      "http_status": 403,
+      "reason": {
+        "code": "SCOPE_DENIED",
+        "message": "Wright rejected this process operation.",
+        "correction": "Keep your draft and inspect the exact process or connection before proceeding."
+      }
+    }
+  },
+  "continued_action": {
+    "schema_version": "wright.process-interaction/1",
+    "context": {
+      "process": {
+        "workspace_id": "c4688c7f-c4e0-4bda-9d53-1d2267225943",
+        "source_path": "workflows/native-review.workflow.wflow",
+        "source_digest": "55a967ebbe42ce78d5be8f7692e1cc5b3cd68275025bf11f6152f4273b7b97c9",
+        "semantic_digest": null,
+        "source_contract": "canonical-source"
+      },
+      "run_id": "2d225376c93b4cebb2fef991146c53b6",
+      "input_snapshot_id": "inputs-fff19bca9344443281e77f2e3671a579",
+      "input_digest": "4e1d22b527bb40a185a1a2e4081fb54abd655021b3e28bd74cf5a931390e812d",
+      "cursor": 11,
+      "generated_at": "2026-10-15T00:00:03.988011+00:00"
+    },
+    "state": "waiting_external",
+    "inputs": [],
+    "readiness": null,
+    "outputs": [
+      {
+        "result_id": "2d225376c93b4cebb2fef991146c53b6:brief:brief_response",
+        "step_id": "brief",
+        "port_id": "brief_response",
+        "role": "deliverable",
+        "title": "Prepare a digital inspection brief",
+        "producer_attempt": null,
+        "revision_id": null,
+        "representations": [
+          {
+            "artifact_ref": "outputs/inspection-brief.md",
+            "sha256": "16fc02e5c7a2ae5042e25ec085856404d1cab1bd3841ee8b374d32239de2908d",
+            "media_type": null,
+            "result_id": "2d225376c93b4cebb2fef991146c53b6:brief:brief_response",
+            "representation_id": null
+          }
+        ],
+        "assessments": [],
+        "supported_viewers": []
+      }
+    ],
+    "interactions": [
+      {
+        "checkpoint_id": "checkpoint-9fb523e2dbe675a0db25e532",
+        "step_id": "review",
+        "kind": "action",
+        "subject_digest": "f84dcc7a74aaa66719e3be36a2fb2f302fc1d0af08e3f4ecabcb5fbdb232adf2",
+        "instructions": "Private fixture only: inspect the brief. A test decision is not engineering approval.",
+        "response_schema": null,
+        "decisions": [
+          "approved",
+          "changes_requested"
+        ],
+        "evidence": [
+          {
+            "artifact_ref": "outputs/inspection-brief.md",
+            "sha256": "16fc02e5c7a2ae5042e25ec085856404d1cab1bd3841ee8b374d32239de2908d",
+            "media_type": null,
+            "result_id": null,
+            "representation_id": null
+          }
+        ],
+        "state": "consumed",
+        "decision": {
+          "decision": "approved",
+          "actor": "local-control-plane",
+          "reason": "Private fixture only: verify continuation; not engineering approval",
+          "request_id": "private-review-decision-01",
+          "integration_test": false
+        },
+        "action_receipt": {
+          "request_id": "private-continuation-01",
+          "principal_id": "local-control-plane",
+          "submission": "accepted",
+          "delivery_completed": true,
+          "observed_outcome": null,
+          "provider_reference": null,
+          "cancellation_requested": false,
+          "cancellation_outcome": null
+        }
+      }
+    ],
+    "actions": [
+      {
+        "action_id": "review-checkpoint-9fb523e2dbe675a0db25e532",
+        "operation": "review",
+        "title": "Review action",
+        "enabled": false,
+        "subject_digest": "f84dcc7a74aaa66719e3be36a2fb2f302fc1d0af08e3f4ecabcb5fbdb232adf2",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This run is already executing a segment.",
+            "correction": "Follow the saved run and its current action receipt.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "checkpoint-9fb523e2dbe675a0db25e532",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "continue-checkpoint-9fb523e2dbe675a0db25e532",
+        "operation": "action",
+        "title": "Continue process",
+        "enabled": false,
+        "subject_digest": "f84dcc7a74aaa66719e3be36a2fb2f302fc1d0af08e3f4ecabcb5fbdb232adf2",
+        "reasons": [
+          {
+            "code": "ACTION_NOT_PERMITTED",
+            "message": "This run is already executing a segment.",
+            "correction": "Follow the saved run and its current action receipt.",
+            "binding_id": null,
+            "step_id": null,
+            "navigation": null,
+            "technical_details_ref": null
+          }
+        ],
+        "checkpoint_id": "checkpoint-9fb523e2dbe675a0db25e532",
+        "idempotency_required": true
+      },
+      {
+        "action_id": "cancel-run",
+        "operation": "cancel",
+        "title": "Cancel this run",
+        "enabled": true,
+        "subject_digest": "c4828cf1b0b55076f6c5d3601e699c4da64f95fae81b094b003371bd44a8cc95",
+        "reasons": [],
+        "checkpoint_id": null,
+        "idempotency_required": true
+      }
+    ],
+    "observations": [
+      {
+        "observation_id": "source-run",
+        "provider_binding": "wright-source-run",
+        "state": "waiting_external",
+        "observed_at": "2026-10-15T00:00:03.988011+00:00",
+        "stale_after": "2026-10-15T00:00:33.988011+00:00",
+        "operation_id": "2d225376c93b4cebb2fef991146c53b6",
+        "activity": "External action outcome is not_dispatched.",
+        "progress_percent": null,
+        "estimated_remaining_seconds": null,
+        "metrics": {
+          "recorded_events": 11,
+          "completed_steps": 1
+        },
+        "limitations": []
+      }
+    ],
+    "diagnostics": [],
+    "navigation": [
+      {
+        "kind": "process",
+        "block_id": null,
+        "run_id": null,
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "run",
+        "block_id": null,
+        "run_id": "2d225376c93b4cebb2fef991146c53b6",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "result",
+        "block_id": null,
+        "run_id": "2d225376c93b4cebb2fef991146c53b6",
+        "result_id": "2d225376c93b4cebb2fef991146c53b6:brief:brief_response",
+        "assessment_id": null,
+        "artifact_ref": null
+      },
+      {
+        "kind": "evidence",
+        "block_id": null,
+        "run_id": "2d225376c93b4cebb2fef991146c53b6",
+        "result_id": "2d225376c93b4cebb2fef991146c53b6:brief:brief_response",
+        "assessment_id": null,
+        "artifact_ref": "outputs/inspection-brief.md"
+      },
+      {
+        "kind": "block",
+        "block_id": "review",
+        "run_id": "2d225376c93b4cebb2fef991146c53b6",
+        "result_id": null,
+        "assessment_id": null,
+        "artifact_ref": null
+      }
+    ],
+    "next_page": null
+  },
+  "evidence_root": "/tmp/wright-desktop-continuation-proof-20261014-02",
+  "receipt_sha256": "cce5504b140a9ff8899c4e7754d99bea2ff7e2558de0881ce2b570971d9e72b9",
+  "limits": [
+    "Same-run identity checked through canonical start and completed snapshot, not inferred from legacy SQLite table counts.",
+    "Actual MCP/API/runtime owners; no native Windows button qualification.",
+    "Synthetic approval only, explicitly authorized private fixture; no engineering MCP or physical actions.",
+    "Persisted continuation-intent guard added after this run; its crash behavior was not exercised here."
+  ]
+}

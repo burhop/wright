@@ -1557,3 +1557,34 @@ button qualification are still required. Do not infer that proof from the prior
 changes-requested review or component tests. Installed0.8.0 and its frozen runtime
 are unchanged. The prior refresh browser proof remains evidence for its recorded
 bundle; these new runtime bytes require new connection qualification.
+
+## Actual private approved-review continuation
+
+Fresh attempt01 at /tmp/wright-desktop-continuation-proof-20261014-01 was
+rejected before a run/reasoning allocation: fixture output inspection-brief.md
+was outside its enrolled outputs directory. Retained logs/readiness diagnostic;
+corrected fixture output to outputs/inspection-brief.md in a fresh attempt02.
+No enrollment or execution contract weakened.
+
+Attempt02, API8154/session13274, actual MCP protocol2025-11-25:
+run2d225376c93b4cebb2fef991146c53b6 received one desktop-authored Markdown brief,
+persisted local-review wait, rejected a stale subject, recorded an explicitly
+synthetic private approval and retained that decision across new MCP processes.
+A single explicit Continue request returned202; the canonical completed snapshot
+has the exact original run_id. Output hash is unchanged across review. There is
+one reasoning request and one response; no engineering tools/physical effects.
+Canonical receipts, not legacy zero-row SQLite tables, establish run identity.
+Compact evidence: continuation-proof-evidence.json; full evidence/logs in
+/tmp/wright-desktop-continuation-proof-20261014-02.
+
+Retained probe mistakes: first answer used the HTTP envelope at the MCP port
+(schema rejection, no accepted response); corrected envelope submitted to the
+same pending request. The helper then used permitted_actions rather than the
+actual actions snapshot field after approval; readback corrected this before
+any Continue was submitted. Never restarted the workflow or repeated its decision.
+The new helper supports that explicit stage recovery and persists continuation
+intent before submission to prevent automatic re-entry after uncertain effects.
+That added crash guard is not itself qualified by this completed run. Ruff and
+syntax checks pass. Native Windows button/served-review UI qualification remains
+open, as do genuine engineering reviews and all complete engineering demos.
+Installed0.8.0 remains unchanged.
