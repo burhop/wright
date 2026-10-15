@@ -1,0 +1,94 @@
+{
+  "scope": "actual ARM64 scikit-fem private provider probe; no full engineering process",
+  "provider_result": {
+    "job_id": "b8050bf3",
+    "solver": "skfem",
+    "status": "completed",
+    "work_dir": "/selected/venv/lib/python3.12/simulation_outputs/arm64-private-conduction-02",
+    "elapsed": "0.78s",
+    "output_files": [
+      "qualification_fixed-coarse-temperature.vtu",
+      "qualification_fixed-fine-temperature.vtu",
+      "qualification_link-coarse-temperature.vtu",
+      "qualification_link-fine-temperature.vtu"
+    ],
+    "stdout_tail": "{\"status\": \"candidate_selected\", \"case_count\": 2, \"output_root\": \"/selected/venv/lib/python3.12/simulation_outputs/arm64-private-conduction-02\"}\n",
+    "trustworthy_result": false,
+    "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.",
+    "critic_review": "REQUIRED \u2014 mandatory critic not yet performed"
+  },
+  "independent_check": {
+    "status": "passed",
+    "boundary": "independent CSV parsing, finite fields, geometry extents, pointwise linear analytic solution and end heat; VTU hashes checked, VTU content not independently decoded",
+    "checks": [
+      {
+        "case": "qualification_fixed",
+        "mesh": "coarse",
+        "nodes": 135,
+        "maximum_pointwise_error_c": 6.707523425575346e-12,
+        "hot_mean_c": 25.555555555562204,
+        "cold_mean_c": 20.0,
+        "independent_conduction_w": 1.0000000000011968,
+        "csv_sha256": "7a9d19190b9f26a10a946a5018c9973184ef02746ef31932c09e2b32cf39e44f"
+      },
+      {
+        "case": "qualification_fixed",
+        "mesh": "fine",
+        "nodes": 765,
+        "maximum_pointwise_error_c": 2.467714921294828e-11,
+        "hot_mean_c": 25.55555555557997,
+        "cold_mean_c": 20.0,
+        "independent_conduction_w": 1.000000000004395,
+        "csv_sha256": "ae106206baf2121ddf17b7e663fe12e5473aea26a5fc4dba585afc5ea4fef564"
+      },
+      {
+        "case": "qualification_link",
+        "mesh": "coarse",
+        "nodes": 135,
+        "maximum_pointwise_error_c": 6.224354365258478e-12,
+        "hot_mean_c": 25.655555555561758,
+        "cold_mean_c": 20.10000000000016,
+        "independent_conduction_w": 1.0000000000010874,
+        "csv_sha256": "07b5c0c1e15485c0681969a1f79c8c82579d4fc57955adbcd6434f29d62bd148"
+      },
+      {
+        "case": "qualification_link",
+        "mesh": "fine",
+        "nodes": 765,
+        "maximum_pointwise_error_c": 2.737721160883666e-11,
+        "hot_mean_c": 25.6555555555828,
+        "cold_mean_c": 20.100000000000822,
+        "independent_conduction_w": 1.0000000000047562,
+        "csv_sha256": "d2381f93d64271e008751b68479662ec141357e00873e194eb151b501e8516fd"
+      }
+    ],
+    "critic_approved": false,
+    "engineering_acceptance": false,
+    "limits": "synthetic uniform-end 3D conduction fixture; not full heat-spreader process or physical model validation"
+  },
+  "state": "/tmp/wright-desktop-oasis-arm64-20261015-01",
+  "first_attempt": "completed_unverified because absolute workspace outputs were outside provider job directory; retained without replay",
+  "second_attempt": "fresh job with relative output root; exact same physics and unchanged script",
+  "source_sha256": "b71d692da20dfd729703f05922b571aa36920726ca7bd885e511ba3452d09a87",
+  "files": {
+    "sizing-decision.json": "13d9a472ef97a841ee52aedcf270ba4f952fda70b7310b0445357b697694bf74",
+    "geometry-analysis-correspondence.json": "d06884003611078518df2e1ce513167f2e6e25cc5091117e5eaad42b9482247a",
+    "qualification_fixed-fine-temperature.csv": "ae106206baf2121ddf17b7e663fe12e5473aea26a5fc4dba585afc5ea4fef564",
+    "qualification_link-fine-temperature.csv": "d2381f93d64271e008751b68479662ec141357e00873e194eb151b501e8516fd",
+    "mesh-comparison.json": "94fd6c759203a1345a1385b45f5697e907a6692cbd907b5367714e3042e218f2",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "solve.py": "771af6ddb574eb3fb77f40fb0a866c0a39626720c13213ec77132ecc67db78c0",
+    "qualification_link-coarse-temperature.vtu": "62dd07e35be3f99044e544654e10fe064199757de95b242d2ed1cd2b7c487dda",
+    "qualification_fixed-coarse-temperature.csv": "7a9d19190b9f26a10a946a5018c9973184ef02746ef31932c09e2b32cf39e44f",
+    "heat-balance.json": "5dae099e436c15a094d35dce81295ef540d66b6980f71651eaa5e435ad478226",
+    "qualification_link-fine-temperature.vtu": "4365efa6a980a11f0f76d496388b447ffc503277ab0b33e0503bc70d31ec8419",
+    "qualification_fixed-coarse-temperature.vtu": "38a58e8b1d27c5e6159ff10aad72d35be2fe68354d4d4a8d9c3b2852122ba5ac",
+    "qualification_link-coarse-temperature.csv": "07b5c0c1e15485c0681969a1f79c8c82579d4fc57955adbcd6434f29d62bd148",
+    "qualification_fixed-fine-temperature.vtu": "3596203574a40fb8df517b53f5d1d15c50d83e793e4b34681be891bcf5b07a74",
+    "stdout.log": "13054d9d969de381b0f8f100828187317814a332a7e6688843da4e21d787756f"
+  },
+  "gateway_qualified": false,
+  "desktop_workflow_qualified": false,
+  "critic_approved": false,
+  "container_exit_code": 0
+}

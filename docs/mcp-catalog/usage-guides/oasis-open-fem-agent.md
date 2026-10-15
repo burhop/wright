@@ -1,8 +1,7 @@
 # OASiS Open FEM Agent usage guide
 
 Updated 15 October 2026. Status: historical Linux x64 protocol/backend/gateway
-qualification retained; GB10 ARM64 installation/protocol verified, actual backend
-and desktop engineering use unverified.
+qualification retained; GB10 ARM64 installation/protocol verified, bounded scikit-fem backend checked; desktop engineering use unverified.
 
 ## Identity and sources
 
@@ -117,3 +116,26 @@ The absent optional SPARTA knowledge file was logged; SPARTA is not selected.
 Next qualification is the actual selected scikit-fem backend, independent field
 checks and Wright gateway. Desktop enrollment and the original heat-spreader
 engineering process remain unverified. Earlier failed attempts are retained.
+
+## GB10 ARM64 scikit-fem backend, 15 October 2026
+
+The retained 3D conduction script ran through actual MCP `run_simulation` for
+synthetic fixed-temperature and total-resistance Robin fixtures. Keep outputs
+inside the provider job directory: an initial absolute `/workspace/direct` output
+root produced files but OASiS did not discover them and returned
+`completed_unverified`. That attempt is retained. A fresh job with output root
+`.` returned `completed` with four coarse/fine VTU fields. No submission replay
+was used, and the original physics/script were unchanged.
+
+Independent CSV checks covered all 135 coarse and 765 fine nodes per case,
+finite values, 50 × 30 × 2 mm bounds, pointwise linear temperature and 1 W
+conductive heat. Maximum pointwise error was below 3e-11 °C. Hot ends were
+25.55555556 °C (fixed) and 25.65555556 °C (Robin). These compare the numerical
+fields to the specified synthetic model, not physical validation. Recorded
+CSV/VTU hashes matched; the independent checker did not decode VTU content.
+
+OASiS correctly retained `trustworthy_result:false` and `critic_approved:false`:
+its mandatory independent critic review has not occurred. The local evidence is
+`/tmp/wright-desktop-oasis-arm64-20261015-01`, including both tool receipts and
+`independent-field-check.json`. Containers exited normally. Wright gateway and
+full desktop heat-spreader execution remain unqualified on this host.
