@@ -56,5 +56,86 @@
     "readback": "/tmp/wright-desktop-custom-source-state-20261015-01/registration-1792036067667/registry-readback.json",
     "readback_sha256": "0e34a34bd4168cca5ee2dcfdf607aa1dcfec913eee23edd4690387c59cff026e",
     "scope": "Private fictional endpoint; synthetic source/setup approval; actual registry-only apply, not provider connection or engineering qualification"
+  },
+  "unavailable_provider": {
+    "validation": {
+      "report": "/tmp/wright-desktop-custom-source-state-20261015-01/unavailable-provider-1792036253354/report.json",
+      "sha256": "1ae4dfebaadaadcc3a97aefa6aceba2dc571bb2fc6544135b8925f2dbc5653e9",
+      "passed": true,
+      "checks": [
+        "actual unavailable endpoint produces failed protocol result; no enable control and no automatic retry",
+        "owner denies workspace enable after failed validation",
+        "saved failure evidence appears in normal connection catalog; inactive and disabled"
+      ]
+    },
+    "reopen": {
+      "report": "/tmp/wright-desktop-custom-source-state-20261015-01/failure-reopen-1792036309095/report.json",
+      "sha256": "67b1132bad19bf35c56c165da39155027fd76a236e865b5e276ac1385f1abeb7",
+      "passed": true,
+      "checks": [
+        "new panel reads saved failed validation through ordinary Connections search without retry",
+        "failure evidence and recovery state fit narrow panel"
+      ]
+    },
+    "attribution_correction": "The retained original report mislabeled the cause: credential owner-ID validation failed before network transport. These receipts establish failure propagation, enable denial and reopen persistence, not unreachable-endpoint behavior."
+  },
+  "https_protocol_recovery": {
+    "report": "/tmp/wright-desktop-custom-https-state-20261015-01/https-recovery-1792036875136/report.json",
+    "sha256": "67f7b4392a07e57b54cd40a209c0812c6c28b3d91c940f5b86792c8aca2d125a",
+    "passed": true,
+    "checks": [
+      "recover exact completed setup without registration or approval replay",
+      "actual TLS-verified MCP initialize and tools discovery passed",
+      "explicit workspace enablement after current validation; no invocation approval",
+      "saved setup discovery from workspace UI",
+      "460px panel has no horizontal overflow"
+    ],
+    "calls": [
+      {
+        "name": "wright_workspace_list"
+      },
+      {
+        "name": "wright_workspace_files"
+      },
+      {
+        "name": "wright_connections_list"
+      },
+      {
+        "name": "wright_connection_plans"
+      },
+      {
+        "name": "wright_connection_plan_read"
+      },
+      {
+        "name": "wright_connection_validate"
+      },
+      {
+        "name": "wright_connection_signin"
+      },
+      {
+        "name": "wright_connection_enable"
+      },
+      {
+        "name": "wright_connection_plans"
+      }
+    ],
+    "errors": [],
+    "saved_plan_id": "plan-6ba3c03e754da2566159",
+    "scope": "Actual MCP/API/storage in simulated desktop browser; private loopback HTTPS MCP protocol and explicit workspace availability; no engineering tool call; synthetic setup review",
+    "limitations": [
+      "Simulated desktop host, not actual Windows panel acceptance",
+      "Private protocol fixture; no SteveCAD OAuth or engineering tool invocation",
+      "Named installed plugin remains unchanged"
+    ]
+  },
+  "credential_identity_tests": {
+    "result": "12 passed in 1.98s",
+    "files": [
+      "packages/tool_registry/tests/test_catalog_user_state_preservation.py",
+      "packages/core/tests/test_secret_provider.py",
+      "packages/tool_registry/tests/test_secret_security.py"
+    ],
+    "ruff": "passed for changed core source and tests",
+    "scope": "GB10 source tests; no Windows native qualification"
   }
 }

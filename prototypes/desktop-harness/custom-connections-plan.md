@@ -201,3 +201,52 @@ validation, credentials, SteveCAD OAuth or engineering outputs.
 SteveCAD registration was already qualified on14October; do not repeat it as new
 progress. Existing confirmed account setup still needs Windows-to-GB10 callback
 routing and genuine user OAuth consent before authenticated engineering runs.
+
+## Unavailable-provider qualification
+
+The registered example.invalid fixture was explicitly validated once through the
+served panel. Wright recorded failed protocol validation, exposed no Enable
+control, denied a direct exact-plan enable request and left the provider inactive
+and workspace-disabled. A fresh read-only panel then searched the normal catalog
+and displayed the saved failed validation and observation without retrying.
+Three live failure checks and two reopen/narrow-panel checks pass. These receipts
+are indexed in custom-connections-evidence.json; no real engineering provider
+or user account was contacted.
+
+Positive HTTPS fixture qualification is in progress in separate isolated state
+/tmp/wright-desktop-custom-https-state-20261015-01. Default trust rejects its test
+certificate; only the test API process trusts that certificate. No global TLS
+change or disabled certificate checking. Do not claim its pending result.
+
+## Imported credential identity defect found by positive qualification
+
+The private HTTPS fixture passes direct protocol initialization and the unchanged
+SseRunner with a normal ID. Imported IDs (import:draft-...) instead fail
+CredentialReference owner validation before transport startup. Therefore the earlier
+example.invalid validation established failure propagation/enable denial, but did
+not establish a DNS/unreachable-provider response. Preserve and correct attribution.
+
+Proposed narrow correction: permit colon in credential owner IDs only, preserving
+canonical IDs and existing file keys. For these previously unsupported owners,
+derive the environment/mounted filename from SHA256 of the exact full reference
+under WRIGHT_SECRET_REF_SHA256_. Existing references retain their names. The new
+prefix is disjoint from the four existing namespace prefixes, avoiding silent
+credential aliasing with underscore-normalized server IDs. No slash/backslash or
+name-character relaxation, no key migration, no gateway or vendor change.
+Tests must prove imported isolation across file/environment/mounted providers,
+legacy stability, unsafe-path rejection and actual HTTPS validation afterward.
+
+## Positive HTTPS recovery result
+
+The isolated served-panel recovery passed all five checks after the credential
+identity correction: it recovered the exact completed setup without replaying
+approval/registration, passed TLS-verified MCP initialization and tool discovery,
+explicitly enabled workspace availability, rediscovered saved setup and fit a
+460px panel. The report and hash are indexed in the evidence JSON. This is a
+private protocol fixture in a simulated desktop host, not Windows acceptance,
+SteveCAD sign-in, engineering invocation authority or a completed demo. The
+named installed plugin is unchanged.
+
+Focused credential/provider/catalog-preservation regression: 12 tests passed;
+Ruff passed for the changed core source and tests. This does not replace the
+repository integration gates or Windows native acceptance.

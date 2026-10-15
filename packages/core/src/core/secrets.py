@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass
 from collections.abc import Callable
 from typing import Protocol
 
 _PART_RE = re.compile(r"^[A-Za-z0-9_.-]*$")
+_OWNER_RE = re.compile(r"^[A-Za-z0-9_.:-]*$")
 _default_provider_factory: Callable[[], SecretProvider] | None = None
 
 
@@ -20,7 +22,7 @@ class CredentialReference:
     def __post_init__(self) -> None:
         if self.namespace not in {"global", "workspace", "mcp", "integration"}:
             raise ValueError("Unsupported credential namespace")
-        if not _PART_RE.fullmatch(self.owner_id):
+        if not _OWNER_RE.fullmatch(self.owner_id):
             raise ValueError("Credential owner_id has invalid characters")
         if not self.name or not _PART_RE.fullmatch(self.name):
             raise ValueError("Credential name has invalid characters")
@@ -31,6 +33,10 @@ class CredentialReference:
 
     @property
     def environment_name(self) -> str:
+        if ":" in self.owner_id:
+            # Previously unsupported owners must not alias legacy normalized IDs.
+            digest = hashlib.sha256(self.key.encode("utf-8")).hexdigest().upper()
+            return f"WRIGHT_SECRET_REF_SHA256_{digest}"
         encoded = re.sub(r"[^A-Za-z0-9]", "_", self.key).upper()
         return f"WRIGHT_SECRET_{encoded}"
 
