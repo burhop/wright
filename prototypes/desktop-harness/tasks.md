@@ -126,3 +126,13 @@ report; later installation/UI evidence and the forward plan take precedence.
 Generated process-UI authoring remains gated. It is separate from desktop
 authoring of ordinary accepted workflow source through the current source owner.
 The read-only proof does not qualify arbitrary tools or installed desktop loading.
+
+### 15 October: combined 0.10 candidate and baseline integration
+
+- PR #154 merged to dev as 3ff4339ea341b4486778578997d01ca2b96f392f
+  after exact-head local gates and all required CI. Post-merge development
+  build/deployment/smoke remains pending; later candidate changes are separate.
+- Prepared named 0.10 package; actual protocol/resource, eleven browser checks
+  and fresh private review/same-run continuation pass. See
+  `native-home-010-evidence.json` and `native-home-010-update.md`.
+- Installed plugin remains 0.9. No live update or Windows acceptance claim.
