@@ -9,10 +9,10 @@ from that candidate, running service or installed plugin is changed here.
 - [x] Identify both current per-image and whole-request limits in existing owners.
 - [ ] Complete required architecture/source review and measure complete actual
       request envelopes, including saved instructions and tool schemas.
-- [ ] Implement the smallest explicit frozen engineering-image profile justified
+- [x] Implement the smallest explicit frozen engineering-image profile justified
       by those measurements. Preserve old profiles and reply bounds.
-- [ ] Prove boundary/format/scope denial, drift, cancellation and restart behavior.
-- [ ] Deliver all six unchanged originals through actual MCP ImageContent and
+- [x] Prove boundary/format/scope denial, drift, cancellation and restart behavior.
+- [x] Deliver all six unchanged originals through actual MCP ImageContent and
       obtain a desktop-authored comparison in a supervised private proof.
 - [ ] Regress existing text and image profiles and a different existing workflow.
 - [ ] Qualify the concrete combined candidate before any named installation change.
@@ -79,3 +79,12 @@ not reclassified. Fifteen workspace/discovery tests pass; the new test exercises
 the real owner check and verifies unchanged workspace/session state. No installed
 plugin update or Windows acceptance is claimed. Evidence:
 /tmp/wright-desktop-engineering-image-budget-20261015/workspace-conflict-tests.log.
+
+## Combined regression checkpoint
+
+All194 prototype/core/affected runtime checks passed together in9.36seconds
+on the feature checkout. This is the local suite, not a current-head repository
+gate or Windows native check. Different-workflow execution remains unqualified;
+the Robot case retains its declared CSV-to-ROS-bag preparation and original
+metric/review requirements. Its historical campaign scripts must not be run
+against protected campaign state.

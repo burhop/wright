@@ -1,5 +1,5 @@
 {
-  "status": "local contract/adapter/image-port implementation; not enabled or live supervised qualification",
+  "status": "Implemented explicit opt-in profile; local six-image perception, reconnect, cancellation and restart proved. Installed profile unchanged; engineering and Windows acceptance open.",
   "new_profile": "inline-png-jpeg-engineering-v1",
   "tests": {
     "core_and_dual_profile_image_port": "38 passed in 2.69s",
@@ -33,11 +33,18 @@
     }
   },
   "remaining": [
-    "complete runtime-resolved review envelope",
-    "explicit local backend profile selection and frozen drift/restart tests",
-    "six-image live supervised MCP delivery and desktop-authored comparison",
-    "different-workflow regression",
-    "combined candidate and actual native Windows acceptance",
-    "original fresh engineering runs and genuine reviews"
-  ]
+    "Complete original runtime-resolved engineering review envelope",
+    "Different-workflow execution regression with preserved requirements",
+    "Repository gates and combined candidate qualification",
+    "Actual Windows native delivery",
+    "Fresh original engineering runs and genuine reviews"
+  ],
+  "combined_regression": {
+    "command": ".venv/bin/python -m pytest -q -o faulthandler_timeout=30 prototypes/desktop-harness/tests packages/core/tests/test_desktop_engineering_images.py packages/workspace_service/tests/test_desktop_reasoning_execution.py",
+    "result": "194 passed in 9.36s",
+    "log": "/tmp/wright-desktop-engineering-image-budget-20261015/combined-regression.log",
+    "sha256": "796786f1b37717eac973f53a911ea7b5a7c6dd164e88089254f7a5de8824df48"
+  },
+  "live_proof": "live-six-image-evidence.json",
+  "restart_proof": "restart-evidence.json"
 }
