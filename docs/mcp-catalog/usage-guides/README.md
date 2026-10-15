@@ -16,6 +16,8 @@ download tickets or private account state in a guide.
 
 ## Available guides
 
+- [OASiS Open FEM Agent](oasis-open-fem-agent.md): retained Linux x64 solver/gateway evidence, selected backend setup and fresh GB10 qualification limits.
+
 - [Casys CalculiX MCP](calculix-mcp.md): recorded static solves, exact resources,
   selected-container setup and host-specific qualification limits.
 
