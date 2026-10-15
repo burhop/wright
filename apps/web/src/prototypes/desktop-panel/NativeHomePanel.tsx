@@ -3,6 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeFilePreview } from "./NativeFilePreview";
 import { NativeConnections } from "./NativeConnections";
+import { NativeNewWorkflow } from "./NativeNewWorkflow";
 import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
 
 export interface DesktopWorkspace {
@@ -22,6 +23,7 @@ export type HomeCall = (
   name:
     | "wright_workspace_list"
     | "wright_workspace_create"
+    | "wright_workflow_create"
     | "wright_workspace_files"
     | "wright_workspace_file_preview"
     | "wright_workflow_history"
@@ -409,9 +411,18 @@ export function NativeHomePanel({
       {selected && view === "workflows" && (
         <section aria-label="Workflows">
           <h2>Workflows</h2>
+          <NativeNewWorkflow
+            key={`${selected.workspace_id}:${selected.session_id}`}
+            workspace={selected}
+            call={call}
+            onOpen={onOpen}
+            onBusy={setCreating}
+            disabled={loading || opening || creating}
+          />
           {!loading && !error && workflowFiles.length === 0 && (
             <p>
-              No saved workflows here yet. Ask this conversation to create one.
+              No saved workflows here yet. Choose New workflow or ask this
+              conversation to create one.
             </p>
           )}
           <ul>

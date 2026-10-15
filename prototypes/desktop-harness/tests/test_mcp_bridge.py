@@ -365,3 +365,34 @@ def test_working_view_configuration_drift_fails_before_connecting(bridge, tmp_pa
         bridge.WrightDesktopClient(
             tmp_path, native_editor=True, native_working_view=True
         )
+
+
+def test_panel_creation_uses_source_owner_and_rejects_scope_before_write(bridge):
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"path": "workflows/new.wflow"})
+    )
+    server = bridge.server(client)
+    tools = {tool.name: tool for tool in asyncio.run(server.list_tools())}
+    assert tools["wright_workflow_create"].meta["ui"]["visibility"] == ["model", "app"]
+    args = {
+        "workspace_id": "workspace",
+        "session_id": "session",
+        "path": "workflows/new.wflow",
+        "source": "source",
+    }
+    asyncio.run(server.call_tool("wright_workflow_create", args))
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/workspace/workflow-sources",
+        json={
+            "session_id": "session",
+            "path": "workflows/new.wflow",
+            "source": "source",
+        },
+    )
+    client.call.reset_mock()
+    client.scope.side_effect = PermissionError("wrong workspace")
+    with pytest.raises(Exception, match="wrong workspace"):
+        asyncio.run(server.call_tool("wright_workflow_create", args))
+    client.call.assert_not_awaited()

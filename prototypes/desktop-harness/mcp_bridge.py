@@ -590,7 +590,7 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={"session_id": session_id, "path": path},
         )
 
-    @mcp.tool(annotations=write)
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workflow_create(
         workspace_id: str, session_id: str, path: str, source: str
     ) -> dict:

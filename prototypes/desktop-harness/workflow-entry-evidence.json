@@ -1,0 +1,227 @@
+{
+  "status": "local proof passed; not installed/native Windows acceptance",
+  "baseline": "a7083736",
+  "report_path": "/tmp/wright-desktop-new-workflow-state-20261015-02/browser-home-1792030195680/report.json",
+  "report_sha256": "cf6e1b8b468f149848704b44836609a32dfd29fa34583cffa7a30be3e6661843",
+  "browser": {
+    "passed": [
+      "explicit UI workspace creation once, discovered exact session, no workflow execution",
+      "native New workflow saves once through source owner, opens shared editor and reopens from Workflows with exact digest",
+      "real isolated workspace and saved workflow source discovered",
+      "home opens shared editor and Back restores exact workspace without mutation",
+      "Refresh reconciles exact workspace/session and retains Files view without execution",
+      "Files lists and filters real scoped storage; unavailable operations explicit",
+      "explicit bounded text preview matches real saved bytes and closes without mutation",
+      "narrow home fits; unsaved source draft prevents workspace navigation",
+      "accepted source unchanged and no browser errors"
+    ],
+    "errors": [],
+    "calls": [
+      {
+        "name": "wright_workspace_list",
+        "arguments": {}
+      },
+      {
+        "name": "wright_workspace_create",
+        "arguments": {
+          "name": "New workflow UI proof confirmed"
+        }
+      },
+      {
+        "name": "wright_workspace_list",
+        "arguments": {}
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299"
+        }
+      },
+      {
+        "name": "wright_workflow_create",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299",
+          "path": "workflows/untitled-workflow-02ddcbf9-3a5f-4cea-b5a7-125c3aefd734.workflow.wflow",
+          "source": "workflow authored_3977febb_d4d0_4b61_aac9_0f1690ca3cef\n  name: \"Engineering review draft\"\n  purpose: \"Define this workflow's steps and outputs.\"\n  discipline: \"engineering\"\n  reviewed_ai_suggestions: true\nend\n"
+        }
+      },
+      {
+        "name": "wright_workflow_open",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299",
+          "path": "workflows/untitled-workflow-02ddcbf9-3a5f-4cea-b5a7-125c3aefd734.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workflow_read",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299",
+          "path": "workflows/untitled-workflow-02ddcbf9-3a5f-4cea-b5a7-125c3aefd734.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workspace_list",
+        "arguments": {}
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299"
+        }
+      },
+      {
+        "name": "wright_workflow_open",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299",
+          "path": "workflows/untitled-workflow-02ddcbf9-3a5f-4cea-b5a7-125c3aefd734.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workflow_read",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299",
+          "path": "workflows/untitled-workflow-02ddcbf9-3a5f-4cea-b5a7-125c3aefd734.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workspace_list",
+        "arguments": {}
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+          "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299"
+        }
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d"
+        }
+      },
+      {
+        "name": "wright_workflow_open",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d",
+          "path": "workflows/navigation.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workflow_read",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d",
+          "path": "workflows/navigation.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workspace_list",
+        "arguments": {}
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d"
+        }
+      },
+      {
+        "name": "wright_workspace_list",
+        "arguments": {}
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d"
+        }
+      },
+      {
+        "name": "wright_workspace_file_preview",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d",
+          "path": "workflows/navigation.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workspace_files",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d"
+        }
+      },
+      {
+        "name": "wright_workflow_open",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d",
+          "path": "workflows/navigation.workflow.wflow"
+        }
+      },
+      {
+        "name": "wright_workflow_read",
+        "arguments": {
+          "workspace_id": "4761d89b-b596-43e9-8c08-dff37abf6630",
+          "session_id": "desktop-4e990edf-84d0-4641-92ec-16c69ae79a7d",
+          "path": "workflows/navigation.workflow.wflow"
+        }
+      }
+    ],
+    "boundary": "simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace/workflow creation",
+    "native_desktop_verified": false,
+    "engineering_runs": 0,
+    "workspace_created": {
+      "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+      "session_id": "desktop-193e4e37-7447-425a-a9d9-55a0845ed299",
+      "workspace_name": "New workflow UI proof confirmed",
+      "url": "http://127.0.0.1:5258/workspace/8e5dda60-6b64-41ab-9bf6-64310269a992?host=openai-desktop"
+    },
+    "workflow_created": {
+      "workspace_id": "8e5dda60-6b64-41ab-9bf6-64310269a992",
+      "path": "workflows/untitled-workflow-02ddcbf9-3a5f-4cea-b5a7-125c3aefd734.workflow.wflow",
+      "storage_digest": "f1d29a2825f94de4a2c0915db0c2a7ee53ab3587af3ca0048238f5581e377d9f"
+    }
+  },
+  "checks": {
+    "components": {
+      "passed": 16,
+      "log": "/tmp/wright-desktop-workflow-entry-tests-02.log"
+    },
+    "mcp_bridge": {
+      "passed": 17,
+      "log": "/tmp/wright-desktop-workflow-entry-python.log"
+    },
+    "typescript": "passed",
+    "eslint": "passed",
+    "ruff": "passed",
+    "bundle_external_assets": 0,
+    "strict_docs": {
+      "status": "passed",
+      "log": "/tmp/wright-desktop-workflow-entry-docs-02.log",
+      "seconds": 5.91,
+      "environment": "isolated cached uv tool environment; runtime venv not modified"
+    }
+  },
+  "source_hashes": {
+    "apps/web/src/prototypes/desktop-panel/NativeNewWorkflow.tsx": "1e0fbebbcf9fea532b85d8d5d0041012e53229a0511c8b2906686a2c9ec27c50",
+    "apps/web/src/prototypes/desktop-panel/NativeHomePanel.tsx": "6811ba88e3d18bc2859de8853f7796f12fdb800dfbb1154763454146739e75db",
+    "prototypes/desktop-harness/mcp_bridge.py": "6f69fdde94e0e9eff572cd2b75d9809a5f00173b3fd84700379a2fbf784f1cf0",
+    "prototypes/desktop-harness/native-editor.html": "bf4f723ce72b07af900dfcda067280cd2c70e8d4696e038696613aaf6ba463c3"
+  },
+  "dependencies": "Locked npm ci --offline in isolated checkout; Python dependencies reused unchanged from frozen 0.9 venv, source PYTHONPATH explicitly points to this checkout for preview API.",
+  "prior_failures": [
+    "/tmp/wright-desktop-new-workflow-state-20261015-01/browser-home-1792030034860/failure.json",
+    "/tmp/wright-desktop-new-workflow-state-20261015-02/browser-home-1792030145084/failure.json"
+  ]
+}

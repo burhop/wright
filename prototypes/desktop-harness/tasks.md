@@ -18,11 +18,15 @@ completed one run with one request/reply and no engineering-tool enablement.
 Windows acceptance remains pending; this existing chat still reported the older
 `4d76cd14…` binding after installation. Do not infer 0.9 use from skill refresh.
 
-The main execution candidate remains d070e351 while its full merge gate runs,
-with the documented GB10 WebKit runtime exception. Earlier browser results were
-161 passed, 5 skipped and 18 WebKit launch failures; no all-browser pass is
-claimed. The 0.9 review-only implementation is a separate descendant and has not
-yet been included in that gate or pushed. Preserve both qualification scopes.
+The main execution candidate d070e351 is draft PR 154. Its full local gate
+passed with the documented GB10 WebKit host exception; the normal pre-push gate
+passed including 18 Chromium editor checks. Current-head CI remains authoritative
+before merge. The 0.9 descendant and subsequent work are separate from that gate.
+
+The next isolated UI candidate is `/tmp/wright-desktop-workflow-entry`, branch
+`codex/desktop-workflow-entry`. New workflow in the native Workflows view reuses
+the shared blank source and creation owner. It is not installed. See
+[workflow entry plan](workflow-entry-plan.md) for scope and retained proof.
 
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its
