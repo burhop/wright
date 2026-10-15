@@ -57,6 +57,12 @@ def request(body, profile=ENGINEERING_IMAGE_PROFILE):
     )
 
 
+@pytest.mark.parametrize("messages", [None, 7, {}, "invalid"])
+def test_engineering_messages_reject_non_list_shapes(messages):
+    with pytest.raises(ValueError, match="messages must be a list"):
+        request({"messages": messages})
+
+
 def test_all_six_original_review_images_fit_without_mutation():
     root = Path(__file__).resolve().parents[3]
     directory = (

@@ -88,3 +88,29 @@ gate or Windows native check. Different-workflow execution remains unqualified;
 the Robot case retains its declared CSV-to-ROS-bag preparation and original
 metric/review requirements. Its historical campaign scripts must not be run
 against protected campaign state.
+
+## Gate and malformed-message correction — 15 October 2026
+
+The full local merge gate passed at 75b4903a (receipt and hashed log under
+/tmp/wright-desktop-engineering-image-budget-20261015). It used the documented
+GB10 WebKit exception; normal Chromium and supported-host CI remain required.
+A subsequent direct contract probe found that null/integer `messages` raised
+TypeError and dictionary `messages` was accepted. The engineering profile now
+requires a list when that field is present. Ten core image-contract tests pass,
+including four malformed-shape cases; legacy profiles and all image budgets
+remain unchanged. The corrected source needs fresh repository qualification.
+
+The fresh Robot workspace has two offline providers and 33 observed tool schemas.
+The full current workflow additionally requires corrective AgentCAD/CalculiX/field
+stages; these have not run and are not removed. See
+/tmp/wright-desktop-robot-workflow-preparation-20261015-01/readiness-audit-v3.json.
+AgentCAD has no qualified GB10 ARM64 dependency or existing x64 route. Native
+CalculiX stdio has a retained output-schema mismatch; its documented stateless
+HTTP contract is not supported by the current production runner. The private
+HTTP probe submitted zero solves and preserved original records. These findings
+block dependent engineering execution, not unrelated UI integration.
+
+Custom connections is PR156 with local gates passed and current-head CI pending.
+Installed0.11 remains unchanged. Windows route and native-panel observations are
+pending; the concrete no-OAuth handoff is
+/tmp/wright-windows-callback-handoff-20261015/WINDOWS-STEPS.md.

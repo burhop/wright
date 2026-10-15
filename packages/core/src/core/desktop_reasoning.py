@@ -104,8 +104,11 @@ class DesktopReasoningRequest(Contract):
             raise ValueError("Desktop task exceeds the 256 KiB handoff limit")
         if engineering:
             text_payload = deepcopy(self.payload)
+            messages = text_payload.get("messages", [])
+            if not isinstance(messages, list):
+                raise ValueError("Desktop engineering messages must be a list")
             count = 0
-            for message in text_payload.get("messages", []):
+            for message in messages:
                 content = message.get("content") if isinstance(message, dict) else None
                 if not isinstance(content, list):
                     continue
