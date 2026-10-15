@@ -339,6 +339,13 @@ authoritative in CI when a local Docker host is unavailable.
 
 ## CI failure protocol
 
+Engineering-image release assets use bounded retries for interrupted build-time
+GET downloads and remove incomplete output on terminal failure. The Docker bundle
+test, selected by the container slice of the push gate and the full merge gate,
+guards this contract. This does not permit retrying workflow external actions.
+The local HTTP partial-body fault probe reproduces the interrupted-transfer class;
+the native image CI remains the proof for the actual publisher and architecture.
+
 PR #133 exposed a Python dependency-audit gap: an exact-image scan does not
 replace the runtime environment audit performed by public-alpha CI. The full
 merge gate and Python slice of the fast gate now run
