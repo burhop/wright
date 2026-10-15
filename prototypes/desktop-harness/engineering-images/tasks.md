@@ -68,3 +68,14 @@ HTTP409 and retained one request/zero accepted responses. See restart-evidence.j
 Only the identified private image-test APIs/relays were stopped after qualification;
 durable test state and prior installed services are preserved. This is pending
 reasoning recovery, not evidence of safe replay after an external tool effect.
+
+## Observed workspace-conflict correction
+
+The pre-start fixture exposed an ordinary desktop journey defect: the owner's
+WorkspaceConflictError escaped as non-JSON HTTP500. The thin desktop route now
+maps this exact known conflict to HTTP409 with guidance to open the existing
+workspace or choose another name, without exposing its path. Other failures are
+not reclassified. Fifteen workspace/discovery tests pass; the new test exercises
+the real owner check and verifies unchanged workspace/session state. No installed
+plugin update or Windows acceptance is claimed. Evidence:
+/tmp/wright-desktop-engineering-image-budget-20261015/workspace-conflict-tests.log.

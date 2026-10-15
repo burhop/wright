@@ -22,6 +22,7 @@ from data_vault.desktop_reasoning_repository import (
     DesktopHandoffConflict,
     DesktopReasoningRepository,
 )
+from workspace_service.errors import WorkspaceConflictError
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
 from api.services.mcp_services import McpApiService, get_mcp_api_service
 from api.security import require_admin
@@ -521,9 +522,16 @@ class DesktopBackend:
         @router.post("/workspaces", status_code=201)
         async def create_workspace(body: CreateWorkspaceRequest):
             self.require_connection()
-            workspace = await self.service.create_workspace(
-                body.name, None, self, agent_id="openai-desktop-harness"
-            )
+            try:
+                workspace = await self.service.create_workspace(
+                    body.name, None, self, agent_id="openai-desktop-harness"
+                )
+            except WorkspaceConflictError:
+                raise HTTPException(
+                    409,
+                    "A workspace with this name or directory already exists. "
+                    "Open the existing workspace or choose a different name.",
+                ) from None
             self.service.repository.set_enabled_tools(
                 workspace.workspace_id, ["wright__workspace_status"]
             )
