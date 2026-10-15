@@ -139,3 +139,15 @@ its mandatory independent critic review has not occurred. The local evidence is
 `/tmp/wright-desktop-oasis-arm64-20261015-01`, including both tool receipts and
 `independent-field-check.json`. Containers exited normally. Wright gateway and
 full desktop heat-spreader execution remain unqualified on this host.
+
+### ARM64 gateway transport proof (2026-10-15)
+
+A fresh synthetic conduction job (`1ed23738`) also completed through Wright’s
+real `GatewayService` and `StdioRunner`, with a private fixture catalog and
+workspace. The audit recorded one started and one succeeded tool call; the four
+coarse/fine fields passed the same independent CSV analytical checks. This does
+not qualify live enrollment or the desktop engineering workflow. Provider
+`trustworthy_result` remains false and no critic approval was supplied. Evidence:
+`prototypes/desktop-harness/oasis-arm64-gateway-evidence.json`. The initial
+sandbox attempt could not reach Docker and dispatched no provider call; its
+log is retained separately from the successful authorized host execution.

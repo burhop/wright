@@ -1,0 +1,146 @@
+{
+  "scope": "Real GatewayService and StdioRunner; fixture workspace/catalog/lifecycle, fresh network-disabled selected-provider container. Not live enrollment, desktop workflow or engineering acceptance.",
+  "provider": {
+    "job_id": "1ed23738",
+    "solver": "skfem",
+    "status": "completed",
+    "work_dir": "/selected/venv/lib/python3.12/simulation_outputs/arm64-private-conduction-03",
+    "elapsed": "1.06s",
+    "output_files": [
+      "qualification_fixed-coarse-temperature.vtu",
+      "qualification_fixed-fine-temperature.vtu",
+      "qualification_link-coarse-temperature.vtu",
+      "qualification_link-fine-temperature.vtu"
+    ],
+    "stdout_tail": "{\"status\": \"candidate_selected\", \"case_count\": 2, \"output_root\": \"/selected/venv/lib/python3.12/simulation_outputs/arm64-private-conduction-03\"}\n",
+    "trustworthy_result": false,
+    "verification": "NOT VERIFIED \u2014 the automated checks passed, but OASiS's MANDATORY independent critic has not reviewed this setup, and OASiS treats no result as trustworthy until it has. Spawn a critic to challenge the parameters, units, discretisation, problem statement and boundary conditions and to cross-check against literature/benchmarks, then re-run with critic_approved=True.",
+    "critic_review": "REQUIRED \u2014 mandatory critic not yet performed"
+  },
+  "independent_check": {
+    "status": "passed",
+    "boundary": "independent CSV parsing, finite fields, geometry extents, pointwise linear analytic solution and end heat; VTU hashes checked, VTU content not independently decoded",
+    "checks": [
+      {
+        "case": "qualification_fixed",
+        "mesh": "coarse",
+        "nodes": 135,
+        "maximum_pointwise_error_c": 6.707523425575346e-12,
+        "hot_mean_c": 25.555555555562204,
+        "cold_mean_c": 20.0,
+        "independent_conduction_w": 1.0000000000011968,
+        "csv_sha256": "7a9d19190b9f26a10a946a5018c9973184ef02746ef31932c09e2b32cf39e44f"
+      },
+      {
+        "case": "qualification_fixed",
+        "mesh": "fine",
+        "nodes": 765,
+        "maximum_pointwise_error_c": 2.467714921294828e-11,
+        "hot_mean_c": 25.55555555557997,
+        "cold_mean_c": 20.0,
+        "independent_conduction_w": 1.000000000004395,
+        "csv_sha256": "ae106206baf2121ddf17b7e663fe12e5473aea26a5fc4dba585afc5ea4fef564"
+      },
+      {
+        "case": "qualification_link",
+        "mesh": "coarse",
+        "nodes": 135,
+        "maximum_pointwise_error_c": 6.224354365258478e-12,
+        "hot_mean_c": 25.655555555561758,
+        "cold_mean_c": 20.10000000000016,
+        "independent_conduction_w": 1.0000000000010874,
+        "csv_sha256": "07b5c0c1e15485c0681969a1f79c8c82579d4fc57955adbcd6434f29d62bd148"
+      },
+      {
+        "case": "qualification_link",
+        "mesh": "fine",
+        "nodes": 765,
+        "maximum_pointwise_error_c": 2.737721160883666e-11,
+        "hot_mean_c": 25.6555555555828,
+        "cold_mean_c": 20.100000000000822,
+        "independent_conduction_w": 1.0000000000047562,
+        "csv_sha256": "d2381f93d64271e008751b68479662ec141357e00873e194eb151b501e8516fd"
+      }
+    ],
+    "critic_approved": false,
+    "engineering_acceptance": false,
+    "limits": "synthetic uniform-end 3D conduction fixture; not full heat-spreader process or physical model validation"
+  },
+  "call_audit": [
+    {
+      "correlation_id": "f59a4d3f-bdc2-4c43-a8f8-ee34e984361a",
+      "request_id": "conduction-03",
+      "session_id": "qualification",
+      "principal_id": "wright-validator",
+      "workspace_id": "qualification-workspace",
+      "operation": "tool.call",
+      "server_id": "oasis-container-probe",
+      "target_name": "run_simulation",
+      "allowed": true,
+      "reason_code": "policy_allowed",
+      "outcome": "started",
+      "duration_ms": 0,
+      "metadata": {
+        "timeout_ms": 120000,
+        "argument_count": 4,
+        "lifecycle_kind": "ordinary"
+      }
+    },
+    {
+      "correlation_id": "07c75e7d-4531-4032-a2cf-5a25a9b32cf6",
+      "request_id": "conduction-03",
+      "session_id": "qualification",
+      "principal_id": "wright-validator",
+      "workspace_id": "qualification-workspace",
+      "operation": "tool.call",
+      "server_id": "oasis-container-probe",
+      "target_name": "run_simulation",
+      "allowed": true,
+      "reason_code": "policy_allowed",
+      "outcome": "succeeded",
+      "duration_ms": 1948,
+      "metadata": {
+        "timeout_ms": 120000,
+        "argument_count": 4,
+        "lifecycle_kind": "ordinary",
+        "response_bytes": 1178,
+        "result_key_count": 1
+      }
+    }
+  ],
+  "initial_attempt": "Sandbox denied Docker before initialization and dispatch; retained gateway-03.log. Authorized host execution succeeded.",
+  "evidence": {
+    "gateway_probe.py": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway_probe.py",
+      "sha256": "4885f720134ac0b1869222ff66dd0a8ccdac9e5d4cf20888796fc573fa4d39dd"
+    },
+    "gateway-03.log": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway-03.log",
+      "sha256": "6d0b4f425510e22210a0ee1ae45ab89d14a8e2a469deeefb2d5cc095a6224485"
+    },
+    "gateway-03-host.log": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway-03-host.log",
+      "sha256": "c61b0c85257f9c8985b41ce9114d7aaa8ec9560ff63829683da5e3c93f279e5a"
+    },
+    "gateway-03-intent.json": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway-03-intent.json",
+      "sha256": "b13074807e5e154d5907129448a3ab07e13aa92a044611d5784c2706ebc45062"
+    },
+    "gateway-03-result.json": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway-03-result.json",
+      "sha256": "6266c6082089fbd72c43839478dfdf9b9d4cdf5caf7ea794423fa3e607993683"
+    },
+    "gateway-03-audit.json": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway-03-audit.json",
+      "sha256": "529a242a89683e27f28b56b235d770c3a5f1038c664252c51e2365f06abe2d13"
+    },
+    "gateway-03-independent-field-check.json": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/gateway-03-independent-field-check.json",
+      "sha256": "0a31f7f145c871858494e1ddc99eed7fd11ea0019b37ea718eae18e3567c19ce"
+    },
+    "check_gateway_fields.py": {
+      "path": "/tmp/wright-desktop-oasis-arm64-20261015-01/check_gateway_fields.py",
+      "sha256": "73d5ee5e68cf1d2f10aa515213ff72797f6888a4641f96b66932300a53c3989c"
+    }
+  }
+}
