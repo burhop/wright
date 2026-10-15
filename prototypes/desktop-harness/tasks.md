@@ -20,9 +20,19 @@ import; 38 focused frontend tests pass. Native controls preserve the common
 editor/header and draft guards. The artifact source and dependency manifests
 remain authoritative; an unrelated workspace file is not offered as a reference.
 
-Next: clean-archive candidate image, full merge gate, push gate, hosted CI and
-served shared-workspace regression; qualify the concrete named plugin update and
-Windows walkthrough. Saved-interface portability, actual Windows delivery and
+The clean-archive image at 04db87cd passed its isolated smoke and served shared
+workspace export/import checks. Candidate plugin0.13 passed local protocol,
+upload, transfer, image-fixture and synthetic-review checks; it is not installed.
+The full merge gate passed its Python/Hermes suites but failed one of 1,910 UI
+tests: the saved-default test did not open the new File details disclosure before
+asserting the reference was visible. The correction preserves exact-reference,
+no-mutation and prepared-binding checks; all 61 tests in that file pass. Full UI
+revalidation is running. The failed gate and generated assets are preserved in
+`/tmp/wright-transfer-integration-evidence-20261015`; production code is unchanged
+by this test correction. This is not a passing full gate.
+
+Next: finish corrected gates, push checks and hosted CI; apply the qualified
+named plugin update and complete Windows acceptance. Saved-interface portability, actual Windows delivery and
 original prepared engineering input cases remain separately unqualified.
 SteveCAD authentication, full four-/six-hole and heat-spreader runs, genuine
 reviews, Robot Tracking Diagnosis and manufacturing digital regression remain

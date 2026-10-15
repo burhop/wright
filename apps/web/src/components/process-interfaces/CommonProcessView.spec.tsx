@@ -912,6 +912,9 @@ describe("common process preparation and authority", () => {
     fireEvent.click(summary);
     expect(screen.getByLabelText("Material (required)")).toBeVisible();
     expect(screen.getByLabelText("Material (required)")).toHaveValue("PETG");
+    expect(screen.getByText("File attached")).toBeVisible();
+    expect(screen.getByText("inputs/drawing.png")).not.toBeVisible();
+    fireEvent.click(screen.getByText("File details"));
     expect(screen.getByText("inputs/drawing.png")).toBeVisible();
     for (const mutation of [
       client.setInputs,
