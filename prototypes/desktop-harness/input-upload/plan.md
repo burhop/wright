@@ -1,7 +1,15 @@
 # Declared input upload in the desktop panel
 
-Status: local implementation, not installed or qualified. Branch starts at
-3f7ad9b2 while PR156 CI runs; preserve that candidate and all private services.
+Status: locally implemented with actual MCP/owner and simulated-host browser
+qualification; not installed. Windows acceptance, two prepared original workflow
+declarations and repository integration remain open. Branch starts at 3f7ad9b2;
+PR156's consolidated correction is separate. Preserve its candidate and services.
+
+Current service: fresh isolated state05, API8192, session82551. Earlier service
+identities below are historical and have stopped. The evidence checkpoint at
+`/tmp/wright-desktop-input-upload-evidence-20261015/checkpoint.json` indexes exact
+receipts, including the deliberately failing unbound-template probe. That failure
+proves readiness rejection propagation, not successful workflow qualification.
 
 Journey: open an accepted process through Workflows, choose a file for one declared
 file input in Run and results, inspect its accepted reference, prepare inputs and
