@@ -1,0 +1,206 @@
+{
+  "boundary": "Private fictional endpoint; actual MCP/API/owner/storage; no provider contact, installation or engineering run",
+  "passed": true,
+  "checks": [
+    "default publisher review remains blocked",
+    "explicit synthetic fixture review creates exact unapproved workspace plan",
+    "wright_connection_import_plan: denied",
+    "wright_connection_import_plan: denied",
+    "lost response recovery finds exact saved plans without provider ID or replay"
+  ],
+  "protocol_version": "2025-11-25",
+  "source_sha256": {
+    "prototypes/desktop-harness/desktop_backend.py": "b4757a0d41e157f25304fe0387bf80b9fbbfc1d5ab2219b0d8c223e2f60440c6",
+    "prototypes/desktop-harness/mcp_bridge.py": "c8a4cc8c26233152e23ee6b727046d720f73213a6014bd24b341e7124ba46853",
+    "packages/tool_registry/src/tool_registry/install_plans.py": "2346e6070f5746b095cbc69fc96bb26bee53419162ed3a9539f261365ded83f5"
+  },
+  "evidence_directory": "/tmp/wright-desktop-custom-source-state-20261015-01",
+  "report_sha256": "8c76e831f81c4f409a1181e25a607562d64e129141a8d5acf94a1100955d48bc",
+  "limitations": [
+    "No apply or provider network call",
+    "Synthetic private fixture publisher review only",
+    "Served panel and Windows acceptance pending"
+  ],
+  "served_browser": {
+    "report": "/tmp/wright-desktop-custom-source-state-20261015-01/browser-1792035750222/report.json",
+    "report_sha256": "e97f29d1370983334e0e2e1941626619bdd07bbecf6ec1f04d431ad613dfd75a",
+    "checks": [
+      "preview through real owner without plan creation",
+      "explicit synthetic source review saves unapproved workspace plan",
+      "saved setup discovery from workspace UI",
+      "460px panel has no horizontal overflow"
+    ],
+    "resource_sha256": "944082a11bd952ff14b5e5cbbd546228886a6f04535f65d3d47afb4908ae0053",
+    "screenshots": [
+      "/tmp/wright-desktop-custom-source-state-20261015-01/browser-1792035750222/review.png",
+      "/tmp/wright-desktop-custom-source-state-20261015-01/browser-1792035750222/narrow.png"
+    ],
+    "limitations": [
+      "Simulated desktop host, not Windows native acceptance",
+      "No approval, installation or provider network call",
+      "Synthetic publisher completion for private fictional endpoint"
+    ]
+  },
+  "restart": {
+    "report": "/tmp/wright-desktop-custom-source-state-20261015-01/restart-result.json",
+    "sha256": "7080d76b25d6e9a7d2df8a4cbda361b8017d4909878f85d06cc7277b31837cc4",
+    "checks": [
+      "transient preview rejected after real backend restart",
+      "exact durable plans unchanged",
+      "no automatic plan creation, approval or application"
+    ]
+  },
+  "registry_registration": {
+    "report": "/tmp/wright-desktop-custom-source-state-20261015-01/registration-1792036067667/report.json",
+    "report_sha256": "f767fafe1b6b777f1618c024eece90a553436321d86f62f36a837272788d30c8",
+    "readback": "/tmp/wright-desktop-custom-source-state-20261015-01/registration-1792036067667/registry-readback.json",
+    "readback_sha256": "0e34a34bd4168cca5ee2dcfdf607aa1dcfec913eee23edd4690387c59cff026e",
+    "scope": "Private fictional endpoint; synthetic source/setup approval; actual registry-only apply, not provider connection or engineering qualification"
+  },
+  "unavailable_provider": {
+    "validation": {
+      "report": "/tmp/wright-desktop-custom-source-state-20261015-01/unavailable-provider-1792036253354/report.json",
+      "sha256": "1ae4dfebaadaadcc3a97aefa6aceba2dc571bb2fc6544135b8925f2dbc5653e9",
+      "passed": true,
+      "checks": [
+        "actual unavailable endpoint produces failed protocol result; no enable control and no automatic retry",
+        "owner denies workspace enable after failed validation",
+        "saved failure evidence appears in normal connection catalog; inactive and disabled"
+      ]
+    },
+    "reopen": {
+      "report": "/tmp/wright-desktop-custom-source-state-20261015-01/failure-reopen-1792036309095/report.json",
+      "sha256": "67b1132bad19bf35c56c165da39155027fd76a236e865b5e276ac1385f1abeb7",
+      "passed": true,
+      "checks": [
+        "new panel reads saved failed validation through ordinary Connections search without retry",
+        "failure evidence and recovery state fit narrow panel"
+      ]
+    },
+    "attribution_correction": "The retained original report mislabeled the cause: credential owner-ID validation failed before network transport. These receipts establish failure propagation, enable denial and reopen persistence, not unreachable-endpoint behavior."
+  },
+  "https_protocol_recovery": {
+    "report": "/tmp/wright-desktop-custom-https-state-20261015-01/https-recovery-1792036875136/report.json",
+    "sha256": "67f7b4392a07e57b54cd40a209c0812c6c28b3d91c940f5b86792c8aca2d125a",
+    "passed": true,
+    "checks": [
+      "recover exact completed setup without registration or approval replay",
+      "actual TLS-verified MCP initialize and tools discovery passed",
+      "explicit workspace enablement after current validation; no invocation approval",
+      "saved setup discovery from workspace UI",
+      "460px panel has no horizontal overflow"
+    ],
+    "calls": [
+      {
+        "name": "wright_workspace_list"
+      },
+      {
+        "name": "wright_workspace_files"
+      },
+      {
+        "name": "wright_connections_list"
+      },
+      {
+        "name": "wright_connection_plans"
+      },
+      {
+        "name": "wright_connection_plan_read"
+      },
+      {
+        "name": "wright_connection_validate"
+      },
+      {
+        "name": "wright_connection_signin"
+      },
+      {
+        "name": "wright_connection_enable"
+      },
+      {
+        "name": "wright_connection_plans"
+      }
+    ],
+    "errors": [],
+    "saved_plan_id": "plan-6ba3c03e754da2566159",
+    "scope": "Actual MCP/API/storage in simulated desktop browser; private loopback HTTPS MCP protocol and explicit workspace availability; no engineering tool call; synthetic setup review",
+    "limitations": [
+      "Simulated desktop host, not actual Windows panel acceptance",
+      "Private protocol fixture; no SteveCAD OAuth or engineering tool invocation",
+      "Named installed plugin remains unchanged"
+    ],
+    "registry_readback": {
+      "path": "/tmp/wright-desktop-custom-https-state-20261015-01/https-recovery-1792036875136/registry-readback.json",
+      "sha256": "b536cb02d4cc351b80813ec7e63702dc7b1b0377dcf4a8b167f3ccb315298f52"
+    }
+  },
+  "credential_identity_tests": {
+    "result": "12 passed in 1.98s",
+    "files": [
+      "packages/tool_registry/tests/test_catalog_user_state_preservation.py",
+      "packages/core/tests/test_secret_provider.py",
+      "packages/tool_registry/tests/test_secret_security.py"
+    ],
+    "ruff": "passed for changed core source and tests",
+    "scope": "GB10 source tests; no Windows native qualification"
+  },
+  "affected_regression": {
+    "python": {
+      "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/affected-python-df58aba8.log",
+      "sha256": "d4c93b0e317892a1201558d4f1f9ca6b72f4ec69296cd3a047b55c5bf144cf71",
+      "passed": 65,
+      "source_commit": "df58aba8"
+    },
+    "ui": {
+      "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/affected-ui-df58aba8.log",
+      "sha256": "a133884d65738f9db1b1e9d8b545895a7dcdba25ffa34bd539b4d62eef9660fe",
+      "passed": 23,
+      "source_commit": "df58aba8"
+    },
+    "onboarding_api": {
+      "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/onboarding-api-df58aba8.log",
+      "sha256": "48c89d5cae057d96a24c746912a28deb1303e002e8408781bfc1dd91d1b4998d",
+      "passed": 5,
+      "source_commit": "df58aba8"
+    }
+  },
+  "status_copy_reopen": {
+    "report": "/tmp/wright-desktop-custom-https-state-20261015-01/status-copy-reopen-1792038999212/report.json",
+    "sha256": "a0dd4e7ec0365e42f876315ff97075aeaeff300872d2b6df5243db024ec5e8ad",
+    "passed": true,
+    "checks": [
+      "recover exact completed setup without registration or approval replay",
+      "completed setup no longer describes reviewed permissions or later checks as outstanding",
+      "reopening makes read-only calls only",
+      "saved setup discovery from workspace UI",
+      "460px panel has no horizontal overflow"
+    ],
+    "calls": [
+      {
+        "name": "wright_workspace_list"
+      },
+      {
+        "name": "wright_workspace_files"
+      },
+      {
+        "name": "wright_connections_list"
+      },
+      {
+        "name": "wright_connection_plans"
+      },
+      {
+        "name": "wright_connection_plan_read"
+      },
+      {
+        "name": "wright_connection_plans"
+      }
+    ],
+    "errors": [],
+    "saved_plan_id": "plan-6ba3c03e754da2566159",
+    "scope": "Actual MCP/API/storage in simulated desktop browser; read-only reopening of exact completed private HTTPS setup; no validation, enablement, engineering invocation or approval replay"
+  },
+  "full_gate": {
+    "receipt": "/tmp/wright-desktop-custom-connections-evidence-20261015/merge-828f992e-receipt.json",
+    "head": "828f992e",
+    "status": "passed",
+    "limitation": "SKIP_PLAYWRIGHT=1 for GB10 WebKit; subsequent two-label correction separately tested"
+  }
+}

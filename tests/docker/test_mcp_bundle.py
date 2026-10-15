@@ -2,6 +2,11 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import subprocess
+import sys
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
@@ -278,6 +283,59 @@ def test_mcp_install_is_manifest_driven_and_uses_build_time_caches() -> None:
         assert expected in script
     assert "brep-caid-opencascade" not in script
     assert "OpenCASCADE" not in script
+
+
+@pytest.mark.parametrize("always_partial", [False, True])
+def test_release_asset_download_recovers_or_removes_partial_output(
+    tmp_path: Path, always_partial: bool
+) -> None:
+    script = read_text("docker/mcp/install-bundle.sh")
+    installer = script.split("install_release_assets() {", 1)[1]
+    python_source = installer.split("<<'PY'\n", 1)[1].split("\nPY\n", 1)[0]
+    payload = b"synthetic complete build asset\n" * 64
+    requests = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *_args):
+            pass
+
+        def do_GET(self):
+            requests.append(self.path)
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(payload)))
+            self.send_header("Connection", "close")
+            self.end_headers()
+            partial = always_partial or len(requests) == 1
+            self.wfile.write(payload[:17] if partial else payload)
+            self.wfile.flush()
+            self.close_connection = True
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    target = tmp_path / "asset.bin"
+    assets = [
+        {"url": f"http://127.0.0.1:{server.server_port}/asset", "target": str(target)}
+    ]
+    try:
+        completed = subprocess.run(
+            [sys.executable, "-c", python_source, str(tmp_path)],
+            env={**os.environ, "ASSETS_JSON": json.dumps(assets)},
+            capture_output=True,
+            timeout=50,
+        )
+        if always_partial:
+            assert completed.returncode != 0
+            assert len(requests) == 6  # Initial attempt plus the existing five retries.
+            assert not target.exists()
+        else:
+            assert completed.returncode == 0, completed.stderr.decode()
+            assert len(requests) == 2
+            assert target.read_bytes() == payload
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
 
 
 def test_base_dockerfile_normalizes_supervisor_config_permissions() -> None:

@@ -1,0 +1,41 @@
+{
+  "runtime_commit": "90e2f261467239df5b5c475d81b657aa7bf1f4c5",
+  "result": "passed",
+  "scope": "fresh private image-bearing action request; abrupt API loss before any action answer",
+  "limitations": [
+    "Not loss during tool dispatch",
+    "No uncertain external effect exercised",
+    "No Windows native acceptance or new CAD result",
+    "Installed image profile remains disabled"
+  ],
+  "files": {
+    "mcp-gateway-probe.json": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/mcp-gateway-probe.json",
+      "sha256": "111b6d0dd0681eff6bc850d57777a877d0e8df4587d3dcc1e4d2daa5eb9b8639"
+    },
+    "restart-fault.json": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/restart-fault.json",
+      "sha256": "4d6c646e19e0a830d9387cf2d675236a39e9e116be8a9fbb6939e8558b7a3daf"
+    },
+    "action-restart-reconciliation.json": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/action-restart-reconciliation.json",
+      "sha256": "3491c9f1e3438677c28526da8cdef711c49d79e7ab03d9c4282dd3ff4dfd765c"
+    },
+    "observe.py": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/observe.py",
+      "sha256": "7288687ab4e3a90fe889cac18f2813bfde2703bcd61f1287da9c1c8339f4b99e"
+    },
+    "observe.log": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/observe.log",
+      "sha256": "7f01e864f221726cfd0de6eca3cbc583c986fd034e5b3c9aa8742685ede9d12e"
+    },
+    "desktop-versions.json": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/desktop-versions.json",
+      "sha256": "472061d17e2dc84a0448867cbd2850d915036fa3cb81e75bdc723669daebf6ae"
+    },
+    "desktop-binding.json": {
+      "path": "/tmp/wright-desktop-action-restart-state-20261015-01/desktop-binding.json",
+      "sha256": "156239392fece1c5d1e371e8225f317cfe5045dae4357020fc618c49d1098bf4"
+    }
+  }
+}

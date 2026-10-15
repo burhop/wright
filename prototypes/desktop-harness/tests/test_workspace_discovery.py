@@ -543,6 +543,154 @@ async def test_preview_bridge_is_ui_only_and_read_only(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_saved_plan_discovery_requires_session_scope_and_filters_owner_output(
+    discovery,
+):
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    create("Beta")
+
+    def plan(workspace, scope, capability):
+        fields = dict(
+            plan_id=f"plan-{workspace}-{scope}",
+            workspace_id=workspace,
+            requested_scope=scope,
+            capability_id=capability,
+            state="blocked",
+            created_at="2026-10-15T00:00:00Z",
+        )
+        return SimpleNamespace(**fields, model_dump=lambda **kwargs: fields)
+
+    owner = SimpleNamespace(
+        list_workspace_install_plans=Mock(
+            return_value=[
+                plan("Alpha", "workspace", "import:custom"),
+                plan("Beta", "workspace", "import:private"),
+                plan("Alpha", "global_registered", "import:global"),
+            ]
+        )
+    )
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.get(
+            "/api/desktop/connection-plans",
+            params={"workspace_id": "Alpha", "session_id": "desktop-Alpha"},
+        )
+        assert response.status_code == 200
+        assert [item["capability_id"] for item in response.json()["plans"]] == [
+            "import:custom"
+        ]
+        owner.list_workspace_install_plans.assert_called_once_with("Alpha", None)
+        owner.list_workspace_install_plans.reset_mock()
+        denied = await client.get(
+            "/api/desktop/connection-plans",
+            params={"workspace_id": "Alpha", "session_id": "desktop-Beta"},
+        )
+        assert denied.status_code in (403, 404)
+        owner.list_workspace_install_plans.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_custom_preview_plan_is_workspace_bound_and_explicitly_expires(discovery):
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    create("Beta")
+    owner = Mock()
+    owner.preview_import.return_value = {"preview_id": "preview", "drafts": []}
+    owner.create_install_plan.return_value = {"plan_id": "saved"}
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            "/api/desktop/connection-imports/preview",
+            json={
+                "workspace_id": "Alpha",
+                "session_id": "desktop-Alpha",
+                "name": "Custom CAD",
+                "url": "https://example.invalid/mcp",
+            },
+        )
+        assert response.status_code == 200
+        owner.create_install_plan.assert_not_called()
+        body = {
+            "workspace_id": "Beta",
+            "session_id": "desktop-Beta",
+            "preview_token": response.json()["preview_token"],
+            "draft_id": "draft",
+            "draft_digest": "a" * 64,
+        }
+        assert (
+            await client.post("/api/desktop/connection-imports/plan", json=body)
+        ).status_code == 409
+        owner.create_install_plan.assert_not_called()
+        body.update(workspace_id="Alpha", session_id="desktop-Alpha")
+        assert (
+            await client.post("/api/desktop/connection-imports/plan", json=body)
+        ).status_code == 200
+        values = owner.create_install_plan.call_args.kwargs
+        assert values["requested_scope"] == "workspace"
+        assert values["workspace_id"] == "Alpha"
+        assert values["independently_completed_license"] is False
+        assert values["import_preview_id"] == "preview"
+        assert values["draft_digest"] == "a" * 64
+        owner.apply_install_plan.assert_not_called()
+        owner.approve_install_plan.assert_not_called()
+        owner.create_install_plan.reset_mock()
+        backend = app.state.desktop_backend
+        previous_clock = backend._now
+        backend._now = lambda: previous_clock() + 901
+        assert (
+            await client.post("/api/desktop/connection-imports/plan", json=body)
+        ).status_code == 409
+        backend.import_scopes.clear()  # Restart loses transient preview, never durable plans.
+        assert (
+            await client.post("/api/desktop/connection-imports/plan", json=body)
+        ).status_code == 409
+        owner.create_install_plan.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example.invalid/mcp",
+        "https://user:password@example.invalid/mcp",
+        "https://example.invalid/mcp?token=secret",
+        "https://example.invalid/mcp#secret",
+    ],
+)
+async def test_custom_preview_rejects_credential_or_unsupported_endpoint_before_owner(
+    discovery, url
+):
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner = Mock()
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            "/api/desktop/connection-imports/preview",
+            json={
+                "workspace_id": "Alpha",
+                "session_id": "desktop-Alpha",
+                "name": "Custom",
+                "url": url,
+            },
+        )
+        assert response.status_code == 422
+        owner.preview_import.assert_not_called()
+
+@pytest.mark.asyncio
 async def test_workspace_creation_conflict_is_actionable_without_path_disclosure(
     discovery,
 ):

@@ -72,6 +72,7 @@ export function OnboardingWizard({
   const [endpoint, setEndpoint] = useState("");
   const [command, setCommand] = useState("");
   const [argumentsText, setArgumentsText] = useState("");
+  const [reviewedImport, setReviewedImport] = useState<string | null>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [plan, setPlan] = useState<InstallPlan | null>(null);
   const [run, setRun] = useState<OnboardingRun | null>(null);
@@ -86,6 +87,7 @@ export function OnboardingWizard({
 
   useEffect(() => {
     if (isOpen) {
+      setReviewedImport(null);
       setCapabilityId(initialCapabilityId);
       setSourceKind(initialCapabilityId ? "catalog" : "import");
       previousFocus.current = document.activeElement as HTMLElement | null;
@@ -169,7 +171,10 @@ export function OnboardingWizard({
       const created = await mcpService.createInstallPlan({
         ...sourceRequest,
         requested_scope: "global_registered",
-        independently_completed_license: true,
+        independently_completed_license:
+          sourceKind === "catalog" || sourceKind === "host"
+            ? true
+            : reviewedImport === normalizedConfiguration,
       });
       setPlan(created);
       setStep("review");
@@ -391,6 +396,21 @@ export function OnboardingWizard({
                     />
                   </label>
                 </>
+              )}
+              {sourceKind !== "catalog" && sourceKind !== "host" && (
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={reviewedImport === normalizedConfiguration}
+                    onChange={(event) =>
+                      setReviewedImport(
+                        event.target.checked ? normalizedConfiguration : null,
+                      )
+                    }
+                  />
+                  I independently reviewed this source and completed its
+                  publisher terms and account requirements.
+                </label>
               )}
               <button
                 type="button"

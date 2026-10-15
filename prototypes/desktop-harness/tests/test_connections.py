@@ -169,3 +169,72 @@ async def test_connection_readback_exposes_saved_validation_without_repeating_it
     client.call.assert_awaited_once_with(
         "GET", "/api/mcp/capabilities", params={"search": "", "limit": 50}
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("capability", [None, "import:custom"])
+async def test_saved_plan_discovery_can_omit_provider_but_always_scopes_workspace(
+    monkeypatch, capability
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"plans": []})
+    )
+    args = {"workspace_id": "workspace", "session_id": "session"}
+    if capability is not None:
+        args["capability_id"] = capability
+    await server(client).call_tool("wright_connection_plans", args)
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "GET", "/api/desktop/connection-plans", params=args
+    )
+
+
+@pytest.mark.asyncio
+async def test_custom_connection_tools_forward_exact_preview_and_plan_without_apply(
+    monkeypatch,
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"accepted": True})
+    )
+    bridge = server(client)
+    scope = {"workspace_id": "workspace", "session_id": "session"}
+    await bridge.call_tool(
+        "wright_connection_preview",
+        {**scope, "name": "CAD", "url": "https://example.invalid/mcp"},
+    )
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/desktop/connection-imports/preview",
+        json={**scope, "name": "CAD", "url": "https://example.invalid/mcp"},
+    )
+    client.call.reset_mock()
+    await bridge.call_tool(
+        "wright_connection_import_plan",
+        {
+            **scope,
+            "preview_token": "preview",
+            "draft_id": "draft",
+            "draft_digest": "a" * 64,
+        },
+    )
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/desktop/connection-imports/plan",
+        json={
+            **scope,
+            "preview_token": "preview",
+            "draft_id": "draft",
+            "draft_digest": "a" * 64,
+            "independently_completed_license": False,
+        },
+    )
+    assert client.scope.await_count == 2
+    for tool in await bridge.list_tools():
+        if tool.name in {"wright_connection_preview", "wright_connection_import_plan"}:
+            assert tool.meta["ui"]["visibility"] == ["app"]

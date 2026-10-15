@@ -621,7 +621,9 @@ class McpApiService:
             now=self.capability_dependencies.clock(),
         )
 
-    def list_workspace_install_plans(self, workspace_id: str, capability_id: str):
+    def list_workspace_install_plans(
+        self, workspace_id: str, capability_id: str | None = None
+    ):
         return list_workspace_install_plans(self.db_path, workspace_id, capability_id)
 
     def get_install_plan(self, plan_id: str):

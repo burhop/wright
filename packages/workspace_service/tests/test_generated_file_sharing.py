@@ -18,7 +18,7 @@ from workspace_service.adapters.filesystem import LocalWorkspaceFiles
 
 
 @contextmanager
-def windows_reader(path):
+def windows_reader(path, *, share_mode=3):
     from ctypes import wintypes
 
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
@@ -34,7 +34,7 @@ def windows_reader(path):
     kernel.CreateFileW.restype = wintypes.HANDLE
     kernel.CloseHandle.argtypes = [wintypes.HANDLE]
     kernel.CloseHandle.restype = wintypes.BOOL
-    handle = kernel.CreateFileW(str(path), 0x80000000, 3, None, 3, 0x80, None)
+    handle = kernel.CreateFileW(str(path), 0x80000000, share_mode, None, 3, 0x80, None)
     if handle == ctypes.c_void_p(-1).value:
         raise ctypes.WinError(ctypes.get_last_error())
     try:

@@ -218,6 +218,7 @@ describe("OnboardingWizard", () => {
         draft_id: "draft-1",
         draft_digest: "a".repeat(64),
         requested_scope: "global_registered",
+        independently_completed_license: false,
       }),
     );
   });
@@ -444,4 +445,30 @@ it("uses a simplified setup entry when a listed MCP server is selected", () => {
       "I reviewed and completed any publisher requirements shown for this server.",
     ),
   ).not.toBeInTheDocument();
+});
+
+it("binds explicit imported publisher review to unchanged source", async () => {
+  vi.clearAllMocks();
+  vi.mocked(mcpService.previewImport).mockResolvedValue(preview);
+  vi.mocked(mcpService.createInstallPlan).mockResolvedValue(plan);
+  render(<OnboardingWizard isOpen onClose={vi.fn()} />);
+  const input = screen.getByLabelText("MCP configuration JSON");
+  fireEvent.change(input, { target: { value: '{"command":"python"}' } });
+  const checkbox = screen.getByRole("checkbox", {
+    name: /independently reviewed this source/,
+  });
+  expect(checkbox).not.toBeChecked();
+  fireEvent.click(checkbox);
+  expect(checkbox).toBeChecked();
+  fireEvent.change(input, { target: { value: '{"command":"different"}' } });
+  expect(checkbox).not.toBeChecked();
+  fireEvent.click(checkbox);
+  fireEvent.click(screen.getByRole("button", { name: "Review install plan" }));
+  await waitFor(() =>
+    expect(mcpService.createInstallPlan).toHaveBeenCalledWith(
+      expect.objectContaining({ independently_completed_license: true }),
+    ),
+  );
+  expect(mcpService.approveInstallPlan).not.toHaveBeenCalled();
+  expect(mcpService.applyInstallPlan).not.toHaveBeenCalled();
 });

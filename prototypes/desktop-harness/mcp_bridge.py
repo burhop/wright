@@ -468,11 +468,34 @@ def server(client, *, native_editor=False, native_working_view=False):
             },
         )
 
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_preview(
+        workspace_id: str, session_id: str, name: str, url: str
+    ) -> dict[str, Any]:
+        """Preview a public HTTPS MCP endpoint; no credentials, query or fragment. Does not connect or install."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("POST", "/api/desktop/connection-imports/preview", json={
+            "workspace_id": workspace_id, "session_id": session_id, "name": name, "url": url,
+        })
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_import_plan(
+        workspace_id: str, session_id: str, preview_token: str,
+        draft_id: str, draft_digest: str, independently_completed_license: bool = False,
+    ) -> dict[str, Any]:
+        """Save a workspace setup plan from the exact preview. Never approves, installs or grants tools."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("POST", "/api/desktop/connection-imports/plan", json={
+            "workspace_id": workspace_id, "session_id": session_id,
+            "preview_token": preview_token, "draft_id": draft_id, "draft_digest": draft_digest,
+            "independently_completed_license": independently_completed_license,
+        })
+
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plans(
-        workspace_id: str, session_id: str, capability_id: str
+        workspace_id: str, session_id: str, capability_id: str | None = None
     ) -> dict[str, Any]:
-        """Find saved setup plans for this workspace/provider without creating or resuming setup."""
+        """Find saved setup plans for this workspace, optionally filtered by provider without creating or resuming setup."""
         await client.scope(workspace_id, session_id)
         return await client.call(
             "GET",
@@ -480,7 +503,7 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={
                 "workspace_id": workspace_id,
                 "session_id": session_id,
-                "capability_id": capability_id,
+                **({"capability_id": capability_id} if capability_id is not None else {}),
             },
         )
 

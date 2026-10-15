@@ -255,3 +255,93 @@ it("reopens an existing setup through reads only", async () => {
     "wright_connection_plan_read",
   ]);
 });
+
+it("recovers an imported setup without its provider identity and opens the exact saved plan", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(reply())
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        capability_id: null,
+        plans: [
+          {
+            plan_id: "imported",
+            capability_id: "import:custom",
+            workspace_id: "a",
+            state: "blocked",
+            created_at: "2026-10-15",
+          },
+        ],
+      },
+    })
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        plan: {
+          plan_id: "imported",
+          plan_digest: "b".repeat(64),
+          capability_id: "import:custom",
+          workspace_id: "a",
+          requested_scope: "workspace",
+          state: "blocked",
+          effects: [],
+          blocking_reasons: [],
+        },
+      },
+    });
+  render(<NativeConnections workspace={workspace} call={call} />);
+  await screen.findByText("CAD");
+  fireEvent.click(
+    screen.getByRole("button", { name: "Saved setup in this workspace" }),
+  );
+  fireEvent.click(
+    await screen.findByRole("button", { name: /Open blocked setup/ }),
+  );
+  expect(await screen.findByText("Plan state: blocked.")).toBeVisible();
+  expect(call.mock.calls.slice(1)).toEqual([
+    ["wright_connection_plans", { workspace_id: "a", session_id: "chat-a" }],
+    [
+      "wright_connection_plan_read",
+      { workspace_id: "a", session_id: "chat-a", plan_id: "imported" },
+    ],
+  ]);
+});
+
+it("rejects another workspace in an unfiltered saved-plan response", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(reply())
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        capability_id: null,
+        plans: [
+          {
+            plan_id: "private",
+            capability_id: "import:custom",
+            workspace_id: "b",
+            state: "completed",
+            created_at: "2026-10-15",
+          },
+        ],
+      },
+    });
+  render(<NativeConnections workspace={workspace} call={call} />);
+  await screen.findByText("CAD");
+  fireEvent.click(
+    screen.getByRole("button", { name: "Saved setup in this workspace" }),
+  );
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "Saved setup could not be read",
+  );
+  expect(
+    screen.queryByRole("button", { name: /Open completed setup/ }),
+  ).toBeNull();
+});

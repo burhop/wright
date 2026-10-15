@@ -352,3 +352,101 @@ def test_saved_plan_discovery_is_bounded_and_workspace_provider_scoped(plan_data
     assert get_install_plan(database, plans[0].plan_id) == plans[0]
     with pytest.raises(ValueError):
         list_workspace_install_plans(database, "a", plans[0].capability_id, limit=1000)
+
+
+def test_workspace_discovery_recovers_imported_plan_without_provider_identity(
+    plan_database,
+):
+    from tool_registry.install_plans import list_workspace_install_plans
+
+    database, snapshot, observation = plan_database
+    plans = []
+    for workspace, scope in [
+        ("a", "workspace"),
+        ("b", "workspace"),
+        (None, "global_registered"),
+        ("a", "workspace"),
+    ]:
+        draft = preview_configuration(
+            {
+                "name": f"remote-{len(plans)}",
+                "type": "http",
+                "url": "https://example.invalid/mcp",
+            },
+            now=NOW,
+        )["drafts"][0]
+        plans.append(
+            create_install_plan(
+                database,
+                snapshot_id=snapshot.snapshot_id,
+                observation=observation,
+                import_draft=draft,
+                actor="engineer",
+                requested_scope=scope,
+                workspace_id=workspace,
+                now=NOW + timedelta(seconds=len(plans)),
+            )
+        )
+    # Simulate losing the create response: discovery needs only the workspace.
+    found = list_workspace_install_plans(database, "a")
+    assert [plan.plan_id for plan in found] == [plans[3].plan_id, plans[0].plan_id]
+    assert all(plan.capability_id.startswith("import:") for plan in found)
+    assert all(plan.state == "blocked" for plan in found)
+    assert [
+        plan.plan_id for plan in list_workspace_install_plans(database, "a", limit=1)
+    ] == [plans[3].plan_id]
+    assert list_workspace_install_plans(database, "missing") == []
+    assert list_workspace_install_plans(database, "a", "") == []
+    assert list_workspace_install_plans(database, "a", plans[0].capability_id) == [
+        plans[0]
+    ]
+    assert get_install_plan(database, plans[0].plan_id) == plans[0]
+    for limit in (0, -1, 51):
+        with pytest.raises(ValueError):
+            list_workspace_install_plans(database, "a", limit=limit)
+
+
+def test_imported_publisher_review_records_completion_without_approval_or_transfer(
+    plan_database,
+):
+    database, snapshot, observation = plan_database
+    draft = preview_configuration(
+        {"name": "Remote", "type": "http", "url": "https://example.invalid/mcp"},
+        now=NOW,
+    )["drafts"][0]
+    arguments = dict(
+        database_path=database,
+        snapshot_id=snapshot.snapshot_id,
+        observation=observation,
+        import_draft=draft,
+        actor="engineer",
+        requested_scope="workspace",
+        workspace_id="a",
+        now=NOW,
+    )
+    blocked = create_install_plan(**arguments)
+    assert blocked.state == "blocked"
+    reviewed = create_install_plan(**arguments, independently_completed_license=True)
+    assert reviewed.state == "reviewable"
+    assert reviewed.requirements.license.state == "unknown"
+    assert reviewed.requirements.license.independent_completion_required
+    assert reviewed.requirements.license.independent_completion_recorded_at == NOW
+    assert reviewed.import_draft_digest == draft["draft_digest"]
+    assert reviewed.approved_by is None
+    assert reviewed.plan_digest != blocked.plan_digest
+    assert get_install_plan(database, blocked.plan_id) == blocked
+    with pytest.raises(InstallPlanError):
+        approve_install_plan(
+            database,
+            reviewed.plan_id,
+            blocked.plan_digest,
+            actor="administrator",
+            now=NOW,
+        )
+    changed = preview_configuration(
+        {"name": "Remote", "type": "http", "url": "https://other.invalid/mcp"},
+        now=NOW,
+    )["drafts"][0]
+    changed_plan = create_install_plan(**{**arguments, "import_draft": changed})
+    assert changed_plan.state == "blocked"
+    assert changed_plan.requirements.license.independent_completion_recorded_at is None

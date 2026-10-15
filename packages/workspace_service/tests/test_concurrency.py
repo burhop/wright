@@ -48,3 +48,40 @@ async def test_cancellation_returns_promptly_and_executor_owns_worker_shutdown()
         await task
     release.set()
     await executor.close()
+
+
+@pytest.mark.asyncio
+async def test_generated_publication_finishes_before_cancellation_returns(tmp_path):
+    executor = BoundedExecutor(max_workers=1)
+    entered = asyncio.Event()
+    release = threading.Event()
+    loop = asyncio.get_running_loop()
+
+    class HeldPublication(LocalWorkspaceFiles):
+        def write_generated(self, path, content, policy):
+            loop.call_soon_threadsafe(entered.set)
+            if not release.wait(5):
+                raise TimeoutError("Test did not release its publication worker")
+            return super().write_generated(path, content, policy)
+
+    files = WorkspaceFileUseCases("unused", executor, HeldPublication)
+    task = asyncio.create_task(
+        files.write_generated(
+            str(tmp_path), "run.json", '{"complete":true}', "overwrite"
+        )
+    )
+    try:
+        await asyncio.wait_for(entered.wait(), 2)
+        task.cancel()
+        await asyncio.sleep(0)
+        await asyncio.sleep(0)
+        assert not task.done(), "Cancellation must not leave a late checkpoint writer"
+        assert not (tmp_path / "run.json").exists()
+        release.set()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        assert (tmp_path / "run.json").read_text() == '{"complete":true}'
+    finally:
+        release.set()
+        await asyncio.gather(task, return_exceptions=True)
+        await executor.close()

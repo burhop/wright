@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "runtime_commit": "90e2f261467239df5b5c475d81b657aa7bf1f4c5",
+  "scope": "Actual private file inspection through enrolled gateway; receipt withheld by test hook; abrupt owner restart",
+  "limits": [
+    "No external mutation",
+    "No Windows native acceptance",
+    "No new engineering artifacts",
+    "Not automatic recovery; reconciliation required"
+  ],
+  "failed_attempt_preserved": "/tmp/wright-desktop-dispatch-restart-state-20261015-01/fixture-failure.json",
+  "files": {
+    "launch.py": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/launch.py",
+      "sha256": "e8c1fa0f458467960ceb37368e0b465ae32130b8b3b0520dc470d87368620784"
+    },
+    "mcp-gateway-probe.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/mcp-gateway-probe.json",
+      "sha256": "fa591b1c0161edbf9b0972f47262f144d95a0220a1f1b4459729fcb7123e0d13"
+    },
+    "desktop-gateway-action-1.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/desktop-gateway-action-1.json",
+      "sha256": "b83a2211582563487b65d5f4ebecdd2b8799224c465bde6707bec73e5c8a3721"
+    },
+    "inspection-completed-receipt-held.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/inspection-completed-receipt-held.json",
+      "sha256": "552392414ac20e36b55cb283854a077a56c258e6f3a8d88e4111d3fe31c32735"
+    },
+    "restart-fault.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/restart-fault.json",
+      "sha256": "f29f2441f38b9ebeadc9c6d4a804f80e3b457db1143d4aa9952622dda125d8e1"
+    },
+    "dispatch-restart-reconciliation.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/dispatch-restart-reconciliation.json",
+      "sha256": "97e32356b0a580c6b4359bc10ce4d1062851eeaa0a7fab4b7d36c127c746f6ee"
+    },
+    "observe.py": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/observe.py",
+      "sha256": "3fbf771e1612167be4058beba0eee350e183208871e055fb09c8a818bc3590cc"
+    },
+    "observe.log": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/observe.log",
+      "sha256": "f0c258b35763f588495d62af51597b8728bb3af1f95cf18d98dc618657688570"
+    },
+    "desktop-versions.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/desktop-versions.json",
+      "sha256": "472061d17e2dc84a0448867cbd2850d915036fa3cb81e75bdc723669daebf6ae"
+    },
+    "desktop-binding.json": {
+      "path": "/tmp/wright-desktop-dispatch-restart-state-20261015-02/desktop-binding.json",
+      "sha256": "156239392fece1c5d1e371e8225f317cfe5045dae4357020fc618c49d1098bf4"
+    }
+  }
+}

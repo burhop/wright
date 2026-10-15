@@ -2,7 +2,22 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
-## Next work — authorized 14 October 2026
+## Current checkpoint — 15 October 2026
+
+Named0.11 is installed and protocol/resource verified. Its custom HTTPS connection
+flow, explicit source review and saved-plan discovery have isolated qualification.
+See [installation evidence](installed-011-evidence.json),
+[walkthrough](desktop-011-walkthrough.md) and the current
+[demo readiness plan](demo-readiness-plan.md). The full local custom-connection
+gate passed at934c70e5 with the documented GB10 WebKit limitation; push checks,
+current-head CI, dev integration and deployment proof remain outstanding.
+
+The separate image follow-on lives at /tmp/wright-desktop-engineering-images.
+Its local six-original-image and owner-loss proofs do not enable that profile
+in installed0.11 or replace fresh SteveCAD/heat-spreader engineering runs,
+Robot/manufacturing regressions, actual Windows acceptance or genuine reviews.
+
+## Historical next-work checkpoint — 14 October 2026
 
 See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.md#current-continuation-checkpoint--14-october-2026)
 and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;
@@ -152,3 +167,36 @@ inputs stay disabled.
 The cumulative 1988beec integration gate failed on Prettier formatting in the new
 template-client test. Formatting was corrected without changing assertions;
 retain the failed gate log and rerun on the corrected candidate before push.
+
+## PR156 first-cycle correction — 15 October 2026
+
+The completed first cycle found one ambiguous onboarding locator and two Windows
+cancellation-test failures. See ci-first-cycle-correction.json. A deterministic
+GB10 test reproduced cancellation returning before generated-file publication
+finished. The use case now reuses the existing owned-write completion mechanism;
+no provider action is repeated. The fixture retains its outcome and 3s wakeup
+assertions with a 1s confirmation window. All12 focused cancellation/concurrency,
+36 gate-contract and five onboarding browser checks pass. The normal frontend
+gate now includes the live read-only onboarding check. Corrected full gates and
+current-head Windows CI remain required before the second push/merge.
+
+## PR156 integration packaging correction — 15 October 2026
+
+The integration-sync head 3f7ad9b2 passed local gates but its x64 engineering
+image download failed with curl TLS error 56 twice (one bounded CI retry).
+A local interrupted-body reproducer showed that the existing curl retry option
+did not retry partial transfers and left a truncated file. The release-asset
+installer now retains five retries, retries transfer failures and removes failed
+partial output. This applies only to build-time GETs, not workflow actions.
+The actual embedded installer passes local recover-on-second-request and
+exhaust-after-six-attempts tests; all 31 Docker bundle tests pass. The test is
+already included in the container push slice and full merge gate.
+
+Evidence: /tmp/wright-artifact-download-recovery-20261015/result.json and
+installer-qualification.json. The local HTTP proof is not an exact reproduction
+of TLS56 or qualification of SourceForge. Native x64 image CI remains required.
+The pending Windows backend check must reach a terminal state before any new
+push. A fourth push would be an exceptional consolidated packaging correction
+after the independently merged image capability, not another blind CI retry.
+Current-candidate gates, CI and dev integration remain pending; no plugin update
+or engineering run follows from these unit checks.
