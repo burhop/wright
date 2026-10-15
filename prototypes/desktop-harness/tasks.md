@@ -2,7 +2,33 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
-## Current local follow-on checkpoint — 15 October 2026
+## Integration candidate checkpoint — 15 October 2026
+
+This checkpoint supersedes the historical observations below. Named plugin0.11
+is still installed; upload/transfer changes are local and not installed or pushed.
+PR156 is merged at dev3b994c56. Both image builds passed; its published ARM64
+image has 503 exact runtime/dependency hashes verified, healthy isolated startup
+and four shipped-workspace save/reopen checks. Evidence:
+`/tmp/wright-dev-3b994c56-deployment-evidence/checkpoint.json`.
+
+The combined file-transfer candidate reuses existing declared-input and portable
+bundle owners. Native input upload, definition export/import, declared-reference
+transfer and uncertain import recovery have scoped local evidence. See
+[transfer plan](workflow-transfer-plan.md) and [input upload plan](input-upload/plan.md).
+Eight actual-owner browser checks include lost-reply recovery without a repeated
+import; 38 focused frontend tests pass. Native controls preserve the common
+editor/header and draft guards. The artifact source and dependency manifests
+remain authoritative; an unrelated workspace file is not offered as a reference.
+
+Next: clean-archive candidate image, full merge gate, push gate, hosted CI and
+served shared-workspace regression; qualify the concrete named plugin update and
+Windows walkthrough. Saved-interface portability, actual Windows delivery and
+original prepared engineering input cases remain separately unqualified.
+SteveCAD authentication, full four-/six-hole and heat-spreader runs, genuine
+reviews, Robot Tracking Diagnosis and manufacturing digital regression remain
+required. Prototype infrastructure tests do not replace those engineering proofs.
+
+## Historical local follow-on checkpoint — 15 October 2026
 
 This section supersedes the older checkpoint below; historical evidence remains
 intact. Complete engineering demonstrations and Windows acceptance are unfinished.
