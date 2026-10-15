@@ -176,3 +176,11 @@
     grid-template-rows: minmax(100px, 0.6fr) minmax(160px, 1fr);
   }
 }
+
+.native-home input[type="checkbox"] {
+  width: auto;
+  margin: 8px 8px 8px 0;
+}
+.native-connection-endpoint {
+  overflow-wrap: anywhere;
+}

@@ -165,3 +165,19 @@ recovered that same workspace through read-only discovery and did not recreate i
 The successful report records hashes of the actual backend, bridge and plan owner.
 This establishes the observed transport/storage path, not native Windows UI,
 installation/validation, credential entry or complete engineering demonstrations.
+
+## Served-panel qualification
+
+Actual Chromium/native-resource/MCP/API/storage proof passes four journeys: preview
+without plan creation, explicit synthetic review saving an unapproved exact
+workspace plan, saved-plan discovery, and 460px layout without horizontal overflow.
+The first passing functional probe exposed a visual defect: review was below the
+long catalog. Review/saved results now precede the catalog and receive focus/scroll.
+The final proof additionally requires the review in the viewport, exact endpoint
+and recorded publisher-review status. Removed the inapplicable catalog confirmation
+checkbox from imported plans and fixed checkbox width in the native frame.
+
+See custom-connections-evidence.json for exact resource/report hashes and screenshots.
+Earlier screenshots/reports remain in the private state directory. This does not
+establish actual Windows native hosting, approval/apply, authentication, provider
+validation or engineering readiness. Named installed 0.10.0 remains unchanged.

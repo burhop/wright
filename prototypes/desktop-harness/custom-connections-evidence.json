@@ -20,5 +20,25 @@
     "No apply or provider network call",
     "Synthetic private fixture publisher review only",
     "Served panel and Windows acceptance pending"
-  ]
+  ],
+  "served_browser": {
+    "report": "/tmp/wright-desktop-custom-source-state-20261015-01/browser-1792035750222/report.json",
+    "report_sha256": "e97f29d1370983334e0e2e1941626619bdd07bbecf6ec1f04d431ad613dfd75a",
+    "checks": [
+      "preview through real owner without plan creation",
+      "explicit synthetic source review saves unapproved workspace plan",
+      "saved setup discovery from workspace UI",
+      "460px panel has no horizontal overflow"
+    ],
+    "resource_sha256": "944082a11bd952ff14b5e5cbbd546228886a6f04535f65d3d47afb4908ae0053",
+    "screenshots": [
+      "/tmp/wright-desktop-custom-source-state-20261015-01/browser-1792035750222/review.png",
+      "/tmp/wright-desktop-custom-source-state-20261015-01/browser-1792035750222/narrow.png"
+    ],
+    "limitations": [
+      "Simulated desktop host, not Windows native acceptance",
+      "No approval, installation or provider network call",
+      "Synthetic publisher completion for private fictional endpoint"
+    ]
+  }
 }

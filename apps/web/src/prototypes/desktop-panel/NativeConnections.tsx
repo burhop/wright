@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import { NativeCustomConnection } from "./NativeCustomConnection";
@@ -46,7 +46,13 @@ export interface SetupPlan {
   workspace_id: string;
   requested_scope: string;
   state: string;
-  requirements?: { license?: { reference: string | null } };
+  source?: { name?: string; endpoint?: string };
+  requirements?: {
+    license?: {
+      reference: string | null;
+      independent_completion_recorded_at?: string | null;
+    };
+  };
   approval_gates?: string[];
   blocking_reasons: { code: string; message: string; recovery: string }[];
   effects: { step_id: string; description: string }[];
@@ -137,6 +143,21 @@ export function NativeConnections({
     }
   }
   const [plan, setPlan] = useState<SetupPlan>();
+  const planView = useRef<HTMLElement>(null);
+  const savedView = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (plan) {
+      planView.current?.focus();
+      planView.current?.scrollIntoView?.({ block: "start" });
+    }
+  }, [plan]);
+  useEffect(() => {
+    if (saved) {
+      savedView.current?.focus();
+      savedView.current?.scrollIntoView?.({ block: "start" });
+    }
+  }, [saved]);
+
   const [planError, setPlanError] = useState(false);
   const [acting, setActing] = useState(false);
   const [uncertain, setUncertain] = useState(false);
@@ -295,6 +316,141 @@ export function NativeConnections({
       >
         Saved setup in this workspace
       </button>
+      {planning && <p role="status">Reading setup…</p>}
+      {savedError && (
+        <p role="alert">
+          Saved setup could not be read. No setup action was requested.
+        </p>
+      )}
+      {saved && (
+        <section aria-label="Saved setup plans" ref={savedView} tabIndex={-1}>
+          <h3>Saved setup plans</h3>
+          <p>
+            Up to 20 most recent plans{" "}
+            {saved.capabilityId ? "for this provider " : ""}in this workspace.
+            Opening one does not resume setup.
+          </p>
+          {saved.plans.length === 0 && (
+            <p>No saved setup plans for this selection.</p>
+          )}
+          {saved.plans.map((item) => (
+            <button
+              key={item.plan_id}
+              disabled={planning || acting}
+              onClick={() => void savedPlans(item.capability_id, item.plan_id)}
+            >
+              Open {item.state} setup — {item.created_at}
+            </button>
+          ))}
+        </section>
+      )}
+      {planError && (
+        <p role="alert">
+          The setup plan was not confirmed. No installation or permission change
+          was requested.
+        </p>
+      )}
+      {plan && (
+        <section aria-label="Setup plan" ref={planView} tabIndex={-1}>
+          <h3>Review setup</h3>
+          <p>Plan state: {plan.state}.</p>
+          {plan.source?.name && <p>{plan.source.name}</p>}
+          {plan.source?.endpoint && (
+            <p className="native-connection-endpoint">{plan.source.endpoint}</p>
+          )}
+          {["blocked", "reviewable", "draft"].includes(plan.state) && (
+            <p>Nothing has been installed or approved by this plan.</p>
+          )}
+          {plan.state === "completed" && (
+            <p>
+              Registration completed. Sign-in, protocol validation and workspace
+              permission still need their own checks.
+            </p>
+          )}
+          {plan.requirements?.license?.reference && (
+            <p>{plan.requirements.license.reference}</p>
+          )}
+          {(plan.approval_gates ?? []).map((gate) => (
+            <p key={gate}>
+              Separate setup approval required: {gate.replaceAll("_", " ")}
+            </p>
+          ))}
+          {plan.capability_id.startsWith("import:") ? (
+            <p>
+              {plan.requirements?.license?.independent_completion_recorded_at
+                ? "Independent publisher review is recorded for this exact source."
+                : "Publisher review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
+            </p>
+          ) : (
+            <>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={licenseCapability === plan.capability_id}
+                  onChange={(event) =>
+                    setLicenseCapability(
+                      event.target.checked ? plan.capability_id : null,
+                    )
+                  }
+                />
+                I have independently completed the publisher account and terms
+                setup for this provider.
+              </label>
+              <p>
+                This records existing completion only; it does not purchase a
+                subscription or sign in. Review setup again to create a new
+                plan.
+              </p>
+            </>
+          )}
+          {plan.effects.map((effect) => (
+            <p key={effect.step_id}>{effect.description}</p>
+          ))}
+          {plan.blocking_reasons.map((reason) => (
+            <p key={reason.code}>
+              {reason.message} {reason.recovery}
+            </p>
+          ))}
+          {uncertain && (
+            <p role="alert">
+              Setup outcome is not confirmed. Check saved status before taking
+              another action; nothing will be repeated automatically.
+            </p>
+          )}
+          <button disabled={acting} onClick={() => void planAction("read")}>
+            Check saved setup status
+          </button>
+          {plan.state === "reviewable" && (
+            <button
+              disabled={acting || uncertain}
+              onClick={() => void planAction("approve")}
+            >
+              Approve this setup plan
+            </button>
+          )}
+          {plan.state === "approved" && (
+            <button
+              disabled={acting || uncertain}
+              onClick={() => void planAction("apply")}
+            >
+              Apply approved setup
+            </button>
+          )}
+        </section>
+      )}
+      {plan?.state === "completed" && (
+        <NativeSignin
+          key={plan.plan_id}
+          scope={{
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            plan_id: plan.plan_id,
+            plan_digest: plan.plan_digest,
+          }}
+          call={call}
+          openLink={openLink}
+        />
+      )}
       {loading ? (
         <p role="status">Loading connections…</p>
       ) : error ? (
@@ -380,126 +536,6 @@ export function NativeConnections({
             <button onClick={() => setCursor(null)}>First connections</button>
           )}
         </>
-      )}
-      {planning && <p role="status">Reading setup…</p>}
-      {savedError && (
-        <p role="alert">
-          Saved setup could not be read. No setup action was requested.
-        </p>
-      )}
-      {saved && (
-        <section aria-label="Saved setup plans">
-          <h3>Saved setup plans</h3>
-          <p>
-            Up to 20 most recent plans{" "}
-            {saved.capabilityId ? "for this provider " : ""}in this workspace.
-            Opening one does not resume setup.
-          </p>
-          {saved.plans.length === 0 && (
-            <p>No saved setup plans for this selection.</p>
-          )}
-          {saved.plans.map((item) => (
-            <button
-              key={item.plan_id}
-              disabled={planning || acting}
-              onClick={() => void savedPlans(item.capability_id, item.plan_id)}
-            >
-              Open {item.state} setup — {item.created_at}
-            </button>
-          ))}
-        </section>
-      )}
-      {planError && (
-        <p role="alert">
-          The setup plan was not confirmed. No installation or permission change
-          was requested.
-        </p>
-      )}
-      {plan && (
-        <section aria-label="Setup plan">
-          <h3>Review setup</h3>
-          <p>Plan state: {plan.state}.</p>
-          {["blocked", "reviewable", "draft"].includes(plan.state) && (
-            <p>Nothing has been installed or approved by this plan.</p>
-          )}
-          {plan.state === "completed" && (
-            <p>
-              Registration completed. Sign-in, protocol validation and workspace
-              permission still need their own checks.
-            </p>
-          )}
-          {plan.requirements?.license?.reference && (
-            <p>{plan.requirements.license.reference}</p>
-          )}
-          {(plan.approval_gates ?? []).map((gate) => (
-            <p key={gate}>
-              Separate setup approval required: {gate.replaceAll("_", " ")}
-            </p>
-          ))}
-          <label>
-            <input
-              type="checkbox"
-              checked={licenseCapability === plan.capability_id}
-              onChange={(event) =>
-                setLicenseCapability(
-                  event.target.checked ? plan.capability_id : null,
-                )
-              }
-            />
-            I have independently completed the publisher account and terms setup
-            for this provider.
-          </label>
-          <p>
-            This records existing completion only; it does not purchase a
-            subscription or sign in. Review setup again to create a new plan.
-          </p>
-          {plan.effects.map((effect) => (
-            <p key={effect.step_id}>{effect.description}</p>
-          ))}
-          {plan.blocking_reasons.map((reason) => (
-            <p key={reason.code}>
-              {reason.message} {reason.recovery}
-            </p>
-          ))}
-          {uncertain && (
-            <p role="alert">
-              Setup outcome is not confirmed. Check saved status before taking
-              another action; nothing will be repeated automatically.
-            </p>
-          )}
-          <button disabled={acting} onClick={() => void planAction("read")}>
-            Check saved setup status
-          </button>
-          {plan.state === "reviewable" && (
-            <button
-              disabled={acting || uncertain}
-              onClick={() => void planAction("approve")}
-            >
-              Approve this setup plan
-            </button>
-          )}
-          {plan.state === "approved" && (
-            <button
-              disabled={acting || uncertain}
-              onClick={() => void planAction("apply")}
-            >
-              Apply approved setup
-            </button>
-          )}
-        </section>
-      )}
-      {plan?.state === "completed" && (
-        <NativeSignin
-          key={plan.plan_id}
-          scope={{
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            plan_id: plan.plan_id,
-            plan_digest: plan.plan_digest,
-          }}
-          call={call}
-          openLink={openLink}
-        />
       )}
       <p>
         Workspace availability never approves individual tool actions or
