@@ -171,10 +171,17 @@ def test_missing_desktop_dispatch_cannot_use_legacy_callback(tmp_path):
         )
 
 
-def test_frozen_binding_drift_blocks_before_another_request(tmp_path):
+@pytest.mark.parametrize(
+    "patch",
+    [
+        {"requested_model": "different-selection"},
+        {"image_input_profile": "inline-png-jpeg-engineering-v1"},
+    ],
+)
+def test_frozen_binding_drift_blocks_before_another_request(tmp_path, patch):
     repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
     first = reasoner(repo)
-    second = reasoner(repo, requested_model="different-selection")
+    second = reasoner(repo, **patch)
     plan = compile_prompt_workflow(source(task(fmt="text")))
     app = service(tmp_path)
 

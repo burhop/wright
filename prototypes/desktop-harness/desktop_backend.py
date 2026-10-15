@@ -12,7 +12,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
-from core.desktop_reasoning import DesktopHarnessBinding, DesktopReasoningResponse
+from core.desktop_reasoning import (
+    ENGINEERING_IMAGE_PROFILE,
+    DesktopHarnessBinding,
+    DesktopReasoningResponse,
+)
 from core.process_validation import canonical_digest
 from data_vault.desktop_reasoning_repository import (
     DesktopHandoffConflict,
@@ -72,11 +76,21 @@ class DesktopBackend:
         native_editor=False,
         native_working_view=False,
         image_inputs=False,
+        engineering_image_inputs=False,
         enrolled_mcp_tasks=False,
         local_reviews=False,
     ):
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
+        if image_inputs and engineering_image_inputs:
+            raise ValueError("Choose one explicit image-input profile")
+        image_profile = (
+            ENGINEERING_IMAGE_PROFILE
+            if engineering_image_inputs
+            else "inline-png-jpeg-v1"
+            if image_inputs
+            else "unavailable"
+        )
         self.service = service
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
@@ -86,11 +100,12 @@ class DesktopBackend:
         self.confined_inspection = confined_inspection
         self.enrolled_mcp_tasks = enrolled_mcp_tasks
         self.local_reviews = local_reviews
-        self.image_inputs = image_inputs
+        self.image_inputs = image_inputs or engineering_image_inputs
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
-            "image_inputs": image_inputs,
+            "image_inputs": self.image_inputs,
+            "image_input_profile": image_profile,
             "enrolled_mcp_tasks": enrolled_mcp_tasks,
             "local_reviews": local_reviews,
             "files": {},
@@ -100,10 +115,12 @@ class DesktopBackend:
             "connection_lease_seconds": CLIENT_LEASE_SECONDS,
             "heartbeat_interval_seconds": HEARTBEAT_INTERVAL_SECONDS,
         }
+        import core.desktop_reasoning as contract
         import agent_adapters.desktop_reasoning as adapter
         import workspace_service.workflow_reasoning_dispatch as dispatch
 
         for name, file in (
+            ("contract", contract.__file__),
             ("adapter", adapter.__file__),
             ("dispatch", dispatch.__file__),
             ("backend", __file__),
@@ -125,7 +142,7 @@ class DesktopBackend:
             ).hexdigest()
         self.binding = DesktopHarnessBinding(
             connection_id="wright-desktop-prototype:" + canonical_digest(runtime),
-            image_input_profile="inline-png-jpeg-v1" if image_inputs else "unavailable",
+            image_input_profile=image_profile,
         )
         (self.state / "desktop-binding.json").write_text(
             self.binding.model_dump_json(indent=2)
