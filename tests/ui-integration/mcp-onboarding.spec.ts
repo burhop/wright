@@ -416,7 +416,9 @@ test.describe("Live local guided onboarding", () => {
     const dialog = page.getByRole("dialog", {
       name: "Add custom MCP server",
     });
-    await expect(dialog.getByLabel("Source")).toHaveValue("import");
+    await expect(
+      dialog.getByRole("combobox", { name: "Source", exact: true }),
+    ).toHaveValue("import");
     await expect(dialog.getByLabel("MCP configuration JSON")).toBeVisible();
     await expect(dialog).toContainText(
       "This check is read-only. It does not install software, connect an account, or enable tools.",

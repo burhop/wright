@@ -1,0 +1,52 @@
+{
+  "scope": "Consolidated first-cycle PR156 correction; Windows requalification pending",
+  "base": "06a3d43628562f58b56c8cd24ffed31bab70409c",
+  "failures": [
+    "Playwright Source substring locator matched selector and explicit review checkbox",
+    "Windows cancellation fixture: 80ms confirmation window and transient run-record access failure"
+  ],
+  "deterministic_finding": "A cancelled generated-file use-case returned while its worker could still publish. Reproduced on GB10 before the fix.",
+  "changes": [
+    "Reuse existing BoundedExecutor.run_to_completion for generated publications",
+    "Keep original cancellation outcomes and 3s wakeup assertion; fixture confirmation window is 1s instead of 80ms",
+    "Use exact combobox role/name for Source",
+    "Include full MCP onboarding Chromium suite with live read-only check in normal frontend push gate; document and test coverage"
+  ],
+  "checks": {
+    "concurrency_and_cancel": 12,
+    "gate_contracts": 36,
+    "onboarding_browser": 5
+  },
+  "evidence": {
+    "ci-first-cycle-terminal.json": {
+      "path": "/tmp/wright-desktop-custom-connections-evidence-20261015/ci-first-cycle-terminal.json",
+      "sha256": "0a21e3fab8df889930f657e09b0fa07874ce54063955f3ac8c6da9ffa8f306c0"
+    },
+    "ci-playwright-38687638158-failure.log": {
+      "path": "/tmp/wright-desktop-custom-connections-evidence-20261015/ci-playwright-38687638158-failure.log",
+      "sha256": "d3217ccb79cab9c82a69c60405ebf7402aec86910a0ec1714fd4001da63d22c3"
+    },
+    "ci-windows-38687638170-failure.log": {
+      "path": "/tmp/wright-desktop-custom-connections-evidence-20261015/ci-windows-38687638170-failure.log",
+      "sha256": "901531a37030ac994efc9bc0233e880deae544dc5e4d77a731de56e3e9c7a697"
+    },
+    "generated-publication-red.log": {
+      "path": "/tmp/wright-desktop-custom-connections-evidence-20261015/generated-publication-red.log",
+      "sha256": "b35c0e9f197314407ccb70d2c5358a27c472ce9359c9e66b908c0cad960db499"
+    },
+    "cancellation-correction-tests.log": {
+      "path": "/tmp/wright-desktop-custom-connections-evidence-20261015/cancellation-correction-tests.log",
+      "sha256": "b190991833fdd3844e493a733c1bbc970aa59ee7c9b8a1745f6f5af0bdc8b934"
+    },
+    "gate-correction-tests.log": {
+      "path": "/tmp/wright-desktop-custom-connections-evidence-20261015/gate-correction-tests.log",
+      "sha256": "bcbbf091872d6b714ab41de294efe02019eb2d0316bfd3f2f74457b745107382"
+    }
+  },
+  "browser_log": "/tmp/wright-onboarding-ci-repro-20261015/corrected-suite.log",
+  "limits": [
+    "Full corrected gate and current-head CI not yet run",
+    "Actual Windows sharing behavior requires Windows CI; deterministic local reproduction is not Windows acceptance",
+    "No provider mutation retried and no uncertain effect replay enabled"
+  ]
+}

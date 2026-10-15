@@ -32,7 +32,10 @@ async def test_provider_cancel_is_durable_once_and_observed_outcome_is_separate(
         properties={"requirements": {"type": "string"}}, required=["requirements"]
     )
     tools[0].upstream_meta["wright/operation"].update(
-        poll_seconds=30, cancel_confirm_seconds=0.08
+        # Confirmation includes durable observations. Keep the provider window
+        # below the 3s wakeup assertion without making 80ms disk latency a gate.
+        poll_seconds=30,
+        cancel_confirm_seconds=1,
     )
     entered = asyncio.Event()
     cancelled = False

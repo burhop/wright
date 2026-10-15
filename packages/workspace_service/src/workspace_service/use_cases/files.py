@@ -147,12 +147,14 @@ class WorkspaceFileUseCases:
     async def write_generated_bytes(
         self, workspace_dir: str, path: str, content: bytes, policy: str
     ) -> str:
-        return await self._executor.run(
+        # A started atomic publication cannot be stopped by cancelling its
+        # observer. Finish it before releasing recorder locks or reporting
+        # cancellation, so a stale worker cannot replace a later checkpoint.
+        return await self._executor.run_to_completion(
             "workspace.files.write_generated",
             lambda: self._files_factory(workspace_dir).write_generated(
                 path, content, policy
             ),
-            timeout_seconds=self._timeout,
         )
 
     async def read_reference(self, workspace_dir: str, path: str) -> bytes:

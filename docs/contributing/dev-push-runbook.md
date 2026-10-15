@@ -89,6 +89,10 @@ the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Outside the bounded correction modes above,
 gate or workflow changes run all slices.
+Frontend selection also runs the MCP onboarding Chromium suite, including its
+read-only live source-entry check against the gate's isolated API. This catches
+accessible-control regressions that component tests and editor-only coverage miss;
+it does not enable live tests globally or install an MCP provider.
 When the broad `tests` target and a nested `tests/...` target are both selected,
 the fast gate excludes the nested target from the broad invocation and runs it
 separately. This preserves suite-local pytest imports while preventing duplicate

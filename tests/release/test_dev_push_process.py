@@ -48,6 +48,18 @@ def test_fast_gate_contains_the_frontend_ci_contract() -> None:
         assert command in gate
 
 
+def test_fast_gate_includes_isolated_live_mcp_onboarding() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    command = gate[gate.index("# Source-review controls must also retain") :]
+    command = command[: command.index("\nfi")]
+    assert "CI=1 PLAYWRIGHT_INCLUDE_LIVE=1" in command
+    assert 'WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}"' in command
+    assert (
+        "npx playwright test tests/ui-integration/mcp-onboarding.spec.ts --project=chromium"
+        in command
+    )
+
+
 def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
     gate = _read("scripts/check-dev-push.sh")
 

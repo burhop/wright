@@ -167,3 +167,15 @@ inputs stay disabled.
 The cumulative 1988beec integration gate failed on Prettier formatting in the new
 template-client test. Formatting was corrected without changing assertions;
 retain the failed gate log and rerun on the corrected candidate before push.
+
+## PR156 first-cycle correction — 15 October 2026
+
+The completed first cycle found one ambiguous onboarding locator and two Windows
+cancellation-test failures. See ci-first-cycle-correction.json. A deterministic
+GB10 test reproduced cancellation returning before generated-file publication
+finished. The use case now reuses the existing owned-write completion mechanism;
+no provider action is repeated. The fixture retains its outcome and 3s wakeup
+assertions with a 1s confirmation window. All12 focused cancellation/concurrency,
+36 gate-contract and five onboarding browser checks pass. The normal frontend
+gate now includes the live read-only onboarding check. Corrected full gates and
+current-head Windows CI remain required before the second push/merge.

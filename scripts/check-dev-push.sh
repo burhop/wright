@@ -563,6 +563,13 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
     WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
     npx playwright test "${PLAYWRIGHT_TARGETS[@]}" "${PLAYWRIGHT_PROJECT_ARGS[@]}"
+  # Source-review controls must also retain the real, read-only setup entry.
+  # Enable live coverage only for this dedicated suite on our isolated API.
+  run env -u PLAYWRIGHT_BASE_URL \
+    CI=1 PLAYWRIGHT_INCLUDE_LIVE=1 \
+    WRIGHT_PLAYWRIGHT_PORT="$GATE_UI_PORT" \
+    WRIGHT_WEB_API_PROXY_TARGET="http://127.0.0.1:${GATE_API_PORT}" \
+    npx playwright test tests/ui-integration/mcp-onboarding.spec.ts --project=chromium
 fi
 
 if [[ "$CHECK_DOCS" == "1" ]]; then
