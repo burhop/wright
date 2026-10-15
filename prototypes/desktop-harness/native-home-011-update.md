@@ -43,3 +43,15 @@ replacement evicts older named versions, restore those exact backed-up bytes and
 verify their hashes. Verify the installed manifest, tools and resource against
 the tested candidate. Do not restart the desktop. Actual Windows acceptance and
 engineering demonstrations remain open; installation cannot prove them.
+
+## Candidate qualification checkpoint
+
+Frozen runtime7afc90c4 passed actual package/resource checks:36 tools and resource
+SHA25651bff22d7e8a4f9882483ba74a77ae5599cf60f348ce3b20e2f7691ef6d56fbc.
+Eleven home/template/editor browser checks and four custom-source browser checks
+passed in the combined profile. A synthetic review completed the same run after
+reconnect and explicit Continue; a stale subject was rejected. These are private
+GB10 browser/MCP checks, not Windows or engineering acceptance. See
+native-home-011-evidence.json. Repository gates, named backup/update and installed
+verification remain pending. The first fixture launcher and probe assertion
+failures are retained; runtime guards and metadata were not weakened.

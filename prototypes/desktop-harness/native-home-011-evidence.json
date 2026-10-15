@@ -40,7 +40,6 @@
   "windows_native_acceptance": false,
   "engineering_acceptance": false,
   "remaining": [
-    "Custom source flow in this exact combined profile",
     "Final repository gate and push checks",
     "Private named-plugin backup, update and installed verification",
     "Windows callback/sign-in and complete engineering demonstrations"
@@ -48,5 +47,11 @@
   "preserved_fixture_failures": [
     "package probe expected wrong readOnlyHint; corrected probe keeps conservative write metadata",
     "navigation seed omitted frozen native-view flags; rejected before workspace creation; corrected launcher used exact flags"
-  ]
+  ],
+  "custom_source_browser": {
+    "report": "/tmp/wright-desktop-home-011-state-20261015-01/browser-1792039552592/report.json",
+    "sha256": "e5b3f573aef47b4bc9568393475af2e1f01fe1e8e140f71b647c63700567ce39",
+    "checks_passed": 4,
+    "scope": "exact package command, combined profile; synthetic source review, no installation/provider call"
+  }
 }
