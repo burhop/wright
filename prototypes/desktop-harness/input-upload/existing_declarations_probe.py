@@ -147,7 +147,12 @@ async def main():
                     assert ref["sha256"] == hashlib.sha256(content).hexdigest()
                 else:
                     assert set(directory.rglob("*")) == before
-                assert (directory / doc["path"]).read_text() == text
+                # Creation may materialize versioned instruction defaults. Compare
+                # against the owning service's accepted digest, not the draft.
+                assert (
+                    hashlib.sha256((directory / doc["path"]).read_bytes()).hexdigest()
+                    == doc["storage_digest"]
+                )
                 assert not list((directory / "runs").rglob("*.json"))
                 item.update(
                     status="passed", source_unchanged=True, process_runs_started=0

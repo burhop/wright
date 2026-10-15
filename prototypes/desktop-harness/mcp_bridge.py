@@ -15,7 +15,7 @@ from typing import Any, Literal
 from importlib.metadata import version
 from urllib.parse import quote, urlsplit
 from uuid import uuid4
-from pydantic import TypeAdapter
+from pydantic import TypeAdapter, ValidationError
 import anyio
 from core.desktop_reasoning import (
     ENGINEERING_IMAGE_PROFILE,
@@ -24,6 +24,7 @@ from core.desktop_reasoning import (
     DesktopHarnessBinding,
 )
 from core.process_validation import Identifier
+from core.process_interactions import Reason
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
@@ -241,9 +242,21 @@ class WrightDesktopClient:
             detail = document.get(
                 "detail", document.get("message", "Wright rejected this request")
             )
+            reason = None
+            process_detail = document.get("details", detail)
+            if path.startswith("/api/workspace/process-interfaces/") and isinstance(
+                process_detail, dict
+            ):
+                try:
+                    # Only the owning process service's public, redacted contract;
+                    # raw provider/HTTP diagnostics remain outside the panel.
+                    reason = Reason.model_validate(process_detail.get("reason"))
+                except ValidationError:
+                    pass
             raise WrightRequestRejected(
                 response.status_code,
                 f"Wright rejected request ({response.status_code}): {detail}",
+                reason=reason,
             )
         return response.json()
 
@@ -474,22 +487,40 @@ def server(client, *, native_editor=False, native_working_view=False):
     ) -> dict[str, Any]:
         """Preview a public HTTPS MCP endpoint; no credentials, query or fragment. Does not connect or install."""
         await client.scope(workspace_id, session_id)
-        return await client.call("POST", "/api/desktop/connection-imports/preview", json={
-            "workspace_id": workspace_id, "session_id": session_id, "name": name, "url": url,
-        })
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-imports/preview",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "name": name,
+                "url": url,
+            },
+        )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_import_plan(
-        workspace_id: str, session_id: str, preview_token: str,
-        draft_id: str, draft_digest: str, independently_completed_license: bool = False,
+        workspace_id: str,
+        session_id: str,
+        preview_token: str,
+        draft_id: str,
+        draft_digest: str,
+        independently_completed_license: bool = False,
     ) -> dict[str, Any]:
         """Save a workspace setup plan from the exact preview. Never approves, installs or grants tools."""
         await client.scope(workspace_id, session_id)
-        return await client.call("POST", "/api/desktop/connection-imports/plan", json={
-            "workspace_id": workspace_id, "session_id": session_id,
-            "preview_token": preview_token, "draft_id": draft_id, "draft_digest": draft_digest,
-            "independently_completed_license": independently_completed_license,
-        })
+        return await client.call(
+            "POST",
+            "/api/desktop/connection-imports/plan",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "preview_token": preview_token,
+                "draft_id": draft_id,
+                "draft_digest": draft_digest,
+                "independently_completed_license": independently_completed_license,
+            },
+        )
 
     @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plans(
@@ -503,7 +534,11 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={
                 "workspace_id": workspace_id,
                 "session_id": session_id,
-                **({"capability_id": capability_id} if capability_id is not None else {}),
+                **(
+                    {"capability_id": capability_id}
+                    if capability_id is not None
+                    else {}
+                ),
             },
         )
 

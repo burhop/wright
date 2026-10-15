@@ -294,7 +294,10 @@ def test_working_view_requires_opt_in_and_reuses_immutable_editor_resource(bridg
     native = bridge.server(client, native_editor=True, native_working_view=True)
     tools = {t.name: t for t in asyncio.run(native.list_tools())}
     assert len(tools) == 36
-    assert {"wright_connection_preview", "wright_connection_import_plan"} <= tools.keys()
+    assert {
+        "wright_connection_preview",
+        "wright_connection_import_plan",
+    } <= tools.keys()
     assert tools["wright_workflow_history"].annotations.readOnlyHint is True
     view = tools["wright_process_view"]
     assert view.annotations.readOnlyHint is True
@@ -432,3 +435,44 @@ def test_templates_use_existing_owner_and_scope_before_creation(bridge):
     with pytest.raises(Exception, match="wrong scope"):
         asyncio.run(server.call_tool("wright_workflow_template_create", args))
     client.call.assert_not_awaited()
+
+
+@pytest.mark.parametrize(
+    "path,extra,accepted",
+    [
+        ("/api/workspace/process-interfaces/inputs/upload", {}, True),
+        ("/api/workspace/process-interfaces/inputs/upload", {"grant": True}, False),
+        ("/api/desktop/workspaces", {}, False),
+    ],
+)
+@pytest.mark.parametrize("envelope", ["detail", "details"])
+def test_only_valid_public_process_reason_reaches_panel(
+    bridge, path, extra, accepted, envelope
+):
+    from native_source_tools import WrightRequestRejected
+
+    public = {
+        "code": "READINESS_UNSUPPORTED",
+        "message": "Mesh step needs a tool binding.",
+        "correction": "Configure that step before preparing inputs.",
+        **extra,
+    }
+    client = bridge.WrightDesktopClient.__new__(bridge.WrightDesktopClient)
+    client.http = SimpleNamespace(
+        request=AsyncMock(
+            return_value=httpx.Response(
+                422,
+                headers={"content-type": "application/json"},
+                json={envelope: {"reason": public, "diagnostic": "PRIVATE RAW DATA"}},
+            )
+        )
+    )
+    with pytest.raises(WrightRequestRejected) as caught:
+        asyncio.run(client.call("POST", path, json={}))
+    if accepted:
+        assert caught.value.reason.code == public["code"]
+        assert caught.value.reason.message == public["message"]
+        assert "PRIVATE" not in str(caught.value.reason)
+    else:
+        assert caught.value.reason is None
+    assert client.http.request.await_count == 1

@@ -60,3 +60,15 @@ affected owner/bridge/source tests:81 passed; other frontend regressions:29
 passed. TypeScript and native bundle build pass. Actual Windows acceptance,
 original prepared workflow qualification and repository gates remain open.
 Screenshot and exact receipts: external checkpoint current_ui_checkpoint.
+
+Public-reason follow-up: the desktop now preserves only the existing validated
+process Reason from Wright's standardized API error envelope, including the
+normal details.reason shape. Unknown mutation outcomes still override the reason
+with OUTCOME_UNKNOWN; raw diagnostics are not returned through this port.
+74 native transport tests pass. A fresh actual-owner probe returns the exact
+READINESS_UNSUPPORTED mesh-step reason, with accepted source unchanged, no
+uploaded artifacts and no run. The original upload-success diagnostic still
+fails; this verifies rejection propagation only, not workflow qualification.
+State04 preserves the first live envelope mismatch; state05 is the corrected
+isolated service (session82551, API8192). State03/04 services stopped cleanly.
+Evidence: /tmp/wright-desktop-input-upload-evidence-20261015/public-reason-owner-receipt.json.

@@ -13,9 +13,10 @@ from mcp.types import ToolAnnotations
 class WrightRequestRejected(ValueError):
     """HTTP rejection with a status, preserving existing ValueError behavior."""
 
-    def __init__(self, status_code, message):
+    def __init__(self, status_code, message, *, reason=None):
         super().__init__(message)
         self.status_code = status_code
+        self.reason = reason
 
 
 def register_native_source_tools(mcp, client):

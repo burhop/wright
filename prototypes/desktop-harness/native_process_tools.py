@@ -278,6 +278,12 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
             return {"ok": True, "document": document}
         except WrightRequestRejected as failure:
             uncertain = changes and owner_called and failure.status_code >= 500
+            if not uncertain and failure.reason is not None:
+                return {
+                    "ok": False,
+                    "http_status": failure.status_code,
+                    "reason": failure.reason.model_dump(mode="json", exclude_none=True),
+                }
             code = (
                 "OUTCOME_UNKNOWN"
                 if uncertain

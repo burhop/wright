@@ -485,3 +485,32 @@ def test_upload_decoded_size_cannot_exceed_existing_owner_limit(panel):
             ),
         )
     client.call.assert_not_awaited()
+
+
+@pytest.mark.parametrize("status", [422, 503])
+def test_public_readiness_reason_preserved_without_weakening_uncertain_upload(
+    panel, status
+):
+    from core.process_interactions import Reason
+    from native_source_tools import WrightRequestRejected
+
+    server, client = panel
+    reason = Reason(
+        code="READINESS_UNSUPPORTED",
+        message="Mesh step needs a tool binding.",
+        correction="Configure that step before preparing inputs.",
+    )
+    client.call.side_effect = WrightRequestRejected(
+        status, "PRIVATE RAW DATA", reason=reason
+    )
+    result = run(
+        server,
+        "wright_process_ui_update",
+        scope("upload", input_id="brief", filename="brief.txt", bytes_base64="YQ=="),
+    )
+    if status == 422:
+        assert result["reason"] == reason.model_dump(mode="json", exclude_none=True)
+    else:
+        assert result["reason"]["code"] == "OUTCOME_UNKNOWN"
+    assert "PRIVATE" not in str(result)
+    assert client.call.await_count == 1
