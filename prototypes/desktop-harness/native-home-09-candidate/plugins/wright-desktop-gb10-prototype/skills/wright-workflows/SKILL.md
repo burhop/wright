@@ -101,3 +101,15 @@ formats remain explicit. Recorded reviews are distinguished from pending respons
 a changes request does not itself revise, restart or approve work. Image inputs,
 enrolled engineering task profiles and generated UI authoring remain gated in
 this named installation. Actual Windows acceptance of this version is pending.
+
+
+Version 0.9.0 preserves the selected workspace/session on Refresh and exposes
+explicit same-run Continue through the existing process action owner. Its local
+review profile is separate from engineering MCP execution. A local review run
+still requires exact manual, empty-tool enrollment from authorized local setup;
+neither the conversation nor a UI prompt creates that grant. General engineering
+MCP execution and image-input profiles remain unavailable. A recorded approval
+alone never establishes continuation readiness; use the current exact permitted
+action and inspect an uncertain receipt before doing anything else. Never invent
+an engineering approval. The private synthetic review proof is not engineering
+acceptance or Windows native-panel acceptance.

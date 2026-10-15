@@ -1,25 +1,25 @@
 # Named experimental 0.9.0 candidate
 
-Prepared package, not installed. Package protocol and eight served browser checks pass; continuation qualification is blocked. Adds exact workspace/session
-preservation on Refresh and explicit same-run Continue through the existing
-process action owner. Installed 0.8.0 and its state remain unchanged.
+Prepared and locally qualified, not installed. Installed 0.8.0 remains unchanged.
 
-Qualification requires isolated runtime dependencies/state, actual package
-protocol/resource checks, served editor/refresh/continuation checks and exact
-backup/rollback before any named-plugin update. Image input and general enrolled
-MCP execution remain unavailable by default. No new engineering acceptance claim.
+Refresh preserves the exact workspace/session. Explicit Continue uses the existing
+process action owner. Local review qualification is now separate from enrolled
+MCP execution and requires an exact manual, empty-tool grant from authorized
+local setup. The panel/conversation cannot create that grant. Image inputs and
+general engineering-tool execution remain off.
 
-## Qualification finding
+The original candidate's failed default-profile review preparation is preserved
+in `../continuation-candidate-evidence.json`. The repaired review-only runtime
+proof is in `../local-review-runtime-evidence.json`; final package, browser and
+96 affected / 140 prototype test results are in
+`../local-review-candidate-final-evidence.json`.
 
-The named profile rejects the private local-review source at preparation because
-`qualify_digital_source` couples local reviews to `enrolled_mcp_tasks`. That broader
-profile is intentionally off. No input snapshot or reasoning request was created.
-The HTTP 503 was conservatively presented as OUTCOME_UNKNOWN; no retry was sent.
-See `../continuation-candidate-evidence.json` for the exact isolated receipt.
+Active candidate state: `/tmp/wright-desktop-local-review-state-20261015-01`.
+API: loopback 8156. Older state and failed receipts are retained without replay.
+Synthetic private review is not engineering approval. Windows native-panel
+acceptance and real engineering demonstrations remain unqualified.
 
-Do not install this candidate as a working review/Continue upgrade. Separate
-local review qualification from engineering-tool enrollment, retaining existing
-exact-subject review authority and continuation checks. Prove denied external
-actions/tools, stale subjects, missing grants, reconnect and same-run continuation
-before changing the named profile. Keep the older successful opt-in private
-continuation proof distinct from this failed default-profile qualification.
+Before installation, take a private backup of the current named-plugin selection
+and all its cached versions. Use the scoped instructions in
+`../native-home-09-update.md`; verify installed bytes/protocol afterward. Preserve
+all other settings/plugins and do not restart the desktop.

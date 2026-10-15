@@ -5,7 +5,7 @@
       "args": [
         "/tmp/wright-desktop-continuation-candidate/prototypes/desktop-harness/mcp_bridge.py",
         "--state-dir",
-        "/tmp/wright-desktop-continuation-state-20261015-01",
+        "/tmp/wright-desktop-local-review-state-20261015-01",
         "--native-editor",
         "--native-working-view"
       ]
