@@ -8,12 +8,29 @@ See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.m
 and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;
 finish the current home slice before duplicating implementation.
 
-The feature worktree contains the [workspace home slice](workspace-home-progress.md).
-Named plugin 0.8.0 is installed from its frozen runtime; local browser/protocol
-checks pass, while Windows acceptance and the real engineering runs remain open.
-The execution candidate at 37746c7b has passed all Python and 1,874 frontend tests.
-Its full merge gate stopped on seven strict-docs links; the links are corrected
-prospectively and live browser checks remain pending. This does not complete M1.
+The installed named plugin is now **0.9.0**, frozen in
+`/tmp/wright-desktop-continuation-candidate` with API8156 and fresh isolated
+review-only state. See [installation evidence](installed-09-evidence.json) and
+[walkthrough](desktop-09-walkthrough.md). The actual package/protocol, eight
+browser checks, 96 affected review/boundary tests and 140 prototype tests pass.
+A real desktop reply, private synthetic review, reconnect and explicit Continue
+completed one run with one request/reply and no engineering-tool enablement.
+Windows acceptance remains pending; this existing chat still reported the older
+`4d76cd14…` binding after installation. Do not infer 0.9 use from skill refresh.
+
+The main execution candidate d070e351 is draft PR 154. Its full local gate
+passed with the documented GB10 WebKit host exception; the normal pre-push gate
+passed including 18 Chromium editor checks. Current-head CI remains authoritative
+before merge. The 0.9 descendant and subsequent work are separate from that gate.
+
+The next isolated UI candidate is `/tmp/wright-desktop-workflow-entry`, branch
+`codex/desktop-workflow-entry`. New workflow in the native Workflows view reuses
+the shared blank source and creation owner. It is not installed. See
+[workflow entry plan](workflow-entry-plan.md) for scope and retained proof.
+
+The isolated `codex/desktop-template-entry` follow-on exposes the existing template
+owner through the shared picker and two scoped MCP operations. It is not installed
+or included in the 33afba8a full gate. See [template entry](template-entry-plan.md).
 
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its
@@ -109,3 +126,29 @@ report; later installation/UI evidence and the forward plan take precedence.
 Generated process-UI authoring remains gated. It is separate from desktop
 authoring of ordinary accepted workflow source through the current source owner.
 The read-only proof does not qualify arbitrary tools or installed desktop loading.
+
+### 15 October: combined 0.10 candidate and baseline integration
+
+- PR #154 merged to dev as 3ff4339ea341b4486778578997d01ca2b96f392f
+  after exact-head local gates and all required CI. Post-merge development
+  build/deployment/smoke remains pending; later candidate changes are separate.
+- Prepared named 0.10 package; actual protocol/resource, eleven browser checks
+  and fresh private review/same-run continuation pass. See
+  `native-home-010-evidence.json` and `native-home-010-update.md`.
+- Installed plugin remains 0.9. No live update or Windows acceptance claim.
+
+- Named 0.10 installed; actual installed 34-tool/resource/package verification passed.
+  All 18 prior cache files retained, only named marketplace source changed.
+  See `installed-010-evidence.json` and `desktop-010-walkthrough.md`.
+
+### Image response restart qualification
+
+Fresh synthetic image task retained the same request after an abrupt private API
+loss. Reopened run requires reconciliation, late answer was denied, and counts
+remain one request/zero responses. See `image-restart-evidence.json`. This does
+not qualify restart during an action or uncertain tool outcome; installed image
+inputs stay disabled.
+
+The cumulative 1988beec integration gate failed on Prettier formatting in the new
+template-client test. Formatting was corrected without changing assertions;
+retain the failed gate log and rerun on the corrected candidate before push.

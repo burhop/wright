@@ -176,3 +176,48 @@ describe("EngineeringTemplateDialog", () => {
     expect(screen.getByTestId("workflow-template-details")).toBeVisible();
   });
 });
+
+it("uses an injected native transport and retains one identity for an explicit retry", async () => {
+  const create = vi
+    .fn()
+    .mockRejectedValueOnce(
+      new Error(
+        "Acknowledgement unavailable; inspect saved workflow before retrying",
+      ),
+    )
+    .mockResolvedValue({
+      workspace_id: "workspace",
+      path: "workflows/3d-printed-replacement-part.workflow.wflow",
+    });
+  const service = {
+    getEngineeringWorkflowTemplates: vi.fn().mockResolvedValue(templates),
+    instantiateEngineeringWorkflowTemplate: create,
+  };
+  const onCreated = vi.fn();
+  render(
+    <EngineeringTemplateDialog
+      open
+      sessionId="session"
+      workspaceId="workspace"
+      workspaceName="Native"
+      onClose={vi.fn()}
+      onCreated={onCreated}
+      service={service}
+      previewUrl={() => null}
+    />,
+  );
+  await screen.findAllByRole("option");
+  expect(
+    screen.getByText(
+      "Template image preview is not available in this host yet.",
+    ),
+  ).toBeVisible();
+  expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  await userEvent.click(screen.getByTestId("workflow-template-create"));
+  await screen.findByRole("alert");
+  expect(onCreated).not.toHaveBeenCalled();
+  expect(create).toHaveBeenCalledTimes(1);
+  await userEvent.click(screen.getByTestId("workflow-template-create"));
+  await waitFor(() => expect(onCreated).toHaveBeenCalledTimes(1));
+  expect(create.mock.calls[0][3]).toBe(create.mock.calls[1][3]);
+});

@@ -590,7 +590,7 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={"session_id": session_id, "path": path},
         )
 
-    @mcp.tool(annotations=write)
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["model", "app"]}})
     async def wright_workflow_create(
         workspace_id: str, session_id: str, path: str, source: str
     ) -> dict:
@@ -600,6 +600,38 @@ def server(client, *, native_editor=False, native_working_view=False):
             "POST",
             "/api/workspace/workflow-sources",
             json={"session_id": session_id, "path": path, "source": source},
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_workflow_templates(workspace_id: str, session_id: str) -> dict:
+        """List existing engineering templates with their actual readiness; never grant or run tools."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("GET", "/api/workspace/workflow-source-templates")
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["model", "app"]}})
+    async def wright_workflow_template_create(
+        workspace_id: str,
+        session_id: str,
+        template_id: str,
+        template_version: str,
+        expected_source_digest: str,
+        workflow_path: str,
+        request_id: str,
+    ) -> dict:
+        """Create an editable copy through the versioned template owner; not execution or a tool grant."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/workspace/workflow-source-templates/"
+            + quote(template_id, safe="")
+            + "/instances",
+            json={
+                "session_id": session_id,
+                "template_version": template_version,
+                "expected_source_digest": expected_source_digest,
+                "workflow_path": workflow_path,
+                "request_id": request_id,
+            },
         )
 
     @mcp.tool(annotations=write)

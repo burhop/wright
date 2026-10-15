@@ -17,6 +17,9 @@ mkdirSync(output);
 const calls = [];
 let createdScope;
 let createSubmitted = false;
+let createdWorkflow;
+let workflowSubmitted = false;
+const templateCopies = new Map();
 const mcp = new Client({name:'wright-home-browser-qualification',version:'0.1.0'});
 const transport = new StdioClientTransport({
  command:resolve('.venv/bin/python'),
@@ -65,7 +68,7 @@ const server = createServer(async (req, res) => {
     let body = ''; for await (const chunk of req) body += chunk;
     const {name, arguments: args} = JSON.parse(body);
     calls.push({name, arguments:args});
-    const allowed = new Set(['wright_workspace_list','wright_workspace_files','wright_workspace_file_preview','wright_workflow_read','wright_workflow_open','wright_connections_list','wright_connection_plans','wright_connection_plan_read','wright_workflow_history','wright_process_view','wright_process_ui_read']);
+    const allowed = new Set(['wright_workflow_templates','wright_workspace_list','wright_workspace_files','wright_workspace_file_preview','wright_workflow_read','wright_workflow_open','wright_connections_list','wright_connection_plans','wright_connection_plan_read','wright_workflow_history','wright_process_view','wright_process_ui_read']);
     if (name === 'wright_workspace_create') {
       if (!evidence.create_workspace || createSubmitted || args.name !== evidence.create_workspace)
         throw Error('Fixture creation denied');
@@ -74,15 +77,30 @@ const server = createServer(async (req, res) => {
       if (!result.isError) createdScope = result.structuredContent ?? JSON.parse(result.content[0].text);
       res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
     }
+    if (name === 'wright_workflow_create') {
+      if (!evidence.create_workflow || workflowSubmitted || !createdScope || args.workspace_id !== createdScope.workspace_id || args.session_id !== createdScope.session_id || !args.source.includes(JSON.stringify(evidence.create_workflow)))
+        throw Error('Fixture workflow creation denied');
+      workflowSubmitted = true;
+      const result = await mcp.callTool({name,arguments:args});
+      if (!result.isError) createdWorkflow = result.structuredContent ?? JSON.parse(result.content[0].text);
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
+    }
+    if (name === 'wright_workflow_template_create') {
+      if (!evidence.template_ids?.includes(args.template_id) || templateCopies.has(args.template_id) || !createdScope || args.workspace_id !== createdScope.workspace_id || args.session_id !== createdScope.session_id)
+        throw Error('Fixture template copy denied');
+      const result = await mcp.callTool({name,arguments:args});
+      if (!result.isError) templateCopies.set(args.template_id, result.structuredContent ?? JSON.parse(result.content[0].text));
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify(result)); return;
+    }
     if (!allowed.has(name)) throw Error('Read-only fixture denies this operation');
     const scoped = args.request ?? args;
     if (name !== 'wright_workspace_list' &&
         (scoped.workspace_id !== evidence.scope.workspace_id || scoped.session_id !== evidence.scope.session_id) &&
-        !(name === 'wright_workspace_files' && createdScope && scoped.workspace_id === createdScope.workspace_id && scoped.session_id === createdScope.session_id))
+        !(createdScope && scoped.workspace_id === createdScope.workspace_id && scoped.session_id === createdScope.session_id && (['wright_workspace_files','wright_workflow_templates'].includes(name) || (['wright_workflow_read','wright_workflow_open'].includes(name) && (args.path === createdWorkflow?.path || [...templateCopies.values()].some(copy => copy.path === args.path))))))
       throw Error('Fixture scope denied');
     if (name === 'wright_workspace_file_preview' && ![evidence.scope.path, evidence.preview_path].includes(args.path))
       throw Error('Fixture preview file denied');
-    if (name.startsWith('wright_workflow_') && args.path !== evidence.scope.path)
+    if (name.startsWith('wright_workflow_') && name !== 'wright_workflow_templates' && args.path !== evidence.scope.path && args.path !== createdWorkflow?.path && ![...templateCopies.values()].some(copy => copy.path === args.path))
       throw Error('Fixture file denied');
     if (name.startsWith('wright_process_') &&
         (scoped.path !== evidence.scope.path || scoped.operation !== 'snapshot' || scoped.run_id !== evidence.run_id))
@@ -109,12 +127,61 @@ try {
     await frame.getByRole('button',{name:'New workspace',exact:true}).click();
     await frame.getByLabel('Workspace name',{exact:true}).fill(evidence.create_workspace);
     await frame.getByRole('button',{name:'Create workspace',exact:true}).click();
-    await expect(frame.getByText('No saved workflows here yet. Ask this conversation to create one.',{exact:true})).toBeVisible();
+    await expect(frame.getByText('No saved workflows here yet. Choose New workflow or ask this conversation to create one.',{exact:true})).toBeVisible();
     expect(createdScope).toBeTruthy();
     await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(createdScope.workspace_id);
     expect(calls.filter(call=>call.name==='wright_workspace_create')).toHaveLength(1);
     await page.screenshot({path:resolve(output,'created-workspace.png')});
     passed.push('explicit UI workspace creation once, discovered exact session, no workflow execution');
+    if (evidence.create_workflow) {
+      await frame.getByRole('button',{name:'New workflow',exact:true}).click();
+      await frame.getByLabel('Workflow name',{exact:true}).fill(evidence.create_workflow);
+      await frame.getByRole('button',{name:'Create workflow',exact:true}).click();
+      await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
+      expect(createdWorkflow.workspace_id).toBe(createdScope.workspace_id);
+      const stored = await get('/api/workspace/workflow-sources',{session_id:createdScope.session_id,path:createdWorkflow.path});
+      expect(stored.storage_digest).toBe(createdWorkflow.storage_digest);
+      expect(stored.source).toBe(createdWorkflow.source);
+      expect(calls.filter(call=>call.name==='wright_workflow_create')).toHaveLength(1);
+      await page.screenshot({path:resolve(output,'created-workflow-editor.png')});
+      await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+      await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(createdScope.workspace_id);
+      await frame.getByRole('button',{name:createdWorkflow.path.split('/').at(-1),exact:true}).click();
+      await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
+      await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+      passed.push('native New workflow saves once through source owner, opens shared editor and reopens from Workflows with exact digest');
+    }
+
+  }
+  for (const templateId of evidence.template_ids ?? []) {
+    await frame.getByRole('button',{name:'Use a template',exact:true}).click();
+    await frame.getByTestId('workflow-template-option-'+templateId).click();
+    await expect(frame.getByTestId('workflow-template-readiness')).not.toContainText('Ready to run');
+    await expect(frame.getByText('Template image preview is not available in this host yet.',{exact:true})).toBeVisible();
+    for (const width of [460, 1100]) {
+      await page.setViewportSize({width,height:820});
+      const layout = await frame.locator('.engineering-template-dialog').evaluate(dialog => {
+        const header=dialog.querySelector('header').getBoundingClientRect();
+        const footer=dialog.querySelector('footer').getBoundingClientRect();
+        const rect=dialog.getBoundingClientRect();
+        return {headerInside:header.top>=rect.top && header.bottom<=rect.bottom,footerInside:footer.top>=rect.top && footer.bottom<=rect.bottom,horizontalOverflow:dialog.scrollWidth>dialog.clientWidth+1};
+      });
+      expect(layout).toEqual({headerInside:true,footerInside:true,horizontalOverflow:false});
+      await page.screenshot({path:resolve(output,templateId+'-picker-'+width+'.png')});
+    }
+    await page.screenshot({path:resolve(output,templateId+'-picker.png')});
+    await frame.getByTestId('workflow-template-create').click();
+    await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
+    const copy = templateCopies.get(templateId);
+    expect(copy.workspace_id).toBe(createdScope.workspace_id);
+    const stored = await get('/api/workspace/workflow-sources',{session_id:createdScope.session_id,path:copy.path});
+    expect(stored.storage_digest).toBe(copy.storage_digest);
+    expect(stored.source).toBe(copy.source);
+    expect(calls.filter(call=>call.name==='wright_workflow_template_create' && call.arguments.template_id===templateId)).toHaveLength(1);
+    await page.screenshot({path:resolve(output,templateId+'-editor.png')});
+    await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+    await expect(frame.getByRole('button',{name:copy.path.split('/').at(-1),exact:true})).toBeVisible();
+    passed.push(templateId+': explicit template copy, exact saved source/digest and shared editor; no execution');
   }
   await frame.getByLabel('Workspace', {exact:true}).selectOption(evidence.scope.workspace_id);
   const workflow = frame.getByRole('button', {name:evidence.scope.path.split('/').at(-1),exact:true});
@@ -222,7 +289,7 @@ try {
   expect((await source()).storage_digest).toBe(before.storage_digest);
   expect(errors).toEqual([]);
   passed.push('accepted source unchanged and no browser errors');
-  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace creation',native_desktop_verified:false,engineering_runs:0,workspace_created:createdScope??null},null,2));
+  writeFileSync(resolve(output,'report.json'),JSON.stringify({passed,errors,calls,boundary:'simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace/workflow creation',native_desktop_verified:false,engineering_runs:0,template_copies:[...templateCopies.values()].map(copy=>({path:copy.path,storage_digest:copy.storage_digest,template:copy.template})),workspace_created:createdScope??null,workflow_created:createdWorkflow?{workspace_id:createdWorkflow.workspace_id,path:createdWorkflow.path,storage_digest:createdWorkflow.storage_digest}:null},null,2));
   console.log(JSON.stringify({output,passed}));
 } catch (error) {
   if (page) await page.screenshot({path:resolve(output,'failure.png')});

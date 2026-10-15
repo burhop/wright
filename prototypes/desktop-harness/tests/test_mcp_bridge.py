@@ -293,7 +293,7 @@ def test_working_view_requires_opt_in_and_reuses_immutable_editor_resource(bridg
     }
     native = bridge.server(client, native_editor=True, native_working_view=True)
     tools = {t.name: t for t in asyncio.run(native.list_tools())}
-    assert len(tools) == 32
+    assert len(tools) == 34
     assert tools["wright_workflow_history"].annotations.readOnlyHint is True
     view = tools["wright_process_view"]
     assert view.annotations.readOnlyHint is True
@@ -365,3 +365,69 @@ def test_working_view_configuration_drift_fails_before_connecting(bridge, tmp_pa
         bridge.WrightDesktopClient(
             tmp_path, native_editor=True, native_working_view=True
         )
+
+
+def test_panel_creation_uses_source_owner_and_rejects_scope_before_write(bridge):
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"path": "workflows/new.wflow"})
+    )
+    server = bridge.server(client)
+    tools = {tool.name: tool for tool in asyncio.run(server.list_tools())}
+    assert tools["wright_workflow_create"].meta["ui"]["visibility"] == ["model", "app"]
+    args = {
+        "workspace_id": "workspace",
+        "session_id": "session",
+        "path": "workflows/new.wflow",
+        "source": "source",
+    }
+    asyncio.run(server.call_tool("wright_workflow_create", args))
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/workspace/workflow-sources",
+        json={
+            "session_id": "session",
+            "path": "workflows/new.wflow",
+            "source": "source",
+        },
+    )
+    client.call.reset_mock()
+    client.scope.side_effect = PermissionError("wrong workspace")
+    with pytest.raises(Exception, match="wrong workspace"):
+        asyncio.run(server.call_tool("wright_workflow_create", args))
+    client.call.assert_not_awaited()
+
+
+def test_templates_use_existing_owner_and_scope_before_creation(bridge):
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"templates": []})
+    )
+    server = bridge.server(client)
+    tools = {t.name: t for t in asyncio.run(server.list_tools())}
+    assert tools["wright_workflow_templates"].annotations.readOnlyHint
+    assert tools["wright_workflow_template_create"].meta["ui"]["visibility"] == [
+        "model",
+        "app",
+    ]
+    args = {
+        "workspace_id": "workspace",
+        "session_id": "session",
+        "template_id": "robot-tracking-diagnosis",
+        "template_version": "1.0.0",
+        "expected_source_digest": "a" * 64,
+        "workflow_path": "workflows/robot.workflow.wflow",
+        "request_id": "copy-1",
+    }
+    asyncio.run(server.call_tool("wright_workflow_template_create", args))
+    client.call.assert_awaited_once_with(
+        "POST",
+        "/api/workspace/workflow-source-templates/robot-tracking-diagnosis/instances",
+        json={
+            k: v for k, v in args.items() if k not in {"workspace_id", "template_id"}
+        },
+    )
+    client.call.reset_mock()
+    client.scope.side_effect = PermissionError("wrong scope")
+    with pytest.raises(Exception, match="wrong scope"):
+        asyncio.run(server.call_tool("wright_workflow_template_create", args))
+    client.call.assert_not_awaited()

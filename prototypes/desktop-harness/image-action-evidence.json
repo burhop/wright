@@ -1,0 +1,79 @@
+{
+  "scope": "Actual desktop image-bearing action decisions through private enrolled read-only gateway task. Not native Windows presentation, fresh CAD or engineering acceptance.",
+  "run_id": "8f273a7a14fb498e8818a27c691aac8f",
+  "source_digest": "16fae714de71809e8483ca29cc183378683373b0f7becb2f99a9062eaf991868",
+  "state": "completed",
+  "no_grant_denial": {
+    "ok": false,
+    "http_status": 403,
+    "reason": {
+      "code": "SCOPE_DENIED",
+      "message": "Wright rejected this process operation.",
+      "correction": "Keep your draft and inspect the exact process or connection before proceeding."
+    }
+  },
+  "image_1": {
+    "exact_bytes": true,
+    "stale_digest_denied": true
+  },
+  "image_2": {
+    "exact_bytes": true,
+    "stale_digest_denied": true
+  },
+  "input_unchanged": true,
+  "successful_dispatch_count": 1,
+  "model_identity": "unreported; actual conversation authored both responses, no alternate model worker",
+  "output": {
+    "matched_owner_validated_response": true,
+    "sha256": "2ed119e883a520f5d95737a671018f72ee3640ffa118d80f3d49f53a7f6803ad",
+    "path": "/tmp/wright-desktop-image-action-state-20261015-01/workspaces/desktop-mcp-gateway-proof/outputs/probe/inspection-note.md",
+    "normalization": "Existing validate_response strips trailing newline; raw response retained separately",
+    "raw_response_sha256": "5bad6990b42be09f1140683446297d944a2f2d180cd2f290e17000e4c11ad300",
+    "boundary": "Saved text consistency; not CAD measurement, engineering acceptance, or Windows native acceptance"
+  },
+  "evidence": {
+    "mcp-gateway-probe.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/mcp-gateway-probe.json",
+      "sha256": "29c985405cfd37e750ea572c9b57014c2b3ea1c2b665a8469e062fb53b2db502"
+    },
+    "mcp-gateway-audit.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/mcp-gateway-audit.json",
+      "sha256": "b0a69d9b3a4624c2b51c3f5d1bdaccced7d86408757028c7746f800296821380"
+    },
+    "desktop-gateway-action-1.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/desktop-gateway-action-1.json",
+      "sha256": "a74d742addaf32b4319d651fd70f76ba1030f1b6c2a1cae9444a7b1c1b459b7e"
+    },
+    "desktop-gateway-action-2.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/desktop-gateway-action-2.json",
+      "sha256": "d9b4f04cb6a9831c4d41c936eb4069ca74778cff4d907ed4c1be0b0c2a4436c1"
+    },
+    "action-image-1.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/action-image-1.json",
+      "sha256": "e60d805d090b12d755d45617853a7f28841509a382e86f56033eca59014d3245"
+    },
+    "action-image-2.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/action-image-2.json",
+      "sha256": "e60d805d090b12d755d45617853a7f28841509a382e86f56033eca59014d3245"
+    },
+    "image-action-output-check.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/image-action-output-check.json",
+      "sha256": "2070626b6ea41cc408774d772a02cdfe2c6474cfd26913bb38917b630d5d2e3a"
+    },
+    "desktop-versions.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/desktop-versions.json",
+      "sha256": "f7af833b64ab47098dfc6da37f7769aa19d09f3695a75b31960ee3ab1094c934"
+    },
+    "desktop-binding.json": {
+      "path": "/tmp/wright-desktop-image-action-state-20261015-01/desktop-binding.json",
+      "sha256": "22f8a5bf50c16d3c022cbb43c9b556ec39f79da9cd45a6ad9fc878fb278e0018"
+    }
+  },
+  "limits": [
+    "Retained historical CAD capture; no fresh design produced",
+    "One local file inspection only; engineering providers remain separately qualified",
+    "No disconnect/restart during this image-bearing action run",
+    "No automatic host image delivery or native Windows acceptance claimed",
+    "Installed profile remains image-disabled"
+  ]
+}

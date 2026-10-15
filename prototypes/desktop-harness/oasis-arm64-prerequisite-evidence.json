@@ -1,0 +1,60 @@
+{
+  "status": "installed_and_protocol_verified",
+  "platform": "linux_arm64",
+  "base_image": "sha256:2fb61e65fcf0f46a66c514eb6e30b141676d32b1717ad94d9fc4fa92aa8932d7",
+  "container": "wright-desktop-oasis-arm64-20261015-02",
+  "container_id": "2b84a1787b9f5e813b0194beea54e9a963f3ba48931453e5a389e704262d316b",
+  "python": "3.12.12",
+  "source_commit": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "requested_mcp": "1.28.1",
+  "requested_scikit_fem": "12.0.2",
+  "resolved_provider": "oasis-mcp 1.1.0",
+  "failed_dependency": "adios2 2.12.1.1001",
+  "failure": "source-build CMake configuration cannot find C/C++ compiler",
+  "log": "/tmp/wright-desktop-oasis-arm64-20261015-01/install-with-git.log",
+  "log_sha256": "238388d084804b9a4106723230e5ecb217694e8b77a9f72dec015d619daa9bf1",
+  "first_attempt": "retained -01 container exited 127 at missing Git; -02 installed documented Git prerequisite",
+  "mcp_calls": 2,
+  "engineering_runs": 0,
+  "base_image_unchanged": true,
+  "next": "Actual bounded scikit-fem solve with independent output checks, then Wright gateway; no desktop workflow or engineering acceptance yet.",
+  "followup_attempts": [
+    {
+      "container": "wright-desktop-oasis-arm64-20261015-03",
+      "status": "failed",
+      "prerequisite_added": "build-essential",
+      "next_missing": "OpenSSL headers/libraries",
+      "log_sha256": "9f4ded71562cfbe4f008e76c9e4aca756b4b68804f21bdad9e3dada345ec9d1a"
+    },
+    {
+      "container": "wright-desktop-oasis-arm64-20261015-04",
+      "status": "failed",
+      "prerequisite_added": "libssl-dev",
+      "next_missing": "CURL headers/libraries",
+      "log_sha256": "757cbe5d2bbd8ee46e3742724cfbd4aa7616c3be82b4701f1ced47bfc449e320"
+    },
+    {
+      "container": "wright-desktop-oasis-arm64-20261015-05",
+      "status": "installation passed",
+      "prerequisite_added": "libcurl4-openssl-dev and pkg-config",
+      "cpu_limit": 4,
+      "dependency_build_timeout_seconds": 600
+    }
+  ],
+  "selected_image": "sha256:a9df706fe1be647725b5101e68adf6fce11bcb34da19200eabd1a9848abf485d",
+  "installed_requirements_sha256": "837aa7a5b2b78d0c0494fd1ea49450fc40e23af8348ca1b8792230e9d9576494",
+  "protocol": {
+    "server": {
+      "name": "OASiS",
+      "title": null,
+      "version": "1.28.1",
+      "websiteUrl": null,
+      "icons": null
+    },
+    "version": "2025-11-25",
+    "tool_count": 17,
+    "network": "none",
+    "initialize_sha256": "309632e1bf4819cbaa87209c11a026271512702ddc42275a0e70c88f320ce363",
+    "tools_sha256": "da0a0763cf38f455785ba799c657a1e3b8294f0bba76c95a82bcf72819e2563a"
+  }
+}

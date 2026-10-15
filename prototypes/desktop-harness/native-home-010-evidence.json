@@ -1,0 +1,54 @@
+{
+  "runtime_commit": "ab3ba5f7",
+  "package": {
+    "package": "/tmp/wright-desktop-template-entry/prototypes/desktop-harness/native-home-010-candidate/plugins/wright-desktop-gb10-prototype",
+    "version": "0.10.0",
+    "protocol": "2025-11-25",
+    "tool_count": 34,
+    "resource": {
+      "uri": "ui://wright/workflow/7bb755f6f87345dcccdaf1efe0d7787ae7dd2c82475a12dbbc7f2c8d2bf83590.html",
+      "sha256": "7bb755f6f87345dcccdaf1efe0d7787ae7dd2c82475a12dbbc7f2c8d2bf83590",
+      "bytes": 2225204
+    },
+    "files": {
+      ".codex-plugin/plugin.json": "01f901b29412cf78f0e9b0345bba550d444aa78024f04ea5ccfd7a96d6769421",
+      ".mcp.json": "5196257ac2abfca1d063d79cdd4e1f24f393116b85f80179b78fbed7a9e6861f",
+      "skills/wright-workflows/SKILL.md": "f141d5452835f5e502258b5009520d49222571fc7b25a1d186e7c7c6a394bc5c"
+    },
+    "profile": "unavailable",
+    "boundary": "actual package command, MCP protocol and resource; no writes or native desktop acceptance"
+  },
+  "browser_report": "/tmp/wright-desktop-home-010-state-20261015-01/browser-home-1792032318654/report.json",
+  "browser_report_sha256": "7325afa314ad922023485b7456f49b0ba9ab7a2b051e3443aaa08b388ba92209",
+  "browser_checks_passed": 11,
+  "review_run": "ec4c9b0feafd474a9797ca09e33f65f0",
+  "review_receipt": "/tmp/wright-desktop-home-010-state-20261015-01/continuation-probe.json",
+  "review_receipt_sha256": "43d40e1e34146445e14cd7158ba7e86df8b61fd370e4181903421fc36ad7b16d",
+  "same_run_completed": true,
+  "stale_review_denied": {
+    "error": {
+      "ok": false,
+      "http_status": 403,
+      "reason": {
+        "code": "SCOPE_DENIED",
+        "message": "Wright rejected this process operation.",
+        "correction": "Keep your draft and inspect the exact process or connection before proceeding."
+      }
+    }
+  },
+  "profile": {
+    "local_reviews": true,
+    "image_inputs": false,
+    "enrolled_mcp_tasks": false,
+    "confined_inspection": false
+  },
+  "installed": false,
+  "windows_native_acceptance": false,
+  "engineering_acceptance": false,
+  "remaining": [
+    "private named-plugin backup, CLI preflight, scoped install and installed verification",
+    "candidate repository gates and integration",
+    "Windows panel acceptance and OAuth route",
+    "required complete engineering demonstrations"
+  ]
+}
