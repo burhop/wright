@@ -1677,3 +1677,26 @@ The complete local evidence is /tmp/wright-desktop-blender-provider-20261015-01.
 
 Next: run the previously unreached browser suite, resolve actual failures, and
 complete the required candidate gates. No push/merge/installed update yet.
+
+## Browser stage and documented local runtime limitation — 15 October 2026
+
+The separately executed remaining Playwright stage finished: 161 passed, 5 skipped,
+18 failures, all WebKit startup errors before page creation. The 18 traces and
+complete HTML report are preserved in browser-stage-report.tar.gz under the gate
+evidence root. The exact browser-stage command came from check-dev-merge.sh,
+with fresh database/dedicated 18154/15154 ports and retained backend evidence.
+No UI assertion failure was hidden by changing tests.
+
+Private extraction of missing Ubuntu ARM64 libraries resolved the dynamic-loader
+failure, but both preload and private unchanged-browser-copy probes then aborted
+inside libWPEWebKit. The backtrace does not establish the root cause; 65536-byte
+host pages are observed, not blamed. No system installation, browser patch,
+sandbox override or rendering override was performed. All temporary evidence is
+under /tmp/wright-webkit-runtime-20261015-01.
+
+The README now records the local browser-runtime limitation required by the gate
+runbook. Next full local gate may use its existing SKIP_PLAYWRIGHT=1 exception,
+with the independently observed 161 browser passes retained and WebKit explicitly
+unqualified. This is not an all-browser pass; required current-head CI must cover
+WebKit before integration. The native fast push gate retains its ordinary
+Chromium selection. Remote dev rechecked unchanged at a6136138; no rebase needed.
