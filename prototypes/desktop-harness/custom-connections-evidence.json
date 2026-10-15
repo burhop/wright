@@ -1,0 +1,24 @@
+{
+  "boundary": "Private fictional endpoint; actual MCP/API/owner/storage; no provider contact, installation or engineering run",
+  "passed": true,
+  "checks": [
+    "default publisher review remains blocked",
+    "explicit synthetic fixture review creates exact unapproved workspace plan",
+    "wright_connection_import_plan: denied",
+    "wright_connection_import_plan: denied",
+    "lost response recovery finds exact saved plans without provider ID or replay"
+  ],
+  "protocol_version": "2025-11-25",
+  "source_sha256": {
+    "prototypes/desktop-harness/desktop_backend.py": "b4757a0d41e157f25304fe0387bf80b9fbbfc1d5ab2219b0d8c223e2f60440c6",
+    "prototypes/desktop-harness/mcp_bridge.py": "c8a4cc8c26233152e23ee6b727046d720f73213a6014bd24b341e7124ba46853",
+    "packages/tool_registry/src/tool_registry/install_plans.py": "2346e6070f5746b095cbc69fc96bb26bee53419162ed3a9539f261365ded83f5"
+  },
+  "evidence_directory": "/tmp/wright-desktop-custom-source-state-20261015-01",
+  "report_sha256": "8c76e831f81c4f409a1181e25a607562d64e129141a8d5acf94a1100955d48bc",
+  "limitations": [
+    "No apply or provider network call",
+    "Synthetic private fixture publisher review only",
+    "Served panel and Windows acceptance pending"
+  ]
+}

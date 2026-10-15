@@ -404,3 +404,49 @@ def test_workspace_discovery_recovers_imported_plan_without_provider_identity(
     for limit in (0, -1, 51):
         with pytest.raises(ValueError):
             list_workspace_install_plans(database, "a", limit=limit)
+
+
+def test_imported_publisher_review_records_completion_without_approval_or_transfer(
+    plan_database,
+):
+    database, snapshot, observation = plan_database
+    draft = preview_configuration(
+        {"name": "Remote", "type": "http", "url": "https://example.invalid/mcp"},
+        now=NOW,
+    )["drafts"][0]
+    arguments = dict(
+        database_path=database,
+        snapshot_id=snapshot.snapshot_id,
+        observation=observation,
+        import_draft=draft,
+        actor="engineer",
+        requested_scope="workspace",
+        workspace_id="a",
+        now=NOW,
+    )
+    blocked = create_install_plan(**arguments)
+    assert blocked.state == "blocked"
+    reviewed = create_install_plan(**arguments, independently_completed_license=True)
+    assert reviewed.state == "reviewable"
+    assert reviewed.requirements.license.state == "unknown"
+    assert reviewed.requirements.license.independent_completion_required
+    assert reviewed.requirements.license.independent_completion_recorded_at == NOW
+    assert reviewed.import_draft_digest == draft["draft_digest"]
+    assert reviewed.approved_by is None
+    assert reviewed.plan_digest != blocked.plan_digest
+    assert get_install_plan(database, blocked.plan_id) == blocked
+    with pytest.raises(InstallPlanError):
+        approve_install_plan(
+            database,
+            reviewed.plan_id,
+            blocked.plan_digest,
+            actor="administrator",
+            now=NOW,
+        )
+    changed = preview_configuration(
+        {"name": "Remote", "type": "http", "url": "https://other.invalid/mcp"},
+        now=NOW,
+    )["drafts"][0]
+    changed_plan = create_install_plan(**{**arguments, "import_draft": changed})
+    assert changed_plan.state == "blocked"
+    assert changed_plan.requirements.license.independent_completion_recorded_at is None

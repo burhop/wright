@@ -59,15 +59,7 @@ def _license_requirement(
     independently_completed: bool,
     now: datetime,
 ) -> tuple[LicenseRequirement, list[CapabilityDiagnostic]]:
-    if entry is None:
-        return LicenseRequirement(state="unknown"), [
-            _reason(
-                "license_unknown",
-                "The imported configuration does not declare license terms.",
-                "Review the publisher terms independently before applying.",
-            )
-        ]
-    if not entry.license:
+    if entry is None or not entry.license:
         requirement = LicenseRequirement(
             state="unknown",
             independent_completion_required=True,
@@ -79,7 +71,7 @@ def _license_requirement(
             else [
                 _reason(
                     "license_unknown",
-                    "The catalog does not identify a license.",
+                    "The source does not identify license terms.",
                     "Verify the source and license, then record that review before applying.",
                 )
             ]

@@ -1,6 +1,6 @@
 # Next management gap: custom MCP source in the desktop panel
 
-Read-only architecture checkpoint; not implemented or enabled.
+Experimental implementation in a separate worktree; not installed or enabled. Remote preview, exact-source publisher review and saved-plan recovery have bounded qualification below.
 
 User journey: Connections → Add custom connection → enter a supported source →
 review normalized source and effects → explicitly approve/apply → validate/sign in
@@ -129,3 +129,39 @@ with a source-license grant. Next work must define the smallest explicit review
 record in the existing owner, bind it to exact imported source/draft and review
 identity, invalidate on source changes and requalify through approval/apply.
 This is shared onboarding debt, not a SteveCAD-specific workaround.
+
+## Reused publisher review owner (supersedes the blocker above)
+
+The existing missing-license catalog path already records independent completion
+with a timestamp in an exact, actor-attributed plan. Imports now use that same
+path, retaining unknown license metadata and requiring explicit completion.
+No new review database, approval type, terms acceptance automation or exception
+is introduced. Reviewable is not approved; plan digest, machine state, approval
+and apply checks remain unchanged. Existing blocked plans are immutable.
+
+Necessary caller correction: standalone OnboardingWizard formerly sent true
+for every source. Custom imports/local commands/remote sources now default false
+and require a source-bound checkbox; editing normalized source invalidates it.
+The existing catalog/host behavior is unchanged by this narrow correction.
+Desktop custom source has the same explicit confirmation and resets on edits.
+
+11 plan-owner tests and 23 onboarding/desktop UI tests pass, including source
+change, old/new plan digest mismatch, no automatic approval/apply, default block
+and explicit review. Actual isolated apply/validation and served UI are next;
+no provider installed and no real publisher review asserted by these fixtures.
+
+## Actual MCP/API/storage proof
+
+Five checks pass against the fresh authenticated loopback API on port 8169,
+state `/tmp/wright-desktop-custom-source-state-20261015-01`: default source-review
+block, explicit synthetic fixture review producing an unapproved workspace plan,
+wrong draft digest rejection, wrong-session rejection, and exact saved-plan
+discovery/readback. No provider was contacted and no plan was approved or applied.
+The endpoint is fictional example.invalid; no real publisher review is claimed.
+
+The first probe incorrectly expected structuredContent for workspace creation.
+Its failed source/log/report are retained as failed-01-*; the corrected probe
+recovered that same workspace through read-only discovery and did not recreate it.
+The successful report records hashes of the actual backend, bridge and plan owner.
+This establishes the observed transport/storage path, not native Windows UI,
+installation/validation, credential entry or complete engineering demonstrations.

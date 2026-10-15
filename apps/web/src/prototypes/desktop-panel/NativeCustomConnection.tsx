@@ -147,11 +147,6 @@ export function NativeCustomConnection({
         tokens or private credential URLs. Local commands, configuration-file
         imports and credential entry are not available in this form yet.
       </p>
-      <p>
-        Imported sources currently remain blocked on publisher-terms review.
-        This prototype can preview and save a setup plan; it cannot yet complete
-        custom installation.
-      </p>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -208,8 +203,8 @@ export function NativeCustomConnection({
               disabled={disabled || uncertain}
               onChange={(event) => setCompletedSetup(event.target.checked)}
             />
-            I have independently completed the publisher’s account and terms
-            setup.
+            I independently reviewed this source and completed its publisher
+            terms and account requirements.
           </label>
           <button
             disabled={disabled || uncertain}
