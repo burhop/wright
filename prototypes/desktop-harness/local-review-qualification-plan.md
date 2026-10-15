@@ -26,3 +26,11 @@ subject and output changes; actual Windows panel acceptance remains separate.
 The candidate API on 8155 was stopped through its owned session before changing
 runtime files. Its state and all failed/successful receipts remain preserved.
 No installation until the new profile passes and a concrete rollback is prepared.
+
+## Actual runtime proof
+
+Commit f2dd5944 passed the fresh private continuation probe on API 8156.
+One desktop request/reply, durable review wait, stale-subject denial, reconnect,
+synthetic approval and explicit same-run completion were observed with general
+MCP execution disabled. See local-review-runtime-evidence.json. The affected
+test job is still running; no broad test or Windows acceptance claim follows.

@@ -1,0 +1,44 @@
+{
+  "implementation_commit": "f2dd5944",
+  "scope": "private synthetic local review; actual desktop reasoning, no engineering approval",
+  "status": "passed",
+  "run_id": "ecef37f4657c4e41b8270737723cfdfa",
+  "same_run_completed": true,
+  "request_response_counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 1
+  },
+  "stale_subject_denied": {
+    "error": {
+      "ok": false,
+      "http_status": 403,
+      "reason": {
+        "code": "SCOPE_DENIED",
+        "message": "Wright rejected this process operation.",
+        "correction": "Keep your draft and inspect the exact process or connection before proceeding."
+      }
+    }
+  },
+  "profile": {
+    "mcp_sdk": "1.28.1",
+    "image_inputs": false,
+    "enrolled_mcp_tasks": false,
+    "local_reviews": true,
+    "confined_inspection": false,
+    "native_editor": true,
+    "native_working_view": true,
+    "connection_lease_seconds": 30,
+    "heartbeat_interval_seconds": 5
+  },
+  "receipt": "/tmp/wright-desktop-local-review-state-20261015-01/continuation-probe.json",
+  "receipt_sha256": "0af183b4ebb23f49d53258bc84d256e7c5f2bdb877399d2f2368f23a4500c8cb",
+  "installed_plugin_changed": false,
+  "native_desktop_acceptance": false,
+  "remaining": [
+    "affected test job still running",
+    "full changed-runtime regression",
+    "named package requalification and rollback before update",
+    "Windows acceptance",
+    "real engineering demos"
+  ]
+}
