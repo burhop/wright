@@ -2,6 +2,31 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
+## PR158 correction checkpoint — 15 October 2026
+
+The file-transfer candidate is draft PR158 at the original pushed head1a079bc2.
+Its normal local push gate passed, including 416 affected UI tests, 18 shared
+editor Chromium checks and 5 onboarding checks. The separately corrected full
+UI suite passed all1,910 tests. CI finished with 27 passes, one intentional skip
+and one Windows backend failure: an existing cancellation test measured3.166
+seconds against its combined three-second wall-clock assertion.
+
+The test correction observes the real poll-wait and cancellation-wakeup events,
+preserving all durable request, one-cancel and uncertain-outcome checks. All55
+affected tests pass locally; a temporary suppressed-signal negative control fails
+at the wakeup assertion as required. No production cancellation code changed.
+Normal correction push checks and the consolidated second CI cycle remain due.
+Evidence: `/tmp/wright-transfer-integration-evidence-20261015/`.
+
+Named plugin0.13 is installed from the previously qualified immutable runtime04db87cd,
+with exact package/protocol/resource verification and all24 older cache files
+preserved. This existing chat still reports its earlier image-unavailable binding;
+actual Windows acceptance is pending a fresh chat. The installed state contains
+**SteveCAD desktop demo** with exact unchanged native example source. Its common
+view blocks Start because SteveCAD has no available tools. No engineering run,
+sign-in or tool grant was created. Full engineering and user-acceptance requirements
+below remain unchanged. This checkpoint supersedes earlier installation/CI status.
+
 ## Integration candidate checkpoint — 15 October 2026
 
 This checkpoint supersedes the historical observations below. Named plugin0.11

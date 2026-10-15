@@ -369,6 +369,16 @@ pre-insert reads if that unsafe pattern returns. Native API functional tests
 use a bounded 15-second completion wait; the former five-second deadline was
 shorter than a successful Windows CI execution and was not a performance SLA.
 
+Provider-cancellation regressions establish that the monitor entered its actual
+poll wait, then observe that cancellation woke it. Do not combine durable disk
+publication, a deliberately lost observer, provider confirmation and final record
+writes into a three-second wall-clock SLA. PR #158 exposed that test assumption
+on Windows (3.166 seconds). Keep the wakeup deadline shorter than the 30-second
+poll and retain exact durable-request, single-dispatch, provider-outcome and
+uncertain-publication assertions. A suppressed wakeup signal must fail the test.
+Both native gates already collect this suite; the correction changes its
+controlled interleaving, not gate selection or production cancellation behavior.
+
 - Collect every failed job and its first actionable error before editing.
 - Let the complete CI browser run report its full failure set; do not cap the run
   after an arbitrary number of failures that forces serial discovery pushes.
