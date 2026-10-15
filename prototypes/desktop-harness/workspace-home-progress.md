@@ -1612,3 +1612,41 @@ are retained as inconclusive checks, not correctness claims; the actual bundled
 artifact comparison and tests are the relevant evidence. Source formatting
 changes invalidate the prior image source binding despite identical panel bytes:
 build a corrected-revision image before rerunning the full gate. No push/merge.
+
+## Full merge gate stopped; Robot fixture correction — 15 October 2026
+
+The exact 6210a6f0 gate exited 1 at the workspace-service suite: 2709 passed,
+10 skipped, four failures in test_robot_campaign_preparer.py. Full log retained
+at /tmp/wright-desktop-gates-20261015-01/merge-corrected.log. Later suites,
+full frontend/docs and live cross-browser checks did not run; this is not a
+merge qualification. Earlier completed suites include API 760 passed, adapters
+444 passed/21 skipped, core 335, data vault 218 and model registry 185 passed.
+The image security scan passed; broad mypy retained its warning-mode duplicate
+conftest-module diagnostic, not a type-check pass.
+
+Three fixture expectations included registered get_message_at_time although no
+accepted task declares it. They now assert the exact scope excluding that unused
+tool. The missing-metrics fixture now supplies the complete remaining inventory,
+so it reaches and proves the intended calculate_tracking_metrics rejection
+instead of failing earlier on missing agentcad/context. No runtime, task scope,
+engineering requirements or permission enforcement changed. Focused four cases
+pass, with Ruff check/format passing. Full gate remains to be rerun.
+
+Separate actual candidate-image Hermes 0.19.0 pure normalization checks passed:
+97 tests, no skips, covering normalization/context/observation/large inputs.
+Source hash, immutable image identity and JUnit are retained under
+/tmp/wright-desktop-hermes-image-regression-20261015-01. This executes extracted
+pure functions, not an authenticated Hermes gateway or native Windows runtime.
+
+The stopped gate generated packaged web assets. Read-only review verifies all
+16 manifest entries; the sample STEP change is CRLF normalization only. Receipt:
+/tmp/wright-desktop-gates-20261015-01/generated-assets-review.json. Preserve those
+outputs and review their disposition before the next source-bound image/gate.
+No feature push, merge, release, installed-plugin update or engineering run occurred.
+
+The generated packaged frontend is retained in a separate archive at
+/tmp/wright-desktop-gates-20261015-01/generated-web-6210a6f0.tar.gz and included
+in the correction checkpoint so shipped assets match the qualified source build.
+This changes a bound Docker input; build a fresh image for the new revision.
+The conservative image binding also covers the corrected package test file.
+Do not reuse the older image to claim the new revision passed its image gate.

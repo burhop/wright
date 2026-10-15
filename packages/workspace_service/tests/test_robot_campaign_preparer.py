@@ -13,10 +13,8 @@ preparer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(preparer)
 
 
-@pytest.mark.parametrize("ordinal", [1, 2, 3])
-def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal):
-    config = json.loads(preparer.BINDING.read_text())
-    qualified_tools = {
+def qualified_tool_inventory(config):
+    return {
         **config["allowed_tools"],
         "agentcad": ["context", "docs", "run"],
         "wright-workspace-files": ["write_text_document", "inspect_file"],
@@ -27,6 +25,12 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
         ],
         "calculix-fields": ["export_recorded_fields_and_reactions"],
     }
+
+
+@pytest.mark.parametrize("ordinal", [1, 2, 3])
+def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal):
+    config = json.loads(preparer.BINDING.read_text())
+    qualified_tools = qualified_tool_inventory(config)
     tools = [
         {"server_id": server, "tool_name": name, "schema_digest": "a" * 64}
         for server, names in qualified_tools.items()
@@ -187,6 +191,8 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     expected_tools = {
         (server, name) for server, names in qualified_tools.items() for name in names
     }
+    # Registered but unused tools must not enter the frozen execution scope.
+    expected_tools.remove((config["bag_server"], "get_message_at_time"))
     assert {
         (tool["server_id"], tool["tool_name"]) for tool in manifest["tool_allowlist"]
     } == expected_tools
@@ -211,7 +217,7 @@ def test_scoped_inspection_does_not_waive_missing_downstream_metric_capability(
     config = json.loads(preparer.BINDING.read_text(encoding="utf-8"))
     tools = [
         {"server_id": server, "tool_name": name, "schema_digest": "a" * 64}
-        for server, names in config["allowed_tools"].items()
+        for server, names in qualified_tool_inventory(config).items()
         for name in names
         if name != "calculate_tracking_metrics"
     ]
