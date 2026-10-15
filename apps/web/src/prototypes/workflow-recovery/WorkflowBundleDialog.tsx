@@ -3,6 +3,7 @@ import {
   workflowBundles,
   parseWorkflowBundleFile,
   type WorkflowBundleInspection,
+  type WorkflowBundleClient,
 } from "../../services/workflow-bundles";
 import {
   workspaceService,
@@ -16,11 +17,13 @@ export function WorkflowBundleDialog({
   sessionId,
   onClose,
   onImported,
+  transfer = workflowBundles,
 }: {
   document: WorkspaceWorkflowSourceDocument;
   sessionId: string;
   onClose: () => void;
   onImported: (path: string) => void;
+  transfer?: WorkflowBundleClient;
 }) {
   const [mode, setMode] = useState<"source" | "bundle">("source");
   const [files, setFiles] = useState<Array<{ path: string; name: string }>>([]);
@@ -69,7 +72,7 @@ export function WorkflowBundleDialog({
     setReport(null);
   };
   const download = async () => {
-    const exported = await workflowBundles.export(
+    const exported = await transfer.export(
       sessionId,
       document.path,
       document.storage_digest,
@@ -333,7 +336,7 @@ export function WorkflowBundleDialog({
               void perform(async () => {
                 if (!bundle) return;
                 const revision = requestRevision.current;
-                const inspection = await workflowBundles.inspect(
+                const inspection = await transfer.inspect(
                   sessionId,
                   bundle,
                   destination,
@@ -399,7 +402,7 @@ export function WorkflowBundleDialog({
                 onClick={() =>
                   void perform(async () => {
                     if (!bundle || !report.can_import) return;
-                    const imported = await workflowBundles.import(
+                    const imported = await transfer.import(
                       sessionId,
                       bundle,
                       destination,

@@ -53,6 +53,42 @@ function upload() {
     target: { files: [file] },
   });
 }
+it("uses the injected transfer owner without falling back to the web transport", async () => {
+  const webInspect = vi.spyOn(workflowBundles, "inspect");
+  const transfer = {
+    export: vi.fn(),
+    inspect: vi.fn().mockResolvedValue(inspection),
+    import: vi.fn().mockResolvedValue({
+      source: {
+        ...document,
+        path: "workflows/imported-process.workflow.wflow",
+      },
+      imported_paths: [],
+      inspection,
+    }),
+  };
+  const onImported = vi.fn();
+  render(
+    <WorkflowBundleDialog
+      document={document}
+      sessionId="session"
+      onClose={vi.fn()}
+      onImported={onImported}
+      transfer={transfer}
+    />,
+  );
+  upload();
+  await waitFor(() =>
+    expect(screen.getByTestId("workflow-transfer-inspect")).not.toBeDisabled(),
+  );
+  fireEvent.click(screen.getByTestId("workflow-transfer-inspect"));
+  await screen.findByText("Definition can be imported");
+  fireEvent.click(screen.getByTestId("workflow-transfer-import"));
+  await waitFor(() => expect(onImported).toHaveBeenCalledOnce());
+  expect(transfer.inspect).toHaveBeenCalledOnce();
+  expect(transfer.import).toHaveBeenCalledOnce();
+  expect(webInspect).not.toHaveBeenCalled();
+});
 it("requires uploaded definition inspection before explicit import and rechecks after destination edits", async () => {
   const inspect = vi
     .spyOn(workflowBundles, "inspect")

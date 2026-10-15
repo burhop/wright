@@ -57,6 +57,22 @@ expanded to unrelated workspace files.
 
 ## Remaining tasks
 
+Frontend transport checkpoint: the existing bundle service now accepts a closed
+three-operation transport, preserving its web default and shared response
+validation. The shared dialog accepts that client; the native client binds exact
+workspace/session and import/source identities. Lost, malformed or mismatched
+import replies latch further submissions in that client instance while allowing
+read-only inspection. Only an explicitly known pre-submission rejection clears
+that latch. This is not durable reconciliation across panel closure.
+
+27 focused shared-service/dialog/native-client tests pass, as does TypeScript.
+Tests use isolated Node 26.0.0 under `/tmp/wright-transfer-node26`; the system
+Node 22.22.0 produced an engine warning during the initial locked dependency
+installation and was not used for these frontend checks. No system runtime or
+live plugin changed. The dialog injection is verified; the native panel menu,
+reference/interface discovery and exact imported-document navigation are not yet
+connected, and actual Windows delivery remains unverified.
+
 - Wire the shared dialog to explicit native ports, including existing reference
   and saved-interface discovery. Preserve standard Wright/Hermes defaults.
 - Finish the UI inspection/import journey and uncertain acknowledgement
