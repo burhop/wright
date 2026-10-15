@@ -1,0 +1,82 @@
+{
+  "scope": "Actual MCP and source/template owners in simulated native host. No Windows native acceptance or engineering execution.",
+  "base": "33afba8ae38e161465e8757eac8f3940866f8d53",
+  "browser_report": "/tmp/wright-desktop-template-state-20261015-03/browser-home-1792031783125/report.json",
+  "browser_report_sha256": "b39d32f8d7c3eb8c40a68bef877543f7fb7f766824a8f47bf9745032b81a3248",
+  "passed": [
+    "explicit UI workspace creation once, discovered exact session, no workflow execution",
+    "native New workflow saves once through source owner, opens shared editor and reopens from Workflows with exact digest",
+    "robot-tracking-diagnosis: explicit template copy, exact saved source/digest and shared editor; no execution",
+    "printed-replacement-part: explicit template copy, exact saved source/digest and shared editor; no execution",
+    "real isolated workspace and saved workflow source discovered",
+    "home opens shared editor and Back restores exact workspace without mutation",
+    "Refresh reconciles exact workspace/session and retains Files view without execution",
+    "Files lists and filters real scoped storage; unavailable operations explicit",
+    "explicit bounded text preview matches real saved bytes and closes without mutation",
+    "narrow home fits; unsaved source draft prevents workspace navigation",
+    "accepted source unchanged and no browser errors"
+  ],
+  "template_copies": [
+    {
+      "path": "workflows/robot-tracking-diagnosis.workflow.wflow",
+      "storage_digest": "17d78d7c884f3596ddcc442002ecae0ba89dd9edf7fd20467deb92c26e48170c",
+      "template": {
+        "template_id": "robot-tracking-diagnosis",
+        "version": "1.0.0",
+        "source_digest": "8383ffbf8533294793d2cb77b10eda5b204ed70534f2c5722647332255fb1bdd",
+        "layout_digest": "793d40e8261e33109e8f4102c4e7b3c77a956b6e72c2ddb804512f5649142011"
+      }
+    },
+    {
+      "path": "workflows/3d-printed-replacement-part.workflow.wflow",
+      "storage_digest": "42370550719fa65f7125d5f240f13f980b47e4a937d8e159546162760346fb99",
+      "template": {
+        "template_id": "printed-replacement-part",
+        "version": "1.0.0",
+        "source_digest": "4d7fc589183f84b34a66c9495798507b2ef4326e467f2e927effe9733bf1e545",
+        "layout_digest": "793d40e8261e33109e8f4102c4e7b3c77a956b6e72c2ddb804512f5649142011"
+      }
+    }
+  ],
+  "workspace": {
+    "workspace_id": "994a2568-37e8-476a-bb59-9e5bea7eca6c",
+    "session_id": "desktop-81bc478b-6e14-4edd-855e-61caae55446e",
+    "workspace_name": "Template UI qualification",
+    "url": "http://127.0.0.1:5262/workspace/994a2568-37e8-476a-bb59-9e5bea7eca6c?host=openai-desktop"
+  },
+  "counts": {
+    "desktop_reasoning_requests": 0,
+    "desktop_reasoning_responses": 0,
+    "surface_capability_grants": 0
+  },
+  "checks": {
+    "frontend": {
+      "passed": 20,
+      "log": "/tmp/wright-desktop-template-tests-02.log"
+    },
+    "owner_and_prototype": {
+      "passed": 156,
+      "log": "/tmp/wright-desktop-template-regression.log"
+    },
+    "typescript": "passed",
+    "eslint": "passed",
+    "ruff": "passed",
+    "strict_docs": {
+      "status": "passed",
+      "log": "/tmp/wright-desktop-template-docs.log"
+    }
+  },
+  "resource_sha256": "7bb755f6f87345dcccdaf1efe0d7787ae7dd2c82475a12dbbc7f2c8d2bf83590",
+  "retained_prior_evidence": [
+    "/tmp/wright-desktop-template-state-20261015-01/browser-home-1792031437672/report.json",
+    "/tmp/wright-desktop-template-state-20261015-02/browser-home-1792031570586/report.json",
+    "/tmp/wright-desktop-template-state-20261015-02/compact-preview-drift-denial.json"
+  ],
+  "limits": [
+    "Template previews explicitly unavailable in native host",
+    "No installation/upgrade",
+    "No engineering task or external action run",
+    "No native Windows rendering/acceptance",
+    "Full repository gate and current-head CI still required"
+  ]
+}

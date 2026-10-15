@@ -57,3 +57,14 @@ outputs; additional navigation alone cannot satisfy the demonstration requiremen
 The 37746c7b full gate passed all Python suites and 1,874 frontend tests, then
 stopped on seven strict-docs evidence links. The prospective documentation fix
 and remaining browser gate require verification; no full-gate pass is claimed.
+
+## Local template-entry candidate (not installed)
+
+The shared engineering picker now has a native MCP transport to the existing
+versioned catalog/copy owner. Eleven real browser/MCP checks include Robot and
+manufacturing template copies, exact saved-source identities and narrow layout;
+156 owner/prototype tests and 20 frontend checks pass. Readiness remains
+reference/setup-required. No reasoning requests or surface grants were created.
+Template image previews remain explicitly unavailable in the native host.
+See `template-entry-evidence.json`; this is not full repository qualification,
+Windows acceptance or the required engineering workflow regression runs.

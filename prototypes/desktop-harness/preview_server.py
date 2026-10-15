@@ -142,6 +142,14 @@ def main():
             "POST",
             "PUT",
         }
+        template_copy = (
+            request.method == "POST"
+            and re.fullmatch(
+                r"/api/workspace/workflow-source-templates/[A-Za-z0-9_-]+/instances",
+                path,
+            )
+            is not None
+        )
         browser_auth = path == "/api/auth/session"
         process_operation = (
             path
@@ -165,6 +173,7 @@ def main():
         if agent_call or (
             request.method not in {"GET", "HEAD", "OPTIONS"}
             and not source_edit
+            and not (desktop is not None and template_copy)
             and not browser_auth
             and not desktop_operation
         ):

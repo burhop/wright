@@ -28,6 +28,10 @@ The next isolated UI candidate is `/tmp/wright-desktop-workflow-entry`, branch
 the shared blank source and creation owner. It is not installed. See
 [workflow entry plan](workflow-entry-plan.md) for scope and retained proof.
 
+The isolated `codex/desktop-template-entry` follow-on exposes the existing template
+owner through the shared picker and two scoped MCP operations. It is not installed
+or included in the 33afba8a full gate. See [template entry](template-entry-plan.md).
+
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its
 [baseline correction evidence](ui-concepts/2026-10-12/baseline-correction-20261014.md)

@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeFilePreview } from "./NativeFilePreview";
 import { NativeConnections } from "./NativeConnections";
 import { NativeNewWorkflow } from "./NativeNewWorkflow";
+import { EngineeringTemplateDialog } from "../workflow-recovery/EngineeringTemplateDialog";
+import { nativeTemplateClient } from "./native-template-client";
 import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
 
 export interface DesktopWorkspace {
@@ -24,6 +26,8 @@ export type HomeCall = (
     | "wright_workspace_list"
     | "wright_workspace_create"
     | "wright_workflow_create"
+    | "wright_workflow_templates"
+    | "wright_workflow_template_create"
     | "wright_workspace_files"
     | "wright_workspace_file_preview"
     | "wright_workflow_history"
@@ -91,6 +95,11 @@ export function NativeHomePanel({
   >("workflows");
   const [fileQuery, setFileQuery] = useState("");
   const [previewPath, setPreviewPath] = useState<string>();
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const templateService = useMemo(
+    () => (selected ? nativeTemplateClient(call, selected) : undefined),
+    [call, selected],
+  );
   const workflowFiles = files.filter((file) => file.path.endsWith(".wflow"));
   const generation = useRef(0);
   const restore = useRef(initialSelection);
@@ -411,6 +420,34 @@ export function NativeHomePanel({
       {selected && view === "workflows" && (
         <section aria-label="Workflows">
           <h2>Workflows</h2>
+          <button
+            disabled={loading || creating || opening}
+            onClick={() => setTemplatesOpen(true)}
+          >
+            Use a template
+          </button>
+          {templateService && (
+            <EngineeringTemplateDialog
+              key={`${selected.workspace_id}:${selected.session_id}`}
+              open={templatesOpen}
+              workspaceId={selected.workspace_id}
+              sessionId={selected.session_id}
+              workspaceName={selected.workspace_name}
+              service={templateService}
+              previewUrl={() => null}
+              onClose={() => setTemplatesOpen(false)}
+              onCreated={(path) => {
+                setOpening(true);
+                void onOpen(selected, path)
+                  .catch(() =>
+                    setError(
+                      "The template was saved, but its editor could not be opened. Refresh and open the saved workflow.",
+                    ),
+                  )
+                  .finally(() => setOpening(false));
+              }}
+            />
+          )}
           <NativeNewWorkflow
             key={`${selected.workspace_id}:${selected.session_id}`}
             workspace={selected}

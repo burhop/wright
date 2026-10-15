@@ -143,3 +143,36 @@
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+
+/* Keep the shared picker inside the host panel; only its contents scroll. */
+.native-home .engineering-template-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 32px);
+}
+.native-home .engineering-template-dialog > header,
+.native-home .engineering-template-dialog > footer {
+  flex: 0 0 auto;
+}
+.native-home .engineering-template-dialog__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+.native-home .engineering-template-dialog__list,
+.native-home .engineering-template-dialog__details {
+  min-height: 0;
+}
+.native-home
+  .engineering-template-dialog__preview[data-preview-available="false"] {
+  min-height: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+}
+@media (max-width: 760px) {
+  .native-home .engineering-template-dialog__body {
+    grid-template-rows: minmax(100px, 0.6fr) minmax(160px, 1fr);
+  }
+}

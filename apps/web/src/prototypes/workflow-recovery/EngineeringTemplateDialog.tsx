@@ -13,7 +13,15 @@ interface EngineeringTemplateDialogProps {
   workspaceName: string;
   onClose: () => void;
   onCreated: (path: string) => void;
+  service?: Pick<
+    typeof workspaceService,
+    "getEngineeringWorkflowTemplates" | "instantiateEngineeringWorkflowTemplate"
+  >;
+  previewUrl?: (template: EngineeringWorkflowTemplate) => string | null;
 }
+
+const templatePreviewUrl = (template: EngineeringWorkflowTemplate) =>
+  `/api/workspace/workflow-source-templates/${encodeURIComponent(template.template_id)}/preview?version=${encodeURIComponent(template.version)}`;
 
 function readable(value: unknown): string {
   if (value && typeof value === "object" && "name" in value)
@@ -45,6 +53,8 @@ export function EngineeringTemplateDialog({
   workspaceName,
   onClose,
   onCreated,
+  service = workspaceService,
+  previewUrl = templatePreviewUrl,
 }: EngineeringTemplateDialogProps) {
   const id = useId();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -53,6 +63,10 @@ export function EngineeringTemplateDialog({
   const [name, setName] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "creating">("idle");
   const [error, setError] = useState("");
+  const creating = useRef(false);
+  const attempt = useRef<{ key: string; requestId: string } | undefined>(
+    undefined,
+  );
   const selected = useMemo(
     () =>
       templates.find((template) => template.template_id === selectedId) ?? null,
@@ -77,7 +91,7 @@ export function EngineeringTemplateDialog({
     let current = true;
     setState("loading");
     setError("");
-    void workspaceService
+    void service
       .getEngineeringWorkflowTemplates()
       .then((items) => {
         if (!current) return;
@@ -98,7 +112,7 @@ export function EngineeringTemplateDialog({
     return () => {
       current = false;
     };
-  }, [open]);
+  }, [open, service]);
 
   const choose = (template: EngineeringWorkflowTemplate) => {
     setSelectedId(template.template_id);
@@ -107,7 +121,7 @@ export function EngineeringTemplateDialog({
   };
 
   const create = async () => {
-    if (!selected) return;
+    if (!selected || creating.current) return;
     const slug = slugFor(name.trim());
     if (
       !name.trim() ||
@@ -120,16 +134,25 @@ export function EngineeringTemplateDialog({
       return;
     }
     const path = `workflows/${slug}.workflow.wflow`;
+    const key = JSON.stringify([
+      sessionId,
+      selected.template_id,
+      selected.version,
+      selected.source_digest,
+      path,
+    ]);
+    if (attempt.current?.key !== key)
+      attempt.current = { key, requestId: crypto.randomUUID() };
+    creating.current = true;
     setState("creating");
     setError("");
     try {
-      const created =
-        await workspaceService.instantiateEngineeringWorkflowTemplate(
-          sessionId,
-          selected,
-          path,
-          crypto.randomUUID(),
-        );
+      const created = await service.instantiateEngineeringWorkflowTemplate(
+        sessionId,
+        selected,
+        path,
+        attempt.current.requestId,
+      );
       if (created.workspace_id !== workspaceId || created.path !== path)
         throw new Error(
           "Wright returned a workflow for a different workspace.",
@@ -143,6 +166,7 @@ export function EngineeringTemplateDialog({
           : "Unable to create this workflow. Existing files were kept.",
       );
     } finally {
+      creating.current = false;
       setState("idle");
     }
   };
@@ -198,6 +222,7 @@ export function EngineeringTemplateDialog({
                 type="button"
                 role="option"
                 aria-selected={template.template_id === selectedId}
+                disabled={state === "creating"}
                 data-testid={`workflow-template-option-${template.template_id}`}
                 onClick={() => choose(template)}
                 onKeyDown={(event) => {
@@ -242,11 +267,17 @@ export function EngineeringTemplateDialog({
               data-testid="workflow-template-details"
               aria-live="polite"
             >
-              <div className="engineering-template-dialog__preview">
-                <img
-                  src={`/api/workspace/workflow-source-templates/${encodeURIComponent(selected.template_id)}/preview?version=${encodeURIComponent(selected.version)}`}
-                  alt={selected.preview.alt}
-                />
+              <div
+                className="engineering-template-dialog__preview"
+                data-preview-available={Boolean(previewUrl(selected))}
+              >
+                {previewUrl(selected) ? (
+                  <img src={previewUrl(selected)!} alt={selected.preview.alt} />
+                ) : (
+                  <p>
+                    Template image preview is not available in this host yet.
+                  </p>
+                )}
               </div>
               <h3>{selected.title}</h3>
               <p>{selected.summary}</p>
@@ -293,6 +324,7 @@ export function EngineeringTemplateDialog({
                 data-testid="workflow-template-name"
                 value={name}
                 maxLength={100}
+                disabled={state === "creating"}
                 onChange={(event) => setName(event.target.value)}
               />
             </section>
