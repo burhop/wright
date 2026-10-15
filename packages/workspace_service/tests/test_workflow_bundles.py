@@ -153,6 +153,63 @@ def test_selected_reference_is_required_hashed_confined_and_not_overwritten(case
     assert (case.target / "references/design.png").read_bytes() == b"image-reference"
 
 
+def test_failed_first_asset_retains_reservation_and_blocks_restart_replay(
+    case, monkeypatch
+):
+    (case.origin / "references").mkdir()
+    (case.origin / "references/design.png").write_bytes(b"private-reference")
+    exported = export(
+        case,
+        source(reference=True),
+        mode="bundle",
+        selected_reference_paths=["references/design.png"],
+    )
+    original = WorkspaceWorkflowSourceStore._write_once
+    writes = []
+
+    def fail_asset(store, path, content):
+        writes.append(path)
+        if path == case.target / "references/design.png":
+            raise OSError("controlled first-asset failure")
+        return original(store, path, content)
+
+    monkeypatch.setattr(WorkspaceWorkflowSourceStore, "_write_once", fail_asset)
+    with pytest.raises(OSError, match="controlled first-asset failure"):
+        asyncio.run(
+            case.service.apply(
+                str(case.target),
+                exported["bundle"],
+                "workflows/imported.workflow.wflow",
+                exported["bundle_digest"],
+            )
+        )
+    receipt = case.target / "imported-assets/imported/manifest.json"
+    assert receipt.is_file()
+    assert writes[0] == receipt
+    assert json.loads(receipt.read_text())["bundle_digest"] == exported["bundle_digest"]
+    assert not (case.target / "references/design.png").exists()
+    assert not (case.target / "workflows/imported.workflow.wflow").exists()
+    # A newly constructed owner has no in-memory knowledge of the first attempt.
+    restarted = WorkflowBundleService(case.service.workspace)
+    report = asyncio.run(
+        restarted.inspect(
+            str(case.target), exported["bundle"], "workflows/imported.workflow.wflow"
+        )
+    )
+    assert not report.can_import and not report.can_run
+    count = len(writes)
+    with pytest.raises(WorkflowBundleError):
+        asyncio.run(
+            restarted.apply(
+                str(case.target),
+                exported["bundle"],
+                "workflows/imported.workflow.wflow",
+                exported["bundle_digest"],
+            )
+        )
+    assert len(writes) == count
+
+
 def test_manifest_omissions_and_undeclared_assets_are_not_trusted(case):
     exported = export(case, source(reference=True))
     assert inspect(case, exported["bundle"]).can_import

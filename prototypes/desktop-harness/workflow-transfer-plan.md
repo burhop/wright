@@ -57,6 +57,22 @@ expanded to unrelated workspace files.
 
 ## Remaining tasks
 
+Durable import reservation checkpoint: the existing bundle owner now publishes
+its write-once manifest before assets, then publishes the source last. No receipt
+format, instruction bytes, successful response shape or new database is added.
+The manifest is intent, never completion. A controlled first-asset failure retains
+that reservation; a newly constructed owner rejects another attempt at the same
+destination without writes. Existing-source and saved-interface checks remain.
+34 owner/API/imported-interface tests pass. The initial sandbox invocation timed
+out during export before reaching the injected failure; the unchanged host test
+reproduced the missing receipt in 0.17 seconds. Logs are retained separately at
+`/tmp/wright-transfer-reservation-red.log`, `-red-host.log`, and `-green-host.log`.
+This fixes durable replay protection, not the remaining UI reconciliation journey.
+
+The existing state03 service was created before this shared owner change and
+must not be presented as its qualification. Future probes must load this
+worktree's workspace-service package explicitly or use a newly installed runtime.
+
 Asset-discovery checkpoint: `wright_workflow_transfer_assets` is a UI-only,
 read-only operation with two closed kinds: references and interfaces. It verifies
 the saved source before calling the existing input-file or interface-list owner;
