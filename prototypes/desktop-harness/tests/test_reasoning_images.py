@@ -9,8 +9,8 @@ import pytest
 from core.desktop_reasoning import DesktopHarnessBinding, DesktopReasoningRequest
 
 
-@pytest.fixture
-def image_case(monkeypatch):
+@pytest.fixture(params=["response", "action"])
+def image_case(monkeypatch, request):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
     from mcp_bridge import server
 
@@ -27,7 +27,7 @@ def image_case(monkeypatch):
         run_id="run",
         ordinal=1,
         created_at="2026-10-14T00:00:00Z",
-        kind="response",
+        kind=request.param,
         output_format="text",
         binding=DesktopHarnessBinding(
             connection_id="connection", image_input_profile="inline-png-jpeg-v1"

@@ -7,6 +7,7 @@ This protocol client relays actual desktop decisions; it contains no model.
 
 import argparse
 import asyncio
+import base64
 import hashlib
 import json
 import sqlite3
@@ -32,6 +33,7 @@ async def main(
     native_working_view=False,
     enrolled_tasks=False,
     direct_tool=False,
+    image_fixture=None,
 ):
     proof = state / "mcp-gateway-probe.json"
     if proof.exists():
@@ -51,6 +53,39 @@ async def main(
         if enrolled_tasks
         else SOURCE
     )
+    image_data = image_fixture.read_bytes() if image_fixture else None
+    if image_data is not None:
+        if not versions.get("image_inputs"):
+            raise ValueError("Image fixture requires the explicit image profile")
+        source = source.replace(
+            '"description":"Exact input"}]',
+            '"description":"Exact input"},{"key":"capture","kind":"reference_images","name":"Retained CAD capture","item":null,"required":true,"quantity":"one","description":"Historical image; not this run CAD evidence"}]',
+        ).replace(
+            "Propose the tool call for Wright to execute;",
+            "Also describe the visible geometry in the supplied retained CAD capture. Distinguish visual observations from dimensions in the text; do not infer measured dimensions from pixels. This capture is historical qualification data, not a CAD result from this run. Propose the tool call for Wright to execute;",
+        )
+        source += """
+input capture
+  name: "Historical CAD capture fixture"
+  purpose: "Qualify image-bearing action transport, not a new CAD result"
+  provided_by: engineer
+  group: null
+  step_type: work
+  inputs: []
+  outputs: [{"key":"image","kind":"reference_images","name":"Capture","item":null,"required":true,"quantity":"one","description":"Historical qualification image"}]
+  instructions: "Observe only; no dimensional inference or engineering approval."
+  tool: null
+  reusable_step: null
+  settings: {"workspace_file":"inputs/capture.png"}
+end
+connection capture_to_inspection
+  type: item
+  from: "capture.image"
+  to: "inspect.capture"
+  label: "Historical image qualification"
+  when: null
+end
+"""
     if direct_tool:
         if not enrolled_tasks:
             raise ValueError("Direct tool proof requires the explicit enrolled profile")
@@ -175,6 +210,13 @@ async def main(
             (root / "inputs").mkdir(exist_ok=True)
             (root / "inputs/requirements.md").write_text(INPUT)
             input_hash = hashlib.sha256(INPUT.encode()).hexdigest()
+            input_files = {"inputs/requirements.md": input_hash}
+            if image_data is not None:
+                (root / "inputs/capture.png").write_bytes(image_data)
+                input_files["inputs/capture.png"] = hashlib.sha256(
+                    image_data
+                ).hexdigest()
+                evidence["image_fixture_sha256"] = input_files["inputs/capture.png"]
             prepared = await call(
                 "wright_process_prepare",
                 **scope,
@@ -215,7 +257,7 @@ async def main(
                 workspace_id=workspace["workspace_id"],
                 source_path=document["path"],
                 source_digest=document["storage_digest"],
-                input_files={"inputs/requirements.md": input_hash},
+                input_files=input_files,
                 output_root="outputs/probe",
                 allowed_tools=[established["allowed_tool"]],
                 approval_mode="manual",
@@ -261,6 +303,36 @@ async def main(
                 ):
                     raise ValueError("Unexpected desktop request identity")
                 evidence[f"pending_{ordinal}"] = task
+                if image_data is not None:
+                    image_args = dict(
+                        scope,
+                        request_id=task["request"]["request_id"],
+                        request_digest=task["request_digest"],
+                        binding_digest=task["binding_digest"],
+                        image_index=0,
+                    )
+                    delivered = await session.call_tool(
+                        "wright_reasoning_image", image_args
+                    )
+                    images = [
+                        part for part in delivered.content if part.type == "image"
+                    ]
+                    assert not delivered.isError and len(images) == 1
+                    assert base64.b64decode(images[0].data, validate=True) == image_data
+                    (state / f"action-image-{ordinal}.json").write_text(
+                        images[0].model_dump_json()
+                    )
+                    denied = await session.call_tool(
+                        "wright_reasoning_image",
+                        {**image_args, "request_digest": "0" * 64},
+                    )
+                    assert denied.isError and not any(
+                        part.type == "image" for part in denied.content
+                    )
+                    evidence[f"image_{ordinal}"] = {
+                        "exact_bytes": True,
+                        "stale_digest_denied": True,
+                    }
                 proof.write_text(json.dumps(evidence, indent=2))
                 print(
                     json.dumps(
@@ -296,6 +368,10 @@ async def main(
                 ).hexdigest()
                 == input_hash
             )
+            if image_data is not None:
+                evidence["input_unchanged"] &= (
+                    root / "inputs/capture.png"
+                ).read_bytes() == image_data
             # Retain observable gateway events separately; do not treat tool
             # discovery as proof that a tool was dispatched.
             audit = GatewayRepository(str(state / "wright.sqlite"))
@@ -343,6 +419,7 @@ if __name__ == "__main__":
     parser.add_argument("--native-working-view", action="store_true")
     parser.add_argument("--enrolled-tasks", action="store_true")
     parser.add_argument("--direct-tool", action="store_true")
+    parser.add_argument("--image-fixture", type=Path)
     args = parser.parse_args()
     asyncio.run(
         main(
@@ -351,5 +428,6 @@ if __name__ == "__main__":
             native_working_view=args.native_working_view,
             enrolled_tasks=args.enrolled_tasks,
             direct_tool=args.direct_tool,
+            image_fixture=args.image_fixture,
         )
     )

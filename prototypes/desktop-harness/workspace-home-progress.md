@@ -1700,3 +1700,25 @@ with the independently observed 161 browser passes retained and WebKit explicitl
 unqualified. This is not an all-browser pass; required current-head CI must cover
 WebKit before integration. The native fast push gate retains its ordinary
 Chromium selection. Remote dev rechecked unchanged at a6136138; no rebase needed.
+
+## Image-bearing action through gateway — 15 October 2026
+
+Fresh isolated state `/tmp/wright-desktop-image-action-state-20261015-01` ran
+`8f273a7a14fb498e8818a27c691aac8f` with the separately enabled image/enrolled
+qualification profile. Actual desktop responses proposed one read-only file
+inspection and then reported its observed bytes/hash alongside visual observations
+of a retained historical CAD capture. MCP delivered the same exact image bytes
+for both action ordinals and rejected stale digests. Missing enrollment was denied
+before the permitted run. The existing runtime completed with one successful
+gateway dispatch and both inputs unchanged. No provider/model substitution.
+
+The recorded output hash matches the existing output owner's validated response.
+An initial raw byte assertion detected its normal trailing-newline removal; no
+source or output was rewritten to obtain a pass. Both actual response and saved
+artifact hashes are retained. Negative image transport checks now cover response
+and action kinds. See `image-action-evidence.json` for exact receipts.
+
+This closes the local combined image/action/tool-result happy path only. No new
+CAD was created and no engineering measurement or review acceptance is claimed.
+Image-bearing restart/reconnect, current Windows delivery and the original
+SteveCAD/multi-tool processes remain open. Installed 0.9 flags remain unchanged.
