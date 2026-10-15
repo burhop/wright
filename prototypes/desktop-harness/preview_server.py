@@ -34,10 +34,16 @@ def main():
     parser.add_argument("--port", type=int, default=8097)
     parser.add_argument("--web-port", type=int, default=5197)
     parser.add_argument("--enable-desktop-bridge", action="store_true")
-    parser.add_argument(
+    images = parser.add_mutually_exclusive_group()
+    images.add_argument(
         "--enable-image-inputs",
         action="store_true",
         help="Opt-in bounded image-input qualification; image generation remains gated",
+    )
+    images.add_argument(
+        "--enable-engineering-image-inputs",
+        action="store_true",
+        help="Opt-in engineering image qualification: 8 MiB request, eight images, 2 MiB per image; no image generation",
     )
     parser.add_argument("--enable-confined-inspection", action="store_true")
     parser.add_argument(
@@ -49,7 +55,9 @@ def main():
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
     args = parser.parse_args()
-    if args.enable_image_inputs and not args.enable_desktop_bridge:
+    if (
+        args.enable_image_inputs or args.enable_engineering_image_inputs
+    ) and not args.enable_desktop_bridge:
         parser.error("Image transport requires the opt-in desktop bridge")
     if args.enable_native_editor and not args.enable_desktop_bridge:
         parser.error("Native editor requires the opt-in desktop bridge")
@@ -118,6 +126,7 @@ def main():
             args.web_port,
             confined_inspection=args.enable_confined_inspection,
             image_inputs=args.enable_image_inputs,
+            engineering_image_inputs=args.enable_engineering_image_inputs,
             enrolled_mcp_tasks=args.enable_enrolled_mcp_tasks,
             local_reviews=args.enable_local_reviews,
             native_editor=args.enable_native_editor,

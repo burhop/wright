@@ -7,8 +7,6 @@ connection authentication and run authority belong to the composition layer.
 from __future__ import annotations
 
 import asyncio
-import base64
-import binascii
 from datetime import datetime, timezone
 from typing import Protocol
 from uuid import uuid4
@@ -16,6 +14,7 @@ from uuid import uuid4
 from core.desktop_reasoning import (
     DesktopHarnessBinding,
     DesktopReasoningRequest,
+    decode_desktop_image as desktop_inline_image,
 )
 from core.process_validation import canonical_digest
 from core.workflow_model_routing import WorkflowDesktopTextResolution
@@ -27,23 +26,6 @@ from .workflow_instructions import (
     workflow_response_instructions,
     validate_workflow_assumptions,
 )
-
-
-def desktop_inline_image(url):
-    """Decode bounded inline transport only; no URL/file fetch or image transformation."""
-    if not isinstance(url, str) or len(url) > 262144:
-        raise ValueError("Desktop inline image exceeds the handoff bound")
-    prefix, separator, encoded = url.partition(";base64,")
-    if not separator or prefix not in {"data:image/png", "data:image/jpeg"}:
-        raise ValueError("Desktop images require inline PNG or JPEG")
-    try:
-        data = base64.b64decode(encoded, validate=True)
-    except (ValueError, binascii.Error):
-        raise ValueError("Desktop inline image encoding is invalid") from None
-    signature = b"\x89PNG\r\n\x1a\n" if prefix == "data:image/png" else b"\xff\xd8\xff"
-    if not data.startswith(signature):
-        raise ValueError("Desktop image media signature differs")
-    return prefix.removeprefix("data:"), data
 
 
 class DesktopReasoningPort(Protocol):
@@ -223,7 +205,7 @@ class DesktopWorkflowReasoner:
         content = prompt
         if images:
             for image in images:
-                desktop_inline_image(image)
+                desktop_inline_image(image, profile=self.binding.image_input_profile)
             content = [{"type": "text", "text": prompt}] + [
                 {"type": "image_url", "image_url": {"url": image}} for image in images
             ]
@@ -312,7 +294,10 @@ class DesktopWorkflowReasoner:
                             raise ValueError(
                                 "Desktop image parts require the exact inline image contract"
                             )
-                        desktop_inline_image(part["image_url"]["url"])
+                        desktop_inline_image(
+                            part["image_url"]["url"],
+                            profile=self.binding.image_input_profile,
+                        )
         instructions = embedded_instruction_set(instruction_set)
         # Existing runtime already resolves saved task/recovery instructions and
         # constructs the precise schema/context. Retain that request unchanged.
