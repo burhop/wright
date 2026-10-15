@@ -8,12 +8,21 @@ See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.m
 and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;
 finish the current home slice before duplicating implementation.
 
-The feature worktree contains the [workspace home slice](workspace-home-progress.md).
-Named plugin 0.8.0 is installed from its frozen runtime; local browser/protocol
-checks pass, while Windows acceptance and the real engineering runs remain open.
-The execution candidate at 37746c7b has passed all Python and 1,874 frontend tests.
-Its full merge gate stopped on seven strict-docs links; the links are corrected
-prospectively and live browser checks remain pending. This does not complete M1.
+The installed named plugin is now **0.9.0**, frozen in
+`/tmp/wright-desktop-continuation-candidate` with API8156 and fresh isolated
+review-only state. See [installation evidence](installed-09-evidence.json) and
+[walkthrough](desktop-09-walkthrough.md). The actual package/protocol, eight
+browser checks, 96 affected review/boundary tests and 140 prototype tests pass.
+A real desktop reply, private synthetic review, reconnect and explicit Continue
+completed one run with one request/reply and no engineering-tool enablement.
+Windows acceptance remains pending; this existing chat still reported the older
+`4d76cd14…` binding after installation. Do not infer 0.9 use from skill refresh.
+
+The main execution candidate remains d070e351 while its full merge gate runs,
+with the documented GB10 WebKit runtime exception. Earlier browser results were
+161 passed, 5 skipped and 18 WebKit launch failures; no all-browser pass is
+claimed. The 0.9 review-only implementation is a separate descendant and has not
+yet been included in that gate or pushed. Preserve both qualification scopes.
 
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its

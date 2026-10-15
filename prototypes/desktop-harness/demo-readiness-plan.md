@@ -100,6 +100,37 @@ Use the short [continuation prompt](demo-readiness-next-goal.md) with the existi
 [full execution scope](demo-readiness-goal.md). No new goal is necessary in the
 current thread: its implementation goal is already active.
 
+## Installed checkpoint — 15 October 2026
+
+0.9.0 is installed and actual package/protocol checks pass. The separate local
+review capability now works without enabling general MCP tasks. It still requires
+exact authorized manual enrollment; it is not a general workflow-authority grant.
+The private test used one actual desktop answer, rejected a stale subject,
+reconnected and completed the same run after explicit Continue. See
+[final candidate evidence](local-review-candidate-final-evidence.json),
+[installation](installed-09-evidence.json) and [walkthrough](desktop-09-walkthrough.md).
+
+Next actions, in order of useful available work:
+
+1. Finish the live d070e351 repository gate, retain the actual WebKit host exception,
+   run the required pre-push gate and prepare the first coherent integration PR.
+   Attribute the separate 0.9 descendant checks explicitly; do not claim they
+   were part of an earlier full gate.
+2. Verify 0.9 in a fresh Windows desktop conversation. This existing conversation
+   still reports an older binding. Keep native acceptance distinct from browser
+   fixture and installed-command tests.
+3. Complete the Windows-to-GB10 callback test using the discovered
+   `promaxgb10-9666` alias, then the existing account's genuine SteveCAD sign-in.
+   No account, callback or token substitution. The prepared Windows handoff stays
+   actionable; this chat has no callable Windows shell or port-forward control.
+4. Continue the original four-hole/six-hole SteveCAD and multi-tool demonstration
+   requirements. Qualify the required engineering task/image profiles separately;
+   local review support does not enable them.
+
+The synthetic local-review proof does not satisfy the engineering demonstrations.
+Remaining management gaps, real reviews, different-workflow regressions and
+platform-specific acceptance retain their original scope below.
+
 ## Outcome and recommended approach
 
 A user can stay in Codex to select or create a Wright workspace, connect its
