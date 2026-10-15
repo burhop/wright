@@ -10,6 +10,8 @@ import httpx
 from mcp.types import ToolAnnotations
 from pydantic import Field, StrictStr
 
+from api.schemas.workspace import WorkflowInputFilesResponse
+from core.process_interfaces import ProcessUI
 from core.process_validation import Contract, Digest, Identifier, canonical_digest
 from core.workflow_bundle import BundleInspection, WorkflowBundle
 
@@ -40,6 +42,14 @@ class ImportRequest(InspectRequest):
     expected_bundle_digest: Digest
 
 
+class AssetListRequest(Contract):
+    workspace_id: Identifier
+    session_id: Identifier
+    path: Annotated[StrictStr, Field(max_length=256)]
+    expected_storage_digest: Digest
+    kind: Literal["references", "interfaces"]
+
+
 class WrightRequestRejected(ValueError):
     """HTTP rejection with a status, preserving existing ValueError behavior."""
 
@@ -50,6 +60,69 @@ class WrightRequestRejected(ValueError):
 
 
 def register_native_source_tools(mcp, client):
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        ),
+        structured_output=True,
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workflow_transfer_assets(
+        request: AssetListRequest,
+    ) -> dict[str, Any]:
+        """List existing transfer candidates for one saved source; grant no authority."""
+        await client.scope(request.workspace_id, request.session_id)
+        source = await client.call(
+            "GET",
+            "/api/workspace/workflow-sources",
+            params={"session_id": request.session_id, "path": request.path},
+        )
+        if (
+            source.get("workspace_id") != request.workspace_id
+            or source.get("path") != request.path
+            or source.get("storage_digest") != request.expected_storage_digest
+        ):
+            raise ValueError(
+                "The saved workflow changed; reopen it before listing transfer assets"
+            )
+        if request.kind == "references":
+            result = WorkflowInputFilesResponse.model_validate(
+                await client.call(
+                    "GET",
+                    "/api/workspace/workflow-sources/input-files",
+                    params={"session_id": request.session_id},
+                )
+            )
+            if (
+                result.workspace_id != request.workspace_id
+                or len(result.files) > 20_000
+            ):
+                raise ValueError("Wright returned an invalid reference file list")
+            return result.model_dump(mode="json")
+        result = await client.call(
+            "GET",
+            "/api/workspace/process-interfaces/uis",
+            params={
+                "session_id": request.session_id,
+                "path": request.path,
+                "expected_storage_digest": request.expected_storage_digest,
+            },
+        )
+        values = result.get("interfaces")
+        if not isinstance(values, list) or len(values) > 256:
+            raise ValueError("Wright returned an invalid saved-interface list")
+        interfaces = [ProcessUI.model_validate(value) for value in values]
+        if any(
+            ui.process.workspace_id != request.workspace_id
+            or ui.process.source_path != request.path
+            for ui in interfaces
+        ):
+            raise ValueError("Saved interfaces belong to another process")
+        return {"interfaces": [ui.model_dump(mode="json") for ui in interfaces]}
+
     @mcp.tool(
         annotations=ToolAnnotations(
             readOnlyHint=True,

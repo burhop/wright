@@ -42,6 +42,45 @@ function setup() {
   };
 }
 
+it("lists reference files through a source-bound port and rejects foreign workspace lists", async () => {
+  const { call, client } = setup();
+  const files = [{ path: "inputs/brief.txt", name: "brief.txt" }];
+  call
+    .mockResolvedValueOnce(response({ workspace_id: "workspace", files }))
+    .mockResolvedValueOnce(response({ workspace_id: "other", files }));
+  expect(
+    await client.listFiles("workflows/design.workflow.wflow", digest),
+  ).toEqual(files);
+  expect(call.mock.calls[0]).toEqual([
+    "wright_workflow_transfer_assets",
+    {
+      request: {
+        workspace_id: "workspace",
+        session_id: "session",
+        path: "workflows/design.workflow.wflow",
+        expected_storage_digest: digest,
+        kind: "references",
+      },
+    },
+  ]);
+  await expect(
+    client.listFiles("workflows/design.workflow.wflow", digest),
+  ).rejects.toThrow("invalid reference file list");
+});
+
+it("does not turn failed interface discovery into an empty success", async () => {
+  const { call, client } = setup();
+  call
+    .mockResolvedValueOnce(response({ interfaces: [] }))
+    .mockResolvedValueOnce({ isError: true, content: [] });
+  expect(
+    await client.listInterfaces("workflows/design.workflow.wflow", digest),
+  ).toEqual([]);
+  await expect(
+    client.listInterfaces("workflows/design.workflow.wflow", digest),
+  ).rejects.toThrow("did not confirm");
+});
+
 it("uses only the exact native ports and preserves inspected definition identity", async () => {
   const { call, client } = setup();
   call

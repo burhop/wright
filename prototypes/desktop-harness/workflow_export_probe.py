@@ -51,6 +51,18 @@ async def main(state):
                 "wright_workspace_create", {"name": "Private workflow export proof"}
             )
             scope = {key: workspace[key] for key in ("workspace_id", "session_id")}
+            with sqlite3.connect(state / "wright.sqlite") as db:
+                workspace_root = Path(
+                    db.execute(
+                        "SELECT local_path FROM engineering_workspaces WHERE workspace_id=?",
+                        (scope["workspace_id"],),
+                    ).fetchone()[0]
+                )
+            fixture = workspace_root / "inputs/private-transfer-proof.txt"
+            fixture.parent.mkdir(parents=True, exist_ok=True)
+            fixture.write_text(
+                "Private transfer-list fixture; not an engineering output.\n"
+            )
             cases = {
                 "manufacturing": "packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/printed-replacement-part.workflow.wflow",
                 "stevecad": "examples/stevecad-demonstrations/prompt-to-reviewed-cad/prompt-to-reviewed-cad-native.workflow.wflow",
@@ -72,6 +84,19 @@ async def main(state):
                     "path": document["path"],
                     "expected_storage_digest": document["storage_digest"],
                 }
+                references = await call(
+                    "wright_workflow_transfer_assets",
+                    {"request": {**request, "kind": "references"}},
+                )
+                assert any(
+                    item["path"] == "inputs/private-transfer-proof.txt"
+                    for item in references["files"]
+                )
+                interfaces = await call(
+                    "wright_workflow_transfer_assets",
+                    {"request": {**request, "kind": "interfaces"}},
+                )
+                assert interfaces == {"interfaces": []}
                 exported = await call("wright_workflow_export", {"request": request})
                 if not exported.get("ok"):
                     evidence["rejection"] = exported
@@ -138,6 +163,8 @@ async def main(state):
                         ],
                         "accepted_source_unchanged": True,
                         "stale_source_denied": True,
+                        "reference_fixture_discovered": True,
+                        "saved_interface_list": "empty confirmed by owner; saved UI transfer unqualified",
                         "imported_source_digest": imported_document["storage_digest"],
                         "existing_destination_inspection_denied": True,
                         "import_can_run": report["can_run"],

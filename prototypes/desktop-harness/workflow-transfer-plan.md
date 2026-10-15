@@ -57,6 +57,22 @@ expanded to unrelated workspace files.
 
 ## Remaining tasks
 
+Asset-discovery checkpoint: `wright_workflow_transfer_assets` is a UI-only,
+read-only operation with two closed kinds: references and interfaces. It verifies
+the saved source before calling the existing input-file or interface-list owner;
+stale/foreign scopes fail. Shared dialog discovery can use injected functions
+without changing the web defaults or partial-failure behavior. The native client
+validates both result scopes. 56 Python boundary tests and 29 frontend tests pass;
+TypeScript, focused lint and diff checks pass.
+
+Fresh state03 actual-MCP proof discovers an explicitly private test text file,
+confirms the empty saved-interface list, and repeats both definition round trips
+without runs. Receipt:
+`/tmp/wright-desktop-workflow-transfer-state-20261015-03/workflow-export-proof.json`.
+State02 stopped before its frozen transport changed. Current API8193 uses state03,
+session55491. These file-list fixtures are not engineering inputs/results, and
+empty-interface discovery does not qualify transfer of a real saved interface.
+
 Frontend transport checkpoint: the existing bundle service now accepts a closed
 three-operation transport, preserving its web default and shared response
 validation. The shared dialog accepts that client; the native client binds exact
@@ -73,8 +89,8 @@ live plugin changed. The dialog injection is verified; the native panel menu,
 reference/interface discovery and exact imported-document navigation are not yet
 connected, and actual Windows delivery remains unverified.
 
-- Wire the shared dialog to explicit native ports, including existing reference
-  and saved-interface discovery. Preserve standard Wright/Hermes defaults.
+- Connect the shared dialog and qualified discovery ports to native panel controls
+  and exact imported-document navigation. Preserve standard Wright/Hermes defaults.
 - Finish the UI inspection/import journey and uncertain acknowledgement
   reconciliation. Never automatically repeat an import or overwrite a conflicting
   destination. Backend ports alone do not establish a complete user journey.

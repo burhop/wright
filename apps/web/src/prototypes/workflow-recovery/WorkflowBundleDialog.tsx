@@ -10,6 +10,7 @@ import {
   type WorkspaceWorkflowSourceDocument,
 } from "../../services/workspace-service";
 import { createInterfaceAuthoringClient } from "../../services/process-ui-authoring";
+import type { ProcessUI } from "@wright/process-client";
 import "./workflow-recovery.css";
 
 export function WorkflowBundleDialog({
@@ -18,12 +19,16 @@ export function WorkflowBundleDialog({
   onClose,
   onImported,
   transfer = workflowBundles,
+  listFiles,
+  listInterfaces,
 }: {
   document: WorkspaceWorkflowSourceDocument;
   sessionId: string;
   onClose: () => void;
   onImported: (path: string) => void;
   transfer?: WorkflowBundleClient;
+  listFiles?: () => Promise<Array<{ path: string; name: string }>>;
+  listInterfaces?: () => Promise<readonly ProcessUI[]>;
 }) {
   const [mode, setMode] = useState<"source" | "bundle">("source");
   const [files, setFiles] = useState<Array<{ path: string; name: string }>>([]);
@@ -177,18 +182,22 @@ export function WorkflowBundleDialog({
                 onClick={() =>
                   void perform(async () => {
                     const outcomes = await Promise.allSettled([
-                      workspaceService.getWorkspaceWorkflowInputFiles(
-                        sessionId,
-                        document.workspace_id,
-                      ),
-                      createInterfaceAuthoringClient(
-                        {
-                          workspace_id: document.workspace_id,
-                          source_path: document.path,
-                          source_digest: document.storage_digest,
-                        },
-                        sessionId,
-                      ).interfaces(),
+                      listFiles
+                        ? listFiles()
+                        : workspaceService.getWorkspaceWorkflowInputFiles(
+                            sessionId,
+                            document.workspace_id,
+                          ),
+                      listInterfaces
+                        ? listInterfaces()
+                        : createInterfaceAuthoringClient(
+                            {
+                              workspace_id: document.workspace_id,
+                              source_path: document.path,
+                              source_digest: document.storage_digest,
+                            },
+                            sessionId,
+                          ).interfaces(),
                     ]);
                     if (outcomes[0].status === "fulfilled")
                       setFiles(

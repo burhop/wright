@@ -1,11 +1,13 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { assertContract } from "@wright/process-client";
 import { createWorkflowBundleClient } from "../../services/workflow-bundles";
 
 export type NativeTransferCall = (
   tool:
     | "wright_workflow_export"
     | "wright_workflow_import_inspect"
-    | "wright_workflow_import",
+    | "wright_workflow_import"
+    | "wright_workflow_transfer_assets",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 
@@ -16,6 +18,20 @@ const tools = {
 } as const;
 const record = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === "object" && !Array.isArray(value);
+
+function payload(result: CallToolResult): Record<string, unknown> {
+  if (result.isError) throw new Error("Wright did not confirm this transfer.");
+  const text = result.content.find((item) => item.type === "text");
+  const value: unknown =
+    result.structuredContent ??
+    (text?.type === "text" ? JSON.parse(text.text) : null);
+  if (
+    !record(value) ||
+    new TextEncoder().encode(JSON.stringify(value)).length > 21 * 1024 * 1024
+  )
+    throw new Error("Wright returned an invalid transfer response.");
+  return value;
+}
 
 /** Three exact UI ports. The shared client still validates portable contracts. */
 export function createNativeTransferClient(
@@ -34,18 +50,7 @@ export function createNativeTransferClient(
     )
       throw new Error("The workflow transfer request is too large.");
     if (operation === "import") pendingImport = true;
-    const result = await call(tools[operation], { request });
-    if (result.isError)
-      throw new Error("Wright did not confirm this transfer.");
-    const text = result.content.find((item) => item.type === "text");
-    const value: unknown =
-      result.structuredContent ??
-      (text?.type === "text" ? JSON.parse(text.text) : null);
-    if (
-      !record(value) ||
-      new TextEncoder().encode(JSON.stringify(value)).length > 21 * 1024 * 1024
-    )
-      throw new Error("Wright returned an invalid transfer response.");
+    const value = payload(await call(tools[operation], { request }));
     if (value.ok === false) {
       if (
         operation === "import" &&
@@ -66,8 +71,56 @@ export function createNativeTransferClient(
     }
     return value;
   });
+  const assets = async (
+    kind: "references" | "interfaces",
+    path: string,
+    digest: string,
+  ) =>
+    payload(
+      await call("wright_workflow_transfer_assets", {
+        request: {
+          workspace_id: workspaceId,
+          session_id: sessionId,
+          path,
+          expected_storage_digest: digest,
+          kind,
+        },
+      }),
+    );
   return {
     ...client,
+    async listFiles(path: string, digest: string) {
+      const value = await assets("references", path, digest);
+      if (
+        value.workspace_id !== workspaceId ||
+        !Array.isArray(value.files) ||
+        value.files.length > 20_000
+      )
+        throw new Error("Wright returned an invalid reference file list.");
+      return value.files.map((file: unknown) => {
+        if (
+          !record(file) ||
+          typeof file.path !== "string" ||
+          typeof file.name !== "string"
+        )
+          throw new Error("Wright returned an invalid reference file.");
+        return { path: file.path, name: file.name };
+      });
+    },
+    async listInterfaces(path: string, digest: string) {
+      const value = await assets("interfaces", path, digest);
+      if (!Array.isArray(value.interfaces) || value.interfaces.length > 256)
+        throw new Error("Wright returned an invalid saved-interface list.");
+      return value.interfaces.map((raw: unknown) => {
+        const ui = assertContract("ProcessUI", raw);
+        if (
+          ui.process.workspace_id !== workspaceId ||
+          ui.process.source_path !== path
+        )
+          throw new Error("Saved interface belongs to another process.");
+        return ui;
+      });
+    },
     async import(...args: Parameters<typeof client.import>) {
       if (pendingImport)
         throw new Error(

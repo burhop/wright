@@ -235,3 +235,66 @@ def test_inspection_cannot_claim_readiness_or_change_bundle(export_port):
             asyncio.run(
                 server.call_tool("wright_workflow_import_inspect", {"request": args})
             )
+
+
+@pytest.mark.parametrize("kind", ["references", "interfaces"])
+def test_asset_discovery_reads_existing_owners_for_exact_source(export_port, kind):
+    server, client, request, _ = export_port
+    source = {
+        "workspace_id": "workspace",
+        "path": request["path"],
+        "storage_digest": request["expected_storage_digest"],
+    }
+    candidates = (
+        {
+            "workspace_id": "workspace",
+            "files": [{"path": "inputs/brief.txt", "name": "brief.txt"}],
+        }
+        if kind == "references"
+        else {"interfaces": []}
+    )
+    client.call.side_effect = [source, candidates]
+    _, reply = asyncio.run(
+        server.call_tool(
+            "wright_workflow_transfer_assets", {"request": {**request, "kind": kind}}
+        )
+    )
+    assert reply == candidates
+    assert client.call.await_count == 2
+    assert all(call.args[0] == "GET" for call in client.call.call_args_list)
+
+
+def test_changed_source_never_lists_transfer_assets(export_port):
+    server, client, request, _ = export_port
+    client.call.return_value = {
+        "workspace_id": "workspace",
+        "path": request["path"],
+        "storage_digest": "0" * 64,
+    }
+    with pytest.raises(Exception, match="saved workflow changed"):
+        asyncio.run(
+            server.call_tool(
+                "wright_workflow_transfer_assets",
+                {"request": {**request, "kind": "references"}},
+            )
+        )
+    assert client.call.await_count == 1
+
+
+def test_other_workspace_reference_list_is_rejected(export_port):
+    server, client, request, _ = export_port
+    client.call.side_effect = [
+        {
+            "workspace_id": "workspace",
+            "path": request["path"],
+            "storage_digest": request["expected_storage_digest"],
+        },
+        {"workspace_id": "other", "files": []},
+    ]
+    with pytest.raises(Exception, match="invalid reference file list"):
+        asyncio.run(
+            server.call_tool(
+                "wright_workflow_transfer_assets",
+                {"request": {**request, "kind": "references"}},
+            )
+        )
