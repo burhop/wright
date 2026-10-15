@@ -21,11 +21,13 @@ export function WorkflowBundleDialog({
   transfer = workflowBundles,
   listFiles,
   listInterfaces,
+  onOpenDestination,
 }: {
   document: WorkspaceWorkflowSourceDocument;
   sessionId: string;
   onClose: () => void;
-  onImported: (path: string) => void;
+  onImported: (path: string) => void | Promise<void>;
+  onOpenDestination?: (path: string) => Promise<void>;
   transfer?: WorkflowBundleClient;
   listFiles?: () => Promise<Array<{ path: string; name: string }>>;
   listInterfaces?: () => Promise<readonly ProcessUI[]>;
@@ -43,6 +45,9 @@ export function WorkflowBundleDialog({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [attemptedDestination, setAttemptedDestination] = useState<
+    string | null
+  >(null);
   const requestRevision = useRef(0);
   const dialogRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -411,6 +416,7 @@ export function WorkflowBundleDialog({
                 onClick={() =>
                   void perform(async () => {
                     if (!bundle || !report.can_import) return;
+                    setAttemptedDestination(destination);
                     const imported = await transfer.import(
                       sessionId,
                       bundle,
@@ -428,7 +434,7 @@ export function WorkflowBundleDialog({
                       `Imported ${imported.source.path}. Local setup and reviews remain required.`,
                     );
                     setReport(null);
-                    onImported(imported.source.path);
+                    await onImported(imported.source.path);
                   })
                 }
               >
@@ -437,6 +443,17 @@ export function WorkflowBundleDialog({
             </section>
           )}
           {error && <p role="alert">{error}</p>}
+          {error && attemptedDestination && onOpenDestination && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void perform(() => onOpenDestination(attemptedDestination))
+              }
+            >
+              Open saved destination
+            </button>
+          )}
           {message && <p role="status">{message}</p>}
         </div>
       </section>

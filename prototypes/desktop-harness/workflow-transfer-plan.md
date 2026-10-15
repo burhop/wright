@@ -57,6 +57,18 @@ expanded to unrelated workspace files.
 
 ## Remaining tasks
 
+Native-control checkpoint: the panel now opens the shared transfer dialog from
+**Export / import workflow** after rereading the exact accepted source. Drafts
+and pending working-view changes block entry; an open dialog blocks workspace
+navigation and run preparation. Reference/interface discovery uses the qualified
+native ports. Successful imports use the existing generation/dirty-guarded
+workflow opener in the same workspace. **Open saved destination** after an
+uncertain reply is read-only navigation to the attempted destination, never a
+second import or a completion claim. Unavailable destinations retain an explicit
+notice. 24 focused UI tests, TypeScript and lint pass before this final notice
+consolidation; browser/package/Windows checks are still pending. The generated
+native resource has not yet been rebuilt and installed.
+
 Durable import reservation checkpoint: the existing bundle owner now publishes
 its write-once manifest before assets, then publishes the source last. No receipt
 format, instruction bytes, successful response shape or new database is added.
@@ -105,8 +117,8 @@ live plugin changed. The dialog injection is verified; the native panel menu,
 reference/interface discovery and exact imported-document navigation are not yet
 connected, and actual Windows delivery remains unverified.
 
-- Connect the shared dialog and qualified discovery ports to native panel controls
-  and exact imported-document navigation. Preserve standard Wright/Hermes defaults.
+- Qualify the connected native panel controls and exact imported-document
+  navigation in the served browser/package and Windows host. Preserve web/Hermes defaults.
 - Finish the UI inspection/import journey and uncertain acknowledgement
   reconciliation. Never automatically repeat an import or overwrite a conflicting
   destination. Backend ports alone do not establish a complete user journey.

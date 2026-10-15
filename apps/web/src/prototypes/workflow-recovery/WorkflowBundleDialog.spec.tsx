@@ -53,6 +53,45 @@ function upload() {
     target: { files: [file] },
   });
 }
+
+it("opens only the attempted destination after an uncertain import without repeating it", async () => {
+  const transfer = {
+    export: vi.fn(),
+    inspect: vi.fn().mockResolvedValue(inspection),
+    import: vi.fn().mockRejectedValue(new Error("Import outcome unknown")),
+  };
+  const onOpenDestination = vi.fn().mockResolvedValue(undefined);
+  render(
+    <WorkflowBundleDialog
+      document={document}
+      sessionId="session"
+      onClose={vi.fn()}
+      onImported={vi.fn()}
+      transfer={transfer}
+      onOpenDestination={onOpenDestination}
+    />,
+  );
+  upload();
+  await waitFor(() =>
+    expect(screen.getByTestId("workflow-transfer-inspect")).not.toBeDisabled(),
+  );
+  fireEvent.click(screen.getByTestId("workflow-transfer-inspect"));
+  await screen.findByText("Definition can be imported");
+  fireEvent.click(screen.getByTestId("workflow-transfer-import"));
+  await screen.findByText("Import outcome unknown");
+  fireEvent.change(screen.getByTestId("workflow-transfer-destination"), {
+    target: { value: "workflows/other.workflow.wflow" },
+  });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Open saved destination" }),
+  );
+  await waitFor(() =>
+    expect(onOpenDestination).toHaveBeenCalledExactlyOnceWith(
+      "workflows/imported-process.workflow.wflow",
+    ),
+  );
+  expect(transfer.import).toHaveBeenCalledOnce();
+});
 it("uses the injected transfer owner without falling back to the web transport", async () => {
   const webInspect = vi.spyOn(workflowBundles, "inspect");
   const transfer = {
