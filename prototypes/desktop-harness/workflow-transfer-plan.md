@@ -10,6 +10,37 @@ WorkflowBundleDialog and authenticated workflow-bundles owners. Keep the neutral
 editor, draft guards, workspace identity and common-view fallback. V1–V7 apply.
 Export is not a run, engineering review, provider grant or confirmed host save.
 
+## Current checkpoint — merged baseline and packaged candidate
+
+The feature branch merged dev `3b994c56d43b311e290cf943376e0b83881500f5`
+without conflicts at local merge `f553c17e6066faa81bc7f2fac9328a3405bdb438`.
+PR156 is merged; its development image publication is still pending in the last
+observed run `38720558428`. The named installed plugin remains 0.11.0.
+Older state/version observations below are historical, not the current runtime.
+
+The native bundle now includes the transfer controls (2,261,707 bytes, zero
+external assets). The initial build failed because the dependency guard mistook
+`client.import(...)` for dynamic JavaScript import. Syntax inspection using the
+already pinned TypeScript dependency preserves the guard and distinguishes real
+imports from property calls, method declarations and strings. Five syntax cases
+passed, including nested dynamic-import rejection. Logs:
+`/tmp/wright-transfer-native-build-20261015.log` (initial failure),
+`/tmp/wright-transfer-native-build-20261015-02.log` (successful package).
+
+State03 was stopped before rebuilding. Fresh state04 runs on API8193, session67842,
+with explicit source paths for this worktree's workspace-service, core and API;
+it reuses only the isolated upload environment's installed dependencies.
+`/tmp/wright-desktop-workflow-transfer-state-20261015-04/workflow-export-proof.json`
+records passing actual MCP definition round trips for the two existing examples,
+with exact accepted bytes, stale-revision denial, occupied-destination denial,
+zero runs and no host download claim. This exercises the updated shared import
+owner. It does not establish saved-interface transfer or full engineering use.
+
+37 focused frontend tests and TypeScript pass after the merge and bundle rebuild.
+Test log: `/tmp/wright-transfer-ui-postmerge-20261015.log`.
+Served browser interactions, full repository gates and actual Windows panel/file
+acceptance remain pending. No candidate installation, push or release occurred.
+
 ## Implemented boundary
 
 The UI-only `wright_workflow_export` operation delegates to the existing export

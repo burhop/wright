@@ -4,6 +4,28 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
 import { writeFileSync } from "node:fs";
+import ts from "typescript";
+
+// Property calls such as client.import(...) are not dynamic module imports.
+// Inspect syntax so the dependency guard rejects only actual import expressions.
+function hasDynamicImport(code) {
+  const source = ts.createSourceFile(
+    "bundle.js",
+    code,
+    ts.ScriptTarget.Latest,
+    false,
+    ts.ScriptKind.JS,
+  );
+  function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      node.expression.kind === ts.SyntaxKind.ImportKeyword
+    )
+      return true;
+    return ts.forEachChild(node, visit);
+  }
+  return Boolean(visit(source));
+}
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const result = await build({
@@ -39,7 +61,7 @@ const unexpected = output.filter((item) =>
     ? !item.fileName.endsWith(".css")
     : item.imports.length ||
       item.dynamicImports.some((name) => name !== item.fileName) ||
-      /\bimport\s*\(/.test(item.code),
+      hasDynamicImport(item.code),
 );
 if (unexpected.length)
   throw new Error(
