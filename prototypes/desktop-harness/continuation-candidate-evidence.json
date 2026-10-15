@@ -1,0 +1,48 @@
+{
+  "candidate_commit": "6bf320e9",
+  "package_protocol": {
+    "package": "/tmp/wright-desktop-continuation-candidate/prototypes/desktop-harness/native-home-09-candidate/plugins/wright-desktop-gb10-prototype",
+    "version": "0.9.0",
+    "protocol": "2025-11-25",
+    "tool_count": 32,
+    "resource": {
+      "uri": "ui://wright/workflow/81213e889e67ac41310b76be60a381472a8f30fc9ff777613bfc86a106fd9f2c.html",
+      "sha256": "81213e889e67ac41310b76be60a381472a8f30fc9ff777613bfc86a106fd9f2c",
+      "bytes": 2210801
+    },
+    "files": {
+      ".codex-plugin/plugin.json": "91a07a5cbdd019c53aca4c4ae80f2b98a546fe9e87e6b446758aba9f57eff352",
+      ".mcp.json": "cf0c724cd69731554acb2cdba1360c17289e3e2e44124e15ef73c344de7f51c9",
+      "skills/wright-workflows/SKILL.md": "42a236e093bdaae091319916ee02edf0e1187e38939f3f6b3ee3280d90b45520"
+    },
+    "profile": "unavailable",
+    "boundary": "actual package command, MCP protocol and resource; no writes or native desktop acceptance"
+  },
+  "browser_report": "/tmp/wright-desktop-continuation-state-20261015-01/browser-home-1792027053178/report.json",
+  "browser_report_sha256": "3d8fe30203c441bd4b26548233065c392a83a8c3577ee0b8adb33b45ea58cb42",
+  "checks": [
+    "explicit UI workspace creation once, discovered exact session, no workflow execution",
+    "real isolated workspace and saved workflow source discovered",
+    "home opens shared editor and Back restores exact workspace without mutation",
+    "Refresh reconciles exact workspace/session and retains Files view without execution",
+    "Files lists and filters real scoped storage; unavailable operations explicit",
+    "explicit bounded text preview matches real saved bytes and closes without mutation",
+    "narrow home fits; unsaved source draft prevents workspace navigation",
+    "accepted source unchanged and no browser errors"
+  ],
+  "errors": [],
+  "boundary": "simulated MCP App host, actual MCP bridge; read-only navigation and optional explicit isolated workspace creation",
+  "native_desktop_verified": false,
+  "engineering_runs": 0,
+  "installed": false,
+  "retained_probe_failures": [
+    "Legacy editor probe omitted native-working-view; frozen configuration rejected initialization before tool calls.",
+    "Preparation helper assumed structuredContent; workspace created once, then discovered through MCP and reused after text-content parsing correction.",
+    "First browser launch had no prepared fixture; no UI operations."
+  ],
+  "remaining": [
+    "candidate same-run continuation",
+    "backup and scoped rollback",
+    "Windows native acceptance"
+  ]
+}
