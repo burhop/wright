@@ -1,0 +1,88 @@
+{
+  "state": "completed",
+  "run_id": "1c3cfd9d37c147ddb2766d7d431de2a8",
+  "request_digest": "dcc13e70f8604310f637b9178b0bf128fe62729c4bd0965db9b496ec041c569e",
+  "request_count": 1,
+  "response_count": 1,
+  "canonical_payload_bytes": 2055222,
+  "original_images": [
+    {
+      "name": "cad-isometric.png",
+      "sha256": "660ab79de420de3c365c75b56c1bfa42cabeb1fd59d9627eb348393b6899dcd0",
+      "bytes": 14306,
+      "index": 0
+    },
+    {
+      "name": "cad-top.png",
+      "sha256": "893a2487466d3adda514a4311fd1ec9be405e4a7ad3de9ffd0cbc895cbf58d22",
+      "bytes": 7257,
+      "index": 1
+    },
+    {
+      "name": "cad-front.png",
+      "sha256": "f0f03fe9077c5345b7869f1e401aa5d2aa4be459fbb793c73f80331013fe1d07",
+      "bytes": 4183,
+      "index": 2
+    },
+    {
+      "name": "render_isometric.png",
+      "sha256": "833f5158ebf712044a1cffaf6789eefee317e3f1879862e1562918e04213953f",
+      "bytes": 570582,
+      "index": 3
+    },
+    {
+      "name": "render_top.png",
+      "sha256": "fd93ba6d566b69fa5fc3dabce5a5bd08731814389601af84f45a3326a94aecdf",
+      "bytes": 566454,
+      "index": 4
+    },
+    {
+      "name": "render_front.png",
+      "sha256": "033f49254aae5b7dbb3991267f6d1c41219e2a464570b417d2f1070d761b852b",
+      "bytes": 375954,
+      "index": 5
+    }
+  ],
+  "saved_output": "/tmp/wright-desktop-six-image-state-20261015-01/workspaces/engineering-images-830442c291a7/outputs/perception.json",
+  "output_sha256": "9864de1d621efa32db4c65dae24b004c1d8f5fe662310e18a76ce40a24475e0e",
+  "model_delivery": "Six exact MCP ImageContent blocks decoded byte-for-byte into local PNGs and shown to this desktop model with view_image original detail. No image transform or alternate model. Native installed-plugin automatic presentation unverified.",
+  "scope": "Live supervised private transport/perception fixture with retained historical artifacts, not a new SteveCAD run or engineering acceptance. Same-run answer after explicit reconnect. Original relay exited 143 with cause unreported.",
+  "evidence": {
+    "engineering-images.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/engineering-images.json",
+      "sha256": "b6db25425e4ef79ef6b09fb4a0eef21b4f8fa4f4fc181d8f6ba051cce3f58f13"
+    },
+    "reconnect-completion.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/reconnect-completion.json",
+      "sha256": "3c34a76cb94d83e66b6c3d7c97368a0a0cab67e64a11bd4fe24b2e5feb9e3635"
+    },
+    "reconnect-observation.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/reconnect-observation.json",
+      "sha256": "f3c2df0f613be3555c4b219efd094eaf9b4915724456a17c4fbbc293209afd67"
+    },
+    "desktop-image-answer.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/desktop-image-answer.json",
+      "sha256": "f2e742ef36cabbd354b360628beecdc2c5c6ab69b742ce98cc2bd7cb37ab97e7"
+    },
+    "pending-image-task.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/pending-image-task.json",
+      "sha256": "df344734eac31fbf37a5c0e54b17fbe50c971be7ab9aeb3f7996f7931fa8e591"
+    },
+    "desktop-versions.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/desktop-versions.json",
+      "sha256": "ea097aa3c58741bb66560e906e39a90a09314f4389492952f20924af86a518f0"
+    },
+    "desktop-binding.json": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/desktop-binding.json",
+      "sha256": "01e5d574428876cdeabf6edf85d43e46acf93b8a459f04c23bb1cbffc11be779"
+    },
+    "fixture-failure-01.md": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/fixture-failure-01.md",
+      "sha256": "d8287bdb28f358169256bd5874463181ed0d81b0c4a6f1cb9a43a1d07d9139fd"
+    },
+    "fixture-failure-02.md": {
+      "path": "/tmp/wright-desktop-six-image-state-20261015-01/fixture-failure-02.md",
+      "sha256": "de5016d4aa09cc6d15fa0efedca2d6217ff287ee963ac06c3a966f4447e4130d"
+    }
+  }
+}

@@ -512,3 +512,33 @@ def test_local_review_does_not_enable_direct_tools(direct_boundary):
         check(enabled)
     assert denied.value.status_code == 503
     service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_engineering_profile_is_explicit_frozen_and_cannot_be_ambiguous(boundary):
+    from desktop_backend import DesktopBackend
+    import core.desktop_reasoning as contract
+    import hashlib
+    import json
+    from pathlib import Path
+
+    default, service, _ = boundary
+    legacy = DesktopBackend(service, default.state, 5201, image_inputs=True)
+    engineering = DesktopBackend(
+        service, default.state, 5201, engineering_image_inputs=True
+    )
+    assert engineering.image_inputs
+    assert engineering.binding.image_input_profile == "inline-png-jpeg-engineering-v1"
+    assert len({x.binding.digest for x in (default, legacy, engineering)}) == 3
+    manifest = json.loads((default.state / "desktop-versions.json").read_text())
+    assert (
+        manifest["files"]["contract"]
+        == hashlib.sha256(Path(contract.__file__).read_bytes()).hexdigest()
+    )
+    with pytest.raises(ValueError, match="Choose one"):
+        DesktopBackend(
+            service,
+            default.state,
+            5201,
+            image_inputs=True,
+            engineering_image_inputs=True,
+        )

@@ -540,3 +540,36 @@ async def test_preview_bridge_is_ui_only_and_read_only(monkeypatch):
         "/api/desktop/workspaces/a/file-preview",
         params={"session_id": "chat-a", "path": "notes.md"},
     )
+
+
+@pytest.mark.asyncio
+async def test_workspace_creation_conflict_is_actionable_without_path_disclosure(
+    discovery,
+):
+    from workspace_service.service import WorkspaceService
+
+    app, repository, _, create, _ = discovery
+    directory = create("Existing")
+    service = app.state.desktop_service
+    backend = app.state.desktop_backend
+    backend.clients["private-test-client"] = backend._now() + 30
+    before = repository.list_all()
+    sessions = repository.list_sessions("Existing")
+
+    async def create_owned(name, parent, agent, **kwargs):
+        WorkspaceService._ensure_workspace_available(service, name, str(directory))
+        raise AssertionError("The real owner must reject an existing directory")
+
+    service.create_workspace = AsyncMock(side_effect=create_owned)
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            "/api/desktop/workspaces", json={"name": "Existing"}
+        )
+    assert response.status_code == 409
+    assert "Open the existing workspace" in response.json()["detail"]
+    assert str(directory) not in response.text
+    service.create_workspace.assert_awaited_once()
+    assert repository.list_all() == before
+    assert repository.list_sessions("Existing") == sessions

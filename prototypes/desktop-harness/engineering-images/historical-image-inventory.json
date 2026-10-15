@@ -1,0 +1,97 @@
+{
+  "source": "/tmp/wright-desktop-custom-connections/examples/stevecad-demonstrations/prompt-to-reviewed-cad/prompt-to-reviewed-cad-native.workflow.wflow",
+  "source_sha256": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+  "scope": "Read-only historical artifact sizes. Not new engineering results, complete request serialization or model delivery.",
+  "cases": [
+    {
+      "case": "block-native-006",
+      "files": [
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/cad-isometric.png",
+          "bytes": 14306,
+          "sha256": "660ab79de420de3c365c75b56c1bfa42cabeb1fd59d9627eb348393b6899dcd0",
+          "base64_bytes": 19076
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/cad-top.png",
+          "bytes": 7257,
+          "sha256": "893a2487466d3adda514a4311fd1ec9be405e4a7ad3de9ffd0cbc895cbf58d22",
+          "base64_bytes": 9676
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/cad-front.png",
+          "bytes": 4183,
+          "sha256": "f0f03fe9077c5345b7869f1e401aa5d2aa4be459fbb793c73f80331013fe1d07",
+          "base64_bytes": 5580
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_isometric.png",
+          "bytes": 570582,
+          "sha256": "833f5158ebf712044a1cffaf6789eefee317e3f1879862e1562918e04213953f",
+          "base64_bytes": 760776
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_top.png",
+          "bytes": 566454,
+          "sha256": "fd93ba6d566b69fa5fc3dabce5a5bd08731814389601af84f45a3326a94aecdf",
+          "base64_bytes": 755272
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_front.png",
+          "bytes": 375954,
+          "sha256": "033f49254aae5b7dbb3991267f6d1c41219e2a464570b417d2f1070d761b852b",
+          "base64_bytes": 501272
+        }
+      ],
+      "total_raw_bytes": 1538736,
+      "base64_lower_bound": 2051652,
+      "current_request_limit": 262144,
+      "fits_current_request": false
+    },
+    {
+      "case": "six-hole-native-001",
+      "files": [
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/cad-isometric.png",
+          "bytes": 16634,
+          "sha256": "a7c51d62449b505f9c61a6f069199c02cfa74ac0785686692bd24749e34275c1",
+          "base64_bytes": 22180
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/cad-top.png",
+          "bytes": 7797,
+          "sha256": "5202e51ef9a6f49b5769ff07718a0043fe84ba98d16ba224eba064a1998da06a",
+          "base64_bytes": 10396
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/cad-front.png",
+          "bytes": 4181,
+          "sha256": "fa95f263554b2121cc2bdc3a114f58e19d769e3bc879c1a38e8a95ceaabc59d1",
+          "base64_bytes": 5576
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/render_isometric.png",
+          "bytes": 572464,
+          "sha256": "8be535e7f0ca08ab3e1cecb1153d8bab45c6465a986389e4fab0d5c75acb3db5",
+          "base64_bytes": 763288
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/render_top.png",
+          "bytes": 574666,
+          "sha256": "f9e17b8d0e248c8bb4fbc94331963d495f567c00c00b8d551f4efd799bfcc772",
+          "base64_bytes": 766224
+        },
+        {
+          "path": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/six-hole-native-001/outputs/render_front.png",
+          "bytes": 376092,
+          "sha256": "b337052865bb3a6173d672a3047c82e78eeb61e3c1c6c73ac98f4b68538f37c6",
+          "base64_bytes": 501456
+        }
+      ],
+      "total_raw_bytes": 1551834,
+      "base64_lower_bound": 2069120,
+      "current_request_limit": 262144,
+      "fits_current_request": false
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "source_sha256": "04a55022d096694bee841163ee710b26f573affd47f16aa789bd403231e2c5de",
+  "scope": "Saved compiled review instructions plus four retained documents and six original images. Diagnostic assembly, not a runtime-resolved complete request: export identity, render geometry result and runtime framing are not included.",
+  "measurements": [
+    {
+      "case": "block-native-006",
+      "serialized_bytes": 2076902,
+      "payload_sha256": "deb7469c9927d7f9ca87ba59fda1ee69e31cc13870e93591a5ac3f76110400b0",
+      "text_bytes": 23786,
+      "image_count": 6
+    },
+    {
+      "case": "six-hole-native-001",
+      "serialized_bytes": 2100014,
+      "payload_sha256": "985b4897fb38d7a2d712f26fc7cdd2cb102fb6d3c2418e993bc0f5d0520d7b33",
+      "text_bytes": 29354,
+      "image_count": 6
+    }
+  ]
+}

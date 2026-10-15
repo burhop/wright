@@ -9,16 +9,25 @@ import pytest
 from core.desktop_reasoning import DesktopHarnessBinding, DesktopReasoningRequest
 
 
-@pytest.fixture(params=["response", "action"])
+@pytest.fixture(
+    params=[
+        (kind, profile)
+        for kind in ("response", "action")
+        for profile in ("inline-png-jpeg-v1", "inline-png-jpeg-engineering-v1")
+    ]
+)
 def image_case(monkeypatch, request):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
     from mcp_bridge import server
 
+    kind, profile = request.param
     root = Path(__file__).resolve().parents[3]
-    data = (
-        root
-        / "artifacts/stevecad-demonstrations/qualification/native/06-inspect-coupon-1.png"
-    ).read_bytes()
+    image_path = (
+        "artifacts/stevecad-demonstrations/qualification/native/06-inspect-coupon-1.png"
+        if profile == "inline-png-jpeg-v1"
+        else "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_isometric.png"
+    )
+    data = (root / image_path).read_bytes()
     encoded = base64.b64encode(data).decode()
     request = DesktopReasoningRequest(
         request_id="request",
@@ -27,10 +36,10 @@ def image_case(monkeypatch, request):
         run_id="run",
         ordinal=1,
         created_at="2026-10-14T00:00:00Z",
-        kind=request.param,
+        kind=kind,
         output_format="text",
         binding=DesktopHarnessBinding(
-            connection_id="connection", image_input_profile="inline-png-jpeg-v1"
+            connection_id="connection", image_input_profile=profile
         ),
         instruction_set_digest="a" * 64,
         payload={
