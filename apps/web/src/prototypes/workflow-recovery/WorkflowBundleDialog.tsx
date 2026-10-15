@@ -93,7 +93,7 @@ export function WorkflowBundleDialog({
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
     setMessage(
-      "Workflow transfer downloaded. Saved instructions are included; execution and approvals are not transferred.",
+      "Download requested. Check your downloads for the workflow transfer. Saved instructions are included; execution and approvals are not transferred.",
     );
   };
   return (

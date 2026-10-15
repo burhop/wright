@@ -228,7 +228,7 @@ it("exports only selected files and active interfaces on the exact saved revisio
       ["ui-current"],
     ),
   );
-  await screen.findByText(/Workflow transfer downloaded/);
+  await screen.findByText(/Download requested. Check your downloads/);
 });
 
 it("names exact dependencies beside their findings and keeps diagnostic codes in details", async () => {
