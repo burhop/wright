@@ -23,19 +23,20 @@ runtime source/dependency files matching the merge tree. See
 `/tmp/wright-dev-20a743ec-deployment-evidence/deployment.json` for the bounded proof.
 This is shared web UI qualification, not Windows native plugin acceptance.
 
-The named plugin remains **0.10.0**, frozen at `/tmp/wright-desktop-template-entry`.
-The current conversation reports connected, image input unavailable and model/app
-identity unreported. Do not infer its loaded package version from that status.
-The embedded Codex chat pilot and authoring/workflow gates remain separate.
+The named plugin is **0.11.0**, frozen at `/tmp/wright-desktop-custom-candidate`.
+Its actual installed package/protocol/resource match the qualified candidate;
+all 21 older cache files and unrelated settings were preserved. See
+[installation evidence](installed-011-evidence.json) and
+[walkthrough](desktop-011-walkthrough.md). This does not identify the package
+loaded by an existing chat or establish Windows native acceptance.
 
-The active custom-connection candidate is `/tmp/wright-desktop-custom-connections`,
-branch `codex/desktop-custom-connections`. Its full local gate passed at828f992e
-with the documented GB10 WebKit exception. A subsequent two-label presentation
-correction and rebuilt native panel passed eight component and five read-only
-served-browser checks; these are distinct from that earlier full gate. Generated
-distributed assets, current-dev reconciliation, final push checks and CI remain.
+The custom-connection candidate is `/tmp/wright-desktop-custom-connections`,
+branch `codex/desktop-custom-connections`. Its final full local gate passed at
+934c70e52487ca9705fe4b79225699a88132d44f with the documented GB10 WebKit
+exception. It includes the final wording, distributed assets and dev20a743ec
+integration. Normal push checks and current-head PR CI remain required.
 See [custom connection plan](custom-connections-plan.md) and its evidence index.
-No custom-connection push or installed plugin update has occurred.
+The embedded Codex chat pilot and generated-authoring gates remain separate.
 
 New private fault proofs retain the same run after an image-bearing pending
 request and after a real enrolled file inspection whose receipt was withheld.
@@ -43,7 +44,7 @@ Both require reconciliation; no automatic continuation is claimed. These are
 read-only fixture checks, not uncertain external-write qualification or fresh CAD.
 See pending-action-restart-evidence.json and dispatch-restart-evidence.json.
 
-Next: finish the coherent custom-connection candidate and named update; qualify
+Next: finish custom-connection branch integration; qualify
 Windows callback routing using the already discovered `promaxgb10-9666` alias and
 obtain the existing account's genuine SteveCAD sign-in. Then complete the original
 four/six-hole CAD and heat-spreader multi-tool runs with exact outputs and genuine

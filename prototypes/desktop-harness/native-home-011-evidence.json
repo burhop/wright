@@ -36,12 +36,11 @@
       }
     }
   },
-  "installed": false,
+  "installed": true,
   "windows_native_acceptance": false,
   "engineering_acceptance": false,
   "remaining": [
-    "Final repository gate and push checks",
-    "Private named-plugin backup, update and installed verification",
+    "Final push checks and current-head PR CI",
     "Windows callback/sign-in and complete engineering demonstrations"
   ],
   "preserved_fixture_failures": [
@@ -53,5 +52,18 @@
     "sha256": "e5b3f573aef47b4bc9568393475af2e1f01fe1e8e140f71b647c63700567ce39",
     "checks_passed": 4,
     "scope": "exact package command, combined profile; synthetic source review, no installation/provider call"
+  },
+  "installation_evidence": "installed-011-evidence.json",
+  "full_local_gate": {
+    "head": "934c70e52487ca9705fe4b79225699a88132d44f",
+    "command": "scripts/check-dev-merge.sh",
+    "exit_code": 0,
+    "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/merge-934c70e5.log",
+    "log_sha256": "cb97c379dfd86bae8287d44c80c676148c0936124cd09468d0015ef8a9cccbac",
+    "image": "wright-desktop-gate:custom-75822197",
+    "limits": [
+      "GB10 WebKit startup limitation: SKIP_PLAYWRIGHT=1; normal Chromium push gate and supported-host browser CI remain required",
+      "Prototype-specific private browser/MCP proofs are separate from repository suites"
+    ]
   }
 }

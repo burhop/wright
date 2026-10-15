@@ -2,7 +2,22 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
-## Next work — authorized 14 October 2026
+## Current checkpoint — 15 October 2026
+
+Named0.11 is installed and protocol/resource verified. Its custom HTTPS connection
+flow, explicit source review and saved-plan discovery have isolated qualification.
+See [installation evidence](installed-011-evidence.json),
+[walkthrough](desktop-011-walkthrough.md) and the current
+[demo readiness plan](demo-readiness-plan.md). The full local custom-connection
+gate passed at934c70e5 with the documented GB10 WebKit limitation; push checks,
+current-head CI, dev integration and deployment proof remain outstanding.
+
+The separate image follow-on lives at /tmp/wright-desktop-engineering-images.
+Its local six-original-image and owner-loss proofs do not enable that profile
+in installed0.11 or replace fresh SteveCAD/heat-spreader engineering runs,
+Robot/manufacturing regressions, actual Windows acceptance or genuine reviews.
+
+## Historical next-work checkpoint — 14 October 2026
 
 See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.md#current-continuation-checkpoint--14-october-2026)
 and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;

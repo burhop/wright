@@ -1,0 +1,61 @@
+{
+  "verification": {
+    "installed_version": "0.11.0",
+    "only_named_marketplace_source_changed": true,
+    "old_cache_files_preserved": 21,
+    "old_cache_restored_files": [
+      "wright-desktop-gb10-prototype/0.7.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.10.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.8.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.6.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.4.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.3.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.9.0/.mcp.json",
+      "wright-desktop-gb10-prototype/0.9.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.9.0/skills/wright-workflows/SKILL.md",
+      "wright-desktop-gb10-prototype/0.3.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.3.0/skills/wright-workflows/SKILL.md",
+      "wright-desktop-gb10-prototype/0.4.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.4.0/skills/wright-workflows/SKILL.md",
+      "wright-desktop-gb10-prototype/0.6.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.6.0/skills/wright-workflows/SKILL.md",
+      "wright-desktop-gb10-prototype/0.8.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.8.0/skills/wright-workflows/SKILL.md",
+      "wright-desktop-gb10-prototype/0.10.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.10.0/skills/wright-workflows/SKILL.md",
+      "wright-desktop-gb10-prototype/0.7.0/.codex-plugin/plugin.json",
+      "wright-desktop-gb10-prototype/0.7.0/skills/wright-workflows/SKILL.md"
+    ],
+    "package_files": {
+      ".mcp.json": "2bf3c750610237e2e607a3f7245314e11605f9427363ae2f7b2d2858f8c68966",
+      ".codex-plugin/plugin.json": "6086e11cf8eb91d5ca56e641e696397baf98a4ac660ee3b39e4840d2c041607a",
+      "skills/wright-workflows/SKILL.md": "102f3840ef98128df5d2e0b5c08f3deb9ae120f4c59f252f900cbb1afebb0ae1"
+    },
+    "backup": "/tmp/wright-desktop-plugin-update-20261015-03"
+  },
+  "protocol": {
+    "package": "/home/burhop/.codex/plugins/cache/wright-desktop-gb10-prototype/wright-desktop-gb10-prototype/0.11.0",
+    "version": "0.11.0",
+    "protocol": "2025-11-25",
+    "tool_count": 36,
+    "resource": {
+      "uri": "ui://wright/workflow/51bff22d7e8a4f9882483ba74a77ae5599cf60f348ce3b20e2f7691ef6d56fbc.html",
+      "sha256": "51bff22d7e8a4f9882483ba74a77ae5599cf60f348ce3b20e2f7691ef6d56fbc",
+      "bytes": 2229635
+    },
+    "files": {
+      ".codex-plugin/plugin.json": "6086e11cf8eb91d5ca56e641e696397baf98a4ac660ee3b39e4840d2c041607a",
+      ".mcp.json": "2bf3c750610237e2e607a3f7245314e11605f9427363ae2f7b2d2858f8c68966",
+      "skills/wright-workflows/SKILL.md": "102f3840ef98128df5d2e0b5c08f3deb9ae120f4c59f252f900cbb1afebb0ae1"
+    },
+    "profile": "unavailable",
+    "boundary": "actual package command, MCP protocol and resource; no writes or native desktop acceptance"
+  },
+  "runtime_commit": "7afc90c48defa2fdd0fd645b780e597433d72706",
+  "state": "/tmp/wright-desktop-home-011-state-20261015-01",
+  "api_port": 8185,
+  "installed": true,
+  "windows_acceptance": false,
+  "engineering_acceptance": false,
+  "observed_at": "2026-10-15T04:51:18.036147+00:00"
+}

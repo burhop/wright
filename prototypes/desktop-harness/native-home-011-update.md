@@ -1,6 +1,6 @@
 # Named 0.11.0 candidate and scoped rollback
 
-Prepared, not installed. The submitted goal authorizes this named update after
+Installed and protocol/resource verified on 15 October 2026. The submitted goal authorizes this named update after
 exact qualification and backup. No other plugin, service or setting changes.
 
 Runtime: `/tmp/wright-desktop-custom-candidate`, frozen from the tested feature.
@@ -52,6 +52,7 @@ Eleven home/template/editor browser checks and four custom-source browser checks
 passed in the combined profile. A synthetic review completed the same run after
 reconnect and explicit Continue; a stale subject was rejected. These are private
 GB10 browser/MCP checks, not Windows or engineering acceptance. See
-native-home-011-evidence.json. Repository gates, named backup/update and installed
-verification remain pending. The first fixture launcher and probe assertion
+native-home-011-evidence.json. The full local gate passed with the recorded GB10 WebKit host exception.
+Named backup/update and installed verification passed; see installed-011-evidence.json.
+Normal push checks and current-head PR CI remain required. The first fixture launcher and probe assertion
 failures are retained; runtime guards and metadata were not weakened.
