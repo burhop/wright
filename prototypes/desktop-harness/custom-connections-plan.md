@@ -181,3 +181,23 @@ See custom-connections-evidence.json for exact resource/report hashes and screen
 Earlier screenshots/reports remain in the private state directory. This does not
 establish actual Windows native hosting, approval/apply, authentication, provider
 validation or engineering readiness. Named installed 0.10.0 remains unchanged.
+
+## Real restart and registry-only apply
+
+Actual owned API restart preserved all five earlier plans exactly (matching
+record hashes), rejected the transient preview with HTTP409, and created no new
+plan or effect. Before/after logs, scripts and receipts remain in the isolated
+state. Only the verified private API was stopped; installed services were untouched.
+
+A subsequent explicit browser test created a distinct fictional endpoint plan,
+proved unapproved apply was denied, then clicked approval and apply once each.
+The actual owner completed one registry-only onboarding run. Independent readback
+confirms installed=true, active=false, default_enabled=false and no workspace
+enablement. No protocol-validation/enable tool was called. The six browser
+checks and registry readback are indexed in custom-connections-evidence.json.
+These are synthetic setup reviews and actual local registration, not live provider
+validation, credentials, SteveCAD OAuth or engineering outputs.
+
+SteveCAD registration was already qualified on14October; do not repeat it as new
+progress. Existing confirmed account setup still needs Windows-to-GB10 callback
+routing and genuine user OAuth consent before authenticated engineering runs.

@@ -40,5 +40,21 @@
       "No approval, installation or provider network call",
       "Synthetic publisher completion for private fictional endpoint"
     ]
+  },
+  "restart": {
+    "report": "/tmp/wright-desktop-custom-source-state-20261015-01/restart-result.json",
+    "sha256": "7080d76b25d6e9a7d2df8a4cbda361b8017d4909878f85d06cc7277b31837cc4",
+    "checks": [
+      "transient preview rejected after real backend restart",
+      "exact durable plans unchanged",
+      "no automatic plan creation, approval or application"
+    ]
+  },
+  "registry_registration": {
+    "report": "/tmp/wright-desktop-custom-source-state-20261015-01/registration-1792036067667/report.json",
+    "report_sha256": "f767fafe1b6b777f1618c024eece90a553436321d86f62f36a837272788d30c8",
+    "readback": "/tmp/wright-desktop-custom-source-state-20261015-01/registration-1792036067667/registry-readback.json",
+    "readback_sha256": "0e34a34bd4168cca5ee2dcfdf607aa1dcfec913eee23edd4690387c59cff026e",
+    "scope": "Private fictional endpoint; synthetic source/setup approval; actual registry-only apply, not provider connection or engineering qualification"
   }
 }
