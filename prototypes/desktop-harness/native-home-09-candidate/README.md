@@ -1,6 +1,6 @@
 # Named experimental 0.9.0 candidate
 
-Prepared and locally qualified, not installed. Installed 0.8.0 remains unchanged.
+Installed and locally qualified at 0.9.0. Prior 0.8.0 cache, service and state remain preserved.
 
 Refresh preserves the exact workspace/session. Explicit Continue uses the existing
 process action owner. Local review qualification is now separate from enrolled

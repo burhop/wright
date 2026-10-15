@@ -1,6 +1,6 @@
 # Named 0.9.0 update and rollback
 
-Prepared; not yet applied. The saved demo-readiness goal authorizes only the
+Applied and installed-package verified; Windows acceptance pending. The saved demo-readiness goal authorizes only the
 named prototype update after concrete qualification and backup. No new approval
 is required within that scope. Do not restart the desktop.
 
@@ -41,3 +41,7 @@ After applying, verify actual installed package bytes, version, 32-tool protocol
 and exact resource digest. Verify older named caches are retained byte-for-byte.
 Retain all new test state even on rollback. A fresh conversation may be needed to
 observe new plugin tools; old chats and user evidence must remain intact.
+
+Installation evidence: installed-09-evidence.json. Private backup and command
+receipts: `/tmp/wright-desktop-plugin-update-20261015-01`. All 15 prior cache files
+were restored byte-for-byte after CLI eviction. No unrelated configuration changed.
