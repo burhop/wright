@@ -44,5 +44,19 @@
     "candidate same-run continuation",
     "backup and scoped rollback",
     "Windows native acceptance"
-  ]
+  ],
+  "continuation_qualification": {
+    "result": "blocked by named profile before input preparation",
+    "state": "/tmp/wright-desktop-continuation-state-20261015-01",
+    "source_digest": "55a967ebbe42ce78d5be8f7692e1cc5b3cd68275025bf11f6152f4273b7b97c9",
+    "workspace_id": "311287c0-182e-48ec-a214-876523987a17",
+    "observed_http_status": 503,
+    "bridge_reason": "OUTCOME_UNKNOWN",
+    "process_input_snapshots": 0,
+    "desktop_reasoning_requests": 0,
+    "desktop_reasoning_responses": 0,
+    "cause": "qualify_digital_source requires enrolled_mcp_tasks for exact local-review actions; named profile disables it",
+    "no_retry": true,
+    "installation_ready": false
+  }
 }
