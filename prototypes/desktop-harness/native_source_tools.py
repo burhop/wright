@@ -11,7 +11,7 @@ from mcp.types import ToolAnnotations
 from pydantic import Field, StrictStr
 
 from core.process_validation import Contract, Digest, Identifier, canonical_digest
-from core.workflow_bundle import WorkflowBundle
+from core.workflow_bundle import BundleInspection, WorkflowBundle
 
 
 class ExportRequest(Contract):
@@ -29,6 +29,17 @@ class ExportResponse(Contract):
     bundle_digest: Digest
 
 
+class InspectRequest(Contract):
+    workspace_id: Identifier
+    session_id: Identifier
+    bundle: WorkflowBundle
+    destination_path: Annotated[StrictStr, Field(max_length=256)]
+
+
+class ImportRequest(InspectRequest):
+    expected_bundle_digest: Digest
+
+
 class WrightRequestRejected(ValueError):
     """HTTP rejection with a status, preserving existing ValueError behavior."""
 
@@ -39,6 +50,78 @@ class WrightRequestRejected(ValueError):
 
 
 def register_native_source_tools(mcp, client):
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        ),
+        structured_output=True,
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workflow_import_inspect(request: InspectRequest) -> dict[str, Any]:
+        """Inspect a definition for this exact destination; never import or run it."""
+        await client.scope(request.workspace_id, request.session_id)
+        result = await client.call(
+            "POST",
+            "/api/workspace/workflow-bundles/inspect",
+            json=request.model_dump(mode="json", exclude={"workspace_id"}),
+        )
+        report = BundleInspection.model_validate(result)
+        if report.bundle_digest != canonical_digest(request.bundle):
+            raise ValueError("Wright returned inspection for a different bundle")
+        return report.model_dump(mode="json")
+
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=False,
+            destructiveHint=False,
+            idempotentHint=False,
+            openWorldHint=False,
+        ),
+        structured_output=True,
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workflow_import(request: ImportRequest) -> dict[str, Any]:
+        """Import an inspected definition through Wright's write-once owner."""
+        dispatched = False
+        try:
+            if canonical_digest(request.bundle) != request.expected_bundle_digest:
+                raise ValueError("Bundle changed after inspection")
+            await client.scope(request.workspace_id, request.session_id)
+            dispatched = True
+            result = await client.call(
+                "POST",
+                "/api/workspace/workflow-bundles/import",
+                json=request.model_dump(mode="json", exclude={"workspace_id"}),
+            )
+            source = result["source"]
+            report = BundleInspection.model_validate(result["inspection"])
+            if (
+                source["workspace_id"] != request.workspace_id
+                or source["path"] != request.destination_path
+                or source["source"] != request.bundle.source
+                or source["storage_digest"] != request.bundle.source_digest
+                or source["metadata_authority"] != "wright_host"
+                or report.bundle_digest != request.expected_bundle_digest
+            ):
+                raise ValueError("Import reply differs from the requested definition")
+        except (httpx.HTTPError, ValueError, PermissionError, KeyError, TypeError):
+            return {
+                "ok": False,
+                "error": {
+                    "code": "OUTCOME_UNKNOWN" if dispatched else "IMPORT_REJECTED",
+                    "outcome_known": not dispatched,
+                    "message": (
+                        "Wright did not confirm this import. Inspect the destination and import manifest before another action; some files may already exist."
+                        if dispatched
+                        else "Wright rejected this import before submission. Recheck its workspace and inspected bundle."
+                    ),
+                },
+            }
+        return {"ok": True, "document": result}
+
     @mcp.tool(
         annotations=ToolAnnotations(
             readOnlyHint=True,

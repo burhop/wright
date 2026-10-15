@@ -1,4 +1,4 @@
-"""Actual owner/MCP definition export; no execution, review or host download."""
+"""Actual owner/MCP definition transfer; no execution, review or host download."""
 
 import asyncio
 import hashlib
@@ -18,7 +18,7 @@ async def main(state):
     root = Path(__file__).resolve().parents[2]
     (state / "workflow-export.started").touch(exist_ok=False)
     receipt = state / "workflow-export-proof.json"
-    evidence = {"scope": "definition export only", "cases": []}
+    evidence = {"scope": "definition transfer only", "cases": []}
 
     def save():
         receipt.write_text(json.dumps(evidence, indent=2) + "\n")
@@ -90,6 +90,43 @@ async def main(state):
                     "wright_workflow_read", {**scope, "path": document["path"]}
                 )
                 assert observed["source"] == document["source"]
+                transfer = {
+                    **scope,
+                    "bundle": exported["bundle"],
+                    "destination_path": f"workflows/import-{label}.workflow.wflow",
+                }
+                report = await call(
+                    "wright_workflow_import_inspect", {"request": transfer}
+                )
+                if not report["can_import"]:
+                    evidence["inspection_rejection"] = report
+                    save()
+                    raise RuntimeError(
+                        "Original definition requires correction; no simplification"
+                    )
+                assert report["can_run"] is False
+                imported = await call(
+                    "wright_workflow_import",
+                    {
+                        "request": {
+                            **transfer,
+                            "expected_bundle_digest": report["bundle_digest"],
+                        }
+                    },
+                )
+                if not imported.get("ok"):
+                    evidence["import_failure"] = imported
+                    save()
+                    raise RuntimeError(
+                        "Import not confirmed; inspect state, never retry"
+                    )
+                imported_document = imported["document"]["source"]
+                assert imported_document["source"] == document["source"]
+                assert imported_document["storage_digest"] == document["storage_digest"]
+                duplicate = await call(
+                    "wright_workflow_import_inspect", {"request": transfer}
+                )
+                assert duplicate["can_import"] is False
                 evidence["cases"].append(
                     {
                         "original": relative,
@@ -101,6 +138,9 @@ async def main(state):
                         ],
                         "accepted_source_unchanged": True,
                         "stale_source_denied": True,
+                        "imported_source_digest": imported_document["storage_digest"],
+                        "existing_destination_inspection_denied": True,
+                        "import_can_run": report["can_run"],
                     }
                 )
                 save()

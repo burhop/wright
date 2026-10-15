@@ -137,3 +137,101 @@ def test_export_is_ui_only_read_operation(export_port):
     assert tool.meta["ui"]["visibility"] == ["app"]
     assert tool.annotations.readOnlyHint
     assert not tool.annotations.destructiveHint
+
+
+def import_args(request, exported):
+    return {
+        "workspace_id": request["workspace_id"],
+        "session_id": request["session_id"],
+        "destination_path": "workflows/imported.workflow.wflow",
+        "bundle": exported["bundle"],
+        "expected_bundle_digest": exported["bundle_digest"],
+    }
+
+
+def import_call(server, args):
+    return asyncio.run(server.call_tool("wright_workflow_import", {"request": args}))[1]
+
+
+def inspection(exported):
+    return {
+        "bundle_digest": exported["bundle_digest"],
+        "can_import": True,
+        "can_run": False,
+        "diagnostics": [],
+        "external_dependencies": [],
+        "requirements": [],
+    }
+
+
+def test_import_keeps_owner_source_and_requires_local_readiness(export_port):
+    server, client, request, exported = export_port
+    args = import_args(request, exported)
+    owner = {
+        "source": {
+            "workspace_id": "workspace",
+            "path": args["destination_path"],
+            "source": exported["bundle"]["source"],
+            "storage_digest": exported["bundle"]["source_digest"],
+            "metadata_authority": "wright_host",
+        },
+        "imported_paths": ["imported-assets/imported/manifest.json"],
+        "inspection": inspection(exported),
+    }
+    client.call.return_value = owner
+    assert import_call(server, args) == {"ok": True, "document": owner}
+    assert client.call.call_args.args == (
+        "POST",
+        "/api/workspace/workflow-bundles/import",
+    )
+    assert client.call.await_count == 1
+    assert not owner["inspection"]["can_run"]
+
+
+@pytest.mark.parametrize("fault", ["timeout", "owner-422", "malformed-reply"])
+def test_unconfirmed_import_is_unknown_and_never_replayed(export_port, fault):
+    from native_source_tools import WrightRequestRejected
+
+    server, client, request, exported = export_port
+    if fault == "timeout":
+        client.call.side_effect = httpx.ReadTimeout("private detail")
+    elif fault == "owner-422":
+        client.call.side_effect = WrightRequestRejected(422, "partial file write")
+    else:
+        client.call.return_value = {"source": {"path": "other"}}
+    result = import_call(server, import_args(request, exported))
+    assert result["error"]["code"] == "OUTCOME_UNKNOWN"
+    assert not result["error"]["outcome_known"]
+    assert client.call.await_count == 1
+    assert "private" not in str(result)
+
+
+@pytest.mark.parametrize("fault", ["changed-bundle", "scope"])
+def test_rejected_import_before_dispatch_has_no_effect(export_port, fault):
+    server, client, request, exported = export_port
+    args = import_args(request, exported)
+    if fault == "changed-bundle":
+        args["expected_bundle_digest"] = "0" * 64
+    else:
+        client.scope.side_effect = PermissionError("wrong workspace")
+    result = import_call(server, args)
+    assert result["error"]["outcome_known"]
+    assert result["error"]["code"] == "IMPORT_REJECTED"
+    client.call.assert_not_awaited()
+
+
+def test_inspection_cannot_claim_readiness_or_change_bundle(export_port):
+    server, client, request, exported = export_port
+    args = import_args(request, exported)
+    del args["expected_bundle_digest"]
+    client.call.return_value = inspection(exported)
+    _, reply = asyncio.run(
+        server.call_tool("wright_workflow_import_inspect", {"request": args})
+    )
+    assert reply["can_import"] and not reply["can_run"]
+    for change in ({"can_run": True}, {"bundle_digest": "0" * 64}):
+        client.call.return_value = {**inspection(exported), **change}
+        with pytest.raises(Exception):
+            asyncio.run(
+                server.call_tool("wright_workflow_import_inspect", {"request": args})
+            )

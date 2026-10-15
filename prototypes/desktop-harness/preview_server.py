@@ -167,10 +167,15 @@ def main():
             and request.method == "POST"
             and path == "/api/workspace/process-interfaces/inputs/upload"
         )
-        workflow_export = (
+        workflow_transfer = (
             args.enable_native_editor
             and request.method == "POST"
-            and path == "/api/workspace/workflow-bundles/export"
+            and path
+            in {
+                "/api/workspace/workflow-bundles/export",
+                "/api/workspace/workflow-bundles/inspect",
+                "/api/workspace/workflow-bundles/import",
+            }
         )
         process_operation = (
             path
@@ -192,7 +197,7 @@ def main():
             path.startswith("/api/desktop/")
             or process_operation
             or input_upload
-            or workflow_export
+            or workflow_transfer
         )
         if agent_call or (
             request.method not in {"GET", "HEAD", "OPTIONS"}
