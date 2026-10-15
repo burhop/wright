@@ -1,7 +1,8 @@
 # OASiS Open FEM Agent usage guide
 
 Updated 15 October 2026. Status: historical Linux x64 protocol/backend/gateway
-qualification retained; fresh GB10 ARM64 and desktop engineering use unverified.
+qualification retained; GB10 ARM64 installation/protocol verified, actual backend
+and desktop engineering use unverified.
 
 ## Identity and sources
 
@@ -97,3 +98,22 @@ or universal ARM64 incompatibility. Next is a bounded compiler-prerequisite test
 inside a fresh selected container. Do not remove required dependencies, relax
 pins or add compilers to the Wright base image to conceal the failure. The base
 image remained unchanged. Historical Linux x64 results above remain separate.
+
+## GB10 ARM64 corrected installation and protocol
+
+The selected-container attempts established additional native-build prerequisites
+for resolved adios2 2.12.1.1001: `build-essential`, `libssl-dev`,
+`libcurl4-openssl-dev` and `pkg-config`. With these confined to the provider
+container, the pinned installation completed on ARM64. OASiS source, MCP 1.28.1
+and scikit-fem 12.0.2 were unchanged; NumPy resolved to 1.26.4 and meshio to 5.3.5.
+The full dependency freeze is retained with the local attempt evidence.
+
+Selected image: `sha256:a9df706fe1be647725b5101e68adf6fce11bcb34da19200eabd1a9848abf485d`.
+A separate network-disabled container initialized OASiS 1.28.1 over MCP protocol
+2025-11-25 and listed 17 tools. No tool execution or solver job was performed.
+Backend registration messages are not evidence that every optional solver works.
+The absent optional SPARTA knowledge file was logged; SPARTA is not selected.
+
+Next qualification is the actual selected scikit-fem backend, independent field
+checks and Wright gateway. Desktop enrollment and the original heat-spreader
+engineering process remain unverified. Earlier failed attempts are retained.
