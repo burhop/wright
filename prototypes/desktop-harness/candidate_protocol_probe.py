@@ -22,12 +22,25 @@ async def main(package, output):
         async with ClientSession(*streams) as client:
             initialized = await client.initialize()
             tools = {tool.name: tool for tool in (await client.list_tools()).tools}
-            expected_counts = {"0.7.0": 31, "0.8.0": 32, "0.9.0": 32, "0.10.0": 34}
+            expected_counts = {
+                "0.7.0": 31,
+                "0.8.0": 32,
+                "0.9.0": 32,
+                "0.10.0": 34,
+                "0.11.0": 36,
+            }
             assert len(tools) == expected_counts[manifest["version"]]
-            if manifest["version"] in {"0.8.0", "0.9.0", "0.10.0"}:
+            if manifest["version"] in {"0.8.0", "0.9.0", "0.10.0", "0.11.0"}:
                 preview = tools["wright_workspace_file_preview"]
                 assert preview.annotations.readOnlyHint
                 assert preview.meta["ui"]["visibility"] == ["app"]
+            if manifest["version"] == "0.11.0":
+                for name in (
+                    "wright_connection_preview",
+                    "wright_connection_import_plan",
+                ):
+                    assert tools[name].meta["ui"]["visibility"] == ["app"]
+                assert tools["wright_connection_preview"].annotations.readOnlyHint
             for name in (
                 "wright_workflow_history",
                 "wright_reasoning_image",
