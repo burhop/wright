@@ -8,9 +8,12 @@ See the refreshed [continuation checkpoint and priorities](demo-readiness-plan.m
 and [short goal prompt](demo-readiness-next-goal.md). Continue the existing goal;
 finish the current home slice before duplicating implementation.
 
-The dependent feature worktree has an initial
-[workspace home slice](workspace-home-progress.md), with scoped backend and
-native-component checks. It is not installed and does not complete M1.
+The feature worktree contains the [workspace home slice](workspace-home-progress.md).
+Named plugin 0.8.0 is installed from its frozen runtime; local browser/protocol
+checks pass, while Windows acceptance and the real engineering runs remain open.
+The execution candidate at 37746c7b has passed all Python and 1,874 frontend tests.
+Its full merge gate stopped on seven strict-docs links; the links are corrected
+prospectively and live browser checks remain pending. This does not complete M1.
 
 Use [demo-readiness-plan.md](demo-readiness-plan.md) as the current forward plan.
 The user submitted the [new goal](demo-readiness-goal.md). M0 is active; its

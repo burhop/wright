@@ -1650,3 +1650,30 @@ in the correction checkpoint so shipped assets match the qualified source build.
 This changes a bound Docker input; build a fresh image for the new revision.
 The conservative image binding also covers the corrected package test file.
 Do not reuse the older image to claim the new revision passed its image gate.
+
+## Full gate reached strict docs; link correction — 15 October 2026
+
+37746c7b's full gate passed all Python suites (including 2713 workspace-service
+checks, all four corrected Robot fixtures, and 1563 repository-wide tests),
+13 Hermes-plugin tests and 1874 frontend tests across 210 files. It then exited
+1 because seven usage-guide links pointed outside MkDocs' published tree.
+The exact failed log is merge-37746c7b.log under the retained gate evidence root.
+Live Playwright did not run; the full gate is not green.
+
+Those seven links now use exact-revision GitHub source URLs. Strict MkDocs
+passed in 5.82 seconds (docs-corrected-02.log). The first local invocation failed
+on the read-only uv cache before building; its separate log remains. No warning
+suppression, policy weakening or source/runtime change was needed.
+
+Fresh ARM64 Blender qualification is summarized in blender-arm64-evidence.json
+and its updated usage guide. Actual direct export and an independent parser prove
+10×8×6 unitless bounds, volume480 and exact reference STL bytes. The existing
+qualification GatewayService helper returns matching native object evidence with
+fixture bindings; durable enrollment and full workflow proof remain separate.
+A fresh native process imported the retained read-only STL with unchanged bounds
+and input hash, without export replay. Both exact owned containers are stopped
+(exit143, not claimed graceful document recovery); all failures remain retained.
+The complete local evidence is /tmp/wright-desktop-blender-provider-20261015-01.
+
+Next: run the previously unreached browser suite, resolve actual failures, and
+complete the required candidate gates. No push/merge/installed update yet.

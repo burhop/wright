@@ -189,3 +189,66 @@ known native prerequisite in004, but viewport screenshot success is not yet
 requalified; native file rendering is independently proved. Do not infer a
 screenshot pass, OpenImageDenoise availability or a full catalog pass from this
 dependency installation.
+
+## GB10 ARM64 selected-provider qualification — 15 October 2026
+
+The pinned independent provider revision
+`5f8ddaf6e987c4aa0c3467fcc548838b28f64477` installed in a separate Linux ARM64
+image derived from the clean candidate Wright image. Native Blender is
+`4.3.2+dfsg-2`; its MCP environment uses Python 3.11.14. The exact resolved Python
+requirements are retained in `installed-requirements.txt`; initialization reports
+BlenderMCP 1.30.0 and discovers 28 tools. This is a selected-provider ARM64 test,
+not the catalog's full clean Intel Linux qualification or Windows acceptance.
+
+The native application ran under Xvfb with networking disabled, factory startup,
+only a read-only probe directory and one fresh writable output mount. Safe mode
+was enabled and telemetry disabled. No host installation, credentials, live
+workspace configuration or base-image mutation was required.
+
+Actual direct MCP `execute_blender_code` created one qualification cube and used
+`bpy.ops.wm.stl_export(..., export_selected_objects=True)` to export it. Independent
+binary-STL parsing verified 12 triangles, 684 bytes, bounds [-5,-4,-3] to [5,4,3],
+dimensions 10×8×6 and volume 480 in unitless model coordinates. Its SHA-256 is
+`95855df2ca135e8211699cb78544f2ea4198a7b5f33fa8ccdf4949ce9baf56ae`.
+This matches the retained small x64 qualification geometry byte-for-byte; it is
+not an engineering assignment or physical measurement.
+
+The existing `qualify_stdio_mcp.py` helper advertised all 28 tools through the
+real GatewayService and read the same native object. Direct and gateway result
+hashes agree. This uses the helper's private in-memory catalog/workspace/audit
+fixtures; it does not prove durable workspace enrollment, workflow permissions,
+Hermes-facing gateway stdio or desktop workflow execution. Provider stdio runners
+were closed. The exact native container was stopped and retained with exit 143;
+that is observed termination, not proof of graceful document recovery.
+
+Pitfalls retained with this attempt:
+
+- `addon.register()` already starts its default listener. The first bootstrap
+  unnecessarily started another on port 9876 and failed its assertion. Read-only
+  inspection proved the original listener remained active; subsequent MCP calls
+  succeeded. Use the registered server's state in a future fresh bootstrap.
+- Do not name a probe `inspect.py`: it shadows Python's standard library module.
+  That initial probe failed before MCP initialization.
+- `get_scene_info` requires `user_prompt`. Its first schema rejection was corrected
+  using the original qualification request; the successful native scene read is
+  recorded separately. Do not replace that field with an internal subgoal.
+- The export probe persists intent before dispatch and refuses automatic replay.
+  No uncertain native operation was retried.
+
+Local evidence is retained under
+`/tmp/wright-desktop-blender-provider-20261015-01/`: checkpoint, installation log,
+resolved requirements, protocol/schema receipts, rejected request, direct export,
+object inspection, independent geometry check, gateway result and stopped state.
+The image ID is
+`sha256:4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af`.
+Actual image/mesh handoffs, manufacture-preparation source, rendering, connection
+recovery, human review and complete desktop acceptance remain separate work.
+
+A second fresh native instance subsequently verified the corrected bootstrap:
+call `addon.register()` once and assert `bpy.types.blendermcp_server.running`.
+With the original exported STL mounted read-only, the supported MCP
+`bpy.ops.wm.stl_import` operation finished and preserved native bounds and
+10×8×6 dimensions; the original input hash remained unchanged. This proves
+artifact reopening in a fresh native process, not automatic durable workflow
+recovery. The export was not replayed. Both isolated native containers are
+stopped and retained; detailed receipt: `artifact-reopen-check.json`.

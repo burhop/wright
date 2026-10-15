@@ -60,7 +60,7 @@ per end selection,0.0007224248147886028mm maximum displacement and
 run passed byte-length/SHA-256 checks; DAT contained displacement and stress.
 These are provider observations, not an independently validated design verdict.
 
-See [ARM64 receipt](../../../prototypes/desktop-harness/calculix-arm64-evidence.json).
+See [ARM64 receipt](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/calculix-arm64-evidence.json).
 The existing probe initially hard-coded an older clean-client image identity.
 Original evidence is retained; the receipt explicitly corrects that attribution.
 The script now records observed client OS/architecture/Python instead of inventing
@@ -82,6 +82,6 @@ non-lock durable files before/after and found no changes. Stdio containers exite
 The prior HTTP container was deliberately stopped after its solves completed;
 Docker reports exit133, so graceful HTTP shutdown is not qualified. All selected
 containers are stopped and preserved. See the
-[reproduction receipt](../../../prototypes/desktop-harness/calculix-stdio-recovery-evidence.json)
+[reproduction receipt](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/calculix-stdio-recovery-evidence.json)
 and `prototypes/desktop-harness/calculix_recovery_probe.py`. No upstream report
 was submitted, provider patch applied or runtime compatibility shim introduced.

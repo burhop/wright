@@ -51,7 +51,7 @@ been submitted by this workstream.
 
 ## Current evidence
 
-See the desktop prototype [progress ledger](../../../prototypes/desktop-harness/workspace-home-progress.md)
+See the desktop prototype [progress ledger](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/workspace-home-progress.md)
 for the current run and remaining gaps. Provider installation, tool discovery,
 actual offline analysis, canonical workflow execution and Windows UI acceptance
 are separate evidence boundaries. Current observed GB10 versions/results follow below.
@@ -75,8 +75,8 @@ differences were zero; case03 retained its 13.5–16.5s missing interval. These 
 synthetic dataset measurements, not physical robot certification or causal proof.
 
 Full evidence and fresh bags/plots: `/tmp/wright-desktop-robot-provider-20261014-03/provider-proof/`.
-The [compact receipt](../../../prototypes/desktop-harness/robot-provider-arm64-evidence.json)
-records hashes and exact scope. The [reproducible launcher](../../../prototypes/desktop-harness/robot-provider-qualification.sh)
+The [compact receipt](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/robot-provider-arm64-evidence.json)
+records hashes and exact scope. The [reproducible launcher](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/robot-provider-qualification.sh)
 is ARM64/GB10-specific and retains the stopped container. This selected-container
 provider proof does not rerun the catalog's full Intel/gateway matrix or qualify
 a desktop-driven workflow.

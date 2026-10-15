@@ -1,6 +1,6 @@
 # Desktop engineering prototype: qualification matrix
 
-Checkpoint: 14 October 2026, implementation through `5937b23c`, frozen runtime `268bf094`.
+Checkpoint: 15 October 2026, implementation through `37746c7b`, frozen installed runtime `268bf094`.
 This is experimental. Installed plugin **0.8.0** now selects the frozen
 `/tmp/wright-desktop-ui-files-candidate` runtime on API8151. The prior 0.6.0
 runtime/cache remains preserved. “Local” means GB10 Linux ARM64, not Windows acceptance.
@@ -20,6 +20,7 @@ runtime/cache remains preserved. “Local” means GB10 Linux ARM64, not Windows
 | Image artifact viewing | Real owner integration and separate browser decoder proof with retained CAD PNG | Actual Windows panel result-view acceptance remains pending |
 | Model image input | Opt-in bounded PNG/JPEG profile, durable request, actual MCP bytes, reconnect/revocation proofs | Default remains unavailable; actual desktop synthetic image perception verified; engineering action-image lifecycle unverified; engineering image gate stays closed |
 | Workflow tools | Separate qualified exact read-only file-inspection profile | Named installed default remains text-only; arbitrary engineering MCP task/direct-tool execution is gated |
+| Blender on GB10 | Pinned provider installed in an isolated ARM64 image; actual MCP export, independent STL geometry, gateway read and fresh-process import pass | Qualification fixture only; no desktop workflow enrollment, rendering or manufacturing assignment proof |
 | SteveCAD native CAD workflow | Original source preserved and dependencies inventoried | No new four-hole/six-hole execution, images, geometry verification or genuine engineering review yet |
 | Multi-tool comparison | Existing SteveCAD/OASiS workflow and requirements retained | Actual authenticated CAD→analysis handoffs and genuine reviews outstanding |
 | Different workflow proof | Existing Robot Tracking Diagnosis/manufacturing copies and readiness findings retained | Fresh substantive execution/regression remains outstanding |
@@ -50,3 +51,7 @@ keeping model-image reasoning, arbitrary engineering execution and generated UI
 authoring gated. This candidate is an incremental prototype, not completion of
 the saved goal. Continue toward actual engineering tool handoffs and reviewable
 outputs; additional navigation alone cannot satisfy the demonstration requirements.
+
+The 37746c7b full gate passed all Python suites and 1,874 frontend tests, then
+stopped on seven strict-docs evidence links. The prospective documentation fix
+and remaining browser gate require verification; no full-gate pass is claimed.

@@ -128,7 +128,7 @@ prerequisite limitation, not evidence of a defect in a tool invocation.
 
 The bounded nonroot selected container exited 1 before imports, MCP initialization
 or native CAD calls. Original image and live host packages were unchanged. The
-[prerequisite receipt](../../../prototypes/desktop-harness/engineering-provider-prerequisites.json)
+[prerequisite receipt](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/engineering-provider-prerequisites.json)
 records the exact source/image and retained resolver log. Do not infer ARM64
 support from earlier Windows-to-Linux x64 qualification, force an incompatible
 OCP version, or substitute a previously generated CAD artifact. The next viable
@@ -140,4 +140,4 @@ Current upstream rechecked at commit
 pyproject retains the same build123d/OCP bounds. An AgentCAD-only upgrade is
 therefore not a resolution of the observed ARM64 prerequisite. No new install
 was attempted or dependencies overridden. See
-[current upstream evidence](../../../prototypes/desktop-harness/agentcad-current-upstream-evidence.json).
+[current upstream evidence](https://github.com/burhop/wright/blob/37746c7b20ee1146c55e67dc965aa2b0a9e9992b/prototypes/desktop-harness/agentcad-current-upstream-evidence.json).
