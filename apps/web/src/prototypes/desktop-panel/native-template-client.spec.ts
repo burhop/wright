@@ -14,16 +14,14 @@ const template = {
   source_digest: "a".repeat(64),
 } as EngineeringWorkflowTemplate;
 it("preserves pinned template and scoped creation request without execution", async () => {
-  const call = vi
-    .fn()
-    .mockResolvedValue({
-      content: [],
-      structuredContent: {
-        workspace_id: "w",
-        path: "workflows/robot.workflow.wflow",
-        storage_digest: "b".repeat(64),
-      },
-    });
+  const call = vi.fn().mockResolvedValue({
+    content: [],
+    structuredContent: {
+      workspace_id: "w",
+      path: "workflows/robot.workflow.wflow",
+      storage_digest: "b".repeat(64),
+    },
+  });
   const client = nativeTemplateClient(call, workspace);
   await client.instantiateEngineeringWorkflowTemplate(
     "s",
@@ -67,16 +65,14 @@ it("does not treat failed catalog loading as an empty success", async () => {
   ).rejects.toThrow("incompatible");
 });
 it("rejects cross-workspace creation receipts", async () => {
-  const call = vi
-    .fn()
-    .mockResolvedValue({
-      content: [],
-      structuredContent: {
-        workspace_id: "other",
-        path: "workflows/robot.workflow.wflow",
-        storage_digest: "b".repeat(64),
-      },
-    });
+  const call = vi.fn().mockResolvedValue({
+    content: [],
+    structuredContent: {
+      workspace_id: "other",
+      path: "workflows/robot.workflow.wflow",
+      storage_digest: "b".repeat(64),
+    },
+  });
   await expect(
     nativeTemplateClient(
       call,

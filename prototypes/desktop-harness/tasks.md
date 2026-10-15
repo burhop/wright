@@ -140,3 +140,15 @@ The read-only proof does not qualify arbitrary tools or installed desktop loadin
 - Named 0.10 installed; actual installed 34-tool/resource/package verification passed.
   All 18 prior cache files retained, only named marketplace source changed.
   See `installed-010-evidence.json` and `desktop-010-walkthrough.md`.
+
+### Image response restart qualification
+
+Fresh synthetic image task retained the same request after an abrupt private API
+loss. Reopened run requires reconciliation, late answer was denied, and counts
+remain one request/zero responses. See `image-restart-evidence.json`. This does
+not qualify restart during an action or uncertain tool outcome; installed image
+inputs stay disabled.
+
+The cumulative 1988beec integration gate failed on Prettier formatting in the new
+template-client test. Formatting was corrected without changing assertions;
+retain the failed gate log and rerun on the corrected candidate before push.

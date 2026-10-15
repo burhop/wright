@@ -1,0 +1,49 @@
+{
+  "runtime_commit": "1988beec213f9a17bceee72201534bccee0046b2",
+  "scope": "actual synthetic image response task over MCP; abrupt private API loss; same-state restart",
+  "status": "passed",
+  "run_id": "37c09c92130742058e46a4b5f757c59a",
+  "counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 0
+  },
+  "observations": [
+    "same run requires reconciliation",
+    "same image-bearing request digest retained",
+    "late answer denied",
+    "no replacement reasoning request or accepted response"
+  ],
+  "evidence": {
+    "image-perception.json": {
+      "path": "/tmp/wright-desktop-image-restart-state-20261015-01/image-perception.json",
+      "sha256": "6ab6747b19bea18366c00b6ba0f8f2e8502418d627d17f6aeaafac178ce0a898"
+    },
+    "restart-fault.json": {
+      "path": "/tmp/wright-desktop-image-restart-state-20261015-01/restart-fault.json",
+      "sha256": "06ee40080a9927abf9574bdc4b941721daf10a3e300cea9d4913314e85d480aa"
+    },
+    "image-restart-reconciliation.json": {
+      "path": "/tmp/wright-desktop-image-restart-state-20261015-01/image-restart-reconciliation.json",
+      "sha256": "a996c904520adf942a69fb91053dd89673f6a3470b9be4fe7f79eb4d8f53db2e"
+    },
+    "desktop-binding.json": {
+      "path": "/tmp/wright-desktop-image-restart-state-20261015-01/desktop-binding.json",
+      "sha256": "620a91c502121414e595c349102b64ed6e3792139f0d6abc3e8d250a626b1567"
+    },
+    "desktop-versions.json": {
+      "path": "/tmp/wright-desktop-image-restart-state-20261015-01/desktop-versions.json",
+      "sha256": "e18a90eb3d504a6ce7a7432c16fbeec0de3f2f9025525f36f39a6ff979019523"
+    },
+    "observe.py": {
+      "path": "/tmp/wright-desktop-image-restart-state-20261015-01/observe.py",
+      "sha256": "ea3ed427410a4a4d5a93b9656c15262c6243b224b9e65d3a7b4cd229de5c3f6b"
+    }
+  },
+  "limits": [
+    "No engineering provider or side effect",
+    "Does not qualify restart during an action or uncertain tool outcome",
+    "Automatic restart/resumption unsupported",
+    "No native Windows acceptance",
+    "Installed image-input profile remains disabled"
+  ]
+}
