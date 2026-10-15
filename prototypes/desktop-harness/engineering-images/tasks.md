@@ -57,3 +57,14 @@ also needs live export identity/render geometry inputs and upstream engineering
 outputs. Engineering-profile restart/cancel qualification, different-workflow
 regressions, Windows native delivery and full repository gates remain open.
 Installed0.11 is unchanged. Do not claim new CAD or human acceptance.
+
+## Recovery checkpoint
+
+Twenty runtime checks pass, including engineering-image cancellation with retained
+request identity and denied late answers after repository reopen. An actual
+private API SIGKILL/restart proof retained six images and the exact pending request,
+returned reconciliation_required on the same run, rejected a late response with
+HTTP409 and retained one request/zero accepted responses. See restart-evidence.json.
+Only the identified private image-test APIs/relays were stopped after qualification;
+durable test state and prior installed services are preserved. This is pending
+reasoning recovery, not evidence of safe replay after an external tool effect.

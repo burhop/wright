@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "scope": "Abrupt API loss with six original historical images pending; no provider dispatch or engineering approval",
+  "run_id": "61ee0d7b99bd421ba4c0b530955a39c0",
+  "counts": {
+    "desktop_reasoning_requests": 1,
+    "desktop_reasoning_responses": 0
+  },
+  "image_count": 6,
+  "request_preserved": true,
+  "late_answer_denied": {
+    "error": "Error executing tool wright_reasoning_answer: Wright rejected request (409): The run has no live reasoning consumer; reconcile its retained request"
+  },
+  "evidence": {
+    "restart-reconciliation.json": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/restart-reconciliation.json",
+      "sha256": "e77cc523826b7599555d24531cbf352b8fefba5f003bfabd20bed4708641a671"
+    },
+    "restart-fault.json": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/restart-fault.json",
+      "sha256": "6d4583c4933e3ba9ab4ec9ff95958386a7d4023122ef1bbefdb1a23893345b73"
+    },
+    "observe.py": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/observe.py",
+      "sha256": "9cb75f2f479f9af92c4ed8a809c7b6e33e797f7e6282c3aee313cbd3f27894c3"
+    },
+    "observe.log": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/observe.log",
+      "sha256": "db7f54f73aa32d5ce768de161278d82f643aa79893d0cfcaa7ccc7779ba73868"
+    },
+    "desktop-binding.json": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/desktop-binding.json",
+      "sha256": "01e5d574428876cdeabf6edf85d43e46acf93b8a459f04c23bb1cbffc11be779"
+    },
+    "desktop-versions.json": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/desktop-versions.json",
+      "sha256": "ea097aa3c58741bb66560e906e39a90a09314f4389492952f20924af86a518f0"
+    },
+    "engineering-images.json": {
+      "path": "/tmp/wright-desktop-six-image-restart-20261015-01/engineering-images.json",
+      "sha256": "5282da4b21780897ca7aeb56817440d8cd96c2c2ae26cdcb084ba66a6b878c77"
+    }
+  },
+  "limitations": [
+    "No dispatched engineering effect in this fixture",
+    "No actual Windows native-panel acceptance",
+    "Original engineering workflows and genuine reviews remain open"
+  ]
+}

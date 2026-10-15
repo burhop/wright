@@ -228,12 +228,26 @@ def test_invalid_json_fails_existing_validator_and_writes_no_output(tmp_path):
     assert not (tmp_path / "report.json").exists()
 
 
-def test_cancellation_retains_receipt_and_denies_late_answer(tmp_path):
+@pytest.mark.parametrize("profile", ["unavailable", "inline-png-jpeg-engineering-v1"])
+def test_cancellation_retains_receipt_and_denies_late_answer(tmp_path, profile):
+    import base64
+    from pathlib import Path
+
     repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
-    desktop = reasoner(repo)
+    desktop = reasoner(repo, image_input_profile=profile)
+    images = None
+    if profile != "unavailable":
+        root = Path(__file__).resolve().parents[3]
+        data = (
+            root
+            / "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/block-native-006/outputs/render_isometric.png"
+        ).read_bytes()
+        images = ["data:image/png;base64," + base64.b64encode(data).decode()]
 
     async def run():
-        running = asyncio.create_task(desktop.generate_response("Task", "text"))
+        running = asyncio.create_task(
+            desktop.generate_response("Task", "text", images=images)
+        )
         request = await pending(repo)
         running.cancel()
         with pytest.raises(asyncio.CancelledError):
@@ -243,6 +257,14 @@ def test_cancellation_retains_receipt_and_denies_late_answer(tmp_path):
         )
         with pytest.raises(DesktopHandoffConflict):
             answer(repo, request, "Late response")
+        reopened = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+        assert (
+            reopened.get_request("workspace-1", "session-1", request.request_id).digest
+            == request.digest
+        )
+        assert reopened.pending("workspace-1", "session-1") == []
+        with pytest.raises(DesktopHandoffConflict):
+            answer(reopened, request, "Late response after reopen")
 
     asyncio.run(run())
 
