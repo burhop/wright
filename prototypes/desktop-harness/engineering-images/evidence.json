@@ -1,0 +1,43 @@
+{
+  "status": "local contract/adapter/image-port implementation; not enabled or live supervised qualification",
+  "new_profile": "inline-png-jpeg-engineering-v1",
+  "tests": {
+    "core_and_dual_profile_image_port": "38 passed in 2.69s",
+    "existing_runtime_and_legacy_image_port": "34 passed in 1.15s",
+    "lint": "passed"
+  },
+  "failures_preserved": [
+    "initial tests used datetime instead of existing Timestamp string; fixture corrected without contract change",
+    "sandbox runtime test remained waiting; verified exact process terminated after matching host checks passed; not counted as a pass"
+  ],
+  "evidence": {
+    "contract-tests-01.log": {
+      "path": "/tmp/wright-desktop-engineering-image-budget-20261015/contract-tests-01.log",
+      "sha256": "a8a01c51cfd4aa6383894ff6efc943a0a9b23779bfb241146b2f06397e35ef33"
+    },
+    "contract-tests-02.log": {
+      "path": "/tmp/wright-desktop-engineering-image-budget-20261015/contract-tests-02.log",
+      "sha256": "895361ffbf88d5a8c40d47f8dd3d03df2042ca9360d08738bcbb4faa39495404"
+    },
+    "runtime-tests-host-01.log": {
+      "path": "/tmp/wright-desktop-engineering-image-budget-20261015/runtime-tests-host-01.log",
+      "sha256": "e623a0c5e856010be8934b10c3ce6ae629c968d835d269f1785b4a685b343236"
+    },
+    "image-port-tests-02.log": {
+      "path": "/tmp/wright-desktop-engineering-image-budget-20261015/image-port-tests-02.log",
+      "sha256": "834bf54ddd7062f60dd43ab0fcf5dd6dd950672e603ea33381c2c88b5bddf88c"
+    },
+    "sandbox-test-cleanup.json": {
+      "path": "/tmp/wright-desktop-engineering-image-budget-20261015/sandbox-test-cleanup.json",
+      "sha256": "a3a28a8771aea64d232e10b1970abc0d4673b4ac52941a7a51613754e6c72843"
+    }
+  },
+  "remaining": [
+    "complete runtime-resolved review envelope",
+    "explicit local backend profile selection and frozen drift/restart tests",
+    "six-image live supervised MCP delivery and desktop-authored comparison",
+    "different-workflow regression",
+    "combined candidate and actual native Windows acceptance",
+    "original fresh engineering runs and genuine reviews"
+  ]
+}

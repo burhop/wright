@@ -1,5 +1,8 @@
 """Bounded desktop handoff receipts, independent of workflow run authority."""
 
+import base64
+import binascii
+from copy import deepcopy
 from typing import Annotated, Literal
 
 from pydantic import Field, JsonValue, StringConstraints, model_validator
@@ -18,12 +21,42 @@ ReplyText = Annotated[
     str, StringConstraints(strict=True, min_length=1, max_length=262144)
 ]
 
+ENGINEERING_IMAGE_PROFILE = "inline-png-jpeg-engineering-v1"
+
+
+def decode_desktop_image(url, *, profile="inline-png-jpeg-v1"):
+    """Validate bounded inline bytes; never fetch, transform or repair an image."""
+    if profile not in {"inline-png-jpeg-v1", ENGINEERING_IMAGE_PROFILE}:
+        raise ValueError("Desktop image profile unavailable")
+    maximum = (
+        262144
+        if profile == "inline-png-jpeg-v1"
+        else 4 * ((2 * 1024 * 1024 + 2) // 3) + 23
+    )
+    if not isinstance(url, str) or len(url) > maximum:
+        raise ValueError("Desktop inline image exceeds the handoff bound")
+    prefix, separator, encoded = url.partition(";base64,")
+    if not separator or prefix not in {"data:image/png", "data:image/jpeg"}:
+        raise ValueError("Desktop images require inline PNG or JPEG")
+    try:
+        data = base64.b64decode(encoded, validate=True)
+    except (ValueError, binascii.Error):
+        raise ValueError("Desktop inline image encoding is invalid") from None
+    if profile == ENGINEERING_IMAGE_PROFILE and len(data) > 2 * 1024 * 1024:
+        raise ValueError("Desktop engineering image exceeds 2 MiB")
+    signature = b"\x89PNG\r\n\x1a\n" if prefix == "data:image/png" else b"\xff\xd8\xff"
+    if not data.startswith(signature):
+        raise ValueError("Desktop image media signature differs")
+    return prefix.removeprefix("data:"), data
+
 
 class DesktopHarnessBinding(Contract):
     schema_version: Literal["wright.desktop-binding/1"] = "wright.desktop-binding/1"
     connection_id: Identifier
     adapter: Literal["openai-desktop-harness"] = "openai-desktop-harness"
-    image_input_profile: Literal["unavailable", "inline-png-jpeg-v1"] = "unavailable"
+    image_input_profile: Literal[
+        "unavailable", "inline-png-jpeg-v1", "inline-png-jpeg-engineering-v1"
+    ] = "unavailable"
     requested_model: Identifier | None = None
     reported_model: Identifier | None = None
     model_identity_source: Literal["unreported", "client_reported"] = "unreported"
@@ -63,8 +96,47 @@ class DesktopReasoningRequest(Contract):
 
     @model_validator(mode="after")
     def bounded_payload(self):
-        if len(canonical_json(self.payload).encode()) > 262144:
+        engineering = self.binding.image_input_profile == ENGINEERING_IMAGE_PROFILE
+        maximum = 8 * 1024 * 1024 if engineering else 262144
+        if len(canonical_json(self.payload).encode()) > maximum:
+            if engineering:
+                raise ValueError("Desktop engineering task exceeds 8 MiB")
             raise ValueError("Desktop task exceeds the 256 KiB handoff limit")
+        if engineering:
+            text_payload = deepcopy(self.payload)
+            count = 0
+            for message in text_payload.get("messages", []):
+                content = message.get("content") if isinstance(message, dict) else None
+                if not isinstance(content, list):
+                    continue
+                for part in content:
+                    if not isinstance(part, dict) or part.get("type") not in {
+                        "image_url",
+                        "image",
+                        "input_image",
+                    }:
+                        continue
+                    if (
+                        set(part) != {"type", "image_url"}
+                        or part["type"] != "image_url"
+                        or not isinstance(part["image_url"], dict)
+                        or set(part["image_url"]) != {"url"}
+                    ):
+                        raise ValueError(
+                            "Desktop image parts require the exact inline image contract"
+                        )
+                    count += 1
+                    if count > 8:
+                        raise ValueError(
+                            "Desktop engineering task exceeds eight images"
+                        )
+                    decode_desktop_image(
+                        part["image_url"]["url"],
+                        profile=self.binding.image_input_profile,
+                    )
+                    part["image_url"]["url"] = ""
+            if len(canonical_json(text_payload).encode()) > 262144:
+                raise ValueError("Desktop non-image task content exceeds 256 KiB")
         return self
 
     @property

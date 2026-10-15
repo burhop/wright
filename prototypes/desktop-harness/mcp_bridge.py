@@ -18,6 +18,7 @@ from uuid import uuid4
 from pydantic import TypeAdapter
 import anyio
 from core.desktop_reasoning import (
+    ENGINEERING_IMAGE_PROFILE,
     DesktopActionReply,
     DesktopReasoningRequest,
     DesktopHarnessBinding,
@@ -44,13 +45,19 @@ def reasoning_images(request):
                 "image",
                 "input_image",
             }:
-                if request.binding.image_input_profile != "inline-png-jpeg-v1":
+                if request.binding.image_input_profile not in {
+                    "inline-png-jpeg-v1",
+                    ENGINEERING_IMAGE_PROFILE,
+                }:
                     raise ValueError("Image handoff profile unavailable")
                 if part.get("type") != "image_url" or not isinstance(
                     part.get("image_url"), dict
                 ):
                     raise ValueError("Unsupported image handoff shape")
-                media, data = desktop_inline_image(part["image_url"].get("url"))
+                media, data = desktop_inline_image(
+                    part["image_url"].get("url"),
+                    profile=request.binding.image_input_profile,
+                )
                 images.append((content, index, media, data))
     return images
 
