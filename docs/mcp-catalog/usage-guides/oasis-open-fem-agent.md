@@ -81,3 +81,19 @@ This guide indexes existing evidence without rerunning or upgrading the provider
 Next: qualify the pinned recipe in a fresh selected ARM64 environment, then the
 actual backend and Wright gateway, recording platform-specific results before
 using it in a new engineering run. Keep the historical evidence intact.
+
+## GB10 ARM64 installation attempt, 15 October 2026
+
+A fresh selected ARM64 container used the existing recipe with Python 3.12.12,
+source 7c184d5b, MCP 1.28.1 and scikit-fem 12.0.2. After adding the documented Git
+prerequisite inside that container, the resolver selected oasis-mcp 1.1.0 and
+adios2 2.12.1.1001. The latter attempted a source build and failed at CMake
+configuration because a C/C++ compiler was absent. No MCP initialization, tool
+call or solver job occurred. The first missing-Git attempt and second build
+failure are retained at `/tmp/wright-desktop-oasis-arm64-20261015-01` on GB10.
+
+This is a missing selected-environment prerequisite, not a proved provider defect
+or universal ARM64 incompatibility. Next is a bounded compiler-prerequisite test
+inside a fresh selected container. Do not remove required dependencies, relax
+pins or add compilers to the Wright base image to conceal the failure. The base
+image remained unchanged. Historical Linux x64 results above remain separate.

@@ -1,0 +1,21 @@
+{
+  "status": "installation_failed",
+  "platform": "linux_arm64",
+  "base_image": "sha256:2fb61e65fcf0f46a66c514eb6e30b141676d32b1717ad94d9fc4fa92aa8932d7",
+  "container": "wright-desktop-oasis-arm64-20261015-02",
+  "container_id": "2b84a1787b9f5e813b0194beea54e9a963f3ba48931453e5a389e704262d316b",
+  "python": "3.12.12",
+  "source_commit": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "requested_mcp": "1.28.1",
+  "requested_scikit_fem": "12.0.2",
+  "resolved_provider": "oasis-mcp 1.1.0",
+  "failed_dependency": "adios2 2.12.1.1001",
+  "failure": "source-build CMake configuration cannot find C/C++ compiler",
+  "log": "/tmp/wright-desktop-oasis-arm64-20261015-01/install-with-git.log",
+  "log_sha256": "238388d084804b9a4106723230e5ecb217694e8b77a9f72dec015d619daa9bf1",
+  "first_attempt": "retained -01 container exited 127 at missing Git; -02 installed documented Git prerequisite",
+  "mcp_calls": 0,
+  "engineering_runs": 0,
+  "base_image_unchanged": true,
+  "next": "Bounded selected-container compiler prerequisite qualification; no dependency removal or provider fork. This does not establish that ARM64 is unsupported."
+}
