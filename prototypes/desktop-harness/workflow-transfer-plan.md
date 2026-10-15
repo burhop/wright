@@ -10,6 +10,22 @@ WorkflowBundleDialog and authenticated workflow-bundles owners. Keep the neutral
 editor, draft guards, workspace identity and common-view fallback. V1–V7 apply.
 Export is not a run, engineering review, provider grant or confirmed host save.
 
+## Declared reference portability
+
+`workflow_asset_transfer_probe.py` verifies a real bundle between two fresh private
+workspaces through the native MCP tools and existing HTTP owners. It uses the
+existing manufacturing template and its checked-in replacement-knob SVG, resolving
+only the template instance/input-root placeholders. The accepted source and exact
+SVG bytes survive export, inspection and import unchanged. Existing-asset/source
+inspection rejects another import without submitting one. No process runs,
+engineering outputs or approvals are created.
+
+Receipt: `/tmp/wright-desktop-workflow-transfer-state-20261015-06/asset-transfer-proof.json`.
+Log: `/tmp/wright-transfer-asset-20261015.log`. Ruff and diff checks pass.
+This is actual cross-workspace input portability, not Windows file delivery,
+saved-interface transfer or manufacturing completion. The UI source-only browser
+proof remains separate; it does not claim selection of this SVG in Windows.
+
 ## Lost acknowledgement qualification
 
 The actual MCP/browser harness now deliberately withholds one successful private
