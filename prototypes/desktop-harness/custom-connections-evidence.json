@@ -126,7 +126,11 @@
       "Simulated desktop host, not actual Windows panel acceptance",
       "Private protocol fixture; no SteveCAD OAuth or engineering tool invocation",
       "Named installed plugin remains unchanged"
-    ]
+    ],
+    "registry_readback": {
+      "path": "/tmp/wright-desktop-custom-https-state-20261015-01/https-recovery-1792036875136/registry-readback.json",
+      "sha256": "b536cb02d4cc351b80813ec7e63702dc7b1b0377dcf4a8b167f3ccb315298f52"
+    }
   },
   "credential_identity_tests": {
     "result": "12 passed in 1.98s",
@@ -137,5 +141,25 @@
     ],
     "ruff": "passed for changed core source and tests",
     "scope": "GB10 source tests; no Windows native qualification"
+  },
+  "affected_regression": {
+    "python": {
+      "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/affected-python-df58aba8.log",
+      "sha256": "d4c93b0e317892a1201558d4f1f9ca6b72f4ec69296cd3a047b55c5bf144cf71",
+      "passed": 65,
+      "source_commit": "df58aba8"
+    },
+    "ui": {
+      "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/affected-ui-df58aba8.log",
+      "sha256": "a133884d65738f9db1b1e9d8b545895a7dcdba25ffa34bd539b4d62eef9660fe",
+      "passed": 23,
+      "source_commit": "df58aba8"
+    },
+    "onboarding_api": {
+      "log": "/tmp/wright-desktop-custom-connections-evidence-20261015/onboarding-api-df58aba8.log",
+      "sha256": "48c89d5cae057d96a24c746912a28deb1303e002e8408781bfc1dd91d1b4998d",
+      "passed": 5,
+      "source_commit": "df58aba8"
+    }
   }
 }
