@@ -1,0 +1,52 @@
+{
+  "runtime_commit": "7afc90c48defa2fdd0fd645b780e597433d72706",
+  "package": {
+    "package": "/tmp/wright-desktop-custom-candidate/prototypes/desktop-harness/native-home-011-candidate/plugins/wright-desktop-gb10-prototype",
+    "version": "0.11.0",
+    "protocol": "2025-11-25",
+    "tool_count": 36,
+    "resource": {
+      "uri": "ui://wright/workflow/51bff22d7e8a4f9882483ba74a77ae5599cf60f348ce3b20e2f7691ef6d56fbc.html",
+      "sha256": "51bff22d7e8a4f9882483ba74a77ae5599cf60f348ce3b20e2f7691ef6d56fbc",
+      "bytes": 2229635
+    },
+    "files": {
+      ".codex-plugin/plugin.json": "6086e11cf8eb91d5ca56e641e696397baf98a4ac660ee3b39e4840d2c041607a",
+      ".mcp.json": "2bf3c750610237e2e607a3f7245314e11605f9427363ae2f7b2d2858f8c68966",
+      "skills/wright-workflows/SKILL.md": "102f3840ef98128df5d2e0b5c08f3deb9ae120f4c59f252f900cbb1afebb0ae1"
+    },
+    "profile": "unavailable",
+    "boundary": "actual package command, MCP protocol and resource; no writes or native desktop acceptance"
+  },
+  "browser_report": "/tmp/wright-desktop-home-011-state-20261015-01/browser-home-1792039434552/report.json",
+  "browser_report_sha256": "b7eac5fe92e6700db323946f145e24174b28c9d531205963fdab3fad9bd5524c",
+  "browser_checks_passed": 11,
+  "review_run": "97273c5e95f64d5f850eec6a3fd4823f",
+  "review_receipt": "/tmp/wright-desktop-home-011-state-20261015-01/continuation-probe.json",
+  "review_receipt_sha256": "2ae8615d31b27d8c54138f3218d14479e7d2e9d23cb3127622817a68112d70a2",
+  "same_run_completed": true,
+  "stale_review_denied": {
+    "error": {
+      "ok": false,
+      "http_status": 403,
+      "reason": {
+        "code": "SCOPE_DENIED",
+        "message": "Wright rejected this process operation.",
+        "correction": "Keep your draft and inspect the exact process or connection before proceeding."
+      }
+    }
+  },
+  "installed": false,
+  "windows_native_acceptance": false,
+  "engineering_acceptance": false,
+  "remaining": [
+    "Custom source flow in this exact combined profile",
+    "Final repository gate and push checks",
+    "Private named-plugin backup, update and installed verification",
+    "Windows callback/sign-in and complete engineering demonstrations"
+  ],
+  "preserved_fixture_failures": [
+    "package probe expected wrong readOnlyHint; corrected probe keeps conservative write metadata",
+    "navigation seed omitted frozen native-view flags; rejected before workspace creation; corrected launcher used exact flags"
+  ]
+}

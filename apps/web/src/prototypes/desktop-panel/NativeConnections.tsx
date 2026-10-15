@@ -371,9 +371,7 @@ export function NativeConnections({
             <p>{plan.requirements.license.reference}</p>
           )}
           {(plan.approval_gates ?? []).map((gate) => (
-            <p key={gate}>
-              Setup permissions: {gate.replaceAll("_", " ")}
-            </p>
+            <p key={gate}>Setup permissions: {gate.replaceAll("_", " ")}</p>
           ))}
           {plan.capability_id.startsWith("import:") ? (
             <p>

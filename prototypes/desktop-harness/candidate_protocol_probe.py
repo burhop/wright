@@ -40,7 +40,13 @@ async def main(package, output):
                     "wright_connection_import_plan",
                 ):
                     assert tools[name].meta["ui"]["visibility"] == ["app"]
-                assert tools["wright_connection_preview"].annotations.readOnlyHint
+                assert (
+                    tools["wright_connection_preview"].annotations.readOnlyHint is False
+                )
+                assert (
+                    tools["wright_connection_import_plan"].annotations.readOnlyHint
+                    is False
+                )
             for name in (
                 "wright_workflow_history",
                 "wright_reasoning_image",
