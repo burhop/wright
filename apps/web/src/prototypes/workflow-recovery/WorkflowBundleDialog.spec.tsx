@@ -22,6 +22,7 @@ const document = {
 const bundle = {
   schema_version: "wright.workflow-bundle/1",
   source: "exact saved source",
+  dependencies: [{ category: "reference", identity: "images/reference.png" }],
 };
 const inspection = {
   bundle_digest: "b".repeat(64),
@@ -208,6 +209,7 @@ it("exports only selected files and active interfaces on the exact saved revisio
   ).mockResolvedValue([
     { path: "images/reference.png", name: "reference.png" },
     { path: "runs/history.json", name: "history.json" },
+    { path: "images/unrelated.png", name: "unrelated.png" },
   ]);
   mocks.interfaces.mockResolvedValue([
     {
@@ -253,6 +255,16 @@ it("exports only selected files and active interfaces on the exact saved revisio
   fireEvent.click(screen.getByTestId("workflow-transfer-list-assets"));
   await screen.findByLabelText("images/reference.png");
   expect(screen.queryByText("runs/history.json")).toBeNull();
+  expect(screen.queryByText("images/unrelated.png")).toBeNull();
+  expect(exportFile).toHaveBeenCalledExactlyOnceWith(
+    "session",
+    document.path,
+    document.storage_digest,
+    "source",
+    [],
+    [],
+  );
+  exportFile.mockClear();
   expect(screen.queryByLabelText("Old interface")).toBeNull();
   fireEvent.click(screen.getByLabelText("images/reference.png"));
   fireEvent.click(screen.getByLabelText("Current interface"));
@@ -331,4 +343,34 @@ it("names exact dependencies beside their findings and keeps diagnostic codes in
   expect(details).toHaveTextContent("external_dependency");
   expect(screen.getByTestId("workflow-transfer-import")).toBeDisabled();
   expect(apply).not.toHaveBeenCalled();
+});
+
+it("does not offer workspace files when the owner dependency manifest is unavailable", async () => {
+  const transfer = {
+    export: vi.fn().mockRejectedValue(new Error("Manifest unavailable")),
+    inspect: vi.fn(),
+    import: vi.fn(),
+  };
+  render(
+    <WorkflowBundleDialog
+      document={document}
+      sessionId="session"
+      onClose={vi.fn()}
+      onImported={vi.fn()}
+      transfer={transfer}
+      listFiles={async () => [
+        { path: "images/unrelated.png", name: "unrelated.png" },
+      ]}
+      listInterfaces={async () => []}
+    />,
+  );
+  fireEvent.change(screen.getByTestId("workflow-transfer-mode"), {
+    target: { value: "bundle" },
+  });
+  fireEvent.click(screen.getByTestId("workflow-transfer-list-assets"));
+  await screen.findByText(
+    /Some selectable files or interfaces could not be loaded/,
+  );
+  expect(screen.queryByLabelText("images/unrelated.png")).toBeNull();
+  expect(transfer.import).not.toHaveBeenCalled();
 });

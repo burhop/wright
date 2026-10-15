@@ -10,6 +10,38 @@ WorkflowBundleDialog and authenticated workflow-bundles owners. Keep the neutral
 editor, draft guards, workspace identity and common-view fallback. V1–V7 apply.
 Export is not a run, engineering review, provider grant or confirmed host save.
 
+## Served transfer journey — 15 October
+
+The existing native-home browser harness now exercises workflow transfer through
+real MCP/HTTP owners. Fresh state06 verifies seven checks: home discovery,
+narrow transfer dialog, real Chromium file download, inspection and exactly one
+fresh import with return to its exact saved source, workspace/Files refresh,
+Back and retained draft guards. Original accepted source remains unchanged;
+no process runs or engineering approvals occur. Windows file delivery is still
+unverified. Full shared-editor/Hermes gates and installed candidate checks remain.
+
+Browser evidence:
+`/tmp/wright-desktop-workflow-transfer-state-20261015-06/browser-home-1792061115573/report.json`.
+Final service: API8193, session99416, editor-only profile. State04 and state05
+services stopped before resource rebuilds; their evidence is preserved.
+
+The first state04 browser attempt failed during connection because the harness
+requested a working-view profile absent from this service. The second exposed a
+real shared UI defect: reference discovery offered undeclared workspace files,
+which the export owner correctly rejected. The picker now intersects existing
+files with the exact source's owner-provided dependency manifest; a failed
+manifest read does not offer arbitrary files. Export enforcement is unchanged.
+The final test verifies exclusion of the unrelated fixture and a source transfer;
+selected-asset and saved-interface round trips remain separate pending proofs.
+
+Visual inspection moved the transfer control into the existing styled workflow
+header instead of adding a raw button above the canvas. The final screenshot
+shows the preserved canvas and run-details control. 38 focused tests, TypeScript,
+focused ESLint and diff checks pass. A presentation-test stub initially lacked
+the new header callback; it was updated without removing the draft/stale-source
+assertions. Earlier failure logs and screenshots remain alongside final evidence.
+No installed plugin, engineering provider, push or release changed in this slice.
+
 ## Current checkpoint — merged baseline and packaged candidate
 
 The feature branch merged dev `3b994c56d43b311e290cf943376e0b83881500f5`

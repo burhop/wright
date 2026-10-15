@@ -152,38 +152,30 @@ export function NativePanelContent({
       );
     }
   };
+  const openTransfer = () => {
+    setOpeningTransfer(true);
+    onDirty(true);
+    void sourceClient
+      .read()
+      .then((observed) => {
+        if (observed.storage_digest !== accepted.storage_digest)
+          throw new Error(
+            "The saved workflow changed. Reload it before transferring.",
+          );
+        setTransferDocument(observed);
+        setOpeningTransfer(false);
+      })
+      .catch(() => {
+        setNotice(
+          "Wright could not confirm the current saved workflow. Reload it before transferring; your draft is kept.",
+        );
+        setOpeningTransfer(false);
+        onDirty(sourceDirty || workingDirty);
+      });
+  };
   return (
     <div style={{ height: "100%", minHeight: 0 }}>
       {notice && <p role="status">{notice}</p>}
-      {view === "editor" && transfer && onOpenTransferred && (
-        <button
-          type="button"
-          disabled={sourceDirty || workingDirty || transferPending}
-          onClick={() => {
-            setOpeningTransfer(true);
-            onDirty(true);
-            void sourceClient
-              .read()
-              .then((observed) => {
-                if (observed.storage_digest !== accepted.storage_digest)
-                  throw new Error(
-                    "The saved workflow changed. Reload it before transferring.",
-                  );
-                setTransferDocument(observed);
-                setOpeningTransfer(false);
-              })
-              .catch(() => {
-                setNotice(
-                  "Wright could not confirm the current saved workflow. Reload it before transferring; your draft is kept.",
-                );
-                setOpeningTransfer(false);
-                onDirty(sourceDirty || workingDirty);
-              });
-          }}
-        >
-          Export / import workflow
-        </button>
-      )}
       {transferDocument && transfer && onOpenTransferred && (
         <WorkflowBundleDialog
           document={transferDocument}
@@ -219,6 +211,10 @@ export function NativePanelContent({
           initial={initial}
           client={sourceClient}
           workspaceName={workspaceName}
+          onOpenTransfer={
+            transfer && onOpenTransferred ? openTransfer : undefined
+          }
+          transferDisabled={sourceDirty || workingDirty || transferPending}
           onDirty={sourceChange}
           onAccepted={setAccepted}
           onOpenWorkingView={

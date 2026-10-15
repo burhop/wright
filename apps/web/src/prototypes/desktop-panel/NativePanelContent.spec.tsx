@@ -38,6 +38,14 @@ vi.mock("./NativeWorkflowPanel", () => ({
     const [draft, setDraft] = useState("");
     return (
       <section aria-label="Editor">
+        {props.onOpenTransfer && (
+          <button
+            onClick={props.onOpenTransfer}
+            disabled={props.transferDisabled}
+          >
+            Export / import workflow
+          </button>
+        )}
         <input
           aria-label="Retained editor state"
           value={draft}

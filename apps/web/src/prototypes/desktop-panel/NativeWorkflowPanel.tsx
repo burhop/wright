@@ -13,6 +13,8 @@ export function NativeWorkflowPanel({
   onDirty,
   onAccepted,
   onOpenWorkingView,
+  onOpenTransfer,
+  transferDisabled = false,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly client: NativeSourceClient;
@@ -20,6 +22,8 @@ export function NativeWorkflowPanel({
   readonly onAccepted?: (document: WorkspaceWorkflowSourceDocument) => void;
   readonly onOpenWorkingView?: () => void;
   readonly onDirty?: (dirty: boolean) => void;
+  readonly onOpenTransfer?: () => void;
+  readonly transferDisabled?: boolean;
 }) {
   const [document, setDocument] = useState(initial);
   const [unsaved, setUnsaved] = useState(false);
@@ -36,6 +40,15 @@ export function NativeWorkflowPanel({
         <span>
           {unsaved ? "Unsaved changes — save before closing." : "Workflow"}
         </span>
+        {onOpenTransfer && (
+          <button
+            type="button"
+            disabled={transferDisabled}
+            onClick={onOpenTransfer}
+          >
+            Export / import workflow
+          </button>
+        )}
         {onOpenWorkingView && (
           <button type="button" disabled={unsaved} onClick={onOpenWorkingView}>
             Run and results

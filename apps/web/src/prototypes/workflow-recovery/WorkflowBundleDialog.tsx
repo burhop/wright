@@ -187,12 +187,40 @@ export function WorkflowBundleDialog({
                 onClick={() =>
                   void perform(async () => {
                     const outcomes = await Promise.allSettled([
-                      listFiles
-                        ? listFiles()
-                        : workspaceService.getWorkspaceWorkflowInputFiles(
+                      (async () => {
+                        const [available, exported] = await Promise.all([
+                          listFiles
+                            ? listFiles()
+                            : workspaceService.getWorkspaceWorkflowInputFiles(
+                                sessionId,
+                                document.workspace_id,
+                              ),
+                          transfer.export(
                             sessionId,
-                            document.workspace_id,
+                            document.path,
+                            document.storage_digest,
+                            "source",
+                            [],
+                            [],
                           ),
+                        ]);
+                        const dependencies = exported.bundle.dependencies;
+                        if (!Array.isArray(dependencies))
+                          throw new Error("Reference manifest unavailable.");
+                        const declared = new Set(
+                          dependencies
+                            .filter(
+                              (item) =>
+                                item &&
+                                item.category === "reference" &&
+                                typeof item.identity === "string",
+                            )
+                            .map((item) => item.identity),
+                        );
+                        return available.filter((file) =>
+                          declared.has(file.path),
+                        );
+                      })(),
                       listInterfaces
                         ? listInterfaces()
                         : createInterfaceAuthoringClient(
