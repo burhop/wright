@@ -165,3 +165,23 @@ Evidence in the same external directory: `merge-83c2ca70-receipt.json`,
 `/tmp/wright-desktop-plugin-update-014-mcp130-20261016-01/` (private configuration
 must not be published). Full SteveCAD, Robot and manufacturing acceptance is
 still required; these delivery and packaging checks do not replace it.
+
+## Windows chat restoration regression — 16 October 2026
+
+The consolidated SDK correction at `ca71bf92` passed both local gates and the
+ARM64 final-image smoke. Its second CI cycle found a distinct existing chat race:
+an initial history response arriving after a new turn erased that turn. A
+deterministic test now holds history, observes the completed blank-response
+diagnostic, releases history and verifies that the diagnostic remains. The
+unchanged implementation fails that interleaving; a per-session turn version
+rejects the stale restore result. All 70 adjacent chat/session UI checks pass,
+including ordinary history normalization, reconnect, queueing and steering.
+This preserves the standalone Hermes experience; desktop reasoning is unchanged.
+
+Evidence: `pr159-second-windows-frontend-failure.log`,
+`chat-history-race-negative.log`, `chat-history-race-positive.log`, and
+`chat-history-related-tests.log` in the existing external evidence directory.
+Remaining second-cycle jobs must finish before another consolidated push. This
+is a new product ordering defect, not another attempt at the SDK downgrade;
+fresh exact-candidate gates and current-head CI are required. No timeout or
+assertion was weakened, and no failed job was rerun.

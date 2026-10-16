@@ -387,6 +387,13 @@ uncertain-publication assertions. A suppressed wakeup signal must fail the test.
 Both native gates already collect this suite; the correction changes its
 controlled interleaving, not gate selection or production cancellation behavior.
 
+Chat restoration regressions must hold the initial history response until a new
+turn completes, then release that older response and verify the new messages
+remain visible. PR #159 exposed initial-history delivery erasing a completed
+turn on Windows. Waiting longer for the missing diagnostic does not fix that
+ordering bug. Keep ordinary history restoration, reconnect and queued-turn checks;
+the existing full frontend suite runs the deterministic interleaving regression.
+
 - Collect every failed job and its first actionable error before editing.
 - Let the complete CI browser run report its full failure set; do not cap the run
   after an arbitrary number of failures that forces serial discovery pushes.

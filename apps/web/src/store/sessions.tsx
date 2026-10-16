@@ -683,6 +683,7 @@ export function ChatProvider({
   );
   const steeringSessionsRef = useRef<Set<string>>(new Set());
   const resumedStreamIdsRef = useRef<Set<string>>(new Set());
+  const sessionTurnVersionsRef = useRef<Map<string, number>>(new Map());
   const providerMountedRef = useRef(true);
 
   useEffect(() => {
@@ -776,6 +777,7 @@ export function ChatProvider({
     if (desktopConversation || !state.activeSessionId) return;
 
     const sessionId = state.activeSessionId;
+    const turnVersion = sessionTurnVersionsRef.current.get(sessionId) ?? 0;
     const restoreSession = async () => {
       try {
         const [historyResult, statusResult] = await Promise.allSettled([
@@ -783,6 +785,13 @@ export function ChatProvider({
           agentService.getStreamStatus(sessionId),
         ]);
         if (!providerMountedRef.current) return;
+        // A history snapshot requested before a new turn cannot replace it or
+        // reattach work that predates that turn.
+        if (
+          (sessionTurnVersionsRef.current.get(sessionId) ?? 0) !== turnVersion
+        ) {
+          return;
+        }
 
         const cachedHistory =
           readCachedSessions().find(
@@ -1091,6 +1100,10 @@ export function ChatProvider({
         return;
       }
 
+      sessionTurnVersionsRef.current.set(
+        sessionId,
+        (sessionTurnVersionsRef.current.get(sessionId) ?? 0) + 1,
+      );
       const userMsg: ChatMessage = {
         id: Math.random().toString(36).substring(7),
         role: "user",
