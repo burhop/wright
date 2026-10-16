@@ -111,3 +111,23 @@ Evidence under `/tmp/wright-desktop-file-download-evidence-20261015/`:
 `merge-74584fed-receipt.json`, `dev-reconciliation.json`,
 `candidate-014-preparation.json`, `download-source-review.json`,
 `native-014-update.md` and `desktop-014-walkthrough.md`.
+
+## Security gate correction — 16 October 2026
+
+The normal push gate at `e19c48ff` stopped before its test stages because the
+current dependency audit reported CVE-2026-59951 in locked MCP1.28.1. The previous
+full gate is retained as historical evidence, not current dependency qualification.
+Upstream fixes this stateful Streamable HTTP session-retention issue in1.30.0
+on the1.x line: https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-84m7-p3x7-pcfv.
+
+Both existing MCP requirements now require at least1.30.0 and retain the<2 bound.
+The locked resolver changed only MCP to1.30.0; the existing native build helper
+regenerated the runtime extra lock. A fresh isolated environment passes the
+unchanged dependency audit with no findings. No exception was added. All769 gateway and
+desktop compatibility checks passed; new full/push gates and a rebuilt
+candidate are required. The previously prepared0.14 package must not be installed.
+Installed0.13 and live services have not been changed.
+
+Evidence: `push-e19c48ff-receipt.json`, `security-audit-followup.json`,
+`mcp-130-lock.log`, `mcp-130-sync.log`, `mcp-130-audit.log` and
+`mcp-130-compatibility.log` in the existing external evidence directory.
