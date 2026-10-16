@@ -2,6 +2,11 @@
 
 Initial investigation, 15 October 2026. Superseded by the implementation checkpoint below; not installed.
 
+Current status, 16 October: the patched 0.14.0 prototype is installed and locally
+qualified. PR159 is under qualification; Windows native download acceptance and
+complete engineering demonstrations remain outstanding. Earlier dated entries
+below describe historical states, not the current installation.
+
 The goal requires inspecting and retrieving real engineering deliverables. Native
 Files currently offers metadata and 64 KiB text previews; STEP, meshes and PDFs
 have no download control. Definition export in PR158 does not close this gap.
@@ -131,3 +136,32 @@ Installed0.13 and live services have not been changed.
 Evidence: `push-e19c48ff-receipt.json`, `security-audit-followup.json`,
 `mcp-130-lock.log`, `mcp-130-sync.log`, `mcp-130-audit.log` and
 `mcp-130-compatibility.log` in the existing external evidence directory.
+
+## Patched installation and engineering-image correction — 16 October 2026
+
+Head `83c2ca70` passed full local merge and normal push gates with MCP1.30.0.
+The full browser limitation remains explicit; separate Chromium checks passed.
+The named plugin was updated to the independently qualified patched 0.14.0
+package with exact configuration/cache backup and scoped rollback. Its installed
+command serves 41 tools and the expected native resource. Actual MCP and
+simulated-host Chromium proofs preserve the retained STEP and Robot CSV bytes;
+actual Windows download acceptance remains pending. No engineering run, provider
+grant or authentication was introduced. A fresh SteveCAD workspace holds the
+unchanged original workflow and reports missing provider tools before start.
+
+PR159's first CI cycle exposed both engineering manifests downgrading the shared
+MCP SDK to1.28.1 after the base image passed. Disposable containers reproduced
+the fourth dependency conflict. Both manifests now pin1.30.0; the unchanged
+reconciler accepts only the three previously reviewed Hermes conflicts. A new
+test in the already selected Docker bundle suite compares both pins with the
+runtime requirement and resolver lock. Its negative control failed on both old
+pins. Final-image qualification and new current-candidate gates remain required.
+Wait for all first-cycle jobs to finish before the consolidated correction push.
+
+Evidence in the same external directory: `merge-83c2ca70-receipt.json`,
+`push-83c2ca70-receipt.json`, `candidate-014-mcp130/`,
+`pr159-failure-triage.json`, `bundle-pin-negative-control.log`, and
+`bundle-pin-regression-unsandboxed.log`. Scoped installation backup and receipts:
+`/tmp/wright-desktop-plugin-update-014-mcp130-20261016-01/` (private configuration
+must not be published). Full SteveCAD, Robot and manufacturing acceptance is
+still required; these delivery and packaging checks do not replace it.
