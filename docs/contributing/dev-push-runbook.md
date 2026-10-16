@@ -102,6 +102,14 @@ contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
 developer host; both images must build and pass their exact-image smoke tests.
 
+PR #159 exposed a bundle downgrade after the base image passed: its provider
+install list pinned an older MCP SDK in the shared Hermes environment. The
+Docker bundle suite now checks both Linux manifests against Wright's runtime
+requirement and locked SDK version. Both native gates run that check before
+dependency audits and base-image scanning. Update these pins together; do not
+add an SDK conflict to the reviewed Hermes dependency exceptions. Base-image
+qualification alone does not qualify the final engineering bundle.
+
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
 Backend Python CI also installs the pinned Node toolchain and runs `npm ci`, then

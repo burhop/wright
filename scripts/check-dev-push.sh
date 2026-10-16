@@ -432,6 +432,8 @@ fi
 
 if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
+  # Catch shared SDK downgrades before scanning the base image (PR159).
+  run "$GATE_PYTHON" -m pytest tests/docker/test_mcp_bundle.py -q -k bundle_mcp_sdk_matches_runtime_lock
   run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
   if [[ "$CHECK_DOCKER_SCAN" == "1" ]]; then
     run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host

@@ -1,5 +1,6 @@
 """Opt-in prototype composition over Wright's existing services and owners."""
 
+import base64
 import hashlib
 from importlib.metadata import version
 import json
@@ -717,6 +718,50 @@ class DesktopBackend:
                 "content": result.content.decode("utf-8"),
                 "sha256": hashlib.sha256(result.content).hexdigest(),
                 "bytes": len(result.content),
+            }
+
+        @router.get("/workspaces/{workspace_id}/file-download")
+        async def workspace_file_download(
+            workspace_id: str, session_id: str, path: str
+        ):
+            row = self.workspace(workspace_id, session_id)
+            scope = {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "path": path,
+            }
+            from workspace_service.workspace_path import WorkspacePath
+
+            try:
+                # Match Files visibility; hidden runtime/configuration data is not
+                # a downloadable engineering document. The owner checks confinement.
+                parts = path.replace("\\", "/").split("/")
+                if (
+                    len(path) > 4096
+                    or any(ord(char) < 32 or ord(char) == 127 for char in path)
+                    or any(
+                        not part or part.startswith(".") or part == "freecad_mcp_work"
+                        for part in parts
+                    )
+                ):
+                    raise ValueError("File is outside the visible file surface")
+                WorkspacePath(row["local_path"]).resolve(path, must_exist=True)
+                content = await self.service.files.read_bytes(
+                    row["local_path"], path, maximum_bytes=16 * 1024 * 1024
+                )
+            except (ValueError, OSError):
+                return {
+                    **scope,
+                    "supported": False,
+                    "reason": "Download unavailable. Choose a visible workspace file up to 16 MiB.",
+                }
+            return {
+                **scope,
+                "supported": True,
+                "filename": parts[-1],
+                "content_base64": base64.b64encode(content).decode("ascii"),
+                "sha256": hashlib.sha256(content).hexdigest(),
+                "bytes": len(content),
             }
 
         @router.get("/reasoning")

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { NativeFileDownload } from "./NativeFileDownload";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
 
 /** Plain text only; file content never becomes HTML or an execution request. */
@@ -66,6 +67,16 @@ export function NativeFilePreview({
       <button type="button" onClick={onClose}>
         Close preview
       </button>
+      <NativeFileDownload
+        key={JSON.stringify([
+          workspace.workspace_id,
+          workspace.session_id,
+          path,
+        ])}
+        call={call}
+        workspace={workspace}
+        path={path}
+      />
       {!preview && <p role="status">Reading file…</p>}
       {preview?.reason && <p role="status">{preview.reason}</p>}
       {preview?.content !== undefined && (

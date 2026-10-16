@@ -6,11 +6,13 @@ import os
 import subprocess
 import sys
 import threading
+import tomllib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
 import yaml
+from packaging.requirements import Requirement
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -81,6 +83,27 @@ def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> 
             "playwright-mcp": "playwright-mcp",
             "onshape-labs-featurescript-mcp": "onshape-labs-featurescript-mcp",
         }
+
+
+@pytest.mark.parametrize("manifest", ["docker/mcp-bundle.yaml", "docker/mcp-bundle.linux-arm64.yaml"])
+def test_bundle_mcp_sdk_matches_runtime_lock(manifest: str) -> None:
+    """Bundle installation must not downgrade the shared Hermes MCP SDK."""
+    lock = tomllib.loads(read_text("uv.lock"))
+    locked_version = next(package["version"] for package in lock["package"] if package["name"] == "mcp")
+    project = tomllib.loads(read_text("pyproject.toml"))
+    runtime = [Requirement(value) for value in project["project"]["optional-dependencies"]["runtime"]]
+    requirement = next(value for value in runtime if value.name == "mcp")
+    assert locked_version in requirement.specifier
+    bundle = yaml.safe_load(read_text(manifest))
+    pins = [
+        Requirement(value)
+        for server in bundle["mcp_servers"]
+        for value in server.get("install", {}).get("python_tools", [])
+        if value.startswith(("mcp[", "mcp==", "mcp>"))
+    ]
+    assert pins, f"{manifest} must declare its shared MCP SDK pin"
+    for pin in pins:
+        assert str(pin.specifier) == f"=={locked_version}", (manifest, str(pin), locked_version)
 
 
 def test_arm64_bundle_uses_platform_native_freecad_source() -> None:

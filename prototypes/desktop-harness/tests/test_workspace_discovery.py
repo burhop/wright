@@ -721,3 +721,115 @@ async def test_workspace_creation_conflict_is_actionable_without_path_disclosure
     service.create_workspace.assert_awaited_once()
     assert repository.list_all() == before
     assert repository.list_sessions("Existing") == sessions
+
+
+@pytest.mark.asyncio
+async def test_download_exact_bytes_and_scope(discovery):
+    import base64
+    import hashlib
+
+    app, _, _, create, _ = discovery
+    directory = create("Download")
+    content = b"ISO-10303-21;\x00\xff\r\nEND-ISO-10303-21;"
+    (directory / "part.step").write_bytes(content)
+    owner = app.state.desktop_service.files
+    owner.read_bytes = AsyncMock(return_value=content)
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        route = "/api/desktop/workspaces/Download/file-download"
+        denied = await client.get(
+            route, params={"session_id": "other", "path": "part.step"}
+        )
+        assert denied.status_code == 403
+        owner.read_bytes.assert_not_awaited()
+        result = (
+            await client.get(
+                route, params={"session_id": "desktop-Download", "path": "part.step"}
+            )
+        ).json()
+        assert result["supported"]
+        assert base64.b64decode(result["content_base64"], validate=True) == content
+        assert result["sha256"] == hashlib.sha256(content).hexdigest()
+        assert result["bytes"] == len(content)
+        assert result["filename"] == "part.step"
+        owner.read_bytes.assert_awaited_once_with(
+            str(directory), "part.step", maximum_bytes=16 * 1024 * 1024
+        )
+        owner.read_bytes.side_effect = ValueError("private exception detail")
+        rejected = (
+            await client.get(
+                route, params={"session_id": "desktop-Download", "path": "part.step"}
+            )
+        ).json()
+        assert rejected["supported"] is False
+        assert "content_base64" not in rejected
+        assert "private exception detail" not in str(rejected)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "path",
+    [
+        "../outside",
+        "/etc/passwd",
+        "C:\\secret",
+        "a:stream",
+        ".env",
+        ".wright/state.json",
+        "outputs/.secret",
+        "freecad_mcp_work/file",
+        "bad\nname",
+        "linked.step",
+        "missing.step",
+    ],
+)
+async def test_download_rejects_nonvisible_or_unconfined_paths_before_read(
+    discovery, path
+):
+    app, _, _, create, root = discovery
+    directory = create("Download")
+    outside = root / "outside"
+    outside.write_bytes(b"private")
+    (directory / "linked.step").symlink_to(outside)
+    owner = app.state.desktop_service.files
+    owner.read_bytes = AsyncMock(return_value=b"must not read")
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        result = (
+            await client.get(
+                "/api/desktop/workspaces/Download/file-download",
+                params={"session_id": "desktop-Download", "path": path},
+            )
+        ).json()
+    assert result["supported"] is False
+    assert "content_base64" not in result
+    owner.read_bytes.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_download_bridge_is_ui_only_and_scoped(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        call=AsyncMock(return_value={"supported": False}), scope=AsyncMock()
+    )
+    bridge = server(client)
+    tool = next(
+        tool
+        for tool in await bridge.list_tools()
+        if tool.name == "wright_workspace_file_download"
+    )
+    assert tool.annotations.readOnlyHint
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    await bridge.call_tool(
+        tool.name, {"workspace_id": "a", "session_id": "chat-a", "path": "part.step"}
+    )
+    client.scope.assert_awaited_once_with("a", "chat-a")
+    client.call.assert_awaited_once_with(
+        "GET",
+        "/api/desktop/workspaces/a/file-download",
+        params={"session_id": "chat-a", "path": "part.step"},
+    )
