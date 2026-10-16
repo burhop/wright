@@ -89,3 +89,25 @@ Remaining: reconcile integrated dev, repository gates and full shared UI
 regression, named-candidate package qualification/rollback before installation,
 and Windows acceptance. PR158's current-head Windows backend CI is still running.
 Full SteveCAD, Robot and manufacturing process acceptance remains incomplete.
+
+## Integration checkpoint — 16 October 2026
+
+PR158 merged to dev at `bcb5b52f1f7169eb0b5b71bc1a1ef704b6911a94` after
+all current CI checks passed (28 successes and one intentional skip). This branch
+was rebased onto that merge; its exact Git tree remained unchanged from the
+qualified download head `74584fed`. The full local merge gate passed, including
+1,921 frontend tests. Local full Playwright was explicitly skipped for the
+retained GB10 WebKit limitation; separate actual Chromium/MCP download proofs
+and hosted browser CI remain required. Generated build files were preserved
+before restoring only those files. Normal push checks and PR CI remain pending.
+
+Candidate 0.14.0 is prepared, not installed. Its exact packaged command serves
+41 tools and the recorded native resource; actual MCP and simulated-host Chromium
+downloads preserve both retained engineering files. Candidate service state is
+isolated from installed 0.13.0. No new engineering output, Windows acceptance,
+SteveCAD authentication, model routing change or tool grant is claimed.
+
+Evidence under `/tmp/wright-desktop-file-download-evidence-20261015/`:
+`merge-74584fed-receipt.json`, `dev-reconciliation.json`,
+`candidate-014-preparation.json`, `download-source-review.json`,
+`native-014-update.md` and `desktop-014-walkthrough.md`.
