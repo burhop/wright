@@ -109,6 +109,38 @@ async def test_denied_scope_never_reads_catalog_and_invalid_catalog_is_not_empty
 
 
 @pytest.mark.asyncio
+async def test_disable_is_app_only_and_checks_scope_before_exact_owner_call(
+    monkeypatch,
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"ok": True})
+    )
+    bridge = server(client)
+    args = {
+        "workspace_id": "workspace",
+        "session_id": "session",
+        "capability_id": "cad",
+        "server_id": "registered-cad",
+    }
+    tools = await bridge.list_tools()
+    tool = next(item for item in tools if item.name == "wright_connection_disable")
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    await bridge.call_tool("wright_connection_disable", args)
+    client.scope.assert_awaited_once_with("workspace", "session")
+    client.call.assert_awaited_once_with(
+        "POST", "/api/desktop/connections/disable", json=args
+    )
+    client.call.reset_mock()
+    client.scope.side_effect = RuntimeError("scope denied")
+    with pytest.raises(Exception, match="scope denied"):
+        await bridge.call_tool("wright_connection_disable", args)
+    client.call.assert_not_awaited()
+
+
+@pytest.mark.asyncio
 async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
     from mcp_bridge import server

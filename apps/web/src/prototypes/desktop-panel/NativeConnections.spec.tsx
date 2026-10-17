@@ -17,6 +17,7 @@ const reply = (scope = "a") => ({
     connections: [
       {
         capability_id: "cad",
+        server_id: "registered-cad",
         name: "CAD",
         description: "Design",
         installed: true,
@@ -31,6 +32,105 @@ const reply = (scope = "a") => ({
   },
 });
 afterEach(cleanup);
+
+function enabledReply(enabled = true) {
+  const result = reply();
+  result.structuredContent.connections[0].enabled_here = enabled;
+  return result;
+}
+function disabledReceipt(workspaceId = "a") {
+  return {
+    content: [],
+    structuredContent: {
+      workspace_id: workspaceId,
+      session_id: "chat-a",
+      availability: {
+        workspace_id: workspaceId,
+        capability_id: "cad",
+        server_id: "registered-cad",
+        enabled: false,
+      },
+    },
+  };
+}
+
+it("disables the exact workspace connection once and retains provider setup", async () => {
+  let finish!: (value: ReturnType<typeof disabledReceipt>) => void;
+  const pending = new Promise<ReturnType<typeof disabledReceipt>>((resolve) => {
+    finish = resolve;
+  });
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(enabledReply())
+    .mockReturnValueOnce(pending);
+  render(<NativeConnections workspace={workspace} call={call} />);
+  const disable = await screen.findByRole("button", {
+    name: "Disable CAD in this workspace",
+  });
+  fireEvent.click(disable);
+  fireEvent.click(disable);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_disable"),
+  ).toHaveLength(1);
+  expect(call).toHaveBeenLastCalledWith("wright_connection_disable", {
+    workspace_id: "a",
+    session_id: "chat-a",
+    capability_id: "cad",
+    server_id: "registered-cad",
+  });
+  finish(disabledReceipt());
+  expect(
+    await screen.findByText("CAD is disabled in this workspace."),
+  ).toBeVisible();
+  expect(
+    screen.queryByRole("button", { name: "Disable CAD in this workspace" }),
+  ).toBeNull();
+  expect(
+    screen.getByRole("button", { name: "Review setup for CAD" }),
+  ).toBeVisible();
+  expect(
+    call.mock.calls.every(([name]) =>
+      ["wright_connections_list", "wright_connection_disable"].includes(name),
+    ),
+  ).toBe(true);
+});
+
+it.each(["lost reply", "wrong scope"])(
+  "reconciles %s through a read without repeating disable",
+  async (failure) => {
+    const call = vi
+      .fn()
+      .mockResolvedValueOnce(enabledReply())
+      .mockImplementationOnce(() =>
+        failure === "lost reply"
+          ? Promise.reject(Error("Lost acknowledgement"))
+          : Promise.resolve(disabledReceipt("other")),
+      )
+      .mockResolvedValue(enabledReply(false));
+    render(<NativeConnections workspace={workspace} call={call} />);
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Disable CAD in this workspace",
+      }),
+    );
+    expect(
+      await screen.findByText(/Disable outcome is not confirmed/),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Disable CAD in this workspace" }),
+    ).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Search / refresh" }));
+    expect(
+      await screen.findByText(
+        /Saved availability is confirmed: this connection is disabled/,
+      ),
+    ).toBeVisible();
+    expect(
+      call.mock.calls.filter(([name]) => name === "wright_connection_disable"),
+    ).toHaveLength(1);
+  },
+);
+
 it("shows catalog state without implying workspace grant or live health", async () => {
   const call = vi.fn().mockResolvedValue(reply());
   render(<NativeConnections workspace={workspace} call={call} />);

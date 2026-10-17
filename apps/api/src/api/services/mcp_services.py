@@ -449,6 +449,34 @@ class McpApiService:
             ),
         }
 
+    def disable_capability_for_workspace(
+        self, identity: str, workspace_id: str, *, expected_server_id: str
+    ):
+        """Revoke availability without requiring fresh provider validation."""
+        view = self.get_capability(identity)
+        server_id = view.user_state.server_id
+        if not server_id or server_id != expected_server_id:
+            raise McpInvalidOperationError(
+                "The connection identity changed. Refresh Connections before disabling."
+            )
+        workspace_service = getattr(self.app_state, "workspace_service", None)
+        if workspace_service is None:
+            raise McpOperationError("Workspace service is unavailable.")
+        workspace = workspace_service.repository.get_by_id(workspace_id)
+        if workspace is None:
+            raise McpNotFoundError(f"Workspace '{workspace_id}' not found.")
+        state = workspace_service.set_workspace_tool_enabled_by_workspace(
+            workspace_id, server_id, False
+        )
+        self._notify_gateway_changes(session_id=workspace.get("session_id"))
+        return {
+            "workspace_id": workspace_id,
+            "capability_id": view.canonical_id,
+            "server_id": server_id,
+            "enabled": server_id in (state.enabled_tools or []),
+            "invocation_approved": False,
+        }
+
     def get_catalog_state(self):
         bootstrap_bundled_snapshot(self.db_path)
         state = get_catalog_state(self.db_path)

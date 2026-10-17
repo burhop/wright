@@ -15,7 +15,8 @@ export type ConnectionsCall = (
     | "wright_connection_plan_update"
     | "wright_connection_signin"
     | "wright_connection_validate"
-    | "wright_connection_enable",
+    | "wright_connection_enable"
+    | "wright_connection_disable",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
@@ -31,6 +32,7 @@ interface Connection {
   installed: boolean;
   active: boolean;
   enabled_here: boolean;
+  server_id?: string | null;
   credentials_missing: boolean;
   process_status: string;
   installed_version: string | null;
@@ -75,6 +77,10 @@ export function NativeConnections({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const [availabilityNotice, setAvailabilityNotice] = useState("");
+  const disabling = useRef(false);
+  const [disableUncertain, setDisableUncertain] = useState<string>();
+  const availabilityReadPending = useRef<string | undefined>(undefined);
   const [planning, setPlanning] = useState(false);
   const [saved, setSaved] = useState<{
     capabilityId: string | null;
@@ -161,6 +167,57 @@ export function NativeConnections({
   const [planError, setPlanError] = useState(false);
   const [acting, setActing] = useState(false);
   const [uncertain, setUncertain] = useState(false);
+  async function disableConnection(item: Connection) {
+    if (disabling.current || !item.server_id || !item.enabled_here) return;
+    disabling.current = true;
+    setActing(true);
+    setAvailabilityNotice("");
+    try {
+      const result = await call("wright_connection_disable", {
+        workspace_id: workspace.workspace_id,
+        session_id: workspace.session_id,
+        capability_id: item.capability_id,
+        server_id: item.server_id,
+      });
+      const data = result.structuredContent;
+      const availability = data?.availability as
+        | {
+            workspace_id?: string;
+            capability_id?: string;
+            server_id?: string;
+            enabled?: boolean;
+          }
+        | undefined;
+      if (
+        result.isError ||
+        data?.workspace_id !== workspace.workspace_id ||
+        data?.session_id !== workspace.session_id ||
+        availability?.workspace_id !== workspace.workspace_id ||
+        availability.capability_id !== item.capability_id ||
+        availability.server_id !== item.server_id ||
+        availability.enabled !== false
+      )
+        throw Error("Disable outcome not confirmed");
+      setAvailabilityNotice(`${item.name} is disabled in this workspace.`);
+      setItems((current) =>
+        current.map((connection) =>
+          connection.capability_id === item.capability_id &&
+          connection.server_id === item.server_id
+            ? { ...connection, enabled_here: false }
+            : connection,
+        ),
+      );
+    } catch {
+      availabilityReadPending.current = item.capability_id;
+      setDisableUncertain(item.capability_id);
+      setAvailabilityNotice(
+        "Disable outcome is not confirmed. Search / refresh to check saved availability before another attempt; no request was repeated.",
+      );
+    } finally {
+      disabling.current = false;
+      setActing(false);
+    }
+  }
   const [licenseCapability, setLicenseCapability] = useState<string | null>(
     null,
   );
@@ -239,6 +296,7 @@ export function NativeConnections({
   }
   useEffect(() => {
     let active = true;
+    const reconcileAvailability = availabilityReadPending.current;
     setLoading(true);
     setError(false);
     void call("wright_connections_list", {
@@ -259,6 +317,22 @@ export function NativeConnections({
           throw new Error("Unconfirmed connection scope");
         if (!active) return;
         setItems(data.connections as Connection[]);
+        if (reconcileAvailability) {
+          const saved = (data.connections as Connection[]).find(
+            (item) =>
+              item.capability_id === reconcileAvailability &&
+              typeof item.enabled_here === "boolean",
+          );
+          if (saved) {
+            availabilityReadPending.current = undefined;
+            setDisableUncertain(undefined);
+            setAvailabilityNotice(
+              saved.enabled_here
+                ? "Saved availability is confirmed: this connection is still enabled. You may explicitly try disabling it again."
+                : "Saved availability is confirmed: this connection is disabled in this workspace.",
+            );
+          }
+        }
         setNext(typeof data.next_cursor === "string" ? data.next_cursor : null);
       })
       .catch(() => {
@@ -281,6 +355,7 @@ export function NativeConnections({
   return (
     <section aria-label="Connections">
       <h2>Connections</h2>
+      {availabilityNotice && <p role="status">{availabilityNotice}</p>}
       <p>
         Engineering tools for {workspace.workspace_name}. Availability here does
         not approve workflow actions.
@@ -512,6 +587,25 @@ export function NativeConnections({
                     </p>
                   ))}
                 </details>
+                {item.enabled_here && item.server_id && (
+                  <button
+                    disabled={
+                      planning ||
+                      acting ||
+                      loading ||
+                      disableUncertain === item.capability_id
+                    }
+                    onClick={() => void disableConnection(item)}
+                  >
+                    Disable {item.name} in this workspace
+                  </button>
+                )}
+                {item.enabled_here && !item.server_id && (
+                  <p>
+                    Availability changes are unavailable because the registered
+                    connection could not be identified. Refresh Connections.
+                  </p>
+                )}
                 <button
                   disabled={planning || acting || uncertain}
                   onClick={() => void savedPlans(item.capability_id)}

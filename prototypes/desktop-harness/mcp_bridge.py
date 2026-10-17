@@ -428,6 +428,7 @@ def server(client, *, native_editor=False, native_working_view=False):
                         scope.get("workspace_id") == workspace_id
                         for scope in item.user_state.enabled_workspaces
                     ),
+                    "server_id": item.user_state.server_id,
                     "credentials_missing": any(
                         not configured
                         for configured in item.user_state.credentials_configured.values()
@@ -629,6 +630,23 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "plan_digest": plan_digest,
+            },
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_disable(
+        workspace_id: str, session_id: str, capability_id: str, server_id: str
+    ) -> dict[str, Any]:
+        """Explicit operator removal from this workspace; no provider uninstall or invocation grant."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connections/disable",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "server_id": server_id,
             },
         )
 

@@ -690,6 +690,7 @@ async def test_custom_preview_rejects_credential_or_unsupported_endpoint_before_
         assert response.status_code == 422
         owner.preview_import.assert_not_called()
 
+
 @pytest.mark.asyncio
 async def test_workspace_creation_conflict_is_actionable_without_path_disclosure(
     discovery,
@@ -833,3 +834,55 @@ async def test_download_bridge_is_ui_only_and_scoped(monkeypatch):
         "/api/desktop/workspaces/a/file-download",
         params={"session_id": "chat-a", "path": "part.step"},
     )
+
+
+@pytest.mark.asyncio
+async def test_disable_requires_operator_and_owned_session_before_mutation(discovery):
+    from api.security import SecuritySettings, require_admin
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    app.state.security_settings = SecuritySettings(
+        "enforced", "synthetic-operator-token", (), "127.0.0.1"
+    )
+    create("Alpha")
+    owner = SimpleNamespace(
+        disable_capability_for_workspace=Mock(
+            return_value={
+                "workspace_id": "Alpha",
+                "capability_id": "cad",
+                "server_id": "registered-cad",
+                "enabled": False,
+            }
+        )
+    )
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    body = {
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "capability_id": "cad",
+        "server_id": "registered-cad",
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        denied = await client.post("/api/desktop/connections/disable", json=body)
+        assert denied.status_code in (401, 403)
+        owner.disable_capability_for_workspace.assert_not_called()
+        app.dependency_overrides[require_admin] = lambda: None
+        wrong = await client.post(
+            "/api/desktop/connections/disable", json={**body, "session_id": "unrelated"}
+        )
+        assert wrong.status_code == 403
+        owner.disable_capability_for_workspace.assert_not_called()
+        result = await client.post("/api/desktop/connections/disable", json=body)
+        assert result.status_code == 200
+        assert result.json()["availability"]["enabled"] is False
+        owner.disable_capability_for_workspace.assert_called_once_with(
+            "cad", "Alpha", expected_server_id="registered-cad"
+        )
+        extra = await client.post(
+            "/api/desktop/connections/disable", json={**body, "approval_mode": "auto"}
+        )
+        assert extra.status_code == 422
+        assert owner.disable_capability_for_workspace.call_count == 1

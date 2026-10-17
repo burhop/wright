@@ -95,6 +95,14 @@ class ConnectionPlanAction(BaseModel):
     plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
 
 
+class DisableConnectionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    capability_id: str = Field(min_length=1, max_length=256)
+    server_id: str = Field(min_length=1, max_length=256)
+
+
 class DesktopBackend:
     def __init__(
         self,
@@ -557,6 +565,31 @@ class DesktopBackend:
                 "session_id": body.session_id,
                 "plan_id": plan_id,
                 "enablement": result,
+            }
+
+        @router.post("/connections/disable", dependencies=[Depends(require_admin)])
+        async def disable_connection(
+            body: DisableConnectionRequest,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(body.workspace_id, body.session_id)
+            from api.services.mcp_services import (
+                McpServiceError,
+                mcp_service_http_exception,
+            )
+
+            try:
+                result = service.disable_capability_for_workspace(
+                    body.capability_id,
+                    body.workspace_id,
+                    expected_server_id=body.server_id,
+                )
+            except McpServiceError as error:
+                raise mcp_service_http_exception(error) from error
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "availability": result,
             }
 
         @router.get("/connection")
