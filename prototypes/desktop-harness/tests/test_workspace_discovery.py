@@ -354,6 +354,10 @@ async def test_operator_signin_is_scoped_and_cleared_without_workspace_grant(dis
         state="completed",
         plan_digest="a" * 64,
     )
+    owner.get_capability.return_value = SimpleNamespace(
+        local_validation=None,
+        user_state=SimpleNamespace(installed=True, active=False, enabled_workspaces=[]),
+    )
     ready, finish = asyncio.Event(), asyncio.Event()
 
     async def validate(server_id, **kwargs):

@@ -340,3 +340,83 @@ async def test_uninstall_denied_and_uncertain_outcomes_never_repeat_owner(contro
         failed = await client.post("/api/desktop/connection-controls", json=request)
         assert failed.status_code == 503 and "PRIVATE" not in failed.text
         owner.uninstall_server.assert_awaited_once_with("playwright-mcp")
+
+
+@pytest.mark.asyncio
+async def test_saved_provider_status_is_scoped_read_only_and_redacted(
+    controls, monkeypatch
+):
+    app, owner, repository, engine, gateway, sync, directory = controls
+    plan = SimpleNamespace(
+        workspace_id="alpha",
+        requested_scope="workspace",
+        state="completed",
+        capability_id="playwright-mcp",
+        plan_digest="a" * 64,
+    )
+    monkeypatch.setattr(owner, "get_install_plan", Mock(return_value=plan))
+    get_view = Mock(
+        return_value=SimpleNamespace(
+            local_validation={
+                "evidence_id": "saved",
+                "state": "passed",
+                "observed_at": "2026-10-17",
+                "private": "PRIVATE_VALIDATION",
+            },
+            user_state=SimpleNamespace(
+                installed=True,
+                active=False,
+                enabled_workspaces=[
+                    {"workspace_id": "alpha"},
+                    {"workspace_id": "OTHER_PRIVATE", "label": "PRIVATE_LABEL"},
+                ],
+            ),
+        )
+    )
+    monkeypatch.setattr(owner, "get_capability", get_view)
+    validate = AsyncMock()
+    enable = Mock()
+    monkeypatch.setattr(owner, "run_capability_validation", validate)
+    monkeypatch.setattr(owner, "enable_capability_for_workspace", enable)
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        params = {"workspace_id": "alpha", "session_id": "chat-alpha"}
+        result = await client.get(
+            "/api/desktop/connection-plans/saved/signin", params=params
+        )
+        assert result.status_code == 200
+        data = result.json()
+        assert data["plan_digest"] == "a" * 64
+        assert data["provider_status"] == {
+            "installed": True,
+            "active": False,
+            "enabled_here": True,
+            "recorded_validation": {
+                "evidence_id": "saved",
+                "state": "passed",
+                "observed_at": "2026-10-17",
+            },
+        }
+        assert (
+            "PRIVATE" not in result.text
+            and result.headers["cache-control"] == "no-store"
+        )
+        get_view.assert_called_once_with("playwright-mcp")
+        for patch in [{"session_id": "foreign"}, {"workspace_id": "foreign"}]:
+            denied = await client.get(
+                "/api/desktop/connection-plans/saved/signin", params={**params, **patch}
+            )
+            assert denied.status_code in {403, 404}
+        assert get_view.call_count == 1
+        app.dependency_overrides.pop(
+            __import__("api.security", fromlist=["require_admin"]).require_admin
+        )
+        denied = await client.get(
+            "/api/desktop/connection-plans/saved/signin", params=params
+        )
+        assert denied.status_code == 403 and get_view.call_count == 1
+    validate.assert_not_called()
+    enable.assert_not_called()
+    engine.start_server.assert_not_called()
+    engine.stop_server.assert_not_called()

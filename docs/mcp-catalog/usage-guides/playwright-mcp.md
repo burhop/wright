@@ -120,6 +120,19 @@ source-review.json, readback.json and browser-1792219071705/report.json. This is
 GB10 ARM64 simulated-host resource/owner qualification, not Windows acceptance,
 clean catalog requalification, gateway execution or an engineering demonstration.
 
+## Saved provider recovery
+
+A fresh normal native setup additionally withheld successful protocol-validation
+and workspace-enable replies. The existing read-only status port recovered the
+same validation evidence and scoped membership; reopening the saved setup did
+not validate, enable or start anything again. The provider ran only initialize
+and two tools/list calls, then was explicitly stopped through the existing owner.
+One onboarding and one passed local protocol validation were retained; no
+provider tools/call or engineering run. Another workspace remained disabled.
+Evidence: /tmp/wright-desktop-provider-recovery-proof-20261017/checkpoint.json
+and browser-1792219520797/report.json. This does not qualify Windows sign-in or
+current execution authority: Enable still checks configuration/evidence.
+
 ## Bugs and maintenance
 
 No new provider defect or issue submission is claimed. Record exact package/browser versions, inputs, actual results and evidence before marking a capability verified. Retain version/platform-specific failures and update this guide after qualification.

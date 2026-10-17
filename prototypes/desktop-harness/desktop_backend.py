@@ -638,6 +638,31 @@ class DesktopBackend:
                 raise HTTPException(
                     403, "Sign-in presentation belongs to another scope"
                 ) from None
+            # Recover recorded validation/availability without starting another
+            # check. Enable still requalifies current evidence in its owner.
+            provider_status = None
+            if plan.state == "completed":
+                from api.routers.mcp import mcp_service_http_exception
+                from tool_registry.services import McpServiceError
+
+                try:
+                    view = service.get_capability(server_id)
+                except McpServiceError as error:
+                    raise mcp_service_http_exception(error) from None
+                validation = view.local_validation
+                provider_status = {
+                    "installed": view.user_state.installed,
+                    "active": view.user_state.active,
+                    "enabled_here": any(
+                        item.get("workspace_id") == workspace_id
+                        for item in view.user_state.enabled_workspaces
+                    ),
+                    "recorded_validation": (
+                        {key: validation.get(key) for key in
+                         ("evidence_id", "state", "observed_at")}
+                        if validation is not None else None
+                    ),
+                }
             # Sensitive transient URL: served only to the authenticated operator.
             from starlette.responses import JSONResponse
 
@@ -646,6 +671,8 @@ class DesktopBackend:
                     "workspace_id": workspace_id,
                     "session_id": session_id,
                     "plan_id": plan_id,
+                    "plan_digest": plan.plan_digest,
+                    "provider_status": provider_status,
                     **pending,
                 },
                 headers={"Cache-Control": "no-store"},

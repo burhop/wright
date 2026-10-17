@@ -154,6 +154,9 @@ async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
                 "session_id": "s",
                 "plan_id": "p",
                 "presentation": "awaiting_user",
+                "plan_digest": "a" * 64,
+                "provider_status": {"installed": True, "active": False, "enabled_here": False,
+                                    "recorded_validation": {"evidence_id": "saved", "state": "passed", "observed_at": "2026-10-17"}},
                 "authorization_url": private_url,
                 "callback_uri": "http://127.0.0.1:9505/oauth/callback",
             }
@@ -172,6 +175,8 @@ async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
     assert private_url not in str(result.content)
     assert private_url not in str(result.structuredContent)
     assert "9505" not in str(result.structuredContent)
+    assert result.structuredContent["plan_digest"] == "a" * 64
+    assert result.structuredContent["provider_status"]["recorded_validation"]["evidence_id"] == "saved"
 
 
 @pytest.mark.asyncio

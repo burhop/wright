@@ -572,3 +572,27 @@ browser-1792219071705/report.json. Native resource d3835444b9b59bd189d83b3f3b12a
 2301877bytes,51tools,zero external assets. Installed0.14 remains unchanged.
 Private/full configuration, upgrade and actual Windows authentication still
 require work. Official vulnerability-DB manifest was still unchanged06:39UTC.
+
+## Saved provider recovery (locally qualified)
+
+The existing scoped app-only sign-in read now projects a completed plan's
+recorded validation and this workspace's availability through get_capability;
+no new tool, check, installation or grant is dispatched. Only closed public
+status fields leave this owner; sign-in links remain transient app-private
+metadata. The panel verifies the exact plan digest, recovers passed evidence
+and saved enablement explicitly, and blocks failed/stale/mismatched evidence.
+Enable still invokes its existing current-configuration/evidence gate. A
+recorded passed check is never presented as current execution authority.
+
+279 native API/transport and170 panel checks, TypeScript, Ruff and focused ESLint
+pass. Seven actual resource/MCP/API/browser cases include lost validation and
+enable acknowledgements, same-evidence read recovery, fresh-panel reopen,
+other-workspace exclusion and earlier approval/apply uncertainty. One normal
+onboarding run/one protocol validation; zero provider tools/call or engineering
+runs. The owned provider is stopped, saved setup/evidence/grants retained and
+container absent. Evidence: /tmp/wright-desktop-provider-recovery-proof-20261017/
+checkpoint.json and browser-1792219520797/report.json. Resource 8200156600b7a66fef7f863e0f99280a83ce3120c2701609c60fc57c934b7cb5,
+2302791bytes,51tools,zero external assets. An initial pre-readiness
+initialize attempt made no setup/write; readiness/counts were checked before
+retrying without service restart. Both test observer/fixture corrections and
+failed attempts are retained. No installed plugin update or Windows claim.

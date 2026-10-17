@@ -24,6 +24,7 @@ export function NativeSignin({
   const [pending, setPending] = useState(false);
   const [validated, setValidated] = useState(false);
   const [enableAttempted, setEnableAttempted] = useState(false);
+  const [enablePending, setEnablePending] = useState(false);
   const enabling = useRef(false);
   const [attempted, setAttempted] = useState(false);
   const [message, setMessage] = useState("");
@@ -49,6 +50,35 @@ export function NativeSignin({
       )
         throw Error("Scope unavailable");
       if (signal?.aborted || generation !== readGeneration.current) return;
+      const provider = data.provider_status as {
+        installed?: boolean;
+        active?: boolean;
+        enabled_here?: boolean;
+        recorded_validation?: { evidence_id?: string; state?: string } | null;
+      } | null | undefined;
+      if (provider != null) {
+        if (data.plan_digest !== scope.plan_digest ||
+            typeof provider.installed !== "boolean" ||
+            typeof provider.active !== "boolean" ||
+            typeof provider.enabled_here !== "boolean")
+          throw Error("Saved provider subject unavailable");
+        const passed = provider.installed &&
+          provider.recorded_validation?.state === "passed" &&
+          typeof provider.recorded_validation.evidence_id === "string" &&
+          provider.recorded_validation.evidence_id.length > 0;
+        setValidated(passed);
+        setEnableAttempted(provider.enabled_here);
+        // A fresh saved-state read permits a new explicit grant attempt only.
+        // It never retries an uncertain operation itself.
+        enabling.current = false;
+        if (provider.enabled_here) {
+          setMessage("Saved workspace availability is enabled. Individual tool actions and reviews remain separate.");
+        } else if (passed) {
+          setMessage("Recorded protocol validation passed. Enable will recheck current configuration and evidence; no validation was repeated.");
+        } else {
+          setMessage("Saved provider check is " + (provider.recorded_validation?.state ?? "not recorded") + ". Workspace enablement requires current passed validation.");
+        }
+      }
       const privateData = result._meta?.["wright/signin"] as
         { authorization_url?: string; callback_uri?: string } | undefined;
       if (
@@ -74,7 +104,7 @@ export function NativeSignin({
         setCallback(undefined);
       }
     },
-    [call, scope.workspace_id, scope.session_id, scope.plan_id],
+    [call, scope.workspace_id, scope.session_id, scope.plan_id, scope.plan_digest],
   );
   useEffect(() => {
     if (!pending) return;
@@ -105,6 +135,7 @@ export function NativeSignin({
     started.current = true;
     setAttempted(true);
     setPending(true);
+    setValidated(false);
     setMessage("Checking the installed provider; sign-in may be required.");
     try {
       const result = await call("wright_connection_validate", scope);
@@ -124,6 +155,7 @@ export function NativeSignin({
           : `Protocol validation: ${validation?.state ?? "unconfirmed"}. Check readiness details.`,
       );
     } catch {
+      setValidated(false);
       setMessage(
         "Validation outcome is not confirmed. Check sign-in status and recorded readiness before another attempt; no request was repeated.",
       );
@@ -138,6 +170,8 @@ export function NativeSignin({
   async function enable() {
     if (!validated || enabling.current) return;
     enabling.current = true;
+    ++readGeneration.current;
+    setEnablePending(true);
     setEnableAttempted(true);
     try {
       const result = await call("wright_connection_enable", scope);
@@ -158,8 +192,11 @@ export function NativeSignin({
       );
     } catch {
       setMessage(
-        "Workspace availability was not confirmed. Refresh Connections to read saved status; no enable request was repeated.",
+        "Workspace availability was not confirmed. Check sign-in status to read saved provider availability; no enable request was repeated.",
       );
+    } finally {
+      ++readGeneration.current;
+      setEnablePending(false);
     }
   }
   return (
@@ -174,10 +211,12 @@ export function NativeSignin({
         Sign in and validate provider
       </button>
       <button
+        disabled={enablePending}
         onClick={() =>
           void read().catch(() => {
             setUrl(undefined);
             setCallback(undefined);
+            setValidated(false);
             setMessage("Sign-in status unavailable.");
           })
         }
@@ -185,7 +224,7 @@ export function NativeSignin({
         Check sign-in status
       </button>
       {validated && (
-        <button disabled={enableAttempted} onClick={() => void enable()}>
+        <button disabled={pending || enableAttempted || enablePending} onClick={() => void enable()}>
           Enable in this workspace
         </button>
       )}

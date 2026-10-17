@@ -674,11 +674,13 @@ def server(client, *, native_editor=False, native_working_view=False):
             key: data[key]
             for key in ("workspace_id", "session_id", "plan_id", "presentation")
         }
+        public["plan_digest"] = data.get("plan_digest")
+        public["provider_status"] = data.get("provider_status")
         return CallToolResult(
             content=[
                 TextContent(
                     type="text",
-                    text="Operator sign-in status read. No login was started.",
+                    text="Operator sign-in and saved provider status read. No login or validation was started.",
                 )
             ],
             structuredContent=public,
