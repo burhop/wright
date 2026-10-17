@@ -1,15 +1,15 @@
 # Desktop engineering prototype: qualification matrix
 
-**Current integration checkpoint:16 October2026, with17 October UTC proof files.**
+**Current integration checkpoint:17 October2026.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
 installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The local
-completion candidate includes99d837f1 scoped file staging plus provider controls, typed local-command preview, read-only run evidence, scoped navigation/context and durable inert editor drafts;
+completion candidate includes99d837f1 scoped file staging plus provider controls, typed local-command preview, read-only run evidence, scoped navigation/context, durable inert editor drafts and nonsecret workspace settings;
 it is not installed. Detailed current scope and remaining work are in
 [integration-completion-plan.md](integration-completion-plan.md).
 
 | Current area | Verified boundary | Remaining required work |
 |---|---|---|
-| Workspace/home/editor | Earlier native panel observation; installed0.14 resource check; current normal Workflows→shared editor/source/CAS save; independent optional widget navigation/scoped Home; backend draft recovery preserves invalid Source, applied diagram and viewport; drift/uncertain-ack/Undo/Redo checks | Candidate promotion, actual Windows persistence/API availability, current served dev and settings parity |
+| Workspace/home/editor | Earlier native panel observation; installed0.14 resource check; current normal Workflows→shared editor/source/CAS save; independent optional widget navigation/scoped Home; backend draft recovery preserves invalid Source, applied diagram and viewport; nonsecret settings partial CAS, conflict/lost-reply recovery and frozen accepted instructions | Candidate promotion, actual Windows persistence/API availability and current served dev; credentials retain external authentication |
 | Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop and tool switches; real pinned provider restart retains deny; workflow gateway excludes denied tool; readiness and availability separate; literal local-command preview and blocked saved-plan/lost-reply recovery | Local-command apply/validation, full configuration imports, uninstall/version management and private setup parity, real Windows callback/authentication |
 | Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners; old-source exact recorder view and pinned-hash download/drift denial | Named candidate promotion, actual Windows delivery; unsupported live/older-source text presentations |
 | Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
@@ -17,7 +17,7 @@ it is not installed. Detailed current scope and remaining work are in
 | Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
 | Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
 | Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
-| Gates/deployment |541 registry and12 targeted API/service checks retained; current350 source/native and233 panel/shared editor/canvas checks pass; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB (official manifest unchanged05:30UTC17October); no follow-on push/merge/dev deployment yet |
+| Gates/deployment |541 registry and12 targeted API/service checks retained; settings361 owner/source/native and162 panel checks pass, earlier350 draft/source/native and233 panel/shared-editor/canvas checks retained; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB (official manifest unchanged06:04UTC17October); no follow-on push/merge/dev deployment yet |
 
 Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
 establish Windows native acceptance. The host still reports no model/app identity;

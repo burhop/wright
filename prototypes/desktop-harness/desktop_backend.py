@@ -33,6 +33,7 @@ from api.services.mcp_services import (
 )
 from api.security import require_admin
 from desktop_oauth import DesktopOAuthPresentation
+from workspace_service.use_cases.context import WorkspaceConfigurationChanges
 
 
 CLIENT_LEASE_SECONDS = 30
@@ -49,6 +50,16 @@ class CreateWorkspaceRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str = Field(min_length=1, max_length=100)
 
+
+class WorkspaceSettingsReadRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    workspace_id: Identifier
+    session_id: Identifier
+
+
+class WorkspaceSettingsSaveRequest(WorkspaceSettingsReadRequest):
+    expected_revision: Digest
+    changes: WorkspaceConfigurationChanges
 
 class FileUploadRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -971,6 +982,48 @@ class DesktopBackend:
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "tree": await self.service.files.tree(row["local_path"]),
+            }
+
+        @router.post("/workspace-settings/read")
+        async def workspace_settings_read(body: WorkspaceSettingsReadRequest):
+            self.workspace(body.workspace_id, body.session_id)
+            settings = await self.service.executor.run(
+                "workspace.configuration.read",
+                lambda: self.service.context.configuration(body.workspace_id),
+                timeout_seconds=30,
+            )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "settings": settings,
+            }
+
+        @router.post("/workspace-settings/save", dependencies=[Depends(require_admin)])
+        async def workspace_settings_save(body: WorkspaceSettingsSaveRequest):
+            from data_vault.workspace_repository import WorkspaceConfigurationConflict
+
+            self.workspace(body.workspace_id, body.session_id)
+            try:
+                settings = await self.service.executor.run_to_completion(
+                    "workspace.configuration.patch",
+                    lambda: self.service.context.patch_configuration(
+                        body.workspace_id,
+                        expected_revision=body.expected_revision,
+                        changes=body.changes,
+                    ),
+                )
+            except WorkspaceConfigurationConflict:
+                raise HTTPException(
+                    409, "Workspace settings changed; read them before saving again"
+                ) from None
+            except (OSError, RuntimeError):
+                raise HTTPException(
+                    503, "Settings save is unconfirmed; read saved state before continuing"
+                ) from None
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "settings": settings,
             }
 
         @router.post("/run-records/read")

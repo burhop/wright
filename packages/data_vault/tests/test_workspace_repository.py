@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+from unittest.mock import Mock
+import pytest
+
 from core.secrets import CredentialReference, CredentialStatus
 from data_vault import WorkspaceRepository, upgrade_database
+from data_vault.workspace_repository import WorkspaceConfigurationConflict
 
 
 class MemorySecrets:
@@ -19,6 +24,90 @@ class MemorySecrets:
 
     def status(self, reference: CredentialReference) -> CredentialStatus:
         return CredentialStatus(reference in self.values, "memory")
+
+
+def test_partial_settings_cas_preserves_credentials_sessions_tools_and_untouched_values(
+    tmp_path,
+):
+    db = str(tmp_path / "state.db")
+    upgrade_database(db)
+    secrets = MemorySecrets()
+    repository = WorkspaceRepository(db, secrets=secrets)
+    repository.create(
+        "ws", "desktop-ws", str(tmp_path), workspace_name="Wright", git_token="PRIVATE"
+    )
+    repository.associate_session("ws", "desktop-ws", agent_id="openai-desktop-harness")
+    repository.associate_session("ws", "hermes-session", agent_id="hermes")
+    repository.set_enabled_tools("ws", ["cad", "solver"])
+    repository.update_remote(
+        "ws", "https://user:PRIVATE@host/repo", "git-user", None, "old context", 12345
+    )
+    before = repository.get_by_id("ws")
+    sessions = repository.list_sessions("ws")
+    secret_values = dict(secrets.values)
+    secrets.get = Mock(
+        side_effect=AssertionError("Preferences must not read credentials")
+    )
+    secrets.set = Mock(
+        side_effect=AssertionError("Preferences must not copy credentials")
+    )
+    observed = repository.configuration("ws")
+    saved = repository.patch_configuration(
+        "ws",
+        expected_revision=observed["revision"],
+        changes={"workspace_prompt": "new context"},
+    )
+    assert (
+        saved["workspace_prompt"] == "new context"
+        and saved["revision"] != observed["revision"]
+    )
+    after = repository.get_by_id("ws")
+    assert {
+        k: v for k, v in after.items() if k not in {"workspace_prompt", "updated_at"}
+    } == {
+        k: v for k, v in before.items() if k not in {"workspace_prompt", "updated_at"}
+    }
+    assert (
+        sessions == repository.list_sessions("ws") and secrets.values == secret_values
+    )
+    assert repository.enabled_tools("ws") == ["cad", "solver"]
+    with pytest.raises(WorkspaceConfigurationConflict):
+        repository.patch_configuration(
+            "ws",
+            expected_revision=observed["revision"],
+            changes={"git_username": "other"},
+        )
+    with pytest.raises(ValueError):
+        repository.patch_configuration(
+            "ws",
+            expected_revision=saved["revision"],
+            changes={"git_token": "not allowed"},
+        )
+    secrets.get.assert_not_called()
+    secrets.set.assert_not_called()
+
+
+def test_concurrent_partial_configuration_saves_have_one_winner(tmp_path):
+    db = str(tmp_path / "state.db")
+    upgrade_database(db)
+    repository = WorkspaceRepository(db, secrets=MemorySecrets())
+    repository.create("ws", "session", str(tmp_path), workspace_name="Wright")
+    before = repository.configuration("ws")
+
+    def save(i):
+        try:
+            return repository.patch_configuration(
+                "ws",
+                expected_revision=before["revision"],
+                changes={"workspace_prompt": f"editor {i}"},
+            )
+        except WorkspaceConfigurationConflict:
+            return "conflict"
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(save, range(2)))
+    assert sum(isinstance(value, dict) for value in results) == 1
+    assert "conflict" in results
 
 
 def test_workspace_repository_preserves_records_sessions_tools_and_secret_refs(

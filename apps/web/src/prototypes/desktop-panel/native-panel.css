@@ -200,3 +200,19 @@
 .native-editor-drafts summary { cursor: pointer; overflow-wrap: anywhere; }
 .native-editor-drafts button { margin: 4px; }
 .native-editor-drafts textarea { display: block; box-sizing: border-box; width: 100%; min-height: 140px; }
+.native-workspace-settings {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--native-host-border, #414141);
+  border-radius: 8px;
+  min-width: 0;
+}
+.native-workspace-settings label { display: block; margin-top: 8px; }
+.native-workspace-settings textarea, .native-workspace-settings input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+.native-workspace-settings textarea { min-height: 110px; resize: vertical; }
+.native-workspace-settings pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.native-workspace-settings button { margin: 8px 6px 0 0; }

@@ -3,6 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeFilePreview } from "./NativeFilePreview";
 import { NativeFileUpload } from "./NativeFileUpload";
+import { NativeWorkspaceSettings } from "./NativeWorkspaceSettings";
 import { NativeConnections } from "./NativeConnections";
 import { NativeNewWorkflow } from "./NativeNewWorkflow";
 import { EngineeringTemplateDialog } from "../workflow-recovery/EngineeringTemplateDialog";
@@ -27,6 +28,8 @@ export type HomeCall = (
   name:
     | "wright_workspace_list"
     | "wright_workspace_create"
+    | "wright_workspace_settings_read"
+    | "wright_workspace_settings_save"
     | "wright_workflow_create"
     | "wright_workflow_templates"
     | "wright_workflow_template_create"
@@ -76,11 +79,13 @@ export function NativeHomePanel({
   initialView = "workflows",
   onNavigate,
   restorationNotice,
+  onDirty,
 }: {
   readonly call: HomeCall;
   readonly initialView?: HomeView;
   readonly onNavigate?: (view: HomeView) => void;
   readonly restorationNotice?: string;
+  readonly onDirty?: (dirty: boolean) => void;
   readonly initialSelection?: Pick<
     DesktopWorkspace,
     "workspace_id" | "session_id"
@@ -95,6 +100,11 @@ export function NativeHomePanel({
   readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [items, setItems] = useState<DesktopWorkspace[]>([]);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsDirty, setSettingsDirty] = useState(false);
+  const settingsChanged = useCallback((pending: boolean) => {
+    setSettingsDirty(pending); onDirty?.(pending);
+  }, [onDirty]);
   const [selected, setSelected] = useState<DesktopWorkspace>();
   const [files, setFiles] = useState<FileNode[]>([]);
   const [loading, setLoading] = useState(true);
@@ -160,6 +170,7 @@ export function NativeHomePanel({
 
   const select = useCallback(
     async (workspace: DesktopWorkspace) => {
+      if (settingsDirty) return;
       const request = ++generation.current;
       setSelected(workspace);
       onSelect?.(workspace);
@@ -192,7 +203,7 @@ export function NativeHomePanel({
         if (request === generation.current) setLoading(false);
       }
     },
-    [call, onSelect],
+    [call, onSelect, settingsDirty],
   );
 
   useEffect(() => {
@@ -214,7 +225,7 @@ export function NativeHomePanel({
 
   const createWorkspace = async () => {
     const name = workspaceName.trim();
-    if (!name || createFlight.current || createUncertain) return;
+    if (!name || createFlight.current || createUncertain || settingsDirty) return;
     createFlight.current = true;
     setCreating(true);
     setCreateNotice("");
@@ -258,7 +269,7 @@ export function NativeHomePanel({
       <header>
         <h1>Wright</h1>
         <button
-          disabled={opening || creating}
+          disabled={opening || creating || settingsDirty}
           onClick={() => {
             restore.current = selected ?? restore.current;
             setRefresh((value) => value + 1);
@@ -272,7 +283,7 @@ export function NativeHomePanel({
       <label htmlFor="wright-workspace">Workspace</label>
       <select
         id="wright-workspace"
-        disabled={opening || creating}
+        disabled={opening || creating || settingsDirty}
         value={selected?.workspace_id ?? ""}
         onChange={(event) => {
           const workspace = items.find(
@@ -296,7 +307,7 @@ export function NativeHomePanel({
         ))}
       </select>
       <button
-        disabled={opening || creating || loading || createUncertain}
+        disabled={opening || creating || loading || createUncertain || settingsDirty}
         onClick={() => setCreateVisible((value) => !value)}
       >
         New workspace
@@ -312,13 +323,13 @@ export function NativeHomePanel({
           <input
             id="wright-new-workspace"
             value={workspaceName}
-            disabled={creating || createUncertain}
+            disabled={creating || createUncertain || settingsDirty}
             onChange={(event) => setWorkspaceName(event.target.value)}
             required
           />
           <button
             type="submit"
-            disabled={creating || createUncertain || !workspaceName.trim()}
+            disabled={creating || createUncertain || settingsDirty || !workspaceName.trim()}
           >
             {creating ? "Creating workspace…" : "Create workspace"}
           </button>
@@ -330,6 +341,16 @@ export function NativeHomePanel({
       {!loading && !error && items.length === 0 && (
         <p>No Wright workspaces yet. Choose New workspace to get started.</p>
       )}
+      {selected && <>
+        <button disabled={opening || creating || settingsDirty}
+          onClick={() => setSettingsOpen((current) => !current)}>
+          {settingsOpen ? "Close workspace settings" : "Workspace settings"}
+        </button>
+        {settingsOpen && <NativeWorkspaceSettings
+          key={`${selected.workspace_id}:${selected.session_id}`} workspace={selected}
+          call={call} onDirty={settingsChanged} />}
+      </>}
+      <div inert={settingsDirty}>
       {selected && (
         <nav aria-label="Workspace views">
           <button
@@ -525,6 +546,7 @@ export function NativeHomePanel({
           </ul>
         </section>
       )}
+      </div>
     </main>
   );
 }

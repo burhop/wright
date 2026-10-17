@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import os
 import re
 import time
@@ -22,7 +23,29 @@ UUID_SESSION_PATTERN = re.compile(
 )
 HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
 GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
+WORKSPACE_CONFIGURATION_FIELDS = (
+    "git_remote_url",
+    "git_username",
+    "workspace_prompt",
+    "git_large_file_threshold",
+)
 
+
+class WorkspaceConfigurationConflict(ValueError):
+    """The observed nonsecret configuration is no longer current."""
+
+
+def _configuration_record(row) -> dict[str, Any]:
+    value = {key: row[key] for key in ("workspace_id", *WORKSPACE_CONFIGURATION_FIELDS)}
+    revision = hashlib.sha256(
+        json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    return {**value, "revision": revision}
 
 def sanitize_workspace_name(name: str) -> str:
     import re
@@ -351,6 +374,51 @@ class WorkspaceRepository:
         return self.secrets.get(
             CredentialReference("workspace", workspace_id, "GIT_TOKEN")
         )
+
+    def configuration(self, workspace_id: str) -> dict[str, Any]:
+        """Read configuration without requesting or copying credential values."""
+        with connect_state_db(self.db_path) as conn:
+            row = conn.execute(
+                "SELECT workspace_id, git_remote_url, git_username, workspace_prompt, "
+                "git_large_file_threshold FROM engineering_workspaces WHERE workspace_id = ?",
+                (workspace_id,),
+            ).fetchone()
+        if row is None:
+            raise LookupError("Workspace not found")
+        return _configuration_record(row)
+
+    def patch_configuration(
+        self,
+        workspace_id: str,
+        *,
+        expected_revision: str,
+        changes: dict[str, Any],
+    ) -> dict[str, Any]:
+        """CAS only named preferences; preserve credentials, sessions and tools."""
+        if not changes or set(changes) - set(WORKSPACE_CONFIGURATION_FIELDS):
+            raise ValueError("Unknown or empty workspace configuration update")
+        with connect_state_db(self.db_path) as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                "SELECT workspace_id, git_remote_url, git_username, workspace_prompt, "
+                "git_large_file_threshold FROM engineering_workspaces WHERE workspace_id = ?",
+                (workspace_id,),
+            ).fetchone()
+            if row is None:
+                raise LookupError("Workspace not found")
+            before = _configuration_record(row)
+            if before["revision"] != expected_revision:
+                raise WorkspaceConfigurationConflict(
+                    "Workspace settings changed; read them before saving"
+                )
+            # Column names come exclusively from the fixed allowlist above.
+            assignments = ", ".join(f"{key} = ?" for key in changes)
+            conn.execute(
+                f"UPDATE engineering_workspaces SET {assignments}, updated_at = ? WHERE workspace_id = ?",
+                (*changes.values(), int(time.time()), workspace_id),
+            )
+            result = _configuration_record({**dict(row), **changes})
+        return result
 
     def has_git_token(self, workspace_id: str) -> bool:
         return self.secrets.status(

@@ -439,3 +439,57 @@ retained; no process start, reasoning request, provider or review was allocated.
 This is not installed0.14 behavior or actual Windows acceptance. Work typed before
 the short autosave delay/acknowledgement is not claimed durable. No automatic
 restoration or silent rebasing is supported; older drafts remain inspectable.
+
+## Workspace settings (locally qualified)
+
+Expose existing nonsecret workspace configuration in a compact Home disclosure:
+workflow context, Git remote/user and large-file threshold. Credentials remain
+with the existing external/Wright authentication owner. Preserve hidden or legacy
+remote values unless the user explicitly replaces them with a supported public
+URL; never return an embedded credential or accept credential fields.
+
+Reuse WorkspaceRepository and WorkspaceContextUseCases, adding a closed atomic
+partial update with the exact observed configuration digest. This avoids the
+legacy full replacement clearing untouched settings or racing another editor.
+Preserve secret references, sessions, tools, harness attribution and accepted
+workflows. The existing workflow-instruction default resolver embeds workspace
+context only in new processes; editing it must not rewrite saved instructions or
+retarget existing runs. No Git network action is performed by saving settings.
+
+Use two scoped app-only read/update ports, operator enforcement for mutation,
+bounded existing executor and readback after uncertain acknowledgements without
+repeating a write. Preserve an unsaved settings edit when navigating or receiving
+a chat workspace switch. Qualify actual UI→MCP→owner read/save/reopen, concurrent
+CAS/scope/permission denial, lost reply, secret preservation and new-versus-saved
+workflow instruction behavior. This does not complete remaining connection,
+Windows, different-workflow or repository-gate work.
+
+The local candidate implements this through the existing repository/context
+owners and bounded executor. Fixed-field SQL CAS preserves all untouched values,
+secret references, tool membership and session attribution. No new storage or
+agent materialization is added. Legacy/private remote URLs are hidden in the
+public projection and preserved unless explicitly replaced. UI validation rejects
+credential-bearing remote URLs before transport; the backend independently
+enforces the closed fields and current revision. A known denial stops the save;
+uncertain acknowledgement requires readback of the intended values. Conflicting
+saved values are shown without discarding the local edit; explicit Keep my edit
+selects the observed revision before another Save. Dirty/pending settings block
+workspace switches, editor entry and chat-requested Home changes.
+
+361 repository/workspace/source/native checks and162 native-panel checks pass;
+TypeScript, Ruff and focused ESLint pass. Eight real native-resource→MCP→API→owner
+Chromium checks cover edit/save/reopen, hidden-remote preservation, typed Git
+settings, input/permission/CAS denial, a deliberately lost acknowledgement,
+explicit conflict recovery and480-pixel usability. A pre-existing accepted source
+stayed byte-identical while a new source embedded the saved workspace-context
+layer. Other workspace configuration, sessions and tool membership stayed intact.
+Two isolated workspaces/two sources, zero runs, reasoning requests, onboarding
+runs or provider calls. Resourceb29ec6f3f2c0f58757e0c22492017032f7d44ec4f714c89c522dfa2ba323d1d9,
+2301118bytes,51tools, zero external assets. Evidence:
+/tmp/wright-desktop-settings-proof-20261017/checkpoint.json and
+browser-1792216973122/report.json. The initial lint failure in a control-character
+regex was corrected without relaxing input bounds. Installed0.14 remains
+unchanged; only acknowledged settings persist across reopening, while unsaved
+settings edits remain in the current panel. Credential entry/authentication stays
+outside this plugin; actual Windows and consolidated development deployment
+remain unqualified. Official Trivy manifest still unchanged at06:04UTC17October.

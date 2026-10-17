@@ -153,6 +153,7 @@ function home() {
         initialView={homeView}
         onNavigate={rememberView}
         restorationNotice={restorationNotice}
+        onDirty={(pending) => { dirty = pending; }}
         onSelect={rememberWorkspace}
         onOpenRun={async (workspace, path, run) => {
           const request = ++generation;
