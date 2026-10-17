@@ -600,7 +600,7 @@ export function NativeConnections({
                     <p>No local protocol validation recorded.</p>
                   )}
                   <p>
-                    Installed version:{" "}
+                    Recorded installed version:{" "}
                     {item.installed_version ?? "Not reported"}.
                   </p>
                   {item.compatibility.reasons.map((reason) => (

@@ -525,7 +525,9 @@ def server(client, *, native_editor=False, native_working_view=False):
         )
 
     @mcp.tool(
-        annotations=write, structured_output=True, meta={"ui": {"visibility": ["app"]}}
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True,
+                                    idempotentHint=False, openWorldHint=False),
+        structured_output=True, meta={"ui": {"visibility": ["app"]}},
     )
     async def wright_connection_control(
         request: ConnectionControlRequest,

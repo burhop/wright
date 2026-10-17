@@ -20,7 +20,7 @@ export interface ControlState {
     reported_read_only: boolean;
   }[];
 }
-type Operation = "start" | "stop" | "tool-enable" | "tool-disable";
+type Operation = "start" | "stop" | "uninstall" | "tool-enable" | "tool-disable";
 function payload(result: CallToolResult) {
   if (result.isError) throw Error("Unconfirmed control response");
   const text = result.content.find((item) => item.type === "text");
@@ -48,6 +48,7 @@ export function NativeConnectionControls({
   const [busy, setBusy] = useState(false);
   const [uncertain, setUncertain] = useState(false);
   const [message, setMessage] = useState("");
+  const [uninstallSubject, setUninstallSubject] = useState<string>();
   const flight = useRef(false);
   const alive = useRef(true);
   useEffect(() => {
@@ -93,6 +94,7 @@ export function NativeConnectionControls({
   async function refresh() {
     if (flight.current) return;
     flight.current = true;
+    setUninstallSubject(undefined);
     setBusy(true);
     try {
       const next = checked(
@@ -115,6 +117,8 @@ export function NativeConnectionControls({
   }
   async function change(operation: Operation, toolId?: string) {
     if (flight.current || uncertain || !state) return;
+    if (operation === "uninstall" && uninstallSubject !== state.control_digest) return;
+    setUninstallSubject(undefined);
     flight.current = true;
     setBusy(true);
     setMessage("");
@@ -150,6 +154,8 @@ export function NativeConnectionControls({
           ? next.active
           : operation === "stop"
             ? !next.active
+            : operation === "uninstall"
+              ? !next.active && !next.installed
             : next.tools.find((t) => t.tool_id === toolId)?.enabled ===
               (operation === "tool-enable");
       if (!reached) throw Error("Requested state not reached");
@@ -205,6 +211,18 @@ export function NativeConnectionControls({
           >
             Stop provider (shared)
           </button>
+          <button
+            disabled={busy || uncertain || !state.installed}
+            onClick={() => setUninstallSubject(state.control_digest)}
+          >
+            Uninstall provider (shared)
+          </button>
+          {uninstallSubject && <section aria-label="Confirm provider uninstall">
+            <p>This stops the provider for every Wright workspace and marks it uninstalled. Saved setup, credentials and downloaded packages are retained. Review setup again before using it.</p>
+            <button disabled={busy || uncertain || uninstallSubject !== state.control_digest}
+              onClick={() => void change("uninstall")}>Uninstall for all workspaces</button>
+            <button disabled={busy} onClick={() => setUninstallSubject(undefined)}>Keep provider</button>
+          </section>}
           <ul>
             {state.tools.map((tool) => (
               <li key={tool.tool_id}>

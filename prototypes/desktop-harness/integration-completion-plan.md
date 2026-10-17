@@ -493,3 +493,46 @@ unchanged; only acknowledged settings persist across reopening, while unsaved
 settings edits remain in the current panel. Credential entry/authentication stays
 outside this plugin; actual Windows and consolidated development deployment
 remain unqualified. Official Trivy manifest still unchanged at06:04UTC17October.
+
+## Shared provider uninstall (locally qualified)
+
+Extend the existing closed provider-control operation with uninstall, using
+McpApiService.uninstall_server without a session argument. This invokes the
+registry's stop/mark-not-installed owner and global gateway notification; it skips
+legacy session-specific Hermes synchronization without changing its defaults.
+Preserve provider registration/configuration, credentials, workspace memberships,
+accepted workflows and durable evidence. Uninstall does not remove downloaded
+software. Deleting a registration and its credentials is a different existing
+operation and is not silently substituted for uninstall.
+
+The native control reviews the shared impact before an explicit confirm against
+the observed control digest. Scope, operator, current configuration and tool
+identity enforcement remain in the backend. Confirm success only after observing
+inactive/not-installed; a rejected or uncertain reply requires current-state
+readback, never automatic replay. Qualify actual pinned provider stop/uninstall,
+other-workspace observation, retained configuration/memberships, denied/stale
+subjects, lost acknowledgement and shared editor/connection regressions. Keep
+provider version labels attributable to recorded metadata, not an upstream claim.
+
+The closed existing control now accepts uninstall and declares potentially
+destructive mutation in its MCP annotation. The inline confirmation retains the
+observed digest; refreshing/changing state cancels it. No dispatch occurs before
+explicit confirm. The existing owner is used without session sync and publishes
+global gateway changes; accepted workflows, memberships and credentials are not
+deleted or rewritten. Registration deletion is still distinct from uninstall.
+
+278 native API/transport and164 panel checks, TypeScript, Ruff and focused ESLint
+pass. Five actual native-resource→MCP→owner/browser checks started the pinned
+Playwright0.0.78 provider in a read-only, network-disabled container limited to
+one CPU/1GiB/256 processes, denied stale and foreign-session uninstall while it
+remained running, then confirmed uninstall and actual container removal. A
+deliberately withheld host acknowledgement was reconciled by saved-state refresh
+without another mutation. The second workspace observed the same final state;
+the existing workflow-tool selection no longer advertised the provider. Its
+configuration, credential-store bytes, memberships and immutable image remained
+intact. Local validation remains not_tested; this is lifecycle qualification,
+not catalog installation or engineering use. Zero provider tools/call, workflow
+runs, reasoning requests or onboarding runs. Evidence:
+/tmp/wright-desktop-uninstall-proof-20261017/checkpoint.json and
+browser-1792218083496/report.json. Resource9695a702a66ff9aac1ba758093e246d4afb53da6cf32fa5cd0e9eee185aa250c,
+2301866bytes,51tools, zero external assets. Installed0.14 remains unchanged.

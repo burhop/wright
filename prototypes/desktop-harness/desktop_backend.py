@@ -182,7 +182,7 @@ class DisableConnectionRequest(BaseModel):
 class ConnectionControlRequest(DisableConnectionRequest):
     control_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
     shared_scope: Literal["wright-host"]
-    operation: Literal["start", "stop", "tool-enable", "tool-disable"]
+    operation: Literal["start", "stop", "uninstall", "tool-enable", "tool-disable"]
     tool_id: str | None = Field(default=None, min_length=1, max_length=512)
 
     @model_validator(mode="after")
@@ -828,6 +828,10 @@ class DesktopBackend:
                             else {}
                         ),
                     )
+                elif body.operation == "uninstall":
+                    # This shared owner stops and marks uninstalled, retaining
+                    # configuration/credentials. No session-specific agent sync.
+                    await service.uninstall_server(body.server_id)
                 else:
                     service.set_tool_enabled(
                         body.tool_id, body.operation == "tool-enable"

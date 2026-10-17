@@ -37,6 +37,7 @@ def test_connection_control_ports_are_app_only_and_preserve_exact_subject(contro
         assert tools[name].meta["ui"]["visibility"] == ["app"]
     assert tools["wright_connection_controls"].annotations.readOnlyHint is True
     assert tools["wright_connection_control"].annotations.readOnlyHint is False
+    assert tools["wright_connection_control"].annotations.destructiveHint is True
     result = asyncio.run(
         server.call_tool("wright_connection_control", {"request": request()})
     )[1]
@@ -54,6 +55,7 @@ def test_connection_control_ports_are_app_only_and_preserve_exact_subject(contro
         {"operation": "dispatch"},
         {"operation": "tool-enable"},
         {"tool_id": "unexpected-for-stop"},
+        {"operation": "uninstall", "tool_id": "unexpected-for-uninstall"},
         {"approval_mode": "auto"},
         {"shared_scope": "workspace"},
     ],
@@ -80,3 +82,16 @@ def test_control_rejection_and_uncertainty_never_retry(controls, status, known):
     assert result["error"]["outcome_known"] is known
     assert "PRIVATE" not in str(result)
     client.call.assert_awaited_once()
+
+
+def test_uninstall_port_preserves_exact_scope_without_session_sync_override(controls):
+    server, client = controls
+    result = asyncio.run(
+        server.call_tool(
+            "wright_connection_control", {"request": request(operation="uninstall")}
+        )
+    )[1]
+    assert result["ok"]
+    client.call.assert_awaited_once_with(
+        "POST", "/api/desktop/connection-controls", json=request(operation="uninstall")
+    )

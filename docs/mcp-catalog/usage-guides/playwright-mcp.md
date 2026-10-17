@@ -74,6 +74,29 @@ simulated Chromium host, not the Windows desktop. Existing checked GB10 harness
 configuration hashes were preserved; desktop activation skips legacy Hermes
 profile synchronization. No provider bug was reported.
 
+## Desktop uninstall qualification
+
+A separate fresh user-owned `desktop-playwright-uninstall` fixture reused the
+same immutable0.0.78 image. The actual native Connections panel started it with
+network disabled, a read-only filesystem and one CPU/1GiB/256-process limits;
+only initialize/tools-list ran. Stale state and foreign-session uninstall were
+denied while the actual container stayed running. Explicit shared-impact confirm
+then used Wright's existing uninstall owner: the process/container stopped and
+the registry became inactive/not-installed. Saved configuration, a synthetic
+credential-store reference, both workspace memberships and the image remained.
+
+The outer host deliberately withheld the successful uninstall reply. The panel
+blocked another write and refreshed saved state without repeating uninstall.
+Another workspace saw the same result; current workflow-tool selection omitted
+the provider. The fixture still has no local protocol-validation acceptance and
+no provider tools/call or engineering run occurred. Uninstall retains downloaded
+packages and setup; registration/credential deletion is a separate operation.
+Recorded installed-version metadata is not a new upstream version attestation.
+
+Evidence: /tmp/wright-desktop-uninstall-proof-20261017/checkpoint.json and
+browser-1792218083496/report.json. This is GB10 ARM64 lifecycle verification in a
+labeled simulated desktop frame, not Windows acceptance or catalog installation.
+
 ## Bugs and maintenance
 
 No new provider defect or issue submission is claimed. Record exact package/browser versions, inputs, actual results and evidence before marking a capability verified. Retain version/platform-specific failures and update this guide after qualification.

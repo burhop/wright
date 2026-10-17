@@ -242,3 +242,101 @@ async def test_owner_failure_requires_readback_without_repeat(
         )
         assert response.status_code == status and "PRIVATE" not in response.text
         owner.toggle_server_activation.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_shared_uninstall_uses_existing_owner_and_preserves_configuration_and_grants(
+    controls, monkeypatch
+):
+    app, owner, repository, engine, gateway, sync, directory = controls
+    from api.services.mcp_services import registry_services
+
+    delete_secrets = Mock()
+    monkeypatch.setattr(registry_services, "delete_secrets", delete_secrets)
+    manager = Mock()
+    owner.app_state.agent_sync_manager = manager
+    before = get_server(owner.db_path, "playwright-mcp")
+    repository.set_enabled_tools("alpha", ["playwright-mcp"])
+    repository.create(
+        "beta", "chat-beta", str(directory.parent / "beta"), workspace_name="Beta"
+    )
+    repository.set_enabled_tools("beta", ["playwright-mcp"])
+    grants = {key: repository.enabled_tools(key) for key in ("alpha", "beta")}
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        state = (
+            await client.get("/api/desktop/connection-controls", params=scope)
+        ).json()["state"]
+        request = {
+            **scope,
+            "shared_scope": "wright-host",
+            "control_digest": state["control_digest"],
+            "operation": "uninstall",
+        }
+        result = await client.post("/api/desktop/connection-controls", json=request)
+        assert result.status_code == 200 and "PRIVATE" not in result.text
+        after = result.json()["state"]
+        assert not after["active"] and not after["installed"]
+        registered = get_server(owner.db_path, "playwright-mcp")
+        assert (
+            registered.command == before.command
+            and registered.launch_env == before.launch_env
+        )
+        assert registered.installed_version == before.installed_version
+        assert {key: repository.enabled_tools(key) for key in grants} == grants
+        engine.stop_server.assert_awaited_once_with("playwright-mcp")
+        manager.sync_workspace_tools.assert_not_called()
+        sync.assert_not_called()
+        delete_secrets.assert_not_called()
+        gateway.publish_list_changes.assert_called_once_with(workspace_id=None)
+        # Repeating either a stale request or a new uninstall cannot stop again.
+        assert (
+            await client.post("/api/desktop/connection-controls", json=request)
+        ).status_code == 409
+        assert (
+            await client.post(
+                "/api/desktop/connection-controls",
+                json={**request, "control_digest": after["control_digest"]},
+            )
+        ).status_code == 409
+        engine.stop_server.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_uninstall_denied_and_uncertain_outcomes_never_repeat_owner(controls):
+    from api.security import require_admin
+
+    app, owner, _, engine, _, _, _ = controls
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        state = (
+            await client.get("/api/desktop/connection-controls", params=scope)
+        ).json()["state"]
+        request = {
+            **scope,
+            "shared_scope": "wright-host",
+            "control_digest": state["control_digest"],
+            "operation": "uninstall",
+        }
+        app.dependency_overrides.pop(require_admin)
+        assert (
+            await client.post("/api/desktop/connection-controls", json=request)
+        ).status_code == 403
+        app.dependency_overrides[require_admin] = lambda: None
+        for patch, status in [
+            ({"session_id": "foreign"}, 403),
+            ({"control_digest": "f" * 64}, 409),
+            ({"tool_id": "inspect"}, 422),
+        ]:
+            assert (
+                await client.post(
+                    "/api/desktop/connection-controls", json={**request, **patch}
+                )
+            ).status_code == status
+        engine.stop_server.assert_not_awaited()
+        owner.uninstall_server = AsyncMock(side_effect=OSError("PRIVATE diagnostic"))
+        failed = await client.post("/api/desktop/connection-controls", json=request)
+        assert failed.status_code == 503 and "PRIVATE" not in failed.text
+        owner.uninstall_server.assert_awaited_once_with("playwright-mcp")
