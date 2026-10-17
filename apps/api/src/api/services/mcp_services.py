@@ -711,7 +711,14 @@ class McpApiService:
     def register_server(self, body):
         return registry_services.register_server(self.db_path, body)
 
-    async def toggle_server_activation(self, server_id: str, is_active: bool):
+    async def toggle_server_activation(
+        self,
+        server_id: str,
+        is_active: bool,
+        *,
+        workspace_dir: str | None = None,
+        sync_agent_profile: bool = True,
+    ):
         server = get_server(self.db_path, server_id)
         approval_context = (
             ApprovalContext(machine_approvals=set(server.approval_gates))
@@ -723,8 +730,10 @@ class McpApiService:
             server_id,
             is_active,
             approval_context=approval_context,
+            **({"workspace_dir": workspace_dir} if workspace_dir is not None else {}),
         )
-        sync_mcp_server_to_wright_gateway(updated)
+        if sync_agent_profile:
+            sync_mcp_server_to_wright_gateway(updated)
         self._notify_gateway_changes()
         return updated
 

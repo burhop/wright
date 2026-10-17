@@ -46,6 +46,34 @@ Do not confuse Playwright MCP with browser controls in the desktop harness. Tool
 
 The independent provider owns browser interaction. Wright owns tool authority, accepted workflow, durable run and recorded outputs. New proof is confined to a disposable local context. It proves browser-tool integration rather than CAD/engineering compliance or user acceptance. No shared live workspace or protected campaign may be used.
 
+## Desktop provider controls and restart proof
+
+The native-panel prototype locally qualified shared Start/Stop and exact tool
+switches through the existing lifecycle and registry owners. The user-owned
+`desktop-playwright-lifecycle` registration uses the same immutable ARM64 image
+and package above, a network-disabled disposable container and no host mounts.
+Starting receives the selected workspace root; another workspace observes the
+same shared process/tool flags. After disabling browser_snapshot, stopping and
+restarting Wright, rediscovery preserved the deny. An explicit enable and a final
+disable audit passed; the actual workflow gateway omitted the disabled tool.
+No tools/call or engineering run was performed in this lifecycle proof.
+
+A failed initial fixture used a catalog-owned row whose overridden launch command
+was restored by catalog reconciliation on restart. Its Start failed before spawn.
+Use a distinct user-owned registration for such an isolated container fixture;
+this is not a catalog defect or authority to change the catalog. Copied historical
+catalog validation metadata was removed before final restart/audit: the fixture's
+local validation remains not_tested. Successful discovery/lifecycle does not
+claim catalog installation or engineering validation. The corrected final provider
+is stopped, workspace memberships retained, and callable contracts removed.
+
+Evidence: /tmp/wright-desktop-provider-controls-proof-20261017/checkpoint.json,
+browser-disable-1792210219940/, browser-restore-1792210303549/ and
+browser-audit-1792210374078/. These use the actual resource/MCP/storage with a
+simulated Chromium host, not the Windows desktop. Existing checked GB10 harness
+configuration hashes were preserved; desktop activation skips legacy Hermes
+profile synchronization. No provider bug was reported.
+
 ## Bugs and maintenance
 
 No new provider defect or issue submission is claimed. Record exact package/browser versions, inputs, actual results and evidence before marking a capability verified. Retain version/platform-specific failures and update this guide after qualification.

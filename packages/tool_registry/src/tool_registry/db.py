@@ -351,8 +351,13 @@ def get_tool(db_path: str, tool_id: str) -> Optional[McpTool]:
         return _row_to_tool(row) if row else None
 
 
+def _disabled_tool_key(server_id: str, name: str) -> str:
+    return "mcp.disabled-tool:" + json.dumps([server_id, name], separators=(",", ":"))
+
+
 def insert_tools(db_path: str, tools: List[McpTool]) -> None:
     with _get_conn(db_path) as conn:
+        conn.execute("BEGIN IMMEDIATE")
         columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(mcp_tools)")}
         for tool in tools:
             names = [
@@ -379,7 +384,11 @@ def insert_tools(db_path: str, tools: List[McpTool]) -> None:
                 names.append("meta")
                 values.append(_serialize_json(tool.meta))
             names.extend(("is_enabled", "created_at"))
-            values.extend((1 if tool.is_enabled else 0, tool.created_at))
+            denied = conn.execute(
+                "SELECT 1 FROM system_settings WHERE key = ?",
+                (_disabled_tool_key(tool.server_id, tool.name),),
+            ).fetchone()
+            values.extend((1 if tool.is_enabled and not denied else 0, tool.created_at))
             placeholders = ", ".join("?" for _ in names)
             conn.execute(
                 f"INSERT OR REPLACE INTO mcp_tools ({', '.join(names)}) "
@@ -391,6 +400,17 @@ def insert_tools(db_path: str, tools: List[McpTool]) -> None:
 
 def clear_server_tools(db_path: str, server_id: str) -> None:
     with _get_conn(db_path) as conn:
+        conn.execute("BEGIN IMMEDIATE")
+        # Preserve existing operator denies before discovery/stop removes live
+        # contracts. The existing settings owner survives API process loss.
+        for row in conn.execute(
+            "SELECT name FROM mcp_tools WHERE server_id = ? AND is_enabled = 0",
+            (server_id,),
+        ).fetchall():
+            conn.execute(
+                "INSERT OR REPLACE INTO system_settings (key, value) VALUES (?, ?)",
+                (_disabled_tool_key(server_id, row["name"]), "false"),
+            )
         conn.execute("DELETE FROM mcp_tools WHERE server_id = ?", (server_id,))
         conn.commit()
 
@@ -402,5 +422,18 @@ def update_tool_enabled(db_path: str, tool_id: str, is_enabled: bool) -> bool:
             "UPDATE mcp_tools SET is_enabled = ? WHERE tool_id = ?",
             (1 if is_enabled else 0, tool_id),
         )
+        changed = cursor.rowcount > 0
+        if changed:
+            tool = conn.execute(
+                "SELECT server_id, name FROM mcp_tools WHERE tool_id = ?", (tool_id,)
+            ).fetchone()
+            key = _disabled_tool_key(tool["server_id"], tool["name"])
+            if is_enabled:
+                conn.execute("DELETE FROM system_settings WHERE key = ?", (key,))
+            else:
+                conn.execute(
+                    "INSERT OR REPLACE INTO system_settings (key, value) VALUES (?, ?)",
+                    (key, "false"),
+                )
         conn.commit()
-        return cursor.rowcount > 0
+        return changed

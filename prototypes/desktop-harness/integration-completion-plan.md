@@ -156,3 +156,59 @@ wording assertion are retained with their corrected passes. This qualifies local
 MCP/browser behavior, not a new engineering analysis or Windows acceptance.
 The installed plugin remains0.14.0. The finished idle connection-preview API was
 stopped after evidence retention; fresh upload API8204 is separate from installed8198.
+
+## Shared provider controls and permission persistence
+
+Connections now adds a collapsed provider-management section for an installed
+registration. Start/stop and individual tool switches reuse McpApiService,
+registry services and the existing coordinated lifecycle. These controls affect
+the shared Wright host; the separate workspace availability control is retained.
+Start receives the selected workspace's backend-resolved directory. It cannot
+silently rebind a running provider, and current process binding is observed
+without returning private filesystem paths. Existing callers retain their default
+activation signature/behavior. Desktop activation skips the legacy agent-profile
+synchronization path; preview compatibility configuration is confined to its own
+state directory. Wright gateway notifications remain active.
+
+Operator writes require exact workspace/session, capability/registered-server
+identity, a digest of observed configuration/state/tool contracts and an explicit
+shared-host scope. Cross-provider tool IDs, stale subjects and extra authority
+fields are rejected before the owner call. Only public metadata and digests leave
+the adapter, never launch commands, environment values or credentials. A lost,
+mismatched or failed reply locks writes until an explicit current-state read;
+the transport never repeats the action. Human process reviews and external-action
+authority are not modified by these controls.
+
+Qualification exposed a real shared defect: lifecycle rediscovery reset a saved
+tool disable to enabled after stop. The retained failing reproduction now passes:
+denies persist by exact provider/tool name in existing system_settings, while
+stop still removes callable contracts. Rediscovery and a new lifecycle owner
+restore those denies. Explicit enable removes only that deny. This adds no
+database or scheduler, changes no vendor protocol, and preserves other providers.
+All541 registry tests passed after this narrow authority fix. The targeted legacy
+service fixture now composes its secret provider explicitly; it previously relied
+on another test module's import order. Final current-resource checks passed:263 prototype,122 panel and12 targeted
+native/legacy service checks, TypeScript and affected lint. Actual resource/MCP/
+Chromium controls started the pinned Playwright0.0.78 container in the selected
+workspace, disabled browser_snapshot and stopped it. After replacing the API
+owner with the same frozen profile, discovery retained the deny; an explicit
+enable and second workspace observed the shared update. A final disable audit
+confirmed the actual workspace workflow gateway omitted that tool. All phases
+ended inactive with no live tool contracts, no provider tools/call and zero
+workflow runs/start receipts/reasoning requests. Checked GB10 harness configuration
+hashes and installed0.14.0 remain unchanged.480px controls had no overflow.
+
+Retained fixture corrections matter: a canonical catalog row's overridden command
+was reconciled back on restart, so its first Start failed before child spawn.
+The proof then used a distinct user-owned registration of the same pinned image,
+without changing catalog behavior. Historical validation metadata copied from the
+catalog was removed before final restart/audit; local validation is not_tested.
+This proves lifecycle/protocol authority, not a newly validated installation.
+Evidence: /tmp/wright-desktop-provider-controls-proof-20261017/checkpoint.json,
+three browser reports/screenshots, restart backup and metadata correction receipt.
+Resource SHA77ea363d08bb2d6d26d6e130d3cd360bcf207d1c382afe53521dda09d51f35c5,
+2273146bytes; no external assets. Public publisher status shows the latest two
+Trivy DB publishing jobs failed; the unchanged stale manifest still blocks push.
+There is no security gate exception. Provider uninstall, version
+updates, secret entry and broader workspace/history parity still require audit
+and completion; this section does not claim those capabilities are delivered.

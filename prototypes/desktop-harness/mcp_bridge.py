@@ -28,7 +28,7 @@ from core.process_interactions import Reason
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
-from desktop_backend import FileUploadRequest
+from desktop_backend import FileUploadRequest, ConnectionControlRequest
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
 
@@ -478,7 +478,9 @@ def server(client, *, native_editor=False, native_working_view=False):
     @mcp.tool(
         annotations=write, structured_output=True, meta={"ui": {"visibility": ["app"]}}
     )
-    async def wright_workspace_file_upload(request: FileUploadRequest) -> dict[str, Any]:
+    async def wright_workspace_file_upload(
+        request: FileUploadRequest,
+    ) -> dict[str, Any]:
         """Stage an explicitly selected input file. No workflow, tool, trust or overwrite authority."""
         try:
             await client.scope(request.workspace_id, request.session_id)
@@ -496,6 +498,50 @@ def server(client, *, native_editor=False, native_working_view=False):
                     "message": "Upload was rejected. Check workspace access, file size and filename."
                     if known
                     else "Upload outcome is unconfirmed. Check the saved upload before another attempt.",
+                },
+            }
+        return {"ok": True, "document": document}
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_controls(
+        workspace_id: str, session_id: str, capability_id: str, server_id: str
+    ) -> dict:
+        """Read registered provider/tool state. Shared controls are distinct from workspace grants."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-controls",
+            params={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "server_id": server_id,
+            },
+        )
+
+    @mcp.tool(
+        annotations=write, structured_output=True, meta={"ui": {"visibility": ["app"]}}
+    )
+    async def wright_connection_control(
+        request: ConnectionControlRequest,
+    ) -> dict[str, Any]:
+        """Apply one operator-selected shared provider/tool state change through its existing owner."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            document = await client.call(
+                "POST",
+                "/api/desktop/connection-controls",
+                json=request.model_dump(mode="json", exclude_none=True),
+            )
+        except WrightRequestRejected as failure:
+            known = failure.status_code in (400, 401, 403, 404, 409, 422)
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": "Shared control was rejected. Refresh its current subject and check operator access."
+                    if known
+                    else "Shared control outcome is not confirmed. Read current provider state before another action.",
                 },
             }
         return {"ok": True, "document": document}

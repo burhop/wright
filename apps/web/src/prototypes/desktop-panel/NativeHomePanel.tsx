@@ -44,7 +44,9 @@ export type HomeCall = (
     | "wright_connection_signin"
     | "wright_connection_validate"
     | "wright_connection_enable"
-    | "wright_connection_disable",
+    | "wright_connection_disable"
+    | "wright_connection_controls"
+    | "wright_connection_control",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 

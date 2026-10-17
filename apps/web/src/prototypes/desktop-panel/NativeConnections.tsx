@@ -3,6 +3,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import { NativeCustomConnection } from "./NativeCustomConnection";
 import { NativeSignin } from "./NativeSignin";
+import { NativeConnectionControls } from "./NativeConnectionControls";
 
 export type ConnectionsCall = (
   name:
@@ -16,7 +17,9 @@ export type ConnectionsCall = (
     | "wright_connection_signin"
     | "wright_connection_validate"
     | "wright_connection_enable"
-    | "wright_connection_disable",
+    | "wright_connection_disable"
+    | "wright_connection_controls"
+    | "wright_connection_control",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
@@ -590,6 +593,30 @@ export function NativeConnections({
                     </p>
                   ))}
                 </details>
+                {item.installed && item.server_id && (
+                  <NativeConnectionControls
+                    key={`${workspace.workspace_id}:${workspace.session_id}:${item.server_id}`}
+                    call={call}
+                    workspace={workspace}
+                    capabilityId={item.capability_id}
+                    serverId={item.server_id}
+                    onChanged={(state) =>
+                      setItems((current) =>
+                        current.map((connection) =>
+                          connection.server_id === state.server_id
+                            ? {
+                                ...connection,
+                                active: state.active,
+                                installed: state.installed,
+                                process_status: state.status,
+                                installed_version: state.installed_version,
+                              }
+                            : connection,
+                        ),
+                      )
+                    }
+                  />
+                )}
                 {item.enabled_here && item.server_id && (
                   <button
                     disabled={

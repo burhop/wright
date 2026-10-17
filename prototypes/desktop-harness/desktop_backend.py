@@ -9,9 +9,10 @@ from types import SimpleNamespace
 import time
 from uuid import uuid4
 from urllib.parse import urlsplit
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
 from core.desktop_reasoning import (
@@ -26,7 +27,9 @@ from data_vault.desktop_reasoning_repository import (
 )
 from workspace_service.errors import WorkspaceConflictError
 from workspace_service.workflow_reasoning_dispatch import WorkflowReasoningCallbacks
-from api.services.mcp_services import McpApiService, get_mcp_api_service
+from api.services.mcp_services import (
+    McpApiService, McpInvalidOperationError, get_mcp_api_service,
+)
 from api.security import require_admin
 from desktop_oauth import DesktopOAuthPresentation
 
@@ -112,6 +115,77 @@ class DisableConnectionRequest(BaseModel):
     server_id: str = Field(min_length=1, max_length=256)
 
 
+class ConnectionControlRequest(DisableConnectionRequest):
+    control_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    shared_scope: Literal["wright-host"]
+    operation: Literal["start", "stop", "tool-enable", "tool-disable"]
+    tool_id: str | None = Field(default=None, min_length=1, max_length=512)
+
+    @model_validator(mode="after")
+    def exact_operation_subject(self):
+        if self.operation.startswith("tool-") != (self.tool_id is not None):
+            raise ValueError(
+                "Tool switches require one exact tool; provider controls accept none"
+            )
+        return self
+
+
+def connection_control_state(service, capability_id, server_id, *, repository):
+    """Redacted operator view over existing registry configuration and tool owners."""
+    from tool_registry.db import get_server, get_tools
+    from tool_registry.gateway_adapters import _server_authority_revision
+
+    capability = service.get_capability(capability_id)
+    if capability.user_state.server_id != server_id:
+        raise HTTPException(
+            409, "The registered connection changed; refresh its controls."
+        )
+    server = get_server(service.db_path, server_id)
+    if server is None:
+        raise HTTPException(404, "The registered provider is unavailable.")
+    tools = sorted(get_tools(service.db_path, server_id), key=lambda tool: tool.tool_id)
+    lifecycle = getattr(getattr(service, "engine", None), "lifecycle", None)
+    runner = lifecycle.runner_for(server_id) if lifecycle is not None else None
+    directory = getattr(runner, "cwd", None)
+    workspace = repository.get_by_path(directory) if directory else None
+    subjects = [
+        {
+            "tool_id": tool.tool_id,
+            "name": tool.name,
+            "enabled": tool.is_enabled,
+            "input_schema": tool.input_schema,
+            "output_schema": tool.output_schema,
+            "annotations": tool.annotations,
+        }
+        for tool in tools
+    ]
+    state = {
+        "capability_id": capability_id,
+        "server_id": server_id,
+        "shared_scope": "wright-host",
+        "installed": server.is_installed,
+        "active": server.is_active,
+        "status": server.status,
+        "installed_version": server.installed_version,
+        "bound_workspace_id": workspace["workspace_id"] if workspace else None,
+        "tools": [
+            {
+                "tool_id": tool.tool_id,
+                "name": tool.name,
+                "enabled": tool.is_enabled,
+                "reported_read_only": tool.annotations.get("readOnlyHint") is True,
+            }
+            for tool in tools
+        ],
+    }
+    state["control_digest"] = canonical_digest(
+        {
+            **state,
+            "configuration_revision": _server_authority_revision(server),
+            "tools": subjects,
+        }
+    )
+    return state
 class DesktopBackend:
     def __init__(
         self,
@@ -606,6 +680,112 @@ class DesktopBackend:
                 "availability": result,
             }
 
+        @router.get("/connection-controls")
+        async def read_connection_controls(
+            workspace_id: str,
+            session_id: str,
+            capability_id: str,
+            server_id: str,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(workspace_id, session_id)
+            from api.services.mcp_services import (
+                McpServiceError,
+                mcp_service_http_exception,
+            )
+
+            try:
+                state = connection_control_state(
+                    service,
+                    capability_id,
+                    server_id,
+                    repository=self.service.repository,
+                )
+            except McpServiceError as error:
+                raise mcp_service_http_exception(error) from error
+            return {
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "state": state,
+            }
+
+
+        @router.post("/connection-controls", dependencies=[Depends(require_admin)])
+        async def change_connection_control(
+            body: ConnectionControlRequest,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            workspace = self.workspace(body.workspace_id, body.session_id)
+            from api.services.mcp_services import (
+                McpServiceError,
+                mcp_service_http_exception,
+            )
+
+            try:
+                before = connection_control_state(
+                    service,
+                    body.capability_id,
+                    body.server_id,
+                    repository=self.service.repository,
+                )
+            except McpServiceError as error:
+                raise mcp_service_http_exception(error) from error
+            if before["control_digest"] != body.control_digest:
+                raise HTTPException(
+                    409,
+                    "Provider or tool state changed; refresh before another action.",
+                )
+            if not before["installed"]:
+                raise HTTPException(
+                    409, "Complete provider setup before using shared controls."
+                )
+            selected = next(
+                (tool for tool in before["tools"] if tool["tool_id"] == body.tool_id),
+                None,
+            )
+            if body.operation.startswith("tool-") and selected is None:
+                raise HTTPException(
+                    403, "This tool does not belong to the selected provider."
+                )
+            try:
+                if body.operation in {"start", "stop"}:
+                    await service.toggle_server_activation(
+                        body.server_id,
+                        body.operation == "start",
+                        sync_agent_profile=False,
+                        **(
+                            {"workspace_dir": workspace["local_path"]}
+                            if body.operation == "start"
+                            else {}
+                        ),
+                    )
+                else:
+                    service.set_tool_enabled(
+                        body.tool_id, body.operation == "tool-enable"
+                    )
+                state = connection_control_state(
+                    service,
+                    body.capability_id,
+                    body.server_id,
+                    repository=self.service.repository,
+                )
+            except McpInvalidOperationError:
+                raise HTTPException(
+                    400,
+                    "Wright's provider policy rejected this control. Check required credentials and setup.",
+                ) from None
+            except (McpServiceError, OSError, RuntimeError, ValueError):
+                raise HTTPException(
+                    503,
+                    "Shared control outcome is not confirmed; refresh saved provider state before another action.",
+                ) from None
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "operation": body.operation,
+                "tool_id": body.tool_id,
+                "state": state,
+            }
         @router.get("/connection")
         async def connection():
             return {

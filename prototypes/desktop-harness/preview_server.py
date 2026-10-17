@@ -109,6 +109,8 @@ def main():
             "WRIGHT_API_TOKEN": token_file.read_text(),
             "WRIGHT_ALLOWED_ORIGINS": f"http://127.0.0.1:{args.web_port},http://localhost:{args.web_port}",
             "WRIGHT_API_MCP_AUTOSTART": "0",
+            # Confine any retained compatibility synchronization to this instance.
+            "HERMES_CONFIG_PATH": str(state / "unused-hermes" / "config.yaml"),
         }
     )
 

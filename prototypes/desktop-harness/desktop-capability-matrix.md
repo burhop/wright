@@ -3,21 +3,21 @@
 **Current integration checkpoint:16 October2026, with17 October UTC proof files.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
 installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The local
-completion candidate starts at9c042c8f and adds tested scoped file staging;
+completion candidate includes99d837f1 scoped file staging plus provider controls;
 it is not installed. Detailed current scope and remaining work are in
 [integration-completion-plan.md](integration-completion-plan.md).
 
 | Current area | Verified boundary | Remaining required work |
 |---|---|---|
 | Workspace/home/editor | Earlier native panel observation; installed0.14 protocol/resource check; shared editor retained | Current served Workflows, native Windows and lifecycle/settings parity |
-| Connections | Actual native bundle→MCP→owner scoped Disable; independent workspace/provider unchanged; readiness and availability labels; catalog/custom HTTPS/setup retained | Full lifecycle/tool permission parity, real Windows callback/authentication |
+| Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop and tool switches; real pinned provider restart retains deny; workflow gateway excludes denied tool; readiness and availability separate | Uninstall/version management and private setup parity, real Windows callback/authentication |
 | Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners | Named candidate promotion, actual Windows delivery, historical revision navigation |
 | Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
 | Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
 | Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
 | Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
 | Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
-| Gates/deployment |276 prototype/file-owner and114 panel checks pass; two existing Windows-only checks skipped on Linux; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
+| Gates/deployment |541 registry,263 prototype,122 panel and12 targeted API/service checks pass; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
 
 Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
 establish Windows native acceptance. The host still reports no model/app identity;
@@ -26,7 +26,12 @@ background wakeups. Full named engineering campaigns are deferred by the new
 goal; bounded real tools and a substantially different existing workflow remain
 required. External current receipts live under
 /tmp/wright-desktop-integration-completion-20261016/ and
-/tmp/wright-desktop-workspace-tools-proof-20261017/.
+/tmp/wright-desktop-workspace-tools-proof-20261017/. Provider lifecycle evidence is
+/tmp/wright-desktop-provider-controls-proof-20261017/checkpoint.json. The shared
+provider fixture is user-owned, pinned and locally catalog-unvalidated; these
+proofs establish actual lifecycle/permission behavior, not catalog installation.
+No provider tools were invoked in the lifecycle slice, and checked existing GB10
+harness configuration hashes were unchanged. Named plugin0.14.0 is unchanged.
 
 ## Retained historical checkpoint
 
