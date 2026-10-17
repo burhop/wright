@@ -8,6 +8,7 @@ import { NativeNewWorkflow } from "./NativeNewWorkflow";
 import { EngineeringTemplateDialog } from "../workflow-recovery/EngineeringTemplateDialog";
 import { nativeTemplateClient } from "./native-template-client";
 import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
+import type { HomeView } from "./native-navigation-state";
 
 export interface DesktopWorkspace {
   workspace_id: string;
@@ -72,8 +73,14 @@ export function NativeHomePanel({
   initialSelection,
   onSelect,
   onOpenRun,
+  initialView = "workflows",
+  onNavigate,
+  restorationNotice,
 }: {
   readonly call: HomeCall;
+  readonly initialView?: HomeView;
+  readonly onNavigate?: (view: HomeView) => void;
+  readonly restorationNotice?: string;
   readonly initialSelection?: Pick<
     DesktopWorkspace,
     "workspace_id" | "session_id"
@@ -100,9 +107,11 @@ export function NativeHomePanel({
   const createFlight = useRef(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
-  const [view, setView] = useState<
-    "workflows" | "connections" | "files" | "runs"
-  >("workflows");
+  const [view, setView] = useState<HomeView>(initialView);
+  function navigate(next: HomeView) {
+    setView(next);
+    onNavigate?.(next);
+  }
   const [fileQuery, setFileQuery] = useState("");
   const [previewPath, setPreviewPath] = useState<string>();
   const [templatesOpen, setTemplatesOpen] = useState(false);
@@ -231,7 +240,7 @@ export function NativeHomePanel({
       setItems(workspaces);
       setWorkspaceName("");
       setCreateVisible(false);
-      setView("workflows");
+      navigate("workflows");
       await select(workspace);
     } catch {
       setCreateUncertain(true);
@@ -259,6 +268,7 @@ export function NativeHomePanel({
         </button>
       </header>
       <p>Engineering workflows, alongside this conversation.</p>
+      {restorationNotice && <p role="status">{restorationNotice}</p>}
       <label htmlFor="wright-workspace">Workspace</label>
       <select
         id="wright-workspace"
@@ -323,25 +333,25 @@ export function NativeHomePanel({
       {selected && (
         <nav aria-label="Workspace views">
           <button
-            onClick={() => setView("workflows")}
+            onClick={() => navigate("workflows")}
             disabled={opening || creating}
           >
             Workflows
           </button>
           <button
-            onClick={() => setView("connections")}
+            onClick={() => navigate("connections")}
             disabled={opening || creating}
           >
             Connections
           </button>
           <button
-            onClick={() => setView("files")}
+            onClick={() => navigate("files")}
             disabled={opening || creating}
           >
             Files
           </button>
           <button
-            onClick={() => setView("runs")}
+            onClick={() => navigate("runs")}
             disabled={opening || creating}
           >
             Recent runs

@@ -320,3 +320,38 @@ async def test_command_preview_is_app_only_typed_scoped_and_has_no_execution_fie
                 "wright_connection_command_preview", {"request": {**args, **patch}}
             )
     client.call.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_home_can_reopen_exact_workspace_without_global_selection_or_automatic_fallback(
+    monkeypatch,
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"workspaces": []})
+    )
+    bridge = server(client, native_editor=True)
+    _, result = await bridge.call_tool(
+        "wright_home", {"workspace_id": "alpha", "session_id": "chat-alpha"}
+    )
+    assert result["selection"] == {"workspace_id": "alpha", "session_id": "chat-alpha"}
+    client.scope.assert_awaited_once_with("alpha", "chat-alpha")
+    client.call.assert_awaited_once_with("GET", "/api/desktop/workspaces")
+    client.call.reset_mock()
+    client.scope.reset_mock()
+    _, result = await bridge.call_tool("wright_home", {})
+    assert "selection" not in result
+    client.scope.assert_not_awaited()
+    client.call.reset_mock()
+    for args in [{"workspace_id": "alpha"}, {"session_id": "chat-alpha"}]:
+        with pytest.raises(Exception, match="together"):
+            await bridge.call_tool("wright_home", args)
+    client.call.assert_not_awaited()
+    client.scope.side_effect = RuntimeError("scope denied")
+    with pytest.raises(Exception, match="scope denied"):
+        await bridge.call_tool(
+            "wright_home", {"workspace_id": "alpha", "session_id": "foreign"}
+        )
+    client.call.assert_not_awaited()

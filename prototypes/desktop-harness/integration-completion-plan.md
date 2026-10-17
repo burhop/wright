@@ -316,3 +316,56 @@ ed82e57f31938e690fe97b3f77853cdf167de98d8d767c729bac516fcae1844a,
 Windows acceptance or the required distinct substantive engineering regression.
 Official Trivy DB manifest remains unchanged at the latest interval check; push
 and dev integration still cannot proceed through that security gate.
+
+## Workspace navigation and conversation context
+
+Official OpenAI UI guidance rechecked17 October: durable data belongs to the
+server; widgetState/setWidgetState are optional ChatGPT extensions scoped to one
+rendered widget. Troubleshooting explicitly limits its UI/persistence advice to
+ChatGPT, so this is not evidence they exist in the actual Windows harness. The
+portable ui/update-model-context channel provides selection context for subsequent
+conversation turns, without starting a model response. Sources:
+https://developers.openai.com/plugins/build/chatgpt-ui
+https://developers.openai.com/plugins/reference
+https://developers.openai.com/plugins/deploy/troubleshooting
+
+Implement feature-detected private widget navigation hints (exact workspace/session
+and one home view only) plus the portable conversation-context update. Context
+updates are serialized and expose selected workspace, accepted source identity and
+a dirty flag, never credentials, answers, review authority or raw drafts. New
+scoped Home arguments allow a conversation to reopen an exact workspace. Explicit
+requested scope takes precedence over restored hints; every restore reconciles
+against current owned-workspace discovery and file reads. No global last-workspace
+setting may redirect another conversation. Unsupported host helpers remain
+explicit; local widget simulation is separate from native Windows acceptance.
+
+This slice does not persist authoring drafts. Their durable recovery still needs
+Wright-owned storage separate from accepted source; browser widget state is not
+its sole authority. Preserve existing editor parsing, Undo/Redo, layout, CAS and
+dirty-navigation guards while completing that remaining requirement.
+
+Navigation/context slice locally qualified:269 prototype tests,150 native-panel
+tests, TypeScript and focused lint pass. Seven actual native-resource→MCP→owner
+Chromium checks cover independent widget scopes, Files restore, explicit scope
+over older hints, stale-session denial, context-only and unsupported hosts, and
+normal Workflows entry with source editing/CAS save. A chat Home request during
+an unsaved edit preserved the draft and current workspace. An acknowledged save
+updated the conversation's accepted source hash and cleared its dirty flag. No
+execution, review or provider call occurred. Two fresh workspaces and source
+revision history are retained; no global last-workspace setting was introduced.
+
+The first setup reached MCP before API startup completed; zero allocation was
+verified and the same now-serving service was reused, without restarting it.
+Browser fixture corrections added the editor's existing source-read port and used
+the Source tab's actual identity. The first component test used a Playwright-only
+matcher option; TypeScript caught it. Retained failures were corrected without
+changing product scope or weakening a check. A read-only partial widget API is
+not treated as persistence support. Context-only hosts explicitly report that the
+conversation can reopen the workspace but panel navigation is not saved.
+
+Final proof: /tmp/wright-desktop-navigation-proof-20261017/checkpoint.json and
+browser-1792213787548/report.json. The earlier six-check success remains retained.
+Installed0.14 is unchanged. Real Windows optional API availability and durable
+authoring-draft recovery remain required; successful simulated-host checks do not
+satisfy them. Official credential guidance also means secret entry should remain
+with Wright/provider authentication outside the plugin, not new plugin fields.

@@ -322,3 +322,28 @@ it("does not redirect refreshed selection to a changed session", async () => {
     screen.queryByRole("button", { name: "part.wflow" }),
   ).not.toBeInTheDocument();
 });
+
+it("restores the requested view only after reconciling the exact workspace/session and reports navigation", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha, beta] }))
+    .mockResolvedValue(files(beta, "part.wflow"));
+  const onNavigate = vi.fn();
+  render(
+    <NativeHomePanel
+      call={call}
+      onOpen={vi.fn()}
+      initialSelection={beta}
+      initialView="files"
+      onNavigate={onNavigate}
+    />,
+  );
+  await screen.findByRole("heading", { name: "Files" });
+  expect(screen.getByLabelText("Workspace")).toHaveValue("b");
+  expect(call).toHaveBeenLastCalledWith("wright_workspace_files", {
+    workspace_id: "b",
+    session_id: "b-chat",
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Recent runs" }));
+  expect(onNavigate).toHaveBeenCalledExactlyOnceWith("runs");
+});

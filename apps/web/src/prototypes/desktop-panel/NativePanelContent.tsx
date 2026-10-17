@@ -29,6 +29,7 @@ export function NativePanelContent({
   theme,
   transferCall,
   onOpenTransferred,
+  onAcceptedSource,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
@@ -42,6 +43,9 @@ export function NativePanelContent({
   readonly theme?: "dark" | "light";
   readonly transferCall?: NativeTransferCall;
   readonly onOpenTransferred?: (path: string) => Promise<void>;
+  readonly onAcceptedSource?: (
+    document: WorkspaceWorkflowSourceDocument,
+  ) => void;
 }) {
   const [accepted, setAccepted] = useState(initial);
   const [view, setView] = useState<"editor" | "working">(
@@ -216,7 +220,10 @@ export function NativePanelContent({
           }
           transferDisabled={sourceDirty || workingDirty || transferPending}
           onDirty={sourceChange}
-          onAccepted={setAccepted}
+          onAccepted={(document) => {
+            setAccepted(document);
+            onAcceptedSource?.(document);
+          }}
           onOpenWorkingView={
             workingViewEnabled ? () => void openWorking() : undefined
           }

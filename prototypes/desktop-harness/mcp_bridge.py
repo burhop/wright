@@ -1130,10 +1130,19 @@ def server(client, *, native_editor=False, native_working_view=False):
             annotations=read,
             meta={"ui": {"resourceUri": uri, "visibility": ["model", "app"]}},
         )
-        async def wright_home() -> dict[str, Any]:
-            """Open Wright's workspace picker beside this conversation. This only reads."""
+        async def wright_home(
+            workspace_id: str | None = None, session_id: str | None = None,
+        ) -> dict[str, Any]:
+            """Open Wright beside this conversation, optionally returning to its exact workspace/session. Read only."""
+            if (workspace_id is None) != (session_id is None):
+                raise ValueError("Provide the workspace and its session together")
+            selection = None
+            if workspace_id is not None:
+                await client.scope(workspace_id, session_id)
+                selection = {"workspace_id": workspace_id, "session_id": session_id}
             return {
                 "view": "home",
+                **({"selection": selection} if selection is not None else {}),
                 **await client.call("GET", "/api/desktop/workspaces"),
             }
 
