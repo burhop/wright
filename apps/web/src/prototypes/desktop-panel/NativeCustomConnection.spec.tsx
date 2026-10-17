@@ -130,3 +130,206 @@ it("stops after uncertain plan creation and directs recovery through saved plans
   ).toBeDisabled();
   expect(call).toHaveBeenCalledTimes(2);
 });
+
+const commandArgs = ["-m", "existing_mcp", "a path with spaces"];
+function commandPreview() {
+  return {
+    ...preview,
+    structuredContent: {
+      ...preview.structuredContent,
+      preview: {
+        ...preview.structuredContent.preview,
+        drafts: [
+          {
+            draft_id: "draft",
+            draft_digest: "a".repeat(64),
+            name: "Custom CAD",
+            transport: "stdio",
+            command: "/usr/bin/python3",
+            arguments: commandArgs,
+            errors: [],
+          },
+        ],
+      },
+    },
+  };
+}
+function fillCommand(argumentsText = JSON.stringify(commandArgs)) {
+  fireEvent.change(screen.getByLabelText("Connection type"), {
+    target: { value: "stdio" },
+  });
+  fireEvent.change(screen.getByLabelText("Connection name"), {
+    target: { value: "Custom CAD" },
+  });
+  fireEvent.change(screen.getByLabelText("Executable on Wright host"), {
+    target: { value: "/usr/bin/python3" },
+  });
+  fireEvent.change(screen.getByLabelText("Arguments (JSON array)"), {
+    target: { value: argumentsText },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Preview connection" }));
+}
+it("previews literal GB10 command arguments without running or silently approving setup", async () => {
+  const call = vi.fn().mockResolvedValue(commandPreview());
+  render(
+    <NativeCustomConnection
+      workspace={workspace}
+      call={call}
+      disabled={false}
+      onBusy={vi.fn()}
+      onPlan={vi.fn()}
+    />,
+  );
+  fillCommand();
+  await screen.findByRole("region", { name: "Custom connection preview" });
+  expect(call).toHaveBeenCalledExactlyOnceWith(
+    "wright_connection_command_preview",
+    {
+      request: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        name: "Custom CAD",
+        command: "/usr/bin/python3",
+        arguments: commandArgs,
+      },
+    },
+  );
+  expect(screen.getByText(/Commands run on the Wright/)).toHaveTextContent(
+    "not on the Windows desktop",
+  );
+  expect(screen.getByRole("checkbox")).not.toBeChecked();
+  fireEvent.change(screen.getByLabelText("Arguments (JSON array)"), {
+    target: { value: "[]" },
+  });
+  expect(
+    screen.queryByRole("region", { name: "Custom connection preview" }),
+  ).not.toBeInTheDocument();
+});
+it.each(["not-json", "{}", "[42]", JSON.stringify(["x".repeat(4097)])])(
+  "rejects malformed or oversized arguments before transport: %s",
+  async (text) => {
+    const call = vi.fn();
+    render(
+      <NativeCustomConnection
+        workspace={workspace}
+        call={call}
+        disabled={false}
+        onBusy={vi.fn()}
+        onPlan={vi.fn()}
+      />,
+    );
+    fillCommand(text);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Nothing was sent",
+    );
+    expect(call).not.toHaveBeenCalled();
+  },
+);
+it.each(["arguments", "workspace"])(
+  "does not accept a preview for different %s",
+  async (field) => {
+    const value = commandPreview();
+    if (field === "workspace") value.structuredContent.workspace_id = "other";
+    else value.structuredContent.preview.drafts[0].arguments = ["changed"];
+    const call = vi.fn().mockResolvedValue(value);
+    render(
+      <NativeCustomConnection
+        workspace={workspace}
+        call={call}
+        disabled={false}
+        onBusy={vi.fn()}
+        onPlan={vi.fn()}
+      />,
+    );
+    fillCommand();
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "No setup was applied",
+    );
+    expect(
+      screen.queryByRole("button", { name: "Review custom setup" }),
+    ).not.toBeInTheDocument();
+  },
+);
+
+it("shows the existing normalizer's actionable diagnostics without enabling plan creation", async () => {
+  const value = commandPreview();
+  const call = vi.fn().mockResolvedValue({
+    ...value,
+    structuredContent: {
+      ...value.structuredContent,
+      preview: {
+        ...value.structuredContent.preview,
+        drafts: [
+          {
+            ...value.structuredContent.preview.drafts[0],
+            command: null,
+            errors: [
+              {
+                message:
+                  "Shell expansion and control operators are not allowed.",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  });
+  render(
+    <NativeCustomConnection
+      workspace={workspace}
+      call={call}
+      disabled={false}
+      onBusy={vi.fn()}
+      onPlan={vi.fn()}
+    />,
+  );
+  fillCommand();
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "Shell expansion and control operators",
+  );
+  expect(
+    screen.queryByRole("button", { name: "Review custom setup" }),
+  ).not.toBeInTheDocument();
+  expect(call).toHaveBeenCalledTimes(1);
+});
+it("ignores a saved-plan response after the connection panel unmounts", async () => {
+  let finish!: (value: unknown) => void;
+  const onPlan = vi.fn();
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(commandPreview())
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+  const view = render(
+    <NativeCustomConnection
+      workspace={workspace}
+      call={call}
+      disabled={false}
+      onBusy={vi.fn()}
+      onPlan={onPlan}
+    />,
+  );
+  fillCommand();
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Review custom setup" }),
+  );
+  view.unmount();
+  finish({
+    structuredContent: {
+      workspace_id: "a",
+      session_id: "chat-a",
+      plan: {
+        workspace_id: "a",
+        requested_scope: "workspace",
+        capability_id: "import:draft",
+      },
+    },
+  });
+  await Promise.resolve();
+  expect(onPlan).not.toHaveBeenCalled();
+  expect(call).toHaveBeenCalledTimes(2);
+});

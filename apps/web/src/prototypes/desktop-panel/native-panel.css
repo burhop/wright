@@ -109,9 +109,16 @@
   display: block;
 }
 .native-home select,
-.native-home input {
+.native-home input,
+.native-home textarea {
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
   margin: 8px 0;
+}
+.native-home textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 .native-home ul {
   padding: 0;
@@ -127,6 +134,7 @@
 .native-home button,
 .native-home select,
 .native-home input,
+.native-home textarea,
 .native-workspace-frame > nav button {
   font: inherit;
   color: inherit;

@@ -250,3 +250,16 @@ named installed plugin is unchanged.
 Focused credential/provider/catalog-preservation regression: 12 tests passed;
 Ruff passed for the changed core source and tests. This does not replace the
 repository integration gates or Windows native acceptance.
+
+##17 October: local command form
+
+The integration-completion follow-on adds typed, bounded literal command/argument
+preview in the same custom form and existing setup owners. Environment/credential
+values and full configuration-file import remain unavailable. The saved review
+shows exact source after reopening, and uncertain plan creation recovers through
+read-only saved-plan discovery. Actual resource/MCP/browser proof preserves two
+blocked plans with publisher completion false and performs no onboarding effect
+or provider call. This extends source entry, not general engineering qualification.
+See integration-completion-plan.md and
+/tmp/wright-desktop-command-setup-proof-20261017/checkpoint.json for exact tests,
+retained failures and resource identity. Installed0.14 is unchanged.

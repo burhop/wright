@@ -270,3 +270,53 @@ async def test_custom_connection_tools_forward_exact_preview_and_plan_without_ap
     for tool in await bridge.list_tools():
         if tool.name in {"wright_connection_preview", "wright_connection_import_plan"}:
             assert tool.meta["ui"]["visibility"] == ["app"]
+
+
+@pytest.mark.asyncio
+async def test_command_preview_is_app_only_typed_scoped_and_has_no_execution_fields(
+    monkeypatch,
+):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        scope=AsyncMock(), call=AsyncMock(return_value={"preview": {}})
+    )
+    bridge = server(client)
+    args = {
+        "workspace_id": "a",
+        "session_id": "chat-a",
+        "name": "Local",
+        "command": "python",
+        "arguments": ["-m", "existing_mcp"],
+    }
+    tool = next(
+        t
+        for t in await bridge.list_tools()
+        if t.name == "wright_connection_command_preview"
+    )
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    assert set(tool.inputSchema["properties"]) == {"request"}
+    assert (
+        tool.inputSchema["$defs"]["LocalConnectionPreviewRequest"][
+            "additionalProperties"
+        ]
+        is False
+    )
+    await bridge.call_tool("wright_connection_command_preview", {"request": args})
+    client.scope.assert_awaited_once_with("a", "chat-a")
+    client.call.assert_awaited_once_with(
+        "POST", "/api/desktop/connection-imports/preview", json=args
+    )
+    client.call.reset_mock()
+    client.scope.side_effect = RuntimeError("scope denied")
+    with pytest.raises(Exception, match="scope denied"):
+        await bridge.call_tool("wright_connection_command_preview", {"request": args})
+    client.call.assert_not_awaited()
+    client.scope.side_effect = None
+    for patch in [{"env": {}}, {"arguments": ["x" * 4097]}]:
+        with pytest.raises(Exception):
+            await bridge.call_tool(
+                "wright_connection_command_preview", {"request": {**args, **patch}}
+            )
+    client.call.assert_not_awaited()

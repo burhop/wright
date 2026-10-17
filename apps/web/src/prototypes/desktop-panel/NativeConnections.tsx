@@ -11,6 +11,7 @@ export type ConnectionsCall = (
     | "wright_connection_plans"
     | "wright_connection_plan"
     | "wright_connection_preview"
+    | "wright_connection_command_preview"
     | "wright_connection_import_plan"
     | "wright_connection_plan_read"
     | "wright_connection_plan_update"
@@ -51,7 +52,12 @@ export interface SetupPlan {
   workspace_id: string;
   requested_scope: string;
   state: string;
-  source?: { name?: string; endpoint?: string };
+  source?: {
+    name?: string;
+    endpoint?: string;
+    command?: string;
+    arguments?: string[];
+  };
   requirements?: {
     license?: {
       reference: string | null;
@@ -435,6 +441,16 @@ export function NativeConnections({
           {plan.source?.name && <p>{plan.source.name}</p>}
           {plan.source?.endpoint && (
             <p className="native-connection-endpoint">{plan.source.endpoint}</p>
+          )}
+          {plan.source?.command && (
+            <div aria-label="Reviewed command on Wright host">
+              <p className="native-connection-endpoint">
+                Command on Wright host: {plan.source.command}
+              </p>
+              <p className="native-connection-endpoint">
+                Arguments: {JSON.stringify(plan.source.arguments ?? [])}
+              </p>
+            </div>
           )}
           {["blocked", "reviewable", "draft"].includes(plan.state) && (
             <p>Nothing has been installed or approved by this plan.</p>

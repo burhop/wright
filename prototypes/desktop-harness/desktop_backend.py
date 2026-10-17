@@ -90,6 +90,22 @@ class RemoteConnectionPreviewRequest(BaseModel):
         return value
 
 
+class LocalConnectionPreviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    name: str = Field(min_length=1, max_length=100)
+    command: str = Field(min_length=1, max_length=500)
+    arguments: list[str] = Field(default_factory=list, max_length=512)
+
+    @field_validator("arguments")
+    @classmethod
+    def bounded_arguments(cls, value: list[str]) -> list[str]:
+        if any(len(item) > 4096 for item in value) or sum(map(len, value)) > 65536:
+            raise ValueError("Local command arguments exceed the preview limit")
+        return value
+
+
 class ImportedConnectionPlanRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -470,7 +486,7 @@ class DesktopBackend:
 
         @router.post("/connection-imports/preview")
         async def preview_remote_connection(
-            body: RemoteConnectionPreviewRequest,
+            body: RemoteConnectionPreviewRequest | LocalConnectionPreviewRequest,
             request: Request,
             service: McpApiService = Depends(get_mcp_api_service),
         ):
@@ -484,10 +500,15 @@ class DesktopBackend:
             }
             if len(self.import_scopes) >= 128:
                 raise HTTPException(429, "Too many active previews; wait for previews to expire")
+            configuration = (
+                {"name": body.name, "type": "http", "url": body.url}
+                if isinstance(body, RemoteConnectionPreviewRequest)
+                else {"name": body.name, "type": "stdio", "command": body.command,
+                      "args": body.arguments}
+            )
             preview = await preview_mcp_import(
-                ImportPreviewRequest(configuration=json.dumps({
-                    "name": body.name, "type": "http", "url": body.url,
-                })), request, service,
+                ImportPreviewRequest(configuration=json.dumps(configuration)),
+                request, service,
             )
             token = str(uuid4())
             self.import_scopes[token] = (

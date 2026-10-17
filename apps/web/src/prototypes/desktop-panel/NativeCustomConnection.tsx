@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import type { ConnectionsCall, SetupPlan } from "./NativeConnections";
 
@@ -8,7 +8,10 @@ interface Preview {
     draft_id: string;
     draft_digest: string;
     name: string;
-    endpoint: string;
+    transport?: string;
+    endpoint?: string | null;
+    command?: string | null;
+    arguments?: string[];
   };
   expires: string;
 }
@@ -26,8 +29,18 @@ export function NativeCustomConnection({
   onPlan: (plan: SetupPlan) => void;
 }) {
   const inFlight = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+  const [transport, setTransport] = useState("https");
+  const [command, setCommand] = useState("");
+  const [argumentsText, setArgumentsText] = useState("[]");
   const [preview, setPreview] = useState<Preview>();
   const [completedSetup, setCompletedSetup] = useState(false);
   const [error, setError] = useState("");
@@ -35,39 +48,72 @@ export function NativeCustomConnection({
   async function prepare() {
     if (inFlight.current || uncertain) return;
     setError("");
-    let parsed: URL;
-    try {
-      parsed = new URL(url);
-    } catch {
-      setError("Enter a public HTTPS MCP endpoint.");
-      return;
-    }
-    if (
-      parsed.protocol !== "https:" ||
-      parsed.username ||
-      parsed.password ||
-      parsed.search ||
-      parsed.hash
-    ) {
-      setError(
-        "Use a public HTTPS endpoint without credentials, query or fragment. Nothing was sent.",
-      );
-      return;
+    let arguments_: string[] = [];
+    if (transport === "https") {
+      let parsed: URL;
+      try {
+        parsed = new URL(url);
+      } catch {
+        setError("Enter a public HTTPS MCP endpoint.");
+        return;
+      }
+      if (
+        parsed.protocol !== "https:" ||
+        parsed.username ||
+        parsed.password ||
+        parsed.search ||
+        parsed.hash
+      ) {
+        setError(
+          "Use a public HTTPS endpoint without credentials, query or fragment. Nothing was sent.",
+        );
+        return;
+      }
+    } else {
+      try {
+        const value: unknown = JSON.parse(argumentsText);
+        if (
+          !Array.isArray(value) ||
+          value.length > 512 ||
+          !value.every(
+            (item) => typeof item === "string" && item.length <= 4096,
+          ) ||
+          value.reduce((total, item: string) => total + item.length, 0) > 65536
+        ) {
+          throw Error();
+        }
+        arguments_ = value;
+      } catch {
+        setError(
+          "Arguments must be a bounded JSON array of strings. Nothing was sent.",
+        );
+        return;
+      }
     }
     inFlight.current = true;
     onBusy(true);
     setPreview(undefined);
     try {
-      const result = await call("wright_connection_preview", {
+      const scope = {
         workspace_id: workspace.workspace_id,
         session_id: workspace.session_id,
         name: name.trim(),
-        url,
-      });
+      };
+      const result =
+        transport === "https"
+          ? await call("wright_connection_preview", { ...scope, url })
+          : await call("wright_connection_command_preview", {
+              request: {
+                ...scope,
+                command: command.trim(),
+                arguments: arguments_,
+              },
+            });
+      if (!mounted.current) return;
       const data = result.structuredContent;
       const value = data?.preview as
         | {
-            drafts?: (Preview["draft"] & { errors: unknown[] })[];
+            drafts?: (Preview["draft"] & { errors: { message?: string }[] })[];
             document_errors?: unknown[];
             expires_at?: string;
           }
@@ -80,11 +126,26 @@ export function NativeCustomConnection({
         typeof data.preview_token !== "string" ||
         value?.drafts?.length !== 1 ||
         !draft ||
-        draft.errors.length ||
         value.document_errors?.length ||
         draft.name !== name.trim() ||
-        draft.endpoint !== url ||
         !value.expires_at
+      )
+        throw Error();
+      if (draft.errors.length) {
+        setError(
+          "Configuration needs changes: " +
+            draft.errors
+              .map((item) => item.message || "Review the source configuration.")
+              .join(" "),
+        );
+        return;
+      }
+      if (
+        transport === "https"
+          ? draft.endpoint !== url
+          : draft.transport !== "stdio" ||
+            draft.command !== command.trim() ||
+            JSON.stringify(draft.arguments) !== JSON.stringify(arguments_)
       )
         throw Error();
       setPreview({
@@ -115,6 +176,7 @@ export function NativeCustomConnection({
         draft_digest: preview.draft.draft_digest,
         independently_completed_license: completedSetup,
       });
+      if (!mounted.current) return;
       const data = result.structuredContent;
       const plan = data?.plan as SetupPlan | undefined;
       if (
@@ -143,9 +205,11 @@ export function NativeCustomConnection({
     <details>
       <summary>Add a custom MCP</summary>
       <p>
-        Public HTTPS endpoints are supported here. Do not enter passwords,
-        tokens or private credential URLs. Local commands, configuration-file
-        imports and credential entry are not available in this form yet.
+        Add a public HTTPS endpoint or a local command. Commands run on the
+        Wright host (GB10 here), not on the Windows desktop. Do not enter
+        passwords, tokens, credential arguments or private URLs. Environment
+        values, configuration-file imports and credential entry are not
+        available here yet.
       </p>
       <form
         onSubmit={(event) => {
@@ -153,6 +217,21 @@ export function NativeCustomConnection({
           void prepare();
         }}
       >
+        <label htmlFor="wright-custom-connection-type">Connection type</label>
+        <select
+          id="wright-custom-connection-type"
+          value={transport}
+          disabled={disabled || uncertain}
+          onChange={(event) => {
+            setTransport(event.target.value);
+            setPreview(undefined);
+            setCompletedSetup(false);
+            setError("");
+          }}
+        >
+          <option value="https">Public HTTPS endpoint</option>
+          <option value="stdio">Local command on Wright host</option>
+        </select>
         <label>
           Connection name
           <input
@@ -167,22 +246,62 @@ export function NativeCustomConnection({
             }}
           />
         </label>
-        <label>
-          Public MCP endpoint
-          <input
-            value={url}
-            type="url"
-            maxLength={2048}
-            required
-            disabled={disabled || uncertain}
-            onChange={(event) => {
-              setUrl(event.target.value);
-              setPreview(undefined);
-              setCompletedSetup(false);
-            }}
-          />
-        </label>
-        <button disabled={disabled || uncertain || !name.trim() || !url}>
+        {transport === "https" ? (
+          <label>
+            Public MCP endpoint
+            <input
+              value={url}
+              type="url"
+              maxLength={2048}
+              required
+              disabled={disabled || uncertain}
+              onChange={(event) => {
+                setUrl(event.target.value);
+                setPreview(undefined);
+                setCompletedSetup(false);
+              }}
+            />
+          </label>
+        ) : (
+          <>
+            <label>
+              Executable on Wright host
+              <input
+                value={command}
+                maxLength={500}
+                required
+                disabled={disabled || uncertain}
+                onChange={(event) => {
+                  setCommand(event.target.value);
+                  setPreview(undefined);
+                  setCompletedSetup(false);
+                }}
+              />
+            </label>
+            <label htmlFor="wright-custom-command-arguments">
+              Arguments (JSON array)
+            </label>
+            <textarea
+              id="wright-custom-command-arguments"
+              value={argumentsText}
+              maxLength={70000}
+              disabled={disabled || uncertain}
+              onChange={(event) => {
+                setArgumentsText(event.target.value);
+                setPreview(undefined);
+                setCompletedSetup(false);
+              }}
+            />
+          </>
+        )}
+        <button
+          disabled={
+            disabled ||
+            uncertain ||
+            !name.trim() ||
+            (transport === "https" ? !url : !command.trim())
+          }
+        >
           Preview connection
         </button>
       </form>
@@ -190,8 +309,14 @@ export function NativeCustomConnection({
       {preview && (
         <section aria-label="Custom connection preview">
           <p>
-            {preview.draft.name}: {preview.draft.endpoint}
+            {preview.draft.name}:{" "}
+            {preview.draft.endpoint || preview.draft.command}
           </p>
+          {preview.draft.command && (
+            <p className="native-connection-endpoint">
+              {JSON.stringify(preview.draft.arguments)}
+            </p>
+          )}
           <p>
             Preview expires: {preview.expires}. Previewing does not connect or
             install.

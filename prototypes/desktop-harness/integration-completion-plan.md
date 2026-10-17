@@ -212,3 +212,43 @@ Trivy DB publishing jobs failed; the unchanged stale manifest still blocks push.
 There is no security gate exception. Provider uninstall, version
 updates, secret entry and broader workspace/history parity still require audit
 and completion; this section does not claim those capabilities are delivered.
+
+## Command-based custom connection setup
+
+The existing Connections custom form now also previews one literal stdio command
+and its JSON string-array arguments on the Wright host. It explicitly distinguishes
+GB10 execution from the Windows desktop. The typed app-only port accepts no
+environment, credential, endpoint or execution fields; bounds precede the owner.
+The same existing import normalizer, transient scoped preview and durable
+workspace setup-plan owner retain exact source/draft identity, explicit publisher
+review default false, separate approval/apply and saved-plan recovery. Nothing
+executes during preview or plan creation. The saved review now displays exact
+command/arguments, including when reopened. Editing source invalidates its preview
+and publisher state; an unmounted panel ignores a late saved-plan reply.
+
+Local protocol/owner checks:265 prototype tests pass.132 panel tests passed before
+the final label/containment adjustment; all25 affected form/connections checks,
+TypeScript and lint pass afterward. The strict nested request was necessary:
+FastMCP's flat helper silently discarded an extra env argument. The retained failed
+negative test now rejects it before API dispatch. Actual Chromium also exposed an
+exact-label failure for a nested select; explicit labels for the select/textarea
+fix it. Host-styled, border-box controls and wrapped launch arguments fit480px.
+No assertions or permissions were weakened.
+
+Actual resource→MCP→API→storage walkthrough created one isolated workspace and
+two blocked local-command plans. It used the already pinned provider's literal
+launch as source but never launched it. The publisher checkbox remained false.
+Withholding the second owner's successful save reply locked writes; explicit
+saved-plan discovery recovered that exact plan without another creation. A fresh
+panel reopened it using read-only calls. Counts remain zero for onboarding effects,
+workflow runs, start receipts and reasoning requests. These proofs do not newly
+qualify local-command apply/validation, configuration-file imports, credential
+entry, OAuth or actual Windows acceptance. Named installed0.14 remains unchanged.
+
+Evidence: /tmp/wright-desktop-command-setup-proof-20261017/checkpoint.json and
+browser-1792211785598/report.json; initial label failure and corrected screenshots
+retained. Resource SHA8874f588a71c9b90407fb2f882f2b5dedb9940ca6ef7ee3ebae4b999eca13dbc,
+2275546bytes, no external assets;46tools. Next audit must complete remaining
+management/secret-entry/workspace/history gaps, shared editor/Hermes and different
+existing engineering-workflow qualification, consolidated candidate/current gates,
+exact dev deployment and actual Windows acceptance.

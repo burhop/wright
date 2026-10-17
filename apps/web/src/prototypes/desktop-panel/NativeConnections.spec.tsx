@@ -460,3 +460,70 @@ it("rejects another workspace in an unfiltered saved-plan response", async () =>
     screen.queryByRole("button", { name: /Open completed setup/ }),
   ).toBeNull();
 });
+
+it("saved local setup shows the exact executable and literal arguments before approval", async () => {
+  const plan = {
+    plan_id: "local",
+    plan_digest: "a".repeat(64),
+    capability_id: "import:local",
+    workspace_id: "a",
+    requested_scope: "workspace",
+    state: "reviewable",
+    source: {
+      name: "Reviewed local",
+      command: "/usr/bin/python3",
+      arguments: ["-m", "existing_mcp", "a path with spaces"],
+    },
+    blocking_reasons: [],
+    effects: [],
+  };
+  const call = vi.fn().mockImplementation(async (name) => {
+    if (name === "wright_connections_list") return reply();
+    if (name === "wright_connection_plans")
+      return {
+        content: [],
+        structuredContent: {
+          workspace_id: "a",
+          session_id: "chat-a",
+          capability_id: null,
+          plans: [{ ...plan, created_at: "2026-10-17" }],
+        },
+      };
+    if (name === "wright_connection_plan_read")
+      return {
+        content: [],
+        structuredContent: {
+          workspace_id: "a",
+          session_id: "chat-a",
+          plan,
+        },
+      };
+    throw Error("Unexpected mutation");
+  });
+  render(<NativeConnections workspace={workspace} call={call} />);
+  fireEvent.click(
+    await screen.findByRole("button", {
+      name: "Saved setup in this workspace",
+    }),
+  );
+  fireEvent.click(
+    await screen.findByRole("button", { name: /Open reviewable setup/ }),
+  );
+  expect(
+    await screen.findByLabelText("Reviewed command on Wright host"),
+  ).toHaveTextContent("/usr/bin/python3");
+  expect(
+    screen.getByLabelText("Reviewed command on Wright host"),
+  ).toHaveTextContent('["-m","existing_mcp","a path with spaces"]');
+  expect(
+    screen.getByRole("button", { name: "Approve this setup plan" }),
+  ).toBeEnabled();
+  expect(
+    call.mock.calls.every(
+      ([name]) =>
+        name.endsWith("_list") ||
+        name.endsWith("_plans") ||
+        name.endsWith("_read"),
+    ),
+  ).toBe(true);
+});

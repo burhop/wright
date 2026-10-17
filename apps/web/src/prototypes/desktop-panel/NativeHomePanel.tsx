@@ -38,6 +38,7 @@ export type HomeCall = (
     | "wright_connection_plans"
     | "wright_connection_plan"
     | "wright_connection_preview"
+    | "wright_connection_command_preview"
     | "wright_connection_import_plan"
     | "wright_connection_plan_read"
     | "wright_connection_plan_update"

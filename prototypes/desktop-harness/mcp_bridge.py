@@ -28,7 +28,9 @@ from core.process_interactions import Reason
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
-from desktop_backend import FileUploadRequest, ConnectionControlRequest
+from desktop_backend import (
+    FileUploadRequest, ConnectionControlRequest, LocalConnectionPreviewRequest,
+)
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
 
@@ -581,6 +583,17 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "name": name,
                 "url": url,
             },
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_command_preview(
+        request: LocalConnectionPreviewRequest,
+    ) -> dict[str, Any]:
+        """Preview a literal command on the Wright host; no execution, installation, environment or credentials."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/connection-imports/preview",
+            json=request.model_dump(),
         )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})

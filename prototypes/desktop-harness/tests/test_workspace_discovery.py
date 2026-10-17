@@ -952,3 +952,61 @@ async def test_disable_requires_operator_and_owned_session_before_mutation(disco
         )
         assert extra.status_code == 422
         assert owner.disable_capability_for_workspace.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_local_command_preview_uses_existing_normalizer_without_execution(discovery):
+    import json
+    from api.services.mcp_services import get_mcp_api_service
+    from tool_registry.config_import import preview_configuration
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner = Mock()
+    owner.preview_import.side_effect = preview_configuration
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    body = {
+        "workspace_id": "Alpha", "session_id": "desktop-Alpha",
+        "name": "Local provider", "command": "/usr/bin/python3",
+        "arguments": ["-m", "existing_mcp", "a path with spaces"],
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post("/api/desktop/connection-imports/preview", json=body)
+        assert response.status_code == 200, response.text
+        result = response.json()
+        draft = result["preview"]["drafts"][0]
+        assert draft["transport"] == "stdio" and draft["errors"] == []
+        assert draft["command"] == body["command"]
+        assert draft["arguments"] == body["arguments"]
+        assert result["preview"]["source_discarded"] is True
+        assert json.loads(owner.preview_import.call_args.args[0]) == {
+            "name": body["name"], "type": "stdio",
+            "command": body["command"], "args": body["arguments"],
+        }
+        owner.create_install_plan.assert_not_called()
+        owner.apply_install_plan.assert_not_called()
+        owner.approve_install_plan.assert_not_called()
+        owner.preview_import.reset_mock()
+        for patch, status in [
+            ({"session_id": "wrong"}, 403),
+            ({"env": {"TOKEN": "not-allowed"}}, 422),
+            ({"url": "https://example.invalid/mcp"}, 422),
+            ({"arguments": [1]}, 422),
+            ({"arguments": ["a" * 4097]}, 422),
+            ({"arguments": ["a"] * 513}, 422),
+        ]:
+            denied = await client.post(
+                "/api/desktop/connection-imports/preview", json={**body, **patch}
+            )
+            assert denied.status_code == status, denied.text
+        owner.preview_import.assert_not_called()
+        unsafe = await client.post(
+            "/api/desktop/connection-imports/preview",
+            json={**body, "command": "python;id", "arguments": ["$(id)"]},
+        )
+        assert unsafe.status_code == 200
+        codes = {item["code"] for item in unsafe.json()["preview"]["drafts"][0]["errors"]}
+        assert codes == {"command_unsafe", "argument_shell_expression"}
+        owner.apply_install_plan.assert_not_called()
