@@ -10,6 +10,72 @@ from data_vault import WorkspaceRepository, upgrade_database
 from workspace_service.use_cases.lifecycle import WorkspaceLifecycleUseCases
 
 
+@pytest.mark.asyncio
+async def test_upload_requires_operator_exact_scope_and_closed_body(discovery):
+    import base64
+    import hashlib
+    from api.security import SecuritySettings, require_admin
+
+    app, _, _, create, _ = discovery
+    root = create("Upload")
+    app.state.security_settings = SecuritySettings(
+        "enforced", "synthetic-operator-token", (), "127.0.0.1"
+    )
+    content = b"native STEP\x00\xff"
+    digest = hashlib.sha256(content).hexdigest()
+    owner = app.state.desktop_service.files
+    owner.stage_upload = AsyncMock(return_value=f"uploads/{digest}/input.step")
+    body = {
+        "workspace_id": "Upload",
+        "session_id": "desktop-Upload",
+        "filename": "input.step",
+        "sha256": digest,
+        "content_base64": base64.b64encode(content).decode(),
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post("/api/desktop/files/upload", json=body)
+        assert response.status_code == 403
+        owner.stage_upload.assert_not_awaited()
+        app.dependency_overrides[require_admin] = lambda: None
+        response = await client.post(
+            "/api/desktop/files/upload", json={**body, "session_id": "other"}
+        )
+        assert response.status_code == 403
+        owner.stage_upload.assert_not_awaited()
+        response = await client.post(
+            "/api/desktop/files/upload", json={**body, "path": "outputs/overwrite.step"}
+        )
+        assert response.status_code == 422
+        owner.stage_upload.assert_not_awaited()
+        response = await client.post(
+            "/api/desktop/files/upload", json={**body, "content_base64": "!!!!"}
+        )
+        assert response.status_code == 422
+        owner.stage_upload.assert_not_awaited()
+        response = await client.post("/api/desktop/files/upload", json=body)
+        assert response.status_code == 200
+        assert response.json() == {
+            "workspace_id": "Upload",
+            "session_id": "desktop-Upload",
+            "filename": "input.step",
+            "path": f"uploads/{digest}/input.step",
+            "sha256": digest,
+            "bytes": len(content),
+        }
+        owner.stage_upload.assert_awaited_once_with(
+            str(root), "input.step", content, digest
+        )
+        for error, status in [
+            (FileExistsError("PRIVATE"), 409),
+            (OSError("PRIVATE"), 503),
+        ]:
+            owner.stage_upload.side_effect = error
+            response = await client.post("/api/desktop/files/upload", json=body)
+            assert response.status_code == status and "PRIVATE" not in response.text
+
+
 @pytest.fixture
 def discovery(tmp_path, monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))

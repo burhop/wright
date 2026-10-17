@@ -46,6 +46,15 @@ class CreateWorkspaceRequest(BaseModel):
     name: str = Field(min_length=1, max_length=100)
 
 
+class FileUploadRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: str
+    session_id: str
+    filename: str = Field(min_length=1, max_length=160)
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    content_base64: str = Field(min_length=1, max_length=22369624)
+
+
 class AnswerRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -724,6 +733,35 @@ class DesktopBackend:
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "tree": await self.service.files.tree(row["local_path"]),
+            }
+
+        @router.post("/files/upload", dependencies=[Depends(require_admin)])
+        async def upload_workspace_file(body: FileUploadRequest):
+            row = self.workspace(body.workspace_id, body.session_id)
+            try:
+                content = base64.b64decode(body.content_base64, validate=True)
+                path = await self.service.files.stage_upload(
+                    row["local_path"], body.filename, content, body.sha256
+                )
+            except FileExistsError:
+                raise HTTPException(
+                    409, "Saved upload differs; inspect the existing file before proceeding."
+                ) from None
+            except ValueError:
+                raise HTTPException(
+                    422, "Choose a nonempty file up to 16 MiB with a simple filename and matching SHA-256."
+                ) from None
+            except OSError:
+                raise HTTPException(
+                    503, "Upload outcome is not confirmed; check the saved upload before another attempt."
+                ) from None
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "path": path,
+                "filename": body.filename,
+                "sha256": body.sha256,
+                "bytes": len(content),
             }
 
         @router.get("/workspaces/{workspace_id}/file-preview")

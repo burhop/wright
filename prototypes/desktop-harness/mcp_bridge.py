@@ -28,6 +28,7 @@ from core.process_interactions import Reason
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
+from desktop_backend import FileUploadRequest
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
 
@@ -473,6 +474,31 @@ def server(client, *, native_editor=False, native_working_view=False):
             f"/api/desktop/workspaces/{workspace_id}/file-download",
             params={"session_id": session_id, "path": path},
         )
+
+    @mcp.tool(
+        annotations=write, structured_output=True, meta={"ui": {"visibility": ["app"]}}
+    )
+    async def wright_workspace_file_upload(request: FileUploadRequest) -> dict[str, Any]:
+        """Stage an explicitly selected input file. No workflow, tool, trust or overwrite authority."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            document = await client.call(
+                "POST",
+                "/api/desktop/files/upload",
+                json=request.model_dump(mode="json"),
+            )
+        except WrightRequestRejected as failure:
+            known = failure.status_code in (400, 401, 403, 404, 409, 422)
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": "Upload was rejected. Check workspace access, file size and filename."
+                    if known
+                    else "Upload outcome is unconfirmed. Check the saved upload before another attempt.",
+                },
+            }
+        return {"ok": True, "document": document}
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plan(

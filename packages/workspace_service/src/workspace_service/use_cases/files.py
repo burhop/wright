@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import hashlib
+import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -155,6 +157,51 @@ class WorkspaceFileUseCases:
             lambda: self._files_factory(workspace_dir).write_generated(
                 path, content, policy
             ),
+        )
+
+    async def stage_upload(
+        self, workspace_dir: str, name: str, content: bytes, expected_sha256: str
+    ) -> str:
+        """Stage inert input bytes without replacing workspace files or granting trust."""
+        if (
+            not isinstance(name, str)
+            or not 1 <= len(name) <= 160
+            or name.startswith(".")
+            or name != name.strip()
+            or name.endswith(".")
+            or re.search(r'[/\\:%<>"|?*\x00-\x1f\x7f]', name)
+            or name.split(".", 1)[0].upper()
+            in {
+                "CON",
+                "PRN",
+                "AUX",
+                "NUL",
+                *(f"COM{i}" for i in "0123456789¹²³"),
+                *(f"LPT{i}" for i in "0123456789¹²³"),
+            }
+            or not isinstance(content, bytes)
+            or not 0 < len(content) <= 16 * 1024 * 1024
+            or hashlib.sha256(content).hexdigest() != expected_sha256
+        ):
+            raise ValueError(
+                "Choose a nonempty file up to 16 MiB with a simple filename and matching SHA-256."
+            )
+        path = f"uploads/{expected_sha256}/{name}"
+
+        def publish():
+            files = self._files_factory(workspace_dir)
+            try:
+                return files.write_generated(path, content, "exclusive")
+            except FileExistsError:
+                _, saved = files.read(path, max_bytes=16 * 1024 * 1024)
+                if saved != content:
+                    raise FileExistsError(
+                        "Saved upload bytes changed; inspect the existing file."
+                    ) from None
+                return path
+
+        return await self._executor.run_to_completion(
+            "workspace.files.stage_upload", publish
         )
 
     async def read_reference(self, workspace_dir: str, path: str) -> bytes:

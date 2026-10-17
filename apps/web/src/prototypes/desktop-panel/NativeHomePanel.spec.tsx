@@ -52,6 +52,11 @@ it("lists and filters workspace files without opening or executing them", async 
           children: [
             { type: "file", name: "part.wflow", path: "/workflows/part.wflow" },
             {
+              type: "file",
+              name: "uploaded.wflow",
+              path: "/uploads/opaque/uploaded.wflow",
+            },
+            {
               type: "directory",
               children: [
                 {
@@ -70,6 +75,7 @@ it("lists and filters workspace files without opening or executing them", async 
     <NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
+  expect(screen.queryByRole("button", { name: "uploaded.wflow" })).toBeNull();
   expect(screen.queryByText("plate.step")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
   expect(screen.getByText("/outputs/plate.step")).toBeVisible();

@@ -108,3 +108,51 @@ API-readiness and duplicate-placeholder setup failures remain in the evidence;
 the two created workspaces were reconciled without replacements. The installed
 plugin and its service remain unchanged; only the completed owned normal-proof
 API was stopped after saving its recovery evidence.
+
+## Files upload slice
+
+User journey: choose an engineering input in Files, stage it, inspect/download the
+saved file, then bind it through normal declared-input preparation. This does not
+create a run, change accepted source, transfer an approval or trust uploaded code.
+The app-only upload port requires the existing authenticated operator and exact
+desktop workspace/session. A fixed16MiB bound, simple filename and actual SHA-256
+identify uploads/<digest>/<filename>; callers supply no destination or executable
+operation. Existing file use cases, bounded executor, path confinement and atomic
+publication own storage. Exclusive publication plus byte comparison reuses an
+identical saved upload and rejects changed bytes without overwriting. No database
+or upload-job authority is added. The original declared-input upload and portable
+bundle owners are retained.
+
+The panel retains an unconfirmed upload and disables another write. Explicit
+Check saved upload reads the same exact path through the existing download owner
+and compares scope, digest, size and bytes. It never resubmits the write. Closing
+the host does not claim durable draft preservation; the deterministic saved path
+allows inspection on reopening, and identical explicit uploads cannot overwrite
+or create indexed duplicates. File staging is current-file storage, not run
+evidence; accepted input snapshots still freeze their own references and hashes.
+Missing permissions/storage and unsupported sizes/names stay explicit. Qualification
+must cover atomic concurrency, wrong workspace/operator, malformed/hash-mismatched
+input, tampered saved bytes, lost replies, native panel staging/readback and the
+unchanged editor/declared-input paths before candidate promotion.
+
+The local slice now passes276 prototype/file-owner checks (two existing
+Windows-only sharing checks are skipped on Linux),114 panel checks, TypeScript,
+affected ESLint and Ruff. Actual MCP staging/readback preserved retained STEP and
+robot-telemetry bytes; explicit duplicate uploads returned the same subject and
+left one copy. An actual native-resource Chromium proof withheld an owner reply
+after publication: the panel reconciled through an exact read without a second
+write, then downloaded both files with matching original sizes/hashes. Both fresh
+workspaces contain exactly two uploaded files; workflow runs, start receipts and
+desktop reasoning requests remain zero. Workflows navigation excludes raw staged
+.wflow files; importing/accepting source still uses the existing owner.
+
+Resource:d3be0270f5a5599c044c78a79806da1aa8448cb596ef88cc0e98664c2a236c51,
+2269079bytes, no external assets. Evidence:
+/tmp/wright-desktop-file-upload-proof-20261017/checkpoint.json and its
+browser-1792208551077/ screenshots/report; unit logs are indexed in
+/tmp/wright-desktop-integration-completion-20261016/file-upload-checkpoint.json.
+Initial test-fixture/structured-output annotation errors and the changed footer
+wording assertion are retained with their corrected passes. This qualifies local
+MCP/browser behavior, not a new engineering analysis or Windows acceptance.
+The installed plugin remains0.14.0. The finished idle connection-preview API was
+stopped after evidence retention; fresh upload API8204 is separate from installed8198.

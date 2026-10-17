@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeFilePreview } from "./NativeFilePreview";
+import { NativeFileUpload } from "./NativeFileUpload";
 import { NativeConnections } from "./NativeConnections";
 import { NativeNewWorkflow } from "./NativeNewWorkflow";
 import { EngineeringTemplateDialog } from "../workflow-recovery/EngineeringTemplateDialog";
@@ -31,6 +32,7 @@ export type HomeCall = (
     | "wright_workspace_files"
     | "wright_workspace_file_preview"
     | "wright_workspace_file_download"
+    | "wright_workspace_file_upload"
     | "wright_workflow_history"
     | "wright_connections_list"
     | "wright_connection_plans"
@@ -104,7 +106,11 @@ export function NativeHomePanel({
     () => (selected ? nativeTemplateClient(call, selected) : undefined),
     [call, selected],
   );
-  const workflowFiles = files.filter((file) => file.path.endsWith(".wflow"));
+  const workflowFiles = files.filter(
+    (file) =>
+      file.path.replace(/^\//, "").startsWith("workflows/") &&
+      file.path.endsWith(".wflow"),
+  );
   const generation = useRef(0);
   const restore = useRef(initialSelection);
   const invalidate = useCallback(() => {
@@ -369,6 +375,15 @@ export function NativeHomePanel({
       {selected && view === "files" && (
         <section aria-label="Files">
           <h2>Files</h2>
+          <NativeFileUpload
+            key={`${selected.workspace_id}:${selected.session_id}`}
+            call={call}
+            workspace={selected}
+            onUploaded={(path) => {
+              void select(selected);
+              setFileQuery(path.split("/").at(-1) ?? "");
+            }}
+          />
           <p>
             Saved workspace files. Inspect run outputs and their evidence in the
             workflow’s working view.
@@ -408,7 +423,7 @@ export function NativeHomePanel({
           </ul>
           <p>
             Text previews support files up to 64 KiB; downloads support visible
-            files up to 16 MiB. Other previews and uploads are unavailable here.
+            files up to 16 MiB. Other previews are unavailable here.
           </p>
           {previewPath && (
             <NativeFilePreview

@@ -49,7 +49,7 @@ function envelope(result: CallToolResult): {
   return JSON.parse(content.text);
 }
 
-function encodeFile(file: File, signal?: AbortSignal): Promise<string> {
+export function encodeFile(file: File, signal?: AbortSignal): Promise<string> {
   signal?.throwIfAborted();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

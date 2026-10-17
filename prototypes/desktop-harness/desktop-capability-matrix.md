@@ -3,7 +3,7 @@
 **Current integration checkpoint:16 October2026, with17 October UTC proof files.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
 installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The local
-completion candidate starts at354f7efe and adds the tested permission labels;
+completion candidate starts at9c042c8f and adds tested scoped file staging;
 it is not installed. Detailed current scope and remaining work are in
 [integration-completion-plan.md](integration-completion-plan.md).
 
@@ -11,13 +11,13 @@ it is not installed. Detailed current scope and remaining work are in
 |---|---|---|
 | Workspace/home/editor | Earlier native panel observation; installed0.14 protocol/resource check; shared editor retained | Current served Workflows, native Windows and lifecycle/settings parity |
 | Connections | Actual native bundle→MCP→owner scoped Disable; independent workspace/provider unchanged; readiness and availability labels; catalog/custom HTTPS/setup retained | Full lifecycle/tool permission parity, real Windows callback/authentication |
-| Files/portability/history | Installed0.14 bounded download transport; existing attachment/export/import/result owners | Actual Windows delivery, generic needed upload, historical revision navigation |
+| Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners | Named candidate promotion, actual Windows delivery, historical revision navigation |
 | Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
 | Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
 | Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
 | Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
 | Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
-| Gates/deployment |238 local prototype tests pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
+| Gates/deployment |276 prototype/file-owner and114 panel checks pass; two existing Windows-only checks skipped on Linux; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
 
 Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
 establish Windows native acceptance. The host still reports no model/app identity;
