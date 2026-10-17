@@ -135,12 +135,10 @@ it("keeps reconciliation pending when saved bytes or scope differ", async () => 
 });
 
 it("shows an authoritative rejection without claiming a saved file or retrying", async () => {
-  const call = vi
-    .fn()
-    .mockResolvedValue({
-      content: [],
-      structuredContent: { ok: false, error: { outcome_known: true } },
-    });
+  const call = vi.fn().mockResolvedValue({
+    content: [],
+    structuredContent: { ok: false, error: { outcome_known: true } },
+  });
   const { onUploaded } = show(call);
   fireEvent.click(screen.getByRole("button", { name: "Upload file" }));
   await screen.findByText(/Upload was rejected/);

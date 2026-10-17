@@ -217,31 +217,79 @@ it("ignores late control replies after leaving the scoped panel", async () => {
 });
 
 it("reviews shared uninstall before sending exactly one observed-subject operation", async () => {
-  const call = vi.fn().mockResolvedValueOnce(read()).mockResolvedValue(changed("uninstall", {installed: false, active: false, status: "inactive"}));
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(read())
+    .mockResolvedValue(
+      changed("uninstall", {
+        installed: false,
+        active: false,
+        status: "inactive",
+      }),
+    );
   show(call);
-  fireEvent.click(await screen.findByRole("button", {name: "Uninstall provider (shared)"}));
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Uninstall provider (shared)" }),
+  );
   expect(call).toHaveBeenCalledOnce();
-  expect(screen.getByLabelText("Confirm provider uninstall")).toHaveTextContent(/Saved setup, credentials and downloaded packages are retained/);
-  fireEvent.click(screen.getByRole("button", {name: "Keep provider"}));
+  expect(screen.getByLabelText("Confirm provider uninstall")).toHaveTextContent(
+    /Saved setup, credentials and downloaded packages are retained/,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Keep provider" }));
   expect(call).toHaveBeenCalledOnce();
-  fireEvent.click(screen.getByRole("button", {name: "Uninstall provider (shared)"}));
-  fireEvent.click(screen.getByRole("button", {name: "Uninstall for all workspaces"}));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Uninstall provider (shared)" }),
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Uninstall for all workspaces" }),
+  );
   await screen.findByText(/Shared provider state updated/);
-  expect(call).toHaveBeenLastCalledWith("wright_connection_control", {request: {...scope, operation: "uninstall", shared_scope: "wright-host", control_digest: state.control_digest}});
-  expect(call.mock.calls.filter(([name]) => name === "wright_connection_control")).toHaveLength(1);
-  expect(screen.getByRole("button", {name: "Start for this workspace"})).toBeDisabled();
-  expect(screen.getByRole("button", {name: "Uninstall provider (shared)"})).toBeDisabled();
+  expect(call).toHaveBeenLastCalledWith("wright_connection_control", {
+    request: {
+      ...scope,
+      operation: "uninstall",
+      shared_scope: "wright-host",
+      control_digest: state.control_digest,
+    },
+  });
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_control"),
+  ).toHaveLength(1);
+  expect(
+    screen.getByRole("button", { name: "Start for this workspace" }),
+  ).toBeDisabled();
+  expect(
+    screen.getByRole("button", { name: "Uninstall provider (shared)" }),
+  ).toBeDisabled();
 });
 
 it("an uncertain uninstall requires readback, never a second uninstall", async () => {
-  const call = vi.fn().mockResolvedValueOnce(read()).mockRejectedValueOnce(new Error("lost reply")).mockResolvedValue(read({installed: false, active: false, status: "inactive"}));
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(read())
+    .mockRejectedValueOnce(new Error("lost reply"))
+    .mockResolvedValue(
+      read({ installed: false, active: false, status: "inactive" }),
+    );
   show(call);
-  fireEvent.click(await screen.findByRole("button", {name: "Uninstall provider (shared)"}));
-  fireEvent.click(screen.getByRole("button", {name: "Uninstall for all workspaces"}));
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Uninstall provider (shared)" }),
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Uninstall for all workspaces" }),
+  );
   await screen.findByText(/Control outcome is not confirmed/);
-  expect(screen.getByRole("button", {name: "Uninstall provider (shared)"})).toBeDisabled();
-  fireEvent.click(screen.getByRole("button", {name: "Refresh provider state"}));
+  expect(
+    screen.getByRole("button", { name: "Uninstall provider (shared)" }),
+  ).toBeDisabled();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Refresh provider state" }),
+  );
   await screen.findByText(/Process: inactive/);
-  expect(call.mock.calls.filter(([name]) => name === "wright_connection_control")).toHaveLength(1);
-  expect(screen.getByRole("button", {name: "Start for this workspace"})).toBeDisabled();
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_control"),
+  ).toHaveLength(1);
+  expect(
+    screen.getByRole("button", { name: "Start for this workspace" }),
+  ).toBeDisabled();
 });

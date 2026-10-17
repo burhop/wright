@@ -65,21 +65,65 @@ export function NativeWorkflowPanel({
             : "Use this desktop conversation for reasoning. Run controls are not connected in this editor prototype."}
         </small>
       </header>
-      {draftClient && <details className="native-editor-drafts">
-        <summary>{drafts.message || "Editor drafts"}{drafts.rows.length > 0 ? ` · ${drafts.rows.length} preserved` : ""}</summary>
-        <p>Drafts preserve editing only. They cannot run, approve work, or replace a saved workflow.</p>
-        <button type="button" onClick={() => void drafts.refresh()}>Read saved drafts</button>
-        {draftClient.requiresRead && <button type="button" onClick={drafts.separate}>Preserve as a separate draft</button>}
-        {drafts.rows.map((row) => <div key={row.draft_id}>
-          <span>{new Date(row.updated_at * 1000).toLocaleString()} · {row.base_matches_current && row.base_storage_digest === drafts.acceptedDigest ? "Current base" : "Older workflow"}</span>
-          <button type="button" onClick={() => void drafts.inspect(row.draft_id)}>Inspect draft</button>
-          <button type="button" disabled={unsaved || !row.base_matches_current || row.base_storage_digest !== drafts.acceptedDigest || draftClient.requiresRead}
-            onClick={() => void drafts.resume(row.draft_id, unsaved)}>Resume draft</button>
-        </div>)}
-        {drafts.inspected && <label>Preserved source (read only; copy text to compare)
-          <textarea readOnly value={drafts.inspected.source} aria-label="Preserved draft source" />
-        </label>}
-      </details>}
+      {draftClient && (
+        <details className="native-editor-drafts">
+          <summary>
+            {drafts.message || "Editor drafts"}
+            {drafts.rows.length > 0 ? ` · ${drafts.rows.length} preserved` : ""}
+          </summary>
+          <p>
+            Drafts preserve editing only. They cannot run, approve work, or
+            replace a saved workflow.
+          </p>
+          <button type="button" onClick={() => void drafts.refresh()}>
+            Read saved drafts
+          </button>
+          {draftClient.requiresRead && (
+            <button type="button" onClick={drafts.separate}>
+              Preserve as a separate draft
+            </button>
+          )}
+          {drafts.rows.map((row) => (
+            <div key={row.draft_id}>
+              <span>
+                {new Date(row.updated_at * 1000).toLocaleString()} ·{" "}
+                {row.base_matches_current &&
+                row.base_storage_digest === drafts.acceptedDigest
+                  ? "Current base"
+                  : "Older workflow"}
+              </span>
+              <button
+                type="button"
+                onClick={() => void drafts.inspect(row.draft_id)}
+              >
+                Inspect draft
+              </button>
+              <button
+                type="button"
+                disabled={
+                  unsaved ||
+                  !row.base_matches_current ||
+                  row.base_storage_digest !== drafts.acceptedDigest ||
+                  draftClient.requiresRead
+                }
+                onClick={() => void drafts.resume(row.draft_id, unsaved)}
+              >
+                Resume draft
+              </button>
+            </div>
+          ))}
+          {drafts.inspected && (
+            <label>
+              Preserved source (read only; copy text to compare)
+              <textarea
+                readOnly
+                value={drafts.inspected.source}
+                aria-label="Preserved draft source"
+              />
+            </label>
+          )}
+        </details>
+      )}
       <div className="native-workflow-panel__editor">
         <WorkflowRecoveryConcept
           key={drafts.generation}

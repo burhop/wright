@@ -1454,8 +1454,12 @@ class WorkspaceWorkflowSourceStore:
             ),
         }
 
-    def _draft_paths(self, directory: Path, capability: _DirectoryCapability) -> list[Path]:
-        target = capability.descriptor if capability.descriptor is not None else directory
+    def _draft_paths(
+        self, directory: Path, capability: _DirectoryCapability
+    ) -> list[Path]:
+        target = (
+            capability.descriptor if capability.descriptor is not None else directory
+        )
         paths = []
         with os.scandir(target) as entries:
             for count, entry in enumerate(entries, start=1):
@@ -1481,7 +1485,9 @@ class WorkspaceWorkflowSourceStore:
         return paths
 
     @contextmanager
-    def _draft_directory(self, slug: str) -> Iterator[tuple[Path, _DirectoryCapability]]:
+    def _draft_directory(
+        self, slug: str
+    ) -> Iterator[tuple[Path, _DirectoryCapability]]:
         directory = self._metadata_directory(slug) / "editor-drafts"
         with self._directory_capability(directory, create=True) as capability:
             # Reads, CAS and publication must use this same pinned directory,
@@ -1512,7 +1518,9 @@ class WorkspaceWorkflowSourceStore:
             )
             with self._draft_directory(slug) as (directory, capability):
                 if draft_id is not None:
-                    record = self._read_draft(directory / f"{draft_id}.json", normalized)
+                    record = self._read_draft(
+                        directory / f"{draft_id}.json", normalized
+                    )
                     return {
                         "path": normalized,
                         "draft": self._draft_observation(record, document),
@@ -1617,9 +1625,9 @@ class WorkspaceWorkflowSourceStore:
                     "draft_revision": current["draft_revision"] + 1 if current else 1,
                     "updated_at": int(time.time()),
                 }
-                record["accepted_checkpoint"] = self._draft_observation(record, document)[
-                    "matches_accepted"
-                ]
+                record["accepted_checkpoint"] = self._draft_observation(
+                    record, document
+                )["matches_accepted"]
                 record["draft_digest"] = _digest(self._draft_bytes(record))
                 self._atomic_write(target, self._draft_bytes(record))
                 return {
@@ -2253,7 +2261,6 @@ class WorkspaceWorkflowSourceUseCases:
                 "Editor draft read did not finish",
             ) from error
 
-
     async def editor_draft_save(
         self,
         workspace_dir: str,
@@ -2262,9 +2269,10 @@ class WorkspaceWorkflowSourceUseCases:
     ) -> dict[str, object]:
         return await self._executor.run_to_completion(
             "workspace.workflow_sources.editor_draft_save",
-            lambda: self._store_factory(workspace_dir).editor_draft_save(path, **kwargs),
+            lambda: self._store_factory(workspace_dir).editor_draft_save(
+                path, **kwargs
+            ),
         )
-
 
     async def update(
         self,

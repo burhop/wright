@@ -47,6 +47,7 @@ def _configuration_record(row) -> dict[str, Any]:
     ).hexdigest()
     return {**value, "revision": revision}
 
+
 def sanitize_workspace_name(name: str) -> str:
     import re
 

@@ -201,7 +201,10 @@ export interface WorkflowRecoveryPersistedSource {
 
 export interface WorkflowRecoveryConceptProps {
   readonly initialDraft?: WorkflowEditorDraftSnapshot;
-  readonly onDraftChange?: (snapshot: WorkflowEditorDraftSnapshot, dirty: boolean) => void;
+  readonly onDraftChange?: (
+    snapshot: WorkflowEditorDraftSnapshot,
+    dirty: boolean,
+  ) => void;
   readonly onLoadInstructionDefaults?: () => Promise<
     import("../../services/workspace-service").WorkflowInstructionDefaultsDocument
   >;
@@ -1672,16 +1675,31 @@ export function WorkflowRecoveryConcept({
     ? parseRecoveryAuthoringSource(initialDraft.applied_source, loaded.workflow)
     : undefined;
   if (recovered && (!recovered.ok || recovered.workflow === null)) {
-    return <section role="alert">The preserved diagram cannot be loaded. Your draft and accepted workflow are unchanged.</section>;
+    return (
+      <section role="alert">
+        The preserved diagram cannot be loaded. Your draft and accepted workflow
+        are unchanged.
+      </section>
+    );
   }
   if (recovered?.workflow && initialDraft?.layout) {
     let validLayout = false;
     try {
-      validLayout = validateRecoveryLayoutDocument(recovered.workflow, {
-        ...initialDraft.layout, semanticRevision: recovered.workflow.revision,
-      }).length === 0;
-    } catch { /* Malformed presentation must not silently discard draft positions. */ }
-    if (!validLayout) return <section role="alert">The preserved layout is incompatible. Your draft and accepted workflow are unchanged.</section>;
+      validLayout =
+        validateRecoveryLayoutDocument(recovered.workflow, {
+          ...initialDraft.layout,
+          semanticRevision: recovered.workflow.revision,
+        }).length === 0;
+    } catch {
+      /* Malformed presentation must not silently discard draft positions. */
+    }
+    if (!validLayout)
+      return (
+        <section role="alert">
+          The preserved layout is incompatible. Your draft and accepted workflow
+          are unchanged.
+        </section>
+      );
   }
   return (
     <WorkflowRecoveryReadyConcept
@@ -2190,7 +2208,10 @@ function runDefinitionLockDiagnostic(): RecoveryDiagnostic {
 interface WorkflowRecoveryReadyConceptProps {
   readonly initialDraft?: WorkflowEditorDraftSnapshot;
   readonly recoveredWorkflow?: RecoveryWorkflow;
-  readonly onDraftChange?: (snapshot: WorkflowEditorDraftSnapshot, dirty: boolean) => void;
+  readonly onDraftChange?: (
+    snapshot: WorkflowEditorDraftSnapshot,
+    dirty: boolean,
+  ) => void;
   readonly onLoadInstructionDefaults?: () => Promise<
     import("../../services/workspace-service").WorkflowInstructionDefaultsDocument
   >;
@@ -2266,15 +2287,22 @@ function WorkflowRecoveryReadyConcept({
   const loadedDocumentKeyRef = useRef(
     `${definitionRevision}\u0000${storageDigest ?? ""}\u0000${workflowSource}`,
   );
-  const [workflow, setWorkflow] = useState(() => recoveredWorkflow ?? loadedWorkflow);
+  const [workflow, setWorkflow] = useState(
+    () => recoveredWorkflow ?? loadedWorkflow,
+  );
   // Optional draft presentation only; auto-framing does not dirty accepted source.
-  const [draftViewport, setDraftViewport] = useState(initialDraft?.layout?.viewport);
+  const [draftViewport, setDraftViewport] = useState(
+    initialDraft?.layout?.viewport,
+  );
   const connectionCapabilities = useEngineeringConnectionCapabilities(
     workflow,
     workspaceSessionId,
   );
   const [layout, setLayout] = useState(() =>
-    hydrateAuthoringLayout(recoveredWorkflow ?? loadedWorkflow, initialDraft?.layout ?? workflowLayout),
+    hydrateAuthoringLayout(
+      recoveredWorkflow ?? loadedWorkflow,
+      initialDraft?.layout ?? workflowLayout,
+    ),
   );
   const [savedLayoutIdentity, setSavedLayoutIdentity] = useState(() =>
     canonicalLayoutPositionBytes(
@@ -2329,10 +2357,16 @@ function WorkflowRecoveryReadyConcept({
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [diagnostics, setDiagnostics] = useState<RecoveryDiagnostic[]>([]);
   const checkButtonRef = useRef<HTMLButtonElement>(null);
-  const [sourceDraft, setSourceDraft] = useState(initialDraft?.source ?? workflowSource);
+  const [sourceDraft, setSourceDraft] = useState(
+    initialDraft?.source ?? workflowSource,
+  );
   const [savedSource, setSavedSource] = useState(workflowSource);
-  const [sourceDirty, setSourceDirty] = useState(() => initialDraft !== undefined &&
-    initialDraft.source !== formatRecoveryAuthoringSource(recoveredWorkflow ?? loadedWorkflow).text);
+  const [sourceDirty, setSourceDirty] = useState(
+    () =>
+      initialDraft !== undefined &&
+      initialDraft.source !==
+        formatRecoveryAuthoringSource(recoveredWorkflow ?? loadedWorkflow).text,
+  );
   const [savedSemanticIdentity, setSavedSemanticIdentity] = useState(() =>
     contentIdentity(loadedWorkflow),
   );
@@ -2353,10 +2387,16 @@ function WorkflowRecoveryReadyConcept({
     "idle" | "copying" | "comparing" | "reloading"
   >("idle");
   const [conflictActionMessage, setConflictActionMessage] = useState("");
-  const [undoStack, setUndoStack] = useState<Snapshot[]>(() => initialDraft ? [{
-    workflow: cloneWorkflow(loadedWorkflow),
-    layout: hydrateAuthoringLayout(loadedWorkflow, workflowLayout),
-  }] : []);
+  const [undoStack, setUndoStack] = useState<Snapshot[]>(() =>
+    initialDraft
+      ? [
+          {
+            workflow: cloneWorkflow(loadedWorkflow),
+            layout: hydrateAuthoringLayout(loadedWorkflow, workflowLayout),
+          },
+        ]
+      : [],
+  );
   const [redoStack, setRedoStack] = useState<Snapshot[]>([]);
   const [modal, setModal] = useState<
     | "none"
@@ -2668,9 +2708,27 @@ function WorkflowRecoveryReadyConcept({
     );
   }, [onUnsavedChange, semanticDirty, sourceDirty, layoutDirty, proposal]);
   useEffect(() => {
-    onDraftChange?.({source: sourceDraft, applied_source: formatted.text, layout: draftViewport ? {...layout, viewport: draftViewport} : layout, view},
-      semanticDirty || sourceDirty || layoutDirty || proposal !== null);
-  }, [onDraftChange, sourceDraft, formatted.text, layout, draftViewport, view, semanticDirty, sourceDirty, layoutDirty, proposal]);
+    onDraftChange?.(
+      {
+        source: sourceDraft,
+        applied_source: formatted.text,
+        layout: draftViewport ? { ...layout, viewport: draftViewport } : layout,
+        view,
+      },
+      semanticDirty || sourceDirty || layoutDirty || proposal !== null,
+    );
+  }, [
+    onDraftChange,
+    sourceDraft,
+    formatted.text,
+    layout,
+    draftViewport,
+    view,
+    semanticDirty,
+    sourceDirty,
+    layoutDirty,
+    proposal,
+  ]);
   const reopenState = useRef({
     dirty: false,
     busy: false,

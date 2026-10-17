@@ -153,7 +153,9 @@ function home() {
         initialView={homeView}
         onNavigate={rememberView}
         restorationNotice={restorationNotice}
-        onDirty={(pending) => { dirty = pending; }}
+        onDirty={(pending) => {
+          dirty = pending;
+        }}
         onSelect={rememberWorkspace}
         onOpenRun={async (workspace, path, run) => {
           const request = ++generation;
@@ -332,9 +334,15 @@ async function open() {
     async (name, arguments_) =>
       app.callServerTool({ name, arguments: arguments_ }),
   );
-  const draftClient = new NativeEditorDraftClient({
-    workspaceId: input.workspace_id, sessionId: input.session_id, path: input.path,
-  }, async (name, arguments_) => app.callServerTool({name, arguments: arguments_}));
+  const draftClient = new NativeEditorDraftClient(
+    {
+      workspaceId: input.workspace_id,
+      sessionId: input.session_id,
+      path: input.path,
+    },
+    async (name, arguments_) =>
+      app.callServerTool({ name, arguments: arguments_ }),
+  );
   notice.textContent = "Opening the accepted workflow…";
   try {
     const document = await client.read(); // Cached tool results are not durable restoration authority.

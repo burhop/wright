@@ -50,19 +50,28 @@ export function NativeSignin({
       )
         throw Error("Scope unavailable");
       if (signal?.aborted || generation !== readGeneration.current) return;
-      const provider = data.provider_status as {
-        installed?: boolean;
-        active?: boolean;
-        enabled_here?: boolean;
-        recorded_validation?: { evidence_id?: string; state?: string } | null;
-      } | null | undefined;
+      const provider = data.provider_status as
+        | {
+            installed?: boolean;
+            active?: boolean;
+            enabled_here?: boolean;
+            recorded_validation?: {
+              evidence_id?: string;
+              state?: string;
+            } | null;
+          }
+        | null
+        | undefined;
       if (provider != null) {
-        if (data.plan_digest !== scope.plan_digest ||
-            typeof provider.installed !== "boolean" ||
-            typeof provider.active !== "boolean" ||
-            typeof provider.enabled_here !== "boolean")
+        if (
+          data.plan_digest !== scope.plan_digest ||
+          typeof provider.installed !== "boolean" ||
+          typeof provider.active !== "boolean" ||
+          typeof provider.enabled_here !== "boolean"
+        )
           throw Error("Saved provider subject unavailable");
-        const passed = provider.installed &&
+        const passed =
+          provider.installed &&
           provider.recorded_validation?.state === "passed" &&
           typeof provider.recorded_validation.evidence_id === "string" &&
           provider.recorded_validation.evidence_id.length > 0;
@@ -72,11 +81,19 @@ export function NativeSignin({
         // It never retries an uncertain operation itself.
         enabling.current = false;
         if (provider.enabled_here) {
-          setMessage("Saved workspace availability is enabled. Individual tool actions and reviews remain separate.");
+          setMessage(
+            "Saved workspace availability is enabled. Individual tool actions and reviews remain separate.",
+          );
         } else if (passed) {
-          setMessage("Recorded protocol validation passed. Enable will recheck current configuration and evidence; no validation was repeated.");
+          setMessage(
+            "Recorded protocol validation passed. Enable will recheck current configuration and evidence; no validation was repeated.",
+          );
         } else {
-          setMessage("Saved provider check is " + (provider.recorded_validation?.state ?? "not recorded") + ". Workspace enablement requires current passed validation.");
+          setMessage(
+            "Saved provider check is " +
+              (provider.recorded_validation?.state ?? "not recorded") +
+              ". Workspace enablement requires current passed validation.",
+          );
         }
       }
       const privateData = result._meta?.["wright/signin"] as
@@ -104,7 +121,13 @@ export function NativeSignin({
         setCallback(undefined);
       }
     },
-    [call, scope.workspace_id, scope.session_id, scope.plan_id, scope.plan_digest],
+    [
+      call,
+      scope.workspace_id,
+      scope.session_id,
+      scope.plan_id,
+      scope.plan_digest,
+    ],
   );
   useEffect(() => {
     if (!pending) return;
@@ -224,7 +247,10 @@ export function NativeSignin({
         Check sign-in status
       </button>
       {validated && (
-        <button disabled={pending || enableAttempted || enablePending} onClick={() => void enable()}>
+        <button
+          disabled={pending || enableAttempted || enablePending}
+          onClick={() => void enable()}
+        >
           Enable in this workspace
         </button>
       )}

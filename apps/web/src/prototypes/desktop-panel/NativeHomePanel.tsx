@@ -102,9 +102,13 @@ export function NativeHomePanel({
   const [items, setItems] = useState<DesktopWorkspace[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsDirty, setSettingsDirty] = useState(false);
-  const settingsChanged = useCallback((pending: boolean) => {
-    setSettingsDirty(pending); onDirty?.(pending);
-  }, [onDirty]);
+  const settingsChanged = useCallback(
+    (pending: boolean) => {
+      setSettingsDirty(pending);
+      onDirty?.(pending);
+    },
+    [onDirty],
+  );
   const [selected, setSelected] = useState<DesktopWorkspace>();
   const [files, setFiles] = useState<FileNode[]>([]);
   const [loading, setLoading] = useState(true);
@@ -225,7 +229,8 @@ export function NativeHomePanel({
 
   const createWorkspace = async () => {
     const name = workspaceName.trim();
-    if (!name || createFlight.current || createUncertain || settingsDirty) return;
+    if (!name || createFlight.current || createUncertain || settingsDirty)
+      return;
     createFlight.current = true;
     setCreating(true);
     setCreateNotice("");
@@ -307,7 +312,9 @@ export function NativeHomePanel({
         ))}
       </select>
       <button
-        disabled={opening || creating || loading || createUncertain || settingsDirty}
+        disabled={
+          opening || creating || loading || createUncertain || settingsDirty
+        }
         onClick={() => setCreateVisible((value) => !value)}
       >
         New workspace
@@ -329,7 +336,12 @@ export function NativeHomePanel({
           />
           <button
             type="submit"
-            disabled={creating || createUncertain || settingsDirty || !workspaceName.trim()}
+            disabled={
+              creating ||
+              createUncertain ||
+              settingsDirty ||
+              !workspaceName.trim()
+            }
           >
             {creating ? "Creating workspace…" : "Create workspace"}
           </button>
@@ -341,211 +353,222 @@ export function NativeHomePanel({
       {!loading && !error && items.length === 0 && (
         <p>No Wright workspaces yet. Choose New workspace to get started.</p>
       )}
-      {selected && <>
-        <button disabled={opening || creating || settingsDirty}
-          onClick={() => setSettingsOpen((current) => !current)}>
-          {settingsOpen ? "Close workspace settings" : "Workspace settings"}
-        </button>
-        {settingsOpen && <NativeWorkspaceSettings
-          key={`${selected.workspace_id}:${selected.session_id}`} workspace={selected}
-          call={call} onDirty={settingsChanged} />}
-      </>}
-      <div inert={settingsDirty}>
       {selected && (
-        <nav aria-label="Workspace views">
+        <>
           <button
-            onClick={() => navigate("workflows")}
-            disabled={opening || creating}
+            disabled={opening || creating || settingsDirty}
+            onClick={() => setSettingsOpen((current) => !current)}
           >
-            Workflows
+            {settingsOpen ? "Close workspace settings" : "Workspace settings"}
           </button>
-          <button
-            onClick={() => navigate("connections")}
-            disabled={opening || creating}
-          >
-            Connections
-          </button>
-          <button
-            onClick={() => navigate("files")}
-            disabled={opening || creating}
-          >
-            Files
-          </button>
-          <button
-            onClick={() => navigate("runs")}
-            disabled={opening || creating}
-          >
-            Recent runs
-          </button>
-        </nav>
-      )}
-      {selected && view === "connections" && (
-        <NativeConnections
-          key={selected.workspace_id}
-          workspace={selected}
-          call={call}
-          openLink={openLink}
-        />
-      )}
-      {selected && view === "runs" && (
-        <NativeRecentRuns
-          key={`${selected.workspace_id}:${selected.session_id}`}
-          workspace={selected}
-          paths={workflowFiles.map((file) => file.path.replace(/^\//, ""))}
-          call={call}
-          onOpen={
-            onOpenRun
-              ? async (path, run) => {
-                  setOpening(true);
-                  try {
-                    await onOpenRun(selected, path, run);
-                  } finally {
-                    setOpening(false);
-                  }
-                }
-              : undefined
-          }
-        />
-      )}
-      {selected && view === "files" && (
-        <section aria-label="Files">
-          <h2>Files</h2>
-          <NativeFileUpload
-            key={`${selected.workspace_id}:${selected.session_id}`}
-            call={call}
-            workspace={selected}
-            onUploaded={(path) => {
-              void select(selected);
-              setFileQuery(path.split("/").at(-1) ?? "");
-            }}
-          />
-          <p>
-            Saved workspace files. Inspect run outputs and their evidence in the
-            workflow’s working view.
-          </p>
-          <label htmlFor="wright-file-search">Find a file</label>
-          <input
-            id="wright-file-search"
-            type="search"
-            value={fileQuery}
-            onChange={(event) => setFileQuery(event.target.value)}
-          />
-          {!loading && !error && files.length === 0 && (
-            <p>No saved files here yet.</p>
+          {settingsOpen && (
+            <NativeWorkspaceSettings
+              key={`${selected.workspace_id}:${selected.session_id}`}
+              workspace={selected}
+              call={call}
+              onDirty={settingsChanged}
+            />
           )}
-          {!loading &&
-            !error &&
-            files.length > 0 &&
-            !files.some((file) =>
-              file.path.toLowerCase().includes(fileQuery.toLowerCase()),
-            ) && <p>No files match this search.</p>}
-          <ul>
-            {files
-              .filter((file) =>
+        </>
+      )}
+      <div inert={settingsDirty}>
+        {selected && (
+          <nav aria-label="Workspace views">
+            <button
+              onClick={() => navigate("workflows")}
+              disabled={opening || creating}
+            >
+              Workflows
+            </button>
+            <button
+              onClick={() => navigate("connections")}
+              disabled={opening || creating}
+            >
+              Connections
+            </button>
+            <button
+              onClick={() => navigate("files")}
+              disabled={opening || creating}
+            >
+              Files
+            </button>
+            <button
+              onClick={() => navigate("runs")}
+              disabled={opening || creating}
+            >
+              Recent runs
+            </button>
+          </nav>
+        )}
+        {selected && view === "connections" && (
+          <NativeConnections
+            key={selected.workspace_id}
+            workspace={selected}
+            call={call}
+            openLink={openLink}
+          />
+        )}
+        {selected && view === "runs" && (
+          <NativeRecentRuns
+            key={`${selected.workspace_id}:${selected.session_id}`}
+            workspace={selected}
+            paths={workflowFiles.map((file) => file.path.replace(/^\//, ""))}
+            call={call}
+            onOpen={
+              onOpenRun
+                ? async (path, run) => {
+                    setOpening(true);
+                    try {
+                      await onOpenRun(selected, path, run);
+                    } finally {
+                      setOpening(false);
+                    }
+                  }
+                : undefined
+            }
+          />
+        )}
+        {selected && view === "files" && (
+          <section aria-label="Files">
+            <h2>Files</h2>
+            <NativeFileUpload
+              key={`${selected.workspace_id}:${selected.session_id}`}
+              call={call}
+              workspace={selected}
+              onUploaded={(path) => {
+                void select(selected);
+                setFileQuery(path.split("/").at(-1) ?? "");
+              }}
+            />
+            <p>
+              Saved workspace files. Inspect run outputs and their evidence in
+              the workflow’s working view.
+            </p>
+            <label htmlFor="wright-file-search">Find a file</label>
+            <input
+              id="wright-file-search"
+              type="search"
+              value={fileQuery}
+              onChange={(event) => setFileQuery(event.target.value)}
+            />
+            {!loading && !error && files.length === 0 && (
+              <p>No saved files here yet.</p>
+            )}
+            {!loading &&
+              !error &&
+              files.length > 0 &&
+              !files.some((file) =>
                 file.path.toLowerCase().includes(fileQuery.toLowerCase()),
-              )
-              .map((file) => (
+              ) && <p>No files match this search.</p>}
+            <ul>
+              {files
+                .filter((file) =>
+                  file.path.toLowerCase().includes(fileQuery.toLowerCase()),
+                )
+                .map((file) => (
+                  <li key={file.path}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPreviewPath(file.path.replace(/^\//, ""))
+                      }
+                    >
+                      {file.name}
+                    </button>
+                    <small>{file.path}</small>
+                  </li>
+                ))}
+            </ul>
+            <p>
+              Text previews support files up to 64 KiB; downloads support
+              visible files up to 16 MiB. Other previews are unavailable here.
+            </p>
+            {previewPath && (
+              <NativeFilePreview
+                key={`${selected.workspace_id}:${selected.session_id}:${previewPath}`}
+                call={call}
+                workspace={selected}
+                path={previewPath}
+                onClose={() => setPreviewPath(undefined)}
+              />
+            )}
+          </section>
+        )}
+        {selected && view === "workflows" && (
+          <section aria-label="Workflows">
+            <h2>Workflows</h2>
+            <button
+              disabled={loading || creating || opening}
+              onClick={() => setTemplatesOpen(true)}
+            >
+              Use a template
+            </button>
+            {templateService && (
+              <EngineeringTemplateDialog
+                key={`${selected.workspace_id}:${selected.session_id}`}
+                open={templatesOpen}
+                workspaceId={selected.workspace_id}
+                sessionId={selected.session_id}
+                workspaceName={selected.workspace_name}
+                service={templateService}
+                previewUrl={() => null}
+                onClose={() => setTemplatesOpen(false)}
+                onCreated={(path) => {
+                  setOpening(true);
+                  void onOpen(selected, path)
+                    .catch(() =>
+                      setError(
+                        "The template was saved, but its editor could not be opened. Refresh and open the saved workflow.",
+                      ),
+                    )
+                    .finally(() => setOpening(false));
+                }}
+              />
+            )}
+            <NativeNewWorkflow
+              key={`${selected.workspace_id}:${selected.session_id}`}
+              workspace={selected}
+              call={call}
+              onOpen={onOpen}
+              onBusy={setCreating}
+              disabled={loading || opening || creating}
+            />
+            {!loading && !error && workflowFiles.length === 0 && (
+              <p>
+                No saved workflows here yet. Choose New workflow or ask this
+                conversation to create one.
+              </p>
+            )}
+            <ul>
+              {workflowFiles.map((file) => (
                 <li key={file.path}>
                   <button
-                    type="button"
-                    onClick={() => setPreviewPath(file.path.replace(/^\//, ""))}
+                    disabled={loading || creating}
+                    onClick={() => {
+                      setLoading(true);
+                      setOpening(true);
+                      // File-tree paths start at the workspace root; source identities
+                      // are relative to it. Preserve every other character exactly.
+                      void onOpen(selected, file.path.replace(/^\//, ""))
+                        .catch(() =>
+                          setError(
+                            "The workflow could not be opened. Your saved source is unchanged.",
+                          ),
+                        )
+                        .finally(() => {
+                          setLoading(false);
+                          setOpening(false);
+                        });
+                    }}
                   >
                     {file.name}
                   </button>
                   <small>{file.path}</small>
                 </li>
               ))}
-          </ul>
-          <p>
-            Text previews support files up to 64 KiB; downloads support visible
-            files up to 16 MiB. Other previews are unavailable here.
-          </p>
-          {previewPath && (
-            <NativeFilePreview
-              key={`${selected.workspace_id}:${selected.session_id}:${previewPath}`}
-              call={call}
-              workspace={selected}
-              path={previewPath}
-              onClose={() => setPreviewPath(undefined)}
-            />
-          )}
-        </section>
-      )}
-      {selected && view === "workflows" && (
-        <section aria-label="Workflows">
-          <h2>Workflows</h2>
-          <button
-            disabled={loading || creating || opening}
-            onClick={() => setTemplatesOpen(true)}
-          >
-            Use a template
-          </button>
-          {templateService && (
-            <EngineeringTemplateDialog
-              key={`${selected.workspace_id}:${selected.session_id}`}
-              open={templatesOpen}
-              workspaceId={selected.workspace_id}
-              sessionId={selected.session_id}
-              workspaceName={selected.workspace_name}
-              service={templateService}
-              previewUrl={() => null}
-              onClose={() => setTemplatesOpen(false)}
-              onCreated={(path) => {
-                setOpening(true);
-                void onOpen(selected, path)
-                  .catch(() =>
-                    setError(
-                      "The template was saved, but its editor could not be opened. Refresh and open the saved workflow.",
-                    ),
-                  )
-                  .finally(() => setOpening(false));
-              }}
-            />
-          )}
-          <NativeNewWorkflow
-            key={`${selected.workspace_id}:${selected.session_id}`}
-            workspace={selected}
-            call={call}
-            onOpen={onOpen}
-            onBusy={setCreating}
-            disabled={loading || opening || creating}
-          />
-          {!loading && !error && workflowFiles.length === 0 && (
-            <p>
-              No saved workflows here yet. Choose New workflow or ask this
-              conversation to create one.
-            </p>
-          )}
-          <ul>
-            {workflowFiles.map((file) => (
-              <li key={file.path}>
-                <button
-                  disabled={loading || creating}
-                  onClick={() => {
-                    setLoading(true);
-                    setOpening(true);
-                    // File-tree paths start at the workspace root; source identities
-                    // are relative to it. Preserve every other character exactly.
-                    void onOpen(selected, file.path.replace(/^\//, ""))
-                      .catch(() =>
-                        setError(
-                          "The workflow could not be opened. Your saved source is unchanged.",
-                        ),
-                      )
-                      .finally(() => {
-                        setLoading(false);
-                        setOpening(false);
-                      });
-                  }}
-                >
-                  {file.name}
-                </button>
-                <small>{file.path}</small>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+            </ul>
+          </section>
+        )}
       </div>
     </main>
   );

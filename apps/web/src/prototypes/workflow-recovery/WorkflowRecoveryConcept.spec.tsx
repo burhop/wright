@@ -70,16 +70,25 @@ it("recovers invalid raw source, the last applied diagram and moved layout witho
   workflow.metadata.title = "Recovered diagram title";
   const layout = structuredClone(initialLayout);
   const block = workflow.blocks[0]!;
-  layout.positions[block.id] = {x: 432, y: 321};
+  layout.positions[block.id] = { x: 432, y: 321 };
   const onDraftChange = vi.fn();
   const onSave = vi.fn();
   const onRun = vi.fn();
-  render(<Editor
-    workflowSource={formatRecoveryAuthoringSource(initialWorkflow).text}
-    workflowLayout={initialLayout}
-    initialDraft={{source: "", applied_source: formatRecoveryAuthoringSource(workflow).text, layout, view: "code"}}
-    onDraftChange={onDraftChange} onSave={onSave} onRun={onRun}
-  />);
+  render(
+    <Editor
+      workflowSource={formatRecoveryAuthoringSource(initialWorkflow).text}
+      workflowLayout={initialLayout}
+      initialDraft={{
+        source: "",
+        applied_source: formatRecoveryAuthoringSource(workflow).text,
+        layout,
+        view: "code",
+      }}
+      onDraftChange={onDraftChange}
+      onSave={onSave}
+      onRun={onRun}
+    />,
+  );
   expect(screen.getByLabelText("Workflow source")).toHaveValue("");
   expect(screen.getByTestId("workflow-recovery-save")).toBeDisabled();
   await waitFor(() => expect(onDraftChange).toHaveBeenCalled());
@@ -87,7 +96,7 @@ it("recovers invalid raw source, the last applied diagram and moved layout witho
   expect(dirty).toBe(true);
   expect(observed.source).toBe("");
   expect(observed.applied_source).toContain("Recovered diagram title");
-  expect(observed.layout.positions[block.id]).toEqual({x: 432, y: 321});
+  expect(observed.layout.positions[block.id]).toEqual({ x: 432, y: 321 });
   expect(onSave).not.toHaveBeenCalled();
   expect(onRun).not.toHaveBeenCalled();
 });
@@ -97,13 +106,31 @@ it("keeps the accepted Undo baseline after explicitly recovering a diagram draft
   workflow.metadata.title = "Recovered editable title";
   const source = formatRecoveryAuthoringSource(workflow).text;
   const onDraftChange = vi.fn();
-  render(<Editor workflowSource={formatRecoveryAuthoringSource(initialWorkflow).text}
-    workflowLayout={initialLayout} onDraftChange={onDraftChange}
-    initialDraft={{source, applied_source: source, layout: initialLayout, view: "diagram"}} />);
+  render(
+    <Editor
+      workflowSource={formatRecoveryAuthoringSource(initialWorkflow).text}
+      workflowLayout={initialLayout}
+      onDraftChange={onDraftChange}
+      initialDraft={{
+        source,
+        applied_source: source,
+        layout: initialLayout,
+        view: "diagram",
+      }}
+    />,
+  );
   fireEvent.click(screen.getByTestId("workflow-recovery-undo"));
-  await waitFor(() => expect(onDraftChange.mock.calls.at(-1)?.[0].applied_source).not.toContain("Recovered editable title"));
+  await waitFor(() =>
+    expect(onDraftChange.mock.calls.at(-1)?.[0].applied_source).not.toContain(
+      "Recovered editable title",
+    ),
+  );
   fireEvent.click(screen.getByTestId("workflow-recovery-redo"));
-  await waitFor(() => expect(onDraftChange.mock.calls.at(-1)?.[0].applied_source).toContain("Recovered editable title"));
+  await waitFor(() =>
+    expect(onDraftChange.mock.calls.at(-1)?.[0].applied_source).toContain(
+      "Recovered editable title",
+    ),
+  );
 });
 
 it("keeps the editor usable when LAN HTTP has no Web Crypto digest", async () => {

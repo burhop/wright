@@ -815,7 +815,15 @@ function RecoveryCanvasViewport({
         zoom: 0.9,
       });
     }
-  }, [initialized, width, height, getNodes, fitView, setViewport, runtime.restoredViewport]);
+  }, [
+    initialized,
+    width,
+    height,
+    getNodes,
+    fitView,
+    setViewport,
+    runtime.restoredViewport,
+  ]);
   useEffect(() => {
     if (!initialized || !selectedNodeId || !width || !height) return;
     const node = getNode(selectedNodeId);
@@ -1442,7 +1450,9 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
         minZoom={0.4}
         maxZoom={1.8}
         proOptions={{ hideAttribution: true }}
-        defaultViewport={runtime.restoredViewport ?? { x: 40, y: 90, zoom: 0.9 }}
+        defaultViewport={
+          runtime.restoredViewport ?? { x: 40, y: 90, zoom: 0.9 }
+        }
         onMoveEnd={(_event, viewport) => runtime.onViewportChange?.(viewport)}
         deleteKeyCode={["Backspace", "Delete"]}
         nodesConnectable

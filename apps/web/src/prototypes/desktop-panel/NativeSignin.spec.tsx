@@ -145,32 +145,59 @@ it("requires a separate enable click and does not repeat an uncertain grant", as
   ).toHaveLength(1);
 });
 
-const recovered = (state = "passed", enabled = false, digest = scope.plan_digest) => ({
+const recovered = (
+  state = "passed",
+  enabled = false,
+  digest = scope.plan_digest,
+) => ({
   content: [],
   structuredContent: {
-    ...scope, plan_digest: digest, presentation: "not_pending",
-    provider_status: { installed: true, active: false, enabled_here: enabled,
-      recorded_validation: { evidence_id: "validation-saved", state } },
+    ...scope,
+    plan_digest: digest,
+    presentation: "not_pending",
+    provider_status: {
+      installed: true,
+      active: false,
+      enabled_here: enabled,
+      recorded_validation: { evidence_id: "validation-saved", state },
+    },
   },
 });
 it("recovers a lost validation reply by reading saved status before explicit enable, without validating again", async () => {
   const call = vi.fn(async (name: string) => {
-    if (name === "wright_connection_validate") throw Error("withheld after saved validation");
-    if (name === "wright_connection_enable") return { content: [], structuredContent: {
-      ...scope, enablement: { enabled: true, invocation_approved: false } } };
+    if (name === "wright_connection_validate")
+      throw Error("withheld after saved validation");
+    if (name === "wright_connection_enable")
+      return {
+        content: [],
+        structuredContent: {
+          ...scope,
+          enablement: { enabled: true, invocation_approved: false },
+        },
+      };
     return recovered();
   });
   render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(screen.getByRole("button", { name: "Sign in and validate provider" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Sign in and validate provider" }),
+  );
   await screen.findByText(/Validation outcome is not confirmed/);
   fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
-  const enable = await screen.findByRole("button", { name: "Enable in this workspace" });
+  const enable = await screen.findByRole("button", {
+    name: "Enable in this workspace",
+  });
   expect(enable).toBeEnabled();
-  expect(call.mock.calls.filter(([name]) => name === "wright_connection_enable")).toHaveLength(0);
-  expect(call.mock.calls.filter(([name]) => name === "wright_connection_validate")).toHaveLength(1);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_enable"),
+  ).toHaveLength(0);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_validate"),
+  ).toHaveLength(1);
   fireEvent.click(enable);
   await screen.findByText(/Enabled in this workspace/);
-  expect(call.mock.calls.filter(([name]) => name === "wright_connection_enable")).toHaveLength(1);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_enable"),
+  ).toHaveLength(1);
 });
 it("reopens a saved enabled provider by read only and never replays the grant", async () => {
   const call = vi.fn().mockResolvedValue(recovered("passed", true));
@@ -178,21 +205,36 @@ it("reopens a saved enabled provider by read only and never replays the grant", 
   expect(call).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
   await screen.findByText(/Saved workspace availability is enabled/);
-  expect(screen.getByRole("button", { name: "Enable in this workspace" })).toBeDisabled();
-  expect(call.mock.calls.map(([name]) => name)).toEqual(["wright_connection_signin"]);
+  expect(
+    screen.getByRole("button", { name: "Enable in this workspace" }),
+  ).toBeDisabled();
+  expect(call.mock.calls.map(([name]) => name)).toEqual([
+    "wright_connection_signin",
+  ]);
 });
-it.each(["failed", "stale", "blocked"])("does not offer enable for recorded %s validation", async (state) => {
-  const call = vi.fn().mockResolvedValue(recovered(state));
-  render(<NativeSignin scope={scope} call={call} />);
-  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
-  await screen.findByText(new RegExp("Saved provider check is " + state));
-  expect(screen.queryByRole("button", { name: "Enable in this workspace" })).toBeNull();
-  expect(call).toHaveBeenCalledTimes(1);
-});
+it.each(["failed", "stale", "blocked"])(
+  "does not offer enable for recorded %s validation",
+  async (state) => {
+    const call = vi.fn().mockResolvedValue(recovered(state));
+    render(<NativeSignin scope={scope} call={call} />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Check sign-in status" }),
+    );
+    await screen.findByText(new RegExp("Saved provider check is " + state));
+    expect(
+      screen.queryByRole("button", { name: "Enable in this workspace" }),
+    ).toBeNull();
+    expect(call).toHaveBeenCalledTimes(1);
+  },
+);
 it("rejects recovered provider status for another plan digest", async () => {
-  const call = vi.fn().mockResolvedValue(recovered("passed", false, "b".repeat(64)));
+  const call = vi
+    .fn()
+    .mockResolvedValue(recovered("passed", false, "b".repeat(64)));
   render(<NativeSignin scope={scope} call={call} />);
   fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
   await screen.findByText("Sign-in status unavailable.");
-  expect(screen.queryByRole("button", { name: "Enable in this workspace" })).toBeNull();
+  expect(
+    screen.queryByRole("button", { name: "Enable in this workspace" }),
+  ).toBeNull();
 });
