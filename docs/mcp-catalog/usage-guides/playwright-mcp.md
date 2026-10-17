@@ -97,6 +97,29 @@ Evidence: /tmp/wright-desktop-uninstall-proof-20261017/checkpoint.json and
 browser-1792218083496/report.json. This is GB10 ARM64 lifecycle verification in a
 labeled simulated desktop frame, not Windows acceptance or catalog installation.
 
+## Desktop custom-command setup qualification
+
+A separate fresh proof used the normal native Add a custom MCP local-command
+form and existing source preview → saved plan → approval → apply → protocol
+validation → workspace Enable owners. Exact package metadata and its LICENSE
+file were inspected in the existing immutable0.0.78 image before recording the
+required independent technical source/license review. The unknown-source license
+gate remains in place; this is not personal account/terms completion.
+
+An unreviewed source stayed blocked. Stale/foreign approval, validation before
+apply and Enable before protocol validation were denied. Withheld approval/apply
+replies recovered through saved reads without replay. The actual independent
+provider initialized/listed schemas in a bounded read-only/network-none container;
+explicit enable applied only to one workspace. One onboarding run and one passed
+local protocol validation were recorded; no tools/call or engineering run.
+Global support remains uncertain and recorded installed-version metadata null.
+The provider was stopped afterward, retaining setup, validation and membership.
+
+Evidence: /tmp/wright-desktop-command-apply-proof-20261017/checkpoint.json,
+source-review.json, readback.json and browser-1792219071705/report.json. This is
+GB10 ARM64 simulated-host resource/owner qualification, not Windows acceptance,
+clean catalog requalification, gateway execution or an engineering demonstration.
+
 ## Bugs and maintenance
 
 No new provider defect or issue submission is claimed. Record exact package/browser versions, inputs, actual results and evidence before marking a capability verified. Retain version/platform-specific failures and update this guide after qualification.

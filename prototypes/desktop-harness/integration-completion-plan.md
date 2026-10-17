@@ -536,3 +536,39 @@ runs, reasoning requests or onboarding runs. Evidence:
 /tmp/wright-desktop-uninstall-proof-20261017/checkpoint.json and
 browser-1792218083496/report.json. Resource9695a702a66ff9aac1ba758093e246d4afb53da6cf32fa5cd0e9eee185aa250c,
 2301866bytes,51tools, zero external assets. Installed0.14 remains unchanged.
+
+## Normal custom-command setup (locally qualified)
+
+Close the earlier preview-only gap through the existing import/install-plan,
+registry onboarding, protocol-validation and workspace-enablement owners. No
+new installation backend, registry writes or grant shortcut is introduced.
+The custom-source checkbox now describes actual independent source/license
+review and any required publisher setup; account-based setup retains its gate.
+Unknown source licenses remain unknown, with explicit review recorded.
+
+An exact already-present Apache-2.0 @playwright/mcp0.0.78 image was independently
+inspected before this authorized technical review; no personal account, new
+terms acceptance, new download or credentials were involved. The normal native
+form previewed its literal bounded Docker launch, saved a blocked unreviewed
+plan, then a separate explicitly reviewed plan. Stale/cross-workspace approval,
+premature validation and enable-before-validation were denied. Lost approval
+and apply acknowledgements reconciled by saved-plan reads without repeating
+either mutation. Registration stayed inactive before protocol validation.
+The real owner initialized/listed the independent MCP; explicit Enable granted
+only the selected workspace, and a second workspace remained disabled. Fresh
+panel reopening read the saved state;480px layout had no horizontal overflow.
+
+278 native API/transport and164 panel checks, TypeScript and focused ESLint pass.
+Five actual resource/MCP/API/browser cases passed. The normal owner recorded
+one onboarding run and one passed local protocol validation; zero workflow runs,
+start receipts, reasoning requests or provider tools/call. This does not establish
+a gateway execution probe, global platform support or a provider-reported version:
+recorded installed version remains null and platform support uncertain. Only
+this proof's provider was stopped afterward; configuration, passed evidence and
+scoped membership were retained. A cleanup observer initially used the wrong
+response nesting; read-only reconciliation confirmed stop without repeating it.
+Evidence: /tmp/wright-desktop-command-apply-proof-20261017/checkpoint.json and
+browser-1792219071705/report.json. Native resource d3835444b9b59bd189d83b3f3b12a9972282de1ba01c4ddd656e153237a15761,
+2301877bytes,51tools,zero external assets. Installed0.14 remains unchanged.
+Private/full configuration, upgrade and actual Windows authentication still
+require work. Official vulnerability-DB manifest was still unchanged06:39UTC.

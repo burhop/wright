@@ -10,14 +10,14 @@ it is not installed. Detailed current scope and remaining work are in
 | Current area | Verified boundary | Remaining required work |
 |---|---|---|
 | Workspace/home/editor | Earlier native panel observation; installed0.14 resource check; current normal Workflows→shared editor/source/CAS save; independent optional widget navigation/scoped Home; backend draft recovery preserves invalid Source, applied diagram and viewport; nonsecret settings partial CAS, conflict/lost-reply recovery and frozen accepted instructions | Candidate promotion, actual Windows persistence/API availability and current served dev; credentials retain external authentication |
-| Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop/tool switches/uninstall; pinned provider stopped/marked uninstalled with configuration/credentials/grants/image retained; lost-reply readback; deny survives restart; readiness and availability separate; recorded version and local-command preview | Local-command apply/validation, full configuration imports, upgrade/private setup parity and real Windows callback/authentication; registration/credential deletion is separate from uninstall |
+| Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop/tool switches/uninstall; pinned provider stopped/marked uninstalled with configuration/credentials/grants/image retained; lost-reply readback; deny survives restart; readiness and availability separate; recorded version and local-command preview/apply/protocol validation/explicit workspace enable | Full configuration imports, upgrade/private setup parity and real Windows callback/authentication; registration/credential deletion is separate from uninstall |
 | Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners; old-source exact recorder view and pinned-hash download/drift denial | Named candidate promotion, actual Windows delivery; unsupported live/older-source text presentations |
 | Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
 | Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
 | Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
 | Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
 | Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
-| Gates/deployment |Current278 native and164 panel checks pass; earlier541 registry,12 API/service,361 settings owner/source/native and233 shared-editor/canvas checks retained; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB (official manifest unchanged06:04UTC17October); no follow-on push/merge/dev deployment yet |
+| Gates/deployment |Current278 native and164 panel checks pass; earlier541 registry,12 API/service,361 settings owner/source/native and233 shared-editor/canvas checks retained; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB (official manifest unchanged06:39UTC17October); no follow-on push/merge/dev deployment yet |
 
 Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
 establish Windows native acceptance. The host still reports no model/app identity;
@@ -30,7 +30,12 @@ required. External current receipts live under
 /tmp/wright-desktop-provider-controls-proof-20261017/checkpoint.json. The shared
 provider fixture is user-owned, pinned and locally catalog-unvalidated; these
 proofs establish actual lifecycle/permission behavior, not catalog installation.
-No provider tools were invoked in the lifecycle slice, and checked existing GB10
+Normal custom-command setup now has separate actual owner qualification at
+/tmp/wright-desktop-command-apply-proof-20261017/checkpoint.json: one onboarding
+run/one protocol validation, selected-workspace enable, other workspace denied,
+no shortcut grants. Its unknown source license was independently inspected and
+reviewed; no personal publisher account/terms completion is claimed.
+No provider tools were invoked in either the lifecycle or setup slice, and checked existing GB10
 harness configuration hashes were unchanged. Named plugin0.14.0 is unchanged.
 
 ## Retained historical checkpoint

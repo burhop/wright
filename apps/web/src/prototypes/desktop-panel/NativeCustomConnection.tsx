@@ -328,8 +328,8 @@ export function NativeCustomConnection({
               disabled={disabled || uncertain}
               onChange={(event) => setCompletedSetup(event.target.checked)}
             />
-            I independently reviewed this source and completed its publisher
-            terms and account requirements.
+            I independently verified this exact source, its license and any
+            required publisher setup.
           </label>
           <button
             disabled={disabled || uncertain}

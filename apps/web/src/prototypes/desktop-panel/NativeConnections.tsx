@@ -470,8 +470,8 @@ export function NativeConnections({
           {plan.capability_id.startsWith("import:") ? (
             <p>
               {plan.requirements?.license?.independent_completion_recorded_at
-                ? "Independent publisher review is recorded for this exact source."
-                : "Publisher review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
+                ? "Independent source and license review is recorded for this exact source."
+                : "Source and license review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
             </p>
           ) : (
             <>
