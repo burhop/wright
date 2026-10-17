@@ -6,13 +6,18 @@ installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The lo
 completion candidate includes99d837f1 scoped file staging plus provider controls, typed local-command preview, read-only run evidence, scoped navigation/context, durable inert editor drafts and nonsecret workspace settings;
 it is not installed. Detailed current scope and remaining work are in
 [integration-completion-plan.md](integration-completion-plan.md).
+The frozen 0.15.0 candidate now has a separately recorded combined-profile proof:
+[qualification checkpoint](integration-qualification-20261017.md). Its 51-tool
+protocol/resource check, normal gateway task, original-byte image task, synthetic
+review and exact ARM64 image smoke passed locally. The normal current merge gate
+failed at security-database freshness; independent later checks remain diagnostics.
 
 | Current area | Verified boundary | Remaining required work |
 |---|---|---|
 | Workspace/home/editor | Earlier native panel observation; installed0.14 resource check; current normal Workflows→shared editor/source/CAS save; independent optional widget navigation/scoped Home; backend draft recovery preserves invalid Source, applied diagram and viewport; nonsecret settings partial CAS, conflict/lost-reply recovery and frozen accepted instructions | Candidate promotion, actual Windows persistence/API availability and current served dev; credentials retain external authentication |
 | Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop/tool switches/uninstall; pinned provider stopped/marked uninstalled with configuration/credentials/grants/image retained; lost approval/apply/validation/enable replies and fresh setup reopening recover by read; deny survives restart; readiness and availability separate; recorded version and local-command preview/apply/protocol validation/explicit workspace enable | Full configuration imports, upgrade/private setup parity and real Windows callback/authentication; registration/credential deletion is separate from uninstall |
 | Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners; old-source exact recorder view and pinned-hash download/drift denial | Named candidate promotion, actual Windows delivery; unsupported live/older-source text presentations |
-| Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion and broader supported task qualification |
+| Desktop tool work | Real Playwright snapshot workflows completed through normal workspace permission and actual desktop handoff; the frozen combined 0.15 profile also retains image inputs and separate local reviews, with no private task enrollment | Candidate promotion and broader supported task qualification |
 | Different existing workflow | Existing083 bounded digital focus-wheel process completes two native Blender operations through the normal Workflows/shared editor/common view; exact STL handoff, five artifact hashes, independent mesh checks and exact-run PNG display/download | Full named engineering campaigns deferred; dark original preview, Windows acceptance and manufacturing/physical/human review are separate |
 | Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
 | Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |

@@ -10,6 +10,15 @@ Installed0.14.0 remains frozen83c2ca70. API restored from that exact runtime aft
 
 Evidence index: /tmp/wright-desktop-integration-completion-20261016/; earlier gates/receipts retained at /tmp/wright-desktop-file-download-evidence-20261015/. Current matrix: acceptance-matrix.md in the new external index. Earlier versioned matrices are historical.
 
+Current consolidated qualification and delivery conditions:
+[17 October checkpoint](integration-qualification-20261017.md). The frozen 0.15.0
+candidate has actual combined-profile gateway/image/review and exact-image smoke
+evidence. The installed named plugin remains 0.14.0. The normal merge gate is
+red at upstream security-database freshness; supplemental regression stages do
+not replace it. No follow-on push, merge or exact dev deployment is claimed.
+Use the [short walkthrough](desktop-015-walkthrough.md) after the installed update
+is verified; it explicitly distinguishes the prepared and active versions.
+
 ## Work sequence
 
 1. Integrate the current chat-race/download/security correction when the scanner freshness gate and current-head CI pass, then verify exact merged dev deployment.
