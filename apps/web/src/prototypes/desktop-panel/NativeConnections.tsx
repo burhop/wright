@@ -546,9 +546,12 @@ export function NativeConnections({
                       ? "Sign-in or credentials needed"
                       : !item.active
                         ? "Inactive"
-                        : !item.enabled_here
-                          ? "Not enabled in this workspace"
-                          : "Enabled in this workspace"}
+                        : "Provider active"}
+                </p>
+                <p>
+                  {item.enabled_here
+                    ? "Enabled in this workspace"
+                    : "Not enabled in this workspace"}
                 </p>
                 <details>
                   <summary>Readiness details</summary>

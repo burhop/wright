@@ -148,6 +148,21 @@ it("shows catalog state without implying workspace grant or live health", async 
     search: "",
   });
 });
+
+it("shows workspace permission even when an enabled provider needs credentials", async () => {
+  const data = enabledReply();
+  data.structuredContent.connections[0].active = false;
+  data.structuredContent.connections[0].credentials_missing = true;
+  const call = vi.fn().mockResolvedValue(data);
+  render(<NativeConnections workspace={workspace} call={call} />);
+  expect(
+    await screen.findByText("Sign-in or credentials needed"),
+  ).toBeVisible();
+  expect(screen.getByText("Enabled in this workspace")).toBeVisible();
+  expect(
+    screen.getByRole("button", { name: "Disable CAD in this workspace" }),
+  ).toBeEnabled();
+});
 it("rejects mismatched scope and permits an explicit search retry", async () => {
   const call = vi
     .fn()

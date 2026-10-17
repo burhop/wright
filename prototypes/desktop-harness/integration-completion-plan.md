@@ -80,8 +80,31 @@ Per-workspace Disable is implemented through the existing workspace membership o
 
 All231 native bridge tests,104 native panel UI tests and7 owner/API tests pass. TypeScript, affected ESLint and Ruff checks pass. The initial full prototype run failed only its old41-tool inventory assertion;42tools are now expected and app-only visibility is retained. Native resource is2266040bytes with zero external assets. This is local implementation, not installed or Windows-accepted behavior; actual-owner browser proof and repository gates remain. See connection-disable-checkpoint.json and connection-resource.json in the external evidence index.
 
-## Normal workspace task qualification in progress
+## Normal workspace task prerequisite record
 
 An opt-in workspace_mcp_tasks profile now admits explicitly named MCP tasks through normal canonical preparation/gateway authority. It rejects supplied integration-test policy digests and cannot coexist with private task-enrollment profiles. The installed default is unchanged. All48 boundary checks pass, including prior profile gates. This candidate is not enabled in the named plugin.
 
-Pinned Playwright MCP0.0.78 in the existing isolated ARM64 image passed initialization, discovery and one actual browser_snapshot of about:blank. The first call failed explicitly because the caller omitted the bundle browser-cache environment; corrected evidence is retained. This standalone prerequisite does not qualify Wright dispatch or native Windows behavior. Next: actual normal-workspace gateway/desktop handoff, denied membership, source/tool/configuration drift and recovery before dependent promotion. Evidence: /tmp/wright-desktop-workspace-tools-proof-20261017/.
+Pinned Playwright MCP0.0.78 in the existing isolated ARM64 image passed initialization, discovery and one actual browser_snapshot of about:blank. The first call failed explicitly because the caller omitted the bundle browser-cache environment; corrected evidence is retained. That prerequisite is now followed by the actual gateway/recovery checkpoint above. Neither establishes native Windows behavior. Evidence: /tmp/wright-desktop-workspace-tools-proof-20261017/.
+
+## Connections panel verification
+
+Readiness and workspace availability now have independent labels: missing
+credentials or an inactive provider no longer hides an existing workspace grant.
+An actual Chromium native-resource view called the real scoped MCP Disable tool
+and existing owner exactly once. Catalog readback confirmed the selected workspace
+was disabled, the second workspace stayed enabled, and the provider remained
+installed/inactive at its original version. No workflow ran. The controlled setup
+used the already installed immutable provider image under its catalog identity;
+it was operator setup, not a catalog installation or validation claim.
+
+All105 panel tests, TypeScript and affected ESLint checks pass. The rebuilt native
+resource is2266084bytes, SHA-256
+80f83b062702342875f490af1de6258f6025bc2f32cae1d3b58891e72f323890,
+with no external assets. At480pixels the panel has no horizontal overflow and
+keyboard focus advances from search to its button. Screenshots and exact calls:
+/tmp/wright-desktop-workspace-tools-proof-20261017/browser-1792207818540/.
+These are labeled simulated-host browser previews, not Windows captures. Initial
+API-readiness and duplicate-placeholder setup failures remain in the evidence;
+the two created workspaces were reconciled without replacements. The installed
+plugin and its service remain unchanged; only the completed owned normal-proof
+API was stopped after saving its recovery evidence.

@@ -3,14 +3,14 @@
 **Current integration checkpoint:16 October2026, with17 October UTC proof files.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
 installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The local
-completion candidate starts at73d44439 and adds the tested Start-error correction;
+completion candidate starts at354f7efe and adds the tested permission labels;
 it is not installed. Detailed current scope and remaining work are in
 [integration-completion-plan.md](integration-completion-plan.md).
 
 | Current area | Verified boundary | Remaining required work |
 |---|---|---|
 | Workspace/home/editor | Earlier native panel observation; installed0.14 protocol/resource check; shared editor retained | Current served Workflows, native Windows and lifecycle/settings parity |
-| Connections | Local scoped disable owner/API/transport/UI tests; catalog/custom HTTPS/setup retained | Actual owner-to-panel proof, full lifecycle/tool permission parity, real Windows callback/authentication |
+| Connections | Actual native bundle→MCP→owner scoped Disable; independent workspace/provider unchanged; readiness and availability labels; catalog/custom HTTPS/setup retained | Full lifecycle/tool permission parity, real Windows callback/authentication |
 | Files/portability/history | Installed0.14 bounded download transport; existing attachment/export/import/result owners | Actual Windows delivery, generic needed upload, historical revision navigation |
 | Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
 | Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
