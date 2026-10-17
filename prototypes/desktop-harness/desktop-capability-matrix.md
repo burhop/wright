@@ -12,6 +12,9 @@ The frozen 0.15.0 installation has a separately recorded combined-profile proof:
 protocol/resource check, normal gateway task, original-byte image task, synthetic
 review and exact ARM64 image smoke passed locally. The normal current merge gate
 failed at security-database freshness; independent later checks remain diagnostics.
+The [connection parity audit](connection-parity-audit.md) distinguishes native
+gaps from shared legacy import/credential/upgrade limitations. An existing UI
+button or API success flag is not evidence those capabilities are qualified.
 
 | Current area | Verified boundary | Remaining required work |
 |---|---|---|
