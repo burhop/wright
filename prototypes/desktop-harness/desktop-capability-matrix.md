@@ -3,7 +3,7 @@
 **Current integration checkpoint:16 October2026, with17 October UTC proof files.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
 installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The local
-completion candidate includes99d837f1 scoped file staging plus provider controls and typed local-command preview;
+completion candidate includes99d837f1 scoped file staging plus provider controls, typed local-command preview and read-only run evidence;
 it is not installed. Detailed current scope and remaining work are in
 [integration-completion-plan.md](integration-completion-plan.md).
 
@@ -11,13 +11,13 @@ it is not installed. Detailed current scope and remaining work are in
 |---|---|---|
 | Workspace/home/editor | Earlier native panel observation; installed0.14 protocol/resource check; shared editor retained | Current served Workflows, native Windows and lifecycle/settings parity |
 | Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop and tool switches; real pinned provider restart retains deny; workflow gateway excludes denied tool; readiness and availability separate; literal local-command preview and blocked saved-plan/lost-reply recovery | Local-command apply/validation, full configuration imports, uninstall/version management and private setup parity, real Windows callback/authentication |
-| Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners | Named candidate promotion, actual Windows delivery, historical revision navigation |
+| Files/portability/history | Installed0.14 download; local staged upload, exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners; old-source exact recorder view and pinned-hash download/drift denial | Named candidate promotion, actual Windows delivery; unsupported live/older-source text presentations |
 | Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
 | Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
 | Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
 | Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
 | Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
-| Gates/deployment |541 registry,265 prototype,132 panel then25 affected form checks and12 targeted API/service checks pass; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
+| Gates/deployment |541 registry,268 prototype,140 panel and12 targeted API/service checks pass; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
 
 Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
 establish Windows native acceptance. The host still reports no model/app identity;

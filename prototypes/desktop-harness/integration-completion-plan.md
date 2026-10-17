@@ -252,3 +252,67 @@ retained. Resource SHA8874f588a71c9b90407fb2f882f2b5dedb9940ca6ef7ee3ebae4b999ec
 management/secret-entry/workspace/history gaps, shared editor/Hermes and different
 existing engineering-workflow qualification, consolidated candidate/current gates,
 exact dev deployment and actual Windows acceptance.
+
+## Read-only saved run evidence
+
+Native Recent runs currently opens prior runs only through the current accepted
+source's common working view; its current-document load therefore blocks old
+evidence presentation. The underlying snapshot owner already permits old completed
+run reads; this change preserves that behavior. Reuse
+read_workflow_run for exact run/source recorder observations, complete bounded
+metadata and existing public result types/redaction. Add a closed app-only read
+port with no execution/decision/approval fields and a compact read-only presentation
+using the shared EngineeringResults component. Keep current-source process-action
+gates unchanged. Workspace-file downloads must match both actual transport bytes
+and the recorder's saved hash before requesting host delivery; changed/missing
+bytes are unavailable, never substituted. Cloud/application/value representations
+remain explicit unsupported presentations in this saved-file view. No new run,
+executor, lease, approval owner or database is introduced by inspection.
+
+Qualification: wrong workspace/session/path/run/digest, unsupported result versions
+and cross-run provenance must fail closed; metadata uses existing redaction. Prove
+unchanged record/artifact bytes after inspection, source-change history, exact saved
+file download and rejection of changed current bytes through actual resource/MCP/
+API/storage. Regress current file-download and working-view navigation separately.
+Use fresh isolated digital state and the existing digital inspection-brief source
+unchanged for history testing. This is a history/runtime proof, not CAD measurement
+or the still-required substantially different substantive engineering regression.
+
+Implemented: a closed typed app-only recorder read, existing public result defaults
+and redaction, exact source/run matching and unsupported-version/foreign-provenance
+denial. Recent runs now separates Read saved evidence from Open working view.
+The read-only view cannot issue execution, approval, review or continuation. It
+reuses EngineeringResults for saved-file metadata and the current file-download
+owner with an additional recorder hash check before creating a download. Missing
+recorded hashes, changed bytes and unsupported live representations stay explicit.
+
+Qualification:268 prototype tests,140 native-panel tests, TypeScript and affected
+lint pass. A fresh unchanged existing digital inspection-brief workflow completed
+through this desktop's actual response, preserved all supplied dimensions/hole
+count and explicitly made no measurement/release claim. After saving a new source
+revision with only its presentation name changed, exact old-run metadata and bytes
+remained readable. A stale-source new Start was denied with no extra execution.
+Actual Recent runs→saved evidence→Chromium download matched the recorded1057bytes
+and SHA1d40fad18b65f76e5660ca9add8312a8f6f83b3a7d351ec5e0b83ec83e09129c.
+A deliberate change to only this fresh test artifact was refused before a second
+download; the original bytes were restored. A fresh browser then downloaded those
+original bytes again. Recorder JSON and current accepted source remained unchanged;
+480px had no overflow. The named installed plugin remains0.14.0.
+
+Retained probe corrections: completed old-run snapshots were already readable,
+contrary to the probe's initial expected read denial; preserve the owner and test
+stale-source mutation denial instead. Result representation zero was a value
+locator, so the corrected probe selects the explicit workspace_file representation.
+Canonical source runs live in recorder JSON, not the separate native runner's
+workspace_workflow_runs table: one completed canonical record, one start receipt
+and one reasoning request were observed; native table remains zero. No run was
+restarted to correct these probes.
+
+Evidence: /tmp/wright-desktop-run-history-proof-20261017/checkpoint.json, retained
+failed probes, browser-1792212535974/report.json (changed-file denial) and
+browser-1792212584493/report.json (restored exact delivery). Resource
+ed82e57f31938e690fe97b3f77853cdf167de98d8d767c729bac516fcae1844a,
+2278813bytes;47tools. This is local runtime/history verification, not actual
+Windows acceptance or the required distinct substantive engineering regression.
+Official Trivy DB manifest remains unchanged at the latest interval check; push
+and dev integration still cannot proceed through that security gate.

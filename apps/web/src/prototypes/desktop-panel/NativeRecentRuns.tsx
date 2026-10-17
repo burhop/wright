@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
+import { NativeRunEvidence } from "./NativeRunEvidence";
 
 export interface RecordedRun {
   run_id: string | null;
@@ -27,9 +28,11 @@ export function NativeRecentRuns({
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
+  const [selected, setSelected] = useState<RecordedRun>();
   useEffect(() => {
     let active = true;
     setRuns([]);
+    setSelected(undefined);
     setError("");
     if (!path) return;
     setLoading(true);
@@ -100,6 +103,14 @@ export function NativeRecentRuns({
             <strong>{run.status.replaceAll("_", " ")}</strong>
             <small>{run.started_at ?? "Start time unreported"}</small>
             <small>{run.run_id ?? run.path}</small>
+            {run.run_id && run.source_digest && (
+              <button
+                disabled={opening || loading}
+                onClick={() => setSelected(run)}
+              >
+                Read saved evidence
+              </button>
+            )}
             {onOpen && run.run_id && run.source_digest ? (
               <button
                 disabled={opening || loading}
@@ -115,7 +126,7 @@ export function NativeRecentRuns({
                     .finally(() => setOpening(false));
                 }}
               >
-                Inspect run
+                Open working view
               </button>
             ) : (
               <small>Exact run navigation unavailable for this record.</small>
@@ -123,6 +134,15 @@ export function NativeRecentRuns({
           </li>
         ))}
       </ul>
+      {selected?.run_id && selected.source_digest && path && (
+        <NativeRunEvidence
+          key={`${path}:${selected.run_id}:${selected.source_digest}`}
+          workspace={workspace}
+          path={path}
+          run={selected}
+          call={call}
+        />
+      )}
     </section>
   );
 }

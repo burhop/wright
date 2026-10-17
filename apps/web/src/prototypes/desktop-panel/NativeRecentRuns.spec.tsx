@@ -51,7 +51,7 @@ it("reads only on selection and opens the exact recorded run on explicit click",
   });
   await screen.findByText("waiting human");
   expect(onOpen).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole("button", { name: "Inspect run" }));
+  fireEvent.click(screen.getByRole("button", { name: "Open working view" }));
   await waitFor(() => expect(onOpen).toHaveBeenCalledWith(path, run));
   expect(call).toHaveBeenCalledWith("wright_workflow_history", {
     workspace_id: "w",
@@ -89,10 +89,60 @@ it("does not retry an unavailable exact run", async () => {
   fireEvent.change(screen.getByLabelText("Workflow history"), {
     target: { value: path },
   });
-  fireEvent.click(await screen.findByRole("button", { name: "Inspect run" }));
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Open working view" }),
+  );
   expect(await screen.findByRole("alert")).toHaveTextContent(
     "exact run could not be opened",
   );
   expect(onOpen).toHaveBeenCalledTimes(1);
   expect(call).toHaveBeenCalledTimes(1);
+});
+
+it("reads a historical record without opening the current-source working view", async () => {
+  const record = {
+    content: [],
+    structuredContent: {
+      workspace_id: "w",
+      session_id: "s",
+      workflow_path: path,
+      record: {
+        run_id: "r",
+        source_digest: run.source_digest,
+        source_matches_current: false,
+        status: "completed",
+        results: [],
+      },
+    },
+  };
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(response())
+    .mockResolvedValue(record);
+  const onOpen = vi.fn();
+  render(
+    <NativeRecentRuns
+      workspace={workspace}
+      paths={[path]}
+      call={call}
+      onOpen={onOpen}
+    />,
+  );
+  fireEvent.change(screen.getByLabelText("Workflow history"), {
+    target: { value: path },
+  });
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Read saved evidence" }),
+  );
+  await screen.findByText(/workflow has changed since this run/);
+  expect(onOpen).not.toHaveBeenCalled();
+  expect(call).toHaveBeenLastCalledWith("wright_recorded_run_read", {
+    request: {
+      workspace_id: "w",
+      session_id: "s",
+      path,
+      run_id: "r",
+      source_digest: run.source_digest,
+    },
+  });
 });

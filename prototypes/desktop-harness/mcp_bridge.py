@@ -30,6 +30,7 @@ import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
 from desktop_backend import (
     FileUploadRequest, ConnectionControlRequest, LocalConnectionPreviewRequest,
+    RecordedRunRequest,
 )
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
@@ -964,6 +965,14 @@ def server(client, *, native_editor=False, native_working_view=False):
             "workflow_path": path,
             "runs": [{key: row.get(key) for key in fields} for row in document["runs"]],
         }
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_recorded_run_read(request: RecordedRunRequest) -> dict[str, Any]:
+        """Read exact saved run evidence, including older source revisions. Never resumes, reviews or executes."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/run-records/read", json=request.model_dump(),
+        )
 
     @mcp.tool(annotations=read)
     async def wright_reasoning_pending(workspace_id: str, session_id: str) -> dict:

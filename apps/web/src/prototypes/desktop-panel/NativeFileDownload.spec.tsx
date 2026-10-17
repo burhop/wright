@@ -103,3 +103,44 @@ it("discards a late reply after closing the selected file", async () => {
   await waitFor(() => expect(call).toHaveBeenCalledOnce());
   expect(URL.createObjectURL).not.toHaveBeenCalled();
 });
+
+it("rejects current bytes that differ from the saved run's hash before requesting delivery", async () => {
+  const call = vi.fn().mockResolvedValue(result());
+  render(
+    <NativeFileDownload
+      call={call}
+      workspace={workspace}
+      path="part.step"
+      recordedEvidence={{ runId: "recorded", sha256: "f".repeat(64) }}
+    />,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Download file" }));
+  expect(await screen.findByRole("status")).toHaveTextContent(
+    "no longer matches this run",
+  );
+  expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+});
+it("verifies actual bytes against both response and exact recorder hash", async () => {
+  const call = vi.fn().mockResolvedValue(result());
+  render(
+    <NativeFileDownload
+      call={call}
+      workspace={workspace}
+      path="part.step"
+      recordedEvidence={{
+        runId: "recorded",
+        sha256:
+          "9c17195371edce04de3f349ccc57d389a1ca5c687a1c6a0d00153227fe52987e",
+      }}
+    />,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Download file" }));
+  expect(await screen.findByRole("status")).toHaveTextContent(
+    "Bytes match this saved run",
+  );
+  expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "File delivery is not confirmed",
+  );
+});

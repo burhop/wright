@@ -34,6 +34,7 @@ export type HomeCall = (
     | "wright_workspace_file_download"
     | "wright_workspace_file_upload"
     | "wright_workflow_history"
+    | "wright_recorded_run_read"
     | "wright_connections_list"
     | "wright_connection_plans"
     | "wright_connection_plan"

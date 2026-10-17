@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
 
-/** Current-file retrieval only; recorded run evidence has its own owner. */
+/** Retrieve current bytes; optional recorder provenance must match before delivery. */
 export function NativeFileDownload({
   call,
   workspace,
   path,
+  recordedEvidence,
 }: {
   call: HomeCall;
   workspace: DesktopWorkspace;
   path: string;
+  recordedEvidence?: { runId: string; sha256: string };
 }) {
   const alive = useRef(true);
   const pending = useRef(false);
@@ -48,6 +50,17 @@ export function NativeFileDownload({
       if (data.supported === false) {
         setMessage(
           "Download unavailable. Choose a visible workspace file up to 16 MiB.",
+        );
+        return;
+      }
+      if (
+        recordedEvidence &&
+        (!recordedEvidence.runId ||
+          !/^[a-f0-9]{64}$/.test(recordedEvidence.sha256) ||
+          data.sha256 !== recordedEvidence.sha256)
+      ) {
+        setMessage(
+          "The saved file no longer matches this run’s recorded evidence. No download was requested.",
         );
         return;
       }
@@ -92,7 +105,9 @@ export function NativeFileDownload({
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
       setMessage(
-        "Download requested. Check your downloads. This is the current saved file, not verified run evidence.",
+        recordedEvidence
+          ? "Download requested. Bytes match this saved run; check your downloads. File delivery is not confirmed."
+          : "Download requested. Check your downloads. This is the current saved file, not verified run evidence.",
       );
     } catch {
       if (alive.current)

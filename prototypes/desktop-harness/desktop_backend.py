@@ -1,6 +1,7 @@
 """Opt-in prototype composition over Wright's existing services and owners."""
 
 import base64
+import asyncio
 import hashlib
 from importlib.metadata import version
 import json
@@ -12,7 +13,7 @@ from urllib.parse import urlsplit
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from agent_adapters.desktop_reasoning import DesktopWorkflowReasoner
 from core.desktop_reasoning import (
@@ -20,7 +21,7 @@ from core.desktop_reasoning import (
     DesktopHarnessBinding,
     DesktopReasoningResponse,
 )
-from core.process_validation import canonical_digest
+from core.process_validation import canonical_digest, Digest, Identifier
 from data_vault.desktop_reasoning_repository import (
     DesktopHandoffConflict,
     DesktopReasoningRepository,
@@ -56,6 +57,15 @@ class FileUploadRequest(BaseModel):
     filename: str = Field(min_length=1, max_length=160)
     sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     content_base64: str = Field(min_length=1, max_length=22369624)
+
+
+class RecordedRunRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    workspace_id: Identifier
+    session_id: Identifier
+    path: str = Field(min_length=1, max_length=256)
+    run_id: Identifier
+    source_digest: Digest
 
 
 class AnswerRequest(BaseModel):
@@ -934,6 +944,45 @@ class DesktopBackend:
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "tree": await self.service.files.tree(row["local_path"]),
+            }
+
+        @router.post("/run-records/read")
+        async def read_recorded_run(body: RecordedRunRequest):
+            from core.redaction import redact_evidence
+            from workspace_service.workflow_run_record import (
+                read_workflow_run, WorkflowRunReadError,
+            )
+            from workspace_service.workflow_results import EngineeringResult
+
+            row = self.workspace(body.workspace_id, body.session_id)
+            try:
+                record = await asyncio.to_thread(
+                    read_workflow_run, row["local_path"], body.path, body.run_id,
+                    complete_results=True,
+                )
+                if record["source_digest"] != body.source_digest:
+                    raise HTTPException(409, "Recorded source identity differs")
+                # Restore the existing public result defaults after the recorder's
+                # compact projection; legacy malformed metadata stays unavailable.
+                result_type = TypeAdapter(EngineeringResult)
+                def public_result(item):
+                    if (item.get("schema_version") != 1
+                            or item.get("provenance", {}).get("run_id") != body.run_id):
+                        raise ValueError("Unsupported result identity or version")
+                    return result_type.validate_python({
+                        **item, "exports": [public_result(child) for child in item.get("exports", [])],
+                    }).to_dict()
+                record["results"] = [
+                    public_result(item)
+                    for item in record["results"]
+                ]
+                for previous in record.get("previous_results", []):
+                    previous["result"] = public_result(previous["result"])
+            except (WorkflowRunReadError, ValueError, TypeError, KeyError):
+                raise HTTPException(409, "Exact saved run evidence is unavailable") from None
+            return {
+                "workspace_id": body.workspace_id, "session_id": body.session_id,
+                "workflow_path": body.path, "record": redact_evidence(record),
             }
 
         @router.post("/files/upload", dependencies=[Depends(require_admin)])
