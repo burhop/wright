@@ -1,11 +1,11 @@
 # Wright desktop walkthrough
 
-**0.15.0 is prepared, not installed yet.** First ask:
+**0.15.0 is installed and verified on GB10.** In a fresh conversation, first ask:
 
 > Check Wright's connection status and tell me which version and capabilities are active. Do not start a workflow.
 
-After the named update is verified, use a fresh conversation on the existing GB10
-host. Keep this file open in another tab. No desktop restart is needed.
+Use the existing GB10 host from the Windows desktop. Keep this file open in
+another tab. No desktop restart is needed. Older conversations can retain old tools.
 
 1. **Open:** “Open Wright home in the panel beside this conversation.”
 2. **Workspace:** “Create a Wright workspace called Desktop UI Check and open it.”

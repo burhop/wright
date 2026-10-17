@@ -1,24 +1,29 @@
 # Desktop integration qualification — 17 October
 
-Experimental, locally qualified candidate; **not integrated, installed or Windows accepted**.
+Experimental **0.15.0 installed and locally verified**; dev integration and
+Windows acceptance remain incomplete.
 The controlling scope remains [the submitted goal](integration-completion-goal.md).
 
 ## Frozen candidate
 
-- Runtime source: `2d4f589e7191d645d1f474863dcecad5b264a37d`, clean Git archive.
-- Runtime: `/tmp/wright-desktop-completion-2d4f589e-runtime-20261017`.
-- Isolated environment: `/tmp/wright-desktop-completion-015-env-20261017`.
+- Runtime source: `6bce016b11c3e1436ae9324446e6fc424a718fdf`, clean Git archive.
+- Runtime: `/tmp/wright-desktop-completion-6bce016b-runtime-20261017`.
+- Isolated environment: `/tmp/wright-desktop-completion-015-final-env-20261017`.
 - Python 3.13.12, MCP SDK 1.30.0; JavaScript MCP SDK 1.32.1 / MCP Apps 1.7.5.
-- Prepared named plugin: 0.15.0, 51 tools. Its skill is separately versioned and
-  hashed in `candidate-015-manifest.json`; it is not an observed provider prompt.
-- Inline native resource: 2,302,794 bytes, SHA-256
-  `d4ff6634122638848c8823cda423b025e9ac5b2bb1f5da38e309f8fc0e2d03cb`.
+- Installed named plugin: 0.15.0, 51 tools, MCP protocol `2025-11-25`. Its skill
+  source is c579b225, hashed in `final-candidate-015-manifest.json`; it is not an
+  observed provider prompt. [Installed receipt](installed-015-evidence.json).
+- Inline native resource: 2,303,045 bytes, SHA-256
+  `bd96f9cd07d16a976dc1af3283f89d669aeada2e64a6b2256819b5ee65e5c56e`.
 - Inherited engineering image and local-review profiles retained; normal workspace
   MCP tasks enabled. Private task enrollment and confined-inspection profiles off.
   Generated UI authoring remains gated. No alternate model or authentication route.
 
 Primary receipts: `/tmp/wright-desktop-completion-qualification-20261017/`.
-The compact combined-profile receipt is `combined-015-checkpoint.json`.
+The compact combined-profile receipt is `combined-015-checkpoint.json`, from the
+2d4f589e predecessor. Frozen Python/SDK/profile fields match the final candidate;
+only its native resource hash changed. The final exact-binding task and old-binding
+denial are in `final-015-brief-readonly-reconciliation.json`.
 Earlier detailed feature receipts remain in the existing evidence index; none are
 replaced by this checkpoint.
 
@@ -31,9 +36,27 @@ replaced by this checkpoint.
 | Separate review | Existing synthetic brief/review fixture persisted `changes_requested`, rejected a stale subject and reopened the exact decision; run `9ed2292a056c44d9b967a64394d895ce` | No genuine engineering approval or external effect |
 | Different workflow | Existing bounded 083 digital focus-wheel process: two native Blender operations, preserved geometry requirements, independent mesh checks, five matching artifact hashes | No manufacturing, strength, fit or physical acceptance; full named campaigns deferred |
 | Rebuilt native bytes | Read-only exact-run PNG display/download and editor return; 480px without overflow; no additional start or tool effect | Simulated host in GB10 Chromium, not Windows desktop capture |
-| Docker | Exact ARM64 candidate image `sha256:ba16df6201ba239b5975784784c2100a59a58bbc83073e54d0e46ebcf9540c97` passed the existing smoke, including cold API/Hermes readiness with external networking disabled | Historical backup-restore scenario printed by the smoke was not newly executed |
+| Docker | Exact final ARM64 image `sha256:75276146f3b0375dfe14a761e287da8e818b31ea8fa306c7446b67b3cdc1af06` passed the existing smoke, including cold API/Hermes readiness with external networking disabled | Historical backup-restore scenario printed by the smoke was not newly executed |
 | Repository gates | Unmodified normal merge gate passed SDK and runtime/Node dependency audits, then **failed** on expired vulnerability DB metadata | No push, merge, full-gate pass or dev deployment claim; later stages run separately as diagnostics |
-| Installed state | Read-only inventory: two workspaces, owned absolute paths, zero canonical run records/start receipts/reasoning requests | 0.14.0 remains unchanged; inventory is not a backup or update |
+| Installed state | Named 0.14→0.15 update verified: two unchanged workspace rows/paths, 46 files and one symlink preserved, credential/token bytes preserved, unrelated settings semantically unchanged, zero new runs/requests | Actual Windows native panel and download acceptance still pending |
+| Broad regressions | 762 API, 444 adapter, 350 core, 220 data-vault, 185 model-registry, 546 registry and 2,758 workspace checks passed; 1,992 frontend checks, 13 Hermes-plugin checks and strict docs passed; coverage 86.42% | Package/host skips retained; warning-mode broad MyPy still reports the existing duplicate conftest issue |
+| Served editor | Existing Chromium/desktop-surface tests: 141 passed, five explicitly skipped, no failures or retries | Installed-Hermes/appliance/opt-in live cases require their separate harnesses; WebKit/Windows qualification is separate |
+
+The broad root suite retained one synthetic leak-fixture failure, alongside
+1,567 passes and 66 skips. Its unused token is now generated at runtime; eight
+affected redaction/scanner checks pass with the scanner and allowlist unchanged.
+The original failure is preserved. This does not turn the stopped full gate green.
+
+The final digital brief completed as `bde12fb4d3fe40eebd174a2f9850cbe2`, and the
+prior resource binding was denied. The original observer compared raw Markdown
+with the saved document and failed on one trailing newline. Read-only recovery
+verified exact bytes against the existing `validate_response` contract and the
+unchanged canonical record; no run or reply was repeated. Source, response and
+artifact hashes remain attributable to their actual boundaries.
+
+Current native CSS also corrects observed serif navigation and a dark frame under
+a light-only host context. Actual dark fallback, shared light palette and host
+font/color overrides pass; see [style evidence](native-style-evidence.json).
 
 The initial installed-state inventory query assumed an absent `workspaces` table;
 it failed without mutation. The corrected read uses the existing
@@ -42,15 +65,15 @@ in the receipts rather than being reported as successful first attempts.
 
 ## Delivery conditions
 
-Finish the current broad regression checks and record every skip/failure. The
-upstream Trivy database must satisfy the unchanged freshness policy before a
+The upstream Trivy database must satisfy the unchanged freshness policy before a
 normal gate can pass. Do not substitute a predecessor image, change the clock,
 waive the policy or call supplemental commands a passing full gate.
 
-The named update must preserve the original installed state and workspace paths;
-copying its SQLite database under a new root does not migrate absolute paths.
-Prepare an exact private backup and scoped rollback, check quiescence again,
-then verify the installed command and preserved data. No desktop restart.
+The named local update is complete under the goal's separate authorization. It
+retains `/tmp/wright-desktop-home-014-mcp130-state-20261016-01` and API8198,
+PID3528721. Exact private backups, scoped rollback and CLI/preservation receipts
+are retained. No desktop restart, unrelated setting, new run or release occurred.
+This Python-plugin update does not waive the failed repository image gate.
 
 Actual Windows rendering/delivery and Windows-to-GB10 real OAuth completion
 remain required external qualification. No Windows control driver is exposed in

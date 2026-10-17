@@ -2,22 +2,32 @@
 
 Controlling scope: [submitted goal](integration-completion-goal.md). It supersedes full named engineering-campaign acceptance; it retains bounded tool/review/file/recovery proofs and different-workflow regression. Experimental label remains.
 
+**Current delivery, 17 October 08:14 UTC:** named 0.15.0 is installed and its
+exact command/resource/profile verified. Frozen runtime6bce016b, API8198,
+PID3528721; existing state and two workspace paths retained. Current proof,
+failure/skip attribution and limits are in
+[the consolidated checkpoint](integration-qualification-20261017.md) and
+[installed evidence](installed-015-evidence.json). The walkthrough is ready for
+a fresh Windows conversation. No follow-on push/merge/dev deployment; repository
+security freshness and actual Windows authentication/delivery remain blockers.
+The earlier candidate/preparation records below retain their historical scopes.
+
 ## Baseline and delivery
 
 Follow-on branch codex/desktop-integration-completion starts at11705f52 from PR159. That exact correction has a green full merge gate; its normal push gate is blocked by freshly downloaded but expired upstream vulnerability metadata. Both the default mirror and official GHCR source returned the same expired database. Preserve the correction, failed gate, and policy. This isolated follow-on permits independent implementation without dirtying its qualification. Reconcile integrated dev before delivery.
 
-Installed0.14.0 remains frozen83c2ca70. API restored from that exact runtime after an isolated SQLite backup and verification of zero workflow runs/pending reasoning requests. Installed command exposes41tools and the exact native resource; browser preview port5198 remains unavailable. No new run or plugin configuration was changed. Local MCP/browser proofs are not Windows acceptance.
+The starting installed0.14.0 was frozen83c2ca70. Its API was restored from that exact runtime after an isolated SQLite backup and verification of zero workflow runs/pending reasoning requests. That command exposed41tools; browser preview port5198 was unavailable. This baseline observation did not change runs or plugin configuration. The authorized0.15 update is recorded above. Local MCP/browser proofs are not Windows acceptance.
 
 Evidence index: /tmp/wright-desktop-integration-completion-20261016/; earlier gates/receipts retained at /tmp/wright-desktop-file-download-evidence-20261015/. Current matrix: acceptance-matrix.md in the new external index. Earlier versioned matrices are historical.
 
 Current consolidated qualification and delivery conditions:
 [17 October checkpoint](integration-qualification-20261017.md). The frozen 0.15.0
 candidate has actual combined-profile gateway/image/review and exact-image smoke
-evidence. The installed named plugin remains 0.14.0. The normal merge gate is
+evidence and is now installed as named0.15.0. The normal merge gate is
 red at upstream security-database freshness; supplemental regression stages do
 not replace it. No follow-on push, merge or exact dev deployment is claimed.
-Use the [short walkthrough](desktop-015-walkthrough.md) after the installed update
-is verified; it explicitly distinguishes the prepared and active versions.
+Use the [short walkthrough](desktop-015-walkthrough.md) in a fresh Windows
+conversation; installed-byte verification and Windows acceptance stay separate.
 
 ## Work sequence
 

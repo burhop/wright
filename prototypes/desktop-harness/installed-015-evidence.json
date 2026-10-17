@@ -1,0 +1,94 @@
+{
+  "status": "installed experimental local prototype; dev integration and Windows acceptance incomplete",
+  "source_head": "6bce016b11c3e1436ae9324446e6fc424a718fdf",
+  "version": "0.15.0",
+  "protocol": "2025-11-25",
+  "tool_count": 51,
+  "resource": {
+    "uri": "ui://wright/workflow/bd96f9cd07d16a976dc1af3283f89d669aeada2e64a6b2256819b5ee65e5c56e.html",
+    "sha256": "bd96f9cd07d16a976dc1af3283f89d669aeada2e64a6b2256819b5ee65e5c56e",
+    "bytes": 2303045
+  },
+  "python": "3.13.12",
+  "mcp_sdk": "1.30.0",
+  "js_mcp_sdk": "1.32.1",
+  "mcp_apps_sdk": "1.7.5",
+  "node": "26.0.0",
+  "codex_cli": "0.159.2",
+  "state": "/tmp/wright-desktop-home-014-mcp130-state-20261016-01",
+  "api_port": 8198,
+  "api_pid": 3528721,
+  "runtime": "/tmp/wright-desktop-completion-6bce016b-runtime-20261017",
+  "environment": "/tmp/wright-desktop-completion-015-final-env-20261017",
+  "profile": {
+    "image_input_profile": "inline-png-jpeg-engineering-v1",
+    "local_reviews": true,
+    "workspace_mcp_tasks": true,
+    "enrolled_mcp_tasks": false,
+    "confined_inspection": false
+  },
+  "candidate_files_match_installed": true,
+  "unrelated_configuration_semantically_unchanged": true,
+  "preservation": {
+    "workspace_files_checked": 46,
+    "workspace_symlinks_preserved_without_following": 1,
+    "workspace_rows_and_paths_unchanged": true,
+    "counts": {
+      "process_start_receipts": 0,
+      "desktop_reasoning_requests": 0,
+      "desktop_reasoning_responses": 0,
+      "workspace_workflow_runs": 0
+    },
+    "token_and_existing_credential_file_bytes_preserved": true,
+    "observer_correction": "Initial verifier assumed every manifest entry had a content hash; symlinks are recorded by link target. Corrected comparison checks links as links and never follows them or changes data.",
+    "scope": "Post-update read-only preservation check. No workflow/source/file/grant/credential mutation or new run."
+  },
+  "final_binding_proof": {
+    "status": "passed_after_readonly_reconciliation",
+    "run_id": "bde12fb4d3fe40eebd174a2f9850cbe2",
+    "output_sha256": "bd6bc24a775bea1c17fd32300fe530f493365d2346c2a2b173803187ba9a2662",
+    "prior_binding_denied": true,
+    "observer_failure_retained": true,
+    "boundary": "Existing Markdown validation removes final newline; saved bytes match existing owner contract and canonical hash. Read-only reconciliation, no repeated run or reply."
+  },
+  "existing_bounded_workflow": "f93f69fde7cf48a9aea48772ababe8bd; actual two Blender operations; no repeat during current-resource read/display/download",
+  "docker": {
+    "image": "wright-desktop-gate:completion-6bce016b",
+    "image_id": "sha256:75276146f3b0375dfe14a761e287da8e818b31ea8fa306c7446b67b3cdc1af06",
+    "architecture": "arm64",
+    "smoke_exit_code": 0
+  },
+  "local_regressions": {
+    "served_chromium_desktop_surface": {
+      "passed": 141,
+      "skipped": 5,
+      "failed": 0
+    },
+    "full_frontend": {
+      "passed": 1992,
+      "files": 221
+    },
+    "hermes_plugin": 13,
+    "workspace_service": 2758,
+    "registry": 546,
+    "agent_adapters": {
+      "passed": 444,
+      "skipped": 21
+    },
+    "api": 762,
+    "core": 350,
+    "data_vault": 220,
+    "model_registry": 185,
+    "release_native_coverage_percent": 86.42,
+    "root_suite": "1567passed66skipped1 synthetic leak-fixture failure retained; corrected affected8checks pass. Normal full gate not passed.",
+    "strict_docs": "passed"
+  },
+  "limits": [
+    "Windows native panel/file delivery pending fresh-chat observation",
+    "Real Windows-to-GB10 OAuth completion and personal consent unverified",
+    "Normal repository gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment",
+    "Generated UI authoring and automatic reasoning restart/background wakeups unavailable",
+    "Model/app identity/cost/global native tool ceiling unreported"
+  ],
+  "evidence_directory": "/tmp/wright-desktop-completion-qualification-20261017"
+}

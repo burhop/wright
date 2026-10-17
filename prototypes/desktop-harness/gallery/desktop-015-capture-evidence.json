@@ -1,0 +1,14 @@
+{
+  "canvas": {
+    "source": "/tmp/wright-desktop-mesh-workflow-proof-20261017/browser-1792224964009/shared-canvas-wide.png",
+    "saved": "/tmp/wright-desktop-integration-completion/prototypes/desktop-harness/gallery/desktop-015-shared-canvas-gb10-preview.png",
+    "sha256": "194a1983a85f3f7ced2f0bf7f68b9fda72c67e14d7c63516e4c5465cd11e9431"
+  },
+  "light_frame": {
+    "source": "/tmp/wright-desktop-completion-qualification-20261017/native-font-browser-1792224125976/light-fallback.png",
+    "saved": "/tmp/wright-desktop-integration-completion/prototypes/desktop-harness/gallery/desktop-015-light-frame-gb10-preview.png",
+    "sha256": "df126be6012867b2e969bbfb3fa6789dd23460de2c7ce4ba53e7e09b2ca20968"
+  },
+  "resource_sha256": "bd96f9cd07d16a976dc1af3283f89d669aeada2e64a6b2256819b5ee65e5c56e",
+  "scope": "Actual Wright native resource/MCP/API shown in a simulated GB10 Chromium host, not a Windows desktop capture. Existing accepted workflow only; no additional engineering run. No publication."
+}

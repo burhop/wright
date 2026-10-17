@@ -1,5 +1,12 @@
 # Wright inside the desktop harness — local prototype
 
+**Current, 17 October:** experimental named plugin 0.15.0 is installed on GB10
+from frozen source6bce016b. Start with the [short walkthrough](desktop-015-walkthrough.md)
+and [current qualification/limits](integration-qualification-20261017.md).
+The existing workspaces are preserved. Dev integration is blocked by the normal
+security-database freshness gate; Windows acceptance is separate. Earlier paths,
+profiles and checkpoints below are historical, not installation instructions.
+
 Current native-chat private-network viewing evidence is recorded in
 [private-lan-access.md](private-lan-access.md). Workspace `dave` and its completed
 welcome workflow now open through an automatically established browser session
