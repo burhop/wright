@@ -116,12 +116,15 @@ class DesktopBackend:
         image_inputs=False,
         engineering_image_inputs=False,
         enrolled_mcp_tasks=False,
+        workspace_mcp_tasks=False,
         local_reviews=False,
     ):
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
         if image_inputs and engineering_image_inputs:
             raise ValueError("Choose one explicit image-input profile")
+        if workspace_mcp_tasks and (enrolled_mcp_tasks or confined_inspection):
+            raise ValueError("Choose either workspace authority or private task enrollment")
         image_profile = (
             ENGINEERING_IMAGE_PROFILE
             if engineering_image_inputs
@@ -138,6 +141,7 @@ class DesktopBackend:
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
         self.enrolled_mcp_tasks = enrolled_mcp_tasks
+        self.workspace_mcp_tasks = workspace_mcp_tasks
         self.local_reviews = local_reviews
         self.image_inputs = image_inputs or engineering_image_inputs
         self.repository = DesktopReasoningRepository(service.db_path)
@@ -146,6 +150,7 @@ class DesktopBackend:
             "image_inputs": self.image_inputs,
             "image_input_profile": image_profile,
             "enrolled_mcp_tasks": enrolled_mcp_tasks,
+            "workspace_mcp_tasks": workspace_mcp_tasks,
             "local_reviews": local_reviews,
             "files": {},
             "confined_inspection": confined_inspection,
@@ -856,6 +861,10 @@ class DesktopBackend:
         if row is None:
             raise HTTPException(403, "Desktop session is unavailable")
         self.workspace(row["workspace_id"], session_id)
+        if self.workspace_mcp_tasks and body.get("integration_policy_digest") is not None:
+            raise HTTPException(
+                403, "Workspace task execution cannot use integration-test authority"
+            )
         document = await self.service.workflow_sources.read(
             row["local_path"], body.get("path")
         )
@@ -897,7 +906,7 @@ class DesktopBackend:
         if any(step.cad or step.application for step in plan.steps) or (
             reviews
             and (
-                not (self.enrolled_mcp_tasks or self.local_reviews)
+                not (self.enrolled_mcp_tasks or self.workspace_mcp_tasks or self.local_reviews)
                 or not local_reviews_only
             )
         ):
@@ -907,10 +916,16 @@ class DesktopBackend:
             )
         tasks = [step for step in plan.steps if step.agent_task]
         direct = [step for step in plan.steps if step.tool_name]
-        if direct and not self.enrolled_mcp_tasks:
+        if direct and not (self.enrolled_mcp_tasks or self.workspace_mcp_tasks):
             raise HTTPException(
                 503, "Direct-tool execution requires separate enrollment qualification"
             )
+        if self.workspace_mcp_tasks:
+            if any(not step.task_tool_allowlist for step in tasks):
+                raise HTTPException(503, "Workspace MCP tasks require explicit tool lists")
+            # Normal preparation and dispatch retain gateway workspace grants,
+            # exact schemas, bounded decisions and per-action approval checks.
+            return
         if reviews and self.local_reviews and not tasks and not direct:
             if operation in {
                 "/api/workspace/process-interfaces/runs",

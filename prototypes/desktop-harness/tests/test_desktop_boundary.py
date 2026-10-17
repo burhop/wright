@@ -1,4 +1,5 @@
 import asyncio
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
@@ -541,4 +542,55 @@ def test_engineering_profile_is_explicit_frozen_and_cannot_be_ambiguous(boundary
             5201,
             image_inputs=True,
             engineering_image_inputs=True,
+        )
+
+
+def test_workspace_profile_uses_normal_authority_without_private_enrollment(boundary):
+    from desktop_backend import DesktopBackend
+
+    original, service, _ = boundary
+    backend = DesktopBackend(service, original.state, 5201, workspace_mcp_tasks=True)
+    check(backend, grant=False)
+    service.workflow_integration_policies.get.assert_not_called()
+    versions = json.loads((original.state / "desktop-versions.json").read_text())
+    assert versions["workspace_mcp_tasks"] is True
+    assert versions["enrolled_mcp_tasks"] is False
+    assert versions["confined_inspection"] is False
+
+
+def test_workspace_profile_rejects_integration_authority_before_execution(boundary):
+    from desktop_backend import DesktopBackend
+
+    original, service, _ = boundary
+    backend = DesktopBackend(service, original.state, 5201, workspace_mcp_tasks=True)
+    with pytest.raises(HTTPException, match="integration-test authority") as failure:
+        check(backend, grant=True)
+    assert failure.value.status_code == 403
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+def test_workspace_profile_still_requires_explicit_task_tools(boundary):
+    from desktop_backend import DesktopBackend
+
+    original, service, source = boundary
+    service.workflow_sources.read.return_value.source = source.replace(
+        '"mcp_task_tools":["inspect_file"],', ""
+    )
+    backend = DesktopBackend(service, original.state, 5201, workspace_mcp_tasks=True)
+    with pytest.raises(HTTPException, match="explicit tool lists") as failure:
+        check(backend, grant=False)
+    assert failure.value.status_code == 503
+    service.workflow_integration_policies.get.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "private", [{"confined_inspection": True}, {"enrolled_mcp_tasks": True}]
+)
+def test_workspace_profile_cannot_mix_private_task_enrollment(boundary, private):
+    from desktop_backend import DesktopBackend
+
+    original, service, _ = boundary
+    with pytest.raises(ValueError, match="workspace authority"):
+        DesktopBackend(
+            service, original.state, 5201, workspace_mcp_tasks=True, **private
         )
