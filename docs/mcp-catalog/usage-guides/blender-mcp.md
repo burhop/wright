@@ -252,3 +252,40 @@ With the original exported STL mounted read-only, the supported MCP
 artifact reopening in a fresh native process, not automatic durable workflow
 recovery. The export was not replayed. Both isolated native containers are
 stopped and retained; detailed receipt: `artifact-reopen-check.json`.
+
+## GB10 desktop bounded workflow proof —17 October2026
+
+The same pinned source/image/package/native versions above were reused in a
+fresh non-root, safe-mode-enabled, network-disabled/read-only container with
+only one isolated writable Wright workspace. Normal source review, setup plan,
+approval/apply, protocol validation and workspace enablement owners registered
+it;27 unrelated tools were disabled, leaving only execute_blender_code. This
+does not change global catalog support or install software in Wright's base.
+
+The existing083 bounded common-digital focus-wheel source ran through native
+Workflows→shared editor→common view→Wright runtime/gateway. Only host paths and
+resolved provider/schema changed; original geometry and quoted requirements were
+preserved. Two actual native operations constructed then consumed the same-run
+STL, repaired/oriented it, and produced the declared700×700 geometry preview.
+Existing independent STL reading verified original envelope limits, closed
+one-component positive-volume meshes (10824/10808 triangles), unchanged producer
+file identity and five exact recorded artifact hashes/sizes. PNG decoding,
+exact-run display/download and editor return passed with read-only recovery.
+This is a different-workflow integration regression, not printing, fit, strength,
+a complete manufacturing campaign, human engineering acceptance or Windows proof.
+The inherited preview is dark; no polished-rendering claim is made.
+
+The actual provider advertises a valid target_size default1.0. Wright's local
+validation incorrectly applied the catalog-signing no-float serializer. Its
+schema/probe hashing now uses the existing finite-JSON digest; catalog signing
+is unchanged and nonfinite inputs still fail. A second shared executor defect
+demanded a frozen model callback for deterministic-only steps; sharing the
+existing model-step classifier fixed it without adding a model or grant. The
+failed validation and first pre-dispatch failed run remain, with no uncertain
+operation replay. No provider defect or upstream issue is claimed.
+
+Completed run f93f69fde7cf48a9aea48772ababe8bd; full evidence
+/tmp/wright-desktop-mesh-workflow-proof-20261017/checkpoint.json and
+independent-verification.json. Exact native container was stopped afterward
+(exit143); files and run records remained unchanged. This is not a graceful
+document-recovery claim. The original installed desktop plugin is unchanged.

@@ -596,3 +596,49 @@ checkpoint.json and browser-1792219520797/report.json. Resource 8200156600b7a66f
 initialize attempt made no setup/write; readiness/counts were checked before
 retrying without service restart. Both test observer/fixture corrections and
 failed attempts are retained. No installed plugin update or Windows claim.
+
+## Different existing workflow and shared execution corrections
+
+Reused the existing083 common-digital focus-wheel accepted process and its two
+configured Blender operations. A fresh native Workflows→shared editor→common
+working view started one accepted process through normal workspace/gateway
+authority. The actual independent provider constructed the source STL, read that
+exact same-run file, repaired/oriented it and rendered the declared preview.
+Only artifact paths and provider/schema binding changed; AST comparison confirms
+the geometry code and original quoted requirements remain intact. This bounded
+regression is materially different from text/Playwright inspection. It is not
+the full manufacturing campaign or physical/engineering acceptance.
+
+Actual qualification exposed two shared defects. Local protocol validation used
+signed-catalog hashing for ordinary numeric tool schemas and probe evidence;
+reuse the existing finite-JSON digest there while keeping signed capability and
+credential digests unchanged. Valid provider default1.0 now qualifies; NaN and
+infinities still fail. Separately, callback dispatch constructed model callbacks
+for deterministic-only plans, despite correctly freezing no model route. Reuse
+the model freezer's existing typed classification; model tasks still require
+the exact configured callback and frozen route. Neither fix adds a gateway grant,
+provider protocol, executor or instruction policy.
+
+Run f93f69fde7cf48a9aea48772ababe8bd completed with two actual native calls,
+zero model requests and no integration-test policy. Independent existing bounded
+STL reading verified both original envelope limits, closed one-component positive
+volume meshes,10824/10808 triangles and unchanged source SHA through handoff.
+Five recorded artifact hashes/sizes match; the actual700×700 PNG fully decodes.
+Exact-run reopening/display/download and editor return pass with reads only.
+The image is dark and not presented as a polished rendering. The first run
+f98a3e90ea24488e82c74fb7610e4f04 remains visibly failed before all dispatches;
+it and the failed validation are retained. A success observer expected the wrong
+label; read-only recovery inspected the same completed run without another start.
+
+546 registry,17 focused validation/signing,68 focused execution/routing,2758
+workspace checks (12 skipped),279 native checks, and481 adapter/platform checks
+(21 skipped, including absent installed Windows Hermes source comparison) pass;
+Ruff and diff checks pass. No live Hermes model or Windows acceptance is claimed.
+The selected non-root native image stayed read-only/network-none/safe-mode with
+only a fresh workspace writable. MCP stopped and its exact owned native container
+exited143 after completion; that termination is not graceful document recovery.
+Source, runs, outputs, setup, grants and evidence remain intact. Compact evidence:
+mesh-workflow-native-evidence.json; full receipts/screenshots/checks under
+/tmp/wright-desktop-mesh-workflow-proof-20261017/checkpoint.json. Installed0.14
+is unchanged. The upstream vulnerability DB publisher failed again06:56UTC;
+no scan-policy bypass, push, merge or current-dev deployment is claimed.
