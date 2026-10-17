@@ -36,6 +36,44 @@ Desktop owns conversation/model harness. Wright owns accepted definitions, durab
 
 No milestone or passing fixture alone establishes goal completion. Keep actual verification and user acceptance separate.
 
+## Normal gateway and recovery checkpoint
+
+Actual MCP transport, ordinary workspace availability and this desktop's bounded
+action replies completed one independent Playwright snapshot workflow. No private
+integration grant or alternate model worker was used. Wright saved the observed
+about:blank/empty-tree result with its exact artifact hash. This is an integration
+fixture, not an engineering campaign or proof of Connections setup/Windows UI.
+
+Revoked membership and changed schemas after a pending request each failed with
+zero provider dispatches. The same unchanged declared-human-input fixture also
+completed after disconnect/reconnect, rejected an invalid selection, and preserved
+the same run and prior output. Its separate cancellation control returned the
+same receipt for a duplicate start, reached cancelled and rejected a late reply.
+After an abrupt isolated API kill/restart, the exact pending run remained
+reconciliation_required; reattachment returned its original receipt, a late reply
+was denied, and no replacement run/output was created. Automatic reasoning restart
+is unsupported. These fixture regressions do not replace the substantially
+different existing engineering-workflow qualification still required by the goal.
+The separate manual-review fixture also retained an exact-subject synthetic
+changes_requested decision across reconnect; its stale subject was denied.
+That test neither approved engineering work nor dispatched an external action.
+
+The proof found an actionable error gap: a public preallocation capability
+rejection on Start was flattened to OUTCOME_UNKNOWN solely because HTTP status
+was503. The bridge now retains that validated owner reason for Start only; bare
+5xx responses, uploads and other uncertain writes remain conservative. All238
+prototype tests pass, including two new rejection/uncertain-outcome controls.
+The initial full-test invocation lacked the repository import path and stalled
+in sandbox teardown; its interrupted failure log is preserved. The corrected
+python -m pytest invocation with local-socket access passed. Ruff/diff checks pass.
+
+Evidence index: /tmp/wright-desktop-workspace-tools-proof-20261017/ and
+/tmp/wright-desktop-integration-completion-20261016/. The source/runtime byte guard
+also rejected a changed bridge before connecting. The completed old run's DB and
+manifest were backed up before explicitly restarting only this test service to
+qualify the correction. Installed0.14.0 remains unchanged. Profile promotion,
+native UI proof, full repository gates and dev deployment remain outstanding.
+
 ## Local connection lifecycle checkpoint
 
 Per-workspace Disable is implemented through the existing workspace membership owner and scoped app-only transport. The observed registered server identity is required; changed mapping, wrong session and non-operator requests fail before mutation. The provider and other workspaces remain intact. The UI blocks duplicate writes and reconciles an unconfirmed reply by reading saved availability.

@@ -1,6 +1,6 @@
 # Playwright MCP usage guide
 
-Last updated:16 October2026. Status: existing bundled provider; new desktop-workspace qualification pending. No engineering workflow or Windows desktop acceptance is claimed.
+Last updated:16 October2026 (proofs dated17 October UTC). Status: actual standalone and normal Wright workspace gateway operation verified on GB10 ARM64. No engineering campaign or Windows desktop acceptance is claimed.
 
 ## Identity and sources
 
@@ -15,6 +15,30 @@ The selected existing ARM64 image wright-desktop-engineering:download-ca71bf92 h
 Initial standalone initialization and tools/list succeeded (server reports1.62.0-alpha-1783623505000). The first browser_tabs list call returned an explicit missing chrome-for-testing error: the caller omitted the bundle's PLAYWRIGHT_BROWSERS_PATH environment setting. The corrected prerequisite uses that exact recorded setting and the read-only browser_snapshot tool; it completed against an isolated about:blank page with isError=false. The initial and corrected containers both terminated after their bounded calls. This is a caller configuration failure, not a provider bug. Evidence: /tmp/wright-desktop-workspace-tools-proof-20261017/provider.json and provider-corrected.json. The verified standalone prerequisite is initialize, tools/list and browser_snapshot with an empty argument object. Its result reports Page URL: about:blank and an empty accessibility tree. browser_tabs combines read and destructive variants, so its annotations must not be rewritten as read-only just because one action is list. The selected browser_snapshot schema reports readOnlyHint=true and destructiveHint=false; the proof supplies no filename. Subsequent Wright qualification must use the normal gateway workspace binding and desktop reasoning callback, with exact tool schema/evidence and denied-membership controls. Standalone success alone does not qualify a workflow or the Windows panel.
 
 ## Pitfalls and recovery
+
+The fresh normal-workspace workflow completed through actual MCP stdio, the
+desktop reasoning handoff and WorkflowMcpRuntime. This conversation supplied the
+tool proposal and the final response after reading its real result; the relay
+script never called another model. Wright executed exactly one browser_snapshot
+with empty arguments and saved browser-observation.md with SHA-256
+3fc151a8bd832c350852c7f88f3f07c31d7c9acc674e3c67fc82527f3096fd24.
+The run is c88caf405f87457c93849790bfb8de4c in the private state
+/tmp/wright-desktop-workspace-normal-state-20261017-01. It used ordinary workspace
+membership and no integration-test enrollment. Local operator setup registered
+the already installed immutable container and actual discovered schema; it did
+not fabricate a provider validation result. This proves dispatch, not the native
+Connections installation journey.
+
+Negative controls revoked membership and changed the selected input schema
+after a desktop request was pending. Both runs failed before any provider call;
+the original registration was restored. The corrected panel transport also
+preserves the owner's actionable preallocation capability rejection instead of
+labeling it an uncertain effect. Bare 5xx responses and uncertain uploads still
+require reconciliation. Evidence: normal-workflow.json,
+denied-current-permission.json, negative-revoked.json and negative-schema.json
+under /tmp/wright-desktop-workspace-tools-proof-20261017/. Initial invalid source
+filename/duplicate-port fixture failures were retained and corrected before any
+execution; they are not provider defects.
 
 Do not confuse Playwright MCP with browser controls in the desktop harness. Tool-list discovery does not prove browser startup. Preserve exact initialization/launch errors; do not replace the provider or weaken permissions. After an uncertain operation, inspect the existing operation/container before retrying.
 

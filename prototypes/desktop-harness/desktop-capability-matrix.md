@@ -1,5 +1,35 @@
 # Desktop engineering prototype: qualification matrix
 
+**Current integration checkpoint:16 October2026, with17 October UTC proof files.**
+The matrix below this checkpoint is the retained historical0.10 record. Current
+installed package is0.14.0, frozen83c2ca70, MCP Python SDK1.30.0,41tools. The local
+completion candidate starts at73d44439 and adds the tested Start-error correction;
+it is not installed. Detailed current scope and remaining work are in
+[integration-completion-plan.md](integration-completion-plan.md).
+
+| Current area | Verified boundary | Remaining required work |
+|---|---|---|
+| Workspace/home/editor | Earlier native panel observation; installed0.14 protocol/resource check; shared editor retained | Current served Workflows, native Windows and lifecycle/settings parity |
+| Connections | Local scoped disable owner/API/transport/UI tests; catalog/custom HTTPS/setup retained | Actual owner-to-panel proof, full lifecycle/tool permission parity, real Windows callback/authentication |
+| Files/portability/history | Installed0.14 bounded download transport; existing attachment/export/import/result owners | Actual Windows delivery, generic needed upload, historical revision navigation |
+| Desktop tool work | One real Playwright snapshot workflow completed through normal workspace permission and actual desktop handoff; recorded output hash | Candidate promotion, broader supported task qualification and engineering workflow regression |
+| Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
+| Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
+| Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
+| Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
+| Gates/deployment |238 local prototype tests pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB; no follow-on push/merge/dev deployment yet |
+
+Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
+establish Windows native acceptance. The host still reports no model/app identity;
+do not infer provider-internal routing, billing, native tabs, Computer controls or
+background wakeups. Full named engineering campaigns are deferred by the new
+goal; bounded real tools and a substantially different existing workflow remain
+required. External current receipts live under
+/tmp/wright-desktop-integration-completion-20261016/ and
+/tmp/wright-desktop-workspace-tools-proof-20261017/.
+
+## Retained historical checkpoint
+
 Checkpoint: 15 October 2026. Installed plugin **0.10.0** selects the frozen
 `/tmp/wright-desktop-template-entry` runtime on API8163; runtime code is
 ab3ba5f7 and package wiring is 504acfa5. Earlier caches, states and services are

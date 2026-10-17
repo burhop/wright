@@ -277,7 +277,20 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                 document = await client.call("POST", path, json=body)
             return {"ok": True, "document": document}
         except WrightRequestRejected as failure:
-            uncertain = changes and owner_called and failure.status_code >= 500
+            # The start owner reports capability failures before reserving a run.
+            # A validated public reason distinguishes that rejection from a lost
+            # acknowledgement. Other writes retain conservative reconciliation.
+            start_rejected = (
+                request.operation == "start"
+                and failure.reason is not None
+                and failure.reason.code == "CAPABILITY_UNAVAILABLE"
+            )
+            uncertain = (
+                changes
+                and owner_called
+                and failure.status_code >= 500
+                and not start_rejected
+            )
             if not uncertain and failure.reason is not None:
                 return {
                     "ok": False,
