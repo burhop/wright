@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
+from uuid import uuid4
 
 import httpx
 import pytest
@@ -117,13 +118,14 @@ async def test_run_metadata_is_redacted_and_malformed_result_fails_closed(histor
         "run_id": "historic",
         "source_digest": digest,
     }
-    record["error"] = "token=synthetic-private"
+    sensitive_value = uuid4().hex
+    record["error"] = f"token={sensitive_value}"
     recorded.write_text(json.dumps(record))
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app), base_url="http://test"
     ) as client:
         value = await client.post("/api/desktop/run-records/read", json=body)
-        assert value.status_code == 200 and "synthetic-private" not in value.text
+        assert value.status_code == 200 and sensitive_value not in value.text
         record["result"]["results"][0]["schema_version"] = 2
         recorded.write_text(json.dumps(record))
         assert (
