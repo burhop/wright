@@ -9,6 +9,7 @@ import "@wright/ui-kit/styles.css";
 import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
+import { NativeEditorDraftClient } from "./native-editor-draft-client";
 import type { NativeProcessCall } from "./native-process-client";
 import type { NativeTransferCall } from "./native-transfer-client";
 import {
@@ -330,6 +331,9 @@ async function open() {
     async (name, arguments_) =>
       app.callServerTool({ name, arguments: arguments_ }),
   );
+  const draftClient = new NativeEditorDraftClient({
+    workspaceId: input.workspace_id, sessionId: input.session_id, path: input.path,
+  }, async (name, arguments_) => app.callServerTool({name, arguments: arguments_}));
   notice.textContent = "Opening the accepted workflow…";
   try {
     const document = await client.read(); // Cached tool results are not durable restoration authority.
@@ -363,6 +367,7 @@ async function open() {
             key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
             initial={document}
             sourceClient={client}
+            draftClient={draftClient}
             call={processCall}
             transferCall={transferCall}
             onOpenTransferred={(path) =>

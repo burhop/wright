@@ -31,6 +31,7 @@ from native_source_tools import WrightRequestRejected, register_native_source_to
 from desktop_backend import (
     FileUploadRequest, ConnectionControlRequest, LocalConnectionPreviewRequest,
     RecordedRunRequest,
+    EditorDraftReadRequest, EditorDraftSaveRequest,
 )
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
@@ -973,6 +974,47 @@ def server(client, *, native_editor=False, native_working_view=False):
         return await client.call(
             "POST", "/api/desktop/run-records/read", json=request.model_dump(),
         )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_editor_drafts_read(request: EditorDraftReadRequest) -> dict[str, Any]:
+        """Read inert editor drafts for one source. Never accepts, runs or reviews a workflow."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/editor-drafts/read", json=request.model_dump()
+        )
+
+
+    @mcp.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True,
+                                    idempotentHint=False, openWorldHint=False),
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_editor_draft_save(request: EditorDraftSaveRequest) -> dict[str, Any]:
+        """Preserve an inert editor draft with CAS; no accepted source, run or permission changes."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            value = await client.call(
+                "POST", "/api/desktop/editor-drafts/save", json=request.model_dump()
+            )
+            return {"ok": True, **value}
+        except (WrightRequestRejected, httpx.HTTPError) as error:
+            known = isinstance(error, WrightRequestRejected) and error.status_code in {
+                403,
+                409,
+                422,
+            }
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": (
+                        "Draft was not saved. Inspect saved drafts before continuing."
+                        if known
+                        else "Draft save is unconfirmed. Read it before another write."
+                    ),
+                },
+            }
+
 
     @mcp.tool(annotations=read)
     async def wright_reasoning_pending(workspace_id: str, session_id: str) -> dict:

@@ -2,6 +2,8 @@ import { useState } from "react";
 import WorkflowRecoveryConcept from "../workflow-recovery/WorkflowRecoveryConcept";
 import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
 import { NativeSourceClient } from "./native-source-client";
+import type { NativeEditorDraftClient } from "./native-editor-draft-client";
+import { useNativeEditorDrafts } from "./use-native-editor-drafts";
 import "../../styles/presentation-controls.css";
 import "./native-panel.css";
 
@@ -9,6 +11,7 @@ import "./native-panel.css";
 export function NativeWorkflowPanel({
   initial,
   client,
+  draftClient,
   workspaceName,
   onDirty,
   onAccepted,
@@ -18,6 +21,7 @@ export function NativeWorkflowPanel({
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly client: NativeSourceClient;
+  readonly draftClient?: NativeEditorDraftClient;
   readonly workspaceName: string;
   readonly onAccepted?: (document: WorkspaceWorkflowSourceDocument) => void;
   readonly onOpenWorkingView?: () => void;
@@ -28,6 +32,7 @@ export function NativeWorkflowPanel({
   const [document, setDocument] = useState(initial);
   const [unsaved, setUnsaved] = useState(false);
   const [reopen, setReopen] = useState(0);
+  const drafts = useNativeEditorDrafts(draftClient, initial, setDocument);
   return (
     <main
       className="native-workflow-panel"
@@ -38,7 +43,7 @@ export function NativeWorkflowPanel({
       <header className="native-workflow-panel__context">
         <b>{workspaceName}</b>
         <span>
-          {unsaved ? "Unsaved changes — save before closing." : "Workflow"}
+          {unsaved ? "Unsaved changes — Save to accept." : "Workflow"}
         </span>
         {onOpenTransfer && (
           <button
@@ -60,8 +65,26 @@ export function NativeWorkflowPanel({
             : "Use this desktop conversation for reasoning. Run controls are not connected in this editor prototype."}
         </small>
       </header>
+      {draftClient && <details className="native-editor-drafts">
+        <summary>{drafts.message || "Editor drafts"}{drafts.rows.length > 0 ? ` · ${drafts.rows.length} preserved` : ""}</summary>
+        <p>Drafts preserve editing only. They cannot run, approve work, or replace a saved workflow.</p>
+        <button type="button" onClick={() => void drafts.refresh()}>Read saved drafts</button>
+        {draftClient.requiresRead && <button type="button" onClick={drafts.separate}>Preserve as a separate draft</button>}
+        {drafts.rows.map((row) => <div key={row.draft_id}>
+          <span>{new Date(row.updated_at * 1000).toLocaleString()} · {row.base_matches_current && row.base_storage_digest === drafts.acceptedDigest ? "Current base" : "Older workflow"}</span>
+          <button type="button" onClick={() => void drafts.inspect(row.draft_id)}>Inspect draft</button>
+          <button type="button" disabled={unsaved || !row.base_matches_current || row.base_storage_digest !== drafts.acceptedDigest || draftClient.requiresRead}
+            onClick={() => void drafts.resume(row.draft_id, unsaved)}>Resume draft</button>
+        </div>)}
+        {drafts.inspected && <label>Preserved source (read only; copy text to compare)
+          <textarea readOnly value={drafts.inspected.source} aria-label="Preserved draft source" />
+        </label>}
+      </details>}
       <div className="native-workflow-panel__editor">
         <WorkflowRecoveryConcept
+          key={drafts.generation}
+          initialDraft={drafts.restored}
+          onDraftChange={draftClient ? drafts.change : undefined}
           workflowSource={document.source}
           workflowLayout={document.layout ?? undefined}
           workflowFilePath={document.path}
@@ -75,6 +98,7 @@ export function NativeWorkflowPanel({
           }}
           onSave={async (source, layout) => {
             const saved = await client.save(source, layout);
+            drafts.accepted(saved);
             onAccepted?.(saved);
             return saved;
           }}
@@ -83,6 +107,7 @@ export function NativeWorkflowPanel({
             const observed = await client.read();
             if (canReplace && !canReplace(observed)) return;
             client.accept(observed);
+            drafts.accepted(observed);
             setDocument(observed);
             onAccepted?.(observed);
             setReopen((value) => value + 1);

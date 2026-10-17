@@ -59,6 +59,28 @@ _WINDOWS_RESERVED_SLUGS = {
 }
 _JOURNAL_SCHEMA_VERSION = 1
 _HEAD_SCHEMA_VERSION = 1
+_EDITOR_DRAFT_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$")
+_EDITOR_DRAFT_MAX_BYTES = (
+    12 * WORKFLOW_SOURCE_MAX_BYTES + WORKFLOW_LAYOUT_MAX_BYTES + 16384
+)
+_EDITOR_DRAFT_KEYS = {
+    "schema_version",
+    "path",
+    "draft_id",
+    "request_id",
+    "base_storage_revision",
+    "base_storage_digest",
+    "source",
+    "applied_source",
+    "layout",
+    "view",
+    "draft_revision",
+    "draft_digest",
+    "updated_at",
+    "accepted_checkpoint",
+}
+
+
 _RECORD_KEYS = {
     "schema_version",
     "storage_revision",
@@ -1305,6 +1327,306 @@ class WorkspaceWorkflowSourceStore:
             return None
         return self._decode_json(path, label="layout head")[1]
 
+    @staticmethod
+    def _draft_bytes(value: dict[str, object]) -> bytes:
+        return json.dumps(
+            value,
+            sort_keys=True,
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
+
+    @staticmethod
+    def _draft_id(value: str) -> str:
+        if (
+            not isinstance(value, str)
+            or _EDITOR_DRAFT_ID.fullmatch(value) is None
+            or value.lower() in _WINDOWS_RESERVED_SLUGS
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_draft_invalid",
+                "Editor draft identity is invalid",
+            )
+        return value
+
+    def _draft_snapshot(self, value: dict[str, object]) -> dict[str, object]:
+        keys = {
+            "source",
+            "applied_source",
+            "layout",
+            "view",
+            "base_storage_revision",
+            "base_storage_digest",
+        }
+        if (
+            set(value) != keys
+            or not isinstance(value.get("source"), str)
+            or not isinstance(value.get("applied_source"), str)
+            or value.get("view") not in ("diagram", "code", "split")
+            or _positive_int(value.get("base_storage_revision")) is None
+            or not isinstance(value.get("base_storage_digest"), str)
+            or _DIGEST.fullmatch(value["base_storage_digest"]) is None
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_draft_invalid",
+                "Editor draft has an invalid shape",
+            )
+        _source_bytes(value["source"])
+        _source_bytes(value["applied_source"])
+        return {
+            **value,
+            "layout": (
+                validate_source_layout(value["layout"])
+                if value["layout"] is not None
+                else None
+            ),
+        }
+
+    def _read_draft(self, path: Path, normalized: str) -> dict[str, object]:
+        record, _ = self._decode_json(
+            path,
+            label="editor draft",
+            max_bytes=_EDITOR_DRAFT_MAX_BYTES,
+        )
+        if (
+            set(record) != _EDITOR_DRAFT_KEYS
+            or record.get("schema_version") != "wright.workflow-editor-draft/1"
+            or record.get("path") != normalized
+            or record.get("draft_id") != path.stem
+            or _positive_int(record.get("draft_revision")) is None
+            or _positive_int(record.get("updated_at")) is None
+            or not isinstance(record.get("accepted_checkpoint"), bool)
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_source_integrity",
+                "Saved editor draft identity is invalid",
+            )
+        self._draft_id(record["draft_id"])
+        self._draft_id(record["request_id"])
+        self._draft_snapshot(
+            {
+                key: record[key]
+                for key in (
+                    "source",
+                    "applied_source",
+                    "layout",
+                    "view",
+                    "base_storage_revision",
+                    "base_storage_digest",
+                )
+            }
+        )
+        if record["draft_digest"] != _digest(
+            self._draft_bytes(
+                {key: value for key, value in record.items() if key != "draft_digest"}
+            )
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_source_integrity",
+                "Saved editor draft digest differs",
+            )
+        return record
+
+    @staticmethod
+    def _draft_observation(
+        record: dict[str, object],
+        document: WorkflowSourceDocument,
+    ) -> dict[str, object]:
+        def presentation(layout):
+            if layout is None:
+                return None
+            return {
+                key: value
+                for key, value in layout.items()
+                if key not in {"semanticRevision", "layoutRevision"}
+            }
+
+        return {
+            **record,
+            "base_matches_current": (
+                record["base_storage_revision"] == document.storage_revision
+                and record["base_storage_digest"] == document.storage_digest
+            ),
+            "matches_accepted": (
+                record["source"] == record["applied_source"] == document.source
+                and presentation(record["layout"]) == presentation(document.layout)
+            ),
+        }
+
+    def _draft_paths(self, directory: Path, capability: _DirectoryCapability) -> list[Path]:
+        target = capability.descriptor if capability.descriptor is not None else directory
+        paths = []
+        with os.scandir(target) as entries:
+            for count, entry in enumerate(entries, start=1):
+                if count > 128:
+                    raise WorkflowSourceStorageError(
+                        "workflow_draft_limit",
+                        "Editor draft directory exceeds its safe limit",
+                    )
+                # A killed atomic writer may leave its uncommitted temporary
+                # file. It is never a draft or recovery authority; retain it.
+                if re.fullmatch(r"\.wright-workflow-source-[0-9a-f]{24}", entry.name):
+                    continue
+                if not entry.name.endswith(".json"):
+                    raise WorkflowSourceStorageError(
+                        "workflow_source_integrity", "Unexpected editor draft entry"
+                    )
+                self._draft_id(entry.name[:-5])
+                paths.append(directory / entry.name)
+                if len(paths) > 64:
+                    raise WorkflowSourceStorageError(
+                        "workflow_draft_limit", "This source has too many editor drafts"
+                    )
+        return paths
+
+    @contextmanager
+    def _draft_directory(self, slug: str) -> Iterator[tuple[Path, _DirectoryCapability]]:
+        directory = self._metadata_directory(slug) / "editor-drafts"
+        with self._directory_capability(directory, create=True) as capability:
+            # Reads, CAS and publication must use this same pinned directory,
+            # just as the accepted source transaction does for its journal.
+            previous = self._active_directory_capabilities
+            self._active_directory_capabilities = {
+                **(previous or {}),
+                self._directory_key(directory): capability,
+            }
+            try:
+                yield directory, capability
+            finally:
+                self._active_directory_capabilities = previous
+
+    def editor_drafts_read(
+        self,
+        user_path: str,
+        draft_id: str | None = None,
+    ) -> dict[str, object]:
+        """Observe inert authoring state. Never accept source or resume a run."""
+        normalized, slug, path = self._source_path(user_path)
+        if draft_id is not None:
+            self._draft_id(draft_id)
+        with self._transaction(slug, path):
+            document = self._with_layout(
+                slug,
+                self._read_state_unlocked(normalized, slug, path).document,
+            )
+            with self._draft_directory(slug) as (directory, capability):
+                if draft_id is not None:
+                    record = self._read_draft(directory / f"{draft_id}.json", normalized)
+                    return {
+                        "path": normalized,
+                        "draft": self._draft_observation(record, document),
+                    }
+                rows = []
+                for draft_path in self._draft_paths(directory, capability):
+                    observed = self._draft_observation(
+                        self._read_draft(draft_path, normalized),
+                        document,
+                    )
+                    rows.append(
+                        {
+                            key: value
+                            for key, value in observed.items()
+                            if key not in {"source", "applied_source", "layout"}
+                        }
+                    )
+                return {
+                    "path": normalized,
+                    "drafts": sorted(
+                        rows,
+                        key=lambda row: (row["updated_at"], row["draft_id"]),
+                        reverse=True,
+                    ),
+                }
+
+    def editor_draft_save(
+        self,
+        user_path: str,
+        *,
+        draft_id: str,
+        request_id: str,
+        expected_draft_digest: str | None,
+        snapshot: dict[str, object],
+    ) -> dict[str, object]:
+        normalized, slug, path = self._source_path(user_path)
+        self._draft_id(draft_id)
+        self._draft_id(request_id)
+        snapshot = self._draft_snapshot(snapshot)
+        if expected_draft_digest is not None and (
+            not isinstance(expected_draft_digest, str)
+            or _DIGEST.fullmatch(expected_draft_digest) is None
+        ):
+            raise WorkflowSourceStorageError(
+                "workflow_draft_invalid", "Invalid draft digest"
+            )
+        with self._transaction(slug, path):
+            document = self._with_layout(
+                slug,
+                self._read_state_unlocked(normalized, slug, path).document,
+            )
+            # The full accepted journal was verified above. A historical base is
+            # allowed for preservation, but never silently rebased on recovery.
+            revision = snapshot["base_storage_revision"]
+            base_path = self._journal_paths(slug).get(revision)
+            if (
+                base_path is None
+                or self._decode_json(base_path, label="draft base")[0]["storage_digest"]
+                != snapshot["base_storage_digest"]
+            ):
+                raise WorkflowSourceStorageError(
+                    "workflow_draft_base_invalid",
+                    "Draft base is not an accepted revision",
+                )
+            with self._draft_directory(slug) as (directory, capability):
+                target = directory / f"{draft_id}.json"
+                try:
+                    capability.lstat(target.name)
+                except FileNotFoundError:
+                    current = None
+                else:
+                    current = self._read_draft(target, normalized)
+                if current is not None and current["request_id"] == request_id:
+                    if any(current[key] != value for key, value in snapshot.items()):
+                        raise WorkflowSourceStorageError(
+                            "workflow_draft_conflict",
+                            "Draft request identity was reused",
+                        )
+                    return {
+                        "path": normalized,
+                        "draft": self._draft_observation(current, document),
+                    }
+                if (
+                    current["draft_digest"] if current is not None else None
+                ) != expected_draft_digest:
+                    raise WorkflowSourceStorageError(
+                        "workflow_draft_conflict",
+                        "Draft changed; read it before another save",
+                    )
+                if current is None:
+                    if len(self._draft_paths(directory, capability)) >= 64:
+                        raise WorkflowSourceStorageError(
+                            "workflow_draft_limit",
+                            "This source already has 64 editor drafts",
+                        )
+                record = {
+                    **snapshot,
+                    "schema_version": "wright.workflow-editor-draft/1",
+                    "path": normalized,
+                    "draft_id": draft_id,
+                    "request_id": request_id,
+                    "draft_revision": current["draft_revision"] + 1 if current else 1,
+                    "updated_at": int(time.time()),
+                }
+                record["accepted_checkpoint"] = self._draft_observation(record, document)[
+                    "matches_accepted"
+                ]
+                record["draft_digest"] = _digest(self._draft_bytes(record))
+                self._atomic_write(target, self._draft_bytes(record))
+                return {
+                    "path": normalized,
+                    "draft": self._draft_observation(record, document),
+                }
+
     def list_input_files(self) -> list[dict[str, str]]:
         """List bounded, visible workspace references; never read their contents.
 
@@ -1910,6 +2232,39 @@ class WorkspaceWorkflowSourceUseCases:
             raise WorkflowSourceStorageError(
                 "workflow_source_unavailable", "Workspace input files are unavailable"
             ) from error
+
+    async def editor_drafts_read(
+        self,
+        workspace_dir: str,
+        path: str,
+        draft_id: str | None = None,
+    ) -> dict[str, object]:
+        try:
+            return await self._executor.run(
+                "workspace.workflow_sources.editor_drafts_read",
+                lambda: self._store_factory(workspace_dir).editor_drafts_read(
+                    path, draft_id
+                ),
+                timeout_seconds=30.0,
+            )
+        except WorkspaceTimeoutError as error:
+            raise WorkflowSourceStorageError(
+                "workflow_source_unavailable",
+                "Editor draft read did not finish",
+            ) from error
+
+
+    async def editor_draft_save(
+        self,
+        workspace_dir: str,
+        path: str,
+        **kwargs,
+    ) -> dict[str, object]:
+        return await self._executor.run_to_completion(
+            "workspace.workflow_sources.editor_draft_save",
+            lambda: self._store_factory(workspace_dir).editor_draft_save(path, **kwargs),
+        )
+
 
     async def update(
         self,

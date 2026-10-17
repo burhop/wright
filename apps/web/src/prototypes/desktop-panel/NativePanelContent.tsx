@@ -5,6 +5,7 @@ import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-autho
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
 import { NativeSourceClient } from "./native-source-client";
+import type { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { WorkflowBundleDialog } from "../workflow-recovery/WorkflowBundleDialog";
 import {
   createNativeTransferClient,
@@ -19,6 +20,7 @@ import {
 export function NativePanelContent({
   initial,
   sourceClient,
+  draftClient,
   call,
   sessionId,
   workspaceName,
@@ -33,6 +35,7 @@ export function NativePanelContent({
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
+  readonly draftClient?: NativeEditorDraftClient;
   readonly call: NativeProcessCall;
   readonly sessionId: string;
   readonly workspaceName: string;
@@ -214,6 +217,7 @@ export function NativePanelContent({
         <NativeWorkflowPanel
           initial={initial}
           client={sourceClient}
+          draftClient={draftClient}
           workspaceName={workspaceName}
           onOpenTransfer={
             transfer && onOpenTransferred ? openTransfer : undefined

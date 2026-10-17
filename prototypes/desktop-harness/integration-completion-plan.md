@@ -369,3 +369,73 @@ Installed0.14 is unchanged. Real Windows optional API availability and durable
 authoring-draft recovery remain required; successful simulated-host checks do not
 satisfy them. Official credential guidance also means secret entry should remain
 with Wright/provider authentication outside the plugin, not new plugin fields.
+
+## Durable authoring drafts (local candidate)
+
+Keep the accepted .wflow and its source/layout journal authoritative. Add inert
+per-editor draft sidecars through WorkspaceWorkflowSourceStore's existing source
+transaction, path confinement, bounded reads and atomic publication. Each draft
+keeps its exact accepted base, current applied graph source, unapplied Source text,
+layout and view. Allow a known historical base so another accepted edit does not
+prevent preserving work. CAS and request identity protect concurrent/lost saves;
+no grammar validity, execution, model, permission or review authority is inferred.
+
+Use two closed app-only ports (read/discover and save) and existing operator/scope
+checks. The native editor saves dirty snapshots after a short debounce and records
+a clean snapshot after accepted save/Undo, avoiding false recovery offers. Read
+back an uncertain save by its exact request/content; never repeat it automatically.
+Fresh instances discover server-held drafts; resuming is explicit, base-compatible
+and separate from acceptance. Keep stale-base text available without silently
+rebasing or overwriting another accepted revision. Preserve applied diagram edits
+when an additional raw Source edit is invalid. Optional widget storage is only a
+navigation hint, never the draft owner.
+
+Qualify source/layout preservation, reload/reopen, invalid Source plus applied
+graph, exact scoped/CAS denial, lost reply/read-only recovery, source drift and
+existing editor/Hermes behavior. Prove the actual native resource through normal
+Workflows entry; no engineering run or protected campaign is needed for this slice.
+
+Implementation reuses the canonical source store, its cross-process transaction,
+pinned directory handles, bounded executor and atomic file writer. Inert heads
+live under .wright/workflow-sources/<slug>/editor-drafts/<editor-id>.json, bounded
+to64 streams/source. There is no new database or executor. The older provisional
+workflow_drafts service requires a different semantic graph and cannot represent
+invalid raw source; a lossy conversion would discard current editor capabilities.
+The source store remains opaque to grammar; the shared editor checks the recovered
+applied source and layout before use. Accepted definitions retain their existing
+write-once journal and CAS. A clean checkpoint stays identifiable after later
+accepted revisions, rather than resurfacing as an unsaved draft.
+
+Two closed app-only ports enforce exact desktop workspace/session/source scope;
+save additionally requires the existing operator. They accept no run, review,
+permission, credential or execution fields. The save annotation declares mutation;
+it is not an approval grant. The panel coalesces editing and permits one save in
+flight. An uncertain acknowledgement stops writes; explicit readback must match
+the exact request and intended content. Known denials need inspection and an
+explicit separate draft, not an automatic retry. Accepted Save still uses the
+original native source client. Draft recovery does not redirect a session/model.
+
+The first actual browser proof exposed a pre-existing presentation gap: live
+canvas pan/zoom was not connected to editor state. Optional runtime callbacks now
+capture that presentation for draft-enabled panels and restore it on reopening.
+Initial auto-framing does not dirty a saved workflow; standard hosts retain their
+existing framing. The shared editor retains the accepted Undo baseline and raw
+invalid text independently of its applied diagram. Subsequent acknowledgements
+refresh draft-list metadata without another round-trip. Crash-left atomic
+temporary files are retained, bounded and never interpreted as drafts.
+
+Evidence and initial failures: /tmp/wright-desktop-drafts-proof-20261017/. Final
+storage/native transport checks350 and panel/shared editor/canvas checks233 pass;
+TypeScript, Ruff and affected ESLint pass (three existing hook warnings). Six
+real-resource→MCP→API/store Chromium checks pass, including lost acknowledgement
+and separately accepted source drift. Resourcee86e05fe0bec51e444bc338b75e4da742dd709519016d8dd804398e5ee41f2d7,
+2292108bytes,49tools, zero external assets. A final storage-only correction pins
+the draft directory across read/CAS/publication, preventing a directory swap from
+redirecting the atomic writer. Its deterministic race test and actual scoped MCP
+duplicate/CAS/scope/readback proof pass; all26 pre-existing proof files remain
+byte-identical. The native resource is unchanged by this backend correction. Scope403 is also returned as a known denial before save dispatch, qualified by the final real MCP/API proof.
+All proof workspaces, original source/draft failures and source revisions are
+retained; no process start, reasoning request, provider or review was allocated.
+This is not installed0.14 behavior or actual Windows acceptance. Work typed before
+the short autosave delay/acknowledgement is not claimed durable. No automatic
+restoration or silent rebasing is supported; older drafts remain inspectable.

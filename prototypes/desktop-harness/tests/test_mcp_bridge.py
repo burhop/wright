@@ -293,7 +293,9 @@ def test_working_view_requires_opt_in_and_reuses_immutable_editor_resource(bridg
     }
     native = bridge.server(client, native_editor=True, native_working_view=True)
     tools = {t.name: t for t in asyncio.run(native.list_tools())}
-    assert len(tools) == 47
+    assert len(tools) == 49
+    for name in ("wright_editor_drafts_read", "wright_editor_draft_save"):
+        assert tools[name].meta["ui"]["visibility"] == ["app"]
     assert {
         "wright_connection_preview",
         "wright_connection_command_preview",

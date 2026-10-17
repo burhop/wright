@@ -52,6 +52,7 @@ import {
   type RecoveryRunProjection,
   type RecoveryRunState,
   type RecoveryRunSubject,
+  type RecoveryLayout,
 } from "./model";
 import { WorkflowObjectIcon } from "./WorkflowObjectIcon";
 import { canConnectAuthoringPorts } from "./authoring-objects";
@@ -61,6 +62,8 @@ import {
 } from "./workflow-result-blocks";
 
 interface RecoveryCanvasRuntime {
+  readonly restoredViewport?: RecoveryLayout["viewport"];
+  readonly onViewportChange?: (viewport: RecoveryLayout["viewport"]) => void;
   readonly resultBlocks?: readonly WorkflowResultBlock[];
   readonly outputLabels?: Readonly<Record<string, string>>;
   readonly outputGroups?: Readonly<Record<string, string>>;
@@ -775,6 +778,7 @@ function RecoveryCanvasViewport({
 }: {
   readonly selectedNodeId: string | null;
 }) {
+  const runtime = useContext(RuntimeContext);
   const { getNodes, getNode, getViewport, setViewport, fitView } =
     useReactFlow();
   const initialized = useNodesInitialized();
@@ -784,6 +788,10 @@ function RecoveryCanvasViewport({
   useEffect(() => {
     if (!initialized || !width || !height || didInitialize.current) return;
     didInitialize.current = true;
+    if (runtime.restoredViewport) {
+      void setViewport(runtime.restoredViewport);
+      return;
+    }
     const nodes = getNodes();
     const left = Math.min(...nodes.map((node) => node.position.x));
     const top = Math.min(...nodes.map((node) => node.position.y));
@@ -807,7 +815,7 @@ function RecoveryCanvasViewport({
         zoom: 0.9,
       });
     }
-  }, [initialized, width, height, getNodes, fitView, setViewport]);
+  }, [initialized, width, height, getNodes, fitView, setViewport, runtime.restoredViewport]);
   useEffect(() => {
     if (!initialized || !selectedNodeId || !width || !height) return;
     const node = getNode(selectedNodeId);
@@ -1434,7 +1442,8 @@ export const ReactFlowRecoveryCanvas: DraftCanvasRenderer = ({
         minZoom={0.4}
         maxZoom={1.8}
         proOptions={{ hideAttribution: true }}
-        defaultViewport={{ x: 40, y: 90, zoom: 0.9 }}
+        defaultViewport={runtime.restoredViewport ?? { x: 40, y: 90, zoom: 0.9 }}
+        onMoveEnd={(_event, viewport) => runtime.onViewportChange?.(viewport)}
         deleteKeyCode={["Backspace", "Delete"]}
         nodesConnectable
         nodesDraggable

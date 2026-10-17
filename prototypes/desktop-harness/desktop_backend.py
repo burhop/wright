@@ -68,6 +68,33 @@ class RecordedRunRequest(BaseModel):
     source_digest: Digest
 
 
+class EditorDraftReadRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    workspace_id: Identifier
+    session_id: Identifier
+    path: str = Field(min_length=1, max_length=256)
+    draft_id: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$"
+    )
+
+
+class EditorDraftSnapshot(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    base_storage_revision: int = Field(ge=1)
+    base_storage_digest: Digest
+    source: str = Field(max_length=1048576)
+    applied_source: str = Field(max_length=1048576)
+    layout: dict | None
+    view: Literal["diagram", "code", "split"]
+
+
+class EditorDraftSaveRequest(EditorDraftReadRequest):
+    draft_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$")
+    request_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]{0,95}$")
+    expected_draft_digest: Digest | None
+    snapshot: EditorDraftSnapshot
+
+
 class AnswerRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -984,6 +1011,62 @@ class DesktopBackend:
                 "workspace_id": body.workspace_id, "session_id": body.session_id,
                 "workflow_path": body.path, "record": redact_evidence(record),
             }
+
+        @router.post("/editor-drafts/read")
+        async def editor_drafts_read(body: EditorDraftReadRequest):
+            from workspace_service.workflow_sources import WorkflowSourceStorageError
+
+            row = self.workspace(body.workspace_id, body.session_id)
+            try:
+                value = await self.service.workflow_sources.editor_drafts_read(
+                    row["local_path"],
+                    body.path,
+                    body.draft_id,
+                )
+            except (WorkflowSourceStorageError, FileNotFoundError, OSError):
+                raise HTTPException(
+                    409, "Saved draft is unavailable; your open edits are unchanged"
+                ) from None
+            return {"workspace_id": body.workspace_id, "session_id": body.session_id, **value}
+
+
+        @router.post("/editor-drafts/save", dependencies=[Depends(require_admin)])
+        async def editor_draft_save(body: EditorDraftSaveRequest):
+            from workspace_service.workflow_sources import WorkflowSourceStorageError
+
+            row = self.workspace(body.workspace_id, body.session_id)
+            try:
+                value = await self.service.workflow_sources.editor_draft_save(
+                    row["local_path"],
+                    body.path,
+                    draft_id=body.draft_id,
+                    request_id=body.request_id,
+                    expected_draft_digest=body.expected_draft_digest,
+                    snapshot=body.snapshot.model_dump(),
+                )
+            except WorkflowSourceStorageError as error:
+                # Validation/CAS cannot have written. Storage/integrity failures
+                # may follow a committed write: force exact read reconciliation.
+                if error.code in {
+                    "workflow_draft_invalid",
+                    "workflow_draft_base_invalid",
+                    "workflow_draft_conflict",
+                    "workflow_draft_limit",
+                    "workflow_source_too_large",
+                    "workflow_layout_invalid",
+                }:
+                    raise HTTPException(
+                        409, "Draft was not saved; inspect its saved version before continuing"
+                    ) from None
+                raise HTTPException(
+                    503, "Draft save outcome is unconfirmed; read it before another write"
+                ) from None
+            except OSError:
+                raise HTTPException(
+                    503, "Draft save outcome is unconfirmed; read it before another write"
+                ) from None
+            return {"workspace_id": body.workspace_id, "session_id": body.session_id, **value}
+
 
         @router.post("/files/upload", dependencies=[Depends(require_admin)])
         async def upload_workspace_file(body: FileUploadRequest):
