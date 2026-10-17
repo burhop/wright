@@ -1,3 +1,10 @@
+:root[data-theme="light"] #editor {
+  --native-host-bg: var(--color-neutral);
+  --native-host-fg: var(--color-primary);
+  --native-host-muted: var(--color-text-muted);
+  --native-host-border: var(--color-border);
+}
+
 .native-workflow-panel[data-control-style] {
   --color-neutral: var(--native-host-bg, #1c1c1c);
   --color-primary: var(--native-host-fg, #eeeeee);
@@ -73,6 +80,7 @@
 }
 
 .native-workspace-frame {
+  font-family: var(--native-host-font, system-ui, sans-serif);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   height: 100%;

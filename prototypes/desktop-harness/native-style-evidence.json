@@ -1,0 +1,43 @@
+{
+  "scope": "Actual native resource/MCP/API in a simulated GB10 Chromium host. Only workspace/source setup writes; presentation uses reads and starts no run.",
+  "resource_sha256": "bd96f9cd07d16a976dc1af3283f89d669aeada2e64a6b2256819b5ee65e5c56e",
+  "resource_bytes": 2303045,
+  "passed": [
+    "dark-fallback uses consistent host/fallback control typography and theme",
+    "light-fallback uses consistent host/fallback control typography and theme",
+    "light-host-font uses consistent host/fallback control typography and theme"
+  ],
+  "observations": [
+    {
+      "name": "dark-fallback",
+      "shared_light_bg": "rgb(9, 13, 22)",
+      "nav_font": "system-ui, sans-serif",
+      "context_font": "system-ui, sans-serif",
+      "nav_bg": "rgb(32, 32, 32)",
+      "nav_fg": "rgb(240, 240, 240)",
+      "theme": "dark"
+    },
+    {
+      "name": "light-fallback",
+      "shared_light_bg": "rgb(232, 237, 245)",
+      "nav_font": "system-ui, sans-serif",
+      "context_font": "system-ui, sans-serif",
+      "nav_bg": "rgb(232, 237, 245)",
+      "nav_fg": "rgb(15, 23, 42)",
+      "theme": "light"
+    },
+    {
+      "name": "light-host-font",
+      "shared_light_bg": "rgb(232, 237, 245)",
+      "nav_font": "\"Courier New\", monospace",
+      "context_font": "\"Courier New\", monospace",
+      "nav_bg": "rgb(253, 253, 253)",
+      "nav_fg": "rgb(17, 17, 17)",
+      "theme": "light"
+    }
+  ],
+  "report": "/tmp/wright-desktop-completion-qualification-20261017/native-font-browser-1792224125976/report.json",
+  "previous_actual_serif_observation": "/tmp/wright-desktop-completion-qualification-20261017/native-font-finding.json",
+  "retained_failed_theme_and_test_premise_correction": "/tmp/wright-desktop-completion-qualification-20261017/native-theme-probe-premise-correction.json",
+  "effects": "One existing fresh workspace/source only. No run, reasoning request or provider call. Same saved source reused after a quiescent normal API restart."
+}
