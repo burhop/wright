@@ -97,7 +97,9 @@ async def freeze_workflow_model_routing(
             plan,
             steps=tuple(
                 replace(step, model_resolution=frozen.text.model_dump(mode="json"))
-                if step_requires_model(step) and not step.native_image_format and frozen.text
+                if step_requires_model(step)
+                and not step.native_image_format
+                and frozen.text
                 else step
                 for step in plan.steps
             ),

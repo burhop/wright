@@ -230,7 +230,9 @@ async def test_local_validation_accepts_finite_numeric_schema_and_probe_evidence
     }
     assert "not retained" not in first.model_dump_json()
     client.default = 0.75
-    changed = await _run(database, client, read_only_probe=None, clock=lambda: NOW + timedelta(seconds=1))
+    changed = await _run(
+        database, client, read_only_probe=None, clock=lambda: NOW + timedelta(seconds=1)
+    )
     assert changed.state == "passed" and changed.schema_digest != first.schema_digest
     assert latest_capability_validation_evidence(database, "fixture-server") == changed
 
