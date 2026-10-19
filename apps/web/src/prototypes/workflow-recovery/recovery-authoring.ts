@@ -1111,7 +1111,8 @@ function parsePortList(
     const basePort = basePortsByKey.get(key);
     if (
       basePort &&
-      (basePort.ownerBlockId !== ownerBlockId || basePort.direction !== direction)
+      (basePort.ownerBlockId !== ownerBlockId ||
+        basePort.direction !== direction)
     ) {
       diagnostics.push(
         diagnostic(
@@ -1890,7 +1891,9 @@ export function parseRecoverySourceDocument(
 ): RecoveryParseResult {
   const base = cloneWorkflow(initialWorkflow);
   base.ports = [];
-  const declarations = [...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm)];
+  const declarations = [
+    ...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm),
+  ];
   if (declarations.length === 1)
     base.workflowId = `workflow.${declarations[0]![1]!.replaceAll("_", "-")}`;
   base.revision = definitionRevision;

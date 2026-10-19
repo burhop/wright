@@ -84,7 +84,9 @@ export function createNativePanelProcessClient(options: {
   readonly sessionId: string;
   readonly call: NativeProcessCall;
   readonly workspaceName: string;
-  readonly navigate?: Parameters<typeof createNativeProcessClient>[0]["navigate"];
+  readonly navigate?: Parameters<
+    typeof createNativeProcessClient
+  >[0]["navigate"];
 }): {
   client: ProcessClient;
   readReasoningStatus: WorkflowReasoningStatusReader;

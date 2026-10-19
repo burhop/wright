@@ -225,7 +225,10 @@ async function open() {
       ? (args.request as Record<string, unknown>)
       : args),
   };
-  if (typeof input.path === "string" && /^\/workflows\/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow$/.test(input.path))
+  if (
+    typeof input.path === "string" &&
+    /^\/workflows\/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow$/.test(input.path)
+  )
     input.path = input.path.slice(1);
   if (
     pending?.structuredContent?.view === "home" &&

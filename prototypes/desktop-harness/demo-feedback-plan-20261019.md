@@ -69,7 +69,7 @@ Implemented locally, not installed or user accepted: 319 focused frontend checks
 final explicit no-panel fallback adjustment passed. TypeScript passed. The first
 candidate's copied recorded-response reproduction produced 19 captures without
 page errors, unsupported calls or horizontal overflow. That is simulated-host
-evidence, not a Windows capture. The final resource SHA256 is
+evidence, not a Windows capture. The initial resource SHA256 was
 `7fc090844ea0221d1cfa7b7e1dffb9f1696ab9423fb9c472a22a157d6aed3f46`.
 
 All local logs and exact original-demo readback are indexed in
@@ -91,3 +91,14 @@ read-only Home/workflow/history reopening route remains available; no synthetic
 host result establishes Windows visibility after final response. Final served
 Workflows checks, repository gates, current-head CI, dev integration, exact named
 deployment and Windows acceptance are still pending for this correction.
+
+The initial normal gate stopped at formatting, after security/history/Ruff/lint
+passed. Installed the committed root lockfile's Prettier3.9.6 in this isolated
+worktree (the workspace-only install had omitted it) and formatted only the eight
+changed frontend files. The complete frontend formatting check now passes.
+A rendered error-state check also found the raw correction field was only181×43px;
+it now reuses shared source-editor styling, fits entirely at1280/480px, and stays
+selectable/read-only after an uncertain save. Five owning recovery checks pass.
+The regenerated resource SHA256 is `24b7acaa4e256d886a6d6f1864f003c679a2de7949ee7dee768c9fec3eb0366a`.
+This candidate still requires its own exact image, normal gates and served checks;
+no failed gate or earlier image is reused as a pass.

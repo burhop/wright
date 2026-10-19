@@ -1600,34 +1600,62 @@ function InvalidSourceCorrection({
   const [uncertain, setUncertain] = useState(false);
   const attempted = useRef<string | undefined>(undefined);
   const parsed = workflowFromSource(draft, revision);
-  const originalName = [...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm)];
-  const sameDocument = originalName.length !== 1 ||
-    parsed.workflow?.workflowId === `workflow.${originalName[0]![1]!.replaceAll("_", "-")}`;
-  const valid = parsed.ok && parsed.workflow !== null &&
-    sameDocument && validateRecoveryAuthoringRoundTrip(parsed.workflow).ok;
+  const originalName = [
+    ...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm),
+  ];
+  const sameDocument =
+    originalName.length !== 1 ||
+    parsed.workflow?.workflowId ===
+      `workflow.${originalName[0]![1]!.replaceAll("_", "-")}`;
+  const valid =
+    parsed.ok &&
+    parsed.workflow !== null &&
+    sameDocument &&
+    validateRecoveryAuthoringRoundTrip(parsed.workflow).ok;
   const confirm = (saved: WorkflowRecoveryStoredSource) => {
-    if (saved.source !== attempted.current || !saved.storage_digest ||
+    if (
+      saved.source !== attempted.current ||
+      !saved.storage_digest ||
       !/^[a-f0-9]{64}$/.test(saved.storage_digest) ||
-      !Number.isInteger(saved.definition_revision) || saved.definition_revision < 1 ||
-      !workflowFromSource(saved.source, saved.definition_revision).ok)
+      !Number.isInteger(saved.definition_revision) ||
+      saved.definition_revision < 1 ||
+      !workflowFromSource(saved.source, saved.definition_revision).ok
+    )
       throw new Error("Saved correction identity was not confirmed.");
     onDirty?.(false);
     onConfirmed({ ...saved, storage_digest: saved.storage_digest });
   };
   return (
-    <section aria-label="Source correction">
-      <p>Edit the source below. The saved workflow and its runs stay unchanged until you save a valid correction.</p>
-      <label>Workflow source
-        <textarea aria-label="Workflow source" value={draft} disabled={pending || uncertain}
+    <section aria-label="Source correction" className="recovery-code">
+      <p>
+        Edit the source below. The saved workflow and its runs stay unchanged
+        until you save a valid correction.
+      </p>
+      <label>
+        Workflow source
+        <textarea
+          aria-label="Workflow source"
+          value={draft}
+          style={{ boxSizing: "border-box" }}
+          readOnly={pending || uncertain}
           onChange={(event) => {
+            if (pending || uncertain) return;
             setDraft(event.target.value);
             onDirty?.(event.target.value !== source);
             setMessage("");
-          }} />
+          }}
+        />
       </label>
-      <p aria-live="polite">{message || parsed.diagnostics[0]?.explanation ||
-        (!sameDocument ? "Keep this workflow's declared identity when correcting its source." : "")}</p>
-      <button type="button" disabled={!onSave || !valid || draft === source || pending || uncertain}
+      <p aria-live="polite">
+        {message ||
+          parsed.diagnostics[0]?.explanation ||
+          (!sameDocument
+            ? "Keep this workflow's declared identity when correcting its source."
+            : "")}
+      </p>
+      <button
+        type="button"
+        disabled={!onSave || !valid || draft === source || pending || uncertain}
         onClick={() => {
           if (!onSave || !parsed.workflow || pending || uncertain) return;
           attempted.current = draft;
@@ -1636,33 +1664,67 @@ function InvalidSourceCorrection({
             .then(confirm)
             .catch(() => {
               setUncertain(true);
-              setMessage("The save was not confirmed. Read the saved workflow before any further save; no write was repeated.");
+              setMessage(
+                "The save was not confirmed. Read the saved workflow before any further save; no write was repeated.",
+              );
             })
             .finally(() => setPending(false));
-        }}>Save corrected source</button>
-      {uncertain && onRead && <button type="button" disabled={pending}
-        onClick={() => {
-          setPending(true);
-          void onRead().then(confirm).catch(() => setMessage(
-            "The saved correction is still unconfirmed. Your source is kept here; reopen the saved workflow to compare it. No write was repeated.",
-          )).finally(() => setPending(false));
-        }}>Read saved workflow</button>}
+        }}
+      >
+        Save corrected source
+      </button>
+      {uncertain && onRead && (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => {
+            setPending(true);
+            void onRead()
+              .then(confirm)
+              .catch(() =>
+                setMessage(
+                  "The saved correction is still unconfirmed. Your source is kept here; reopen the saved workflow to compare it. No write was repeated.",
+                ),
+              )
+              .finally(() => setPending(false));
+          }}
+        >
+          Read saved workflow
+        </button>
+      )}
     </section>
   );
 }
 
-export function WorkflowRecoveryConcept(props: WorkflowRecoveryConceptProps = {}) {
-  const original = JSON.stringify([props.workflowFilePath, props.definitionRevision,
-    props.storageDigest, props.workflowSource]);
+export function WorkflowRecoveryConcept(
+  props: WorkflowRecoveryConceptProps = {},
+) {
+  const original = JSON.stringify([
+    props.workflowFilePath,
+    props.definitionRevision,
+    props.storageDigest,
+    props.workflowSource,
+  ]);
   const [corrected, setCorrected] = useState<{
     original: string;
     saved: WorkflowRecoveryPersistedSource;
   }>();
   const saved = corrected?.original === original ? corrected?.saved : undefined;
-  return <WorkflowRecoveryDocument {...props}
-    {...(saved ? { workflowSource: saved.source, definitionRevision: saved.definition_revision,
-      storageDigest: saved.storage_digest, workflowLayout: saved.layout ?? undefined, initialDraft: undefined } : {})}
-    onCorrected={(document) => setCorrected({ original, saved: document })} />;
+  return (
+    <WorkflowRecoveryDocument
+      {...props}
+      {...(saved
+        ? {
+            workflowSource: saved.source,
+            definitionRevision: saved.definition_revision,
+            storageDigest: saved.storage_digest,
+            workflowLayout: saved.layout ?? undefined,
+            initialDraft: undefined,
+          }
+        : {})}
+      onCorrected={(document) => setCorrected({ original, saved: document })}
+    />
+  );
 }
 
 function WorkflowRecoveryDocument({
@@ -1696,7 +1758,9 @@ function WorkflowRecoveryDocument({
   onOpenRunWorkingView,
   fileActions,
   onCorrected,
-}: WorkflowRecoveryConceptProps & { onCorrected: (saved: WorkflowRecoveryPersistedSource) => void }) {
+}: WorkflowRecoveryConceptProps & {
+  onCorrected: (saved: WorkflowRecoveryPersistedSource) => void;
+}) {
   if (surfaceState === "loading") {
     return (
       <section
@@ -1750,10 +1814,16 @@ function WorkflowRecoveryDocument({
             replaced with fallback content.
           </small>
         </div>
-        <InvalidSourceCorrection key={`${workflowFilePath}:${storageDigest ?? workflowSource}`}
-          source={workflowSource} revision={definitionRevision} layout={workflowLayout}
-          onSave={onSave} onRead={onReadStoredSource} onDirty={onUnsavedChange}
-          onConfirmed={onCorrected} />
+        <InvalidSourceCorrection
+          key={`${workflowFilePath}:${storageDigest ?? workflowSource}`}
+          source={workflowSource}
+          revision={definitionRevision}
+          layout={workflowLayout}
+          onSave={onSave}
+          onRead={onReadStoredSource}
+          onDirty={onUnsavedChange}
+          onConfirmed={onCorrected}
+        />
         <InvalidSourceRunResults
           key={`${workspaceSessionId}:${workspaceId}:${workflowFilePath}`}
           workspaceSessionId={workspaceSessionId}
