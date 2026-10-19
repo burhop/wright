@@ -1,5 +1,66 @@
 # Desktop engineering prototype: qualification matrix
 
+**Current, 19 October:** [the consolidated status](integration-status-20261019.md)
+is authoritative for this resumed candidate. The normal full merge gate passed;
+actual device challenge/pending/expiry, encrypted credentials, bounded JSON import,
+private HTTPS headers and reviewed pinned-version replacements are locally
+qualified. Installed 0.15 is unchanged pending gated dev integration and one named
+0.16 update. Actual Windows rendering/download and personal sign-in remain open.
+Earlier checkpoints below retain their historical outcomes, not current blockers.
+
+**Retained integration checkpoint:17 October2026.**
+The matrix below this checkpoint is the retained historical0.10 record. Current
+installed package is0.15.0, frozen6bce016b, MCP Python SDK1.30.0,51tools. It includes
+scoped file staging, provider controls, typed local-command setup, read-only run
+evidence, scoped navigation/context, durable inert editor drafts and nonsecret
+workspace settings. Detailed current scope and remaining work are in
+[integration-completion-plan.md](integration-completion-plan.md).
+The frozen 0.15.0 installation has a separately recorded combined-profile proof:
+[qualification checkpoint](integration-qualification-20261017.md). Its 51-tool
+protocol/resource check, normal gateway task, original-byte image task, synthetic
+review and exact ARM64 image smoke passed locally. The normal current merge gate
+failed at security-database freshness; independent later checks remain diagnostics.
+The [connection parity audit](connection-parity-audit.md) distinguishes native
+gaps from shared legacy import/credential/upgrade limitations. An existing UI
+button or API success flag is not evidence those capabilities are qualified.
+
+| Current area | Verified boundary | Remaining required work |
+|---|---|---|
+| Workspace/home/editor | Earlier native panel observation; installed0.15 exact command/resource check; current normal Workflows→shared editor/source/CAS save; independent optional widget navigation/scoped Home; backend draft recovery preserves invalid Source, applied diagram and viewport; nonsecret settings partial CAS, conflict/lost-reply recovery and frozen accepted instructions | Actual Windows persistence/API availability and current served dev; credentials retain external authentication |
+| Connections | Actual native bundle→MCP→owner workspace Disable, shared Start/Stop/tool switches/uninstall; pinned provider stopped/marked uninstalled with configuration/credentials/grants/image retained; lost approval/apply/validation/enable replies and fresh setup reopening recover by read; deny survives restart; readiness and availability separate; recorded version and local-command preview/apply/protocol validation/explicit workspace enable | Full configuration imports, upgrade/private setup parity and real Windows callback/authentication; registration/credential deletion is separate from uninstall |
+| Files/portability/history | Installed0.15 upload/download ports; locally verified exact STEP/CSV round trip, lost-ack read reconciliation and duplicate suppression; existing attachment/export/import/result owners; old-source exact recorder view and pinned-hash download/drift denial | Actual Windows delivery; unsupported live/older-source text presentations |
+| Desktop tool work | Real Playwright snapshot workflows completed through normal workspace permission and actual desktop handoff; installed combined 0.15 profile retains image inputs and separate local reviews, with no private task enrollment; final exact binding completes a fresh brief and denies the prior binding | Broader supported task qualification and actual Windows acceptance |
+| Different existing workflow | Existing083 bounded digital focus-wheel process completes two native Blender operations through the normal Workflows/shared editor/common view; exact STL handoff, five artifact hashes, independent mesh checks and exact-run PNG display/download | Full named engineering campaigns deferred; dark original preview, Windows acceptance and manufacturing/physical/human review are separate |
+| Denial/drift | Missing availability rejects before allocation; revoked permission and changed schema after pending proposal yield no provider dispatch | Broader continuation configuration and uncertain-effect coverage |
+| Declared inputs/cancel | Unchanged existing input fixture completes same run after reconnect; invalid choice, duplicate start, cancellation and late-reply checks pass | Actual panel acceptance; separate genuine engineering review remains user authority |
+| Abrupt restart | Same pending run/receipt retained, late reply denied, no replacement output | Automatic desktop reasoning restart unsupported; explicit reconciliation remains required |
+| Generated interfaces | Shared common view retained | Original no-tools authoring contract remains gated |
+| Gates/deployment |Current546 registry,2758 workspace (12 skipped),481 adapter/platform (21 skipped),279 native and170 panel checks pass; earlier541 registry,12 API/service,361 settings owner/source/native and233 shared-editor/canvas checks retained; types/lint pass; predecessor11705 full merge gate passed | Push gate blocked by expired upstream vulnerability DB (publisher failed again06:56UTC17October); no follow-on push/merge/dev deployment yet |
+
+Local means GB10 Linux ARM64. Protocol/relay and simulated browser checks do not
+establish Windows native acceptance. The host still reports no model/app identity;
+do not infer provider-internal routing, billing, native tabs, Computer controls or
+background wakeups. Full named engineering campaigns are deferred by the new
+goal; bounded real tools and a substantially different existing workflow remain
+required. External current receipts live under
+/tmp/wright-desktop-integration-completion-20261016/ and
+/tmp/wright-desktop-workspace-tools-proof-20261017/. Provider lifecycle evidence is
+/tmp/wright-desktop-provider-controls-proof-20261017/checkpoint.json. The shared
+provider fixture is user-owned, pinned and locally catalog-unvalidated; these
+proofs establish actual lifecycle/permission behavior, not catalog installation.
+Normal custom-command setup now has separate actual owner qualification at
+/tmp/wright-desktop-command-apply-proof-20261017/checkpoint.json: one onboarding
+run/one protocol validation, selected-workspace enable, other workspace denied,
+no shortcut grants. Its unknown source license was independently inspected and
+reviewed; no personal publisher account/terms completion is claimed.
+No provider tools were invoked in either the lifecycle or setup slice, and checked existing GB10
+harness configuration hashes were unchanged during those provider proofs. The
+later authorized named0.15 update preserves unrelated settings, both workspaces,
+46 files, one symlink and credential bytes; it creates no run. See
+[installed evidence](installed-015-evidence.json).
+
+## Retained historical checkpoint
+
 Checkpoint: 15 October 2026. Installed plugin **0.10.0** selects the frozen
 `/tmp/wright-desktop-template-entry` runtime on API8163; runtime code is
 ab3ba5f7 and package wiring is 504acfa5. Earlier caches, states and services are

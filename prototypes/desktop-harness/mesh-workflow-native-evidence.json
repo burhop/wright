@@ -1,0 +1,87 @@
+{
+  "source_base": "6adc25cd plus local-validation finite JSON and deterministic callback dispatch fixes",
+  "host": "GB10 Linux ARM64; actual native bundle/MCP/API/Wright runtime/independent Blender; simulated desktop host, not Windows acceptance",
+  "scope": "Existing accepted083 bounded focus-wheel digital preparation workflow; two deterministic native operations and exact STL handoff. Original geometry and quoted requirements retained, only resolved paths/provider/schema changed. Full manufacturing campaign, printing, fit, strength and engineering acceptance deferred.",
+  "run": {
+    "completed": "f93f69fde7cf48a9aea48772ababe8bd",
+    "failed_control": "f98a3e90ea24488e82c74fb7610e4f04",
+    "canonical_records": 2,
+    "start_receipts": 2,
+    "native_geometry_calls": 2,
+    "desktop_model_requests": 0,
+    "source_sha256": "215b2075d8995aedd4c57121ec3447696f2b830c0d68d1cd59f80ea73cc64f1b",
+    "record_sha256": "309b6e42831a690dde9777a837c61266b242a17e1a868794ba5da2f43784d4b1"
+  },
+  "tests": {
+    "tool_registry": {
+      "passed": 546
+    },
+    "focused_validation_signing": {
+      "passed": 17
+    },
+    "focused_execution_model_routing": {
+      "passed": 68
+    },
+    "workspace_service": {
+      "passed": 2758,
+      "skipped": 12
+    },
+    "native_api_transport": {
+      "passed": 279
+    },
+    "adapters_and_platform_regression": {
+      "passed": 481,
+      "skipped": 21,
+      "limit": "Includes unavailable installed Windows Hermes API-source comparison; no live Hermes model/auth qualification claimed"
+    },
+    "ruff": "passed"
+  },
+  "observed_fixes": [
+    {
+      "defect": "Catalog signing float prohibition incorrectly rejected ordinary tool schemas and probe evidence.",
+      "fix": "Existing core finite-JSON digest only for schemas/probe inputs/results; signed capability and credential hashing unchanged.",
+      "negative": "NaN/infinities remain rejected; strict signed catalog metadata remains unchanged.",
+      "reproduction": "Actual provider target_size default1.0; test fails before fix and passes after."
+    },
+    {
+      "defect": "Deterministic workflows demanded model callbacks despite correctly having no frozen model route.",
+      "fix": "Share the model freezer\u2019s existing typed step classification with callback construction; actual model steps retain strict factory/frozen route enforcement.",
+      "negative": "First run failed before all native/model dispatches; original record/receipt retained, explicit new attempt only after fix."
+    }
+  ],
+  "gate": "No push/merge. Upstream DB publisher39008766209 failed06:56UTC; no live publisher job and no stale scan bypass.",
+  "evidence_root": "/tmp/wright-desktop-mesh-workflow-proof-20261017",
+  "native_preview": {
+    "path": "process-proofs/printed-replacement-part/common-digital-083/outputs/f93f69fde7cf48a9aea48772ababe8bd/mesh-preview.png",
+    "width": 700,
+    "height": 700,
+    "format": "PNG",
+    "sha256": "fa2e49e5d297cddb6fa7d366c53795c211bbad0a7da15d599a291e652cbac74b",
+    "scope": "Actual native geometry-only preview, not support/toolpath or print evidence"
+  },
+  "artifact_checks": {
+    "count": 5,
+    "source_triangles": 10824,
+    "repaired_triangles": 10808,
+    "scope": "Exact SHA/size, original envelope, closed one-component positive-volume meshes, source unchanged through same-run handoff; not print or engineering acceptance"
+  },
+  "native_ui": {
+    "resource_sha256": "8200156600b7a66fef7f863e0f99280a83ce3120c2701609c60fc57c934b7cb5",
+    "resource_bytes": 2302791,
+    "tools": 51,
+    "entry": "Native Workflows\u2192shared editor\u2192Run and results\u2192prepare\u2192start, two real native tool steps",
+    "reopen_checks": [
+      "Read-only exact-run reopening displays the actual Process completed state and decodes the same native PNG through the scoped result owner",
+      "Actual Chromium download matches this run\u2019s recorded PNG hash; Windows delivery and image aesthetics are separate",
+      "Exact result closes and returns to the shared editor with reads only;480px layout has no horizontal overflow, and no run/tool/approval action is repeated"
+    ],
+    "browser_report": "/tmp/wright-desktop-mesh-workflow-proof-20261017/browser-1792221021118/report.json",
+    "png_sha256": "fa2e49e5d297cddb6fa7d366c53795c211bbad0a7da15d599a291e652cbac74b",
+    "observer_correction": "Successful run observer expected Completed instead of actual Process completed; timeout retained, then exact run reopened read-only. No extra run/tool call."
+  },
+  "provider_final": {
+    "state": "exited",
+    "exit_code": 143,
+    "MCP": "stopped, installed, selected membership and disabled-tool preferences retained"
+  }
+}

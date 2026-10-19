@@ -258,6 +258,7 @@ CHECK_FRONTEND=0
 CHECK_PYTHON=0
 CHECK_DOCS=0
 CHECK_GITLEAKS=0
+CHECK_GITLEAKS_HISTORY=0
 CHECK_PROGRAM_CONTROL=0
 CHECK_DOCKER_SCAN=0
 BLOCKED_RECOVERY_SAFE=1
@@ -344,7 +345,12 @@ while IFS= read -r changed_file; do
       CHECK_GITLEAKS=1
       PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
       ;;
-    scripts/security-scan.*|scripts/test-gitleaks-program-status-allowlist.sh)
+    scripts/security-scan.*)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS_HISTORY=1
+      PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
+      ;;
+    scripts/test-gitleaks-program-status-allowlist.sh)
       CHECK_PYTHON=1
       CHECK_GITLEAKS=1
       PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
@@ -368,6 +374,16 @@ while IFS= read -r changed_file; do
     tests/ui-integration/*.spec.ts|tests/ui-integration/*/*.spec.ts)
       CHECK_FRONTEND=1
       PLAYWRIGHT_TARGETS+=("$changed_file")
+      ;;
+    prototypes/desktop-harness/*)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS_HISTORY=1
+      PYTHON_TEST_TARGETS+=(prototypes/desktop-harness/tests)
+      ;;
+    .gitleaksignore)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS_HISTORY=1
+      PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
       ;;
     apps/api/*)
       CHECK_PYTHON=1
@@ -419,11 +435,13 @@ if [[ "${#PLAYWRIGHT_TARGETS[@]}" -gt 0 ]]; then
   printf 'Selected Playwright target: %s\n' "${PLAYWRIGHT_TARGETS[@]}"
 fi
 
-if [[ "$CHECK_GITLEAKS" == "1" ]]; then
+if [[ "$CHECK_GITLEAKS" == "1" || "$CHECK_GITLEAKS_HISTORY" == "1" ]]; then
   if command -v docker >/dev/null 2>&1 &&
     command -v timeout >/dev/null 2>&1 &&
     timeout 10 docker info >/dev/null 2>&1; then
-    run bash scripts/test-gitleaks-program-status-allowlist.sh
+    if [[ "$CHECK_GITLEAKS" == "1" ]]; then
+      run bash scripts/test-gitleaks-program-status-allowlist.sh
+    fi
     run bash scripts/security-scan.sh --include-untracked --skip-trufflehog
   else
     echo "Gitleaks contract/history scan unavailable: no responsive local Docker host within 10 seconds. GitHub security CI remains authoritative."
@@ -432,6 +450,8 @@ fi
 
 if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
+  # Catch shared SDK downgrades before scanning the base image (PR159).
+  run "$GATE_PYTHON" -m pytest tests/docker/test_mcp_bundle.py -q -k bundle_mcp_sdk_matches_runtime_lock
   run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
   if [[ "$CHECK_DOCKER_SCAN" == "1" ]]; then
     run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host

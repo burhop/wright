@@ -1,7 +1,15 @@
+import re
 from collections.abc import Mapping
 from typing import Any, List, Literal, Optional, Union
 
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    model_serializer,
+    model_validator,
+)
 
 
 VerificationState = Literal[
@@ -41,6 +49,32 @@ class ValidationSummary(BaseModel):
     missing_dependencies: List[str] = Field(default_factory=list)
 
 
+_MCP_RESERVED_HEADERS = frozenset(
+    {
+        "host",
+        "content-length",
+        "transfer-encoding",
+        "connection",
+        "accept",
+        "content-type",
+        "mcp-session-id",
+        "mcp-protocol-version",
+        "proxy-authorization",
+        "cookie",
+    }
+)
+
+
+def validate_mcp_header_name(value: str) -> str:
+    if (
+        not isinstance(value, str)
+        or not re.fullmatch(r"[!#$%&'*+.^_`|~0-9A-Za-z-]{1,128}", value)
+        or value.lower() in _MCP_RESERVED_HEADERS
+    ):
+        raise ValueError("Unsupported authentication header name")
+    return value
+
+
 class EnvVarDefinition(BaseModel):
     """Metadata about an environment variable an MCP server needs."""
 
@@ -49,6 +83,21 @@ class EnvVarDefinition(BaseModel):
     description: str = ""  # Help text
     required: bool = True
     secret: bool = False  # If True, value should be masked in UI
+    # None retains the exact legacy environment-definition representation.
+    target: Literal["http_header"] | None = None
+
+    @model_validator(mode="after")
+    def validate_target(self):
+        if self.target == "http_header":
+            validate_mcp_header_name(self.name)
+        return self
+
+    @model_serializer(mode="wrap")
+    def legacy_environment_shape(self, handler):
+        data = handler(self)
+        if data.get("target") is None:
+            data.pop("target", None)
+        return data
 
 
 class McpServer(BaseModel):

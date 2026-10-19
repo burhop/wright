@@ -22,6 +22,10 @@ from api.routers.workspace import get_workspace_service
         "/api/workspace/workflow-sources/readiness",
         "/api/workspace/workflow-sources/copy",
         "/api/workspace/workflow-sources/images",
+        "/api/desktop/connection-imports/preview",
+        "/api/desktop/connection-plans/p/credentials/form",
+        "/api/desktop/connection-plans/p/credentials/save",
+        "/api/desktop/connection-plans/p/signin",
     ],
 )
 def test_value_error_context_is_safe_without_echoing_private_request(path):

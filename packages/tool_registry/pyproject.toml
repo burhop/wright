@@ -24,7 +24,7 @@ dependencies = [
     "httpx>=0.28",
     "httpx-sse>=0.4",
     "PyYAML>=6.0",
-    "mcp>=1.27.2,<2",
+    "mcp>=1.30.0,<2",
     "jsonschema>=4.26",
     "cryptography>=45,<51",
 ]

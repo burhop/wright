@@ -2,6 +2,27 @@
 
 This record tracks verification, not product acceptance or release readiness.
 
+## Current file-download integration — 16 October 2026
+
+PR158 is merged at dev `bcb5b52f`; download follow-on rebased with an identical
+Git tree. Full local merge gate passed, including all1,921 frontend tests, with
+the documented full-Playwright host limitation. Normal push checks/current PR CI
+are next. Candidate0.14 exact package/MCP/browser delivery checks passed; it is
+not installed. Installed0.13 and existing state are preserved. Actual Windows
+delivery, SteveCAD sign-in and complete engineering demonstrations remain open.
+See [file-download plan](file-download-plan.md) for evidence and remaining gates.
+
+## File download follow-on — 15 October 2026
+
+Local isolated `codex/desktop-file-download` adds bounded current-file downloads
+to the native Files view using the existing file owner. Exact retained STEP/Robot
+telemetry byte transport, negative boundaries and the 16 MiB MCP limit have
+evidence; 34 backend and 26 frontend checks pass. See
+[file-download-plan.md](file-download-plan.md) for identities, original failures
+and remaining qualification. This does not change the installed0.13 plugin,
+qualify Windows delivery or complete an engineering workflow. PR158 integration
+and this follow-on's repository gates remain pending.
+
 ## PR158 correction checkpoint — 15 October 2026
 
 The file-transfer candidate is draft PR158 at the original pushed head1a079bc2.

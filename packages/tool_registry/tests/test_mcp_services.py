@@ -1,5 +1,5 @@
 import pytest
-from data_vault import upgrade_database
+from data_vault import upgrade_database, install_default_secret_provider
 
 from tool_registry import EnvVarDefinition, McpServer, McpServerCreate, McpTool
 from tool_registry.db import (
@@ -14,6 +14,7 @@ from tool_registry.safety import ApprovalContext
 
 @pytest.fixture
 def db_path(tmp_path):
+    install_default_secret_provider()
     path = tmp_path / "mcp-services.db"
     upgrade_database(path)
     return str(path)

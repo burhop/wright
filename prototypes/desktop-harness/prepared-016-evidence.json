@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "package_version": "0.16.0",
+  "tool_count": 56,
+  "protocol": "2025-11-25",
+  "resource": {
+    "uri": "ui://wright/workflow/9fdd6e8029783f1e4c5e4306edcd9ecb428461c9632837ade927e225e29c2bda.html",
+    "sha256": "9fdd6e8029783f1e4c5e4306edcd9ecb428461c9632837ade927e225e29c2bda",
+    "bytes": 2338712
+  },
+  "mcp_sdk": "1.30.0",
+  "credential_crypto": "1.6.1",
+  "remote_oauth_flow": "device_code",
+  "candidate_differs_only_by_state": true,
+  "writes_requested": false,
+  "windows_acceptance": false,
+  "boundary": "Actual proof-package command/SDK protocol/native resource and frozen profile. Intended installation selects retained user state only after backed-up service transition."
+}

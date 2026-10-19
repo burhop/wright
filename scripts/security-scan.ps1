@@ -27,7 +27,7 @@ function Initialize-HistoryScanRoot {
     if (Test-Path -LiteralPath (Join-Path $RootDir ".git") -PathType Leaf) {
         $script:TemporaryScanParent = Join-Path ([IO.Path]::GetTempPath()) ("wright-security-scan-" + [guid]::NewGuid().ToString("N"))
         $script:ScanRoot = Join-Path $script:TemporaryScanParent "repo"
-        git clone --no-hardlinks --no-checkout $RootDir $script:ScanRoot | Out-Null
+        git clone --no-hardlinks --no-checkout --single-branch --no-tags $RootDir $script:ScanRoot | Out-Null
         Assert-LastExitCode "Linked-worktree history clone"
         $headCommit = (git -C $RootDir rev-parse --verify HEAD).Trim()
         Assert-LastExitCode "Resolve linked-worktree HEAD"

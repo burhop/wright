@@ -10,7 +10,8 @@ from core.workflow_model_routing import (
 UNSET_CONTEXT = object()
 
 
-def _model_step(step):
+def step_requires_model(step):
+    """Classify model use identically for freezing, restoration and dispatch."""
     return step.agent_task or not (
         step.tool_name
         or step.human_interaction
@@ -30,7 +31,7 @@ def validate_frozen_model_plan(plan, context):
     expected_text = frozen.text.model_dump(mode="json") if frozen.text else {}
     actual_images = {}
     for step in plan.steps:
-        if not _model_step(step):
+        if not step_requires_model(step):
             continue
         if step.native_image_format:
             actual_images[step.id] = step.native_image_resolution
@@ -60,7 +61,7 @@ async def freeze_workflow_model_routing(
     # context shape; absence is not retrospectively fabricated frozen provenance.
     if continuing and frozen_raw is None:
         return plan, context
-    model_steps = [step for step in plan.steps if _model_step(step)]
+    model_steps = [step for step in plan.steps if step_requires_model(step)]
     reader = getattr(service, "workflow_model_capabilities", None)
     if not model_steps or (reader is None and not continuing):
         return plan, context
@@ -96,7 +97,9 @@ async def freeze_workflow_model_routing(
             plan,
             steps=tuple(
                 replace(step, model_resolution=frozen.text.model_dump(mode="json"))
-                if _model_step(step) and not step.native_image_format and frozen.text
+                if step_requires_model(step)
+                and not step.native_image_format
+                and frozen.text
                 else step
                 for step in plan.steps
             ),
@@ -136,9 +139,9 @@ def restore_review_model_routing(plan, context):
             plan,
             steps=tuple(
                 replace(step, native_image_resolution=frozen.images.get(step.id, {}))
-                if _model_step(step) and step.native_image_format
+                if step_requires_model(step) and step.native_image_format
                 else replace(step, model_resolution=frozen.text.model_dump(mode="json"))
-                if _model_step(step) and frozen.text
+                if step_requires_model(step) and frozen.text
                 else step
                 for step in plan.steps
             ),

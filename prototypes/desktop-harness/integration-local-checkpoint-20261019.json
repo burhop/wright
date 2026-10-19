@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-10-19T15:10:55.815937+00:00",
+  "source": "7a18ba532e0c56d692dd0b0b5ef5e7d57ac16f6a",
+  "gate_source": "cb875fc581fbeb464366454fa37f1c5affe2b7f1",
+  "desktop_owner_suite": {
+    "log": "final-016-desktop-owner-regression.log",
+    "passed": 297,
+    "exit_code": 0,
+    "log_sha256": "e4da19b5fd0203df0de4aa7774367941e6b4bcc4312d1118af746b4ff8f1d8bc"
+  },
+  "native_panel_suite": {
+    "log": "header-replacement-ui-v2.log",
+    "passed": 187,
+    "files": 22,
+    "exit_code": 0,
+    "log_sha256": "a2abbaedcbae8098020ccf9df64711869e1dbb63aec7ee2989185f4137a82348"
+  },
+  "focused_owner_scanner_suite": {
+    "log": "replacement-header-focused-v5.log",
+    "passed": 23,
+    "exit_code": 0,
+    "log_sha256": "3ab647be763bec11610779daf9a21d8aa741ebf118a5dc358976741995972a16"
+  },
+  "docker_smoke": {
+    "log": "candidate-cb875fc5-docker-smoke.log",
+    "image": "wright-desktop-gate:completion-cb875fc5",
+    "image_id": "sha256:d9824994f23486ef508af6e40d914a6fd693722e6843bdddfe5fc2a9d15e1d17",
+    "architecture": "arm64",
+    "exit_code": 0,
+    "limit": "Existing smoke historical backup/restore printed scenario was not newly executed. No host ports or live services.",
+    "log_sha256": "9fb87533bb7ccceece8b5cb141ce63d9e67621f7b14cc88a0800f15959094591"
+  },
+  "windows_desktop_acceptance": false,
+  "personal_signin_completed": false,
+  "full_merge_gate": {
+    "status": "passed",
+    "receipt": "normal-full-gate-cb875fc5-receipt.json",
+    "source": "cb875fc581fbeb464366454fa37f1c5affe2b7f1",
+    "log_sha256": "3df36df6ae237636b1f4d182d6644bd9b48172998fb87298f68b552e4aa564bc"
+  }
+}

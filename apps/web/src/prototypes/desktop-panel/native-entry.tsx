@@ -9,6 +9,7 @@ import "@wright/ui-kit/styles.css";
 import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
+import { NativeEditorDraftClient } from "./native-editor-draft-client";
 import type { NativeProcessCall } from "./native-process-client";
 import type { NativeTransferCall } from "./native-transfer-client";
 import {
@@ -16,6 +17,13 @@ import {
   type HomeCall,
   type DesktopWorkspace,
 } from "./NativeHomePanel";
+import {
+  readNavigationState,
+  rememberNavigationState,
+  navigationState,
+  type NativeNavigationState,
+  type HomeView,
+} from "./native-navigation-state";
 
 const root = createRoot(document.getElementById("editor")!);
 const notice = document.getElementById("notice")!;
@@ -29,8 +37,69 @@ let pending: CallToolResult | undefined;
 let generation = 0;
 let dirty = false;
 let selectedWorkspace: DesktopWorkspace | undefined;
+let navigation: NativeNavigationState | undefined;
+let homeView: HomeView = "workflows";
+let restorationNotice = "";
+let contextGeneration = 0;
+let contextWrite: Promise<unknown> = Promise.resolve();
+let homeGeneration = 0;
+let openedWorkflow:
+  { path: string; source_digest: string; run_id?: string } | undefined;
+function rememberLocation() {
+  if (!selectedWorkspace) return;
+  navigation = {
+    schema_version: "wright.native-navigation/1",
+    workspace_id: selectedWorkspace.workspace_id,
+    session_id: selectedWorkspace.session_id,
+    view: homeView,
+  };
+  const widgetAccepted = rememberNavigationState(navigation);
+  const version = ++contextGeneration;
+  const context = {
+    ...navigation,
+    workspace_name: selectedWorkspace.workspace_name,
+    ...(openedWorkflow
+      ? { workflow: { ...openedWorkflow, editor_has_unsaved_changes: dirty } }
+      : {}),
+  };
+  contextWrite = contextWrite
+    .catch(() => {})
+    .then(async () => {
+      if (version !== contextGeneration) return;
+      try {
+        await app.updateModelContext(
+          { structuredContent: context },
+          { timeout: 5000 },
+        );
+        if (version === contextGeneration) {
+          restorationNotice = widgetAccepted
+            ? ""
+            : "Workspace context is available to this conversation, but this host does not save panel navigation. Ask the conversation to reopen this workspace.";
+          renderCurrent?.(app.getHostContext());
+        }
+      } catch {
+        if (version === contextGeneration) {
+          restorationNotice = widgetAccepted
+            ? "The panel location is saved here, but chat context could not be updated. Name the workspace when asking the conversation."
+            : "This host could not retain panel navigation. Reopen Wright with the workspace name; saved workflows are unchanged.";
+          renderCurrent?.(app.getHostContext());
+        }
+      }
+    });
+}
 const rememberWorkspace = (workspace: DesktopWorkspace) => {
+  if (
+    selectedWorkspace?.workspace_id !== workspace.workspace_id ||
+    selectedWorkspace.session_id !== workspace.session_id
+  )
+    openedWorkflow = undefined;
   selectedWorkspace = workspace;
+  rememberLocation();
+};
+const rememberView = (view: HomeView) => {
+  homeView = view;
+  openedWorkflow = undefined;
+  rememberLocation();
 };
 let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
 const processCall: NativeProcessCall = (name, request) =>
@@ -72,12 +141,21 @@ function home() {
     return;
   }
   generation++;
+  openedWorkflow = undefined;
+  const homeKey = ++homeGeneration;
   notice.textContent = "";
   renderCurrent = () =>
     root.render(
       <NativeHomePanel
+        key={homeKey}
         call={homeCall}
-        initialSelection={selectedWorkspace}
+        initialSelection={selectedWorkspace ?? navigation}
+        initialView={homeView}
+        onNavigate={rememberView}
+        restorationNotice={restorationNotice}
+        onDirty={(pending) => {
+          dirty = pending;
+        }}
         onSelect={rememberWorkspace}
         onOpenRun={async (workspace, path, run) => {
           const request = ++generation;
@@ -150,8 +228,43 @@ async function open() {
   if (
     pending?.structuredContent?.view === "home" &&
     !pending.isError &&
-    typeof input.workspace_id !== "string"
+    typeof input.path !== "string"
   ) {
+    if (dirty) {
+      notice.textContent =
+        "Your draft is kept. Save it before changing workspace.";
+      return;
+    }
+    const requested =
+      typeof input.workspace_id === "string" ||
+      typeof input.session_id === "string";
+    const explicit = navigationState({
+      schema_version: "wright.native-navigation/1",
+      workspace_id: input.workspace_id,
+      session_id: input.session_id,
+      view: "workflows",
+    });
+    const acknowledged = pending.structuredContent.selection as
+      Record<string, unknown> | undefined;
+    if (
+      requested &&
+      (!explicit ||
+        acknowledged?.workspace_id !== explicit.workspace_id ||
+        acknowledged.session_id !== explicit.session_id)
+    ) {
+      notice.textContent =
+        "The requested workspace was not confirmed. No other workspace was opened.";
+      return;
+    }
+    const restored = explicit ?? navigation ?? readNavigationState();
+    if (
+      explicit &&
+      (selectedWorkspace?.workspace_id !== explicit.workspace_id ||
+        selectedWorkspace.session_id !== explicit.session_id)
+    )
+      selectedWorkspace = undefined;
+    navigation = restored;
+    homeView = restored?.view ?? "workflows";
     home();
     return;
   }
@@ -221,6 +334,15 @@ async function open() {
     async (name, arguments_) =>
       app.callServerTool({ name, arguments: arguments_ }),
   );
+  const draftClient = new NativeEditorDraftClient(
+    {
+      workspaceId: input.workspace_id,
+      sessionId: input.session_id,
+      path: input.path,
+    },
+    async (name, arguments_) =>
+      app.callServerTool({ name, arguments: arguments_ }),
+  );
   notice.textContent = "Opening the accepted workflow…";
   try {
     const document = await client.read(); // Cached tool results are not durable restoration authority.
@@ -230,6 +352,20 @@ async function open() {
         "This run's source changed. Reopen its exact accepted workflow; no action was repeated.";
       return;
     }
+    selectedWorkspace = {
+      workspace_id: input.workspace_id,
+      session_id: input.session_id,
+      workspace_name: data.workspace?.workspace_name ?? "Workspace",
+      available: true,
+      reason: null,
+    };
+    homeView = "workflows";
+    openedWorkflow = {
+      path: input.path,
+      source_digest: document.storage_digest,
+      ...(typeof input.run_id === "string" ? { run_id: input.run_id } : {}),
+    };
+    rememberLocation();
     renderCurrent = (context) =>
       root.render(
         <div className="native-workspace-frame">
@@ -240,6 +376,7 @@ async function open() {
             key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
             initial={document}
             sourceClient={client}
+            draftClient={draftClient}
             call={processCall}
             transferCall={transferCall}
             onOpenTransferred={(path) =>
@@ -258,7 +395,20 @@ async function open() {
             workingViewEnabled={data.working_view_enabled === true}
             theme={context?.theme}
             onDirty={(value) => {
+              const changed = dirty !== value;
               dirty = value;
+              if (changed) rememberLocation();
+            }}
+            onAcceptedSource={(saved) => {
+              openedWorkflow = {
+                path: saved.path,
+                source_digest: saved.storage_digest,
+                ...(openedWorkflow?.source_digest === saved.storage_digest &&
+                openedWorkflow.run_id
+                  ? { run_id: openedWorkflow.run_id }
+                  : {}),
+              };
+              rememberLocation();
             }}
           />
         </div>,

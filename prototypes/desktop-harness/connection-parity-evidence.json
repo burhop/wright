@@ -1,0 +1,33 @@
+{
+  "head": "267b0bb9518e06228707755632ae8250af71370c",
+  "boundary": "Pure existing preview_configuration call; no repository write, plan/apply, secret-store access, provider process, network or workflow run",
+  "source_discarded": true,
+  "environment_requirements": [
+    {
+      "name": "API_TOKEN",
+      "credential_required": true,
+      "value_supplied": true
+    },
+    {
+      "name": "RUN_MODE",
+      "credential_required": false,
+      "value_supplied": true
+    }
+  ],
+  "header_requirements": [
+    {
+      "name": "Authorization",
+      "credential_required": true,
+      "value_supplied": true
+    }
+  ],
+  "raw_values_absent": true,
+  "nonsecret_environment_value_also_discarded": true,
+  "source_files": {
+    "packages/tool_registry/src/tool_registry/config_import.py": "1433ca19b495b6dea8beb57ca77a25894eded972c3ab844d61207c6f3a04f9f8",
+    "packages/tool_registry/src/tool_registry/install_plans.py": "2346e6070f5746b095cbc69fc96bb26bee53419162ed3a9539f261365ded83f5",
+    "packages/tool_registry/src/tool_registry/registry_onboarding.py": "a0c6014b04afe6a7646dd336359cf2cddda93ca20e2273131eab4cb91939cc9c",
+    "packages/tool_registry/src/tool_registry/version_check.py": "bf0da335d08bc4dffb525e1e16f863bc219301549744f2e5b650600674f16994",
+    "packages/tool_registry/src/tool_registry/services.py": "bff5555f52770b99c9a10e8a7800dd6676796a4d746838b16ebab99ff12ca105"
+  }
+}

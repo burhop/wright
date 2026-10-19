@@ -84,6 +84,44 @@ branch failure from hiding outside the latest incremental diff.
   delivered. Use these measures to remove process cost, never to weaken a red
   customer, security, compatibility, or release signal.
 
+PR #159 also exposed a gap between the separately qualified desktop prototype
+and normal gate collection. Python prototype changes now select its existing owner
+tests as an isolated pytest root in both native gates. These include frozen routing,
+authentication, private credentials, scope, recovery, and observable evidence.
+GitHub CodeQL remains the whole-program data-flow check. Its name heuristic treated
+the public `remote_oauth_flow` selector as a password; the internal selector is now
+named `remote_signin_mode`, while the CLI flag, serialized key, and supported values
+remain unchanged. No CodeQL rule or alert is suppressed. The synthetic credential
+fixture compares its exact canary with `hmac.compare_digest`; it does not store or
+hash customer passwords. Collect every current-head CI result before the next push.
+
+The same CI cycle flagged two `credential_sha256` values in desktop test evidence.
+Both are verified digests of the isolated HTTPS fixture canaries, not personal
+credentials. `.gitleaksignore` lists only the two exact historical finding
+fingerprints (introducing commit/path/rule/line). The current receipt uses
+`fixture_value_digest`. The pinned scanner was checked to discover the repository's
+ignore file and still flag a neighboring key. Prototype changes and fingerprint
+changes select the existing history scan in the fast gate; the full merge gate now
+runs that same scan. Existing allowlist rules and their selected contracts remain
+unchanged. No history rewrite or whole-file exclusion is permitted.
+
+The OCI scanner may fail before it writes a vulnerability report. Its public
+projection now includes only an allowlisted reported category (for example DB
+download or registry rate limiting), retaining raw details locally. An unclassified
+failure remains blocking. These categories diagnose the scanner; they do not
+establish a clean inventory, authorize retries, extend DB validity or waive policy.
+PR #159's initial scanner failure lacked a public cause and remains unclassified.
+
+Linked-worktree history scans normalize only the current candidate branch and
+omit unrelated tags. Every candidate ancestor, including merged branches, remains
+in the scan; unpublished sibling workstreams are outside the reported HEAD scope.
+A real Git regression exercises both Bash and PowerShell clone commands with a
+merged ancestor, an unrelated branch/tag and a main checkout on another branch.
+History-runner edits select that boundary regression and the history scan;
+allowlist-rule edits retain their existing scanner contracts. PR #159's first
+expanded local scan found an off-candidate fixture from a separate local branch;
+that branch and finding were preserved without adding an exception.
+
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
@@ -101,6 +139,14 @@ Container and engineering-image changes also select the Docker bundle, smoke
 contract, and workflow-policy tests. Pull-request CI remains authoritative for
 the native amd64 and arm64 image builds that cannot be reproduced on every
 developer host; both images must build and pass their exact-image smoke tests.
+
+PR #159 exposed a bundle downgrade after the base image passed: its provider
+install list pinned an older MCP SDK in the shared Hermes environment. The
+Docker bundle suite now checks both Linux manifests against Wright's runtime
+requirement and locked SDK version. Both native gates run that check before
+dependency audits and base-image scanning. Update these pins together; do not
+add an SDK conflict to the reviewed Hermes dependency exceptions. Base-image
+qualification alone does not qualify the final engineering bundle.
 
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
@@ -378,6 +424,13 @@ poll and retain exact durable-request, single-dispatch, provider-outcome and
 uncertain-publication assertions. A suppressed wakeup signal must fail the test.
 Both native gates already collect this suite; the correction changes its
 controlled interleaving, not gate selection or production cancellation behavior.
+
+Chat restoration regressions must hold the initial history response until a new
+turn completes, then release that older response and verify the new messages
+remain visible. PR #159 exposed initial-history delivery erasing a completed
+turn on Windows. Waiting longer for the missing diagnostic does not fix that
+ordering bug. Keep ordinary history restoration, reconnect and queued-turn checks;
+the existing full frontend suite runs the deterministic interleaving regression.
 
 - Collect every failed job and its first actionable error before editing.
 - Let the complete CI browser run report its full failure set; do not cap the run

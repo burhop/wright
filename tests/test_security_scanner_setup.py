@@ -1,5 +1,9 @@
 from pathlib import Path
 import shlex
+import shutil
+import subprocess
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,10 +152,14 @@ def test_program_status_gitleaks_allowlist_has_scanner_backed_negative_control()
     assert "test-gitleaks-program-status-allowlist.sh" in push
     assert "scripts/security-scan.sh --include-untracked --skip-trufflehog" in push
     assert "GitHub security CI remains authoritative" in push
-    assert (
-        "scripts/security-scan.*|scripts/test-gitleaks-program-status-allowlist.sh"
-        in push
-    )
+    rule_start = push.index("    scripts/test-gitleaks-program-status-allowlist.sh)")
+    rule_scope = push[rule_start : push.index(";;", rule_start)]
+    assert "CHECK_GITLEAKS=1" in rule_scope
+    assert "tests/test_security_scanner_setup.py" in rule_scope
+    history_start = push.index("    scripts/security-scan.*)")
+    history_scope = push[history_start : push.index(";;", history_start)]
+    assert "CHECK_GITLEAKS_HISTORY=1" in history_scope
+    assert "tests/test_security_scanner_setup.py" in history_scope
 
 
 def test_docs_and_makefile_expose_local_alpha_gate() -> None:
@@ -222,3 +230,77 @@ def test_process_evidence_exceptions_pin_exact_rule_path_field_and_value() -> No
         assert set(allowance["regexes"]) == {
             "^" + re.escape(e["match"]) + "$" for e in expected
         }
+
+
+@pytest.mark.parametrize(
+    "scanner_script", ["scripts/security-scan.sh", "scripts/security-scan.ps1"]
+)
+def test_linked_worktree_history_clone_contains_only_candidate_ancestry(
+    tmp_path, scanner_script
+):
+    if not shutil.which("git"):
+        pytest.skip("Git is required for the real worktree history boundary")
+    repository = tmp_path / "source repository"
+    repository.mkdir()
+
+    def git(*args, cwd=repository):
+        return subprocess.check_output(
+            [
+                "git",
+                "-c",
+                "user.name=History fixture",
+                "-c",
+                "user.email=fixture@example.invalid",
+                *args,
+            ],
+            cwd=cwd,
+            text=True,
+            stderr=subprocess.PIPE,
+        ).strip()
+
+    git("init", "-b", "base")
+    (repository / "base.txt").write_text("base")
+    git("add", ".")
+    git("commit", "-m", "Base")
+    git("checkout", "-b", "merged-work")
+    (repository / "merged.txt").write_text("merged ancestor")
+    git("add", ".")
+    git("commit", "-m", "Merged work")
+    merged = git("rev-parse", "HEAD")
+    git("checkout", "base")
+    git("checkout", "-b", "candidate")
+    (repository / "candidate.txt").write_text("candidate")
+    git("add", ".")
+    git("commit", "-m", "Candidate work")
+    git("merge", "--no-ff", "merged-work", "-m", "Accepted merged work")
+    head = git("rev-parse", "HEAD")
+    expected = set(git("rev-list", "HEAD").splitlines())
+    assert merged in expected
+    git("checkout", "-b", "unrelated", "base")
+    (repository / "unrelated.txt").write_text("independent workstream")
+    git("add", ".")
+    git("commit", "-m", "Unrelated local work")
+    unrelated = git("rev-parse", "HEAD")
+    git("tag", "unrelated-only")
+    worktree = tmp_path / "candidate worktree"
+    git("worktree", "add", str(worktree), "candidate")
+
+    # Exercise each script's real clone flags with a main checkout on another
+    # branch, an off-branch tag, and a candidate that includes a merged ancestor.
+    line = next(
+        line
+        for line in read_text(scanner_script).splitlines()
+        if line.strip().startswith("git clone ")
+    )
+    flags = []
+    for token in shlex.split(line.strip())[2:]:
+        if token.startswith("$"):
+            break
+        flags.append(token)
+    clone = tmp_path / "scan clone"
+    git("clone", *flags, str(worktree), str(clone))
+    git("checkout", "--detach", head, cwd=clone)
+    observed = set(git("rev-list", "--all", cwd=clone).splitlines())
+    assert observed == expected
+    assert merged in observed
+    assert unrelated not in observed

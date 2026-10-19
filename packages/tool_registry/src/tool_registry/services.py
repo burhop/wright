@@ -135,6 +135,7 @@ async def toggle_server_activation(
     is_active: bool,
     *,
     approval_context: ApprovalContext | None = None,
+    workspace_dir: str | None = None,
 ) -> McpServer:
     server = _require_server(engine.db_path, server_id)
     if is_active:
@@ -145,7 +146,11 @@ async def toggle_server_activation(
         )
         if not decision.allowed:
             raise McpInvalidOperationError(decision.reason)
-        return await engine.start_server(server_id, approval_context=approval_context)
+        return await engine.start_server(
+            server_id,
+            approval_context=approval_context,
+            **({"workspace_dir": workspace_dir} if workspace_dir is not None else {}),
+        )
     return await engine.stop_server(server_id)
 
 

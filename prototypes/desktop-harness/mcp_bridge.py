@@ -28,6 +28,19 @@ from core.process_interactions import Reason
 
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
+from desktop_backend import (
+    FileUploadRequest,
+    ConnectionControlRequest,
+    ConnectionTemplateRequest,
+    LocalConnectionPreviewRequest,
+    RecordedRunRequest,
+    ConfiguredLocalConnectionPreviewRequest,
+    ConfiguredRemoteConnectionPreviewRequest,
+    EditorDraftReadRequest,
+    EditorDraftSaveRequest,
+    WorkspaceSettingsReadRequest,
+    WorkspaceSettingsSaveRequest,
+)
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
 
@@ -428,6 +441,7 @@ def server(client, *, native_editor=False, native_working_view=False):
                         scope.get("workspace_id") == workspace_id
                         for scope in item.user_state.enabled_workspaces
                     ),
+                    "server_id": item.user_state.server_id,
                     "credentials_missing": any(
                         not configured
                         for configured in item.user_state.credentials_configured.values()
@@ -459,6 +473,101 @@ def server(client, *, native_editor=False, native_working_view=False):
             "GET",
             f"/api/desktop/workspaces/{workspace_id}/file-preview",
             params={"session_id": session_id, "path": path},
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_workspace_file_download(
+        workspace_id: str, session_id: str, path: str
+    ) -> dict[str, Any]:
+        """Read exact bounded current-file bytes for an explicit UI download."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            f"/api/desktop/workspaces/{workspace_id}/file-download",
+            params={"session_id": session_id, "path": path},
+        )
+
+    @mcp.tool(
+        annotations=write, structured_output=True, meta={"ui": {"visibility": ["app"]}}
+    )
+    async def wright_workspace_file_upload(
+        request: FileUploadRequest,
+    ) -> dict[str, Any]:
+        """Stage an explicitly selected input file. No workflow, tool, trust or overwrite authority."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            document = await client.call(
+                "POST",
+                "/api/desktop/files/upload",
+                json=request.model_dump(mode="json"),
+            )
+        except WrightRequestRejected as failure:
+            known = failure.status_code in (400, 401, 403, 404, 409, 422)
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": "Upload was rejected. Check workspace access, file size and filename."
+                    if known
+                    else "Upload outcome is unconfirmed. Check the saved upload before another attempt.",
+                },
+            }
+        return {"ok": True, "document": document}
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_controls(
+        workspace_id: str, session_id: str, capability_id: str, server_id: str
+    ) -> dict:
+        """Read registered provider/tool state. Shared controls are distinct from workspace grants."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "GET",
+            "/api/desktop/connection-controls",
+            params={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "server_id": server_id,
+            },
+        )
+
+    @mcp.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True,
+                                    idempotentHint=False, openWorldHint=False),
+        structured_output=True, meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_connection_control(
+        request: ConnectionControlRequest,
+    ) -> dict[str, Any]:
+        """Apply one operator-selected shared provider/tool state change through its existing owner."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            document = await client.call(
+                "POST",
+                "/api/desktop/connection-controls",
+                json=request.model_dump(mode="json", exclude_none=True),
+            )
+        except WrightRequestRejected as failure:
+            known = failure.status_code in (400, 401, 403, 404, 409, 422)
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": "Shared control was rejected. Refresh its current subject and check operator access."
+                    if known
+                    else "Shared control outcome is not confirmed. Read current provider state before another action.",
+                },
+            }
+        return {"ok": True, "document": document}
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_replacement(
+        request: ConnectionTemplateRequest,
+    ) -> dict[str, Any]:
+        """Read one exact public import template on operator intent; never copies keys or changes the provider."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/connection-replacement", json=request.model_dump()
         )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
@@ -497,6 +606,26 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "url": url,
             },
         )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_command_preview(
+        request: LocalConnectionPreviewRequest,
+    ) -> dict[str, Any]:
+        """Preview a literal command on the Wright host; no execution, installation, environment or credentials."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/connection-imports/preview",
+            json=request.model_dump(),
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_configuration_preview(
+        request: ConfiguredLocalConnectionPreviewRequest
+        | ConfiguredRemoteConnectionPreviewRequest,
+    ) -> dict[str, Any]:
+        """Preview declared environment/header names and explicitly public settings; accepts no private values."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call("POST", "/api/desktop/connection-imports/preview", json=request.model_dump())
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_import_plan(
@@ -554,6 +683,31 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={"workspace_id": workspace_id, "session_id": session_id},
         )
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_credentials(workspace_id: str, session_id: str, plan_id: str) -> dict[str, Any]:
+        """Read configured field status only; never returns stored values."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("GET", "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/credentials",
+                                 params={"workspace_id": workspace_id, "session_id": session_id})
+
+    @mcp.tool(annotations=read, structured_output=False, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_credentials_form(workspace_id: str, session_id: str, plan_id: str, plan_digest: str) -> CallToolResult:
+        """Open a short-lived sealed operator form for the exact installed provider; saves nothing."""
+        await client.scope(workspace_id, session_id)
+        data = await client.call("POST", "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/credentials/form",
+                                 json={"workspace_id": workspace_id, "session_id": session_id, "plan_digest": plan_digest})
+        form = data.pop("form")
+        return CallToolResult(content=[TextContent(type="text", text="Credential form opened; no values were saved.")],
+                              structuredContent=data, _meta={"wright/credential-form": form})
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_credentials_save(workspace_id: str, session_id: str, plan_id: str, plan_digest: str, form_id: str, ciphertext: str) -> dict[str, Any]:
+        """Submit a one-use JWE envelope from the operator form. Raw keys are not accepted as tool arguments."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("POST", "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/credentials/save",
+                                 json={"workspace_id": workspace_id, "session_id": session_id, "plan_digest": plan_digest,
+                                       "form_id": form_id, "ciphertext": ciphertext})
+
     @mcp.tool(
         annotations=read, structured_output=False, meta={"ui": {"visibility": ["app"]}}
     )
@@ -571,11 +725,13 @@ def server(client, *, native_editor=False, native_working_view=False):
             key: data[key]
             for key in ("workspace_id", "session_id", "plan_id", "presentation")
         }
+        public["plan_digest"] = data.get("plan_digest")
+        public["provider_status"] = data.get("provider_status")
         return CallToolResult(
             content=[
                 TextContent(
                     type="text",
-                    text="Operator sign-in status read. No login was started.",
+                    text="Operator sign-in and saved provider status read. No login or validation was started.",
                 )
             ],
             structuredContent=public,
@@ -583,6 +739,7 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "wright/signin": {
                     "authorization_url": data.get("authorization_url"),
                     "callback_uri": data.get("callback_uri"),
+                    "device": data.get("device"),
                 }
             },
         )
@@ -617,6 +774,23 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "plan_digest": plan_digest,
+            },
+        )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_disable(
+        workspace_id: str, session_id: str, capability_id: str, server_id: str
+    ) -> dict[str, Any]:
+        """Explicit operator removal from this workspace; no provider uninstall or invocation grant."""
+        await client.scope(workspace_id, session_id)
+        return await client.call(
+            "POST",
+            "/api/desktop/connections/disable",
+            json={
+                "workspace_id": workspace_id,
+                "session_id": session_id,
+                "capability_id": capability_id,
+                "server_id": server_id,
             },
         )
 
@@ -850,6 +1024,102 @@ def server(client, *, native_editor=False, native_working_view=False):
             "runs": [{key: row.get(key) for key in fields} for row in document["runs"]],
         }
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_workspace_settings_read(
+        request: WorkspaceSettingsReadRequest,
+    ) -> dict[str, Any]:
+        """Read nonsecret settings for one workspace. Does not change accepted instructions or runs."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/workspace-settings/read", json=request.model_dump()
+        )
+
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            readOnlyHint=False,
+            destructiveHint=True,
+            idempotentHint=False,
+            openWorldHint=False,
+        ),
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_workspace_settings_save(
+        request: WorkspaceSettingsSaveRequest,
+    ) -> dict[str, Any]:
+        """Save explicitly changed nonsecret settings with CAS; never rewrites accepted workflows or performs Git actions."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            value = await client.call(
+                "POST",
+                "/api/desktop/workspace-settings/save",
+                json=request.model_dump(exclude_unset=True),
+            )
+            return {"ok": True, **value}
+        except (WrightRequestRejected, httpx.HTTPError) as error:
+            known = isinstance(error, WrightRequestRejected) and error.status_code in {
+                403,
+                409,
+                422,
+            }
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": (
+                        "Settings were not saved. Read saved settings before continuing."
+                        if known
+                        else "Settings save is unconfirmed. Read saved state before continuing."
+                    ),
+                },
+            }
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_recorded_run_read(request: RecordedRunRequest) -> dict[str, Any]:
+        """Read exact saved run evidence, including older source revisions. Never resumes, reviews or executes."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/run-records/read", json=request.model_dump(),
+        )
+
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_editor_drafts_read(request: EditorDraftReadRequest) -> dict[str, Any]:
+        """Read inert editor drafts for one source. Never accepts, runs or reviews a workflow."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/editor-drafts/read", json=request.model_dump()
+        )
+
+    @mcp.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True,
+                                    idempotentHint=False, openWorldHint=False),
+        meta={"ui": {"visibility": ["app"]}},
+    )
+    async def wright_editor_draft_save(request: EditorDraftSaveRequest) -> dict[str, Any]:
+        """Preserve an inert editor draft with CAS; no accepted source, run or permission changes."""
+        try:
+            await client.scope(request.workspace_id, request.session_id)
+            value = await client.call(
+                "POST", "/api/desktop/editor-drafts/save", json=request.model_dump()
+            )
+            return {"ok": True, **value}
+        except (WrightRequestRejected, httpx.HTTPError) as error:
+            known = isinstance(error, WrightRequestRejected) and error.status_code in {
+                403,
+                409,
+                422,
+            }
+            return {
+                "ok": False,
+                "error": {
+                    "outcome_known": known,
+                    "message": (
+                        "Draft was not saved. Inspect saved drafts before continuing."
+                        if known
+                        else "Draft save is unconfirmed. Read it before another write."
+                    ),
+                },
+            }
+
     @mcp.tool(annotations=read)
     async def wright_reasoning_pending(workspace_id: str, session_id: str) -> dict:
         """Read bounded tasks for this workspace. Use their exact saved instructions and schemas."""
@@ -1006,10 +1276,19 @@ def server(client, *, native_editor=False, native_working_view=False):
             annotations=read,
             meta={"ui": {"resourceUri": uri, "visibility": ["model", "app"]}},
         )
-        async def wright_home() -> dict[str, Any]:
-            """Open Wright's workspace picker beside this conversation. This only reads."""
+        async def wright_home(
+            workspace_id: str | None = None, session_id: str | None = None,
+        ) -> dict[str, Any]:
+            """Open Wright beside this conversation, optionally returning to its exact workspace/session. Read only."""
+            if (workspace_id is None) != (session_id is None):
+                raise ValueError("Provide the workspace and its session together")
+            selection = None
+            if workspace_id is not None:
+                await client.scope(workspace_id, session_id)
+                selection = {"workspace_id": workspace_id, "session_id": session_id}
             return {
                 "view": "home",
+                **({"selection": selection} if selection is not None else {}),
                 **await client.call("GET", "/api/desktop/workspaces"),
             }
 

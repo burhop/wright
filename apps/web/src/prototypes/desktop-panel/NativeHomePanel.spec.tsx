@@ -52,6 +52,11 @@ it("lists and filters workspace files without opening or executing them", async 
           children: [
             { type: "file", name: "part.wflow", path: "/workflows/part.wflow" },
             {
+              type: "file",
+              name: "uploaded.wflow",
+              path: "/uploads/opaque/uploaded.wflow",
+            },
+            {
               type: "directory",
               children: [
                 {
@@ -70,6 +75,7 @@ it("lists and filters workspace files without opening or executing them", async 
     <NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
+  expect(screen.queryByRole("button", { name: "uploaded.wflow" })).toBeNull();
   expect(screen.queryByText("plate.step")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
   expect(screen.getByText("/outputs/plate.step")).toBeVisible();
@@ -83,9 +89,7 @@ it("lists and filters workspace files without opening or executing them", async 
   });
   expect(screen.getByText("No files match this search.")).toBeVisible();
   expect(
-    screen.getByText(
-      /Other file previews, upload and download are not available/,
-    ),
+    screen.getByText(/downloads support visible files up to 16 MiB/),
   ).toBeVisible();
   expect(call).toHaveBeenCalledTimes(2);
   expect(onOpen).not.toHaveBeenCalled();
@@ -317,4 +321,29 @@ it("does not redirect refreshed selection to a changed session", async () => {
   expect(
     screen.queryByRole("button", { name: "part.wflow" }),
   ).not.toBeInTheDocument();
+});
+
+it("restores the requested view only after reconciling the exact workspace/session and reports navigation", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha, beta] }))
+    .mockResolvedValue(files(beta, "part.wflow"));
+  const onNavigate = vi.fn();
+  render(
+    <NativeHomePanel
+      call={call}
+      onOpen={vi.fn()}
+      initialSelection={beta}
+      initialView="files"
+      onNavigate={onNavigate}
+    />,
+  );
+  await screen.findByRole("heading", { name: "Files" });
+  expect(screen.getByLabelText("Workspace")).toHaveValue("b");
+  expect(call).toHaveBeenLastCalledWith("wright_workspace_files", {
+    workspace_id: "b",
+    session_id: "b-chat",
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Recent runs" }));
+  expect(onNavigate).toHaveBeenCalledExactlyOnceWith("runs");
 });

@@ -163,6 +163,39 @@ def test_scope_denial_prevents_start(panel):
     client.call.assert_not_awaited()
 
 
+@pytest.mark.parametrize("code", ["CAPABILITY_UNAVAILABLE", "OUTCOME_UNKNOWN"])
+def test_start_keeps_owner_preallocation_reason_and_uncertain_outcome_distinct(
+    panel, code
+):
+    from core.process_interactions import Reason
+    from native_source_tools import WrightRequestRejected
+
+    server, client = panel
+    reason = Reason(
+        code=code,
+        message="The selected tool is unavailable in this workspace.",
+        correction="Inspect workspace availability before another start.",
+    )
+    client.call.side_effect = WrightRequestRejected(
+        503, "PRIVATE RAW DATA", reason=reason
+    )
+    result = run(
+        server,
+        "wright_process_ui_update",
+        scope(
+            "start",
+            input_snapshot_id="inputs",
+            expected_input_digest="a" * 64,
+            request_id="stable-start",
+        ),
+    )
+    assert result["reason"]["code"] == code
+    if code == "CAPABILITY_UNAVAILABLE":
+        assert result["reason"] == reason.model_dump(mode="json", exclude_none=True)
+    assert "PRIVATE" not in str(result)
+    client.call.assert_awaited_once()
+
+
 def test_chat_wait_read_first_authorizes_exact_run_and_does_not_answer(panel):
     server, client = panel
     client.call.side_effect = [

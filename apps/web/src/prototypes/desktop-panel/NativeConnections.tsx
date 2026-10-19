@@ -2,20 +2,32 @@ import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import { NativeCustomConnection } from "./NativeCustomConnection";
+import type { ImportedConnection } from "./connection-config-import";
+import { NativeCredentials } from "./NativeCredentials";
 import { NativeSignin } from "./NativeSignin";
+import { NativeConnectionControls } from "./NativeConnectionControls";
 
 export type ConnectionsCall = (
   name:
+    | "wright_connection_replacement"
+    | "wright_connection_configuration_preview"
+    | "wright_connection_credentials"
+    | "wright_connection_credentials_form"
+    | "wright_connection_credentials_save"
     | "wright_connections_list"
     | "wright_connection_plans"
     | "wright_connection_plan"
     | "wright_connection_preview"
+    | "wright_connection_command_preview"
     | "wright_connection_import_plan"
     | "wright_connection_plan_read"
     | "wright_connection_plan_update"
     | "wright_connection_signin"
     | "wright_connection_validate"
-    | "wright_connection_enable",
+    | "wright_connection_enable"
+    | "wright_connection_disable"
+    | "wright_connection_controls"
+    | "wright_connection_control",
   args: Record<string, unknown>,
 ) => Promise<CallToolResult>;
 interface Connection {
@@ -31,6 +43,7 @@ interface Connection {
   installed: boolean;
   active: boolean;
   enabled_here: boolean;
+  server_id?: string | null;
   credentials_missing: boolean;
   process_status: string;
   installed_version: string | null;
@@ -46,7 +59,14 @@ export interface SetupPlan {
   workspace_id: string;
   requested_scope: string;
   state: string;
-  source?: { name?: string; endpoint?: string };
+  source?: {
+    name?: string;
+    endpoint?: string;
+    command?: string;
+    arguments?: string[];
+    launch_env?: Record<string, string>;
+    env_vars?: { name: string }[];
+  };
   requirements?: {
     license?: {
       reference: string | null;
@@ -75,6 +95,10 @@ export function NativeConnections({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const [availabilityNotice, setAvailabilityNotice] = useState("");
+  const disabling = useRef(false);
+  const [disableUncertain, setDisableUncertain] = useState<string>();
+  const availabilityReadPending = useRef<string | undefined>(undefined);
   const [planning, setPlanning] = useState(false);
   const [saved, setSaved] = useState<{
     capabilityId: string | null;
@@ -143,12 +167,20 @@ export function NativeConnections({
     }
   }
   const [plan, setPlan] = useState<SetupPlan>();
+  const [replacement, setReplacement] = useState<{
+    sequence: number;
+    configuration: ImportedConnection;
+  }>();
+  const replacementSequence = useRef(0);
   const planView = useRef<HTMLElement>(null);
+  const signinView = useRef<HTMLElement>(null);
   const savedView = useRef<HTMLElement>(null);
   useEffect(() => {
     if (plan) {
-      planView.current?.focus();
-      planView.current?.scrollIntoView?.({ block: "start" });
+      const target =
+        plan.state === "completed" ? signinView.current : planView.current;
+      target?.focus();
+      target?.scrollIntoView?.({ block: "start" });
     }
   }, [plan]);
   useEffect(() => {
@@ -161,6 +193,57 @@ export function NativeConnections({
   const [planError, setPlanError] = useState(false);
   const [acting, setActing] = useState(false);
   const [uncertain, setUncertain] = useState(false);
+  async function disableConnection(item: Connection) {
+    if (disabling.current || !item.server_id || !item.enabled_here) return;
+    disabling.current = true;
+    setActing(true);
+    setAvailabilityNotice("");
+    try {
+      const result = await call("wright_connection_disable", {
+        workspace_id: workspace.workspace_id,
+        session_id: workspace.session_id,
+        capability_id: item.capability_id,
+        server_id: item.server_id,
+      });
+      const data = result.structuredContent;
+      const availability = data?.availability as
+        | {
+            workspace_id?: string;
+            capability_id?: string;
+            server_id?: string;
+            enabled?: boolean;
+          }
+        | undefined;
+      if (
+        result.isError ||
+        data?.workspace_id !== workspace.workspace_id ||
+        data?.session_id !== workspace.session_id ||
+        availability?.workspace_id !== workspace.workspace_id ||
+        availability.capability_id !== item.capability_id ||
+        availability.server_id !== item.server_id ||
+        availability.enabled !== false
+      )
+        throw Error("Disable outcome not confirmed");
+      setAvailabilityNotice(`${item.name} is disabled in this workspace.`);
+      setItems((current) =>
+        current.map((connection) =>
+          connection.capability_id === item.capability_id &&
+          connection.server_id === item.server_id
+            ? { ...connection, enabled_here: false }
+            : connection,
+        ),
+      );
+    } catch {
+      availabilityReadPending.current = item.capability_id;
+      setDisableUncertain(item.capability_id);
+      setAvailabilityNotice(
+        "Disable outcome is not confirmed. Search / refresh to check saved availability before another attempt; no request was repeated.",
+      );
+    } finally {
+      disabling.current = false;
+      setActing(false);
+    }
+  }
   const [licenseCapability, setLicenseCapability] = useState<string | null>(
     null,
   );
@@ -239,6 +322,7 @@ export function NativeConnections({
   }
   useEffect(() => {
     let active = true;
+    const reconcileAvailability = availabilityReadPending.current;
     setLoading(true);
     setError(false);
     void call("wright_connections_list", {
@@ -259,6 +343,22 @@ export function NativeConnections({
           throw new Error("Unconfirmed connection scope");
         if (!active) return;
         setItems(data.connections as Connection[]);
+        if (reconcileAvailability) {
+          const saved = (data.connections as Connection[]).find(
+            (item) =>
+              item.capability_id === reconcileAvailability &&
+              typeof item.enabled_here === "boolean",
+          );
+          if (saved) {
+            availabilityReadPending.current = undefined;
+            setDisableUncertain(undefined);
+            setAvailabilityNotice(
+              saved.enabled_here
+                ? "Saved availability is confirmed: this connection is still enabled. You may explicitly try disabling it again."
+                : "Saved availability is confirmed: this connection is disabled in this workspace.",
+            );
+          }
+        }
         setNext(typeof data.next_cursor === "string" ? data.next_cursor : null);
       })
       .catch(() => {
@@ -281,11 +381,44 @@ export function NativeConnections({
   return (
     <section aria-label="Connections">
       <h2>Connections</h2>
+      {availabilityNotice && <p role="status">{availabilityNotice}</p>}
       <p>
         Engineering tools for {workspace.workspace_name}. Availability here does
         not approve workflow actions.
       </p>
+      {plan?.state === "completed" && (
+        <NativeSignin
+          key={plan.plan_id}
+          scope={{
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            plan_id: plan.plan_id,
+            plan_digest: plan.plan_digest,
+          }}
+          focusRef={signinView}
+          providerName={
+            items.find((item) => item.capability_id === plan.capability_id)
+              ?.name
+          }
+          call={call}
+          openLink={openLink}
+        />
+      )}
+      {plan?.state === "completed" && (
+        <NativeCredentials
+          key={`credentials-${plan.plan_id}`}
+          scope={{
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            plan_id: plan.plan_id,
+            plan_digest: plan.plan_digest,
+          }}
+          call={call}
+        />
+      )}
       <NativeCustomConnection
+        key={replacement?.sequence ?? "custom"}
+        initialConfiguration={replacement?.configuration}
         workspace={workspace}
         call={call}
         disabled={planning || acting || uncertain}
@@ -351,12 +484,37 @@ export function NativeConnections({
         </p>
       )}
       {plan && (
-        <section aria-label="Setup plan" ref={planView} tabIndex={-1}>
+        <section
+          aria-label="Setup plan"
+          ref={plan.state === "completed" ? undefined : planView}
+          tabIndex={-1}
+        >
           <h3>Review setup</h3>
           <p>Plan state: {plan.state}.</p>
           {plan.source?.name && <p>{plan.source.name}</p>}
           {plan.source?.endpoint && (
             <p className="native-connection-endpoint">{plan.source.endpoint}</p>
+          )}
+          {plan.source?.command && (
+            <div aria-label="Reviewed command on Wright host">
+              <p className="native-connection-endpoint">
+                Command on Wright host: {plan.source.command}
+              </p>
+              <p className="native-connection-endpoint">
+                Arguments: {JSON.stringify(plan.source.arguments ?? [])}
+              </p>
+            </div>
+          )}
+          {Object.entries(plan.source?.launch_env ?? {}).map(([key, value]) => (
+            <p key={key} className="native-connection-endpoint">
+              Public environment: {key} = {value}
+            </p>
+          ))}
+          {!!plan.source?.env_vars?.length && (
+            <p>
+              Private fields after setup:{" "}
+              {plan.source.env_vars.map((field) => field.name).join(", ")}
+            </p>
           )}
           {["blocked", "reviewable", "draft"].includes(plan.state) && (
             <p>Nothing has been installed or approved by this plan.</p>
@@ -376,8 +534,8 @@ export function NativeConnections({
           {plan.capability_id.startsWith("import:") ? (
             <p>
               {plan.requirements?.license?.independent_completion_recorded_at
-                ? "Independent publisher review is recorded for this exact source."
-                : "Publisher review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
+                ? "Independent source and license review is recorded for this exact source."
+                : "Source and license review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
             </p>
           ) : (
             <>
@@ -436,19 +594,6 @@ export function NativeConnections({
           )}
         </section>
       )}
-      {plan?.state === "completed" && (
-        <NativeSignin
-          key={plan.plan_id}
-          scope={{
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            plan_id: plan.plan_id,
-            plan_digest: plan.plan_digest,
-          }}
-          call={call}
-          openLink={openLink}
-        />
-      )}
       {loading ? (
         <p role="status">Loading connections…</p>
       ) : error ? (
@@ -471,9 +616,12 @@ export function NativeConnections({
                       ? "Sign-in or credentials needed"
                       : !item.active
                         ? "Inactive"
-                        : !item.enabled_here
-                          ? "Not enabled in this workspace"
-                          : "Enabled in this workspace"}
+                        : "Provider active"}
+                </p>
+                <p>
+                  {item.enabled_here
+                    ? "Enabled in this workspace"
+                    : "Not enabled in this workspace"}
                 </p>
                 <details>
                   <summary>Readiness details</summary>
@@ -503,7 +651,7 @@ export function NativeConnections({
                     <p>No local protocol validation recorded.</p>
                   )}
                   <p>
-                    Installed version:{" "}
+                    Recorded installed version:{" "}
                     {item.installed_version ?? "Not reported"}.
                   </p>
                   {item.compatibility.reasons.map((reason) => (
@@ -512,6 +660,57 @@ export function NativeConnections({
                     </p>
                   ))}
                 </details>
+                {item.installed && item.server_id && (
+                  <NativeConnectionControls
+                    key={`${workspace.workspace_id}:${workspace.session_id}:${item.server_id}`}
+                    call={call}
+                    workspace={workspace}
+                    capabilityId={item.capability_id}
+                    serverId={item.server_id}
+                    onReplacement={(configuration) => {
+                      setReplacement({
+                        sequence: ++replacementSequence.current,
+                        configuration,
+                      });
+                      setPlan(undefined);
+                      setUncertain(false);
+                    }}
+                    onChanged={(state) =>
+                      setItems((current) =>
+                        current.map((connection) =>
+                          connection.server_id === state.server_id
+                            ? {
+                                ...connection,
+                                active: state.active,
+                                installed: state.installed,
+                                process_status: state.status,
+                                installed_version: state.installed_version,
+                              }
+                            : connection,
+                        ),
+                      )
+                    }
+                  />
+                )}
+                {item.enabled_here && item.server_id && (
+                  <button
+                    disabled={
+                      planning ||
+                      acting ||
+                      loading ||
+                      disableUncertain === item.capability_id
+                    }
+                    onClick={() => void disableConnection(item)}
+                  >
+                    Disable {item.name} in this workspace
+                  </button>
+                )}
+                {item.enabled_here && !item.server_id && (
+                  <p>
+                    Availability changes are unavailable because the registered
+                    connection could not be identified. Refresh Connections.
+                  </p>
+                )}
                 <button
                   disabled={planning || acting || uncertain}
                   onClick={() => void savedPlans(item.capability_id)}

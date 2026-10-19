@@ -10,6 +10,72 @@ from data_vault import WorkspaceRepository, upgrade_database
 from workspace_service.use_cases.lifecycle import WorkspaceLifecycleUseCases
 
 
+@pytest.mark.asyncio
+async def test_upload_requires_operator_exact_scope_and_closed_body(discovery):
+    import base64
+    import hashlib
+    from api.security import SecuritySettings, require_admin
+
+    app, _, _, create, _ = discovery
+    root = create("Upload")
+    app.state.security_settings = SecuritySettings(
+        "enforced", "synthetic-operator-token", (), "127.0.0.1"
+    )
+    content = b"native STEP\x00\xff"
+    digest = hashlib.sha256(content).hexdigest()
+    owner = app.state.desktop_service.files
+    owner.stage_upload = AsyncMock(return_value=f"uploads/{digest}/input.step")
+    body = {
+        "workspace_id": "Upload",
+        "session_id": "desktop-Upload",
+        "filename": "input.step",
+        "sha256": digest,
+        "content_base64": base64.b64encode(content).decode(),
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post("/api/desktop/files/upload", json=body)
+        assert response.status_code == 403
+        owner.stage_upload.assert_not_awaited()
+        app.dependency_overrides[require_admin] = lambda: None
+        response = await client.post(
+            "/api/desktop/files/upload", json={**body, "session_id": "other"}
+        )
+        assert response.status_code == 403
+        owner.stage_upload.assert_not_awaited()
+        response = await client.post(
+            "/api/desktop/files/upload", json={**body, "path": "outputs/overwrite.step"}
+        )
+        assert response.status_code == 422
+        owner.stage_upload.assert_not_awaited()
+        response = await client.post(
+            "/api/desktop/files/upload", json={**body, "content_base64": "!!!!"}
+        )
+        assert response.status_code == 422
+        owner.stage_upload.assert_not_awaited()
+        response = await client.post("/api/desktop/files/upload", json=body)
+        assert response.status_code == 200
+        assert response.json() == {
+            "workspace_id": "Upload",
+            "session_id": "desktop-Upload",
+            "filename": "input.step",
+            "path": f"uploads/{digest}/input.step",
+            "sha256": digest,
+            "bytes": len(content),
+        }
+        owner.stage_upload.assert_awaited_once_with(
+            str(root), "input.step", content, digest
+        )
+        for error, status in [
+            (FileExistsError("PRIVATE"), 409),
+            (OSError("PRIVATE"), 503),
+        ]:
+            owner.stage_upload.side_effect = error
+            response = await client.post("/api/desktop/files/upload", json=body)
+            assert response.status_code == status and "PRIVATE" not in response.text
+
+
 @pytest.fixture
 def discovery(tmp_path, monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
@@ -287,6 +353,10 @@ async def test_operator_signin_is_scoped_and_cleared_without_workspace_grant(dis
         capability_id="cad",
         state="completed",
         plan_digest="a" * 64,
+    )
+    owner.get_capability.return_value = SimpleNamespace(
+        local_validation=None,
+        user_state=SimpleNamespace(installed=True, active=False, enabled_workspaces=[]),
     )
     ready, finish = asyncio.Event(), asyncio.Event()
 
@@ -690,6 +760,7 @@ async def test_custom_preview_rejects_credential_or_unsupported_endpoint_before_
         assert response.status_code == 422
         owner.preview_import.assert_not_called()
 
+
 @pytest.mark.asyncio
 async def test_workspace_creation_conflict_is_actionable_without_path_disclosure(
     discovery,
@@ -721,3 +792,302 @@ async def test_workspace_creation_conflict_is_actionable_without_path_disclosure
     service.create_workspace.assert_awaited_once()
     assert repository.list_all() == before
     assert repository.list_sessions("Existing") == sessions
+
+
+@pytest.mark.asyncio
+async def test_download_exact_bytes_and_scope(discovery):
+    import base64
+    import hashlib
+
+    app, _, _, create, _ = discovery
+    directory = create("Download")
+    content = b"ISO-10303-21;\x00\xff\r\nEND-ISO-10303-21;"
+    (directory / "part.step").write_bytes(content)
+    owner = app.state.desktop_service.files
+    owner.read_bytes = AsyncMock(return_value=content)
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        route = "/api/desktop/workspaces/Download/file-download"
+        denied = await client.get(
+            route, params={"session_id": "other", "path": "part.step"}
+        )
+        assert denied.status_code == 403
+        owner.read_bytes.assert_not_awaited()
+        result = (
+            await client.get(
+                route, params={"session_id": "desktop-Download", "path": "part.step"}
+            )
+        ).json()
+        assert result["supported"]
+        assert base64.b64decode(result["content_base64"], validate=True) == content
+        assert result["sha256"] == hashlib.sha256(content).hexdigest()
+        assert result["bytes"] == len(content)
+        assert result["filename"] == "part.step"
+        owner.read_bytes.assert_awaited_once_with(
+            str(directory), "part.step", maximum_bytes=16 * 1024 * 1024
+        )
+        owner.read_bytes.side_effect = ValueError("private exception detail")
+        rejected = (
+            await client.get(
+                route, params={"session_id": "desktop-Download", "path": "part.step"}
+            )
+        ).json()
+        assert rejected["supported"] is False
+        assert "content_base64" not in rejected
+        assert "private exception detail" not in str(rejected)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "path",
+    [
+        "../outside",
+        "/etc/passwd",
+        "C:\\secret",
+        "a:stream",
+        ".env",
+        ".wright/state.json",
+        "outputs/.secret",
+        "freecad_mcp_work/file",
+        "bad\nname",
+        "linked.step",
+        "missing.step",
+    ],
+)
+async def test_download_rejects_nonvisible_or_unconfined_paths_before_read(
+    discovery, path
+):
+    app, _, _, create, root = discovery
+    directory = create("Download")
+    outside = root / "outside"
+    outside.write_bytes(b"private")
+    (directory / "linked.step").symlink_to(outside)
+    owner = app.state.desktop_service.files
+    owner.read_bytes = AsyncMock(return_value=b"must not read")
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        result = (
+            await client.get(
+                "/api/desktop/workspaces/Download/file-download",
+                params={"session_id": "desktop-Download", "path": path},
+            )
+        ).json()
+    assert result["supported"] is False
+    assert "content_base64" not in result
+    owner.read_bytes.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_download_bridge_is_ui_only_and_scoped(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from mcp_bridge import server
+
+    client = SimpleNamespace(
+        call=AsyncMock(return_value={"supported": False}), scope=AsyncMock()
+    )
+    bridge = server(client)
+    tool = next(
+        tool
+        for tool in await bridge.list_tools()
+        if tool.name == "wright_workspace_file_download"
+    )
+    assert tool.annotations.readOnlyHint
+    assert tool.meta["ui"]["visibility"] == ["app"]
+    await bridge.call_tool(
+        tool.name, {"workspace_id": "a", "session_id": "chat-a", "path": "part.step"}
+    )
+    client.scope.assert_awaited_once_with("a", "chat-a")
+    client.call.assert_awaited_once_with(
+        "GET",
+        "/api/desktop/workspaces/a/file-download",
+        params={"session_id": "chat-a", "path": "part.step"},
+    )
+
+
+@pytest.mark.asyncio
+async def test_disable_requires_operator_and_owned_session_before_mutation(discovery):
+    from api.security import SecuritySettings, require_admin
+    from api.services.mcp_services import get_mcp_api_service
+
+    app, _, _, create, _ = discovery
+    app.state.security_settings = SecuritySettings(
+        "enforced", "synthetic-operator-token", (), "127.0.0.1"
+    )
+    create("Alpha")
+    owner = SimpleNamespace(
+        disable_capability_for_workspace=Mock(
+            return_value={
+                "workspace_id": "Alpha",
+                "capability_id": "cad",
+                "server_id": "registered-cad",
+                "enabled": False,
+            }
+        )
+    )
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    body = {
+        "workspace_id": "Alpha",
+        "session_id": "desktop-Alpha",
+        "capability_id": "cad",
+        "server_id": "registered-cad",
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        denied = await client.post("/api/desktop/connections/disable", json=body)
+        assert denied.status_code in (401, 403)
+        owner.disable_capability_for_workspace.assert_not_called()
+        app.dependency_overrides[require_admin] = lambda: None
+        wrong = await client.post(
+            "/api/desktop/connections/disable", json={**body, "session_id": "unrelated"}
+        )
+        assert wrong.status_code == 403
+        owner.disable_capability_for_workspace.assert_not_called()
+        result = await client.post("/api/desktop/connections/disable", json=body)
+        assert result.status_code == 200
+        assert result.json()["availability"]["enabled"] is False
+        owner.disable_capability_for_workspace.assert_called_once_with(
+            "cad", "Alpha", expected_server_id="registered-cad"
+        )
+        extra = await client.post(
+            "/api/desktop/connections/disable", json={**body, "approval_mode": "auto"}
+        )
+        assert extra.status_code == 422
+        assert owner.disable_capability_for_workspace.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_local_command_preview_uses_existing_normalizer_without_execution(discovery):
+    import json
+    from api.services.mcp_services import get_mcp_api_service
+    from tool_registry.config_import import preview_configuration
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner = Mock()
+    owner.preview_import.side_effect = preview_configuration
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    body = {
+        "workspace_id": "Alpha", "session_id": "desktop-Alpha",
+        "name": "Local provider", "command": "/usr/bin/python3",
+        "arguments": ["-m", "existing_mcp", "a path with spaces"],
+    }
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.post("/api/desktop/connection-imports/preview", json=body)
+        assert response.status_code == 200, response.text
+        result = response.json()
+        draft = result["preview"]["drafts"][0]
+        assert draft["transport"] == "stdio" and draft["errors"] == []
+        assert draft["command"] == body["command"]
+        assert draft["arguments"] == body["arguments"]
+        assert result["preview"]["source_discarded"] is True
+        assert json.loads(owner.preview_import.call_args.args[0]) == {
+            "name": body["name"], "type": "stdio",
+            "command": body["command"], "args": body["arguments"],
+        }
+        owner.create_install_plan.assert_not_called()
+        owner.apply_install_plan.assert_not_called()
+        owner.approve_install_plan.assert_not_called()
+        owner.preview_import.reset_mock()
+        for patch, status in [
+            ({"session_id": "wrong"}, 403),
+            ({"env": {"TOKEN": "not-allowed"}}, 422),
+            ({"url": "https://example.invalid/mcp"}, 422),
+            ({"arguments": [1]}, 422),
+            ({"arguments": ["a" * 4097]}, 422),
+            ({"arguments": ["a"] * 513}, 422),
+        ]:
+            denied = await client.post(
+                "/api/desktop/connection-imports/preview", json={**body, **patch}
+            )
+            assert denied.status_code == status, denied.text
+        owner.preview_import.assert_not_called()
+        unsafe = await client.post(
+            "/api/desktop/connection-imports/preview",
+            json={**body, "command": "python;id", "arguments": ["$(id)"]},
+        )
+        assert unsafe.status_code == 200
+        codes = {item["code"] for item in unsafe.json()["preview"]["drafts"][0]["errors"]}
+        assert codes == {"command_unsafe", "argument_shell_expression"}
+        owner.apply_install_plan.assert_not_called()
+
+@pytest.mark.asyncio
+async def test_sealed_credentials_use_existing_owner_and_reject_drift_replay_and_viewers(discovery):
+    import json
+    from jwcrypto import jwk, jwe
+    from api.services.mcp_services import get_mcp_api_service
+    from api.security import require_admin
+    from tool_registry.db import insert_server, update_server
+    from tool_registry.models import McpServer
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    database = app.state.desktop_service.db_path
+    insert_server(database, McpServer(server_id="custom", name="Custom", type="stdio", command=["example"],
+                                     is_installed=True, is_active=False, status="inactive", created_at=1, updated_at=1))
+    status = {"server_id":"custom", "env_vars":[{"name":"KEY", "label":"API key", "required":True, "secret":True}], "configured":{"KEY":False}}
+    owner = Mock(db_path=database)
+    owner.get_install_plan.return_value = SimpleNamespace(plan_id="p", workspace_id="Alpha", requested_scope="workspace", capability_id="custom", state="completed", plan_digest="a" * 64)
+    owner.get_credential_status.side_effect = lambda _: status
+    owner.save_credentials.side_effect = lambda _, values: {**status, "configured":{"KEY":True}}
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    app.state.security_settings = SimpleNamespace(enforced=True)
+    scope = {"workspace_id":"Alpha", "session_id":"desktop-Alpha", "plan_digest":"a"*64}
+    path = "/api/desktop/connection-plans/p/credentials"
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="http://test") as client:
+        assert (await client.post(path+"/form", json=scope)).status_code == 403
+        owner.get_credential_status.assert_not_called()
+        app.dependency_overrides[require_admin] = lambda: None
+        assert (await client.post(path+"/form", json={**scope,"session_id":"other"})).status_code == 403
+        assert (await client.post(path+"/form", json={**scope,"plan_digest":"b"*64})).status_code == 409
+        response = await client.post(path+"/form", json=scope)
+        assert response.headers['cache-control'] == 'no-store'
+        form = response.json()['form']
+        envelope = jwe.JWE(json.dumps({'form_id':form['form_id'],'values':{'KEY':'synthetic-private-value'}}).encode(),
+                           protected={'alg':'RSA-OAEP-256','enc':'A256GCM'},recipient=jwk.JWK(**form['public_key']))
+        body={**scope,'form_id':form['form_id'],'ciphertext':envelope.serialize(compact=True)}
+        assert (await client.post(path+'/save',json={**body,'values':{'KEY':'must-reject'}})).status_code==422
+        # Configuration drift cannot consume the saved form for another config.
+        update_server(database,'custom', {'launch_env':{'MODE':'changed'}})
+        assert (await client.post(path+'/save',json=body)).status_code==409
+        owner.save_credentials.assert_not_called()
+        update_server(database,'custom', {'launch_env':{}})
+        saved=await client.post(path+'/save',json=body)
+        assert saved.status_code==200 and saved.json()['configured']=={'KEY':True}
+        assert 'synthetic-private-value' not in saved.text
+        owner.save_credentials.assert_called_once_with('custom',{'KEY':'synthetic-private-value'})
+        assert (await client.post(path+'/save',json=body)).status_code==409
+        # Existing keys are not silently rotated under old validation/runs.
+        status['configured']['KEY']=True
+        assert (await client.post(path+'/form',json=scope)).status_code==409
+        owner.enable_capability_for_workspace.assert_not_called()
+
+@pytest.mark.asyncio
+async def test_configured_command_preview_has_names_and_public_values_only(discovery):
+    import json
+    from api.services.mcp_services import get_mcp_api_service
+    from tool_registry.config_import import preview_configuration
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner=Mock()
+    owner.preview_import.side_effect=lambda value: preview_configuration(value)
+    app.dependency_overrides[get_mcp_api_service]=lambda:owner
+    body={"workspace_id":"Alpha","session_id":"desktop-Alpha","name":"Example","command":"uvx","arguments":["example-mcp"],
+          "environment_fields":["API_KEY","RUN_MODE"],"public_environment":{"RUN_MODE":"read-only"}}
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app),base_url="http://test") as client:
+        assert (await client.post('/api/desktop/connection-imports/preview',json={**body,"session_id":"other"})).status_code==403
+        for patch in ({"public_environment":{"API_KEY":"must-not-be-public"}}, {"environment_fields":["BAD=KEY"]}, {"private_values":{"API_KEY":"must-not-be-accepted"}}):
+            assert (await client.post('/api/desktop/connection-imports/preview',json={**body,**patch})).status_code==422
+        owner.preview_import.assert_not_called()
+        result=await client.post('/api/desktop/connection-imports/preview',json=body)
+        assert result.status_code==200
+        raw=json.loads(owner.preview_import.call_args.args[0])
+        assert raw['env']=={'API_KEY':'','RUN_MODE':''}
+        assert raw['public_env']=={'RUN_MODE':'read-only'}
+        draft=result.json()['preview']['drafts'][0]
+        assert draft['launch_env']=={'RUN_MODE':'read-only'} and [field['name'] for field in draft['env_vars']]==['API_KEY']

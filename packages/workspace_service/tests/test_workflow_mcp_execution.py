@@ -319,3 +319,68 @@ def test_generic_gateway_failure_does_not_expose_raw_message(code):
         error.value.correction
         == "Check the server in Tool Registry and the step's inputs, then retry."
     )
+
+
+def test_deterministic_tool_workflow_does_not_create_model_callbacks(tmp_path):
+    from unittest.mock import Mock
+
+    block = mcp(
+        mcp_arguments=json.dumps({"query": "Existing tool", "limit": 3}),
+        mcp_argument_ports="{}",
+    )
+    block = block.replace(
+        'inputs: [{"key":"search_query","name":"query","kind":"engineering_document"}]',
+        "inputs: []",
+    )
+    plan = compile_prompt_workflow(source(block))
+    app = service(tmp_path)
+    app.workflow_reasoning_factory = Mock(
+        side_effect=ValueError("No model route is frozen")
+    )
+    gateway, tool_runtime = runtime()
+
+    async def unused_response(*args, **kwargs):
+        pytest.fail("A deterministic process must not fall through to a model")
+
+    result = asyncio.run(
+        execute_prompt_workflow(
+            service=app,
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=unused_response,
+            tool_runtime=tool_runtime,
+            execution_context={},
+        )
+    )
+    assert result["steps"][0]["execution_kind"] == "mcp"
+    assert len(gateway.calls) == 1 and gateway.calls[0][0][3] == {
+        "query": "Existing tool",
+        "limit": 3,
+    }
+    app.workflow_reasoning_factory.assert_not_called()
+
+
+def test_model_workflow_still_requires_its_configured_reasoning_factory(tmp_path):
+    from unittest.mock import Mock
+
+    app = service(tmp_path)
+    app.workflow_reasoning_factory = Mock(
+        side_effect=ValueError("No model route is frozen")
+    )
+
+    async def unused_response(*args, **kwargs):
+        pytest.fail("Missing frozen routing must not use a legacy callback")
+
+    with pytest.raises(ValueError, match="No model route is frozen"):
+        asyncio.run(
+            execute_prompt_workflow(
+                service=app,
+                workspace_dir=str(tmp_path),
+                plan=compile_prompt_workflow(source(task())),
+                input_values={},
+                response_generator=unused_response,
+                execution_context={},
+            )
+        )
+    app.workflow_reasoning_factory.assert_called_once()

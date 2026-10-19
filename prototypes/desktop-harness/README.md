@@ -1,5 +1,14 @@
 # Wright inside the desktop harness — local prototype
 
+**Current, 19 October:** the normal full merge gate passed on `cb875fc5`.
+The tested 0.16 candidate adds device-code sign-in without SSH, encrypted missing
+credentials, private-safe configuration import, HTTPS headers and reviewed
+replacement connections. [Current status and evidence](integration-status-20261019.md)
+separate local verification, dev integration, installation and Windows acceptance.
+The installed named plugin remains 0.15 until the exact merged-dev transition.
+The [0.16 walkthrough](desktop-016-walkthrough.md) is prepared for that update;
+it is not an installation claim. Earlier paths/profiles below are historical.
+
 Current native-chat private-network viewing evidence is recorded in
 [private-lan-access.md](private-lan-access.md). Workspace `dave` and its completed
 welcome workflow now open through an automatically established browser session

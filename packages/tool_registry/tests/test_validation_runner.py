@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 import json
 import sqlite3
 
@@ -173,3 +173,109 @@ async def test_runner_records_failure_unavailable_and_cancellation(tmp_path) -> 
     assert cancelled.state == "blocked"
     assert "validation_cancelled" in cancelled.reason_codes
     assert "failed" not in cancelled.protocol_steps.values()
+
+
+@pytest.mark.asyncio
+async def test_local_validation_accepts_finite_numeric_schema_and_probe_evidence(
+    tmp_path,
+):
+    database = tmp_path / "numeric-schemas.db"
+    upgrade_database(database)
+
+    class NumericClient(FixtureClient):
+        default = 0.5
+
+        async def list_tools(self):
+            self.calls.append("tools/list")
+            return [
+                {
+                    "name": "measure",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "tolerance": {
+                                "type": "number",
+                                "default": self.default,
+                                "minimum": 0.001,
+                            }
+                        },
+                    },
+                }
+            ]
+
+        async def call_tool(self, name, arguments):
+            self.calls.append("tools/call:" + name)
+            return {"measurement": 3.125, "private": "not retained"}
+
+    client = NumericClient()
+    first = await _run(
+        database,
+        client,
+        read_only_probe={
+            "name": "measure",
+            "arguments": {"tolerance": 0.5},
+            "limitation": "Synthetic numeric measurement only",
+        },
+    )
+    assert first.state == "passed" and first.tool_count == 1
+    assert first.protocol_steps["tools/list"] == "passed"
+    assert len(first.schema_digest) == 64
+    assert first.read_only_probe["status"] == "passed"
+    assert set(first.read_only_probe) == {
+        "name",
+        "argument_digest",
+        "result_digest",
+        "status",
+        "limitation",
+    }
+    assert "not retained" not in first.model_dump_json()
+    client.default = 0.75
+    changed = await _run(
+        database, client, read_only_probe=None, clock=lambda: NOW + timedelta(seconds=1)
+    )
+    assert changed.state == "passed" and changed.schema_digest != first.schema_digest
+    assert latest_capability_validation_evidence(database, "fixture-server") == changed
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("nonfinite", [float("nan"), float("inf"), -float("inf")])
+async def test_local_validation_rejects_nonfinite_tool_schema(tmp_path, nonfinite):
+    database = tmp_path / "invalid-numeric-schema.db"
+    upgrade_database(database)
+
+    class InvalidSchemaClient(FixtureClient):
+        async def list_tools(self):
+            return [
+                {
+                    "name": "measure",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "number",
+                                "default": nonfinite,
+                            }
+                        },
+                    },
+                }
+            ]
+
+    client = InvalidSchemaClient()
+    evidence = await _run(database, client)
+    assert evidence.state == "failed" and evidence.schema_digest is None
+    assert evidence.protocol_steps["tools/list"] == "failed"
+    assert not any(call.startswith("tools/call") for call in client.calls)
+
+
+@pytest.mark.asyncio
+async def test_local_validation_preserves_strict_catalog_metadata_hashing(tmp_path):
+    from tool_registry.catalog_signing import CatalogVerificationError
+
+    database = tmp_path / "strict-catalog.db"
+    upgrade_database(database)
+    client = FixtureClient()
+    with pytest.raises(CatalogVerificationError, match="Floating-point"):
+        await _run(
+            database, client, capability_document={"id": "fixture", "revision": 0.5}
+        )
+    assert client.calls == []

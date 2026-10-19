@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatProvider, useChat } from "../src/store/sessions";
 import agentService from "../src/services/agent-service";
@@ -810,6 +816,11 @@ describe("ChatProvider session state", () => {
   });
 
   it("shows a diagnostic instead of saving a blank assistant message", async () => {
+    let resolveHistory!: (messages: []) => void;
+    const history = new Promise<[]>((resolve) => {
+      resolveHistory = resolve;
+    });
+    vi.mocked(agentService.getSessionHistory).mockReturnValueOnce(history);
     vi.mocked(agentService.listSessions).mockResolvedValue([
       {
         sessionId: "session-1",
@@ -852,5 +863,10 @@ describe("ChatProvider session state", () => {
       { timeout: 5_000 },
     );
     expect(screen.queryByText(/^assistant:$/)).not.toBeInTheDocument();
+    await act(async () => {
+      resolveHistory([]);
+      await history;
+    });
+    expect(screen.getByText(/Hermes ended the chat turn/i)).toBeInTheDocument();
   });
 });

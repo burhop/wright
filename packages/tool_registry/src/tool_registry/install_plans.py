@@ -469,6 +469,10 @@ def create_install_plan(
             "arguments": import_draft.get("arguments", []),
             "endpoint": import_draft.get("endpoint"),
         }
+        if import_draft.get("env_vars"):
+            source["env_vars"] = import_draft["env_vars"]
+        if import_draft.get("launch_env"):
+            source["launch_env"] = import_draft["launch_env"]
         credentials = sorted(
             item["name"]
             for group in ("environment_requirements", "header_requirements")

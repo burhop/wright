@@ -4,6 +4,7 @@ import json
 import sqlite3
 from datetime import UTC, datetime
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 from data_vault import WorkspaceRepository, upgrade_database
@@ -144,6 +145,55 @@ def test_validation_and_enablement_are_scoped_without_invocation_authority(
         )
     assert json.loads(workspace_rows["workspace-a"]) == [SERVER_ID]
     assert json.loads(workspace_rows["workspace-b"]) == []
+
+
+def test_disable_revokes_only_selected_workspace_without_validation_or_provider_effects(
+    enablement_client,
+    monkeypatch,
+) -> None:
+    client, database = enablement_client
+    service = client.app.dependency_overrides[get_mcp_api_service]()
+    repository = service.app_state.workspace_service.repository
+    for workspace in ("workspace-a", "workspace-b"):
+        repository.set_enabled_tools(workspace, [SERVER_ID])
+    provider_before = get_server(str(database), SERVER_ID).model_dump()
+    service.app_state.gateway_service = SimpleNamespace(publish_list_changes=Mock())
+    monkeypatch.setattr(
+        service,
+        "_validation_context",
+        Mock(side_effect=AssertionError("Revocation must not validate or connect")),
+    )
+    result = service.disable_capability_for_workspace(
+        SERVER_ID,
+        "workspace-a",
+        expected_server_id=SERVER_ID,
+    )
+    assert result["enabled"] is False
+    assert result["invocation_approved"] is False
+    assert repository.enabled_tools("workspace-a") == []
+    assert repository.enabled_tools("workspace-b") == [SERVER_ID]
+    assert get_server(str(database), SERVER_ID).model_dump() == provider_before
+    service.app_state.gateway_service.publish_list_changes.assert_called_once_with(
+        workspace_id="workspace-a"
+    )
+
+
+def test_disable_rejects_changed_connection_identity_without_changing_membership(
+    enablement_client,
+) -> None:
+    from tool_registry.services import McpInvalidOperationError
+
+    client, _ = enablement_client
+    service = client.app.dependency_overrides[get_mcp_api_service]()
+    repository = service.app_state.workspace_service.repository
+    repository.set_enabled_tools("workspace-a", [SERVER_ID])
+    with pytest.raises(McpInvalidOperationError, match="identity changed"):
+        service.disable_capability_for_workspace(
+            SERVER_ID,
+            "workspace-a",
+            expected_server_id="replaced-provider",
+        )
+    assert repository.enabled_tools("workspace-a") == [SERVER_ID]
 
 
 def test_missing_failed_or_stale_validation_blocks_enablement(

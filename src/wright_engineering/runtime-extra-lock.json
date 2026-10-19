@@ -7,7 +7,7 @@
     "httpx-sse>=0.4,<1",
     "httpx>=0.28,<1",
     "jsonschema>=4.26,<5",
-    "mcp>=1.27.2,<2",
+    "mcp>=1.30.0,<2",
     "opentelemetry-api>=1.25,<2",
     "opentelemetry-exporter-otlp>=1.25,<2",
     "opentelemetry-sdk>=1.25,<2",
@@ -20,6 +20,6 @@
     "uvicorn[standard]>=0.30,<1"
   ],
   "schema_version": 1,
-  "uv_lock_sha256": "7b6cfea32ffc4c8bb0c7af26247f6e018deacbcc5a5f0141896d96ac564b8ddc",
+  "uv_lock_sha256": "8599957101a712206881b161c0c3786cf22c8d989f2e7bf7dbbe3f35d86c594a",
   "version": "0.1.9"
 }

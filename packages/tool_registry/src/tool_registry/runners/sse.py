@@ -19,7 +19,9 @@ from mcp.shared.auth import (
 from core.redaction import redact_mapping, redact_text
 from .base import BaseRunner, ProgressCallback
 from .protocol import ChildProtocolState, NotificationHandler
+from .device_oauth import DeviceCodeAuth, DevicePresentation
 from ..secrets import read_secrets, write_secrets
+from ..models import validate_mcp_header_name
 
 logger = logging.getLogger(__name__)
 _OAUTH_CALLBACK_TIMEOUT = 300.0
@@ -29,8 +31,12 @@ OAuthPresentation = Callable[[str, str | None, str | None], Awaitable[None]]
 class _WrightOAuthTokenStorage:
     """Persist MCP OAuth state in Wright's server-scoped secret bundle."""
 
-    def __init__(self, server_id: str) -> None:
+    def __init__(self, server_id: str, *, device_code: bool = False) -> None:
         self.server_id = server_id
+        self.token_key = "MCP_OAUTH_DEVICE_TOKEN" if device_code else "MCP_OAUTH_TOKEN"
+        self.client_key = (
+            "MCP_OAUTH_DEVICE_CLIENT" if device_code else "MCP_OAUTH_CLIENT"
+        )
 
     def _read_model(self, key: str, model_type):
         raw = read_secrets(self.server_id).get(key)
@@ -50,7 +56,7 @@ class _WrightOAuthTokenStorage:
     def clear_oauth_state(self) -> None:
         credentials = read_secrets(self.server_id)
         changed = False
-        for key in ("MCP_OAUTH_TOKEN", "MCP_OAUTH_CLIENT"):
+        for key in (self.token_key, self.client_key):
             if key in credentials:
                 del credentials[key]
                 changed = True
@@ -58,16 +64,16 @@ class _WrightOAuthTokenStorage:
             write_secrets(self.server_id, credentials)
 
     async def get_tokens(self) -> OAuthToken | None:
-        return self._read_model("MCP_OAUTH_TOKEN", OAuthToken)
+        return self._read_model(self.token_key, OAuthToken)
 
     async def set_tokens(self, tokens: OAuthToken) -> None:
-        self._write_model("MCP_OAUTH_TOKEN", tokens)
+        self._write_model(self.token_key, tokens)
 
     async def get_client_info(self) -> OAuthClientInformationFull | None:
-        return self._read_model("MCP_OAUTH_CLIENT", OAuthClientInformationFull)
+        return self._read_model(self.client_key, OAuthClientInformationFull)
 
     async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
-        self._write_model("MCP_OAUTH_CLIENT", client_info)
+        self._write_model(self.client_key, client_info)
 
 
 class _OAuthCallbackServer:
@@ -250,8 +256,11 @@ class SseRunner(BaseRunner):
         ui_enabled: bool = False,
         server_id: str | None = None,
         oauth_enabled: bool = True,
+        static_headers: dict[str, str] | None = None,
         operation_timeout: float = 60.0,
         authorization_presenter: OAuthPresentation | None = None,
+        device_authorization_presenter: Callable[[str, dict | None], Awaitable[None]]
+        | None = None,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
@@ -259,8 +268,41 @@ class SseRunner(BaseRunner):
         self.server_id = (
             server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
         )
+        if static_headers is not None:
+            target = urlsplit(sse_url)
+            if (
+                oauth_enabled
+                or not static_headers
+                or target.scheme != "https"
+                or not target.hostname
+                or target.username
+                or target.password
+                or target.query
+                or target.fragment
+            ):
+                raise ValueError(
+                    "Header authentication requires explicit HTTPS static-header mode without OAuth"
+                )
+            names = [validate_mcp_header_name(name).lower() for name in static_headers]
+            if (
+                len(names) > 32
+                or len(set(names)) != len(names)
+                or any(
+                    not isinstance(value, str)
+                    or not value
+                    or len(value) > 4096
+                    or "\r" in value
+                    or "\n" in value
+                    for value in static_headers.values()
+                )
+            ):
+                raise ValueError("Unsupported authentication header fields")
+        self.static_headers = (
+            dict(static_headers) if static_headers is not None else None
+        )
         self.oauth_enabled = oauth_enabled
         self.authorization_presenter = authorization_presenter
+        self.device_authorization_presenter = device_authorization_presenter
         self.operation_timeout = operation_timeout
         self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
@@ -279,6 +321,15 @@ class SseRunner(BaseRunner):
         self._protocol_version: Optional[str] = None
         self._probe_response: Optional[Dict[str, Any]] = None
         self.protocol = ChildProtocolState(ui_enabled=ui_enabled)
+
+    def _redact(self, value) -> str:
+        private = list((self.static_headers or {}).values())
+        for key, header in (self.static_headers or {}).items():
+            if key.lower() == "authorization" and header.lower().startswith(
+                ("bearer ", "basic ")
+            ):
+                private.append(header.split(" ", 1)[1])
+        return redact_text(value, secrets=private)
 
     def _prepare_headers(self) -> Dict[str, str]:
         headers = {
@@ -319,8 +370,20 @@ class SseRunner(BaseRunner):
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 "Cache-Control": "no-cache",
             }
+            if self.static_headers is not None:
+                headers.update(self.static_headers)
             auth = None
-            if self.oauth_enabled:
+            if self.oauth_enabled and self.device_authorization_presenter is not None:
+                presenter: DevicePresentation = partial(
+                    self.device_authorization_presenter, self.server_id
+                )
+                auth = DeviceCodeAuth(
+                    self.sse_url,
+                    _WrightOAuthTokenStorage(self.server_id, device_code=True),
+                    presenter,
+                    timeout=_OAUTH_CALLBACK_TIMEOUT,
+                )
+            elif self.oauth_enabled:
                 presenter = (
                     partial(self.authorization_presenter, self.server_id)
                     if self.authorization_presenter
@@ -358,7 +421,15 @@ class SseRunner(BaseRunner):
             self.client = httpx.AsyncClient(
                 timeout=self.operation_timeout,
                 headers=headers,
-                follow_redirects=True,
+                follow_redirects=self.device_authorization_presenter is None
+                and self.static_headers is None,
+                # HTTPX counts auth-generator requests in its redirect history,
+                # even with redirects disabled. Allow the bounded five-minute
+                # device flow (minimum one-second interval) plus discovery.
+                # This does not enable following any HTTP redirect.
+                max_redirects=int(_OAUTH_CALLBACK_TIMEOUT) + 16
+                if self.device_authorization_presenter
+                else 20,
                 auth=auth,
             )
 
@@ -413,9 +484,38 @@ class SseRunner(BaseRunner):
                         self._message_endpoint = self.sse_url
                         logger.info("Detected Streamable HTTP support")
             except Exception as e:
+                if self.static_headers is not None:
+                    await self._stop_locked()
+                    raise RuntimeError(
+                        "Header authentication or Streamable HTTP initialization failed; no authentication fallback"
+                    ) from None
+                if self.device_authorization_presenter is not None:
+                    logger.warning(
+                        "Remote device sign-in failed (%s): %s",
+                        type(e).__name__,
+                        self._redact(e),
+                    )
+                    await self._stop_locked()
+                    raise RuntimeError(
+                        "Remote device sign-in or MCP initialization failed"
+                    ) from e
                 logger.debug(
                     "Streamable HTTP probe failed; falling back to legacy SSE: %s",
-                    redact_text(e),
+                    self._redact(e),
+                )
+
+            if self.static_headers is not None and not self._is_streamable_http:
+                await self._stop_locked()
+                raise RuntimeError(
+                    "Header authentication requires a Streamable HTTP endpoint; no redirects or legacy transport fallback"
+                )
+            if (
+                self.device_authorization_presenter is not None
+                and not self._is_streamable_http
+            ):
+                await self._stop_locked()
+                raise RuntimeError(
+                    "Device sign-in currently requires a Streamable HTTP MCP endpoint"
                 )
 
             # Start reading task
@@ -436,7 +536,9 @@ class SseRunner(BaseRunner):
                         "SSE handshake failed: timeout waiting for endpoint event"
                     ) from te
                 except Exception as e:
-                    logger.error("Failed to establish SSE endpoint: %s", redact_text(e))
+                    logger.error(
+                        "Failed to establish SSE endpoint: %s", self._redact(e)
+                    )
                     await self._stop_locked()
                     raise RuntimeError(f"SSE handshake failed: {e}") from e
 
@@ -444,7 +546,7 @@ class SseRunner(BaseRunner):
             try:
                 await asyncio.wait_for(self._handshake(), timeout=10.0)
             except Exception as e:
-                logger.error("SSE MCP handshake failed: %s", redact_text(e))
+                logger.error("SSE MCP handshake failed: %s", self._redact(e))
                 await self._stop_locked()
                 raise RuntimeError(f"MCP handshake failed: {e}") from e
 
@@ -564,7 +666,7 @@ class SseRunner(BaseRunner):
             if "error" in self._probe_response:
                 raise RuntimeError(
                     "RPC Error: "
-                    + redact_text(
+                    + self._redact(
                         redact_mapping({"error": self._probe_response["error"]})
                     )
                 )
@@ -605,7 +707,7 @@ class SseRunner(BaseRunner):
                         if "error" in data:
                             raise RuntimeError(
                                 "RPC Error: "
-                                + redact_text(redact_mapping({"error": data["error"]}))
+                                + self._redact(redact_mapping({"error": data["error"]}))
                             )
                         return data.get("result", {})
                 elif "text/event-stream" in content_type:
@@ -620,7 +722,7 @@ class SseRunner(BaseRunner):
                                     if "error" in data:
                                         raise RuntimeError(
                                             "RPC Error: "
-                                            + redact_text(
+                                            + self._redact(
                                                 redact_mapping({"error": data["error"]})
                                             )
                                         )
@@ -629,7 +731,7 @@ class SseRunner(BaseRunner):
                         self._pending_requests.pop(req_id, None)
                         logger.error(
                             "Failed to parse SSE response in POST request: %s",
-                            redact_text(sse_err),
+                            self._redact(sse_err),
                         )
                         raise RuntimeError(
                             "Streamable HTTP returned an invalid SSE response"
@@ -651,7 +753,7 @@ class SseRunner(BaseRunner):
         except Exception as e:
             self._pending_requests.pop(req_id, None)
             raise RuntimeError(
-                f"Failed to post request to message endpoint: {redact_text(e)}"
+                f"Failed to post request to message endpoint: {self._redact(e)}"
             ) from e
 
         # Otherwise wait for the response to arrive in the SSE stream.
@@ -691,7 +793,7 @@ class SseRunner(BaseRunner):
             response.raise_for_status()
         except Exception as e:
             logger.error(
-                "Failed to send SSE notification %s: %s", method, redact_text(e)
+                "Failed to send SSE notification %s: %s", method, self._redact(e)
             )
 
     async def _connect_and_read(self) -> None:
@@ -743,7 +845,7 @@ class SseRunner(BaseRunner):
                                         fut.set_exception(
                                             RuntimeError(
                                                 "RPC Error: "
-                                                + redact_text(
+                                                + self._redact(
                                                     redact_mapping(
                                                         {"error": message["error"]}
                                                     )
@@ -771,6 +873,6 @@ class SseRunner(BaseRunner):
             except Exception as e:
                 logger.error(
                     "SSE stream error: %s. Retrying in 5 seconds...",
-                    redact_text(e),
+                    self._redact(e),
                 )
                 await asyncio.sleep(5)

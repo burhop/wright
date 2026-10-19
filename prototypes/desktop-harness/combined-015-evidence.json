@@ -1,0 +1,45 @@
+{
+  "source_head": "2d4f589e7191d645d1f474863dcecad5b264a37d",
+  "state": "/tmp/wright-desktop-combined-015-state-20261017-01",
+  "package_version": "0.15.0",
+  "resource": {
+    "uri": "ui://wright/workflow/d4ff6634122638848c8823cda423b025e9ac5b2bb1f5da38e309f8fc0e2d03cb.html",
+    "sha256": "d4ff6634122638848c8823cda423b025e9ac5b2bb1f5da38e309f8fc0e2d03cb",
+    "bytes": 2302794
+  },
+  "profile": {
+    "mcp_sdk": "1.30.0",
+    "image_input_profile": "inline-png-jpeg-engineering-v1",
+    "local_reviews": true,
+    "workspace_mcp_tasks": true,
+    "enrolled_mcp_tasks": false,
+    "confined_inspection": false
+  },
+  "normal_gateway": {
+    "state": "completed",
+    "run_id": "3caf2dde32824186982f0b3d605453ec",
+    "actual_provider_calls": 1,
+    "desktop_replies": 2,
+    "missing_membership_denied": true,
+    "recorded_output_sha256": "81ed6df137de9d0453e30f500706c1d32283db256a4509b122ca485b70e635c8",
+    "output_bytes": 259,
+    "canonical_record_sha256": "05a7190013c68e4b08bd1dfcbe18640ba649de94bc3db3696341b4f027d319b5"
+  },
+  "images": {
+    "state": "completed",
+    "run_id": "6dd0d0087389423382f4e480cecada2b",
+    "original_bytes_verified": true,
+    "count": 6,
+    "output_sha256": "077081be395cca10ff3b35c5d4d3bcfd9ca0d7c7e8ba1433ad33d1275e2a6dec",
+    "reply_matches_saved_output": true,
+    "perception_delivery": "MCP image blocks matched originals; aggregate shell JSON display exceeded output cap, so same hash-verified originals were viewed individually. No Windows delivery claim."
+  },
+  "local_review": {
+    "status": "passed",
+    "run_id": "9ed2292a056c44d9b967a64394d895ce",
+    "stale_subject_denied": true,
+    "decision": "changes_requested",
+    "genuine_engineering_approval": false
+  },
+  "boundary": "Actual frozen runtime/API/MCP with root desktop-authored replies; no substitute model, private task enrollment or Windows UI acceptance. Security gate remains failed."
+}

@@ -34,6 +34,12 @@ def main():
     parser.add_argument("--port", type=int, default=8097)
     parser.add_argument("--web-port", type=int, default=5197)
     parser.add_argument("--enable-desktop-bridge", action="store_true")
+    parser.add_argument(
+        "--remote-oauth-flow",
+        dest="remote_signin_mode",
+        choices=("authorization_code", "device_code"),
+        default="authorization_code",
+    )
     images = parser.add_mutually_exclusive_group()
     images.add_argument(
         "--enable-image-inputs",
@@ -52,6 +58,11 @@ def main():
         help="Private exact-enrollment qualification; no automatic grants",
     )
     parser.add_argument("--enable-local-reviews", action="store_true")
+    parser.add_argument(
+        "--enable-workspace-mcp-tasks",
+        action="store_true",
+        help="Opt-in normal workspace gateway task qualification; no integration-test grants",
+    )
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
     args = parser.parse_args()
@@ -69,6 +80,12 @@ def main():
         parser.error("Enrolled task qualification requires the opt-in desktop bridge")
     if args.enable_local_reviews and not args.enable_desktop_bridge:
         parser.error("Local reviews require the opt-in desktop bridge")
+    if args.enable_workspace_mcp_tasks and not args.enable_desktop_bridge:
+        parser.error("Workspace tasks require the opt-in desktop bridge")
+    if args.enable_workspace_mcp_tasks and (
+        args.enable_enrolled_mcp_tasks or args.enable_confined_inspection
+    ):
+        parser.error("Choose workspace gateway authority or private task enrollment")
     state = args.state_dir.resolve()
     database = state / "wright.sqlite"
     if args.enable_desktop_bridge and not database.exists():
@@ -98,6 +115,8 @@ def main():
             "WRIGHT_API_TOKEN": token_file.read_text(),
             "WRIGHT_ALLOWED_ORIGINS": f"http://127.0.0.1:{args.web_port},http://localhost:{args.web_port}",
             "WRIGHT_API_MCP_AUTOSTART": "0",
+            # Confine any retained compatibility synchronization to this instance.
+            "HERMES_CONFIG_PATH": str(state / "unused-hermes" / "config.yaml"),
         }
     )
 
@@ -128,12 +147,16 @@ def main():
             image_inputs=args.enable_image_inputs,
             engineering_image_inputs=args.enable_engineering_image_inputs,
             enrolled_mcp_tasks=args.enable_enrolled_mcp_tasks,
+            workspace_mcp_tasks=args.enable_workspace_mcp_tasks,
             local_reviews=args.enable_local_reviews,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
+            remote_signin_mode=args.remote_signin_mode,
         )
         app.state.agent_engine = desktop
         app.state.mcp_authorization_presenter = desktop.oauth.present
+        if args.remote_signin_mode == "device_code":
+            app.state.mcp_device_authorization_presenter = desktop.oauth.present_device
         app.include_router(desktop.router())
         # The normal app already ends with a GET frontend fallback. Newly
         # included API routes must precede it rather than returning HTML 200.

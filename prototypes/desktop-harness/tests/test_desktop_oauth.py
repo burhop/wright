@@ -64,3 +64,58 @@ async def test_rejects_unsafe_presentation_addresses(inbox, url, redirect):
     with pytest.raises(ValueError):
         await state.present("cad", url, redirect)
     assert state.read("cad", "w", "s", "p")["authorization_url"] is None
+
+
+@pytest.mark.asyncio
+async def test_device_presentation_is_scoped_expires_and_clears_without_a_callback(
+    inbox,
+):
+    now = [1.0]
+    state = inbox(clock=lambda: now[0])
+    state.bind("cad", "w", "s", "p")
+    challenge = {
+        "verification_uri": "https://issuer.example/device",
+        "verification_uri_complete": None,
+        "user_code": "TEST-1234",
+        "expires_in": 600,
+    }
+    await state.present_device("cad", challenge)
+    value = state.read("cad", "w", "s", "p")
+    assert value["presentation"] == "awaiting_user"
+    assert value["device"] == challenge and value["callback_uri"] is None
+    with pytest.raises(ValueError, match="another operator scope"):
+        state.read("cad", "other", "s", "p")
+    now[0] = 602
+    assert state.read("cad", "w", "s", "p")["device"] is None
+    assert state.read("cad", "w", "s", "p")["presentation"] == "expired"
+    state.clear("cad")
+    state.bind("cad", "w", "s", "p")
+    await state.present_device("cad", challenge)
+    await state.present_device("cad", None)
+    assert state.read("cad", "w", "s", "p")["device"] is None
+    assert inbox().read("cad", "w", "s", "p")["device"] is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"verification_uri": "http://issuer.example/device"},
+        {"verification_uri_complete": "https://other.example/device"},
+        {"expires_in": 601},
+        {"user_code": ""},
+    ],
+)
+async def test_device_presentation_rejects_unsafe_or_invalid_challenges(inbox, change):
+    state = inbox()
+    state.bind("cad", "w", "s", "p")
+    challenge = {
+        "verification_uri": "https://issuer.example/device",
+        "verification_uri_complete": None,
+        "user_code": "TEST-1234",
+        "expires_in": 600,
+        **change,
+    }
+    with pytest.raises(ValueError):
+        await state.present_device("cad", challenge)
+    assert state.read("cad", "w", "s", "p")["device"] is None

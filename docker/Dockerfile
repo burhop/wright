@@ -59,6 +59,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bsdutils \
     ca-certificates \
     curl=8.14.1-2+deb13u7 \
+    libexpat1=2.9.0-1~deb13u1 \
     git \
     libblkid1 \
     liblastlog2-2 \
@@ -145,6 +146,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl=8.14.1-2+deb13u7 \
     gzip \
+    libexpat1=2.9.0-1~deb13u1 \
     libblkid1 \
     liblastlog2-2 \
     libmount1 \

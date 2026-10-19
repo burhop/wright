@@ -8,6 +8,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
+from core.process_validation import canonical_digest
+
 from .capability_models import (
     MachineCompatibilityObservation,
     ValidationEvidence as CapabilityValidationEvidence,
@@ -109,7 +111,9 @@ async def run_capability_validation(
                 for tool in tools
                 if isinstance(tool, Mapping)
             ]
-            schema_digest = _digest(normalized_tools)
+            # Tool schemas and observed probes are ordinary finite JSON, not
+            # signed catalog metadata (whose stricter hash remains above).
+            schema_digest = canonical_digest(normalized_tools)
             tool_count = len(normalized_tools)
             steps["tools/list"] = "passed"
             if read_only_probe:
@@ -119,8 +123,8 @@ async def run_capability_validation(
                 result = await client.call_tool(probe_name, arguments)
                 probe_evidence = {
                     "name": probe_name,
-                    "argument_digest": _digest(arguments),
-                    "result_digest": _digest(result),
+                    "argument_digest": canonical_digest(arguments),
+                    "result_digest": canonical_digest(result),
                     "status": "passed",
                     "limitation": str(
                         read_only_probe.get(

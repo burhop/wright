@@ -1,3 +1,10 @@
+:root[data-theme="light"] #editor {
+  --native-host-bg: var(--color-neutral);
+  --native-host-fg: var(--color-primary);
+  --native-host-muted: var(--color-text-muted);
+  --native-host-border: var(--color-border);
+}
+
 .native-workflow-panel[data-control-style] {
   --color-neutral: var(--native-host-bg, #1c1c1c);
   --color-primary: var(--native-host-fg, #eeeeee);
@@ -73,6 +80,7 @@
 }
 
 .native-workspace-frame {
+  font-family: var(--native-host-font, system-ui, sans-serif);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
@@ -109,9 +117,16 @@
   display: block;
 }
 .native-home select,
-.native-home input {
+.native-home input,
+.native-home textarea {
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
   margin: 8px 0;
+}
+.native-home textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 .native-home ul {
   padding: 0;
@@ -127,6 +142,7 @@
 .native-home button,
 .native-home select,
 .native-home input,
+.native-home textarea,
 .native-workspace-frame > nav button {
   font: inherit;
   color: inherit;
@@ -183,4 +199,50 @@
 }
 .native-connection-endpoint {
   overflow-wrap: anywhere;
+}
+.native-editor-drafts {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--color-border-primary, #414141);
+}
+.native-editor-drafts summary {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.native-editor-drafts button {
+  margin: 4px;
+}
+.native-editor-drafts textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 140px;
+}
+.native-workspace-settings {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--native-host-border, #414141);
+  border-radius: 8px;
+  min-width: 0;
+}
+.native-workspace-settings label {
+  display: block;
+  margin-top: 8px;
+}
+.native-workspace-settings textarea,
+.native-workspace-settings input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+.native-workspace-settings textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+.native-workspace-settings pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.native-workspace-settings button {
+  margin: 8px 6px 0 0;
 }

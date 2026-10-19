@@ -5,6 +5,7 @@ import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-autho
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
 import { NativeSourceClient } from "./native-source-client";
+import type { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { WorkflowBundleDialog } from "../workflow-recovery/WorkflowBundleDialog";
 import {
   createNativeTransferClient,
@@ -19,6 +20,7 @@ import {
 export function NativePanelContent({
   initial,
   sourceClient,
+  draftClient,
   call,
   sessionId,
   workspaceName,
@@ -29,9 +31,11 @@ export function NativePanelContent({
   theme,
   transferCall,
   onOpenTransferred,
+  onAcceptedSource,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
+  readonly draftClient?: NativeEditorDraftClient;
   readonly call: NativeProcessCall;
   readonly sessionId: string;
   readonly workspaceName: string;
@@ -42,6 +46,9 @@ export function NativePanelContent({
   readonly theme?: "dark" | "light";
   readonly transferCall?: NativeTransferCall;
   readonly onOpenTransferred?: (path: string) => Promise<void>;
+  readonly onAcceptedSource?: (
+    document: WorkspaceWorkflowSourceDocument,
+  ) => void;
 }) {
   const [accepted, setAccepted] = useState(initial);
   const [view, setView] = useState<"editor" | "working">(
@@ -210,13 +217,17 @@ export function NativePanelContent({
         <NativeWorkflowPanel
           initial={initial}
           client={sourceClient}
+          draftClient={draftClient}
           workspaceName={workspaceName}
           onOpenTransfer={
             transfer && onOpenTransferred ? openTransfer : undefined
           }
           transferDisabled={sourceDirty || workingDirty || transferPending}
           onDirty={sourceChange}
-          onAccepted={setAccepted}
+          onAccepted={(document) => {
+            setAccepted(document);
+            onAcceptedSource?.(document);
+          }}
           onOpenWorkingView={
             workingViewEnabled ? () => void openWorking() : undefined
           }

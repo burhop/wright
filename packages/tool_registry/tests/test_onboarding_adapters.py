@@ -326,3 +326,104 @@ def test_registry_adapter_registers_and_removes_reviewed_remote_import(
     assert registered.transport_variant == "streamable_http"
     adapter.rollback(remote_plan)
     assert get_server(str(database), remote_plan.capability_id) is None
+
+
+def test_import_keeps_public_environment_and_private_definitions_through_review_and_registration(
+    approved_plan,
+):
+    from tool_registry.config_import import preview_configuration
+
+    database, _ = approved_plan
+    draft = preview_configuration(
+        {
+            "name": "Configured MCP",
+            "command": "uvx",
+            "args": ["example-mcp==1.0.0"],
+            "env": {"RUN_MODE": "", "API_KEY": "discard-me"},
+            "public_env": {"RUN_MODE": "read-only"},
+        },
+        now=NOW,
+    )["drafts"][0]
+    plan = create_install_plan(
+        database,
+        snapshot_id="test",
+        observation=observation(),
+        actor="test-author",
+        requested_scope="global_registered",
+        import_draft=draft,
+        independently_completed_license=True,
+        now=NOW,
+    )
+    assert plan.state == "reviewable"
+    plan = approve_install_plan(
+        database, plan.plan_id, plan.plan_digest, actor="test-review", now=NOW
+    )
+    adapter = RegistryOnboardingAdapter(database, kind="local_command")
+    adapter.prepare(plan)
+    adapter.apply(plan)
+    server = get_server(database, plan.capability_id)
+    assert server.launch_env == {"RUN_MODE": "read-only"}
+    assert [item.name for item in server.env_vars] == ["API_KEY"]
+    assert not server.is_active and not server.default_enabled
+    assert (
+        "discard-me" not in server.model_dump_json()
+        and "discard-me" not in plan.model_dump_json()
+    )
+
+
+def test_replacement_keeps_old_configuration_credentials_and_authority(
+    approved_plan, tmp_path, monkeypatch
+):
+    from data_vault.secret_provider import FileSecretProvider
+    from tool_registry.config_import import preview_configuration
+    from tool_registry.gateway_adapters import _server_authority_revision
+    from tool_registry.services import save_server_credentials
+    from tool_registry.secrets import read_secrets
+
+    provider = FileSecretProvider(tmp_path / "private-credentials.json")
+    monkeypatch.setattr(
+        "tool_registry.secrets.default_secret_provider", lambda: provider
+    )
+    database, _ = approved_plan
+    installed = []
+    for name, version, key in [
+        ("Original", "1.0.0", "placeholder-old-key"),
+        ("Replacement", "1.1.0", "placeholder-new-key"),
+    ]:
+        draft = preview_configuration(
+            {
+                "name": name,
+                "command": "uvx",
+                "args": ["example-mcp==" + version],
+                "env": {"API_KEY": ""},
+            },
+            now=NOW,
+        )["drafts"][0]
+        plan = create_install_plan(
+            database,
+            snapshot_id="test",
+            observation=observation(),
+            actor="test-author",
+            requested_scope="global_registered",
+            import_draft=draft,
+            independently_completed_license=True,
+            now=NOW,
+        )
+        plan = approve_install_plan(
+            database, plan.plan_id, plan.plan_digest, actor="test-review", now=NOW
+        )
+        adapter = RegistryOnboardingAdapter(database, kind="local_command")
+        adapter.prepare(plan)
+        adapter.apply(plan)
+        save_server_credentials(str(database), plan.capability_id, {"API_KEY": key})
+        installed.append(plan.capability_id)
+        if len(installed) == 1:
+            original = get_server(database, installed[0])
+            source = original.model_dump_json()
+            revision = _server_authority_revision(original)
+    assert installed[0] != installed[1]
+    assert get_server(database, installed[0]).model_dump_json() == source
+    assert _server_authority_revision(get_server(database, installed[0])) == revision
+    assert read_secrets(installed[0]) == {"API_KEY": "placeholder-old-key"}
+    assert read_secrets(installed[1]) == {"API_KEY": "placeholder-new-key"}
+    assert not get_server(database, installed[1]).default_enabled

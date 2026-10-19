@@ -26,6 +26,7 @@ import {
   initialWorkflow,
   resolveRecoveryComponentScope,
   toDraftProjection,
+  validateRecoveryLayoutDocument,
   type RecoveryDiagnostic,
   type RecoveryLayout,
   type RecoveryRunProjection,
@@ -174,6 +175,14 @@ interface Snapshot {
   layout: RecoveryLayout;
 }
 
+/** Inert editor state; restoring this never accepts a definition or starts work. */
+export interface WorkflowEditorDraftSnapshot {
+  readonly source: string;
+  readonly applied_source: string;
+  readonly layout: RecoveryLayout | null;
+  readonly view: ViewMode;
+}
+
 interface PersistedRunSubject {
   workflow: RecoveryWorkflow;
   storageDigest: string;
@@ -191,6 +200,11 @@ export interface WorkflowRecoveryPersistedSource {
 }
 
 export interface WorkflowRecoveryConceptProps {
+  readonly initialDraft?: WorkflowEditorDraftSnapshot;
+  readonly onDraftChange?: (
+    snapshot: WorkflowEditorDraftSnapshot,
+    dirty: boolean,
+  ) => void;
   readonly onLoadInstructionDefaults?: () => Promise<
     import("../../services/workspace-service").WorkflowInstructionDefaultsDocument
   >;
@@ -1562,6 +1576,8 @@ function InvalidSourceRunResults({
 }
 
 export function WorkflowRecoveryConcept({
+  initialDraft,
+  onDraftChange,
   onLoadInstructionDefaults,
   onReviewInstructionProtocolUpgrade,
   onExportSource,
@@ -1655,8 +1671,41 @@ export function WorkflowRecoveryConcept({
       </section>
     );
   }
+  const recovered = initialDraft
+    ? parseRecoveryAuthoringSource(initialDraft.applied_source, loaded.workflow)
+    : undefined;
+  if (recovered && (!recovered.ok || recovered.workflow === null)) {
+    return (
+      <section role="alert">
+        The preserved diagram cannot be loaded. Your draft and accepted workflow
+        are unchanged.
+      </section>
+    );
+  }
+  if (recovered?.workflow && initialDraft?.layout) {
+    let validLayout = false;
+    try {
+      validLayout =
+        validateRecoveryLayoutDocument(recovered.workflow, {
+          ...initialDraft.layout,
+          semanticRevision: recovered.workflow.revision,
+        }).length === 0;
+    } catch {
+      /* Malformed presentation must not silently discard draft positions. */
+    }
+    if (!validLayout)
+      return (
+        <section role="alert">
+          The preserved layout is incompatible. Your draft and accepted workflow
+          are unchanged.
+        </section>
+      );
+  }
   return (
     <WorkflowRecoveryReadyConcept
+      initialDraft={initialDraft}
+      recoveredWorkflow={recovered?.workflow ?? undefined}
+      onDraftChange={onDraftChange}
       onLoadInstructionDefaults={onLoadInstructionDefaults}
       onReviewInstructionProtocolUpgrade={onReviewInstructionProtocolUpgrade}
       onExportSource={onExportSource}
@@ -2157,6 +2206,12 @@ function runDefinitionLockDiagnostic(): RecoveryDiagnostic {
 }
 
 interface WorkflowRecoveryReadyConceptProps {
+  readonly initialDraft?: WorkflowEditorDraftSnapshot;
+  readonly recoveredWorkflow?: RecoveryWorkflow;
+  readonly onDraftChange?: (
+    snapshot: WorkflowEditorDraftSnapshot,
+    dirty: boolean,
+  ) => void;
   readonly onLoadInstructionDefaults?: () => Promise<
     import("../../services/workspace-service").WorkflowInstructionDefaultsDocument
   >;
@@ -2199,6 +2254,9 @@ interface WorkflowRecoveryReadyConceptProps {
 }
 
 function WorkflowRecoveryReadyConcept({
+  initialDraft,
+  recoveredWorkflow,
+  onDraftChange,
   onLoadInstructionDefaults,
   onReviewInstructionProtocolUpgrade,
   onExportSource,
@@ -2229,13 +2287,22 @@ function WorkflowRecoveryReadyConcept({
   const loadedDocumentKeyRef = useRef(
     `${definitionRevision}\u0000${storageDigest ?? ""}\u0000${workflowSource}`,
   );
-  const [workflow, setWorkflow] = useState(() => loadedWorkflow);
+  const [workflow, setWorkflow] = useState(
+    () => recoveredWorkflow ?? loadedWorkflow,
+  );
+  // Optional draft presentation only; auto-framing does not dirty accepted source.
+  const [draftViewport, setDraftViewport] = useState(
+    initialDraft?.layout?.viewport,
+  );
   const connectionCapabilities = useEngineeringConnectionCapabilities(
     workflow,
     workspaceSessionId,
   );
   const [layout, setLayout] = useState(() =>
-    hydrateAuthoringLayout(loadedWorkflow, workflowLayout),
+    hydrateAuthoringLayout(
+      recoveredWorkflow ?? loadedWorkflow,
+      initialDraft?.layout ?? workflowLayout,
+    ),
   );
   const [savedLayoutIdentity, setSavedLayoutIdentity] = useState(() =>
     canonicalLayoutPositionBytes(
@@ -2243,7 +2310,7 @@ function WorkflowRecoveryReadyConcept({
     ),
   );
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [view, setView] = useState<ViewMode>("diagram");
+  const [view, setView] = useState<ViewMode>(initialDraft?.view ?? "diagram");
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>("overview");
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const inspectorBodyRef = useRef<HTMLDivElement>(null);
@@ -2290,9 +2357,16 @@ function WorkflowRecoveryReadyConcept({
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [diagnostics, setDiagnostics] = useState<RecoveryDiagnostic[]>([]);
   const checkButtonRef = useRef<HTMLButtonElement>(null);
-  const [sourceDraft, setSourceDraft] = useState(workflowSource);
+  const [sourceDraft, setSourceDraft] = useState(
+    initialDraft?.source ?? workflowSource,
+  );
   const [savedSource, setSavedSource] = useState(workflowSource);
-  const [sourceDirty, setSourceDirty] = useState(false);
+  const [sourceDirty, setSourceDirty] = useState(
+    () =>
+      initialDraft !== undefined &&
+      initialDraft.source !==
+        formatRecoveryAuthoringSource(recoveredWorkflow ?? loadedWorkflow).text,
+  );
   const [savedSemanticIdentity, setSavedSemanticIdentity] = useState(() =>
     contentIdentity(loadedWorkflow),
   );
@@ -2313,7 +2387,16 @@ function WorkflowRecoveryReadyConcept({
     "idle" | "copying" | "comparing" | "reloading"
   >("idle");
   const [conflictActionMessage, setConflictActionMessage] = useState("");
-  const [undoStack, setUndoStack] = useState<Snapshot[]>([]);
+  const [undoStack, setUndoStack] = useState<Snapshot[]>(() =>
+    initialDraft
+      ? [
+          {
+            workflow: cloneWorkflow(loadedWorkflow),
+            layout: hydrateAuthoringLayout(loadedWorkflow, workflowLayout),
+          },
+        ]
+      : [],
+  );
   const [redoStack, setRedoStack] = useState<Snapshot[]>([]);
   const [modal, setModal] = useState<
     | "none"
@@ -2624,6 +2707,28 @@ function WorkflowRecoveryReadyConcept({
       semanticDirty || sourceDirty || layoutDirty || proposal !== null,
     );
   }, [onUnsavedChange, semanticDirty, sourceDirty, layoutDirty, proposal]);
+  useEffect(() => {
+    onDraftChange?.(
+      {
+        source: sourceDraft,
+        applied_source: formatted.text,
+        layout: draftViewport ? { ...layout, viewport: draftViewport } : layout,
+        view,
+      },
+      semanticDirty || sourceDirty || layoutDirty || proposal !== null,
+    );
+  }, [
+    onDraftChange,
+    sourceDraft,
+    formatted.text,
+    layout,
+    draftViewport,
+    view,
+    semanticDirty,
+    sourceDirty,
+    layoutDirty,
+    proposal,
+  ]);
   const reopenState = useRef({
     dirty: false,
     busy: false,
@@ -4413,6 +4518,8 @@ function WorkflowRecoveryReadyConcept({
           {(view === "diagram" || view === "split") && (
             <RecoveryCanvasRuntimeProvider
               value={{
+                restoredViewport: onDraftChange ? draftViewport : undefined,
+                onViewportChange: onDraftChange ? setDraftViewport : undefined,
                 resultBlocks,
                 hiddenPorts,
                 outputLabels: cadOutputs.labels,
