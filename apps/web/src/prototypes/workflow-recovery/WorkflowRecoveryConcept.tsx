@@ -36,6 +36,7 @@ import {
 import {
   formatRecoveryAuthoringSource,
   parseRecoveryAuthoringSource,
+  parseRecoverySourceDocument,
   recoveryAuthoringSemanticIdAtOffset,
   recoveryAuthoringSourceSelection,
   recoveryAuthoringBlockId,
@@ -1575,7 +1576,96 @@ function InvalidSourceRunResults({
   );
 }
 
-export function WorkflowRecoveryConcept({
+/** A raw correction stays a draft until the existing source owner acknowledges it. */
+function InvalidSourceCorrection({
+  source,
+  revision,
+  layout,
+  onSave,
+  onRead,
+  onDirty,
+  onConfirmed,
+}: {
+  source: string;
+  revision: number;
+  layout?: RecoveryLayout;
+  onSave?: WorkflowRecoveryConceptProps["onSave"];
+  onRead?: WorkflowRecoveryConceptProps["onReadStoredSource"];
+  onDirty?: (dirty: boolean) => void;
+  onConfirmed: (saved: WorkflowRecoveryPersistedSource) => void;
+}) {
+  const [draft, setDraft] = useState(source);
+  const [message, setMessage] = useState("");
+  const [pending, setPending] = useState(false);
+  const [uncertain, setUncertain] = useState(false);
+  const attempted = useRef<string | undefined>(undefined);
+  const parsed = workflowFromSource(draft, revision);
+  const originalName = [...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm)];
+  const sameDocument = originalName.length !== 1 ||
+    parsed.workflow?.workflowId === `workflow.${originalName[0]![1]!.replaceAll("_", "-")}`;
+  const valid = parsed.ok && parsed.workflow !== null &&
+    sameDocument && validateRecoveryAuthoringRoundTrip(parsed.workflow).ok;
+  const confirm = (saved: WorkflowRecoveryStoredSource) => {
+    if (saved.source !== attempted.current || !saved.storage_digest ||
+      !/^[a-f0-9]{64}$/.test(saved.storage_digest) ||
+      !Number.isInteger(saved.definition_revision) || saved.definition_revision < 1 ||
+      !workflowFromSource(saved.source, saved.definition_revision).ok)
+      throw new Error("Saved correction identity was not confirmed.");
+    onDirty?.(false);
+    onConfirmed({ ...saved, storage_digest: saved.storage_digest });
+  };
+  return (
+    <section aria-label="Source correction">
+      <p>Edit the source below. The saved workflow and its runs stay unchanged until you save a valid correction.</p>
+      <label>Workflow source
+        <textarea aria-label="Workflow source" value={draft} disabled={pending || uncertain}
+          onChange={(event) => {
+            setDraft(event.target.value);
+            onDirty?.(event.target.value !== source);
+            setMessage("");
+          }} />
+      </label>
+      <p aria-live="polite">{message || parsed.diagnostics[0]?.explanation ||
+        (!sameDocument ? "Keep this workflow's declared identity when correcting its source." : "")}</p>
+      <button type="button" disabled={!onSave || !valid || draft === source || pending || uncertain}
+        onClick={() => {
+          if (!onSave || !parsed.workflow || pending || uncertain) return;
+          attempted.current = draft;
+          setPending(true);
+          void onSave(draft, hydrateAuthoringLayout(parsed.workflow, layout))
+            .then(confirm)
+            .catch(() => {
+              setUncertain(true);
+              setMessage("The save was not confirmed. Read the saved workflow before any further save; no write was repeated.");
+            })
+            .finally(() => setPending(false));
+        }}>Save corrected source</button>
+      {uncertain && onRead && <button type="button" disabled={pending}
+        onClick={() => {
+          setPending(true);
+          void onRead().then(confirm).catch(() => setMessage(
+            "The saved correction is still unconfirmed. Your source is kept here; reopen the saved workflow to compare it. No write was repeated.",
+          )).finally(() => setPending(false));
+        }}>Read saved workflow</button>}
+    </section>
+  );
+}
+
+export function WorkflowRecoveryConcept(props: WorkflowRecoveryConceptProps = {}) {
+  const original = JSON.stringify([props.workflowFilePath, props.definitionRevision,
+    props.storageDigest, props.workflowSource]);
+  const [corrected, setCorrected] = useState<{
+    original: string;
+    saved: WorkflowRecoveryPersistedSource;
+  }>();
+  const saved = corrected?.original === original ? corrected?.saved : undefined;
+  return <WorkflowRecoveryDocument {...props}
+    {...(saved ? { workflowSource: saved.source, definitionRevision: saved.definition_revision,
+      storageDigest: saved.storage_digest, workflowLayout: saved.layout ?? undefined, initialDraft: undefined } : {})}
+    onCorrected={(document) => setCorrected({ original, saved: document })} />;
+}
+
+function WorkflowRecoveryDocument({
   initialDraft,
   onDraftChange,
   onLoadInstructionDefaults,
@@ -1605,7 +1695,8 @@ export function WorkflowRecoveryConcept({
   onOpenFile,
   onOpenRunWorkingView,
   fileActions,
-}: WorkflowRecoveryConceptProps = {}) {
+  onCorrected,
+}: WorkflowRecoveryConceptProps & { onCorrected: (saved: WorkflowRecoveryPersistedSource) => void }) {
   if (surfaceState === "loading") {
     return (
       <section
@@ -1659,6 +1750,10 @@ export function WorkflowRecoveryConcept({
             replaced with fallback content.
           </small>
         </div>
+        <InvalidSourceCorrection key={`${workflowFilePath}:${storageDigest ?? workflowSource}`}
+          source={workflowSource} revision={definitionRevision} layout={workflowLayout}
+          onSave={onSave} onRead={onReadStoredSource} onDirty={onUnsavedChange}
+          onConfirmed={onCorrected} />
         <InvalidSourceRunResults
           key={`${workspaceSessionId}:${workspaceId}:${workflowFilePath}`}
           workspaceSessionId={workspaceSessionId}
@@ -2171,18 +2266,7 @@ function workflowFromSource(
   source: string,
   definitionRevision: number,
 ): ReturnType<typeof parseRecoveryAuthoringSource> {
-  const base = cloneWorkflow(initialWorkflow);
-  // At the file-open boundary the public workflow declaration establishes this
-  // document's identity. Subsequent Source edits still parse against its accepted
-  // base and cannot silently rename that identity. File name is not identity.
-  const declarations = [
-    ...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm),
-  ];
-  if (declarations.length === 1)
-    base.workflowId = `workflow.${declarations[0]![1]!.replaceAll("_", "-")}`;
-  base.revision = definitionRevision;
-  base.parentRevision = definitionRevision > 1 ? definitionRevision - 1 : null;
-  return parseRecoveryAuthoringSource(source, base);
+  return parseRecoverySourceDocument(source, definitionRevision);
 }
 
 function persistedRunSubject(

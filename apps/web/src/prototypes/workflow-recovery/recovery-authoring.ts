@@ -1109,6 +1109,21 @@ function parsePortList(
         ),
       );
     const basePort = basePortsByKey.get(key);
+    if (
+      basePort &&
+      (basePort.ownerBlockId !== ownerBlockId || basePort.direction !== direction)
+    ) {
+      diagnostics.push(
+        diagnostic(
+          "WFR-SOURCE-PORT-OWNER",
+          `Connection point '${key}' belongs to another step or direction.`,
+          "Restore its accepted owner and direction; use a reviewed structural operation to move a connection point.",
+          ownerBlockId,
+          section.startLine,
+        ),
+      );
+      continue;
+    }
     if (basePort && basePort.typeId !== mappedTypeId) {
       diagnostics.push(
         diagnostic(
@@ -1866,12 +1881,32 @@ export function parseRecoveryAuthoringSource(
   return { ok: true, workflow: validated.workflow, diagnostics: [], sourceMap };
 }
 
+/** File opening has vocabulary, but no previously accepted connection points.
+ * Source edits use parseRecoveryAuthoringSource with their own accepted base.
+ */
+export function parseRecoverySourceDocument(
+  source: string,
+  definitionRevision: number,
+): RecoveryParseResult {
+  const base = cloneWorkflow(initialWorkflow);
+  base.ports = [];
+  const declarations = [...source.matchAll(/^workflow ([a-z][a-z0-9_]*)\s*$/gm)];
+  if (declarations.length === 1)
+    base.workflowId = `workflow.${declarations[0]![1]!.replaceAll("_", "-")}`;
+  base.revision = definitionRevision;
+  base.parentRevision = definitionRevision > 1 ? definitionRevision - 1 : null;
+  return parseRecoveryAuthoringSource(source, base);
+}
+
 export function validateRecoveryAuthoringRoundTrip(
   workflow: RecoveryWorkflow,
-  reconstructionBase: RecoveryWorkflow = initialWorkflow,
+  reconstructionBase?: RecoveryWorkflow,
 ): RecoveryParseResult {
   const formatted = formatRecoveryAuthoringSource(workflow);
-  const base = cloneWorkflow(reconstructionBase);
+  const base = cloneWorkflow(reconstructionBase ?? initialWorkflow);
+  if (!reconstructionBase) {
+    base.ports = [];
+  }
   // The reconstruction seed supplies retained schema/binding vocabulary, not a
   // different document identity. The public workflow declaration carries this.
   base.workflowId = workflow.workflowId;

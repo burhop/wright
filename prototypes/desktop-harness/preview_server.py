@@ -169,6 +169,23 @@ def main():
     @app.middleware("http")
     async def preview_boundary(request, call_next):
         path = request.url.path
+        if (
+            request.method == "GET"
+            and not path.startswith("/api/")
+            and "text/html" in request.headers.get("accept", "")
+            and not request.headers.get("authorization")
+        ):
+            from fastapi.responses import HTMLResponse
+
+            return HTMLResponse(
+                "<!doctype html><title>Open Wright in your desktop conversation</title>"
+                "<h1>Open Wright in your desktop conversation</h1>"
+                "<p>This remote prototype uses the native Wright panel. Ask the "
+                "conversation to open Wright and select your workspace. "
+                "This address is not an authenticated browser handoff.</p>",
+                status_code=403,
+                headers={"Cache-Control": "no-store"},
+            )
         agent_call = path.startswith("/api/agent") and path != "/api/agent/health"
         source_edit = path == "/api/workspace/workflow-sources" and request.method in {
             "POST",
@@ -255,9 +272,12 @@ def main():
 
     descriptor = {
         "api_url": f"http://127.0.0.1:{args.port}",
-        "web_url": f"http://127.0.0.1:{args.web_port}/workspace/{info['workspace_id']}?host=openai-desktop"
-        if info.get("workspace_id")
-        else f"http://127.0.0.1:{args.web_port}/?host=openai-desktop",
+        "web_url": None,
+        "presentation": {
+            "kind": "native-panel" if args.enable_native_editor else "conversation",
+            "browser_available": False,
+            "reopen_tool": "wright_home" if args.enable_native_editor else None,
+        },
         "state_dir": str(state),
         "workspace_id": info.get("workspace_id"),
         "capabilities": "experimental desktop reasoning bridge; connection required"

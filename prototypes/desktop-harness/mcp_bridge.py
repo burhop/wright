@@ -10,6 +10,7 @@ import hashlib
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import json
+import re
 from pathlib import Path
 from typing import Any, Literal
 from importlib.metadata import version
@@ -43,6 +44,17 @@ from desktop_backend import (
 )
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
+
+
+def source_read_path(path: str) -> str:
+    """Accept the file browser's exact workspace-root notation, never OS paths.
+
+    The source owner still validates its canonical relative path and scope.
+    Do not normalize dot segments, separators, encoded bytes or other roots.
+    """
+    if re.fullmatch(r"/workflows/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow", path):
+        return path[1:]
+    return path
 
 
 def reasoning_images(request):
@@ -826,7 +838,7 @@ def server(client, *, native_editor=False, native_working_view=False):
         return await client.call(
             "GET",
             "/api/workspace/workflow-sources",
-            params={"session_id": session_id, "path": path},
+            params={"session_id": session_id, "path": source_read_path(path)},
         )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["model", "app"]}})
@@ -1309,7 +1321,7 @@ def server(client, *, native_editor=False, native_working_view=False):
             document = await client.call(
                 "GET",
                 "/api/workspace/workflow-sources",
-                params={"session_id": session_id, "path": path},
+                params={"session_id": session_id, "path": source_read_path(path)},
             )
             return {
                 "workspace": workspace,

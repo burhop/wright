@@ -61,6 +61,38 @@ def test_snapshot_preserves_exact_source_run_and_page(panel):
     )
 
 
+def test_navigation_resolves_through_the_readonly_port_and_existing_owner(panel):
+    server, client = panel
+    target = {"kind": "block", "block_id": "report", "run_id": "saved-run"}
+    run(server, "wright_process_ui_read", scope("navigation", target=target))
+    client.scope.assert_awaited_once_with("workspace", "session")
+    assert client.call.call_args.args == (
+        "POST",
+        "/api/workspace/process-interfaces/navigation",
+    )
+    body = client.call.call_args.kwargs["json"]
+    assert body["target"] == target
+    assert body["expected_storage_digest"] == "a" * 64
+    assert "operation" not in body
+    assert client.call.await_count == 1
+
+
+def test_navigation_cannot_smuggle_execution_fields(panel):
+    server, client = panel
+    with pytest.raises(Exception):
+        run(
+            server,
+            "wright_process_ui_read",
+            scope(
+                "navigation",
+                target={"kind": "run", "run_id": "saved-run"},
+                request_id="start",
+            ),
+        )
+    client.scope.assert_not_awaited()
+    client.call.assert_not_awaited()
+
+
 def test_declared_response_accepts_scalar_without_creating_approval(panel):
     server, client = panel
     run(

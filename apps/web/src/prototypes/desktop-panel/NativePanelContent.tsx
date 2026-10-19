@@ -1,9 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
-import type { ProcessRef } from "@wright/process-client";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ProcessClientError, type ProcessRef, type NavigationResolution } from "@wright/process-client";
+import { createProcessNavigationDispatcher, type ProcessNavigationRequest } from "../../services/process-navigation";
 import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
 import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-authoring";
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
+import { NativeRunEvidence } from "./NativeRunEvidence";
+import type { HomeCall } from "./NativeHomePanel";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { WorkflowBundleDialog } from "../workflow-recovery/WorkflowBundleDialog";
@@ -32,6 +35,7 @@ export function NativePanelContent({
   transferCall,
   onOpenTransferred,
   onAcceptedSource,
+  readEvidence,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
@@ -42,6 +46,7 @@ export function NativePanelContent({
   readonly initialProcess?: ProcessRef;
   readonly initialRunId?: string;
   readonly workingViewEnabled: boolean;
+  readonly readEvidence?: HomeCall;
   readonly onDirty: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
   readonly transferCall?: NativeTransferCall;
@@ -69,6 +74,8 @@ export function NativePanelContent({
   const [transferDocument, setTransferDocument] =
     useState<WorkspaceWorkflowSourceDocument | null>(null);
   const [openingTransfer, setOpeningTransfer] = useState(false);
+  const [navigation, setNavigation] = useState<ProcessNavigationRequest>();
+  const [runDetails, setRunDetails] = useState<{run_id: string; source_digest: string}>();
   const transfer = useMemo(
     () =>
       transferCall
@@ -81,6 +88,34 @@ export function NativePanelContent({
     [initial.workspace_id, sessionId, transferCall],
   );
   const transferPending = openingTransfer || !!transferDocument;
+  const dispatcher = useMemo(() => createProcessNavigationDispatcher(), []);
+  const navigate = useCallback(async (_process: ProcessRef, _target: unknown, resolution: NavigationResolution) => {
+    if (sourceDirty || workingDirty || transferPending)
+      throw new ProcessClientError({ code: "CAPABILITY_UNAVAILABLE",
+        message: "Finish or reconcile pending edits before navigating.", correction: "Your current view is preserved." });
+    const target = resolution.target;
+    if (target.kind === "process" || target.kind === "block") {
+      if (process.source_digest !== accepted.storage_digest)
+        throw new ProcessClientError({ code: "CAPABILITY_UNAVAILABLE",
+          message: "This run belongs to an older source revision.", correction: "Inspect its saved run; open the current workflow separately to edit it." });
+      setNavigation({ requestId: crypto.randomUUID(), resolution });
+      setRunDetails(undefined);
+      setNotice("");
+      setView("editor");
+    } else if (target.kind === "run" && target.run_id && readEvidence) {
+      setRun(target.run_id);
+      setRunDetails({ run_id: target.run_id, source_digest: process.source_digest });
+      setNotice("");
+      setView("working");
+    } else {
+      throw new ProcessClientError({ code: "CAPABILITY_UNAVAILABLE",
+        message: "This native panel cannot open that navigation target yet.", correction: "Inspect the recorded result in Run and results or Files." });
+    }
+  }, [sourceDirty, workingDirty, transferPending, process.source_digest, accepted.storage_digest, readEvidence]);
+  useEffect(() => {
+    dispatcher.setHost((subject, resolution) => navigate(subject, resolution.target, resolution));
+    return () => dispatcher.setHost(undefined);
+  }, [dispatcher, navigate]);
   const native = useMemo(
     () =>
       createNativePanelProcessClient({
@@ -88,8 +123,9 @@ export function NativePanelContent({
         sessionId,
         workspaceName,
         call,
+        navigate: dispatcher.navigate,
       }),
-    [process, sessionId, workspaceName, call],
+    [process, sessionId, workspaceName, call, dispatcher],
   );
   const sourceChange = useCallback(
     (pending: boolean) => {
@@ -218,6 +254,7 @@ export function NativePanelContent({
           initial={initial}
           client={sourceClient}
           draftClient={draftClient}
+          navigation={navigation}
           workspaceName={workspaceName}
           onOpenTransfer={
             transfer && onOpenTransferred ? openTransfer : undefined
@@ -237,6 +274,13 @@ export function NativePanelContent({
         <NativeProcessPanel
           key={`${process.source_digest}:${workingGeneration}`}
           {...native}
+          canNavigate
+          runDetails={runDetails && readEvidence ? <section aria-label="Run details">
+            <button type="button" onClick={() => setRunDetails(undefined)}>Close run details</button>
+            <NativeRunEvidence workspace={{ workspace_id: initial.workspace_id, session_id: sessionId,
+              workspace_name: workspaceName, available: true, reason: null }} path={process.source_path}
+              run={runDetails} call={readEvidence} />
+          </section> : undefined}
           sessionId={sessionId}
           workspaceName={workspaceName}
           title={

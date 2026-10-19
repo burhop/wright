@@ -3,6 +3,7 @@ import WorkflowRecoveryConcept from "../workflow-recovery/WorkflowRecoveryConcep
 import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeEditorDraftClient } from "./native-editor-draft-client";
+import type { ProcessNavigationRequest } from "../../services/process-navigation";
 import { useNativeEditorDrafts } from "./use-native-editor-drafts";
 import "../../styles/presentation-controls.css";
 import "./native-panel.css";
@@ -18,6 +19,7 @@ export function NativeWorkflowPanel({
   onOpenWorkingView,
   onOpenTransfer,
   transferDisabled = false,
+  navigation,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly client: NativeSourceClient;
@@ -28,6 +30,7 @@ export function NativeWorkflowPanel({
   readonly onDirty?: (dirty: boolean) => void;
   readonly onOpenTransfer?: () => void;
   readonly transferDisabled?: boolean;
+  readonly navigation?: ProcessNavigationRequest;
 }) {
   const [document, setDocument] = useState(initial);
   const [unsaved, setUnsaved] = useState(false);
@@ -134,6 +137,8 @@ export function NativeWorkflowPanel({
           workflowFilePath={document.path}
           definitionRevision={document.definition_revision}
           storageDigest={document.storage_digest}
+          workspaceId={document.workspace_id}
+          navigation={navigation}
           reopenRequest={reopen}
           simulationPreview={false}
           onUnsavedChange={(dirty) => {

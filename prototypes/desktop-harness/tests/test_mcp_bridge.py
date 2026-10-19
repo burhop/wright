@@ -48,6 +48,44 @@ def test_pinned_sdk_preserves_unattended_json_as_text(bridge):
     assert isinstance(payload["response"]["reply"], str)
 
 
+def test_file_browser_workflow_path_composes_with_source_read(bridge):
+    client = SimpleNamespace(
+        scope=AsyncMock(),
+        call=AsyncMock(return_value={"path": "workflows/demo.workflow.wflow"}),
+    )
+    server = bridge.server(client)
+    asyncio.run(
+        server.call_tool(
+            "wright_workflow_read",
+            {
+                "workspace_id": "workspace",
+                "session_id": "session",
+                "path": "/workflows/demo.workflow.wflow",
+            },
+        )
+    )
+    client.scope.assert_awaited_once_with("workspace", "session")
+    assert client.call.call_args.kwargs["params"] == {
+        "session_id": "session",
+        "path": "workflows/demo.workflow.wflow",
+    }
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "//workflows/demo.workflow.wflow",
+        "/workflows/../demo.workflow.wflow",
+        "/workflows/%2e%2e/demo.workflow.wflow",
+        "C:/workflows/demo.workflow.wflow",
+        "/other/demo.workflow.wflow",
+        "/workflows/demo.workflow.wflow?x=1",
+    ],
+)
+def test_source_path_does_not_normalize_unsafe_or_other_roots(bridge, path):
+    assert bridge.source_read_path(path) == path
+
+
 def test_html_success_cannot_be_accepted_as_api_evidence(bridge):
     client = bridge.WrightDesktopClient.__new__(bridge.WrightDesktopClient)
     client.http = SimpleNamespace(
