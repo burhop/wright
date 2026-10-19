@@ -120,6 +120,9 @@ else
   run npx prettier --check apps/web/
 fi
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
+# Check LF/CRLF cold reconstruction before expensive suites (PR163).
+run npm run test --workspace=apps/web -- --run \
+  src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx --maxWorkers=1
 
 run uv run --with mypy mypy scripts/release scripts/program_control src/wright_engineering --ignore-missing-imports
 run uv run --with mypy mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {

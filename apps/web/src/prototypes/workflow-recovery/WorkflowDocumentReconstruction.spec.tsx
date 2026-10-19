@@ -35,13 +35,21 @@ beforeAll(() =>
 );
 afterEach(cleanup);
 
-it.each([
-  ["accepted spacer demo", demo],
+it.each(
   [
-    "existing Robot Tracking Diagnosis",
-    robot.replaceAll("__instance__", "robot_test"),
-  ],
-])("cold opens %s with document-owned connection points", (_name, source) => {
+    ["accepted spacer demo", demo],
+    [
+      "existing Robot Tracking Diagnosis",
+      robot.replaceAll("__instance__", "robot_test"),
+    ],
+  ].flatMap(([name, source]) => {
+    const lf = source.replace(/\r\n/g, "\n");
+    return [
+      [`${name} (LF)`, lf],
+      [`${name} (CRLF)`, lf.replace(/\n/g, "\r\n")],
+    ];
+  }),
+)("cold opens %s with document-owned connection points", (_name, source) => {
   const save = vi.fn();
   render(
     <WorkflowRecoveryConcept
@@ -52,7 +60,10 @@ it.each([
   );
   expect(screen.queryByText("Workflow file needs correction.")).toBeNull();
   fireEvent.click(screen.getByTestId("workflow-recovery-view-code"));
-  expect(screen.getByLabelText("Workflow source")).toHaveValue(source);
+  // Textarea display normalizes CRLF; parsing below still uses exact input.
+  expect(screen.getByLabelText("Workflow source")).toHaveValue(
+    source.replace(/\r\n/g, "\n"),
+  );
   expect(save).not.toHaveBeenCalled();
   const parsed = parseRecoverySourceDocument(source, 1);
   expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
