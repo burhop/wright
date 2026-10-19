@@ -47,3 +47,28 @@ installation and Windows acceptance remain separate pending checks. The installe
 References: [JWCrypto JWE](https://jwcrypto.readthedocs.io/en/latest/jwe.html),
 [jose](https://github.com/panva/jose),
 [OpenAI tool-result metadata](https://developers.openai.com/plugins/reference).
+
+## Actual native browser/owner continuation
+
+Frozen sourceca1756f3, resourceSHA256
+`a6faa632fc7aad550f6fce255fc79254ad645804a3c8970d49513ca38dfa67f6`.
+The actual bundle→MCP→API journey imported/reviewed/applied one exact local fixture,
+then filled its missing synthetic credential through JWE. Withholding the committed
+save reply produced one save, cleared the form and required a status read. The
+subsequent explicit protocol validation started a real subprocess which verifies
+both the public setting and exact synthetic private value before initializing and
+listing tools. No tool call, workspace grant, account login or engineering run.
+Fresh panel reopening retained status;480px layout has no horizontal overflow.
+The fixture was then stopped once through the existing exact lifecycle control;
+its workspace, source, credentials and evidence remain intact.
+
+Receipts: `mcp-management-browser-1792417073433/report.json`,
+`mcp-management-fixture-cleanup.json`, and masked screenshots in that browser
+folder. Prior `mcp-management-browser-1792416894909/failure.json` records successful
+setup followed by an observer expecting the wrong terminal label. Readback and
+`mcp-management-observer-correction.json` verify actual `failed` validation with
+missing credentials, denied start, inactive provider and disabled workspace.
+The continuation read the same plan; it did not repeat setup or that denied check.
+The first observer also decoded the workspace-create response incorrectly;
+inventory recovery reused its one created workspace. These failures are retained.
+This qualifies GB10 Chromium in a simulated desktop frame, not actual Windows.

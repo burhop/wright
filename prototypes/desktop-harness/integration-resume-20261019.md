@@ -24,3 +24,12 @@ remain open. The user cannot test while the goal runs; do not repeat that reques
 The installed0.15 service is unchanged. The earlierbade full gate was deliberately
 interrupted for concrete remaining product fixes, with partial results retained;
 it is not a gate pass. Do not reinstate SSH as the customer auth path.
+
+Actualca1756f3 native-browser/MCP/owner/subprocess continuation now passes missing
+credential JWE transport, withheld committed save acknowledgement (one write),
+explicit protocol validation, fresh-panel recovery and480px layout. Fixture
+stopped through its exact owner; all state retained. Remote dev rechecked at
+13:40UTC: bcb5b52f unchanged,33 commits behind feature. Existing draft PR159 still
+has ca71bf92 on codex/desktop-file-download. Prefer one fast-forward update of that
+existing PR after gates, preserving its old local worktree; no force push or dev
+push. Final native/Windows acceptance and personal sign-in are still pending.

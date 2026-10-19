@@ -2,7 +2,18 @@
 
 Controlling scope: [submitted goal](integration-completion-goal.md). It supersedes full named engineering-campaign acceptance; it retains bounded tool/review/file/recovery proofs and different-workflow regression. Experimental label remains.
 
-**Current delivery, 17 October 08:14 UTC:** named 0.15.0 is installed and its
+**19October resume:** [current amendment](integration-resume-20261019.md) replaces
+SSH forwarding as the customer path. The implemented device flow reaches real
+SteveCAD challenge/pending/expiry without personal consent; the missing-credential
+form and bounded JSON/public-environment import now have actual native-browser/
+MCP/owner/subprocess proof. Fresh security metadata is available and the previous
+image blocker is cleared by the fixed libexpat rebuild. Final product gates/CI/dev
+deployment remain outstanding. User cannot perform Windows testing while the goal
+runs; do not repeat that request. Installed0.15 remains unchanged. Core advanced
+limits (static header imports, credential replacement and automated upgrades)
+remain explicit unqualified work; this checkpoint is not goal completion.
+
+**Retained delivery, 17 October 08:14 UTC:** named 0.15.0 is installed and its
 exact command/resource/profile verified. Frozen runtime6bce016b, API8198,
 PID3528721; existing state and two workspace paths retained. Current proof,
 failure/skip attribution and limits are in
