@@ -225,3 +225,7 @@ The strict release/program MyPy slice passed; the broad MyPy invocation stopped 
 ### Required raw-correction recovery follow-up
 
 The c544/1dc gate passes do not cover a subsequently reproduced draft/reconciliation gap. The raw correction now uses the existing saved-draft callbacks and explicit guarded reload owner. Three regressions failed before the change; 21 owning checks and TypeScript/lint/format passed afterward. The native bundle changed, so fresh image/gates and served qualification remain required before the UI first push. See the follow-up in [the correction plan](demo-feedback-plan-20261019.md); the original run and installed0.16 remain unchanged.
+
+### Native recovery and fresh health-port proof
+
+Seven actual MCP/source/draft-owner browser checks now cover durable raw correction, fresh explicit draft resume, one accepted write with withheld reply and exact read/reload/context reconciliation; no workflow ran. Fresh-start testing also reproduced a missing latency field at the existing generic health port. The small prototype fix passed six owner and seven existing API-health tests. The4048 full gate was deliberately interrupted for this known product defect, with its exit2 receipt retained; it is not a pass. Final combined qualification remains required. The native HTML and Docker inputs are unchanged from4048. Details and exact evidence are in [the correction plan](demo-feedback-plan-20261019.md).

@@ -125,3 +125,35 @@ exact negative and single-write assertions. Native resource SHA256: `80c24ab1fc7
 New image/full/push gates, real served recovery/draft-owner checks and current-head
 CI are still required for this product change; no earlier image/gate is relabelled.
 Evidence: `/tmp/wright-desktop-resume-evidence-20261019/raw-correction-recovery-regression/`.
+
+## Fresh-start health-port correction
+
+The fresh isolated native-owner proof found `/api/agent/health` returning500
+before connection: `DesktopBackend.check_health` omitted the existing API port's
+required `latencyMs`. The exact HTTP failure and a failing route regression are
+retained. The prototype now measures its local lease inspection and supplies
+that field; this is not upstream model/transport latency. Connection and expiry
+state still come from the existing lease owner. Six owner tests (including
+disconnected/connected/expired route states) and seven existing API-health tests
+passed. No generic API, gateway or authentication contract was changed.
+
+The running4048 full gate was deliberately interrupted after this concrete
+product defect was reproduced, preserving its exit2 receipt/log and known
+generated scope; it is not a pass. Final qualification must include this patch.
+The native bundle and Docker inputs are unchanged from4048, so the already-built
+image can be reused only with the existing ancestry/input checks; actual host
+prototype source and image source identities must both be recorded.
+
+The corrected native panel already passed seven real MCP/source/draft-owner
+browser checks on a disposable source: durable raw correction, fresh reopen and
+explicit resume, unsaved guard, one accepted-source write with withheld reply,
+exact read/reload reconciliation and updated conversation context. Actual saved
+source digest is699c74b1103eab0bd59475e13346fa18fb29cc0f73e4a7ab7dfafbb2d5857a0c
+at revision2 in its isolated test workspace. Database run/event/reasoning counts
+are all zero. This is not a Windows capture or engineering execution. A first
+observer expected summary text without its appended preserved-count metadata;
+its failure is retained and the continuation read the acknowledged draft before
+proceeding, without replaying creation. The original user demo remains untouched.
+Evidence: `raw-correction-recovery-regression/browser-owner-1792447910285/report.json`,
+`health-before-fix.log`, `health-after-fix-owner.log` and
+`health-existing-api-regression.log` under the external evidence directory.

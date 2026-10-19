@@ -411,7 +411,10 @@ class DesktopBackend:
         return SimpleNamespace(session_id="desktop-" + str(uuid4()))
 
     async def check_health(self):
-        return {"state": "connected" if self.connected else "disconnected"}
+        # This measures local lease inspection, not an upstream model request.
+        started = time.perf_counter()
+        state = "connected" if self.connected else "disconnected"
+        return {"state": state, "latencyMs": (time.perf_counter() - started) * 1000}
 
     @property
     def connected(self):
