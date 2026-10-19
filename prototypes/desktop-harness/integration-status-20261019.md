@@ -174,3 +174,50 @@ image/full/push gates and replacement-head CI remain pending. Installed 0.16 is
 unchanged; its 13 recorded runtime-file hashes and 80 host dependency versions were
 rechecked and match. The separately frozen host environment does not contain
 aiohttp. No personal login, live cache edit or protected campaign was performed.
+
+## Desktop demo UI correction checkpoint
+
+The installed 0.16 user demo revealed valid-source rejection, no editable raw
+correction, disabled exact result navigation, dead remote loopback URLs and
+file-list/read path mismatch. The accepted original source (revision 1), its
+single completed run and artifact evidence remain intact. These observations
+are counterevidence to a claim of complete Windows usability.
+
+The `c544e422` product candidate corrects those gaps through the existing parser,
+shared editor/source CAS owner, scoped process-navigation client/owner and
+read-only run-evidence view. It does not add an executor or gateway authority.
+Unknown navigation targets remain unavailable, uncertain writes require reads,
+and generated UI authoring retains its original confinement gate. Details and
+exact original identities are in [the correction plan](demo-feedback-plan-20261019.md).
+
+The normal full gate passed on `c544e422` with the documented GB10 WebKit host
+limitation; log SHA256 `80930cd10229fca520380e126ccc6ed03b02da5c6fdca073aa1d942c19075d43`. The earlier `acb02eb6` gate failed
+formatting and remains a failure. The corrected candidate uses locked Prettier
+3.9.6. Its exact ARM64 image build/smoke and two real-storage Workflows-entry
+checks passed on fresh spacer/Robot source copies, with no engineering run.
+An additional seven-check Robot browser proof confirms the actual app-only draft
+reader: its first observer expected a transient message, then the corrected
+observer checked the exact owner acknowledgement; both outcomes are retained.
+
+This documentation follow-up changes no product or Docker input. The normal push
+gate, all current-head CI, gated dev integration and exact installed runtime
+remain separate requirements. Local full-gate evidence does not establish them.
+The Windows-upload/security prerequisite is PR162; its first native Windows
+backend pass remains separate from the corrected image's current-head CI.
+
+F01 (panel disappears at assistant final answer) has no Windows lifecycle trace.
+Official UI guidance and existing thread entrypoint/resource identities were
+rechecked; no speculative host fix is claimed. A read-only exact workflow/run
+reopen route remains available. Current simulated-browser screenshots are not
+Windows captures. SteveCAD was uninstalled/unconfigured in the observed demo
+workspace, not a demonstrated provider defect. Local Windows co-location removes
+the remote-loopback mismatch but does not establish UI/provider readiness.
+
+Current external receipts and walkthroughs remain in
+`/tmp/wright-desktop-resume-evidence-20261019/`: `CURRENT-STATUS.json`,
+`demo-feedback-progress.json`, `demo-real-draft-discovery-result.json`,
+`demo-ui-c544e422-screenshots.md` and the named installation/version receipts.
+Nothing is publicly posted; personal login/consent and actual Windows acceptance
+remain user actions after the tested update is ready.
+
+The strict release/program MyPy slice passed; the broad MyPy invocation stopped at an existing duplicate-conftest collection error in warning mode. The gate’s warning policy was unchanged. TypeScript passed. This is not a claim that the full Python tree type-checked.

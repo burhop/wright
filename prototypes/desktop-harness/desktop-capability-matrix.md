@@ -1,12 +1,19 @@
 # Desktop engineering prototype: qualification matrix
 
-**Current, 19 October:** [the consolidated status](integration-status-20261019.md)
-is authoritative for this resumed candidate. The normal full merge gate passed;
-actual device challenge/pending/expiry, encrypted credentials, bounded JSON import,
-private HTTPS headers and reviewed pinned-version replacements are locally
-qualified. Installed 0.15 is unchanged pending gated dev integration and one named
-0.16 update. Actual Windows rendering/download and personal sign-in remain open.
-Earlier checkpoints below retain their historical outcomes, not current blockers.
+**19 October corrective checkpoint:** [the integration checkpoints](integration-status-20261019.md)
+and [demo-correction plan](demo-feedback-plan-20261019.md) distinguish installed
+0.16 evidence from its corrected UI candidate. The user's demo exposed real
+source-loading, navigation and browser-handoff defects despite one completed run;
+earlier passes do not waive that counterevidence. Actual Windows final-answer
+panel retention, downloads and personal SteveCAD sign-in remain unverified.
+The named installation must be updated only after the corrected candidate's
+repository gates, CI, dev integration and exact deployment qualification.
+
+The timestamped records below are historical. The initial resumed candidate
+qualified device challenge/pending/expiry, encrypted credentials, bounded JSON
+import, private HTTPS headers and reviewed pinned-version replacements. Its then
+pending 0.16 integration was later completed; see the subsequent integration
+checkpoints rather than treating those earlier pending items as current facts.
 
 **Retained integration checkpoint:17 October2026.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
