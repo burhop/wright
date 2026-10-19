@@ -444,27 +444,25 @@ it("opens a replacement with a required fresh name and no write on initializatio
 });
 
 it("imports HTTPS header names while withholding their complete private values", async () => {
-  const call = vi
-    .fn()
-    .mockResolvedValue({
-      content: [],
-      structuredContent: {
-        ...preview.structuredContent,
-        preview: {
-          ...preview.structuredContent.preview,
-          drafts: [
-            {
-              draft_id: "remote",
-              draft_digest: "a".repeat(64),
-              name: "Remote",
-              endpoint: "https://provider.example/mcp",
-              errors: [],
-              env_vars: [{ name: "Authorization", target: "http_header" }],
-            },
-          ],
-        },
+  const call = vi.fn().mockResolvedValue({
+    content: [],
+    structuredContent: {
+      ...preview.structuredContent,
+      preview: {
+        ...preview.structuredContent.preview,
+        drafts: [
+          {
+            draft_id: "remote",
+            draft_digest: "a".repeat(64),
+            name: "Remote",
+            endpoint: "https://provider.example/mcp",
+            errors: [],
+            env_vars: [{ name: "Authorization", target: "http_header" }],
+          },
+        ],
       },
-    });
+    },
+  });
   render(
     <NativeCustomConnection
       workspace={workspace}

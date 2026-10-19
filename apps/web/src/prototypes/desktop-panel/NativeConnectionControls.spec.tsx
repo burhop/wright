@@ -304,14 +304,17 @@ it("prepares an inert replacement draft without changing the active provider", a
     environmentFields: ["API_KEY"],
     publicCandidates: { RUN_MODE: "read-only" },
   };
-  const call = vi.fn().mockResolvedValueOnce(read()).mockResolvedValueOnce({
-    content: [],
-    structuredContent: {
-      ...scope,
-      control_digest: state.control_digest,
-      configuration: replacement,
-    },
-  });
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(read())
+    .mockResolvedValueOnce({
+      content: [],
+      structuredContent: {
+        ...scope,
+        control_digest: state.control_digest,
+        configuration: replacement,
+      },
+    });
   const onReplacement = vi.fn();
   render(
     <NativeConnectionControls
@@ -330,9 +333,14 @@ it("prepares an inert replacement draft without changing the active provider", a
     name: "Set up a replacement",
   });
   fireEvent.click(prepare);
-  await waitFor(() => expect(onReplacement).toHaveBeenCalledExactlyOnceWith(replacement));
+  await waitFor(() =>
+    expect(onReplacement).toHaveBeenCalledExactlyOnceWith(replacement),
+  );
   expect(call.mock.calls).toEqual([
     ["wright_connection_controls", scope],
-    ["wright_connection_replacement", {request: {...scope, control_digest: state.control_digest}}],
+    [
+      "wright_connection_replacement",
+      { request: { ...scope, control_digest: state.control_digest } },
+    ],
   ]);
 });
