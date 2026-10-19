@@ -44,3 +44,49 @@ def test_plain_server_is_stable_and_exact() -> None:
     assert first["detected_format"] == "plain_server"
     assert first["drafts"][0]["name"] == "local"
     assert len(first["drafts"][0]["draft_digest"]) == 64
+
+
+def test_public_environment_is_explicit_and_private_fields_remain_value_free():
+    import json
+
+    source = {
+        "name": "Example",
+        "command": "uvx",
+        "args": ["example-mcp"],
+        "env": {"API_KEY": "synthetic-private", "RUN_MODE": "read-only"},
+    }
+    default = preview_configuration(source, now=NOW)["drafts"][0]
+    assert "read-only" not in json.dumps(
+        default
+    ) and "synthetic-private" not in json.dumps(default)
+    assert {item["name"] for item in default["env_vars"]} == {"API_KEY", "RUN_MODE"}
+    explicit = preview_configuration(
+        {**source, "public_env": {"RUN_MODE": "read-only"}}, now=NOW
+    )["drafts"][0]
+    assert explicit["launch_env"] == {"RUN_MODE": "read-only"}
+    assert explicit["env_vars"] == [
+        {"name": "API_KEY", "label": "API_KEY", "required": True, "secret": True}
+    ]
+    assert "synthetic-private" not in json.dumps(explicit)
+    assert explicit["draft_digest"] != default["draft_digest"]
+
+
+def test_public_environment_cannot_declare_credential_names_or_undeclared_fields():
+    for public in (
+        {"API_KEY": "synthetic-private"},
+        {"other": "value"},
+        {"RUN_MODE": "x" * 4097},
+    ):
+        draft = preview_configuration(
+            {
+                "command": "uvx",
+                "env": {"API_KEY": "", "RUN_MODE": ""},
+                "public_env": public,
+            },
+            now=NOW,
+        )["drafts"][0]
+        assert "public_environment_invalid" in {
+            item["code"] for item in draft["errors"]
+        }
+        assert "launch_env" not in draft
+        assert "synthetic-private" not in str(draft)

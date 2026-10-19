@@ -1,3 +1,7 @@
+import {
+  importConnectionConfiguration,
+  type ImportedConnection,
+} from "./connection-config-import";
 import { useEffect, useRef, useState } from "react";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import type { ConnectionsCall, SetupPlan } from "./NativeConnections";
@@ -12,6 +16,8 @@ interface Preview {
     endpoint?: string | null;
     command?: string | null;
     arguments?: string[];
+    launch_env?: Record<string, string>;
+    env_vars?: { name: string }[];
   };
   expires: string;
 }
@@ -41,6 +47,40 @@ export function NativeCustomConnection({
   const [transport, setTransport] = useState("https");
   const [command, setCommand] = useState("");
   const [argumentsText, setArgumentsText] = useState("[]");
+  const [imports, setImports] = useState<ImportedConnection[]>([]);
+  const [imported, setImported] = useState<ImportedConnection>();
+  const [publicFields, setPublicFields] = useState<Record<string, boolean>>({});
+  function selectImport(candidate: ImportedConnection) {
+    setImported(candidate);
+    setPublicFields({});
+    setName(candidate.name);
+    setTransport(candidate.type);
+    setCommand(candidate.command);
+    setArgumentsText(JSON.stringify(candidate.arguments));
+    setUrl(candidate.url);
+    setPreview(undefined);
+    setError("");
+    setCompletedSetup(false);
+  }
+  async function loadConfiguration(file?: File) {
+    if (!file || disabled || uncertain) return;
+    setPreview(undefined);
+    setImports([]);
+    setImported(undefined);
+    setPublicFields({});
+    setError("");
+    try {
+      if (file.size > 256 * 1024) throw Error();
+      const candidates = importConnectionConfiguration(await file.text());
+      if (!mounted.current) return;
+      setImports(candidates);
+      selectImport(candidates[0]);
+    } catch {
+      setError(
+        "Configuration was not imported or sent. Use supported JSON with literal commands or public HTTPS endpoints. HTTP headers, extra fields and credential arguments are not qualified here.",
+      );
+    }
+  }
   const [preview, setPreview] = useState<Preview>();
   const [completedSetup, setCompletedSetup] = useState(false);
   const [error, setError] = useState("");
@@ -102,13 +142,28 @@ export function NativeCustomConnection({
       const result =
         transport === "https"
           ? await call("wright_connection_preview", { ...scope, url })
-          : await call("wright_connection_command_preview", {
-              request: {
-                ...scope,
-                command: command.trim(),
-                arguments: arguments_,
+          : await call(
+              imported?.environmentFields.length
+                ? "wright_connection_configuration_preview"
+                : "wright_connection_command_preview",
+              {
+                request: {
+                  ...scope,
+                  command: command.trim(),
+                  arguments: arguments_,
+                  ...(imported?.environmentFields.length
+                    ? {
+                        environment_fields: imported.environmentFields,
+                        public_environment: Object.fromEntries(
+                          Object.entries(imported.publicCandidates).filter(
+                            ([key]) => publicFields[key],
+                          ),
+                        ),
+                      }
+                    : {}),
+                },
               },
-            });
+            );
       if (!mounted.current) return;
       const data = result.structuredContent;
       const value = data?.preview as
@@ -148,6 +203,29 @@ export function NativeCustomConnection({
             JSON.stringify(draft.arguments) !== JSON.stringify(arguments_)
       )
         throw Error();
+      if (transport === "stdio" && imported?.environmentFields.length) {
+        const expected = Object.fromEntries(
+          Object.entries(imported.publicCandidates).filter(
+            ([key]) => publicFields[key],
+          ),
+        );
+        const actual = draft.launch_env ?? {};
+        if (
+          Object.keys(expected).length !== Object.keys(actual).length ||
+          Object.entries(expected).some(
+            ([key, value]) => actual[key] !== value,
+          ) ||
+          JSON.stringify(
+            (draft.env_vars ?? []).map((field) => field.name).sort(),
+          ) !==
+            JSON.stringify(
+              imported.environmentFields
+                .filter((key) => !(key in expected))
+                .sort(),
+            )
+        )
+          throw Error("Unconfirmed environment configuration");
+      }
       setPreview({
         token: data.preview_token,
         draft,
@@ -207,10 +285,64 @@ export function NativeCustomConnection({
       <p>
         Add a public HTTPS endpoint or a local command. Commands run on the
         Wright host (GB10 here), not on the Windows desktop. Do not enter
-        passwords, tokens, credential arguments or private URLs. Environment
-        values, configuration-file imports and credential entry are not
-        available here yet.
+        passwords, tokens, credential arguments or private URLs. Import
+        environment names from JSON, then enter private values after setup. Only
+        explicitly selected public values are sent with the reviewed plan.
       </p>
+      <label>
+        Import MCP configuration (JSON)
+        <input
+          type="file"
+          accept=".json,application/json"
+          disabled={disabled || uncertain}
+          onChange={(event) => void loadConfiguration(event.target.files?.[0])}
+        />
+      </label>
+      {imports.length > 1 && (
+        <label>
+          Imported connection
+          <select
+            value={imported?.name ?? ""}
+            disabled={disabled || uncertain}
+            onChange={(event) => {
+              const next = imports.find(
+                (item) => item.name === event.target.value,
+              );
+              if (next) selectImport(next);
+            }}
+          >
+            {imports.map((item) => (
+              <option key={item.name}>{item.name}</option>
+            ))}
+          </select>
+        </label>
+      )}
+      {imported?.environmentFields.length ? (
+        <div>
+          <p>
+            Environment fields: {imported.environmentFields.join(", ")}. Private
+            values were discarded; enter them after setup.
+          </p>
+          {Object.entries(imported.publicCandidates).map(([key, value]) => (
+            <label key={key}>
+              <input
+                type="checkbox"
+                checked={!!publicFields[key]}
+                disabled={disabled || uncertain}
+                onChange={(event) => {
+                  setPublicFields((current) => ({
+                    ...current,
+                    [key]: event.target.checked,
+                  }));
+                  setPreview(undefined);
+                }}
+              />
+              Include {key} as public:{" "}
+              <code className="native-connection-endpoint">{value}</code>
+            </label>
+          ))}
+        </div>
+      ) : null}
       <form
         onSubmit={(event) => {
           event.preventDefault();

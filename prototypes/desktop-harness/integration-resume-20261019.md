@@ -13,3 +13,14 @@ Sequence:
 6. Refresh capability matrix, short walkthrough, evidence and unpublished real images. Retain zero-tools authoring gate and explicit interrupted-reasoning recovery.
 
 Evidence directory: /tmp/wright-desktop-resume-evidence-20261019. Keep earlier failures/evidence intact. No main/release, physical/protected campaigns, unrelated config, purchase or personal consent.
+
+19October implementation checkpoint: real standard device challenge/pending/expiry
+observed on SteveCAD, with no callback or personal consent. Source adds scoped
+sealed entry for missing credentials and bounded local JSON import with explicit
+public environment settings. Existing owners retain authority; see remote-auth,
+credential-form and configuration-import qualification notes. Actual browser/store
+proof, final full gates/CI/dev deployment, Windows acceptance and personal login
+remain open. The user cannot test while the goal runs; do not repeat that request.
+The installed0.15 service is unchanged. The earlierbade full gate was deliberately
+interrupted for concrete remaining product fixes, with partial results retained;
+it is not a gate pass. Do not reinstate SSH as the customer auth path.

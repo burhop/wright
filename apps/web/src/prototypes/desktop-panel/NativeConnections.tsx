@@ -8,6 +8,7 @@ import { NativeConnectionControls } from "./NativeConnectionControls";
 
 export type ConnectionsCall = (
   name:
+    | "wright_connection_configuration_preview"
     | "wright_connection_credentials"
     | "wright_connection_credentials_form"
     | "wright_connection_credentials_save"
@@ -61,6 +62,8 @@ export interface SetupPlan {
     endpoint?: string;
     command?: string;
     arguments?: string[];
+    launch_env?: Record<string, string>;
+    env_vars?: { name: string }[];
   };
   requirements?: {
     license?: {
@@ -492,6 +495,17 @@ export function NativeConnections({
                 Arguments: {JSON.stringify(plan.source.arguments ?? [])}
               </p>
             </div>
+          )}
+          {Object.entries(plan.source?.launch_env ?? {}).map(([key, value]) => (
+            <p key={key} className="native-connection-endpoint">
+              Public environment: {key} = {value}
+            </p>
+          ))}
+          {!!plan.source?.env_vars?.length && (
+            <p>
+              Private fields after setup:{" "}
+              {plan.source.env_vars.map((field) => field.name).join(", ")}
+            </p>
           )}
           {["blocked", "reviewable", "draft"].includes(plan.state) && (
             <p>Nothing has been installed or approved by this plan.</p>

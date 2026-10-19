@@ -217,10 +217,45 @@ def _normalize_server(
             )
         )
         env = {}
+    if len(env) > 32 or any(
+        not isinstance(key, str)
+        or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,127}", key)
+        for key in env
+    ):
+        errors.append(
+            _diagnostic(
+                f"{path}.env",
+                "environment_names_invalid",
+                "Use at most32 valid environment variable names.",
+            )
+        )
     environment_requirements = [
         _requirement(str(key), value, credential=bool(_SECRET_NAME.search(str(key))))
         for key, value in sorted(env.items())
     ]
+
+    public_env = raw.get("public_env", {})
+    if (
+        not isinstance(public_env, dict)
+        or len(public_env) > 32
+        or any(
+            not isinstance(key, str)
+            or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,127}", key)
+            or _SECRET_NAME.search(key)
+            or key not in env
+            or not isinstance(value, str)
+            or len(value) > 4096
+            for key, value in public_env.items()
+        )
+    ):
+        errors.append(
+            _diagnostic(
+                f"{path}.public_env",
+                "public_environment_invalid",
+                "Public environment settings require declared nonsecret names and bounded string values.",
+            )
+        )
+        public_env = {}
 
     headers = raw.get("headers", {})
     if not isinstance(headers, dict):
@@ -257,6 +292,7 @@ def _normalize_server(
         "endpoint",
         "env",
         "headers",
+        "public_env",
     }
     for key in sorted(set(raw) - allowed):
         warnings.append(
@@ -288,6 +324,14 @@ def _normalize_server(
             "headers": {str(key): "<redacted>" for key in sorted(headers)},
         },
     }
+    if env:
+        material["env_vars"] = [
+            {"name": str(key), "label": str(key), "required": True, "secret": True}
+            for key in sorted(env)
+            if key not in public_env
+        ]
+    if public_env:
+        material["launch_env"] = public_env
     digest = hashlib.sha256(canonical_json(material)).hexdigest()
     return {
         "draft_id": f"draft-{digest[:20]}",

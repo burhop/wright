@@ -1065,3 +1065,29 @@ async def test_sealed_credentials_use_existing_owner_and_reject_drift_replay_and
         status['configured']['KEY']=True
         assert (await client.post(path+'/form',json=scope)).status_code==409
         owner.enable_capability_for_workspace.assert_not_called()
+
+@pytest.mark.asyncio
+async def test_configured_command_preview_has_names_and_public_values_only(discovery):
+    import json
+    from api.services.mcp_services import get_mcp_api_service
+    from tool_registry.config_import import preview_configuration
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    owner=Mock()
+    owner.preview_import.side_effect=lambda value: preview_configuration(value)
+    app.dependency_overrides[get_mcp_api_service]=lambda:owner
+    body={"workspace_id":"Alpha","session_id":"desktop-Alpha","name":"Example","command":"uvx","arguments":["example-mcp"],
+          "environment_fields":["API_KEY","RUN_MODE"],"public_environment":{"RUN_MODE":"read-only"}}
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app),base_url="http://test") as client:
+        assert (await client.post('/api/desktop/connection-imports/preview',json={**body,"session_id":"other"})).status_code==403
+        for patch in ({"public_environment":{"API_KEY":"must-not-be-public"}}, {"environment_fields":["BAD=KEY"]}, {"private_values":{"API_KEY":"must-not-be-accepted"}}):
+            assert (await client.post('/api/desktop/connection-imports/preview',json={**body,**patch})).status_code==422
+        owner.preview_import.assert_not_called()
+        result=await client.post('/api/desktop/connection-imports/preview',json=body)
+        assert result.status_code==200
+        raw=json.loads(owner.preview_import.call_args.args[0])
+        assert raw['env']=={'API_KEY':'','RUN_MODE':''}
+        assert raw['public_env']=={'RUN_MODE':'read-only'}
+        draft=result.json()['preview']['drafts'][0]
+        assert draft['launch_env']=={'RUN_MODE':'read-only'} and [field['name'] for field in draft['env_vars']]==['API_KEY']

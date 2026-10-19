@@ -333,3 +333,77 @@ it("ignores a saved-plan response after the connection panel unmounts", async ()
   expect(onPlan).not.toHaveBeenCalled();
   expect(call).toHaveBeenCalledTimes(2);
 });
+
+it("imports environment names locally and sends only explicitly selected public values", async () => {
+  const data = {
+    ...preview,
+    structuredContent: {
+      ...preview.structuredContent,
+      preview: {
+        ...preview.structuredContent.preview,
+        drafts: [
+          {
+            draft_id: "local",
+            draft_digest: "a".repeat(64),
+            name: "Design",
+            transport: "stdio",
+            command: "uvx",
+            arguments: ["example-mcp==1.2.3"],
+            errors: [],
+            env_vars: [{ name: "API_KEY" }],
+            launch_env: { RUN_MODE: "read-only" },
+          },
+        ],
+      },
+    },
+  };
+  const call = vi.fn().mockResolvedValue(data);
+  render(
+    <NativeCustomConnection
+      workspace={workspace}
+      call={call}
+      disabled={false}
+      onBusy={vi.fn()}
+      onPlan={vi.fn()}
+    />,
+  );
+  fireEvent.click(screen.getByText("Add a custom MCP"));
+  const file = new File(["synthetic"], "config.json", {
+    type: "application/json",
+  });
+  Object.defineProperty(file, "text", {
+    value: async () =>
+      JSON.stringify({
+        mcpServers: {
+          Design: {
+            command: "uvx",
+            args: ["example-mcp==1.2.3"],
+            env: { API_KEY: "synthetic-private", RUN_MODE: "read-only" },
+          },
+        },
+      }),
+  });
+  fireEvent.change(screen.getByLabelText("Import MCP configuration (JSON)"), {
+    target: { files: [file] },
+  });
+  const include = await screen.findByLabelText(/Include RUN_MODE as public/);
+  expect(include).not.toBeChecked();
+  expect(call).not.toHaveBeenCalled();
+  expect(document.body.textContent).not.toContain("synthetic-private");
+  fireEvent.click(include);
+  fireEvent.click(screen.getByRole("button", { name: "Preview connection" }));
+  await screen.findByRole("region", { name: "Custom connection preview" });
+  expect(call).toHaveBeenCalledOnce();
+  expect(call).toHaveBeenCalledWith("wright_connection_configuration_preview", {
+    request: {
+      workspace_id: "a",
+      session_id: "chat-a",
+      name: "Design",
+      command: "uvx",
+      arguments: ["example-mcp==1.2.3"],
+      environment_fields: ["API_KEY", "RUN_MODE"],
+      public_environment: { RUN_MODE: "read-only" },
+    },
+  });
+  expect(JSON.stringify(call.mock.calls)).not.toContain("synthetic-private");
+});

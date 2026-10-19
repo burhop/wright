@@ -30,7 +30,7 @@ import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
 from desktop_backend import (
     FileUploadRequest, ConnectionControlRequest, LocalConnectionPreviewRequest,
-    RecordedRunRequest,
+    RecordedRunRequest, ConfiguredLocalConnectionPreviewRequest,
     EditorDraftReadRequest, EditorDraftSaveRequest,
     WorkspaceSettingsReadRequest, WorkspaceSettingsSaveRequest,
 )
@@ -600,6 +600,12 @@ def server(client, *, native_editor=False, native_working_view=False):
             "POST", "/api/desktop/connection-imports/preview",
             json=request.model_dump(),
         )
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_configuration_preview(request: ConfiguredLocalConnectionPreviewRequest) -> dict[str, Any]:
+        """Preview declared environment names and explicitly public settings; accepts no private environment values."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call("POST", "/api/desktop/connection-imports/preview", json=request.model_dump())
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_import_plan(

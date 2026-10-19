@@ -326,3 +326,46 @@ def test_registry_adapter_registers_and_removes_reviewed_remote_import(
     assert registered.transport_variant == "streamable_http"
     adapter.rollback(remote_plan)
     assert get_server(str(database), remote_plan.capability_id) is None
+
+
+def test_import_keeps_public_environment_and_private_definitions_through_review_and_registration(
+    approved_plan,
+):
+    from tool_registry.config_import import preview_configuration
+
+    database, _ = approved_plan
+    draft = preview_configuration(
+        {
+            "name": "Configured MCP",
+            "command": "uvx",
+            "args": ["example-mcp==1.0.0"],
+            "env": {"RUN_MODE": "", "API_KEY": "discard-me"},
+            "public_env": {"RUN_MODE": "read-only"},
+        },
+        now=NOW,
+    )["drafts"][0]
+    plan = create_install_plan(
+        database,
+        snapshot_id="test",
+        observation=observation(),
+        actor="test-author",
+        requested_scope="global_registered",
+        import_draft=draft,
+        independently_completed_license=True,
+        now=NOW,
+    )
+    assert plan.state == "reviewable"
+    plan = approve_install_plan(
+        database, plan.plan_id, plan.plan_digest, actor="test-review", now=NOW
+    )
+    adapter = RegistryOnboardingAdapter(database, kind="local_command")
+    adapter.prepare(plan)
+    adapter.apply(plan)
+    server = get_server(database, plan.capability_id)
+    assert server.launch_env == {"RUN_MODE": "read-only"}
+    assert [item.name for item in server.env_vars] == ["API_KEY"]
+    assert not server.is_active and not server.default_enabled
+    assert (
+        "discard-me" not in server.model_dump_json()
+        and "discard-me" not in plan.model_dump_json()
+    )

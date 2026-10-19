@@ -155,6 +155,23 @@ class LocalConnectionPreviewRequest(BaseModel):
         return value
 
 
+class ConfiguredLocalConnectionPreviewRequest(LocalConnectionPreviewRequest):
+    environment_fields: list[str] = Field(default_factory=list, max_length=32)
+    public_environment: dict[str, str] = Field(default_factory=dict, max_length=32)
+
+    @model_validator(mode="after")
+    def environment_definitions(self):
+        import re
+        if (len(set(self.environment_fields)) != len(self.environment_fields)
+                or any(not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,127}", key) for key in self.environment_fields)
+                or not self.public_environment.keys() <= set(self.environment_fields)
+                or any(len(value) > 4096 for value in self.public_environment.values())
+                or any(re.search(r"token|secret|password|passwd|api[_-]?key|authorization|credential", key, re.I)
+                       for key in self.public_environment)):
+            raise ValueError("Unsupported environment fields; secret values belong in the private credential form")
+        return self
+
+
 class ImportedConnectionPlanRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -551,7 +568,7 @@ class DesktopBackend:
 
         @router.post("/connection-imports/preview")
         async def preview_remote_connection(
-            body: RemoteConnectionPreviewRequest | LocalConnectionPreviewRequest,
+            body: RemoteConnectionPreviewRequest | LocalConnectionPreviewRequest | ConfiguredLocalConnectionPreviewRequest,
             request: Request,
             service: McpApiService = Depends(get_mcp_api_service),
         ):
@@ -571,6 +588,9 @@ class DesktopBackend:
                 else {"name": body.name, "type": "stdio", "command": body.command,
                       "args": body.arguments}
             )
+            if isinstance(body, ConfiguredLocalConnectionPreviewRequest):
+                configuration["env"] = {key: "" for key in body.environment_fields}
+                configuration["public_env"] = body.public_environment
             preview = await preview_mcp_import(
                 ImportPreviewRequest(configuration=json.dumps(configuration)),
                 request, service,

@@ -1,6 +1,19 @@
 # Desktop engineering prototype: qualification matrix
 
-**Current integration checkpoint:17 October2026.**
+**19October resumed candidate (not installed):** device-code sign-in reaches a
+real SteveCAD challenge and expires at the bounded five-minute owner check,
+without SSH, consent or tool grants. Missing-credential sealed form and bounded
+JSON/environment import are implemented with focused local checks. See
+[integration resume](integration-resume-20261019.md),
+[remote auth](remote-auth-qualification-20261019.md),
+[credential form](credential-form-qualification-20261019.md) and
+[configuration import](configuration-import-qualification-20261019.md).
+Installed0.15 is unchanged. Fresh image-security scanning now succeeds; final
+product-revision gates/CI/dev deployment remain outstanding. Actual Windows
+acceptance and personal sign-in remain unverified; user unavailable for testing.
+Do not treat the retained17October blockers below as the current security status.
+
+**Retained integration checkpoint:17 October2026.**
 The matrix below this checkpoint is the retained historical0.10 record. Current
 installed package is0.15.0, frozen6bce016b, MCP Python SDK1.30.0,51tools. It includes
 scoped file staging, provider controls, typed local-command setup, read-only run

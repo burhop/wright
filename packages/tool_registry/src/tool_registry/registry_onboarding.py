@@ -7,7 +7,7 @@ from typing import Any
 from .capability_models import InstallPlan
 from .canonical_catalog import LEGACY_SERVER_IDS
 from .db import delete_server, get_server, insert_server, update_server
-from .models import McpServer
+from .models import McpServer, EnvVarDefinition
 
 
 class RegistryOnboardingError(RuntimeError):
@@ -105,6 +105,11 @@ class RegistryOnboardingAdapter:
                 installability_tier="might_work",
                 risk_level="medium" if self.kind == "remote_endpoint" else "low",
                 deployment_mode="user-reviewed-import",
+                env_vars=[
+                    EnvVarDefinition.model_validate(item)
+                    for item in plan.source.get("env_vars", [])
+                ],
+                launch_env=dict(plan.source.get("launch_env", {})),
                 credentials_required=list(plan.requirements.credentials),
                 default_enabled=False,
                 approval_gates=list(plan.approval_gates),
