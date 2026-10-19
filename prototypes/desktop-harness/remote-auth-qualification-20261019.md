@@ -65,3 +65,15 @@ OpenAI's [plugin authentication guide](https://developers.openai.com/plugins/bui
 describes host-to-plugin authentication; that is a separate boundary from Wright
 connecting to engineering MCP providers. It does not transfer the host's provider
 authorization or bypass Wright's gateway permissions.
+
+## Current gate checkpoint
+
+The rebuilt55583c1c ARM64 image
+`sha256:f910b45559111c4ece2d4cced7be252a84098773efe1c8fb9a017a37a3f2f7b5`
+passes the unchanged image-security policy with a fresh19October database.
+The normal full gate then caught one formatting issue in the newly added frontend
+test; the correction is mechanical and the full frontend formatting check passes.
+This is not yet a passing full-gate claim. Current WebKit launch still fails on
+GB10 for missing `libgstcodecparsers-1.0.so.0`; its exact log is retained. The
+repository permits documenting that local limitation and separately qualifying
+Chromium; supported-host CI must still exercise its normal browser matrix.

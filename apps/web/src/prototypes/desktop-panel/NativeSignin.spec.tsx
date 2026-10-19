@@ -281,20 +281,18 @@ it("shows a device code and opens only the operator URL without callback instruc
 });
 
 it("rejects a device completion URL on another origin", async () => {
-  const call = vi
-    .fn()
-    .mockResolvedValue({
-      ...status,
-      _meta: {
-        "wright/signin": {
-          device: {
-            verification_uri: "https://issuer.example/device",
-            verification_uri_complete: "https://other.example/steal",
-            user_code: "TEST-1234",
-          },
+  const call = vi.fn().mockResolvedValue({
+    ...status,
+    _meta: {
+      "wright/signin": {
+        device: {
+          verification_uri: "https://issuer.example/device",
+          verification_uri_complete: "https://other.example/steal",
+          user_code: "TEST-1234",
         },
       },
-    });
+    },
+  });
   const openLink = vi.fn();
   render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
   fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
