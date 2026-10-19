@@ -116,3 +116,28 @@ provider name; the legacy SSH/callback instruction paragraph is removed. Reading
 a recorded terminal failure permits a new explicit Connect click; uncertain
 acknowledgements are never retried automatically. Real positive five-minute
 polling/expiry, personal consent and Windows acceptance still require separate proof.
+
+## Same-attempt expiry and UI recovery correction
+
+The frozenbade9501 runner remained pending for its five-minute bound and then
+reported `Device sign-in expired; start a fresh connection check`. The browser
+observer failed on a separate duplicate-attempt UI assertion; it did not cancel
+or repeat the backend check. A read of the same plan recovered exact failed
+validation `validation-9efe519f34f5417fb9b0f1d86428b7f8` and cleared private
+presentation, with provider inactive and workspace availability false. Receipt:
+`actual-device-expiry-reconciliation.json`; raw failed browser report retained.
+This supersedes the earlier pending five-minute-proof statement above.
+
+The new UI correction keeps an in-flight ref distinct from recorded old failure
+status, so an early poll cannot unlock Connect during a new check. A separate
+sign-in focus ref avoids ref-detachment ordering when a setup completes.
+32 focused sign-in/connection/credential UI checks pass;69 scoped native boundary
+checks pass. These local checks do not establish Windows acceptance or personal
+account authorization. User unavailable for Windows testing on19October; no
+repeat test request is needed while independent goal work continues.
+
+The normalbade9501 gate cleared its current exact-image scan, static checks and
+several service suites, but was deliberately interrupted before completion to
+finish these concrete defects and remaining connection work. Its exit130 and
+partial output are retained. It is not a passing full gate; the final candidate
+must complete the normal required gates before push/merge.

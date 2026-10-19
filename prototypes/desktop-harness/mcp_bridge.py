@@ -657,6 +657,31 @@ def server(client, *, native_editor=False, native_working_view=False):
             params={"workspace_id": workspace_id, "session_id": session_id},
         )
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_credentials(workspace_id: str, session_id: str, plan_id: str) -> dict[str, Any]:
+        """Read configured field status only; never returns stored values."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("GET", "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/credentials",
+                                 params={"workspace_id": workspace_id, "session_id": session_id})
+
+    @mcp.tool(annotations=read, structured_output=False, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_credentials_form(workspace_id: str, session_id: str, plan_id: str, plan_digest: str) -> CallToolResult:
+        """Open a short-lived sealed operator form for the exact installed provider; saves nothing."""
+        await client.scope(workspace_id, session_id)
+        data = await client.call("POST", "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/credentials/form",
+                                 json={"workspace_id": workspace_id, "session_id": session_id, "plan_digest": plan_digest})
+        form = data.pop("form")
+        return CallToolResult(content=[TextContent(type="text", text="Credential form opened; no values were saved.")],
+                              structuredContent=data, _meta={"wright/credential-form": form})
+
+    @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_credentials_save(workspace_id: str, session_id: str, plan_id: str, plan_digest: str, form_id: str, ciphertext: str) -> dict[str, Any]:
+        """Submit a one-use JWE envelope from the operator form. Raw keys are not accepted as tool arguments."""
+        await client.scope(workspace_id, session_id)
+        return await client.call("POST", "/api/desktop/connection-plans/" + quote(plan_id, safe="") + "/credentials/save",
+                                 json={"workspace_id": workspace_id, "session_id": session_id, "plan_digest": plan_digest,
+                                       "form_id": form_id, "ciphertext": ciphertext})
+
     @mcp.tool(
         annotations=read, structured_output=False, meta={"ui": {"visibility": ["app"]}}
     )

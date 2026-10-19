@@ -21,6 +21,7 @@ dependencies = [
     "wright-workspace-service",
     "httpx>=0.28",
     "httpx-sse>=0.4",
+    "jwcrypto==1.6.1",
     "python-multipart>=0.0.32",
 ]
 

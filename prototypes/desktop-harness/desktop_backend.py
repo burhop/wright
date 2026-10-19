@@ -33,6 +33,7 @@ from api.services.mcp_services import (
 )
 from api.security import require_admin
 from desktop_oauth import DesktopOAuthPresentation
+from desktop_credential_form import DesktopCredentialForms, CredentialFormError
 from workspace_service.use_cases.context import WorkspaceConfigurationChanges
 
 
@@ -171,6 +172,11 @@ class ConnectionPlanAction(BaseModel):
     plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
 
 
+class CredentialFormSaveRequest(ConnectionPlanAction):
+    form_id: str = Field(min_length=1, max_length=64)
+    ciphertext: str = Field(min_length=1, max_length=24576)
+
+
 class DisableConnectionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -288,6 +294,7 @@ class DesktopBackend:
         self.clients = {}
         self.import_scopes = {}
         self.oauth = DesktopOAuthPresentation()
+        self.credential_forms = DesktopCredentialForms()
         self._now = time.monotonic
         self.confined_inspection = confined_inspection
         self.enrolled_mcp_tasks = enrolled_mcp_tasks
@@ -298,6 +305,7 @@ class DesktopBackend:
         runtime = {
             "mcp_sdk": version("mcp"),
             "remote_oauth_flow": remote_oauth_flow,
+            "credential_form_crypto": version("jwcrypto"),
             "image_inputs": self.image_inputs,
             "image_input_profile": image_profile,
             "enrolled_mcp_tasks": enrolled_mcp_tasks,
@@ -328,7 +336,8 @@ class DesktopBackend:
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
         for name, file in (
             [("native_source_tools", "native_source_tools.py")]
-            + [("desktop_oauth", "desktop_oauth.py")]
+            + [("desktop_oauth", "desktop_oauth.py"),
+               ("desktop_credential_form", "desktop_credential_form.py")]
             + ([("native_editor", "native-editor.html")] if native_editor else [])
             + (
                 [("native_process_tools", "native_process_tools.py")]
@@ -623,6 +632,75 @@ class DesktopBackend:
                 "session_id": body.session_id,
                 "plan": plan,
             }
+
+        async def credential_subject(plan_id, workspace_id, session_id, request, service, digest=None):
+            plan = await scoped_plan(workspace_id, session_id, plan_id, request, service)
+            if plan.state != "completed" or (digest is not None and plan.plan_digest != digest):
+                raise HTTPException(409, "Read the exact completed setup plan before configuring credentials")
+            from tool_registry.canonical_catalog import LEGACY_SERVER_IDS
+            from tool_registry.db import get_server
+
+            server_id = LEGACY_SERVER_IDS.get(plan.capability_id, plan.capability_id)
+            server = get_server(service.db_path, server_id)
+            if server is None or not server.is_installed:
+                raise HTTPException(409, "Provider is not installed")
+            status = service.get_credential_status(server_id)
+            # Configuration identity, never credential values or transient status.
+            configuration = {key: getattr(server, key) for key in (
+                "server_id", "type", "transport_variant", "command", "launch_env", "env_vars"
+            )}
+            configuration["env_vars"] = status["env_vars"]
+            configuration["configured"] = status["configured"]
+            subject = (workspace_id, session_id, plan_id, plan.plan_digest,
+                       server_id, canonical_digest(configuration))
+            return plan, server, status, subject
+
+        def credential_status_payload(workspace_id, session_id, plan, server, status):
+            return {"workspace_id": workspace_id, "session_id": session_id,
+                    "plan_id": plan.plan_id, "plan_digest": plan.plan_digest,
+                    "server_id": server.server_id, "active": server.is_active,
+                    "configured": status["configured"], "fields": status["env_vars"]}
+
+        @router.get("/connection-plans/{plan_id}/credentials", dependencies=[Depends(require_admin)])
+        async def read_credentials(plan_id: str, workspace_id: str, session_id: str,
+                                   request: Request, service: McpApiService = Depends(get_mcp_api_service)):
+            plan, server, status, _ = await credential_subject(
+                plan_id, workspace_id, session_id, request, service)
+            from starlette.responses import JSONResponse
+            return JSONResponse(credential_status_payload(workspace_id, session_id, plan, server, status),
+                                headers={"Cache-Control": "no-store"})
+
+        @router.post("/connection-plans/{plan_id}/credentials/form", dependencies=[Depends(require_admin)])
+        async def open_credential_form(plan_id: str, body: ConnectionPlanAction,
+                                       request: Request, service: McpApiService = Depends(get_mcp_api_service)):
+            plan, server, status, subject = await credential_subject(
+                plan_id, body.workspace_id, body.session_id, request, service, body.plan_digest)
+            if server.is_active:
+                raise HTTPException(409, "Stop the provider through its lifecycle controls before changing credentials")
+            try:
+                form = self.credential_forms.issue(subject, [field["name"] for field in status["env_vars"]
+                                                           if not status["configured"].get(field["name"], False)])
+            except CredentialFormError as error:
+                raise HTTPException(409, str(error)) from None
+            from starlette.responses import JSONResponse
+            return JSONResponse({**credential_status_payload(body.workspace_id, body.session_id, plan, server, status),
+                                 "form": form}, headers={"Cache-Control": "no-store"})
+
+        @router.post("/connection-plans/{plan_id}/credentials/save", dependencies=[Depends(require_admin)])
+        async def save_credentials(plan_id: str, body: CredentialFormSaveRequest,
+                                   request: Request, service: McpApiService = Depends(get_mcp_api_service)):
+            plan, server, status, subject = await credential_subject(
+                plan_id, body.workspace_id, body.session_id, request, service, body.plan_digest)
+            if server.is_active:
+                raise HTTPException(409, "Stop the provider before changing credentials")
+            try:
+                values = self.credential_forms.consume(body.form_id, subject, body.ciphertext)
+                status = service.save_credentials(server.server_id, values)
+            except CredentialFormError as error:
+                raise HTTPException(409, str(error)) from None
+            except Exception:
+                raise HTTPException(503, "Credential save outcome is unconfirmed; read configured status before reopening the form") from None
+            return credential_status_payload(body.workspace_id, body.session_id, plan, server, status)
 
         @router.get(
             "/connection-plans/{plan_id}/signin", dependencies=[Depends(require_admin)]

@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 export type SigninCall = (
   name:
@@ -12,6 +18,7 @@ export function NativeSignin({
   call,
   openLink,
   providerName,
+  focusRef,
 }: {
   readonly scope: {
     workspace_id: string;
@@ -22,6 +29,7 @@ export function NativeSignin({
   readonly call: SigninCall;
   readonly openLink?: (url: string) => Promise<void>;
   readonly providerName?: string;
+  readonly focusRef?: RefObject<HTMLElement | null>;
 }) {
   const [pending, setPending] = useState(false);
   const [validated, setValidated] = useState(false);
@@ -34,6 +42,7 @@ export function NativeSignin({
   const [callback, setCallback] = useState<string>();
   const [deviceCode, setDeviceCode] = useState<string>();
   const started = useRef(false);
+  const validationInFlight = useRef(false);
   const readGeneration = useRef(0);
   const livePoll = useRef<AbortController | null>(null);
   const read = useCallback(
@@ -100,7 +109,8 @@ export function NativeSignin({
           if (
             ["unavailable", "expired"].includes(String(data.presentation)) &&
             provider.recorded_validation?.state === "failed" &&
-            !provider.active
+            !provider.active &&
+            !validationInFlight.current
           ) {
             started.current = false;
             setAttempted(false);
@@ -205,6 +215,7 @@ export function NativeSignin({
   async function start() {
     if (started.current) return;
     started.current = true;
+    validationInFlight.current = true;
     setAttempted(true);
     setPending(true);
     setValidated(false);
@@ -232,6 +243,7 @@ export function NativeSignin({
         "Validation outcome is not confirmed. Check sign-in status and recorded readiness before another attempt; no request was repeated.",
       );
     } finally {
+      validationInFlight.current = false;
       ++readGeneration.current;
       livePoll.current?.abort();
       setPending(false);
@@ -273,7 +285,7 @@ export function NativeSignin({
     }
   }
   return (
-    <section aria-label="Provider sign-in">
+    <section aria-label="Provider sign-in" ref={focusRef} tabIndex={-1}>
       <h3>
         {providerName
           ? `Connect ${providerName}`
@@ -283,7 +295,7 @@ export function NativeSignin({
         Sign in to your provider and check the connection. Workspace tool access
         is a separate step.
       </p>
-      <button disabled={attempted} onClick={() => void start()}>
+      <button disabled={attempted || pending} onClick={() => void start()}>
         {providerName
           ? `Connect ${providerName}`
           : "Sign in and validate provider"}

@@ -348,3 +348,33 @@ it("allows a new explicit connection attempt only after reading a recorded termi
   );
   expect(document.body.textContent).not.toContain("forwarding");
 });
+
+it("keeps Connect disabled when an old failed status arrives before the new validation binds", async () => {
+  let finish!: (value: ReturnType<typeof recovered>) => void;
+  const validation = new Promise<ReturnType<typeof recovered>>((resolve) => {
+    finish = resolve;
+  });
+  const stale = recovered("failed");
+  stale.structuredContent.presentation = "unavailable";
+  const call = vi.fn((name: string) =>
+    name === "wright_connection_validate" ? validation : Promise.resolve(stale),
+  );
+  render(<NativeSignin scope={scope} call={call} providerName="SteveCAD" />);
+  const connect = screen.getByRole("button", { name: "Connect SteveCAD" });
+  fireEvent.click(connect);
+  await waitFor(() =>
+    expect(call).toHaveBeenCalledWith(
+      "wright_connection_signin",
+      expect.anything(),
+    ),
+  );
+  expect(connect).toBeDisabled();
+  fireEvent.click(connect);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_validate"),
+  ).toHaveLength(1);
+  await act(async () => finish(recovered("failed")));
+  expect(connect).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  await waitFor(() => expect(connect).toBeEnabled());
+});

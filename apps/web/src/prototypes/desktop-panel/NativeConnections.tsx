@@ -2,11 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import { NativeCustomConnection } from "./NativeCustomConnection";
+import { NativeCredentials } from "./NativeCredentials";
 import { NativeSignin } from "./NativeSignin";
 import { NativeConnectionControls } from "./NativeConnectionControls";
 
 export type ConnectionsCall = (
   name:
+    | "wright_connection_credentials"
+    | "wright_connection_credentials_form"
+    | "wright_connection_credentials_save"
     | "wright_connections_list"
     | "wright_connection_plans"
     | "wright_connection_plan"
@@ -159,11 +163,14 @@ export function NativeConnections({
   }
   const [plan, setPlan] = useState<SetupPlan>();
   const planView = useRef<HTMLElement>(null);
+  const signinView = useRef<HTMLElement>(null);
   const savedView = useRef<HTMLElement>(null);
   useEffect(() => {
     if (plan) {
-      planView.current?.focus();
-      planView.current?.scrollIntoView?.({ block: "start" });
+      const target =
+        plan.state === "completed" ? signinView.current : planView.current;
+      target?.focus();
+      target?.scrollIntoView?.({ block: "start" });
     }
   }, [plan]);
   useEffect(() => {
@@ -378,12 +385,25 @@ export function NativeConnections({
             plan_id: plan.plan_id,
             plan_digest: plan.plan_digest,
           }}
+          focusRef={signinView}
           providerName={
             items.find((item) => item.capability_id === plan.capability_id)
               ?.name
           }
           call={call}
           openLink={openLink}
+        />
+      )}
+      {plan?.state === "completed" && (
+        <NativeCredentials
+          key={`credentials-${plan.plan_id}`}
+          scope={{
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            plan_id: plan.plan_id,
+            plan_digest: plan.plan_digest,
+          }}
+          call={call}
         />
       )}
       <NativeCustomConnection
@@ -452,7 +472,11 @@ export function NativeConnections({
         </p>
       )}
       {plan && (
-        <section aria-label="Setup plan" ref={planView} tabIndex={-1}>
+        <section
+          aria-label="Setup plan"
+          ref={plan.state === "completed" ? undefined : planView}
+          tabIndex={-1}
+        >
           <h3>Review setup</h3>
           <p>Plan state: {plan.state}.</p>
           {plan.source?.name && <p>{plan.source.name}</p>}

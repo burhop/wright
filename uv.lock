@@ -640,6 +640,19 @@ wheels = [
 ]
 
 [[package]]
+name = "jwcrypto"
+version = "1.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/13/8f/e802d77957903483129813ce6fa01a72a906f9cdd454039d1ec1e6d1e44a/jwcrypto-1.6.1.tar.gz", hash = "sha256:a1e1570da5c2e35dbcd375ec1d2891a24de8eb35ee2c1fe8e91978efb72cfe90", size = 116287, upload-time = "2026-09-15T21:22:33.286Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/31/a4/ee780473e42a3edaf65da1ad37f5c601a9c740e215c1e09db36bf90f3f59/jwcrypto-1.6.1-py3-none-any.whl", hash = "sha256:77e856818e514cb3d64a1043b6885a7d52f5cc37773f5e944de02103c8d3a54f", size = 121267, upload-time = "2026-09-15T21:22:32.27Z" },
+]
+
+[[package]]
 name = "mcp"
 version = "1.30.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1957,6 +1970,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "httpx" },
     { name = "httpx-sse" },
+    { name = "jwcrypto" },
     { name = "opentelemetry-api" },
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
@@ -1977,6 +1991,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "httpx-sse", specifier = ">=0.4" },
+    { name = "jwcrypto", specifier = "==1.6.1" },
     { name = "opentelemetry-api", specifier = ">=1.25" },
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.25" },
     { name = "opentelemetry-sdk", specifier = ">=1.25" },
@@ -2042,6 +2057,7 @@ runtime = [
     { name = "httpx" },
     { name = "httpx-sse" },
     { name = "jsonschema" },
+    { name = "jwcrypto" },
     { name = "mcp" },
     { name = "opentelemetry-api" },
     { name = "opentelemetry-exporter-otlp" },
@@ -2084,6 +2100,7 @@ requires-dist = [
     { name = "httpx-sse", marker = "extra == 'runtime'", specifier = ">=0.4,<1" },
     { name = "jsonschema", marker = "extra == 'runtime'", specifier = ">=4.26,<5" },
     { name = "jsonschema", marker = "extra == 'workspace-surfaces-test'", specifier = ">=4.26,<5" },
+    { name = "jwcrypto", marker = "extra == 'runtime'", specifier = "==1.6.1" },
     { name = "mcp", marker = "extra == 'runtime'", specifier = ">=1.30.0,<2" },
     { name = "numpy", marker = "extra == 'engineering-models'", specifier = ">=1.26,<3" },
     { name = "opentelemetry-api", marker = "extra == 'runtime'", specifier = ">=1.25,<2" },

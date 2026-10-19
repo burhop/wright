@@ -1014,3 +1014,54 @@ async def test_local_command_preview_uses_existing_normalizer_without_execution(
         codes = {item["code"] for item in unsafe.json()["preview"]["drafts"][0]["errors"]}
         assert codes == {"command_unsafe", "argument_shell_expression"}
         owner.apply_install_plan.assert_not_called()
+
+@pytest.mark.asyncio
+async def test_sealed_credentials_use_existing_owner_and_reject_drift_replay_and_viewers(discovery):
+    import json
+    from jwcrypto import jwk, jwe
+    from api.services.mcp_services import get_mcp_api_service
+    from api.security import require_admin
+    from tool_registry.db import insert_server, update_server
+    from tool_registry.models import McpServer
+
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    database = app.state.desktop_service.db_path
+    insert_server(database, McpServer(server_id="custom", name="Custom", type="stdio", command=["example"],
+                                     is_installed=True, is_active=False, status="inactive", created_at=1, updated_at=1))
+    status = {"server_id":"custom", "env_vars":[{"name":"KEY", "label":"API key", "required":True, "secret":True}], "configured":{"KEY":False}}
+    owner = Mock(db_path=database)
+    owner.get_install_plan.return_value = SimpleNamespace(plan_id="p", workspace_id="Alpha", requested_scope="workspace", capability_id="custom", state="completed", plan_digest="a" * 64)
+    owner.get_credential_status.side_effect = lambda _: status
+    owner.save_credentials.side_effect = lambda _, values: {**status, "configured":{"KEY":True}}
+    app.dependency_overrides[get_mcp_api_service] = lambda: owner
+    app.state.security_settings = SimpleNamespace(enforced=True)
+    scope = {"workspace_id":"Alpha", "session_id":"desktop-Alpha", "plan_digest":"a"*64}
+    path = "/api/desktop/connection-plans/p/credentials"
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app), base_url="http://test") as client:
+        assert (await client.post(path+"/form", json=scope)).status_code == 403
+        owner.get_credential_status.assert_not_called()
+        app.dependency_overrides[require_admin] = lambda: None
+        assert (await client.post(path+"/form", json={**scope,"session_id":"other"})).status_code == 403
+        assert (await client.post(path+"/form", json={**scope,"plan_digest":"b"*64})).status_code == 409
+        response = await client.post(path+"/form", json=scope)
+        assert response.headers['cache-control'] == 'no-store'
+        form = response.json()['form']
+        envelope = jwe.JWE(json.dumps({'form_id':form['form_id'],'values':{'KEY':'synthetic-private-value'}}).encode(),
+                           protected={'alg':'RSA-OAEP-256','enc':'A256GCM'},recipient=jwk.JWK(**form['public_key']))
+        body={**scope,'form_id':form['form_id'],'ciphertext':envelope.serialize(compact=True)}
+        assert (await client.post(path+'/save',json={**body,'values':{'KEY':'must-reject'}})).status_code==422
+        # Configuration drift cannot consume the saved form for another config.
+        update_server(database,'custom', {'launch_env':{'MODE':'changed'}})
+        assert (await client.post(path+'/save',json=body)).status_code==409
+        owner.save_credentials.assert_not_called()
+        update_server(database,'custom', {'launch_env':{}})
+        saved=await client.post(path+'/save',json=body)
+        assert saved.status_code==200 and saved.json()['configured']=={'KEY':True}
+        assert 'synthetic-private-value' not in saved.text
+        owner.save_credentials.assert_called_once_with('custom',{'KEY':'synthetic-private-value'})
+        assert (await client.post(path+'/save',json=body)).status_code==409
+        # Existing keys are not silently rotated under old validation/runs.
+        status['configured']['KEY']=True
+        assert (await client.post(path+'/form',json=scope)).status_code==409
+        owner.enable_capability_for_workspace.assert_not_called()

@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { NativeConnections } from "./NativeConnections";
 const workspace = {
@@ -364,6 +370,11 @@ it("reopens an existing setup through reads only", async () => {
     await screen.findByRole("button", { name: /Open completed setup/ }),
   );
   expect(await screen.findByText("Plan state: completed.")).toBeVisible();
+  await waitFor(() =>
+    expect(
+      screen.getByRole("region", { name: "Provider sign-in" }),
+    ).toHaveFocus(),
+  );
   expect(call.mock.calls.map(([name]) => name)).toEqual([
     "wright_connections_list",
     "wright_connection_plans",
