@@ -688,6 +688,7 @@ def server(client, *, native_editor=False, native_working_view=False):
                 "wright/signin": {
                     "authorization_url": data.get("authorization_url"),
                     "callback_uri": data.get("callback_uri"),
+                    "device": data.get("device"),
                 }
             },
         )

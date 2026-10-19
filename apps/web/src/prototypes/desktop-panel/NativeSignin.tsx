@@ -30,6 +30,7 @@ export function NativeSignin({
   const [message, setMessage] = useState("");
   const [url, setUrl] = useState<string>();
   const [callback, setCallback] = useState<string>();
+  const [deviceCode, setDeviceCode] = useState<string>();
   const started = useRef(false);
   const readGeneration = useRef(0);
   const livePoll = useRef<AbortController | null>(null);
@@ -97,8 +98,43 @@ export function NativeSignin({
         }
       }
       const privateData = result._meta?.["wright/signin"] as
-        { authorization_url?: string; callback_uri?: string } | undefined;
+        | {
+            authorization_url?: string;
+            callback_uri?: string;
+            device?: {
+              verification_uri?: string;
+              verification_uri_complete?: string;
+              user_code?: string;
+            };
+          }
+        | undefined;
+      const device = privateData?.device;
       if (
+        data.presentation === "awaiting_user" &&
+        device?.verification_uri &&
+        device.user_code
+      ) {
+        const target = new URL(device.verification_uri);
+        const complete = new URL(
+          device.verification_uri_complete ?? device.verification_uri,
+        );
+        if (
+          target.protocol !== "https:" ||
+          target.username ||
+          target.password ||
+          target.hash ||
+          complete.protocol !== "https:" ||
+          complete.host !== target.host ||
+          complete.username ||
+          complete.password ||
+          complete.hash ||
+          device.user_code.length > 128
+        )
+          throw Error("Unsupported device sign-in address");
+        setUrl(complete.href);
+        setDeviceCode(device.user_code);
+        setCallback(undefined);
+      } else if (
         data.presentation === "awaiting_user" &&
         privateData?.authorization_url &&
         privateData.callback_uri
@@ -116,9 +152,11 @@ export function NativeSignin({
           throw Error("Unsupported sign-in address");
         setUrl(target.href);
         setCallback(receiver.href);
+        setDeviceCode(undefined);
       } else {
         setUrl(undefined);
         setCallback(undefined);
+        setDeviceCode(undefined);
       }
     },
     [
@@ -142,6 +180,7 @@ export function NativeSignin({
         if (active) {
           setUrl(undefined);
           setCallback(undefined);
+          setDeviceCode(undefined);
         }
       }
       if (active) timer = setTimeout(() => void poll(), 1000);
@@ -188,6 +227,7 @@ export function NativeSignin({
       setPending(false);
       setUrl(undefined);
       setCallback(undefined);
+      setDeviceCode(undefined);
     }
   }
   async function enable() {
@@ -239,6 +279,7 @@ export function NativeSignin({
           void read().catch(() => {
             setUrl(undefined);
             setCallback(undefined);
+            setDeviceCode(undefined);
             setValidated(false);
             setMessage("Sign-in status unavailable.");
           })
@@ -255,6 +296,13 @@ export function NativeSignin({
         </button>
       )}
       {message && <p role="status">{message}</p>}
+      {deviceCode && (
+        <p>
+          Sign in to the provider and confirm this code:{" "}
+          <strong>{deviceCode}</strong>. Wright will detect completion
+          automatically. No network setup is needed.
+        </p>
+      )}
       {url && (
         <button
           disabled={!openLink}
@@ -271,10 +319,10 @@ export function NativeSignin({
       )}
       {callback && (
         <details>
-          <summary>Remote callback setup</summary>
+          <summary>Local sign-in connection</summary>
           <p>
-            Forward this loopback address to the same GB10 port before
-            completing sign-in: {callback}
+            This connection requires a browser on the Wright computer. Remote
+            sign-in needs a provider-supported remote authentication method.
           </p>
         </details>
       )}

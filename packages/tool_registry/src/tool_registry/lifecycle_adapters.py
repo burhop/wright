@@ -114,12 +114,14 @@ class DatabaseLifecycleAdapter:
         *,
         operation_timeout: float = 30.0,
         authorization_presenter: OAuthPresentation | None = None,
+        device_authorization_presenter=None,
     ) -> None:
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
         self.operation_timeout = operation_timeout
         self.authorization_presenter = authorization_presenter
+        self.device_authorization_presenter = device_authorization_presenter
 
     def build_runner(
         self,
@@ -197,6 +199,7 @@ class DatabaseLifecycleAdapter:
                 server_id=server_id,
                 operation_timeout=self.operation_timeout,
                 authorization_presenter=self.authorization_presenter,
+                device_authorization_presenter=self.device_authorization_presenter,
             )
         raise ValueError(f"Unsupported coordinated server type: {server.type}")
 

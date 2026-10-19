@@ -265,7 +265,10 @@ class DesktopBackend:
         enrolled_mcp_tasks=False,
         workspace_mcp_tasks=False,
         local_reviews=False,
+        remote_oauth_flow="authorization_code",
     ):
+        if remote_oauth_flow not in {"authorization_code", "device_code"}:
+            raise ValueError("Unsupported remote OAuth flow")
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
         if image_inputs and engineering_image_inputs:
@@ -294,6 +297,7 @@ class DesktopBackend:
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
+            "remote_oauth_flow": remote_oauth_flow,
             "image_inputs": self.image_inputs,
             "image_input_profile": image_profile,
             "enrolled_mcp_tasks": enrolled_mcp_tasks,
@@ -309,6 +313,8 @@ class DesktopBackend:
         import core.desktop_reasoning as contract
         import agent_adapters.desktop_reasoning as adapter
         import workspace_service.workflow_reasoning_dispatch as dispatch
+        import tool_registry.runners.device_oauth as device_oauth
+        import tool_registry.runners.sse as remote_transport
 
         for name, file in (
             ("contract", contract.__file__),
@@ -316,6 +322,8 @@ class DesktopBackend:
             ("dispatch", dispatch.__file__),
             ("backend", __file__),
             ("transport", Path(__file__).with_name("mcp_bridge.py")),
+            ("device_oauth", device_oauth.__file__),
+            ("remote_transport", remote_transport.__file__),
         ):
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
         for name, file in (

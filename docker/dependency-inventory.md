@@ -17,4 +17,10 @@ Feature 047 validates one `linux/amd64` appliance. Multi-architecture indexes ar
 
 The Dockerfile contains no `apt-get upgrade`, moving `latest` input, or unchecked binary download. Release workflows build the candidate once, store its digest, and direct all smoke, scan, SBOM, provenance, tag promotion, and optional mirror verification at that digest.
 
+19 October desktop-integration qualification: the refreshed database identified
+five fixable High-severity libexpat advisories in the prior image. Both Python
+builder and final runtime explicitly install `libexpat1=2.9.0-1~deb13u1`.
+The prior failed scan is retained; only a scan of the rebuilt exact image can
+establish clearance. No exception or host-package upgrade is introduced.
+
 Rebuild comparison is diagnostic: repeat builds may differ because upstream package repositories and timestamps are not yet fully hermetic. Release identity is established by testing and promoting the first immutable digest, never by rebuilding and assuming equality.

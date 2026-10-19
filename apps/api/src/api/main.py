@@ -282,6 +282,9 @@ async def lifespan(app: FastAPI):
         # not cancel those permitted calls at the shorter default deadline.
         operation_timeout=mcp_settings.maximum_timeout_seconds,
         authorization_presenter=getattr(app.state, "mcp_authorization_presenter", None),
+        device_authorization_presenter=getattr(
+            app.state, "mcp_device_authorization_presenter", None
+        ),
     )
     logger.info("api_startup_stage", stage="mcp_engine_ready")
     if app.state.workspace_surface_settings.flags.webmcp:

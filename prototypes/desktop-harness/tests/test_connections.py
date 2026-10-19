@@ -158,6 +158,7 @@ async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
                 "provider_status": {"installed": True, "active": False, "enabled_here": False,
                                     "recorded_validation": {"evidence_id": "saved", "state": "passed", "observed_at": "2026-10-17"}},
                 "authorization_url": private_url,
+                "device": {"verification_uri": "https://issuer.example/device", "user_code": "TEST-1234"},
                 "callback_uri": "http://127.0.0.1:9505/oauth/callback",
             }
         ),
@@ -172,6 +173,9 @@ async def test_signin_urls_are_only_in_private_metadata(monkeypatch):
         {"workspace_id": "w", "session_id": "s", "plan_id": "p"},
     )
     assert result.meta["wright/signin"]["authorization_url"] == private_url
+    assert result.meta["wright/signin"]["device"]["user_code"] == "TEST-1234"
+    assert "TEST-1234" not in str(result.content)
+    assert "TEST-1234" not in str(result.structuredContent)
     assert private_url not in str(result.content)
     assert private_url not in str(result.structuredContent)
     assert "9505" not in str(result.structuredContent)

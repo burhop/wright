@@ -19,6 +19,7 @@ from mcp.shared.auth import (
 from core.redaction import redact_mapping, redact_text
 from .base import BaseRunner, ProgressCallback
 from .protocol import ChildProtocolState, NotificationHandler
+from .device_oauth import DeviceCodeAuth, DevicePresentation
 from ..secrets import read_secrets, write_secrets
 
 logger = logging.getLogger(__name__)
@@ -252,6 +253,8 @@ class SseRunner(BaseRunner):
         oauth_enabled: bool = True,
         operation_timeout: float = 60.0,
         authorization_presenter: OAuthPresentation | None = None,
+        device_authorization_presenter: Callable[[str, dict | None], Awaitable[None]]
+        | None = None,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
@@ -261,6 +264,7 @@ class SseRunner(BaseRunner):
         )
         self.oauth_enabled = oauth_enabled
         self.authorization_presenter = authorization_presenter
+        self.device_authorization_presenter = device_authorization_presenter
         self.operation_timeout = operation_timeout
         self.startup_timeout = _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
         self.client: Optional[httpx.AsyncClient] = None
@@ -320,7 +324,17 @@ class SseRunner(BaseRunner):
                 "Cache-Control": "no-cache",
             }
             auth = None
-            if self.oauth_enabled:
+            if self.oauth_enabled and self.device_authorization_presenter is not None:
+                presenter: DevicePresentation = partial(
+                    self.device_authorization_presenter, self.server_id
+                )
+                auth = DeviceCodeAuth(
+                    self.sse_url,
+                    _WrightOAuthTokenStorage(self.server_id),
+                    presenter,
+                    timeout=_OAUTH_CALLBACK_TIMEOUT,
+                )
+            elif self.oauth_enabled:
                 presenter = (
                     partial(self.authorization_presenter, self.server_id)
                     if self.authorization_presenter
@@ -358,7 +372,7 @@ class SseRunner(BaseRunner):
             self.client = httpx.AsyncClient(
                 timeout=self.operation_timeout,
                 headers=headers,
-                follow_redirects=True,
+                follow_redirects=self.device_authorization_presenter is None,
                 auth=auth,
             )
 
@@ -413,6 +427,11 @@ class SseRunner(BaseRunner):
                         self._message_endpoint = self.sse_url
                         logger.info("Detected Streamable HTTP support")
             except Exception as e:
+                if self.device_authorization_presenter is not None:
+                    await self._stop_locked()
+                    raise RuntimeError(
+                        "Remote device sign-in or MCP initialization failed"
+                    ) from e
                 logger.debug(
                     "Streamable HTTP probe failed; falling back to legacy SSE: %s",
                     redact_text(e),

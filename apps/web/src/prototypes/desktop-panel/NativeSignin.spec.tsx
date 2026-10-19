@@ -238,3 +238,67 @@ it("rejects recovered provider status for another plan digest", async () => {
     screen.queryByRole("button", { name: "Enable in this workspace" }),
   ).toBeNull();
 });
+
+it("shows a device code and opens only the operator URL without callback instructions", async () => {
+  const deviceStatus = {
+    ...status,
+    _meta: {
+      "wright/signin": {
+        device: {
+          verification_uri: "https://issuer.example/device",
+          verification_uri_complete:
+            "https://issuer.example/device?user_code=TEST-1234",
+          user_code: "TEST-1234",
+        },
+      },
+    },
+  };
+  const call = vi.fn().mockResolvedValue(deviceStatus);
+  const openLink = vi.fn().mockResolvedValue(undefined);
+  render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
+  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  expect(await screen.findByText("TEST-1234")).toBeVisible();
+  expect(document.body.textContent).toContain("No network setup is needed");
+  expect(document.body.textContent).not.toContain("Forward");
+  expect(document.body.textContent).not.toContain("127.0.0.1");
+  expect(openLink).not.toHaveBeenCalled();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Open provider sign-in" }),
+  );
+  expect(openLink).toHaveBeenCalledWith(
+    "https://issuer.example/device?user_code=TEST-1234",
+  );
+  call.mockResolvedValue({
+    ...deviceStatus,
+    structuredContent: {
+      ...deviceStatus.structuredContent,
+      presentation: "expired",
+    },
+    _meta: {},
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  await waitFor(() => expect(screen.queryByText("TEST-1234")).toBeNull());
+});
+
+it("rejects a device completion URL on another origin", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValue({
+      ...status,
+      _meta: {
+        "wright/signin": {
+          device: {
+            verification_uri: "https://issuer.example/device",
+            verification_uri_complete: "https://other.example/steal",
+            user_code: "TEST-1234",
+          },
+        },
+      },
+    });
+  const openLink = vi.fn();
+  render(<NativeSignin scope={scope} call={call} openLink={openLink} />);
+  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  expect(await screen.findByText("Sign-in status unavailable.")).toBeVisible();
+  expect(screen.queryByText("TEST-1234")).toBeNull();
+  expect(openLink).not.toHaveBeenCalled();
+});

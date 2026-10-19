@@ -26,6 +26,7 @@ class McpEngine:
         *,
         operation_timeout: float = 30.0,
         authorization_presenter: OAuthPresentation | None = None,
+        device_authorization_presenter=None,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
@@ -35,6 +36,7 @@ class McpEngine:
             db_path,
             operation_timeout=operation_timeout,
             authorization_presenter=authorization_presenter,
+            device_authorization_presenter=device_authorization_presenter,
         )
         self.lifecycle = McpLifecycleCoordinator(
             self._lifecycle_adapter.build_runner,
@@ -267,6 +269,7 @@ class McpEngine:
                 server_id=server_id,
                 operation_timeout=self._lifecycle_adapter.operation_timeout,
                 authorization_presenter=self._lifecycle_adapter.authorization_presenter,
+                device_authorization_presenter=self._lifecycle_adapter.device_authorization_presenter,
             )
         elif server.type == "webmcp":
             # webmcp servers represent client-side DOM connections managed via websockets in apps/web.
