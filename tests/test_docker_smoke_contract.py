@@ -174,6 +174,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"pillow==12.3.0"' in dockerfile
     assert '"msgpack==1.2.1"' in dockerfile
     assert '"tornado==6.5.9"' in dockerfile
+    assert "aiohttp==3.14.4" in dockerfile
     assert (
         "debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258"
         in dockerfile
@@ -201,6 +202,8 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
     assert "reconcile_hermes_pip_check.py" in smoke
     assert "scripts/check-hermes-jwt-compatibility.py" in smoke
+    assert 'version("aiohttp")' in smoke
+    assert 'Version("3.14.4")' in smoke
 
 
 def test_docker_smoke_checks_offline_rivet_first_run_runtime() -> None:

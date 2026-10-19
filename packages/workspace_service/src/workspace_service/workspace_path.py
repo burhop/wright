@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import re
+import stat
 from pathlib import Path, PureWindowsPath
 
 BACKUP_ID = re.compile(r"^[0-9a-f]{64}$")
@@ -47,6 +48,35 @@ class WorkspacePath:
             )
         return parts
 
+    @staticmethod
+    def _windows_spelling_identity(path: str) -> str:
+        """Remove only an extended DOS/UNC prefix from a normalized identity."""
+        if path.startswith("\\\\?\\unc\\"):
+            return "\\\\" + path[8:]
+        if (
+            path.startswith("\\\\?\\")
+            and len(path) >= 7
+            and path[4] in "abcdefghijklmnopqrstuvwxyz"
+            and path[5:7] == ":\\"
+        ):
+            return path[4:]
+        return path
+
+    @staticmethod
+    def _reject_existing_links(candidate: Path) -> None:
+        for component in (*reversed(candidate.parents), candidate):
+            try:
+                metadata = component.lstat()
+            except FileNotFoundError:
+                continue
+            if stat.S_ISLNK(metadata.st_mode) or (
+                getattr(metadata, "st_file_attributes", 0)
+                & stat.FILE_ATTRIBUTE_REPARSE_POINT
+            ):
+                raise ValueError(
+                    "Access denied: symbolic links and reparse points are not allowed"
+                )
+
     def resolve(self, user_path: str, *, must_exist: bool = False) -> Path:
         parts = self._validate_relative(user_path)
         root = os.path.normpath(str(self.root))
@@ -57,16 +87,22 @@ class WorkspacePath:
         if not lexical_identity.startswith(root_prefix):
             raise ValueError("Access denied: path escapes workspace")
 
-        # realpath resolves every existing link or Windows reparse point in the
-        # chain. Rejecting any difference preserves a link-free capability while
-        # the explicit prefix guard gives filesystem operations a normalized,
-        # workspace-confined path.
+        # realpath resolves existing links. On Windows a concurrent mkdir can
+        # leave the equivalent extended DOS/UNC prefix on a missing target.
+        # Accept only that spelling change, after checking existing components;
+        # other identity changes remain forbidden.
         resolved = os.path.realpath(lexical)
         resolved_identity = os.path.normcase(resolved)
         if resolved_identity != lexical_identity:
-            raise ValueError(
-                "Access denied: symbolic links and reparse points are not allowed"
-            )
+            if os.name != "nt" or self._windows_spelling_identity(
+                resolved_identity
+            ) != self._windows_spelling_identity(lexical_identity):
+                raise ValueError(
+                    "Access denied: symbolic links and reparse points are not allowed"
+                )
+            self._reject_existing_links(Path(lexical))
+            resolved = lexical
+            resolved_identity = lexical_identity
         if not resolved_identity.startswith(root_prefix):
             raise ValueError("Access denied: path escapes workspace")
 

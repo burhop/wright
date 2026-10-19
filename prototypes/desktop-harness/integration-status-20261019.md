@@ -94,3 +94,83 @@ are distinct deployment boundaries; do not claim the image includes the prototyp
 backend. Actual Windows desktop UI/delivery and personal sign-in remain external
 acceptance. User is unavailable for testing; do not repeatedly ask. No main merge,
 release, public post, real engineering approval or protected/physical campaign.
+
+## Later checkpoint: installed 0.16 and Windows upload correction
+
+The outstanding integration/install items above were subsequently completed:
+[PR159](https://github.com/burhop/wright/pull/159) merged into `dev` at
+`3c36b3f6f07c8edc564203aad32dec0332ae6295`, after both normal local gates and
+29 successful PR checks (one intentional documentation-deployment skip).
+The exact merged ARM64 image, frozen host runtime and installed named 0.16 plugin
+were qualified; retained workspace rows, files, runs and unrelated configuration
+were preserved. A fresh actual desktop-authored brief completed through the normal
+runtime. Native resource navigation was tested in a GB10 browser frame, which does
+not establish actual Windows desktop rendering or file delivery.
+
+Post-merge Windows CI then failed the unchanged eight-writer upload test, so final
+repository qualification is **incomplete**. A controlled reproduction using
+[CPython 3.13.16's path resolver](https://github.com/python/cpython/blob/v3.13.16/Lib/ntpath.py)
+showed parent creation between missing-parent and missing-file errors can retain
+the extended DOS prefix for the same target. The original string comparison
+misclassified this spelling difference as a link. CI did not record its resolved
+string; the reproduction establishes a sufficient matching mechanism, not an
+observation of the failed runner's internal path.
+
+The focused `codex/windows-upload-path-race` correction accepts only equivalent
+extended DOS/UNC spellings on Windows. It checks existing ancestors, root, parents
+and target for links/reparse points, propagates metadata denial and preserves the
+exact workspace-relative subject. Other namespace/identity changes still fail.
+Atomic exclusive publication, eight concurrent writers and existing evidence
+bytes are unchanged. No gateway, provider, workflow executor or UI was replaced.
+
+Initial portable regressions failed the old guard (three failures). After the
+correction, 81 focused path/upload/gate-contract checks passed on Linux ARM64;
+the controlled native Windows race is explicitly skipped there. Both native gate
+entry points now check the portable contracts before long checks. Full current
+candidate gates and native Windows CI remain pending; no blind CI rerun or
+confinement waiver is authorized. Installed 0.16 remains on the separately frozen
+merged source while this correction is qualified.
+
+Evidence remains under `/tmp/wright-desktop-resume-evidence-20261019/`:
+`ci-merged-dev-windows-failure.log`, `windows-parent-creation-reproduction.json`,
+`windows-path-contract-before-fix.log` and
+`windows-path-and-upload-after-fix-receipt.json`. The focused passing log SHA256 is
+`dfb529f9030195ab846de212d5cfb30a476034a85afa3a301c3225056a64be64`.
+A sandbox-only asynchronous runner hang was independently reproduced and retained
+as an interrupted host diagnostic, not counted as a product pass or failure.
+
+Personal SteveCAD device login/consent, token/refresh qualification and actual
+Windows panel/save/reopen/download acceptance are still pending. The user's
+confirmed existing publisher account setup is retained. The experimental label,
+generated-UI confinement gate and other previously documented limits remain.
+
+### First correction CI and consolidated image-security follow-up
+
+Both normal local gates passed on `55a3a62a`, and draft
+[PR162](https://github.com/burhop/wright/pull/162) was submitted once. Its entire
+first CI cycle is terminal: 27 checks passed, one intentional docs-deploy skip,
+and one OCI security failure. Actual Windows Python 3.13.16 ran the unfiltered
+workspace suite successfully (2,779 passed, 10 skipped), including the original
+eight-writer upload and controlled native path interleaving. Linux quality passed
+with 86.46% coverage. The actual complete browser report has 179 expected passes,
+five intentional skips, zero unexpected/flaky results across 45 files. These are
+automated host observations, not actual Windows OpenAI desktop acceptance.
+
+The OCI image built and passed cold health/smoke, then its newer vulnerability
+database rejected aiohttp 3.14.3 in the Hermes environment. The upstream patched
+version is 3.14.4. Its isolated ARM64 installation changed only aiohttp and passed
+the existing strict dependency reconciliation, without new exceptions. The
+consolidated correction pins that version, checks the known security contract
+early in both gates and verifies the actual final runtime floor during smoke.
+Fresh scanning under the unchanged policy remains required; the known floor
+does not replace it. The old valid local database pass is retained at its original
+time and is not current security clearance.
+
+Evidence: `ci-windows-upload-55a3a62a-terminal.json`, Windows/Linux quality receipts,
+the current browser artifact result, `aiohttp-ci-failure-classification.json`,
+`aiohttp-fixed-dependency-isolated-probe.json` and the red-before-fix security
+contract are under the existing 19 October resume evidence directory. New exact
+image/full/push gates and replacement-head CI remain pending. Installed 0.16 is
+unchanged; its 13 recorded runtime-file hashes and 80 host dependency versions were
+rechecked and match. The separately frozen host environment does not contain
+aiohttp. No personal login, live cache edit or protected campaign was performed.
