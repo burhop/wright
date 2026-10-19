@@ -1,0 +1,14 @@
+{
+  "head": "cb875fc581fbeb464366454fa37f1c5affe2b7f1",
+  "image_id": "sha256:d9824994f23486ef508af6e40d914a6fd693722e6843bdddfe5fc2a9d15e1d17",
+  "command": [
+    "bash",
+    "scripts/check-dev-merge.sh"
+  ],
+  "started_at": "2026-10-19T15:01:40.684109+00:00",
+  "browser_exception": "Actual current WebKit launch failure retained in webkit-host-probe.log; native GB10 Chromium qualification separate. No security or other gate bypass.",
+  "exit_code": 0,
+  "completed_at": "2026-10-19T15:28:51.922409+00:00",
+  "head_after": "cb875fc581fbeb464366454fa37f1c5affe2b7f1",
+  "log_sha256": "3df36df6ae237636b1f4d182d6644bd9b48172998fb87298f68b552e4aa564bc"
+}

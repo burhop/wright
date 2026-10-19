@@ -136,3 +136,31 @@ current execution authority: Enable still checks configuration/evidence.
 ## Bugs and maintenance
 
 No new provider defect or issue submission is claimed. Record exact package/browser versions, inputs, actual results and evidence before marking a capability verified. Retain version/platform-specific failures and update this guide after qualification.
+
+## 19 October — native reviewed version replacement
+
+The desktop prototype exercised actual pinned @playwright/mcp 0.0.77 and0.0.78
+in separate selected-provider containers. Each image inherits the freshly scanned
+ARM64 Wright candidate base, adds only its chosen npm package, and preserves the
+base image and host. Actual package.json and Apache-2.0 LICENSE bytes were read
+inside read-only, network-disabled containers before setup. 0.0.77 depends on
+playwright/core 1.62.0-alpha-2026-06-29; 0.0.78 uses 1.62.0-alpha-1783623505000.
+Package version and reported MCP server version are different boundaries.
+
+The actual native resource/MCP/registry lifecycle reviewed and initialized 0.0.77,
+then prepared an explicit new-name replacement pinned to 0.0.78 and validated it
+independently. Discovery returned 23 and 24 tools respectively. Both stayed disabled
+in their workspace, and the original source/binding was preserved. Native Stop
+controls then stopped the owned containers; saved setup, immutable images and
+evidence remain. No provider tool or browser backend was invoked in this slice;
+it does not extend the earlier about:blank/backend engineering qualification.
+
+Evidence: `/tmp/wright-desktop-resume-evidence-20261019/provider-version-actual-metadata.json`,
+`replacement-owner-reconciliation.json`,
+`replacement-readback-versions-1792422190319/report.json` and
+`replacement-cleanup-versions-1792422242788/report.json` in that directory.
+The initial observer's whole-object comparison included freshly generated machine
+observation IDs/timestamps; its failure is retained. Read-only identity
+reconciliation corrected that premise without repeating setup or validation.
+This is Linux ARM64/protocol/native browser qualification, not actual Windows
+panel acceptance or full catalog requalification.

@@ -1,0 +1,54 @@
+[
+  {
+    "scenario": "headers",
+    "status": "passed_with_retained_observer_correction",
+    "prior": "header-replacement-browser-1792421982738/failure.json",
+    "correction": "Compatibility observations are newly timestamped on reads and do not form the immutable source/credential identity. Prior deep-equality diff contains only those two observation fields; all provider state, validation, schemas and workspace grants matched. Read-only reconciliation confirms original accepted sources and distinct owners.",
+    "rows": [
+      {
+        "plan_id": "plan-c8eb4862ef8c66509d46",
+        "server_id": "import:draft-f661e2a35fe38e78ed1c",
+        "source_matches_original_accepted_plan": true,
+        "configuration_sha256": "fc0b61858cba1b9c16a101b50aef36866bbb29681e5c871da4c7b8be1ecb846a",
+        "credential_sha256": "b42f2abd176a96e7d412a7e097140184d956384f0b559c46a16e8eafef8c4011",
+        "tool_count": 1
+      },
+      {
+        "plan_id": "plan-aac09827b737789c35b3",
+        "server_id": "import:draft-ce32e55c4b259d20c53e",
+        "source_matches_original_accepted_plan": true,
+        "configuration_sha256": "04fde1cb4c2ebf64cf69c432e50c5b9daf7760476af69eb93031a3821aeb60f8",
+        "credential_sha256": "fee6f7418edd2b810037ed9b885544d132a7cc370396bf9a38eeac519789c8df",
+        "tool_count": 1
+      }
+    ],
+    "mutations_replayed": false,
+    "windows_acceptance": false
+  },
+  {
+    "scenario": "versions",
+    "status": "passed_with_retained_observer_correction",
+    "prior": "version-replacement-browser-1792422019358/failure.json",
+    "correction": "Compatibility observations are newly timestamped on reads and do not form the immutable source/credential identity. Prior deep-equality diff contains only those two observation fields; all provider state, validation, schemas and workspace grants matched. Read-only reconciliation confirms original accepted sources and distinct owners.",
+    "rows": [
+      {
+        "plan_id": "plan-816038b48845c03500d2",
+        "server_id": "import:draft-63c32a3c6768fa642f39",
+        "source_matches_original_accepted_plan": true,
+        "configuration_sha256": "ecbe2d8f4f7f2d14e8f747cc45462d5ead22557c5f967d98e69ead23e3c6456f",
+        "credential_sha256": null,
+        "tool_count": 23
+      },
+      {
+        "plan_id": "plan-5392b03a396b98a99369",
+        "server_id": "import:draft-176869540429e685ffa6",
+        "source_matches_original_accepted_plan": true,
+        "configuration_sha256": "318cbb3e2a1cae11ca1ca7c4abb2f8a276c99a59ebe18feb0c6f4559a62826da",
+        "credential_sha256": null,
+        "tool_count": 24
+      }
+    ],
+    "mutations_replayed": false,
+    "windows_acceptance": false
+  }
+]

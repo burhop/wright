@@ -33,3 +33,10 @@ stopped through its exact owner; all state retained. Remote dev rechecked at
 has ca71bf92 on codex/desktop-file-download. Prefer one fast-forward update of that
 existing PR after gates, preserving its old local worktree; no force push or dev
 push. Final native/Windows acceptance and personal sign-in are still pending.
+
+Current 15:28 UTC: final product `7a18ba53`, test-format correction `cb875fc5`,
+normal full merge gate passed. Actual HTTPS/header and pinned-version replacement
+proofs, fresh native readback, cleanup, 297 desktop-owner checks and current
+combined-profile desktop brief passed. See [current status](integration-status-20261019.md).
+Earlier failures are retained with read-only corrections. Push/CI/dev deployment,
+named 0.16 installation, actual Windows acceptance and personal consent remain open.
