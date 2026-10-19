@@ -36,7 +36,7 @@ prepare_history_scan_root() {
   if [ -f "$ROOT_DIR/.git" ]; then
     TEMP_SCAN_PARENT="$(mktemp -d "${TMPDIR:-/tmp}/wright-security-scan.XXXXXX")"
     SCAN_ROOT_DIR="$TEMP_SCAN_PARENT/repo"
-    git clone --no-hardlinks --no-checkout "$ROOT_DIR" "$SCAN_ROOT_DIR" >/dev/null
+    git clone --no-hardlinks --no-checkout --single-branch --no-tags "$ROOT_DIR" "$SCAN_ROOT_DIR" >/dev/null
     HEAD_COMMIT="$(git -C "$ROOT_DIR" rev-parse --verify HEAD)"
     git -C "$SCAN_ROOT_DIR" checkout --detach "$HEAD_COMMIT" >/dev/null
   fi

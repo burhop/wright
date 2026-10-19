@@ -345,7 +345,12 @@ while IFS= read -r changed_file; do
       CHECK_GITLEAKS=1
       PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
       ;;
-    scripts/security-scan.*|scripts/test-gitleaks-program-status-allowlist.sh)
+    scripts/security-scan.*)
+      CHECK_PYTHON=1
+      CHECK_GITLEAKS_HISTORY=1
+      PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)
+      ;;
+    scripts/test-gitleaks-program-status-allowlist.sh)
       CHECK_PYTHON=1
       CHECK_GITLEAKS=1
       PYTHON_TEST_TARGETS+=(tests/test_security_scanner_setup.py)

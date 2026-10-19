@@ -50,3 +50,18 @@ Actual-source correction checks passed: 300 desktop-owner tests and 110 targeted
 gate/scanner/setup tests (including all 66 image-scanner unit cases). The one
 fixture formatter correction changes only whitespace. These affected checks do
 not replace the updated full/push gates or the next current-head CI cycle.
+
+The first expanded local history gate found a fixture in an unrelated local
+branch, not an ancestor of this candidate. Its full failed receipt is retained.
+Both history-clone implementations now retain only the candidate branch and omit
+unrelated tags. A real Git regression first failed for both implementations, then
+proved that all candidate and merged ancestors remain while the sibling branch/tag
+is excluded. No exception was added for that finding, and the other worktree was
+not changed. History-runner impact selection now runs this regression/history;
+existing allowlist-rule contracts remain selected for changes to their subjects.
+
+The scope reproduction and gate results are retained as
+`history-scope-failure-bc9584aa.json`, `history-scope-before-fix.log`,
+`history-scope-after-fix-v2.log`, and `normal-full-gate-bc9584aa-receipt.json`
+in the same evidence directory. The failed gate remains failed; its image scan
+passed, while its temporary history clone included the unrelated branch.

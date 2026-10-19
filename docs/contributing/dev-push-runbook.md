@@ -112,6 +112,16 @@ failure remains blocking. These categories diagnose the scanner; they do not
 establish a clean inventory, authorize retries, extend DB validity or waive policy.
 PR #159's initial scanner failure lacked a public cause and remains unclassified.
 
+Linked-worktree history scans normalize only the current candidate branch and
+omit unrelated tags. Every candidate ancestor, including merged branches, remains
+in the scan; unpublished sibling workstreams are outside the reported HEAD scope.
+A real Git regression exercises both Bash and PowerShell clone commands with a
+merged ancestor, an unrelated branch/tag and a main checkout on another branch.
+History-runner edits select that boundary regression and the history scan;
+allowlist-rule edits retain their existing scanner contracts. PR #159's first
+expanded local scan found an off-candidate fixture from a separate local branch;
+that branch and finding were preserved without adding an exception.
+
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
