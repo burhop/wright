@@ -1,3 +1,9 @@
+import { NativeWorkflowPanel } from "../desktop-panel/NativeWorkflowPanel";
+import {
+  NativeSourceClient,
+  type NativeSourceCall,
+} from "../desktop-panel/native-source-client";
+import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
 import { afterEach, beforeAll, expect, it, vi } from "vitest";
 import {
   cleanup,
@@ -148,4 +154,137 @@ it("reconciles an uncertain correction through a read without repeating its writ
   );
   expect(save).toHaveBeenCalledOnce();
   expect(read).toHaveBeenCalledOnce();
+});
+
+it("preserves raw correction edits through the existing inert draft callback before accepting source", () => {
+  const changed = vi.fn(),
+    save = vi.fn();
+  render(
+    <WorkflowRecoveryConcept
+      workflowSource="invalid source"
+      onDraftChange={changed}
+      onSave={save}
+    />,
+  );
+  fireEvent.change(screen.getByLabelText("Workflow source"), {
+    target: { value: "retained raw correction" },
+  });
+  expect(changed).toHaveBeenLastCalledWith(
+    {
+      source: "retained raw correction",
+      applied_source: "invalid source",
+      layout: null,
+      view: "code",
+    },
+    true,
+  );
+  expect(save).not.toHaveBeenCalled();
+});
+it("restores an explicitly resumed correction draft without accepting or running it", () => {
+  const save = vi.fn(),
+    dirty = vi.fn();
+  render(
+    <WorkflowRecoveryConcept
+      workflowSource="invalid source"
+      initialDraft={{
+        source: "retained raw correction",
+        applied_source: "invalid source",
+        layout: null,
+        view: "code",
+      }}
+      onSave={save}
+      onUnsavedChange={dirty}
+    />,
+  );
+  expect(screen.getByLabelText("Workflow source")).toHaveValue(
+    "retained raw correction",
+  );
+  expect(dirty).toHaveBeenCalledWith(true);
+  expect(save).not.toHaveBeenCalled();
+});
+it("adopts only the exact reconciled source in native workspace context without replaying an uncertain save", async () => {
+  const initial: WorkspaceWorkflowSourceDocument = {
+    workspace_id: "workspace",
+    path: "workflows/recovery.workflow.wflow",
+    source: "invalid source",
+    storage_revision: 1,
+    storage_digest: "a".repeat(64),
+    definition_revision: 1,
+    metadata_authority: "wright_host",
+    size_bytes: 14,
+  };
+  let stored = initial,
+    observed: WorkspaceWorkflowSourceDocument | undefined;
+  const call = vi.fn<NativeSourceCall>(async (name, args) => {
+    if (name === "wright_workflow_read")
+      return { content: [], structuredContent: { ...(observed ?? stored) } };
+    stored = {
+      ...initial,
+      source: String(args.source),
+      storage_revision: 2,
+      storage_digest: "b".repeat(64),
+      definition_revision: 2,
+      layout: {
+        ...(args.layout as NonNullable<
+          WorkspaceWorkflowSourceDocument["layout"]
+        >),
+        semanticRevision: 2,
+        layoutRevision: 1,
+      },
+      layout_revision: 1,
+      size_bytes: String(args.source).length,
+    };
+    throw Error("Lost save acknowledgement");
+  });
+  const client = new NativeSourceClient(
+    { workspaceId: "workspace", sessionId: "session", path: initial.path },
+    call,
+  );
+  await client.read();
+  const accepted = vi.fn();
+  render(
+    <NativeWorkflowPanel
+      initial={initial}
+      client={client}
+      workspaceName="Recovery"
+      onAccepted={accepted}
+    />,
+  );
+  fireEvent.change(screen.getByLabelText("Workflow source"), {
+    target: { value: demo },
+  });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Save corrected source" }),
+  );
+  const read = await screen.findByRole("button", {
+    name: "Read saved workflow",
+  });
+  observed = initial;
+  fireEvent.click(read);
+  await screen.findByText(/The saved correction is still unconfirmed/);
+  await waitFor(() => expect(read).toBeEnabled());
+  expect(accepted).not.toHaveBeenCalled();
+  expect(
+    screen.getByRole("button", { name: "Save corrected source" }),
+  ).toBeDisabled();
+  observed = {
+    ...stored,
+    layout: { ...stored.layout!, viewport: { x: 11, y: 0, zoom: 1 } },
+  };
+  fireEvent.click(read);
+  await screen.findByText(/The saved correction is still unconfirmed/);
+  await waitFor(() => expect(read).toBeEnabled());
+  expect(accepted).not.toHaveBeenCalled();
+  expect(
+    screen.getByRole("button", { name: "Save corrected source" }),
+  ).toBeDisabled();
+  observed = undefined;
+  fireEvent.click(read);
+  await waitFor(() =>
+    expect(screen.queryByText("Workflow file needs correction.")).toBeNull(),
+  );
+  expect(accepted).toHaveBeenCalledExactlyOnceWith(stored);
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_workflow_save"),
+  ).toHaveLength(1);
 });

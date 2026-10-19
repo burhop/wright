@@ -221,3 +221,7 @@ Nothing is publicly posted; personal login/consent and actual Windows acceptance
 remain user actions after the tested update is ready.
 
 The strict release/program MyPy slice passed; the broad MyPy invocation stopped at an existing duplicate-conftest collection error in warning mode. The gate’s warning policy was unchanged. TypeScript passed. This is not a claim that the full Python tree type-checked.
+
+### Required raw-correction recovery follow-up
+
+The c544/1dc gate passes do not cover a subsequently reproduced draft/reconciliation gap. The raw correction now uses the existing saved-draft callbacks and explicit guarded reload owner. Three regressions failed before the change; 21 owning checks and TypeScript/lint/format passed afterward. The native bundle changed, so fresh image/gates and served qualification remain required before the UI first push. See the follow-up in [the correction plan](demo-feedback-plan-20261019.md); the original run and installed0.16 remain unchanged.

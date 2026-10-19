@@ -1579,22 +1579,42 @@ function InvalidSourceRunResults({
 /** A raw correction stays a draft until the existing source owner acknowledges it. */
 function InvalidSourceCorrection({
   source,
+  initialDraft,
+  onDraftChange,
   revision,
   layout,
   onSave,
   onRead,
+  onReload,
   onDirty,
   onConfirmed,
 }: {
   source: string;
+  initialDraft?: WorkflowEditorDraftSnapshot;
+  onDraftChange?: WorkflowRecoveryConceptProps["onDraftChange"];
   revision: number;
   layout?: RecoveryLayout;
   onSave?: WorkflowRecoveryConceptProps["onSave"];
   onRead?: WorkflowRecoveryConceptProps["onReadStoredSource"];
+  onReload?: WorkflowRecoveryConceptProps["onReloadStoredSource"];
   onDirty?: (dirty: boolean) => void;
   onConfirmed: (saved: WorkflowRecoveryPersistedSource) => void;
 }) {
-  const [draft, setDraft] = useState(source);
+  const [draft, setDraft] = useState(initialDraft?.source ?? source);
+  const retainedLayout = initialDraft?.layout ?? layout;
+  useEffect(() => {
+    const dirty = draft !== source;
+    onDirty?.(dirty);
+    onDraftChange?.(
+      {
+        source: draft,
+        applied_source: source,
+        layout: retainedLayout ?? null,
+        view: "code",
+      },
+      dirty,
+    );
+  }, [draft, source, retainedLayout, onDraftChange, onDirty]);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [uncertain, setUncertain] = useState(false);
@@ -1612,7 +1632,9 @@ function InvalidSourceCorrection({
     parsed.workflow !== null &&
     sameDocument &&
     validateRecoveryAuthoringRoundTrip(parsed.workflow).ok;
-  const confirm = (saved: WorkflowRecoveryStoredSource) => {
+  function validateConfirmation(
+    saved: WorkflowRecoveryStoredSource,
+  ): asserts saved is WorkflowRecoveryPersistedSource {
     if (
       saved.source !== attempted.current ||
       !saved.storage_digest ||
@@ -1622,6 +1644,9 @@ function InvalidSourceCorrection({
       !workflowFromSource(saved.source, saved.definition_revision).ok
     )
       throw new Error("Saved correction identity was not confirmed.");
+  }
+  const confirm = (saved: WorkflowRecoveryStoredSource) => {
+    validateConfirmation(saved);
     onDirty?.(false);
     onConfirmed({ ...saved, storage_digest: saved.storage_digest });
   };
@@ -1641,7 +1666,6 @@ function InvalidSourceCorrection({
           onChange={(event) => {
             if (pending || uncertain) return;
             setDraft(event.target.value);
-            onDirty?.(event.target.value !== source);
             setMessage("");
           }}
         />
@@ -1660,7 +1684,10 @@ function InvalidSourceCorrection({
           if (!onSave || !parsed.workflow || pending || uncertain) return;
           attempted.current = draft;
           setPending(true);
-          void onSave(draft, hydrateAuthoringLayout(parsed.workflow, layout))
+          void onSave(
+            draft,
+            hydrateAuthoringLayout(parsed.workflow, retainedLayout),
+          )
             .then(confirm)
             .catch(() => {
               setUncertain(true);
@@ -1680,7 +1707,24 @@ function InvalidSourceCorrection({
           onClick={() => {
             setPending(true);
             void onRead()
-              .then(confirm)
+              .then(async (saved) => {
+                validateConfirmation(saved);
+                if (onReload) {
+                  let adopted = false;
+                  await onReload((current) => {
+                    adopted =
+                      current.source === saved.source &&
+                      current.storage_digest === saved.storage_digest &&
+                      current.definition_revision === saved.definition_revision;
+                    return adopted;
+                  });
+                  if (!adopted)
+                    throw new Error(
+                      "The saved correction changed before reload.",
+                    );
+                }
+                confirm(saved);
+              })
               .catch(() =>
                 setMessage(
                   "The saved correction is still unconfirmed. Your source is kept here; reopen the saved workflow to compare it. No write was repeated.",
@@ -1817,10 +1861,13 @@ function WorkflowRecoveryDocument({
         <InvalidSourceCorrection
           key={`${workflowFilePath}:${storageDigest ?? workflowSource}`}
           source={workflowSource}
+          initialDraft={initialDraft}
+          onDraftChange={onDraftChange}
           revision={definitionRevision}
           layout={workflowLayout}
           onSave={onSave}
           onRead={onReadStoredSource}
+          onReload={onReloadStoredSource}
           onDirty={onUnsavedChange}
           onConfirmed={onCorrected}
         />

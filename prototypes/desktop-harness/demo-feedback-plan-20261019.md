@@ -102,3 +102,26 @@ selectable/read-only after an uncertain save. Five owning recovery checks pass.
 The regenerated resource SHA256 is `24b7acaa4e256d886a6d6f1864f003c679a2de7949ee7dee768c9fec3eb0366a`.
 This candidate still requires its own exact image, normal gates and served checks;
 no failed gate or earlier image is reused as a pass.
+
+## Raw correction draft/reconciliation follow-up
+
+Three deterministic regressions found a gap in the earlier c544/1dc candidate:
+raw correction did not notify the existing inert draft owner or restore its
+explicitly resumed draft; an exact read after lost save acknowledgement did not
+update the surrounding native accepted-source context. The earlier gates remain
+actual passes for that candidate, but this required behavior blocks its push.
+
+The correction connects `initialDraft`/`onDraftChange` and reuses the existing
+guarded `onReloadStoredSource` after an exact read. It keeps original accepted
+source separate from raw corrections, retains layout, and lets the native source
+client refuse adoption while source/layout remains uncertain. Known old state
+and a mismatched viewport do not authorize acceptance or another save. No new
+client, backend, executor, authentication flow or retry mechanism was added.
+
+Before the change, all three external regressions failed. After the change,
+21 owning recovery/source/draft checks, TypeScript, lint and locked formatting
+passed. The maintained reconstruction suite now includes the regressions, with
+exact negative and single-write assertions. Native resource SHA256: `80c24ab1fc77bb1e42cc8d97b2802ce031cd5a604e9d21bb72b43f7208fb88c4`.
+New image/full/push gates, real served recovery/draft-owner checks and current-head
+CI are still required for this product change; no earlier image/gate is relabelled.
+Evidence: `/tmp/wright-desktop-resume-evidence-20261019/raw-correction-recovery-regression/`.
