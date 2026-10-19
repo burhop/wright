@@ -394,3 +394,165 @@ async def test_uncertain_refresh_is_consumed_and_restart_requires_new_consent():
     assert all(
         b"grant_type=refresh_token" not in r.content for r in wire.requests[first:]
     )
+
+
+@pytest.mark.asyncio
+async def test_device_storage_preserves_legacy_authentication_and_other_credentials(
+    monkeypatch,
+):
+    from tool_registry.runners import sse
+
+    saved = {
+        "MCP_OAUTH_CLIENT": "retained-old-client",
+        "MCP_OAUTH_TOKEN": "retained-old-token",
+        "OTHER_KEY": "retained-other-value",
+    }
+    original = dict(saved)
+    monkeypatch.setattr(sse, "read_secrets", lambda server_id: dict(saved))
+    monkeypatch.setattr(
+        sse,
+        "write_secrets",
+        lambda server_id, values: (saved.clear(), saved.update(values)),
+    )
+    store = sse._WrightOAuthTokenStorage("provider", device_code=True)
+    token = OAuthToken(access_token=uuid4().hex, token_type="Bearer", expires_in=60)
+    await store.set_tokens(token)
+    await store.set_client_info(
+        OAuthClientInformationFull(
+            client_id="device-client",
+            redirect_uris=None,
+            grant_types=[DEVICE_GRANT],
+            issuer=AUTH,
+            token_endpoint_auth_method="none",
+        )
+    )
+    assert await store.get_tokens() == token
+    assert (await store.get_client_info()).client_id == "device-client"
+    assert all(saved[k] == v for k, v in original.items())
+    store.clear_oauth_state()
+    assert saved == original
+
+
+@pytest.mark.asyncio
+async def test_remote_runner_allows_bounded_auth_rounds_without_following_redirects(
+    monkeypatch,
+):
+    import json
+    from tool_registry.runners import sse
+    from mcp.types import LATEST_PROTOCOL_VERSION
+
+    wire = Wire()
+    wire.polls = ["authorization_pending"] * 25
+    # Permit the full declared lifetime; fake time keeps this deterministic.
+    old_response = wire.respond
+
+    def respond(request):
+        if str(request.url) == ROOT + "/mcp" and "authorization" in request.headers:
+            payload = json.loads(request.content)
+            if payload["method"] == "initialize":
+                return httpx.Response(
+                    200,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": payload["id"],
+                        "result": {
+                            "protocolVersion": LATEST_PROTOCOL_VERSION,
+                            "serverInfo": {"name": "fixture", "version": "1"},
+                            "capabilities": {},
+                        },
+                    },
+                )
+            if payload["method"] == "notifications/initialized":
+                return httpx.Response(202)
+            raise AssertionError(payload["method"])
+        response = old_response(request)
+        if str(request.url) == AUTH + "/device":
+            body = response.json()
+            body["expires_in"] = 300
+            return httpx.Response(200, json=body)
+        return response
+
+    actual_client = httpx.AsyncClient
+    constructed = []
+
+    def client(**kwargs):
+        constructed.append(kwargs)
+        return actual_client(transport=httpx.MockTransport(respond), **kwargs)
+
+    actual_auth = DeviceCodeAuth
+    monkeypatch.setattr(sse.httpx, "AsyncClient", client)
+    monkeypatch.setattr(
+        sse,
+        "DeviceCodeAuth",
+        lambda *a, **kw: actual_auth(
+            *a, **kw, clock=lambda: wire.clock, sleep=wire.sleep
+        ),
+    )
+    monkeypatch.setattr(sse, "_WrightOAuthTokenStorage", lambda *a, **kw: wire.store)
+
+    async def scoped_present(server_id, value):
+        await wire.present(value)
+
+    runner = sse.SseRunner(ROOT + "/mcp", device_authorization_presenter=scoped_present)
+    try:
+        await runner.start()
+        assert runner.is_running()
+        assert len(wire.sleeps) == 26
+        assert constructed[0]["follow_redirects"] is False
+
+        # An actual redirect is still refused, independently of auth rounds.
+        def redirect(request):
+            return httpx.Response(
+                302, headers={"location": "https://other.example/steal"}
+            )
+
+        async with actual_client(
+            transport=httpx.MockTransport(redirect),
+            follow_redirects=constructed[0]["follow_redirects"],
+            max_redirects=constructed[0]["max_redirects"],
+        ) as http:
+            assert (await http.get(ROOT + "/mcp")).status_code == 302
+    finally:
+        await runner.stop()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "url", ["https://public.example/mcp", "http://127.0.0.1:8123/mcp"]
+)
+async def test_public_mcp_needs_no_device_grant_or_credential_access(url):
+    wire = Wire()
+    requests = []
+
+    def public(request):
+        requests.append(request)
+        return httpx.Response(200, json={"result": {"protocolVersion": "2025-11-25"}})
+
+    async with httpx.AsyncClient(
+        transport=httpx.MockTransport(public),
+        auth=DeviceCodeAuth(url, wire.store, wire.present),
+    ) as client:
+        assert (
+            await client.post(url, json={"method": "initialize"})
+        ).status_code == 200
+    assert len(requests) == 1 and wire.presentations == [] and wire.store.writes == []
+    assert "authorization" not in requests[0].headers
+
+
+@pytest.mark.asyncio
+async def test_protected_http_resource_cannot_receive_oauth_credentials():
+    wire = Wire()
+    requests = []
+
+    def protected(request):
+        requests.append(request)
+        return httpx.Response(401)
+
+    url = "http://127.0.0.1:8123/mcp"
+    with pytest.raises(RuntimeError, match="HTTPS"):
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(protected),
+            auth=DeviceCodeAuth(url, wire.store, wire.present),
+        ) as client:
+            await client.get(url)
+    assert len(requests) == 1 and wire.store.writes == [] and wire.presentations == []

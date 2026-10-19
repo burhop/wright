@@ -300,3 +300,51 @@ it("rejects a device completion URL on another origin", async () => {
   expect(screen.queryByText("TEST-1234")).toBeNull();
   expect(openLink).not.toHaveBeenCalled();
 });
+
+it("allows a new explicit connection attempt only after reading a recorded terminal failure", async () => {
+  const call = vi.fn(async (name: string) =>
+    name === "wright_connection_signin"
+      ? {
+          content: [],
+          structuredContent: {
+            ...scope,
+            presentation: "unavailable",
+            provider_status: {
+              installed: true,
+              active: false,
+              enabled_here: false,
+              recorded_validation: {
+                state: "failed",
+                evidence_id: "failed-check",
+              },
+            },
+          },
+        }
+      : {
+          content: [],
+          structuredContent: { ...scope, validation: { state: "failed" } },
+        },
+  );
+  render(<NativeSignin scope={scope} call={call} providerName="SteveCAD" />);
+  fireEvent.click(screen.getByRole("button", { name: "Connect SteveCAD" }));
+  await screen.findByText(/Protocol validation: failed/);
+  expect(
+    screen.getByRole("button", { name: "Connect SteveCAD" }),
+  ).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Check sign-in status" }));
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Connect SteveCAD" }),
+    ).toBeEnabled(),
+  );
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_connection_validate"),
+  ).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Connect SteveCAD" }));
+  await waitFor(() =>
+    expect(
+      call.mock.calls.filter(([name]) => name === "wright_connection_validate"),
+    ).toHaveLength(2),
+  );
+  expect(document.body.textContent).not.toContain("forwarding");
+});

@@ -30,8 +30,12 @@ OAuthPresentation = Callable[[str, str | None, str | None], Awaitable[None]]
 class _WrightOAuthTokenStorage:
     """Persist MCP OAuth state in Wright's server-scoped secret bundle."""
 
-    def __init__(self, server_id: str) -> None:
+    def __init__(self, server_id: str, *, device_code: bool = False) -> None:
         self.server_id = server_id
+        self.token_key = "MCP_OAUTH_DEVICE_TOKEN" if device_code else "MCP_OAUTH_TOKEN"
+        self.client_key = (
+            "MCP_OAUTH_DEVICE_CLIENT" if device_code else "MCP_OAUTH_CLIENT"
+        )
 
     def _read_model(self, key: str, model_type):
         raw = read_secrets(self.server_id).get(key)
@@ -51,7 +55,7 @@ class _WrightOAuthTokenStorage:
     def clear_oauth_state(self) -> None:
         credentials = read_secrets(self.server_id)
         changed = False
-        for key in ("MCP_OAUTH_TOKEN", "MCP_OAUTH_CLIENT"):
+        for key in (self.token_key, self.client_key):
             if key in credentials:
                 del credentials[key]
                 changed = True
@@ -59,16 +63,16 @@ class _WrightOAuthTokenStorage:
             write_secrets(self.server_id, credentials)
 
     async def get_tokens(self) -> OAuthToken | None:
-        return self._read_model("MCP_OAUTH_TOKEN", OAuthToken)
+        return self._read_model(self.token_key, OAuthToken)
 
     async def set_tokens(self, tokens: OAuthToken) -> None:
-        self._write_model("MCP_OAUTH_TOKEN", tokens)
+        self._write_model(self.token_key, tokens)
 
     async def get_client_info(self) -> OAuthClientInformationFull | None:
-        return self._read_model("MCP_OAUTH_CLIENT", OAuthClientInformationFull)
+        return self._read_model(self.client_key, OAuthClientInformationFull)
 
     async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
-        self._write_model("MCP_OAUTH_CLIENT", client_info)
+        self._write_model(self.client_key, client_info)
 
 
 class _OAuthCallbackServer:
@@ -330,7 +334,7 @@ class SseRunner(BaseRunner):
                 )
                 auth = DeviceCodeAuth(
                     self.sse_url,
-                    _WrightOAuthTokenStorage(self.server_id),
+                    _WrightOAuthTokenStorage(self.server_id, device_code=True),
                     presenter,
                     timeout=_OAUTH_CALLBACK_TIMEOUT,
                 )
@@ -373,6 +377,13 @@ class SseRunner(BaseRunner):
                 timeout=self.operation_timeout,
                 headers=headers,
                 follow_redirects=self.device_authorization_presenter is None,
+                # HTTPX counts auth-generator requests in its redirect history,
+                # even with redirects disabled. Allow the bounded five-minute
+                # device flow (minimum one-second interval) plus discovery.
+                # This does not enable following any HTTP redirect.
+                max_redirects=int(_OAUTH_CALLBACK_TIMEOUT) + 16
+                if self.device_authorization_presenter
+                else 20,
                 auth=auth,
             )
 
@@ -428,6 +439,11 @@ class SseRunner(BaseRunner):
                         logger.info("Detected Streamable HTTP support")
             except Exception as e:
                 if self.device_authorization_presenter is not None:
+                    logger.warning(
+                        "Remote device sign-in failed (%s): %s",
+                        type(e).__name__,
+                        redact_text(e),
+                    )
                     await self._stop_locked()
                     raise RuntimeError(
                         "Remote device sign-in or MCP initialization failed"
@@ -435,6 +451,15 @@ class SseRunner(BaseRunner):
                 logger.debug(
                     "Streamable HTTP probe failed; falling back to legacy SSE: %s",
                     redact_text(e),
+                )
+
+            if (
+                self.device_authorization_presenter is not None
+                and not self._is_streamable_http
+            ):
+                await self._stop_locked()
+                raise RuntimeError(
+                    "Device sign-in currently requires a Streamable HTTP MCP endpoint"
                 )
 
             # Start reading task

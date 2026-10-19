@@ -369,6 +369,23 @@ export function NativeConnections({
         Engineering tools for {workspace.workspace_name}. Availability here does
         not approve workflow actions.
       </p>
+      {plan?.state === "completed" && (
+        <NativeSignin
+          key={plan.plan_id}
+          scope={{
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            plan_id: plan.plan_id,
+            plan_digest: plan.plan_digest,
+          }}
+          providerName={
+            items.find((item) => item.capability_id === plan.capability_id)
+              ?.name
+          }
+          call={call}
+          openLink={openLink}
+        />
+      )}
       <NativeCustomConnection
         workspace={workspace}
         call={call}
@@ -529,19 +546,6 @@ export function NativeConnections({
             </button>
           )}
         </section>
-      )}
-      {plan?.state === "completed" && (
-        <NativeSignin
-          key={plan.plan_id}
-          scope={{
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            plan_id: plan.plan_id,
-            plan_digest: plan.plan_digest,
-          }}
-          call={call}
-          openLink={openLink}
-        />
       )}
       {loading ? (
         <p role="status">Loading connections…</p>

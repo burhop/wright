@@ -11,6 +11,7 @@ export function NativeSignin({
   scope,
   call,
   openLink,
+  providerName,
 }: {
   readonly scope: {
     workspace_id: string;
@@ -20,6 +21,7 @@ export function NativeSignin({
   };
   readonly call: SigninCall;
   readonly openLink?: (url: string) => Promise<void>;
+  readonly providerName?: string;
 }) {
   const [pending, setPending] = useState(false);
   const [validated, setValidated] = useState(false);
@@ -95,6 +97,14 @@ export function NativeSignin({
               (provider.recorded_validation?.state ?? "not recorded") +
               ". Workspace enablement requires current passed validation.",
           );
+          if (
+            ["unavailable", "expired"].includes(String(data.presentation)) &&
+            provider.recorded_validation?.state === "failed" &&
+            !provider.active
+          ) {
+            started.current = false;
+            setAttempted(false);
+          }
         }
       }
       const privateData = result._meta?.["wright/signin"] as
@@ -264,14 +274,19 @@ export function NativeSignin({
   }
   return (
     <section aria-label="Provider sign-in">
-      <h3>Sign in and check provider</h3>
+      <h3>
+        {providerName
+          ? `Connect ${providerName}`
+          : "Sign in and check provider"}
+      </h3>
       <p>
-        This checks the installed provider without enabling workflow tools. A
-        Windows browser needs a working route to the GB10 callback; remote
-        callback forwarding is not yet qualified.
+        Sign in to your provider and check the connection. Workspace tool access
+        is a separate step.
       </p>
       <button disabled={attempted} onClick={() => void start()}>
-        Sign in and validate provider
+        {providerName
+          ? `Connect ${providerName}`
+          : "Sign in and validate provider"}
       </button>
       <button
         disabled={enablePending}

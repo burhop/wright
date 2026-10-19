@@ -75,7 +75,7 @@ class DeviceCodeAuth(httpx.Auth):
         clock: Callable[[], float] = time.monotonic,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
     ):
-        self.server_url = _https(server_url)
+        self.server_url = server_url
         self.storage, self.presenter = storage, presenter
         self.timeout, self.clock, self.sleep = timeout, clock, sleep
         self.lock = asyncio.Lock()
@@ -86,9 +86,8 @@ class DeviceCodeAuth(httpx.Auth):
         self.scope: str | None = None
         self.resource: str | None = None
 
-    async def _discover(self):
+    async def _discover(self, challenge: httpx.Response):
         # Discover without sending a credential to a possibly changed issuer.
-        challenge = yield httpx.Request("GET", self.server_url)
         prm = None
         for url in build_protected_resource_metadata_discovery_urls(
             extract_resource_metadata_from_www_auth(challenge), self.server_url
@@ -300,7 +299,13 @@ class DeviceCodeAuth(httpx.Auth):
             raise RuntimeError("Device authentication is bound to one MCP endpoint")
         async with self.lock:
             if self.metadata is None:
-                flow = self._discover()
+                # As in the SDK's authorization-code client, public MCPs need
+                # no OAuth. Only a protected-resource challenge starts sign-in.
+                response = yield request
+                if response.status_code != 401:
+                    return
+                _https(self.server_url)
+                flow = self._discover(response)
                 try:
                     outgoing = await anext(flow)
                     while True:

@@ -77,3 +77,42 @@ This is not yet a passing full-gate claim. Current WebKit launch still fails on
 GB10 for missing `libgstcodecparsers-1.0.so.0`; its exact log is retained. The
 repository permits documenting that local limitation and separately qualifying
 Chromium; supported-host CI must still exercise its normal browser matrix.
+
+The real native panel/MCP/catalog/setup journey now displays SteveCAD's actual
+device challenge, with no callback instructions and usable480px layout. Two
+masked screenshots are retained under `device-browser-1792412537040/`. They are
+GB10 Chromium observations, not Windows captures or completed account login.
+The initial browser observer inferred expiry from a disappearing button; that
+claim is withdrawn in `device-browser-observer-correction.json`. Same-attempt
+owner read confirms failed validation and cleared presentation, but the early
+failure cause remains under diagnosis. A separate actual first token poll returns
+the standard HTTP400 `authorization_pending`; no personal sign-in was attempted.
+
+## Diagnosed integration failure and correction
+
+The second browser proof deliberately waits for the actual validation reply and
+fails its timing assertion after91.276seconds. Exact API diagnostics identify
+HTTPX `TooManyRedirects`. HTTPX counts requests yielded by an authentication
+handler toward its redirect-history bound, even with redirect following disabled;
+the original20-round budget exhausted during valid `authorization_pending` polling.
+The client now allows the declared five-minute flow at the minimum one-second
+interval plus16 discovery rounds. `follow_redirects=False` remains enforced;
+a regression completes26 polling rounds and separately proves HTTP302 is not
+followed. The recorded browser failures remain evidence, not passing expiry tests.
+
+An explicitly selected device flow uses separate device client/token keys inside
+the same server-scoped secret bundle. Existing browser-flow credentials and other
+keys remain intact, including on selected-flow cleanup. Public unauthenticated
+MCPs still initialize without OAuth; only a401 starts device discovery, and
+protected HTTP endpoints cannot receive OAuth credentials. Unsupported device
+providers and non-Streamable-HTTP device endpoints remain explicit limitations.
+The default local-browser flow is unchanged.
+
+Current focused protocol coverage:21 device tests, including streamed responses,
+request-budget regression, denied/expired challenges, identity, refresh loss,
+route isolation and unauthenticated providers. Current connection/sign-in UI:
+27 tests. The sign-in controls now precede old setup details and display the
+provider name; the legacy SSH/callback instruction paragraph is removed. Reading
+a recorded terminal failure permits a new explicit Connect click; uncertain
+acknowledgements are never retried automatically. Real positive five-minute
+polling/expiry, personal consent and Windows acceptance still require separate proof.
