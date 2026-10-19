@@ -48,6 +48,23 @@ def test_fast_gate_contains_the_frontend_ci_contract() -> None:
         assert command in gate
 
 
+def test_native_gates_check_portable_windows_path_security_before_long_checks() -> None:
+    command = (
+        '"$GATE_PYTHON" -m pytest '
+        "packages/workspace_service/tests/test_workspace_path.py -q"
+    )
+    for name in ("push", "merge"):
+        gate = _read(f"scripts/check-dev-{name}.sh")
+        assert command in gate
+        assert gate.index(command) < gate.index(
+            '"$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies'
+        )
+        assert f"check-dev-{name}.sh" in _read(f"scripts/check-dev-{name}.ps1")
+    runbook = _read(RUNBOOK)
+    assert "eight-writer upload test" in runbook
+    assert "require native Windows CI" in runbook
+
+
 def test_fast_gate_includes_isolated_live_mcp_onboarding() -> None:
     gate = _read("scripts/check-dev-push.sh")
     command = gate[gate.index("# Source-review controls must also retain") :]

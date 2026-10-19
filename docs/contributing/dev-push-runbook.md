@@ -150,6 +150,16 @@ qualification alone does not qualify the final engineering bundle.
 
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
+Both native gates run the workspace path-security contracts before long checks.
+The portable cases check equivalent Windows extended DOS/UNC spellings, exact
+relative subjects, metadata denial and reparse rejection on every host. These
+model cases are distinct from the Windows-only controlled parent-creation race
+and the unchanged eight-writer upload test, which require native Windows CI.
+Concurrent parent creation can make Python retain an extended path prefix for
+a missing file. Compatibility must preserve confinement and exclusive complete
+file publication; serializing the test, weakening link checks or blindly rerunning
+CI does not qualify the fix. Actual Windows desktop panel/file-delivery acceptance
+is also separate from the native backend suite.
 Backend Python CI also installs the pinned Node toolchain and runs `npm ci`, then
 checks `BuildToolchain.describe()` before tests: workspace tests exercise the real
 fixed interface compiler. `validate_scoped_workflows` checks this preparation in

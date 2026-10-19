@@ -87,6 +87,8 @@ run git diff --check
 run uv sync --all-packages --all-groups --reinstall-package wright-engineering
 # Catch shared SDK downgrades before scanning the base image (PR159).
 run "$GATE_PYTHON" -m pytest tests/docker/test_mcp_bundle.py -q -k bundle_mcp_sdk_matches_runtime_lock
+# Exercise Windows namespace/reparse contracts on every host before long checks.
+run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
 run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
 run "$GATE_PYTHON" -m scripts.release.audit_node_dependencies
 run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host
