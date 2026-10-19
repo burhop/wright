@@ -293,3 +293,46 @@ it("an uncertain uninstall requires readback, never a second uninstall", async (
     screen.getByRole("button", { name: "Start for this workspace" }),
   ).toBeDisabled();
 });
+
+it("prepares an inert replacement draft without changing the active provider", async () => {
+  const replacement = {
+    name: "",
+    type: "stdio" as const,
+    command: "uvx",
+    arguments: ["example-mcp==1.0.0"],
+    url: "",
+    environmentFields: ["API_KEY"],
+    publicCandidates: { RUN_MODE: "read-only" },
+  };
+  const call = vi.fn().mockResolvedValueOnce(read()).mockResolvedValueOnce({
+    content: [],
+    structuredContent: {
+      ...scope,
+      control_digest: state.control_digest,
+      configuration: replacement,
+    },
+  });
+  const onReplacement = vi.fn();
+  render(
+    <NativeConnectionControls
+      workspace={workspace}
+      call={call}
+      capabilityId="provider"
+      serverId="registered"
+      onChanged={vi.fn()}
+      onReplacement={onReplacement}
+    />,
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Refresh provider state" }),
+  );
+  const prepare = await screen.findByRole("button", {
+    name: "Set up a replacement",
+  });
+  fireEvent.click(prepare);
+  await waitFor(() => expect(onReplacement).toHaveBeenCalledExactlyOnceWith(replacement));
+  expect(call.mock.calls).toEqual([
+    ["wright_connection_controls", scope],
+    ["wright_connection_replacement", {request: {...scope, control_digest: state.control_digest}}],
+  ]);
+});

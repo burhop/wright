@@ -6,6 +6,7 @@ export interface ImportedConnection {
   arguments: string[];
   url: string;
   environmentFields: string[];
+  headerFields?: string[];
   publicCandidates: Record<string, string>;
 }
 const secretName =
@@ -53,9 +54,30 @@ export function importConnectionConfiguration(
       throw Error("Unsupported configuration fields");
     const env = raw.env === undefined ? {} : object(raw.env);
     const headers = raw.headers === undefined ? {} : object(raw.headers);
-    // Static HTTP header authentication needs its own qualified runtime mapping.
-    if (Object.keys(headers).length)
-      throw Error("HTTP header imports are not qualified");
+    const headerFields = Object.keys(headers);
+    const reserved = new Set([
+      "host",
+      "content-length",
+      "transfer-encoding",
+      "connection",
+      "accept",
+      "content-type",
+      "mcp-session-id",
+      "mcp-protocol-version",
+      "proxy-authorization",
+      "cookie",
+    ]);
+    if (
+      headerFields.length > 32 ||
+      new Set(headerFields.map((key) => key.toLowerCase())).size !==
+        headerFields.length ||
+      headerFields.some(
+        (key) =>
+          !/^[!#$%&'*+.^_`|~0-9A-Za-z-]{1,128}$/.test(key) ||
+          reserved.has(key.toLowerCase()),
+      )
+    )
+      throw Error("Unsupported authentication header names");
     const fields = Object.keys(env);
     if (fields.length > 32 || fields.some((key) => !environmentName.test(key)))
       throw Error("Unsupported environment names");
@@ -82,8 +104,11 @@ export function importConnectionConfiguration(
         url: url.href,
         environmentFields: [],
         publicCandidates: {},
+        ...(headerFields.length ? { headerFields } : {}),
       };
     }
+    if (headerFields.length)
+      throw Error("HTTP headers require a remote HTTPS MCP");
     if (raw.type !== undefined && raw.type !== "stdio")
       throw Error("Unsupported transport");
     if (

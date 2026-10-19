@@ -90,3 +90,29 @@ def test_public_environment_cannot_declare_credential_names_or_undeclared_fields
         }
         assert "launch_env" not in draft
         assert "synthetic-private" not in str(draft)
+
+
+def test_private_http_header_definitions_reach_plan_without_values():
+    import json
+
+    draft = preview_configuration(
+        {
+            "name": "Remote",
+            "type": "http",
+            "url": "https://provider.example/mcp",
+            "headers": {"Authorization": "Bearer placeholder-private"},
+        },
+        now=NOW,
+    )["drafts"][0]
+    assert not draft["errors"]
+    assert draft["env_vars"][0]["target"] == "http_header"
+    assert (
+        draft["env_vars"][0]["name"] == "Authorization"
+        and draft["env_vars"][0]["secret"]
+    )
+    assert "placeholder-private" not in json.dumps(draft)
+    for headers in ({"Host": "value"}, {"Authorization": "a", "authorization": "b"}):
+        invalid = preview_configuration(
+            {"url": "https://provider.example/mcp", "headers": headers}, now=NOW
+        )["drafts"][0]
+        assert invalid["errors"]

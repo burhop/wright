@@ -193,8 +193,19 @@ class DatabaseLifecycleAdapter:
         if server.type == "sse":
             if not server.command or not isinstance(server.command, str):
                 raise ValueError("Valid SSE URL string is required for sse server.")
+            header_definitions = [
+                item
+                for item in (server.env_vars or [])
+                if isinstance(item, EnvVarDefinition) and item.target == "http_header"
+            ]
             return SseRunner(
                 server.command,
+                static_headers=self._environment(
+                    server_id, header_definitions, target="http_header"
+                )
+                if header_definitions
+                else None,
+                oauth_enabled=not bool(header_definitions),
                 ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
                 server_id=server_id,
                 operation_timeout=self.operation_timeout,
@@ -242,7 +253,9 @@ class DatabaseLifecycleAdapter:
             },
         )
 
-    def _environment(self, server_id: str, definitions: Any) -> dict[str, str]:
+    def _environment(
+        self, server_id: str, definitions: Any, *, target: str | None = None
+    ) -> dict[str, str]:
         if isinstance(definitions, dict):
             return {str(key): str(value) for key, value in definitions.items()}
         if not isinstance(definitions, list):
@@ -250,7 +263,7 @@ class DatabaseLifecycleAdapter:
         saved = read_secrets(server_id)
         result: dict[str, str] = {}
         for definition in definitions:
-            if isinstance(definition, EnvVarDefinition):
+            if isinstance(definition, EnvVarDefinition) and definition.target == target:
                 value = value_for_credential(saved, definition.name)
                 if value:
                     result[definition.name] = value

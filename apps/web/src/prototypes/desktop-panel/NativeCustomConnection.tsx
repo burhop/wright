@@ -27,12 +27,14 @@ export function NativeCustomConnection({
   disabled,
   onBusy,
   onPlan,
+  initialConfiguration,
 }: {
   workspace: DesktopWorkspace;
   call: ConnectionsCall;
   disabled: boolean;
   onBusy: (busy: boolean) => void;
   onPlan: (plan: SetupPlan) => void;
+  initialConfiguration?: ImportedConnection;
 }) {
   const inFlight = useRef(false);
   const mounted = useRef(true);
@@ -42,13 +44,27 @@ export function NativeCustomConnection({
       mounted.current = false;
     };
   }, []);
-  const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
-  const [transport, setTransport] = useState("https");
-  const [command, setCommand] = useState("");
-  const [argumentsText, setArgumentsText] = useState("[]");
+  const [name, setName] = useState(initialConfiguration?.name ?? "");
+  const [url, setUrl] = useState(initialConfiguration?.url ?? "");
+  const [transport, setTransport] = useState<string>(
+    initialConfiguration?.type ?? "https",
+  );
+  const [command, setCommand] = useState(initialConfiguration?.command ?? "");
+  const [argumentsText, setArgumentsText] = useState(
+    JSON.stringify(initialConfiguration?.arguments ?? []),
+  );
   const [imports, setImports] = useState<ImportedConnection[]>([]);
-  const [imported, setImported] = useState<ImportedConnection>();
+  const [imported, setImported] = useState<ImportedConnection | undefined>(
+    initialConfiguration,
+  );
+  const [expanded, setExpanded] = useState(!!initialConfiguration);
+  const nameField = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (initialConfiguration) {
+      nameField.current?.focus();
+      nameField.current?.scrollIntoView?.({ block: "center" });
+    }
+  }, [initialConfiguration]);
   const [publicFields, setPublicFields] = useState<Record<string, boolean>>({});
   function selectImport(candidate: ImportedConnection) {
     setImported(candidate);
@@ -77,7 +93,7 @@ export function NativeCustomConnection({
       selectImport(candidates[0]);
     } catch {
       setError(
-        "Configuration was not imported or sent. Use supported JSON with literal commands or public HTTPS endpoints. HTTP headers, extra fields and credential arguments are not qualified here.",
+        "Configuration was not imported or sent. Use supported JSON with literal commands or public HTTPS endpoints. Reserved headers, extra fields and credential arguments are not supported here.",
       );
     }
   }
@@ -141,7 +157,15 @@ export function NativeCustomConnection({
       };
       const result =
         transport === "https"
-          ? await call("wright_connection_preview", { ...scope, url })
+          ? imported?.headerFields?.length
+            ? await call("wright_connection_configuration_preview", {
+                request: {
+                  ...scope,
+                  url,
+                  header_fields: imported.headerFields,
+                },
+              })
+            : await call("wright_connection_preview", { ...scope, url })
           : await call(
               imported?.environmentFields.length
                 ? "wright_connection_configuration_preview"
@@ -203,6 +227,14 @@ export function NativeCustomConnection({
             JSON.stringify(draft.arguments) !== JSON.stringify(arguments_)
       )
         throw Error();
+      if (
+        transport === "https" &&
+        imported?.headerFields?.length &&
+        JSON.stringify(
+          (draft.env_vars ?? []).map((field) => field.name).sort(),
+        ) !== JSON.stringify([...imported.headerFields].sort())
+      )
+        throw Error("Unconfirmed header field configuration");
       if (transport === "stdio" && imported?.environmentFields.length) {
         const expected = Object.fromEntries(
           Object.entries(imported.publicCandidates).filter(
@@ -280,8 +312,19 @@ export function NativeCustomConnection({
     }
   }
   return (
-    <details>
+    <details
+      open={expanded}
+      onToggle={(event) => setExpanded(event.currentTarget.open)}
+    >
       <summary>Add a custom MCP</summary>
+      {initialConfiguration && (
+        <p>
+          Choose a new connection name. For a version change, edit the pinned
+          command/arguments or endpoint. Enter new credentials after setup; old
+          providers, credentials, permissions and runs stay unchanged. Rebind an
+          accepted workflow only through a new reviewed source revision.
+        </p>
+      )}
       <p>
         Add a public HTTPS endpoint or a local command. Commands run on the
         Wright host (GB10 here), not on the Windows desktop. Do not enter
@@ -316,6 +359,13 @@ export function NativeCustomConnection({
             ))}
           </select>
         </label>
+      )}
+      {!!imported?.headerFields?.length && (
+        <p>
+          Private HTTP headers after setup: {imported.headerFields.join(", ")}.
+          Values were discarded. This selects static header authentication; no
+          OAuth fallback.
+        </p>
       )}
       {imported?.environmentFields.length ? (
         <div>
@@ -367,6 +417,7 @@ export function NativeCustomConnection({
         <label>
           Connection name
           <input
+            ref={nameField}
             value={name}
             maxLength={100}
             required

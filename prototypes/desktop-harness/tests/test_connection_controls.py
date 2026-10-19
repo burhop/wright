@@ -420,3 +420,59 @@ async def test_saved_provider_status_is_scoped_read_only_and_redacted(
     enable.assert_not_called()
     engine.start_server.assert_not_called()
     engine.stop_server.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_explicit_replacement_read_requires_admin_exact_scope_and_current_source(
+    controls,
+):
+    app, owner, repository, engine, gateway, sync, directory = controls
+    from api.security import require_admin
+
+    before = get_server(owner.db_path, "playwright-mcp")
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        state = (
+            await client.get("/api/desktop/connection-controls", params=scope)
+        ).json()["state"]
+        request = {**scope, "control_digest": state["control_digest"]}
+        # Legacy private configuration has no public projection, even on intent.
+        denied = await client.post("/api/desktop/connection-replacement", json=request)
+        assert denied.status_code == 409 and "PRIVATE" not in denied.text
+        update_server(
+            owner.db_path,
+            "playwright-mcp",
+            {
+                "deployment_mode": "user-reviewed-import",
+                "command": ["uvx", "example-mcp==1.0.0"],
+                "launch_env": {"RUN_MODE": "read-only"},
+            },
+        )
+        stale = await client.post("/api/desktop/connection-replacement", json=request)
+        assert stale.status_code == 409
+        state = (
+            await client.get("/api/desktop/connection-controls", params=scope)
+        ).json()["state"]
+        assert "replacement" not in state and "command" not in state
+        request["control_digest"] = state["control_digest"]
+        current = get_server(owner.db_path, "playwright-mcp").model_dump_json()
+        draft = await client.post("/api/desktop/connection-replacement", json=request)
+        assert draft.status_code == 200
+        assert draft.json()["configuration"]["arguments"] == ["example-mcp==1.0.0"]
+        assert draft.json()["configuration"]["name"] == ""
+        assert get_server(owner.db_path, "playwright-mcp").model_dump_json() == current
+        cross_scope = await client.post(
+            "/api/desktop/connection-replacement",
+            json={**request, "session_id": "wrong"},
+        )
+        assert cross_scope.status_code == 403
+        app.dependency_overrides.pop(require_admin)
+        forbidden = await client.post(
+            "/api/desktop/connection-replacement", json=request
+        )
+        assert forbidden.status_code == 403
+    engine.start_server.assert_not_awaited()
+    engine.stop_server.assert_not_awaited()
+    gateway.assert_not_called()
+    assert before.command == ["fixture-command", "PRIVATE_CONFIGURATION"]

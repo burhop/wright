@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
+import type { ImportedConnection } from "./connection-config-import";
 import type { ConnectionsCall } from "./NativeConnections";
 
 export interface ControlState {
@@ -38,12 +39,14 @@ export function NativeConnectionControls({
   capabilityId,
   serverId,
   onChanged,
+  onReplacement,
 }: {
   call: ConnectionsCall;
   workspace: DesktopWorkspace;
   capabilityId: string;
   serverId: string;
   onChanged: (state: ControlState) => void;
+  onReplacement?: (configuration: ImportedConnection) => void;
 }) {
   const [state, setState] = useState<ControlState>();
   const [busy, setBusy] = useState(false);
@@ -110,6 +113,41 @@ export function NativeConnectionControls({
       if (alive.current)
         setMessage(
           "Provider state could not be read. Refresh before another action.",
+        );
+    } finally {
+      flight.current = false;
+      if (alive.current) setBusy(false);
+    }
+  }
+  async function replacement() {
+    if (flight.current || uncertain || !state || !onReplacement) return;
+    flight.current = true;
+    setBusy(true);
+    try {
+      const data = payload(
+        await call("wright_connection_replacement", {
+          request: { ...scope, control_digest: state.control_digest },
+        }),
+      );
+      if (!alive.current) return;
+      if (
+        data?.workspace_id !== scope.workspace_id ||
+        data.session_id !== scope.session_id ||
+        data.capability_id !== scope.capability_id ||
+        data.server_id !== scope.server_id ||
+        data.control_digest !== state.control_digest ||
+        !data.configuration ||
+        data.configuration.name !== ""
+      )
+        throw Error("Unconfirmed template");
+      onReplacement(data.configuration as ImportedConnection);
+      setMessage(
+        "New configuration draft prepared; this provider was not changed.",
+      );
+    } catch {
+      if (alive.current)
+        setMessage(
+          "This source could not be safely prefilled. Review catalog setup or import a sanitized custom configuration; no provider changed.",
         );
     } finally {
       flight.current = false;
@@ -201,6 +239,21 @@ export function NativeConnectionControls({
                 : "Bound to another workspace; stop explicitly before starting here."
               : "Workspace binding is not reported."}
           </p>
+          {onReplacement && (
+            <>
+              <button
+                disabled={busy || uncertain}
+                onClick={() => void replacement()}
+              >
+                Set up a replacement
+              </button>
+              <p>
+                Use a separately reviewed connection for a new version or new
+                credentials; existing bindings and runs keep this provider. No
+                in-place or global upgrade is performed.
+              </p>
+            </>
+          )}
           <button
             disabled={busy || uncertain || !state.installed || state.active}
             onClick={() => void change("start")}

@@ -29,10 +29,17 @@ from core.process_interactions import Reason
 import httpx
 from native_source_tools import WrightRequestRejected, register_native_source_tools
 from desktop_backend import (
-    FileUploadRequest, ConnectionControlRequest, LocalConnectionPreviewRequest,
-    RecordedRunRequest, ConfiguredLocalConnectionPreviewRequest,
-    EditorDraftReadRequest, EditorDraftSaveRequest,
-    WorkspaceSettingsReadRequest, WorkspaceSettingsSaveRequest,
+    FileUploadRequest,
+    ConnectionControlRequest,
+    ConnectionTemplateRequest,
+    LocalConnectionPreviewRequest,
+    RecordedRunRequest,
+    ConfiguredLocalConnectionPreviewRequest,
+    ConfiguredRemoteConnectionPreviewRequest,
+    EditorDraftReadRequest,
+    EditorDraftSaveRequest,
+    WorkspaceSettingsReadRequest,
+    WorkspaceSettingsSaveRequest,
 )
 from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult, TextContent, ImageContent, ToolAnnotations
@@ -553,6 +560,16 @@ def server(client, *, native_editor=False, native_working_view=False):
             }
         return {"ok": True, "document": document}
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_connection_replacement(
+        request: ConnectionTemplateRequest,
+    ) -> dict[str, Any]:
+        """Read one exact public import template on operator intent; never copies keys or changes the provider."""
+        await client.scope(request.workspace_id, request.session_id)
+        return await client.call(
+            "POST", "/api/desktop/connection-replacement", json=request.model_dump()
+        )
+
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
     async def wright_connection_plan(
         workspace_id: str,
@@ -602,8 +619,11 @@ def server(client, *, native_editor=False, native_working_view=False):
         )
 
     @mcp.tool(annotations=write, meta={"ui": {"visibility": ["app"]}})
-    async def wright_connection_configuration_preview(request: ConfiguredLocalConnectionPreviewRequest) -> dict[str, Any]:
-        """Preview declared environment names and explicitly public settings; accepts no private environment values."""
+    async def wright_connection_configuration_preview(
+        request: ConfiguredLocalConnectionPreviewRequest
+        | ConfiguredRemoteConnectionPreviewRequest,
+    ) -> dict[str, Any]:
+        """Preview declared environment/header names and explicitly public settings; accepts no private values."""
         await client.scope(request.workspace_id, request.session_id)
         return await client.call("POST", "/api/desktop/connection-imports/preview", json=request.model_dump())
 
@@ -1069,7 +1089,6 @@ def server(client, *, native_editor=False, native_working_view=False):
             "POST", "/api/desktop/editor-drafts/read", json=request.model_dump()
         )
 
-
     @mcp.tool(
         annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True,
                                     idempotentHint=False, openWorldHint=False),
@@ -1100,7 +1119,6 @@ def server(client, *, native_editor=False, native_working_view=False):
                     ),
                 },
             }
-
 
     @mcp.tool(annotations=read)
     async def wright_reasoning_pending(workspace_id: str, session_id: str) -> dict:

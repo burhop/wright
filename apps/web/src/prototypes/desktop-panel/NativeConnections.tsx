@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
 import { NativeCustomConnection } from "./NativeCustomConnection";
+import type { ImportedConnection } from "./connection-config-import";
 import { NativeCredentials } from "./NativeCredentials";
 import { NativeSignin } from "./NativeSignin";
 import { NativeConnectionControls } from "./NativeConnectionControls";
 
 export type ConnectionsCall = (
   name:
+    | "wright_connection_replacement"
     | "wright_connection_configuration_preview"
     | "wright_connection_credentials"
     | "wright_connection_credentials_form"
@@ -165,6 +167,11 @@ export function NativeConnections({
     }
   }
   const [plan, setPlan] = useState<SetupPlan>();
+  const [replacement, setReplacement] = useState<{
+    sequence: number;
+    configuration: ImportedConnection;
+  }>();
+  const replacementSequence = useRef(0);
   const planView = useRef<HTMLElement>(null);
   const signinView = useRef<HTMLElement>(null);
   const savedView = useRef<HTMLElement>(null);
@@ -410,6 +417,8 @@ export function NativeConnections({
         />
       )}
       <NativeCustomConnection
+        key={replacement?.sequence ?? "custom"}
+        initialConfiguration={replacement?.configuration}
         workspace={workspace}
         call={call}
         disabled={planning || acting || uncertain}
@@ -658,6 +667,14 @@ export function NativeConnections({
                     workspace={workspace}
                     capabilityId={item.capability_id}
                     serverId={item.server_id}
+                    onReplacement={(configuration) => {
+                      setReplacement({
+                        sequence: ++replacementSequence.current,
+                        configuration,
+                      });
+                      setPlan(undefined);
+                      setUncertain(false);
+                    }}
                     onChanged={(state) =>
                       setItems((current) =>
                         current.map((connection) =>

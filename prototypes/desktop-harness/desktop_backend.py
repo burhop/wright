@@ -34,6 +34,7 @@ from api.services.mcp_services import (
 from api.security import require_admin
 from desktop_oauth import DesktopOAuthPresentation
 from desktop_credential_form import DesktopCredentialForms, CredentialFormError
+from desktop_connection_template import replacement_template
 from workspace_service.use_cases.context import WorkspaceConfigurationChanges
 
 
@@ -61,6 +62,7 @@ class WorkspaceSettingsReadRequest(BaseModel):
 class WorkspaceSettingsSaveRequest(WorkspaceSettingsReadRequest):
     expected_revision: Digest
     changes: WorkspaceConfigurationChanges
+
 
 class FileUploadRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -172,6 +174,19 @@ class ConfiguredLocalConnectionPreviewRequest(LocalConnectionPreviewRequest):
         return self
 
 
+class ConfiguredRemoteConnectionPreviewRequest(RemoteConnectionPreviewRequest):
+    header_fields: list[str] = Field(min_length=1, max_length=32)
+
+    @model_validator(mode="after")
+    def header_definitions(self):
+        from tool_registry.models import validate_mcp_header_name
+
+        names = [validate_mcp_header_name(key).lower() for key in self.header_fields]
+        if len(set(names)) != len(names):
+            raise ValueError("Authentication header names must be distinct")
+        return self
+
+
 class ImportedConnectionPlanRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     workspace_id: str
@@ -202,6 +217,10 @@ class DisableConnectionRequest(BaseModel):
     server_id: str = Field(min_length=1, max_length=256)
 
 
+class ConnectionTemplateRequest(DisableConnectionRequest):
+    control_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
 class ConnectionControlRequest(DisableConnectionRequest):
     control_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
     shared_scope: Literal["wright-host"]
@@ -217,7 +236,9 @@ class ConnectionControlRequest(DisableConnectionRequest):
         return self
 
 
-def connection_control_state(service, capability_id, server_id, *, repository):
+def connection_control_state(
+    service, capability_id, server_id, *, repository, include_replacement=False
+):
     """Redacted operator view over existing registry configuration and tool owners."""
     from tool_registry.db import get_server, get_tools
     from tool_registry.gateway_adapters import _server_authority_revision
@@ -272,7 +293,13 @@ def connection_control_state(service, capability_id, server_id, *, repository):
             "tools": subjects,
         }
     )
+    # Projection uses the exact same row as the observed control digest. It is
+    # an inert new draft, never an upgrade or transfer of old permission.
+    if include_replacement:
+        state["replacement"] = replacement_template(server)
     return state
+
+
 class DesktopBackend:
     def __init__(
         self,
@@ -353,8 +380,11 @@ class DesktopBackend:
             runtime["files"][name] = hashlib.sha256(Path(file).read_bytes()).hexdigest()
         for name, file in (
             [("native_source_tools", "native_source_tools.py")]
-            + [("desktop_oauth", "desktop_oauth.py"),
-               ("desktop_credential_form", "desktop_credential_form.py")]
+            + [
+                ("desktop_oauth", "desktop_oauth.py"),
+                ("desktop_credential_form", "desktop_credential_form.py"),
+                ("desktop_connection_template", "desktop_connection_template.py"),
+            ]
             + ([("native_editor", "native-editor.html")] if native_editor else [])
             + (
                 [("native_process_tools", "native_process_tools.py")]
@@ -568,7 +598,10 @@ class DesktopBackend:
 
         @router.post("/connection-imports/preview")
         async def preview_remote_connection(
-            body: RemoteConnectionPreviewRequest | LocalConnectionPreviewRequest | ConfiguredLocalConnectionPreviewRequest,
+            body: RemoteConnectionPreviewRequest
+            | LocalConnectionPreviewRequest
+            | ConfiguredLocalConnectionPreviewRequest
+            | ConfiguredRemoteConnectionPreviewRequest,
             request: Request,
             service: McpApiService = Depends(get_mcp_api_service),
         ):
@@ -591,6 +624,8 @@ class DesktopBackend:
             if isinstance(body, ConfiguredLocalConnectionPreviewRequest):
                 configuration["env"] = {key: "" for key in body.environment_fields}
                 configuration["public_env"] = body.public_environment
+            if isinstance(body, ConfiguredRemoteConnectionPreviewRequest):
+                configuration["headers"] = {key: "" for key in body.header_fields}
             preview = await preview_mcp_import(
                 ImportPreviewRequest(configuration=json.dumps(configuration)),
                 request, service,
@@ -911,6 +946,45 @@ class DesktopBackend:
                 "state": state,
             }
 
+        @router.post("/connection-replacement", dependencies=[Depends(require_admin)])
+        async def prepare_connection_replacement(
+            body: ConnectionTemplateRequest,
+            service: McpApiService = Depends(get_mcp_api_service),
+        ):
+            self.workspace(body.workspace_id, body.session_id)
+            from api.services.mcp_services import (
+                McpServiceError,
+                mcp_service_http_exception,
+            )
+
+            try:
+                state = connection_control_state(
+                    service,
+                    body.capability_id,
+                    body.server_id,
+                    repository=self.service.repository,
+                    include_replacement=True,
+                )
+            except McpServiceError as error:
+                raise mcp_service_http_exception(error) from error
+            if state["control_digest"] != body.control_digest:
+                raise HTTPException(
+                    409, "Provider configuration changed; refresh controls"
+                )
+            template = state["replacement"]
+            if template is None:
+                raise HTTPException(
+                    409,
+                    "This source cannot be safely prefilled; review catalog setup or import a sanitized configuration",
+                )
+            return {
+                "workspace_id": body.workspace_id,
+                "session_id": body.session_id,
+                "capability_id": body.capability_id,
+                "server_id": body.server_id,
+                "control_digest": body.control_digest,
+                "configuration": template,
+            }
 
         @router.post("/connection-controls", dependencies=[Depends(require_admin)])
         async def change_connection_control(
@@ -992,6 +1066,7 @@ class DesktopBackend:
                 "tool_id": body.tool_id,
                 "state": state,
             }
+
         @router.get("/connection")
         async def connection():
             return {
@@ -1219,7 +1294,6 @@ class DesktopBackend:
                 ) from None
             return {"workspace_id": body.workspace_id, "session_id": body.session_id, **value}
 
-
         @router.post("/editor-drafts/save", dependencies=[Depends(require_admin)])
         async def editor_draft_save(body: EditorDraftSaveRequest):
             from workspace_service.workflow_sources import WorkflowSourceStorageError
@@ -1256,7 +1330,6 @@ class DesktopBackend:
                     503, "Draft save outcome is unconfirmed; read it before another write"
                 ) from None
             return {"workspace_id": body.workspace_id, "session_id": body.session_id, **value}
-
 
         @router.post("/files/upload", dependencies=[Depends(require_admin)])
         async def upload_workspace_file(body: FileUploadRequest):

@@ -378,7 +378,10 @@ it("imports environment names locally and sends only explicitly selected public 
           Design: {
             command: "uvx",
             args: ["example-mcp==1.2.3"],
-            env: { API_KEY: "synthetic-private", RUN_MODE: "read-only" },
+            env: {
+              API_KEY: "placeholder-private-value",
+              RUN_MODE: "read-only",
+            },
           },
         },
       }),
@@ -389,7 +392,7 @@ it("imports environment names locally and sends only explicitly selected public 
   const include = await screen.findByLabelText(/Include RUN_MODE as public/);
   expect(include).not.toBeChecked();
   expect(call).not.toHaveBeenCalled();
-  expect(document.body.textContent).not.toContain("synthetic-private");
+  expect(document.body.textContent).not.toContain("placeholder-private-value");
   fireEvent.click(include);
   fireEvent.click(screen.getByRole("button", { name: "Preview connection" }));
   await screen.findByRole("region", { name: "Custom connection preview" });
@@ -405,5 +408,101 @@ it("imports environment names locally and sends only explicitly selected public 
       public_environment: { RUN_MODE: "read-only" },
     },
   });
-  expect(JSON.stringify(call.mock.calls)).not.toContain("synthetic-private");
+  expect(JSON.stringify(call.mock.calls)).not.toContain(
+    "placeholder-private-value",
+  );
+});
+
+it("opens a replacement with a required fresh name and no write on initialization", async () => {
+  const initial = {
+    name: "",
+    type: "stdio" as const,
+    command: "uvx",
+    arguments: ["example-mcp==1.0.0"],
+    url: "",
+    environmentFields: ["API_KEY", "RUN_MODE"],
+    publicCandidates: { RUN_MODE: "read-only" },
+  };
+  const call = vi.fn();
+  render(
+    <NativeCustomConnection
+      workspace={workspace}
+      call={call}
+      disabled={false}
+      onBusy={vi.fn()}
+      onPlan={vi.fn()}
+      initialConfiguration={initial}
+    />,
+  );
+  expect(screen.getByLabelText("Executable on Wright host")).toHaveValue("uvx");
+  expect(screen.getByLabelText("Connection name")).toHaveValue("");
+  expect(
+    screen.getByRole("button", { name: "Preview connection" }),
+  ).toBeDisabled();
+  expect(screen.getByLabelText(/Include RUN_MODE as public/)).not.toBeChecked();
+  expect(call).not.toHaveBeenCalled();
+});
+
+it("imports HTTPS header names while withholding their complete private values", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValue({
+      content: [],
+      structuredContent: {
+        ...preview.structuredContent,
+        preview: {
+          ...preview.structuredContent.preview,
+          drafts: [
+            {
+              draft_id: "remote",
+              draft_digest: "a".repeat(64),
+              name: "Remote",
+              endpoint: "https://provider.example/mcp",
+              errors: [],
+              env_vars: [{ name: "Authorization", target: "http_header" }],
+            },
+          ],
+        },
+      },
+    });
+  render(
+    <NativeCustomConnection
+      workspace={workspace}
+      call={call}
+      disabled={false}
+      onBusy={vi.fn()}
+      onPlan={vi.fn()}
+    />,
+  );
+  fireEvent.click(screen.getByText("Add a custom MCP"));
+  const file = new File(["synthetic"], "remote.json", {
+    type: "application/json",
+  });
+  Object.defineProperty(file, "text", {
+    value: async () =>
+      JSON.stringify({
+        name: "Remote",
+        url: "https://provider.example/mcp",
+        headers: { Authorization: "Bearer placeholder-private" },
+      }),
+  });
+  fireEvent.change(screen.getByLabelText("Import MCP configuration (JSON)"), {
+    target: { files: [file] },
+  });
+  await screen.findByText(/Private HTTP headers after setup/);
+  fireEvent.click(screen.getByRole("button", { name: "Preview connection" }));
+  await screen.findByRole("region", { name: "Custom connection preview" });
+  expect(call).toHaveBeenCalledExactlyOnceWith(
+    "wright_connection_configuration_preview",
+    {
+      request: {
+        workspace_id: "a",
+        session_id: "chat-a",
+        name: "Remote",
+        url: "https://provider.example/mcp",
+        header_fields: ["Authorization"],
+      },
+    },
+  );
+  expect(JSON.stringify(call.mock.calls)).not.toContain("placeholder-private");
 });
