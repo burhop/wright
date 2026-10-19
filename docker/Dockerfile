@@ -104,7 +104,7 @@ RUN set -eux; \
 
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
-        hermes-agent==0.19.0 aiohttp==3.14.3 && \
+        hermes-agent==0.19.0 aiohttp==3.14.4 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv

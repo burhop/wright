@@ -143,3 +143,34 @@ Personal SteveCAD device login/consent, token/refresh qualification and actual
 Windows panel/save/reopen/download acceptance are still pending. The user's
 confirmed existing publisher account setup is retained. The experimental label,
 generated-UI confinement gate and other previously documented limits remain.
+
+### First correction CI and consolidated image-security follow-up
+
+Both normal local gates passed on `55a3a62a`, and draft
+[PR162](https://github.com/burhop/wright/pull/162) was submitted once. Its entire
+first CI cycle is terminal: 27 checks passed, one intentional docs-deploy skip,
+and one OCI security failure. Actual Windows Python 3.13.16 ran the unfiltered
+workspace suite successfully (2,779 passed, 10 skipped), including the original
+eight-writer upload and controlled native path interleaving. Linux quality passed
+with 86.46% coverage. The actual complete browser report has 179 expected passes,
+five intentional skips, zero unexpected/flaky results across 45 files. These are
+automated host observations, not actual Windows OpenAI desktop acceptance.
+
+The OCI image built and passed cold health/smoke, then its newer vulnerability
+database rejected aiohttp 3.14.3 in the Hermes environment. The upstream patched
+version is 3.14.4. Its isolated ARM64 installation changed only aiohttp and passed
+the existing strict dependency reconciliation, without new exceptions. The
+consolidated correction pins that version, checks the known security contract
+early in both gates and verifies the actual final runtime floor during smoke.
+Fresh scanning under the unchanged policy remains required; the known floor
+does not replace it. The old valid local database pass is retained at its original
+time and is not current security clearance.
+
+Evidence: `ci-windows-upload-55a3a62a-terminal.json`, Windows/Linux quality receipts,
+the current browser artifact result, `aiohttp-ci-failure-classification.json`,
+`aiohttp-fixed-dependency-isolated-probe.json` and the red-before-fix security
+contract are under the existing 19 October resume evidence directory. New exact
+image/full/push gates and replacement-head CI remain pending. Installed 0.16 is
+unchanged; its 13 recorded runtime-file hashes and 80 host dependency versions were
+rechecked and match. The separately frozen host environment does not contain
+aiohttp. No personal login, live cache edit or protected campaign was performed.

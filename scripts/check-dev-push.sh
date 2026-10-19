@@ -452,6 +452,7 @@ if [[ "$CHECK_PYTHON" == "1" ]]; then
   run uv sync --all-packages --all-groups
   # Catch shared SDK downgrades before scanning the base image (PR159).
   run "$GATE_PYTHON" -m pytest tests/docker/test_mcp_bundle.py -q -k bundle_mcp_sdk_matches_runtime_lock
+  run "$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_security_overrides
   # Exercise Windows namespace/reparse contracts even when this host is Unix.
   run "$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q
   run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies

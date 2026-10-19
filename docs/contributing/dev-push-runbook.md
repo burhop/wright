@@ -148,6 +148,19 @@ dependency audits and base-image scanning. Update these pins together; do not
 add an SDK conflict to the reviewed Hermes dependency exceptions. Base-image
 qualification alone does not qualify the final engineering bundle.
 
+PR #162's first OCI scan also found fixable High aiohttp findings in the Hermes
+environment: `CVE-2026-111064` and `GHSA-2g87-pp6c-29x5`. The image pins the
+upstream patched version 3.14.4. Both gates check the existing security-pin
+contract before long checks; image smoke also verifies the actual installed
+aiohttp meets that known patched floor. The isolated patch changed only aiohttp
+and retained the existing strict dependency reconciliation, without new exceptions.
+The earlier local scan used a valid 13:35 UTC database; CI's newer 19:08 UTC
+database identified the findings. Preserve both observations and their source,
+image and database identities. A prior pass does not waive a later finding, and
+the explicit known floor does not replace the fresh scanner or unchanged policy.
+See the upstream [resource-exhaustion advisory](https://github.com/aio-libs/aiohttp/security/advisories/GHSA-2g87-pp6c-29x5)
+and [initial-timeout advisory](https://github.com/aio-libs/aiohttp/security/advisories/GHSA-5wr8-gcqf-gqf3).
+
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
 Both native gates run the workspace path-security contracts before long checks.

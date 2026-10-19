@@ -48,17 +48,18 @@ def test_fast_gate_contains_the_frontend_ci_contract() -> None:
         assert command in gate
 
 
-def test_native_gates_check_portable_windows_path_security_before_long_checks() -> None:
-    command = (
-        '"$GATE_PYTHON" -m pytest '
-        "packages/workspace_service/tests/test_workspace_path.py -q"
+def test_native_gates_check_path_and_runtime_security_before_long_checks() -> None:
+    commands = (
+        '"$GATE_PYTHON" -m pytest packages/workspace_service/tests/test_workspace_path.py -q',
+        '"$GATE_PYTHON" -m pytest tests/test_docker_smoke_contract.py -q -k hermes_security_overrides',
     )
     for name in ("push", "merge"):
         gate = _read(f"scripts/check-dev-{name}.sh")
-        assert command in gate
-        assert gate.index(command) < gate.index(
-            '"$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies'
-        )
+        for command in commands:
+            assert command in gate
+            assert gate.index(command) < gate.index(
+                '"$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies'
+            )
         assert f"check-dev-{name}.sh" in _read(f"scripts/check-dev-{name}.ps1")
     runbook = _read(RUNBOOK)
     assert "eight-writer upload test" in runbook

@@ -65,6 +65,16 @@ printf '%s\n' "$PIP_CHECK_OUTPUT" | "${PYTHON_CMD[@]}" \
 echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
 docker run --rm -i --network none --entrypoint /opt/hermes/.venv/bin/python "$IMAGE_TAG" - \
   < scripts/check-hermes-jwt-compatibility.py
+# Check the known patched floor against the actual final environment as well as
+# the source pin; a valid advisory database may not contain a new finding yet.
+docker run --rm --network none --entrypoint /opt/hermes/.venv/bin/python "$IMAGE_TAG" -c '
+from importlib.metadata import version
+from packaging.version import Version
+
+observed = version("aiohttp")
+assert Version(observed) >= Version("3.14.4"), f"Unpatched aiohttp runtime: {observed}"
+print(f"Patched aiohttp runtime: {observed}")
+'
 
 echo -e "Testing packaged Rivet runtime dependencies..."
 NODE_VERSION=$(docker run --rm --entrypoint node "$IMAGE_TAG" --version)
