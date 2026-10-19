@@ -64,6 +64,38 @@ def _write(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
+def _scanner_failure_kind(output: bytes) -> str:
+    """Project finite diagnostic categories, never private scanner output."""
+    message = output[-65536:].decode("utf-8", errors="replace").casefold()
+    patterns = (
+        ("registry-rate-limit", r"toomanyrequests|too many requests|status\W*429\b"),
+        (
+            "network-timeout",
+            r"i/o timeout|context deadline exceeded|connection timed out|tls handshake timeout",
+        ),
+        (
+            "registry-unavailable",
+            r"status\W*(?:500|502|503|504)\b|service unavailable|bad gateway",
+        ),
+        (
+            "tls-trust",
+            r"certificate signed by unknown authority|certificate verify failed",
+        ),
+        (
+            "database-download",
+            r"(?:download|fetch).{0,80}(?:database|\bdb\b)|(?:database|\bdb\b).{0,80}(?:download|fetch)",
+        ),
+        (
+            "container-runtime",
+            r"cannot connect to the docker daemon|docker daemon is not running",
+        ),
+    )
+    for kind, pattern in patterns:
+        if re.search(pattern, message):
+            return kind
+    return "unclassified"
+
+
 class Commands:
     def __init__(self, root: Path, output: Path):
         self.root, self.output = root, output
@@ -85,8 +117,13 @@ class Commands:
             ) from exc
         (self.output / f"{label}.log").write_bytes(result.stdout)
         if result.returncode:
+            detail = (
+                f" (reported {_scanner_failure_kind(result.stdout)})"
+                if label == "trivy"
+                else ""
+            )
             raise ImageScanError(
-                f"{label} failed with exit {result.returncode}; raw log retained"
+                f"{label} failed with exit {result.returncode}{detail}; raw log retained"
             )
         return result.stdout.decode("utf-8")
 

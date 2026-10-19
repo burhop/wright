@@ -10,6 +10,13 @@ This checkpoint supersedes older **current-status** claims in the retained
 historical evidence. It does not revise their original outcomes. Installation,
 repository integration, host verification and personal consent remain separate.
 
+The initial current-head CI identified public-metadata scanner classifications
+and an unclassified scanner execution failure. The
+[consolidated correction](ci-correction-20261019.md) preserves public configuration
+and adds the missing owner/history gate coverage. The versioned test results below
+retain their original source identities; the corrected source requires its updated
+normal gates, current-head CI and final runtime/profile proof before installation.
+
 ## Current capability boundaries
 
 | User journey | Implemented and locally verified | Remaining boundary |

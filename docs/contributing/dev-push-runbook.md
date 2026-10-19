@@ -84,6 +84,34 @@ branch failure from hiding outside the latest incremental diff.
   delivered. Use these measures to remove process cost, never to weaken a red
   customer, security, compatibility, or release signal.
 
+PR #159 also exposed a gap between the separately qualified desktop prototype
+and normal gate collection. Python prototype changes now select its existing owner
+tests as an isolated pytest root in both native gates. These include frozen routing,
+authentication, private credentials, scope, recovery, and observable evidence.
+GitHub CodeQL remains the whole-program data-flow check. Its name heuristic treated
+the public `remote_oauth_flow` selector as a password; the internal selector is now
+named `remote_signin_mode`, while the CLI flag, serialized key, and supported values
+remain unchanged. No CodeQL rule or alert is suppressed. The synthetic credential
+fixture compares its exact canary with `hmac.compare_digest`; it does not store or
+hash customer passwords. Collect every current-head CI result before the next push.
+
+The same CI cycle flagged two `credential_sha256` values in desktop test evidence.
+Both are verified digests of the isolated HTTPS fixture canaries, not personal
+credentials. `.gitleaksignore` lists only the two exact historical finding
+fingerprints (introducing commit/path/rule/line). The current receipt uses
+`fixture_value_digest`. The pinned scanner was checked to discover the repository's
+ignore file and still flag a neighboring key. Prototype changes and fingerprint
+changes select the existing history scan in the fast gate; the full merge gate now
+runs that same scan. Existing allowlist rules and their selected contracts remain
+unchanged. No history rewrite or whole-file exclusion is permitted.
+
+The OCI scanner may fail before it writes a vulnerability report. Its public
+projection now includes only an allowlisted reported category (for example DB
+download or registry rate limiting), retaining raw details locally. An unclassified
+failure remains blocking. These categories diagnose the scanner; they do not
+establish a clean inventory, authorize retries, extend DB validity or waive policy.
+PR #159's initial scanner failure lacked a public cause and remains unclassified.
+
 The fast gate selects Python, frontend/browser, and documentation checks from
 the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate

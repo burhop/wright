@@ -594,3 +594,37 @@ def test_workspace_profile_cannot_mix_private_task_enrollment(boundary, private)
         DesktopBackend(
             service, original.state, 5201, workspace_mcp_tasks=True, **private
         )
+
+
+@pytest.mark.parametrize("mode", ["authorization_code", "device_code"])
+def test_remote_signin_mode_is_public_frozen_configuration(boundary, mode):
+    from desktop_backend import DesktopBackend
+
+    default, service, _ = boundary
+    backend = DesktopBackend(
+        service,
+        default.state,
+        5201,
+        confined_inspection=True,
+        remote_signin_mode=mode,
+    )
+    recorded = json.loads((default.state / "desktop-versions.json").read_text())
+    assert recorded["remote_oauth_flow"] == mode
+    assert "remote_signin_mode" not in recorded
+    assert (backend.binding.digest == default.binding.digest) == (
+        mode == "authorization_code"
+    )
+
+
+def test_remote_signin_mode_rejects_unknown_value_before_writing(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from desktop_backend import DesktopBackend
+
+    with pytest.raises(ValueError, match="^Unsupported remote OAuth flow$"):
+        DesktopBackend(
+            SimpleNamespace(db_path=tmp_path / "wright.sqlite"),
+            tmp_path,
+            5201,
+            remote_signin_mode="not-supported",
+        )
+    assert list(tmp_path.iterdir()) == []

@@ -36,6 +36,7 @@ def main():
     parser.add_argument("--enable-desktop-bridge", action="store_true")
     parser.add_argument(
         "--remote-oauth-flow",
+        dest="remote_signin_mode",
         choices=("authorization_code", "device_code"),
         default="authorization_code",
     )
@@ -150,11 +151,11 @@ def main():
             local_reviews=args.enable_local_reviews,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
-            remote_oauth_flow=args.remote_oauth_flow,
+            remote_signin_mode=args.remote_signin_mode,
         )
         app.state.agent_engine = desktop
         app.state.mcp_authorization_presenter = desktop.oauth.present
-        if args.remote_oauth_flow == "device_code":
+        if args.remote_signin_mode == "device_code":
             app.state.mcp_device_authorization_presenter = desktop.oauth.present_device
         app.include_router(desktop.router())
         # The normal app already ends with a GET frontend fallback. Newly

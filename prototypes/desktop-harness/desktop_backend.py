@@ -315,9 +315,9 @@ class DesktopBackend:
         enrolled_mcp_tasks=False,
         workspace_mcp_tasks=False,
         local_reviews=False,
-        remote_oauth_flow="authorization_code",
+        remote_signin_mode="authorization_code",
     ):
-        if remote_oauth_flow not in {"authorization_code", "device_code"}:
+        if remote_signin_mode not in {"authorization_code", "device_code"}:
             raise ValueError("Unsupported remote OAuth flow")
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
@@ -348,7 +348,7 @@ class DesktopBackend:
         self.repository = DesktopReasoningRepository(service.db_path)
         runtime = {
             "mcp_sdk": version("mcp"),
-            "remote_oauth_flow": remote_oauth_flow,
+            "remote_oauth_flow": remote_signin_mode,
             "credential_form_crypto": version("jwcrypto"),
             "image_inputs": self.image_inputs,
             "image_input_profile": image_profile,

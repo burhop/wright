@@ -91,6 +91,15 @@ run "$GATE_PYTHON" -m scripts.release.audit_runtime_dependencies
 run "$GATE_PYTHON" -m scripts.release.audit_node_dependencies
 run "$GATE_PYTHON" -m scripts.release.scan_image --allow-unavailable-local-host
 
+# Match security CI's history coverage as well as current-file leak checks.
+if command -v docker >/dev/null 2>&1 &&
+  command -v timeout >/dev/null 2>&1 &&
+  timeout 10 docker info >/dev/null 2>&1; then
+  run bash scripts/security-scan.sh --include-untracked --skip-trufflehog
+else
+  echo "Gitleaks history scan unavailable: no responsive local Docker host within 10 seconds. GitHub security CI remains authoritative."
+fi
+
 if [[ "${SKIP_PLAYWRIGHT:-0}" != "1" ]]; then
   echo
   echo "==> Checking Playwright live gate ports"
@@ -183,6 +192,7 @@ for python_suite in \
   packages/model_registry/tests \
   packages/tool_registry/tests \
   packages/workspace_service/tests \
+  prototypes/desktop-harness/tests \
   tests; do
   python_suite_args=()
   if [[ "$python_suite" == "packages/model_registry/tests" ]]; then
