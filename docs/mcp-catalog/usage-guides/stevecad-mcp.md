@@ -488,3 +488,29 @@ Private, credential-free setup receipts are retained under
 `/tmp/wright-desktop-setup-proof-20261014-01/` (`plan-probe.json`,
 `plan-confirmed-probe-02.json`, `apply-probe.json`). Source/evidence continuation
 is indexed in `prototypes/desktop-harness/workspace-home-progress.md`.
+
+## Remote desktop sign-in boundary — 19 October 2026
+
+The GB10 desktop-integration work qualifies the shared remote runner's explicitly
+selected device-code flow for this provider: actual public-client registration,
+device challenge, authorization-pending polling, bounded expiry and recovery were
+observed without personal login. The native panel shows the verification page
+and user code only through operator-private metadata. No Windows-to-GB10 browser
+callback or customer SSH forwarding is required for that selected flow. See
+[remote sign-in qualification](https://github.com/burhop/wright/blob/dev/prototypes/desktop-harness/remote-auth-qualification-20261019.md)
+for exact versions, retained failures and scope.
+
+The user has confirmed existing publisher/account setup. That confirmation is
+separate from installing/registering the server in a particular Wright instance,
+OAuth consent, current protocol discovery, workspace enablement and per-tool
+permission. The pre-update 19 October readback reported SteveCAD uninstalled
+and inactive in the preserved desktop prototype; `credentials_missing=false` alone is not evidence of authentication.
+Prepare its normal scoped setup before asking the user to complete sign-in.
+Do not copy another instance's browser cookies or OAuth tokens. Unsupported device
+grants fail explicitly; another account or grant is not silently substituted.
+
+Successful personal token issuance/refresh and actual Windows sign-in completion
+remain unverified at this checkpoint. After the user authorizes the client,
+rediscover current provider contracts and observe normal protocol readiness before
+enabling permitted workspace tools. These authentication checks establish no new
+CAD, simulation, physical or engineering-review acceptance.
