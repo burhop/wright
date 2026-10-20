@@ -128,6 +128,8 @@ survives a Wright API restart. A healthy old PID is not completion, and changed
 configuration holds the operation. If the replacement exits or configuration
 changes, inspect the private `logs/wright-gateway-rebind.log`, reconcile the
 selected process and restore its recorded configuration before proceeding.
+After an operator repairs the selected Hermes process, restart only the owning
+Wright API to reconcile its retained receipt against the recovered process.
 Preserve the receipt as evidence. Do not delete it to force an uncertain retry.
 Gateway health alone does not establish MCP availability: use the actual
 read-only workspace-status tool through Hermes after rebinding.

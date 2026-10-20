@@ -92,3 +92,28 @@ the new test canary used an unrecognized placeholder spelling. It contains no
 credential. The fixture now uses the repository's existing `test-secret-*`
 convention; no scanner rule or exception changed. The failed log is retained
 as `dev-push.log`; the corrected candidate still needs the complete gate.
+
+## Completed CI reconciliation for the published model-routing candidate
+
+All checks for `6a7617e5` are terminal. Two failed:
+
+- Windows backend: the existing deadline/artifact test inspected disk 600 ms
+  after timeout, before the late worker had finished cleanup. A controlled
+  800 ms cleanup delay reproduced the failure on Linux; after the worker
+  completed, no file remained. The corrected test holds promotion until the
+  real timeout, then observes worker completion and checks both the artifact
+  index and disk. The delayed case passes and deliberately disabled cleanup
+  fails. Production cleanup is unchanged. Both gates now run this interleaving
+  early; the contributor runbook records it.
+- Engineering amd64 image: all bounded retries of the 782 MiB upstream FreeCAD
+  download ended with TLS EOF / curl 56 at partial transfer. Classified as an
+  upstream/download infrastructure failure, not a qualified image. No provider
+  was removed or installer/security check weakened. The next consolidated
+  candidate must still pass its actual amd64 build and smoke checks.
+
+Exact logs: `ci-6a-windows-failed.log`, `ci-6a-amd64-failed.log`,
+`ci-6a-terminal.json`, `deadline-before-controlled.log`,
+`deadline-after-controlled.log`, and `deadline-negative-control.log` in the
+local evidence directory. This is a new Windows pilot finding plus one complete
+CI correction set; no serial one-error CI pushes were made. The repair remains
+local until the repository gate passes.

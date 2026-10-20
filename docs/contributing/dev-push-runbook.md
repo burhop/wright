@@ -537,3 +537,14 @@ injection is not native Windows qualification. Both normal Python gate slices
 already collect this suite; keep the Windows backend CI tests required. These
 retries only read the same exact record and never resubmit cancellation, replay
 a tool or replace an unreadable record with a successful outcome.
+
+### Late native artifact cleanup
+
+PR #165 exposed a Windows test observing the filesystem 600 ms after the durable
+timeout while a late worker was still cleaning its unindexed artifact. The
+regression now holds promotion until the run actually times out, releases the
+worker, and waits for that worker's completion before checking both the durable
+artifact index and disk. A deliberately disabled cleanup still fails. Both
+native gates run this controlled interleaving before long suites, in addition to
+normal workspace coverage. Do not replace completion observation with a longer
+sleep or weaken the no-leftover-artifact assertions.

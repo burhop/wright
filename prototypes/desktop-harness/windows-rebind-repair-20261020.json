@@ -40,6 +40,14 @@
       "model_requests": 4,
       "raw_report_sha256": "9641f30c547206beda7ccef0210c2fc3dbbc081157265cb5d2b6787014a29503",
       "probe_sha256": "653d7755cb5240a5fe15deb8f37ad069e528945f3dcf582f9ce8627f119eead5"
+    },
+    "ci_correction": {
+      "result": "passed",
+      "tests": 66,
+      "log_sha256": "be9402a3f02b35916d76d9cbdba4c91164edd7e9f8d320799810afe18348479e",
+      "controlled_slow_cleanup": "passed",
+      "disabled_cleanup_negative_control": "failed_as_required",
+      "original_test_with_slow_cleanup": "failed_as_reproduced"
     }
   },
   "retained_attempts": [
@@ -60,5 +68,14 @@
     "Roadster readiness",
     "Dev integration and deployment for this repair"
   ],
-  "local_evidence_directory": "/tmp/wright-windows-rebind-evidence-20261020"
+  "local_evidence_directory": "/tmp/wright-windows-rebind-evidence-20261020",
+  "published_candidate_ci": {
+    "commit": "6a7617e532ec37c3d103428f562df862e1f715fd",
+    "all_terminal": true,
+    "failures": {
+      "windows_backend": "Late worker observed before cleanup finished; controlled test correction qualified.",
+      "linux_amd64_image": "Upstream FreeCAD partial download TLS EOF after bounded retries; actual candidate build remains required."
+    },
+    "snapshot_sha256": "2914b9517025c027e1ed1eff994542ddd3591e6b4be7f9e02ffb1cb39d4c023b"
+  }
 }
