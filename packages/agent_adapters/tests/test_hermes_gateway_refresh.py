@@ -28,7 +28,7 @@ def pilot(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "agent_adapters.hermes_gateway_refresh.resolve_hermes_api_settings",
         lambda: SimpleNamespace(
-            base_url="http://127.0.0.1:28642", api_key="private-test-value"
+            base_url="http://127.0.0.1:28642", api_key="test-secret-hermes-key"
         ),
     )
     launches = []
@@ -118,8 +118,8 @@ async def test_manual_refresh_replaces_only_selected_profile_without_install(pil
         "--replace",
     ]
     assert options["env"]["API_SERVER_PORT"] == "28642"
-    assert options["env"]["API_SERVER_KEY"] == "private-test-value"
-    assert "private-test-value" not in str(command)
+    assert options["env"]["API_SERVER_KEY"] == "test-secret-hermes-key"
+    assert "test-secret-hermes-key" not in str(command)
     assert options["env"]["HERMES_GATEWAY_DETACHED"] == "1"
     state["pid"] = 11
     await refresh.wait_ready()

@@ -86,3 +86,9 @@ not use Hermes's deferred-tool discovery. `runtime-1792522194/report.json`
 records actual tool success. Private runtime logs remain local. The focused
 regression log is `focused-refresh-02.log`; portable hashes and results are
 recorded beside this plan before delivery.
+
+The first `b1254aad` pre-push attempt stopped at the plaintext-placeholder scan:
+the new test canary used an unrecognized placeholder spelling. It contains no
+credential. The fixture now uses the repository's existing `test-secret-*`
+convention; no scanner rule or exception changed. The failed log is retained
+as `dev-push.log`; the corrected candidate still needs the complete gate.
