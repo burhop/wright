@@ -1,0 +1,68 @@
+{
+  "implementation_commit": "ac2686bc244784442cba81697cbbdbc6c2428293",
+  "baseline": "40b6270ec5e9bc1c1e9c61c20a0bf50269f35b82",
+  "host": "GB10 Linux ARM64",
+  "python": "3.13.12",
+  "node": "26.0.0",
+  "full_merge_gate": "passed with documented WebKit host limitation",
+  "frontend_unit_tests": 2022,
+  "served_chromium_checks": 15,
+  "live_astra": "blocked: SCOPED_MODEL_AUTH_REQUIRED; zero invocation records",
+  "windows_engineering_acceptance": "pending",
+  "logs": {
+    "full-merge-gate.log": {
+      "sha256": "4e6c8f8d93a8a33d981e9b25d3778d2740733ec1c18419a46251c94a8e5ad400",
+      "bytes": 141507
+    },
+    "focused-python-final.log": {
+      "sha256": "3a57a93456e9f0a82543fdf72d9130130e8d83b35ba581ea29d8f398ba754439",
+      "bytes": 179
+    },
+    "worker-probe-tests.log": {
+      "sha256": "9b05698d19b4a03d5b7f7abf86fe2e03c89fccfed736df1a11567706c4bb0df8",
+      "bytes": 99
+    },
+    "browser-workspace-final.log": {
+      "sha256": "e14ab5de38c3e38ad31407259e7bf44cfc9bb41c9bff0dd6657011616a61207e",
+      "bytes": 6161
+    },
+    "node-incompatible.log": {
+      "sha256": "9a8a4137fc84078575985b6b76c1bb02cde76ee5a30ac0938c47da7929f7e4c0",
+      "bytes": 540
+    },
+    "node-compatible.log": {
+      "sha256": "0750a44ed30b7a82b6a94182198211120e682bc6d381f00da33f300083ce2a51",
+      "bytes": 88
+    },
+    "webkit-host-probe.log": {
+      "sha256": "824c997b88f02bd88e2ef8c593b6fd86c8e7fab1c4a1570a1e44c97c7d1a96af",
+      "bytes": 1328
+    },
+    "astra-auth-required/report.json": {
+      "sha256": "a5e04b1e868ce7baa8f476806882d0edd40f1a5bf359063be697b633f0598e65",
+      "bytes": 292
+    }
+  },
+  "image_scan": {
+    "status": "passed",
+    "started_at": "2026-10-20T14:30:41.768695+00:00",
+    "scanner_image": "docker.io/aquasec/trivy@sha256:be1190afcb28352bfddc4ddeb71470835d16462af68d310f9f4bca710961a41e",
+    "scanner_version": "0.70.0",
+    "builds": 0,
+    "publications": 0,
+    "findings": [],
+    "image_id": "sha256:fc5a6ba463e4fcc14b543d92720b760b43e24acc9e4382f53348ba520b4e2a5a",
+    "image_source_commit": "ac2686bc244784442cba81697cbbdbc6c2428293",
+    "source_commit": "ac2686bc244784442cba81697cbbdbc6c2428293",
+    "source_tree": "7d30119d5d9561c93c969a50cf4aa4f2eeb4e9ad",
+    "policy_sha256": "88caa73407b405b6a6cd98ce42754c3b4439834b84f14eaa3730e6f3316bb5eb",
+    "raw_report_sha256": "193d3823407de02c86d4216cf50a4f3350927c07eb40645766b861d8a5b60401",
+    "database": {
+      "Version": 2,
+      "UpdatedAt": "2026-10-20T13:14:22.737606427Z",
+      "NextUpdate": "2026-10-21T13:14:22.737606156Z",
+      "DownloadedAt": "2026-10-20T14:31:01.487111804Z"
+    },
+    "completed_at": "2026-10-20T14:31:17.233094+00:00"
+  }
+}

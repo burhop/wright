@@ -63,7 +63,23 @@ observation or a real persisted workspace journey.
 - `node-incompatible.log`, `node-compatible.log`: strict engine checks.
 - `browser-workspace-final.log`: served Chromium authentication/editor checks.
 
-Repository gates and exact GitHub delivery are recorded after completion.
+Implementation commit: `ac2686bc244784442cba81697cbbdbc6c2428293`.
+The full merge gate passed on GB10 Linux ARM64 using Python 3.13.12 and
+isolated Node 26.0.0. The exact committed container passed the current-database
+security scan; Python/Node audits and the history leak scan passed. Clean
+wheel/sdist installation, strict docs, 2,022 frontend unit tests, and the backend
+package suites passed. The 15 separately served Chromium startup/editor checks
+passed. The [machine-readable evidence index](windows-readiness-evidence-20261020.json)
+records log hashes and image/source identities.
+
+Local host limitation: WebKit cannot load `libgstcodecparsers-1.0.so.0`;
+the full gate used its documented `SKIP_PLAYWRIGHT=1` mode. Actual Windows and
+cross-browser CI remain required. The gate's broad MyPy invocation reported a
+nonblocking duplicate `conftest` module warning; release/native MyPy passed.
+Local packaging outputs were retained in the build directory and restored out
+of the source diff after qualification. No implementation code changed after
+that full gate. The standard pre-push gate and current-head PR CI remain the
+delivery/merge checks.
 No Windows readiness or live model/provider success is claimed here.
 
 Windows must complete the
