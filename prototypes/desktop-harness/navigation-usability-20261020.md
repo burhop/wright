@@ -155,3 +155,11 @@ installed Windows walkthrough remain pending. Existing independent provider
 qualification recipes and historical receipts are outside this runtime change.
 This additional correction cycle is caused by newly indexed upstream advisories;
 it is not another partial correction of the prior browser-test failure.
+
+The first full gate on `2eae281f` passed the Python dependency audit and then
+stopped on newly indexed Vite advisory GHSA-587h-7wmj-h5pm. The exact Pillow
+image smoke passed; its log and failed gate are retained. Vite is now pinned to
+8.2.4 with the required Rolldown/PostCSS dependency updates. The npm policy audit
+passes with no High/Critical findings and no remaining Vite finding. Existing
+Low/Moderate findings remain reported. Both dependency repairs will be pushed
+together after normal qualification; no intermediate security-only CI push occurred.

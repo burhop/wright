@@ -199,6 +199,15 @@ later failures with their timestamps; an upstream advisory change is not a CI
 rerun waiver. [Pillow's security release](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html)
 documents the fixes and compatibility changes.
 
+The subsequent full gate exposed a newly indexed Windows `launch-editor`
+command-execution advisory bundled in Vite. Pin Vite 8.2.4 in the web workspace
+and retain its resolved toolchain dependencies in the lockfile; the npm audit,
+production build and existing frontend/browser suites remain required. Include
+this finding in the same consolidated correction before another PR push.
+[GHSA-587h-7wmj-h5pm](https://github.com/vitejs/launch-editor/security/advisories/GHSA-587h-7wmj-h5pm)
+identifies 8.2.4 as the patched Vite 8.2 release. Existing Low/Moderate findings
+are still reported under the unchanged audit policy, not silently suppressed.
+
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
 Both native gates run the workspace path-security contracts before long checks.
