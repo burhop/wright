@@ -380,24 +380,28 @@ export function NativeHomePanel({
         {selected && (
           <nav aria-label="Workspace views">
             <button
+              aria-current={view === "workflows" ? "page" : undefined}
               onClick={() => navigate("workflows")}
               disabled={opening || creating}
             >
               Workflows
             </button>
             <button
+              aria-current={view === "connections" ? "page" : undefined}
               onClick={() => navigate("connections")}
               disabled={opening || creating}
             >
               Connections
             </button>
             <button
+              aria-current={view === "files" ? "page" : undefined}
               onClick={() => navigate("files")}
               disabled={opening || creating}
             >
               Files
             </button>
             <button
+              aria-current={view === "runs" ? "page" : undefined}
               onClick={() => navigate("runs")}
               disabled={opening || creating}
             >
@@ -544,10 +548,11 @@ export function NativeHomePanel({
                 conversation to create one.
               </p>
             )}
-            <ul>
+            <ul className="native-home__workflows">
               {workflowFiles.map((file) => (
                 <li key={file.path}>
                   <button
+                    aria-label={file.name}
                     disabled={loading || creating}
                     onClick={() => {
                       setLoading(true);
@@ -566,7 +571,9 @@ export function NativeHomePanel({
                         });
                     }}
                   >
-                    {file.name}
+                    {file.name
+                      .replace(/(?:\.workflow)?\.wflow$/, "")
+                      .replace(/[-_]+/g, " ")}
                   </button>
                   <small>{file.path}</small>
                 </li>

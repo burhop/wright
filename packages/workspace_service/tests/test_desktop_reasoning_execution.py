@@ -47,10 +47,17 @@ def reasoner(repo, **patch):
     )
 
 
-async def pending(repo):
+async def pending(repo, after=None, running=None):
     async def wait():
         while True:
-            tasks = repo.pending("workspace-1", "session-1")
+            if running is not None and running.done():
+                await running
+                raise AssertionError("Execution completed without the expected handoff")
+            tasks = [
+                task
+                for task in repo.pending("workspace-1", "session-1")
+                if task.request_id != after
+            ]
             if tasks:
                 return tasks[0]
             await asyncio.sleep(0.005)
@@ -531,3 +538,266 @@ def test_opt_in_image_does_not_relax_total_payload_bound(tmp_path):
     with pytest.raises(ValueError, match="256 KiB"):
         asyncio.run(desktop.generate_response("x" * 262144, "text", images=[inline]))
     assert repo.pending("workspace-1", "session-1") == []
+
+
+@pytest.mark.parametrize("workflow", ["transport-fixture", "pi-primary-reference"])
+def test_actual_mcp_image_producer_reaches_desktop_request_and_keeps_evidence_redacted(
+    tmp_path,
+    workflow,
+):
+    import base64
+    import hashlib
+
+    from tool_registry.gateway_models import GatewayToolResult
+    from packages.workspace_service.tests.test_workflow_mcp_execution import runtime
+    from packages.workspace_service.tests.test_workflow_mcp_image_observations import (
+        image,
+        png,
+    )
+    from packages.workspace_service.tests.test_workflow_ai_task import call, done, plan
+
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo, image_input_profile="inline-png-jpeg-engineering-v1")
+    gateway, runner = runtime()
+    picture = image(png())
+    gateway.result = GatewayToolResult(content=(picture,))
+    step = plan().steps[0]
+    proposal = call()
+    if workflow == "pi-primary-reference":
+        # Existing PDF/supplier-reference research stage, not CAD inspection.
+        # Only provider responses are controlled; no campaign or engineering
+        # acceptance is asserted by this image-transport regression.
+        from pathlib import Path
+        from types import SimpleNamespace
+        from tool_registry.gateway_models import GatewayTool
+        from packages.workspace_service.tests.test_pi_visual_preparer import (
+            preparer,
+            ROOT,
+        )
+
+        config = json.loads(preparer.BINDING.read_text())
+        tool_catalog = [
+            {
+                "server_id": server,
+                "tool_name": name,
+                "name": f"{server}__{name}",
+                "schema_digest": "a" * 64,
+            }
+            for server, names in config["allowed_tools"].items()
+            for name in names
+        ]
+        prepared = preparer.prepare(
+            SimpleNamespace(
+                workspace_root=str(tmp_path / "workspace"),
+                draft_root=str(tmp_path / "draft"),
+                instance_source=None,
+                attempt="image-contract",
+                initialize_agentcad=False,
+            ),
+            ROOT
+            / "tests/datasets/engineering-workflows/scenarios/raspberry-pi-enclosure/01-riverstone-desktop-computer",
+            tool_catalog,
+        )
+        draft = Path(prepared["draft"]).read_bytes()
+        # As in normal creation, a fresh draft receives current versioned
+        # instructions. This does not rewrite an accepted historical process.
+        existing = compile_prompt_workflow(
+            materialize_new_workflow_instructions(
+                draft.decode(), load_default_workflow_instructions()
+            )
+        )
+        step = next(s for s in existing.steps if "observe_pi_primary_page" in s.prompt)
+        assert "Preserve manufacturer reference-only warning" in step.prompt
+        assert "at most8image observations" in step.prompt
+        tool = GatewayTool(
+            name=step.server_id + "__observe_pi_primary_page",
+            server_id=step.server_id,
+            tool_name="observe_pi_primary_page",
+            description="Controlled primary page observation contract",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "document_name": {"type": "string"},
+                    "page_number": {"type": "integer"},
+                    "view": {"type": "string"},
+                },
+                "required": ["document_name", "page_number", "view"],
+                "additionalProperties": False,
+            },
+        )
+        gateway.list_tools = lambda *args: (tool,)
+        proposal["tool_calls"][0]["function"]["arguments"] = json.dumps(
+            {
+                "schema_version": "wright.workflow-action-intent/1",
+                "arguments": {
+                    "document_name": "manufacturer-drawing.pdf",
+                    "page_number": 1,
+                    "view": "full",
+                },
+                "assumptions": [],
+                "unresolved_required_information": [],
+            }
+        )
+        gateway.result = GatewayToolResult(
+            content=(
+                {
+                    "type": "text",
+                    "text": "Controlled page observation; not actual manufacturer dimensions",
+                },
+                picture,
+            ),
+            structured_content={
+                "document": "manufacturer-drawing.pdf",
+                "page": 1,
+                "source_sha256": "c" * 64,
+                "view": "full",
+            },
+        )
+    events = []
+
+    async def emit(kind, **event):
+        events.append({"kind": kind, **event})
+
+    def reply(request, message):
+        repo.submit_response(
+            "workspace-1",
+            "session-1",
+            DesktopReasoningResponse(
+                request_id=request.request_id,
+                request_digest=request.digest,
+                binding_digest=request.binding.digest,
+                response_id=str(uuid4()),
+                received_at=datetime.now(timezone.utc).isoformat(),
+                reply=DesktopActionReply.model_validate(message),
+            ),
+        )
+
+    async def exercise():
+        running = asyncio.create_task(
+            runner.run_task(
+                step,
+                step.prompt,
+                desktop.decide_action,
+                emit,
+            )
+        )
+        try:
+            first = await pending(repo, running=running)
+            assert step.prompt in json.dumps(first.payload, ensure_ascii=False)
+            reply(first, proposal)
+            request = await pending(repo, after=first.request_id, running=running)
+            parts = request.payload["messages"][-1]["content"]
+            image_part = next(part for part in parts if part["type"] == "image_url")
+            assert image_part["image_url"] == {
+                "url": "data:image/png;base64," + picture["data"],
+                "detail": "high",
+            }
+            # Reading from SQLite revalidates the core request, not a hand-written mock.
+            assert request.kind == "action"
+            reply(
+                request, done("Transport fixture inspected; not engineering acceptance")
+            )
+            response, records = await asyncio.wait_for(running, 5)
+            assert response == "Transport fixture inspected; not engineering acceptance"
+            assert (
+                records[0]["image_observations"][0]["sha256"]
+                == hashlib.sha256(base64.b64decode(picture["data"])).hexdigest()
+            )
+            assert "data:image/" not in json.dumps(records)
+            assert picture["data"] not in json.dumps(events)
+            assert len(gateway.calls) == 1
+            if workflow == "pi-primary-reference":
+                assert records[0]["result"]["source_sha256"] == "c" * 64
+                assert Path(prepared["draft"]).read_bytes() == draft
+        finally:
+            if not running.done():
+                running.cancel()
+            await asyncio.gather(running, return_exceptions=True)
+
+    asyncio.run(exercise())
+
+
+def test_desktop_saved_context_budget_is_rejected_during_route_preparation(tmp_path):
+    from packages.workspace_service.tests.test_workflow_ai_task import plan
+
+    repo = DesktopReasoningRepository(tmp_path / "wright.sqlite")
+    desktop = reasoner(repo)
+    app = service(tmp_path)
+    app.workflow_model_capabilities = desktop.capabilities
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="mcp_context_budget_bytes"
+    ) as error:
+        asyncio.run(
+            freeze_workflow_model_routing(
+                app, plan(mcp_context_budget_bytes=1048576), {}
+            )
+        )
+    assert error.value.code == "WORKFLOW_NOT_READY"
+    assert repo.pending("workspace-1", "session-1") == []
+    frozen, _ = asyncio.run(freeze_workflow_model_routing(app, plan(), {}))
+    assert frozen.steps[0].mcp_context_budget_bytes is None
+
+
+@pytest.mark.asyncio
+async def test_public_readiness_blocks_saved_budget_before_start_and_tool_effects(
+    tmp_path,
+):
+    from packages.workspace_service.tests.test_process_preparation_service import (
+        owner,
+        process,
+        scope,
+        source as prepared_source,
+        section,
+    )
+    from packages.workspace_service.tests.test_workflow_ai_task import (
+        legacy_instruction_profile,
+    )
+    from packages.workspace_service.tests.test_workflow_mcp_execution import Gateway
+    from workspace_service.process_interfaces.errors import ProcessInterfaceError
+    from workspace_service.workflow_source_execution import _parse
+
+    blocks = _parse(prepared_source(default="Inspect the supplied engineering record"))
+    blocks[0]["fields"]["instructions"] = legacy_instruction_profile()
+    first = next(b["fields"] for b in blocks if b["id"] == "first")
+    first["settings"].update(
+        authoring_template="mcp-task",
+        mcp_server="docs",
+        mcp_context_budget_bytes=1048576,
+    )
+    text = "".join(section(b["kind"], b["id"], **b["fields"]) for b in blocks)
+    app = owner(tmp_path, text)
+    repo = DesktopReasoningRepository(tmp_path / "desktop.sqlite")
+    app.workspace.workflow_model_capabilities = reasoner(repo).capabilities
+    gateway = Gateway()
+    try:
+        prepared = await app.set_inputs(scope(), process(text))
+        frozen = prepared.snapshot
+        view = await app.check_readiness(
+            scope(),
+            process(text),
+            frozen.snapshot_id,
+            gateway=gateway,
+            session_id="session",
+        )
+        assert view.state == "blocked"
+        assert "mcp_context_budget_bytes" in view.reasons[0].message
+        assert "Explicitly revise" in view.reasons[0].correction
+        with pytest.raises(ProcessInterfaceError, match="mcp_context_budget_bytes"):
+            await app.runs.start(
+                scope(),
+                process(text),
+                frozen.snapshot_id,
+                "unsupported-budget",
+                expected_input_digest=frozen.digest,
+                response_generator=None,
+                gateway=gateway,
+                session_id="session",
+            )
+        assert app.runs._owned == {}
+        assert gateway.calls == []
+        assert repo.pending("workspace-1", "session-1") == []
+        assert not (tmp_path / "runs").exists()
+        with pytest.raises(KeyError):
+            app.inputs.start_receipt("user", process(text), "unsupported-budget")
+    finally:
+        await app.close()

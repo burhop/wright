@@ -137,3 +137,34 @@ def test_unsupported_shape_and_profile_rejected():
         request(payload([])).binding.digest
         != request(payload([]), "inline-png-jpeg-v1").binding.digest
     )
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        {"detail": "low"},
+        {"detail": "auto"},
+        {"detail": None},
+        {"detail": "high", "other": True},
+    ],
+)
+def test_image_hint_does_not_allow_unqualified_fields(extra):
+    from core.desktop_reasoning import desktop_image_url
+
+    with pytest.raises(ValueError, match="exact inline image contract"):
+        desktop_image_url(
+            {"type": "image_url", "image_url": {"url": "unread", **extra}}
+        )
+
+
+def test_shared_producer_high_hint_preserves_core_request_bytes_and_digest():
+    data = (
+        Path(__file__).resolve().parents[3]
+        / "artifacts/stevecad-demonstrations/qualification/native/06-inspect-coupon-1.png"
+    ).read_bytes()
+    body = payload([inline(data)])
+    body["messages"][0]["content"][1]["image_url"]["detail"] = "high"
+    before = copy.deepcopy(body)
+    accepted = request(body)
+    assert accepted.payload == body == before
+    assert request(body).digest == accepted.digest

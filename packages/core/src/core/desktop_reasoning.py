@@ -24,6 +24,27 @@ ReplyText = Annotated[
 ENGINEERING_IMAGE_PROFILE = "inline-png-jpeg-engineering-v1"
 
 
+def desktop_image_url(part):
+    """Accept the shared MCP producer's high-detail hint without widening media.
+
+    The hint remains request provenance, not proof of the desktop model's
+    resolution. Byte/profile validation is still required by each caller.
+    """
+    image = part.get("image_url") if isinstance(part, dict) else None
+    if (
+        not isinstance(part, dict)
+        or set(part) != {"type", "image_url"}
+        or part["type"] != "image_url"
+        or not isinstance(image, dict)
+        or not (
+            set(image) == {"url"}
+            or (set(image) == {"url", "detail"} and image["detail"] == "high")
+        )
+    ):
+        raise ValueError("Desktop image parts require the exact inline image contract")
+    return image["url"]
+
+
 def decode_desktop_image(url, *, profile="inline-png-jpeg-v1"):
     """Validate bounded inline bytes; never fetch, transform or repair an image."""
     if profile not in {"inline-png-jpeg-v1", ENGINEERING_IMAGE_PROFILE}:
@@ -119,22 +140,14 @@ class DesktopReasoningRequest(Contract):
                         "input_image",
                     }:
                         continue
-                    if (
-                        set(part) != {"type", "image_url"}
-                        or part["type"] != "image_url"
-                        or not isinstance(part["image_url"], dict)
-                        or set(part["image_url"]) != {"url"}
-                    ):
-                        raise ValueError(
-                            "Desktop image parts require the exact inline image contract"
-                        )
+                    url = desktop_image_url(part)
                     count += 1
                     if count > 8:
                         raise ValueError(
                             "Desktop engineering task exceeds eight images"
                         )
                     decode_desktop_image(
-                        part["image_url"]["url"],
+                        url,
                         profile=self.binding.image_input_profile,
                     )
                     part["image_url"]["url"] = ""

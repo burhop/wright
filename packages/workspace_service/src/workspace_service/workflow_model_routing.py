@@ -77,6 +77,16 @@ async def freeze_workflow_model_routing(
                     "The model gateway could not qualify the selected model"
                 )
             text = parse_workflow_text_resolution(capability["resolution"])
+            if capability.get("supports_mcp_context_budget") is False:
+                for step in text_steps:
+                    if step.agent_task and step.mcp_context_budget_bytes is not None:
+                        raise WorkflowSourceExecutionError(
+                            "WORKFLOW_NOT_READY",
+                            f"{step.title}: the configured model adapter does not support "
+                            "the saved mcp_context_budget_bytes setting.",
+                            "Explicitly revise this setting or select a supporting adapter "
+                            "before starting. Existing runs and external results are unchanged.",
+                        )
         current = WorkflowModelRouting(
             text=text,
             images={

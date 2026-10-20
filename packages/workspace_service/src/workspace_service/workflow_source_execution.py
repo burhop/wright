@@ -3241,7 +3241,10 @@ async def execute_prompt_workflow(
                 ) from error
             except ValueError as error:
                 raise _error(
-                    "MODEL_UNAVAILABLE", str(error), "Check Model Setup and run again."
+                    "MODEL_UNAVAILABLE",
+                    str(error),
+                    "Inspect this run's recorded tool outcomes and model configuration before recovery. "
+                    "Completed external operations are preserved; do not repeat them to recover a response.",
                 ) from error
             record = {
                 "execution_kind": execution_kind,
