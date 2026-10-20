@@ -1,0 +1,64 @@
+{
+  "schema": "wright.windows-rebind-qualification/1",
+  "base_commit": "6a7617e532ec37c3d103428f562df862e1f715fd",
+  "host": {
+    "system": "Linux",
+    "machine": "aarch64"
+  },
+  "hermes": {
+    "source_revision": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+    "runtime_dependencies": {
+      "python": "3.11.15",
+      "openai": "2.24.0",
+      "mcp": "1.28.1"
+    }
+  },
+  "source_sha256": {
+    "packages/agent_adapters/src/agent_adapters/hermes_gateway_refresh.py": "75a8081c25f0e6c0b8f7010a92e6ed534042ab058788a458fab7f72b6ee8cdd7",
+    "packages/agent_adapters/src/agent_adapters/hermes_gateway_observer.py": "7c7c89a1c39d7858e098c173241fd12b70ea1a990265edf3d0dd6ecb406c9ae3",
+    "apps/api/src/api/services/wright_gateway_sync.py": "2447be9bdc57cc43f60def56f88a6264b42651aab42975e2b7ed5d4302da7db3",
+    "apps/api/src/api/routers/agent.py": "dd16f4dba88eecce83ca8db0aa291fcd632db970336e2171f565ba2211a62ebc",
+    "packages/workspace_service/src/workspace_service/agent_sync.py": "beb82797866e529482fe7edec2873944dbbe3d50d2fc8cf83fc63f72b18d97e9"
+  },
+  "checks": {
+    "focused_tests": {
+      "result": "passed",
+      "count": 51,
+      "log_sha256": "663ec7a9aa5af115faf3c3209dfeb5d1e8c8267bb1c64c743c2c61b0eadf0d8b"
+    },
+    "actual_runtime": {
+      "result": "passed",
+      "scope": "real pinned Hermes + Wright on Linux ARM64; controlled loopback LLM, no live inference",
+      "old_pid": 3253814,
+      "replacement_pid": 3254053,
+      "authoring_http_status": 200,
+      "tool": "mcp__wrightgateway__wright__workspace_status",
+      "returned_binding": {
+        "workspace_id": "after",
+        "session_id": "session-after"
+      },
+      "model_requests": 4,
+      "raw_report_sha256": "9641f30c547206beda7ccef0210c2fc3dbbc081157265cb5d2b6787014a29503",
+      "probe_sha256": "653d7755cb5240a5fe15deb8f37ad069e528945f3dcf582f9ce8627f119eead5"
+    }
+  },
+  "retained_attempts": [
+    {
+      "identity": "runtime-1792521971",
+      "result": "incomplete",
+      "reason": "Hermes child environment omitted database; MCP rejected workspace binding."
+    },
+    {
+      "identity": "runtime-1792522122",
+      "result": "incomplete",
+      "reason": "Fixture did not use actual Hermes deferred-tool search; tool availability alone did not qualify invocation."
+    }
+  ],
+  "not_verified": [
+    "Actual Windows process replacement and native MCP use",
+    "Live Astra/high authoring, SDK helpers and engineering correction loop",
+    "Roadster readiness",
+    "Dev integration and deployment for this repair"
+  ],
+  "local_evidence_directory": "/tmp/wright-windows-rebind-evidence-20261020"
+}

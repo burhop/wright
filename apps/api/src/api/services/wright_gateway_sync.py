@@ -48,7 +48,10 @@ def default_hermes_gateway_profile(repo_dir: str | None = None) -> WrightGateway
 
 
 def write_gateway_profile_config(
-    profile: WrightGatewayProfile, config_paths: list[str]
+    profile: WrightGatewayProfile,
+    config_paths: list[str],
+    *,
+    gateway_env: dict[str, str] | None = None,
 ) -> bool:
     config_changed = False
 
@@ -69,6 +72,11 @@ def write_gateway_profile_config(
                     if isinstance(existing_gateway, dict)
                     else {}
                 )
+                if gateway_env:
+                    preserved_gateway["env"] = {
+                        **preserved_gateway.get("env", {}),
+                        **gateway_env,
+                    }
                 config["mcp_servers"] = {
                     **servers,
                     profile.server_name: {
@@ -249,6 +257,29 @@ def sync_workspace_tools_to_wright_gateway(
     except Exception as e:
         logger.warning("failed_to_write_workspace_context", error=str(e))
 
-    changed = write_gateway_profile_config(active_profile, active_config_paths)
+    gateway_env = None
+    if (
+        active_profile.provider_name == "hermes"
+        and active_profile.gateway_project_dir is not None
+    ):
+        # Hermes deliberately filters the parent environment for MCP children.
+        # Bind source STDIO to this database; never let it discover another
+        # installation's state. Only forward the named Wright dependencies.
+        gateway_env = {"DATABASE_PATH": str(Path(db_path).resolve())}
+        for key in (
+            "WRIGHT_DATA_ROOT",
+            "WRIGHT_SECRETS_PATH",
+            "WRIGHT_SECRETS_DIR",
+            "WRIGHT_API_BASE_URL",
+        ):
+            if os.getenv(key):
+                gateway_env[key] = os.environ[key]
+        if os.getenv("WRIGHT_API_TOKEN"):
+            # Hermes resolves this from its private process environment.
+            # Never serialize the credential into the profile.
+            gateway_env["WRIGHT_API_TOKEN"] = "${WRIGHT_API_TOKEN}"
+    changed = write_gateway_profile_config(
+        active_profile, active_config_paths, gateway_env=gateway_env
+    )
     notify_gateway_tool_change()
     return changed

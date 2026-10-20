@@ -990,15 +990,36 @@ async def chat(
             log.warn("Failed to sync workspace tools", error=str(e))
 
     if (
-        gateway_restart_required
+        (
+            gateway_restart_required
+            or os.getenv("WRIGHT_HERMES_GATEWAY_CONTROL") == "manual"
+        )
         and sync_manager
         and getattr(sync_manager, "active_agent", "") == "hermes"
     ):
         try:
-            await sync_manager.refresh_gateway_if_needed(
-                lambda: asyncio.to_thread(_restart_hermes_gateway_process),
-                wait_ready=lambda: _wait_for_hermes_gateway(engine),
-            )
+            control = os.getenv("WRIGHT_HERMES_GATEWAY_CONTROL", "service")
+            if control == "manual":
+                from agent_adapters.hermes_gateway_refresh import (
+                    ManualHermesGatewayRefresh,
+                )
+
+                refresh = getattr(request.app.state, "hermes_manual_refresh", None)
+                if refresh is None:
+                    refresh = ManualHermesGatewayRefresh()
+                    request.app.state.hermes_manual_refresh = refresh
+                if refresh.pending:
+                    sync_manager.require_gateway_refresh()
+                await sync_manager.refresh_gateway_if_needed(
+                    refresh.start, wait_ready=refresh.wait_ready
+                )
+            elif control == "service":
+                await sync_manager.refresh_gateway_if_needed(
+                    lambda: asyncio.to_thread(_restart_hermes_gateway_process),
+                    wait_ready=lambda: _wait_for_hermes_gateway(engine),
+                )
+            else:
+                raise RuntimeError("Unsupported Hermes gateway control mode")
         except Exception as exc:
             log.exception("workspace_gateway_rebind_failed", error=str(exc))
             raise HTTPException(

@@ -269,3 +269,50 @@ def test_workspace_sync_reuses_binding_for_another_session_in_same_workspace(tmp
     config = yaml.safe_load(config_path.read_text())
     assert config["terminal"]["cwd"] == str(workspace_path)
     assert gateway["args"][2] == "/wright"
+
+
+def test_source_gateway_keeps_isolated_state_under_filtered_hermes_environment(
+    tmp_path, monkeypatch
+):
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    db = _create_workspace_context_db(tmp_path, workspace)
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "mcp_servers": {
+                    "wrightgateway": {
+                        "env": {"DATABASE_PATH": "wrong.db", "CUSTOM_OPTION": "keep"},
+                        "connect_timeout": 45,
+                    }
+                }
+            }
+        )
+    )
+    monkeypatch.setenv("DATABASE_PATH", "unrelated-parent.db")
+    monkeypatch.setenv(
+        "WRIGHT_SECRETS_PATH", str(tmp_path / "private-credentials.json")
+    )
+    monkeypatch.setenv("WRIGHT_API_BASE_URL", "http://127.0.0.1:24287")
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "private-api-test-canary")
+    monkeypatch.setenv("OPENAI_API_KEY", "unrelated-model-test-canary")
+    wright_gateway_sync.sync_workspace_tools_to_wright_gateway(
+        "session1",
+        db,
+        profile=wright_gateway_sync.default_hermes_gateway_profile("/wright"),
+        config_paths=[str(config_path)],
+    )
+    text = config_path.read_text()
+    gateway = yaml.safe_load(text)["mcp_servers"]["wrightgateway"]
+    assert gateway["env"]["DATABASE_PATH"] == str(Path(db).resolve())
+    assert gateway["env"]["WRIGHT_SECRETS_PATH"] == str(
+        tmp_path / "private-credentials.json"
+    )
+    assert gateway["env"]["WRIGHT_API_BASE_URL"] == "http://127.0.0.1:24287"
+    assert gateway["env"]["WRIGHT_API_TOKEN"] == "${WRIGHT_API_TOKEN}"
+    assert gateway["env"]["CUSTOM_OPTION"] == "keep"
+    assert gateway["connect_timeout"] == 45
+    assert "private-api-test-canary" not in text
+    assert "unrelated-model-test-canary" not in text
+    assert "OPENAI_API_KEY" not in gateway["env"]

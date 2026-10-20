@@ -90,6 +90,8 @@ $env:HERMES_API_BASE_URL = 'http://127.0.0.1:28642'
 $env:HERMES_API_DISABLE_DEFAULT_CANDIDATES = '1'
 $env:WRIGHT_WORKFLOW_MODEL_TRANSPORT = 'hermes-model-sdk'
 $env:HERMES_CONFIG_PATH = Join-Path $env:HERMES_HOME 'profiles/windows-engineering-pilot/config.yaml'
+$env:WRIGHT_NATIVE_RUNTIME = '0'
+$env:WRIGHT_HERMES_GATEWAY_CONTROL = 'manual'
 ```
 
 Set `HERMES_API_KEY` to the dedicated API's key through private environment
@@ -99,6 +101,36 @@ install Hermes in Wright's virtual environment or invent paths from GB10.
 Clear inherited endpoint/model/key overrides in this dedicated process as in
 the first-pass launcher. Remove its hard-coded `HERMES_API_BASE_URL=...8642`;
 it must not overwrite the isolated route.
+
+The pilot uses a manually launched Hermes gateway. The `manual` setting makes
+Wright use that installed runtime's `gateway run --replace`, scoped to the named
+profile. It does not run the Windows service restart/install command. Keep an
+explicit loopback port, disable endpoint discovery, and provide the runtime root
+and Python paths above. Before replacement Wright checks that the authenticated
+API PID matches Hermes's selected-profile PID and that no agent/API/delegation
+work is active. A busy or unidentified service holds authoring with HTTP 503.
+Other Wright installations retain their existing service-control mode.
+
+Set the pilot's existing `DATABASE_PATH`, `WRIGHT_DATA_ROOT`,
+`WRIGHT_SECRETS_PATH`, `WRIGHT_SECRETS_DIR`, `WRIGHT_API_BASE_URL`, and private
+`WRIGHT_API_TOKEN` in the dedicated launch environment. Hermes filters the
+environment of MCP subprocesses. The source binding now records the exact Wright
+database and configured Wright paths/endpoint in `mcp_servers.wrightgateway.env`.
+The API token is an environment reference `${WRIGHT_API_TOKEN}`, never its value;
+both owned services must load that reference from the private launcher. Existing
+operator tool filters, timeout settings and unrelated server entries are retained.
+Do not copy personal credentials to make another profile work.
+
+A replacement has a small nonsecret receipt in the private profile,
+`wright-gateway-refresh.yaml`. If readiness times out, retrying the pending chat
+observes that same replacement; it does not launch another one. The receipt also
+survives a Wright API restart. A healthy old PID is not completion, and changed
+configuration holds the operation. If the replacement exits or configuration
+changes, inspect the private `logs/wright-gateway-rebind.log`, reconcile the
+selected process and restore its recorded configuration before proceeding.
+Preserve the receipt as evidence. Do not delete it to force an uncertain retry.
+Gateway health alone does not establish MCP availability: use the actual
+read-only workspace-status tool through Hermes after rebinding.
 
 The browser authoring chat uses this dedicated Hermes API. Select and confirm
 Astra for its new session through Wright's existing session model control
@@ -140,6 +172,10 @@ new run; do not rewrite their recorded routing.
    source revision/digest and screenshot; component tests alone do not qualify it.
 4. Author and refine a small workflow using the locked Astra chat. Retain actual
    Wright-submitted request evidence and gateway lock/runtime receipts.
+   First switch to a fresh test workspace and have Hermes call Wright's
+   `wright__workspace_status` through its native tool mechanism. Require the
+   returned workspace/session to match that binding. Repeat after enabling the
+   intended tools. A standalone MCP probe or healthy listener is insufficient.
    Separately run the following from the configured Wright environment to probe
    the execution route and make one bounded model-only request. Use a fresh
    output directory for every attempt. Its success is a route probe, not
