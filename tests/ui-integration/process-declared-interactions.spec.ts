@@ -262,7 +262,7 @@ for (const loseAcknowledgement of [false, true]) {
       expect(submissions[1]).toEqual(submissions[0]);
     }
     await expect(
-      common.getByText("Process completed", { exact: true }),
+      common.getByText("Completed · Run details", { exact: true }),
     ).toBeVisible();
     await expect(common.getByRole("alert")).toHaveCount(0);
     expect(fixture.starts()).toBe(1);

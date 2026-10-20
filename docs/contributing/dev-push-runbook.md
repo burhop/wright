@@ -127,6 +127,14 @@ the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Outside the bounded correction modes above,
 gate or workflow changes run all slices.
+PR #166 exposed completion assertions against a deliberately collapsed progress
+section. Browser contracts must check the visible terminal summary and results,
+then expand Run details when inspecting progress. Keep exact run/result identity,
+source drafts, declared-input validation and no-replay assertions. The frontend
+fast gate includes the existing common-view, declared-interaction and two-input
+recovery journeys alongside the canonical workspace/editor baseline; component
+checks alone do not establish visibility through a native disclosure control.
+
 Frontend selection also runs the MCP onboarding Chromium suite, including its
 read-only live source-entry check against the gate's isolated API. This catches
 accessible-control regressions that component tests and editor-only coverage miss;
