@@ -169,6 +169,11 @@ vendored bundle/inventory. Exact-image smoke checks all three installed bundles
 and confirms the affected emSign ECC Root CA - G3 is absent. Earlier passing
 audits remain dated evidence; they do not waive this new finding. No dependency
 audit exception is added, and live user environments are not modified by the gate.
+Hermes 0.19's exact older certifi pin prevents a combined resolver install. Apply
+the patch through the existing security-override stage; retain the raw pip check
+and reconcile only its exact 2026.5.20-to-2026.10.19 metadata conflict alongside
+the three earlier reviewed conflicts. Changed versions or extra conflicts fail.
+The separate actual-bundle smoke and vulnerability policy stay mandatory.
 
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.

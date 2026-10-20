@@ -108,7 +108,7 @@ RUN set -eux; \
 
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
-        hermes-agent==0.19.0 aiohttp==3.14.4 certifi==2026.10.19 && \
+        hermes-agent==0.19.0 aiohttp==3.14.4 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv
@@ -206,9 +206,9 @@ RUN set -eux; \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
-# Hermes 0.19.0 exactly pins older cryptography, Pillow and PyJWT releases. Wright
+# Hermes 0.19.0 exactly pins older cryptography, Pillow, PyJWT and certifi releases. Wright
 # installs the security-fixed releases below and the exact-image smoke gate
-# runs `uv pip check`, accepting only those three version-specific metadata
+# runs `uv pip check`, accepting only those four version-specific metadata
 # conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
 # independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
@@ -219,6 +219,7 @@ RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "starlette==1.3.1" \
         "tornado==6.5.9" \
         "pyjwt==2.15.1" \
+        "certifi==2026.10.19" \
         "urllib3==2.8.0" && \
     rm -rf /root/.cache/uv /home/agent/.cache/uv
 
