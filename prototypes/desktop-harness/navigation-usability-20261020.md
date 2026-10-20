@@ -163,3 +163,19 @@ image smoke passed; its log and failed gate are retained. Vite is now pinned to
 passes with no High/Critical findings and no remaining Vite finding. Existing
 Low/Moderate findings remain reported. Both dependency repairs will be pushed
 together after normal qualification; no intermediate security-only CI push occurred.
+
+The next full gate (`9fc00705`) caught a fixed compiler declaration still pinned
+to Vite 8.2.0. Aligning it to 8.2.4 restores the existing version check; the
+compiler envelope and client/kit 1.0.0 contracts are unchanged. All 91 selected
+actual build, prohibited source/CSS, timeout/overflow/cancellation, saved revision
+compatibility and static-hosting checks pass. New build reports record the
+changed package identity; saved bundles and accepted workflow revisions are
+not rewritten. Evidence: `compiler-824-qualified.json` in the same local index.
+The first test invocation named a nonexistent test file and ran no tests; its
+log is retained separately. The complete normal gates still apply.
+
+The actual installed Hermes image helpers also returned byte-identical outputs
+with Pillow 12.3 and 13.0 for the controlled JPEG/RGBA cases; malformed input
+was rejected and original files remained unchanged. A below-minimum-size probe
+exposed identical existing aspect behavior in both versions, not a regression
+or an engineering measurement guarantee. See `hermes-image-comparison.json`.
