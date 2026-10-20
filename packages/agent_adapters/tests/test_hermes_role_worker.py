@@ -34,6 +34,14 @@ def test_standard_deadline_has_the_fixed_timeout_category():
     assert failure_code(TimeoutError("SECRET transport")) == "SCOPED_MODEL_TIMEOUT"
 
 
+def test_native_hermes_relogin_is_actionable_without_exposing_provider_details():
+    error = type("AuthError", (Exception,), {})("SECRET provider response")
+    error.relogin_required = True
+    assert failure_code(error) == "SCOPED_MODEL_AUTH_REQUIRED"
+    error.relogin_required = False
+    assert failure_code(error) == "SCOPED_INVOCATION_UNAVAILABLE"
+
+
 @pytest.fixture
 def sdk(monkeypatch, tmp_path):
     calls = []

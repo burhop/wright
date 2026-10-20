@@ -2,7 +2,14 @@ import time
 import httpx
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Request,
+    WebSocket,
+    WebSocketDisconnect,
+    Response,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.exceptions import RequestValidationError
@@ -760,9 +767,26 @@ async def check_api_health():
 @app.get("/api/runtime/identity")
 async def runtime_identity():
     """Return non-secret process identity used by the native lifecycle challenge."""
-    from wright_engineering.runtime.server import runtime_identity_payload
+    from wright_engineering.runtime.server import (
+        ServerBootstrapError,
+        runtime_identity_payload,
+    )
 
-    return runtime_identity_payload()
+    try:
+        return runtime_identity_payload()
+    except ServerBootstrapError as exc:
+        if str(exc) != "runtime_challenge_missing":
+            raise
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "code": "native_lifecycle_unavailable",
+                "message": (
+                    "This process has no native-manager lifecycle challenge. "
+                    "Use /api/health for source-launch service health."
+                ),
+            },
+        ) from exc
 
 
 @app.get("/api/agent/health", response_model=HealthResponse)

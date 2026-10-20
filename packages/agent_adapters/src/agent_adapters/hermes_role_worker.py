@@ -257,7 +257,9 @@ def failure_code(error):
         "TimeoutException",
     }:
         return "SCOPED_MODEL_TIMEOUT"
-    if name in {"AuthenticationError", "PermissionDeniedError"}:
+    if name in {"AuthenticationError", "PermissionDeniedError"} or (
+        name == "AuthError" and getattr(error, "relogin_required", False) is True
+    ):
         return "SCOPED_MODEL_AUTH_REQUIRED"
     if name == "RateLimitError":
         return "SCOPED_MODEL_RATE_LIMITED"
