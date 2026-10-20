@@ -1,4 +1,5 @@
 import type { ProcessClient } from "@wright/process-client";
+import type { ReactNode } from "react";
 import type { WorkflowReasoningStatusReader } from "../../services/desktop-reasoning-status";
 import { CommonProcessView } from "../../components/process-interfaces/CommonProcessView";
 import "../../components/process-interfaces/process-workspace.css";
@@ -18,6 +19,8 @@ export function NativeProcessPanel({
   onRunAttached,
   onPrepareAnother,
   onDirty,
+  canNavigate = false,
+  runDetails,
 }: {
   readonly client: ProcessClient;
   readonly sessionId: string;
@@ -31,6 +34,8 @@ export function NativeProcessPanel({
   readonly onPrepareAnother?: () => void;
   readonly onDirty?: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
+  readonly canNavigate?: boolean;
+  readonly runDetails?: ReactNode;
 }) {
   return (
     <main className="native-workflow-panel" data-control-style="neutral">
@@ -51,6 +56,7 @@ export function NativeProcessPanel({
         className="native-process-panel"
         style={{ flex: "1 1 0", minHeight: 0, overflow: "auto" }}
       >
+        {runDetails}
         <CommonProcessView
           client={client}
           sessionId={sessionId}
@@ -60,6 +66,7 @@ export function NativeProcessPanel({
           readOnly={readOnly}
           theme={theme}
           canReadRepresentations
+          canNavigate={canNavigate}
           onUpload={(file, definition) =>
             client.uploadInput(definition.input_id, file)
           }

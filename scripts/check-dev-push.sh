@@ -532,6 +532,9 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     run npx prettier --check apps/web/
   fi
   run npx tsc --noEmit -p apps/web/tsconfig.app.json
+  # Check LF/CRLF cold reconstruction before expensive suites (PR163).
+  run npm run test --workspace=apps/web -- --run \
+    src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx --maxWorkers=1
   # Keep jsdom integration tests below their per-test timeout when the fast gate
   # also selects the large Python matrix on high-core developer hosts.
   run npm run test --workspace=apps/web -- --changed "$BASE_REF" --maxWorkers=4

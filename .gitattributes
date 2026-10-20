@@ -1,6 +1,7 @@
 # Force LF line endings for shell scripts so they run correctly in bash/Docker
 *.sh text eol=lf
 uv.lock text eol=lf
+apps/web/src/prototypes/workflow-recovery/fixtures/codex-spacer-comparison.workflow.wflow text eol=lf
 
 # These accepted inputs and generated revision records carry recorded byte hashes.
 specs/082-output-content-validation/campaign-example-renewal*.json text eol=lf

@@ -257,6 +257,17 @@ Windows. Wait for asynchronous digests to reach their final value before
 capturing them. A focused Windows pass does not replace the Linux CI check for
 these portability-sensitive contracts.
 
+
+PR #163 exposed a source-display test that compared a Windows CRLF checkout
+with a textarea value, which uses LF. The unchanged Robot source opened; the
+display assertion failed. Both normal frontend gate slices now run the owning
+cold-reconstruction suite before expensive checks, with explicit LF and CRLF
+inputs for both the spacer and Robot workflows on every host. Normalize only the
+expected textarea display; retain exact parser inputs, semantic round trips,
+port type/ownership rejection and the no-save assertion. Do not rewrite accepted
+templates, fixture hashes or runtime behavior to satisfy a display comparison.
+The full frontend suites and actual Windows CI remain required.
+
 Keep browser fixtures aligned with the current workspace journey: Workflows
 explicitly creates a uniquely named empty source; Workspace Files opens an
 existing source with its exact `workflowPath`. A passive link to a missing file

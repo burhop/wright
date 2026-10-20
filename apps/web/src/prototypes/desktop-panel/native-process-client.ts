@@ -84,6 +84,9 @@ export function createNativePanelProcessClient(options: {
   readonly sessionId: string;
   readonly call: NativeProcessCall;
   readonly workspaceName: string;
+  readonly navigate?: Parameters<
+    typeof createNativeProcessClient
+  >[0]["navigate"];
 }): {
   client: ProcessClient;
   readReasoningStatus: WorkflowReasoningStatusReader;
@@ -244,7 +247,10 @@ export function createNativePanelProcessClient(options: {
         "/readiness": "readiness",
         "/runs": "start",
       };
-      if (url.pathname === "/representations/read") {
+      if (url.pathname === "/navigation") {
+        request.operation = "navigation";
+        tool = "wright_process_ui_read";
+      } else if (url.pathname === "/representations/read") {
         request.operation = "representation";
         tool = "wright_process_ui_read";
       } else if (simple[url.pathname]) request.operation = simple[url.pathname];
@@ -277,6 +283,7 @@ export function createNativePanelProcessClient(options: {
     sessionId,
     baseUrl: base,
     fetch,
+    navigate: options.navigate,
   });
   // MCP tool results are snapshots, not an SSE/LLM stream. Poll only the durable
   // reader while this observer is open. Closing it never cancels or restarts a run.

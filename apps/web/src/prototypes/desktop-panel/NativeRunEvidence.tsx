@@ -28,7 +28,7 @@ export function NativeRunEvidence({
 }: {
   workspace: DesktopWorkspace;
   path: string;
-  run: RecordedRun;
+  run: Pick<RecordedRun, "run_id" | "source_digest">;
   call: HomeCall;
 }) {
   const [record, setRecord] = useState<SavedRecord>();

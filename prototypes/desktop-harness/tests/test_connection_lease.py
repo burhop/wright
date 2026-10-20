@@ -1,4 +1,5 @@
 import asyncio
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -195,3 +196,25 @@ async def test_missing_lease_descriptor_is_explicit_and_closes_client(monkeypatc
         "/api/desktop/disconnect",
     ]
     client.http.aclose.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_health_port_before_connect_and_after_expiry(leased, monkeypatch):
+    from api.main import app as api_app, check_agent_health
+
+    backend, _, now, client, body = leased
+    monkeypatch.setattr(api_app.state, "agent_engine", backend, raising=False)
+    monkeypatch.setattr(api_app.state, "agent_sync_manager", None, raising=False)
+    async with client:
+        disconnected = await check_agent_health()
+        assert disconnected.state == "disconnected"
+        assert math.isfinite(disconnected.latencyMs) and disconnected.latencyMs >= 0
+        assert (await client.post("/api/desktop/connect", json=body)).status_code == 200
+        connected = await check_agent_health()
+        assert connected.state == "connected"
+        assert math.isfinite(connected.latencyMs) and connected.latencyMs >= 0
+        now[0] = 130
+        expired = await check_agent_health()
+        assert expired.state == "disconnected"
+        assert math.isfinite(expired.latencyMs) and expired.latencyMs >= 0
+        assert not backend.clients

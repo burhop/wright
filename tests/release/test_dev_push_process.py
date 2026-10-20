@@ -47,6 +47,13 @@ def test_fast_gate_contains_the_frontend_ci_contract() -> None:
     ):
         assert command in gate
 
+    # The same ordinary owner suite contains both LF and CRLF fixtures.
+    for name in ("push", "merge"):
+        assert (
+            "src/prototypes/workflow-recovery/WorkflowDocumentReconstruction.spec.tsx"
+            in _read(f"scripts/check-dev-{name}.sh")
+        )
+
 
 def test_native_gates_check_path_and_runtime_security_before_long_checks() -> None:
     commands = (

@@ -143,6 +143,30 @@ async def test_lists_only_owned_desktop_scopes_without_rebinding(discovery):
 
 
 @pytest.mark.asyncio
+async def test_workspace_handoff_does_not_advertise_a_remote_loopback_browser(
+    discovery,
+):
+    app, _, _, create, _ = discovery
+    create("Alpha")
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app), base_url="http://test"
+    ) as client:
+        response = await client.get(
+            "/api/desktop/workspaces/Alpha", params={"session_id": "desktop-Alpha"}
+        )
+    assert response.status_code == 200
+    record = response.json()
+    assert "url" not in record
+    assert record["presentation"] == {
+        "kind": "conversation",
+        "browser_available": False,
+        "reopen_tool": None,
+    }
+    assert record["workspace_id"] == "Alpha"
+    assert record["session_id"] == "desktop-Alpha"
+
+
+@pytest.mark.asyncio
 async def test_missing_owned_workspace_is_visible_but_unavailable(discovery):
     app, _, _, create, _ = discovery
     create("Missing", missing=True)

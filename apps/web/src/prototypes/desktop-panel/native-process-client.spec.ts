@@ -56,6 +56,44 @@ function setup() {
 }
 
 describe("native process bridge over the existing public client", () => {
+  it("authorizes an exact navigation target before calling the host, without a write", async () => {
+    const { options, call } = setup();
+    const target = {
+      kind: "block" as const,
+      run_id: "saved-run",
+      block_id: "report",
+    };
+    const navigate = vi.fn();
+    call.mockResolvedValueOnce(
+      result({ ok: true, document: { process, target } }),
+    );
+    const { client } = createNativePanelProcessClient({ ...options, navigate });
+    await client.navigate(target);
+    expect(call).toHaveBeenCalledExactlyOnceWith(
+      "wright_process_ui_read",
+      expect.objectContaining({
+        operation: "navigation",
+        path: process.source_path,
+        expected_storage_digest: digest,
+        target,
+      }),
+      undefined,
+    );
+    expect(navigate).toHaveBeenCalledExactlyOnceWith(process, target, {
+      process,
+      target,
+    });
+    call.mockResolvedValueOnce(
+      result({
+        ok: true,
+        document: { process, target: { ...target, block_id: "other" } },
+      }),
+    );
+    await expect(client.navigate(target)).rejects.toMatchObject({
+      reason: { code: "SCOPE_DENIED" },
+    });
+    expect(navigate).toHaveBeenCalledOnce();
+  });
   it("reads the exact retained run and rejects another run's snapshot", async () => {
     const { client, call } = setup();
     await client.attach("saved-run");

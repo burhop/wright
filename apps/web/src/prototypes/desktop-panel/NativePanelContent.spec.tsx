@@ -38,6 +38,11 @@ vi.mock("./NativeWorkflowPanel", () => ({
     const [draft, setDraft] = useState("");
     return (
       <section aria-label="Editor">
+        {props.navigation && (
+          <span>
+            Focused {props.navigation.resolution.target.block_id ?? "process"}
+          </span>
+        )}
         {props.onOpenTransfer && (
           <button
             onClick={props.onOpenTransfer}
@@ -73,6 +78,7 @@ vi.mock("./NativeWorkflowPanel", () => ({
 vi.mock("./NativeProcessPanel", () => ({
   NativeProcessPanel: (props: ComponentProps<typeof NativeProcessPanel>) => (
     <section aria-label="Working view">
+      {props.runDetails}
       <button onClick={() => props.onDirty?.(true)}>Uncertain change</button>
       <button onClick={() => props.onDirty?.(false)}>Reconciled</button>
       <button onClick={props.onOpenWorkflow}>Open workflow</button>
@@ -85,6 +91,24 @@ vi.mock("./NativeProcessPanel", () => ({
         Read exact run
       </button>
       <span>{props.runId ?? "New preparation"}</span>
+      <button
+        onClick={() =>
+          void props.client.navigate({
+            kind: "block",
+            run_id: props.runId,
+            block_id: "report",
+          })
+        }
+      >
+        Open producing step
+      </button>
+      <button
+        onClick={() =>
+          void props.client.navigate({ kind: "run", run_id: props.runId })
+        }
+      >
+        Open run details
+      </button>
     </section>
   ),
 }));
@@ -189,6 +213,96 @@ it("preserves editor state and attaches the same run after switching views", asy
   fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
   await screen.findByText("retained-run");
   expect(call).not.toHaveBeenCalled();
+});
+it("opens the owner-resolved producing block while retaining the exact run and editor", async () => {
+  const process = {
+    workspace_id: original.workspace_id,
+    source_path: original.path,
+    source_digest: original.storage_digest,
+  };
+  const { call } = setup({
+    initialProcess: process,
+    initialRunId: "retained-run",
+  });
+  call.mockResolvedValueOnce({
+    content: [],
+    structuredContent: {
+      ok: true,
+      document: {
+        process,
+        target: { kind: "block", run_id: "retained-run", block_id: "report" },
+      },
+    },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Open producing step" }));
+  await screen.findByText("Focused report");
+  expect(screen.getByRole("region", { name: "Editor" })).toBeVisible();
+  expect(call).toHaveBeenCalledExactlyOnceWith(
+    "wright_process_ui_read",
+    expect.objectContaining({
+      operation: "navigation",
+      expected_storage_digest: original.storage_digest,
+      target: { kind: "block", run_id: "retained-run", block_id: "report" },
+    }),
+    undefined,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  await screen.findByText("retained-run");
+  expect(call).toHaveBeenCalledOnce();
+});
+it("opens exact recorded run details using the existing read-only evidence view", async () => {
+  const process = {
+    workspace_id: original.workspace_id,
+    source_path: original.path,
+    source_digest: original.storage_digest,
+  };
+  const readEvidence = vi.fn().mockResolvedValue({
+    content: [],
+    structuredContent: {
+      workspace_id: original.workspace_id,
+      session_id: "session",
+      workflow_path: original.path,
+      record: {
+        run_id: "retained-run",
+        source_digest: original.storage_digest,
+        source_matches_current: true,
+        status: "completed",
+        results: [],
+      },
+    },
+  });
+  const { call } = setup({
+    initialProcess: process,
+    initialRunId: "retained-run",
+    readEvidence,
+  });
+  call.mockResolvedValueOnce({
+    content: [],
+    structuredContent: {
+      ok: true,
+      document: {
+        process,
+        target: { kind: "run", run_id: "retained-run" },
+      },
+    },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Open run details" }));
+  await screen.findByText("Recorded state: completed.");
+  expect(readEvidence).toHaveBeenCalledExactlyOnceWith(
+    "wright_recorded_run_read",
+    {
+      request: {
+        workspace_id: original.workspace_id,
+        session_id: "session",
+        path: original.path,
+        run_id: "retained-run",
+        source_digest: original.storage_digest,
+      },
+    },
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Close run details" }));
+  expect(screen.queryByRole("region", { name: "Run details" })).toBeNull();
+  expect(call).toHaveBeenCalledOnce();
 });
 it("keeps drafts and uncertain effects in their current surface", async () => {
   const { read, call, onDirty } = setup();

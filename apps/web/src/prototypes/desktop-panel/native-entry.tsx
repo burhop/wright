@@ -226,6 +226,11 @@ async function open() {
       : args),
   };
   if (
+    typeof input.path === "string" &&
+    /^\/workflows\/[a-z0-9][a-z0-9-]{0,62}\.workflow\.wflow$/.test(input.path)
+  )
+    input.path = input.path.slice(1);
+  if (
     pending?.structuredContent?.view === "home" &&
     !pending.isError &&
     typeof input.path !== "string"
@@ -378,6 +383,7 @@ async function open() {
             sourceClient={client}
             draftClient={draftClient}
             call={processCall}
+            readEvidence={homeCall}
             transferCall={transferCall}
             onOpenTransferred={(path) =>
               openSavedWorkflow(

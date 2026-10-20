@@ -16,6 +16,7 @@ from api.schemas.process_interfaces import (
     ProcessActionRequest,
     ProcessCancelRequest,
     ProcessInputResponseRequest,
+    ProcessNavigationRequest,
     ProcessReadinessRequest,
     ProcessReviewDecisionRequest,
     ProcessRepresentationRequest,
@@ -57,6 +58,11 @@ class PanelReasoning(ProcessSourceRequest):
 class PanelRepresentation(ProcessRepresentationRequest):
     workspace_id: Segment
     operation: Literal["representation"]
+
+
+class PanelNavigation(ProcessNavigationRequest):
+    workspace_id: Segment
+    operation: Literal["navigation"]
 
 
 class PanelInputs(SetProcessInputsRequest):
@@ -117,7 +123,7 @@ class PanelContinue(ProcessActionRequest):
 
 
 PanelRead = Annotated[
-    PanelSnapshot | PanelReasoning | PanelRepresentation,
+    PanelSnapshot | PanelReasoning | PanelRepresentation | PanelNavigation,
     Field(discriminator="operation"),
 ]
 PanelUpdate = Annotated[
@@ -213,6 +219,9 @@ def register_native_process_tools(mcp, client, *, resource_uri=None):
                         "media_type": media,
                         "size_bytes": len(parts),
                     }
+            elif operation == "navigation":
+                owner_called = True
+                document = await client.call("POST", BASE + "/navigation", json=body)
             elif operation == "upload":
                 content = base64.b64decode(body.pop("bytes_base64"), validate=True)
                 filename = body.pop("filename")

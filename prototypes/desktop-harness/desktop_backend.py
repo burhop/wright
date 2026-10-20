@@ -335,6 +335,7 @@ class DesktopBackend:
         self.service = service
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
+        self.native_editor = native_editor
         self.clients = {}
         self.import_scopes = {}
         self.oauth = DesktopOAuthPresentation()
@@ -410,7 +411,10 @@ class DesktopBackend:
         return SimpleNamespace(session_id="desktop-" + str(uuid4()))
 
     async def check_health(self):
-        return {"state": "connected" if self.connected else "disconnected"}
+        # This measures local lease inspection, not an upstream model request.
+        started = time.perf_counter()
+        state = "connected" if self.connected else "disconnected"
+        return {"state": state, "latencyMs": (time.perf_counter() - started) * 1000}
 
     @property
     def connected(self):
@@ -1129,7 +1133,11 @@ class DesktopBackend:
                 "workspace_id": workspace.workspace_id,
                 "session_id": workspace.session_id,
                 "workspace_name": workspace.workspace_name,
-                "url": f"http://127.0.0.1:{self.web_port}/workspace/{workspace.workspace_id}?host=openai-desktop",
+                "presentation": {
+                    "kind": "native-panel" if self.native_editor else "conversation",
+                    "browser_available": False,
+                    "reopen_tool": "wright_home" if self.native_editor else None,
+                },
             }
 
         @router.get("/workspaces/{workspace_id}")
@@ -1139,7 +1147,11 @@ class DesktopBackend:
                 "workspace_id": row["workspace_id"],
                 "session_id": session_id,
                 "workspace_name": row["workspace_name"],
-                "url": f"http://127.0.0.1:{self.web_port}/workspace/{workspace_id}?host=openai-desktop",
+                "presentation": {
+                    "kind": "native-panel" if self.native_editor else "conversation",
+                    "browser_available": False,
+                    "reopen_tool": "wright_home" if self.native_editor else None,
+                },
             }
 
         @router.get("/workspaces")
