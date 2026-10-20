@@ -65,6 +65,32 @@ def test_sdk_route_continuation_stays_exact_and_cannot_replace_http_run():
     assert failed.value.code == "WORKFLOW_MODEL_CHANGED"
 
 
+def test_sdk_reasoning_survives_persisted_context_and_blocks_changed_resume():
+    import json
+    from agent_adapters.workflow_sdk import sdk_workflow_resolution
+
+    native = {
+        "provider": "openai-codex",
+        "model_reference": "gpt-6-astra",
+        "api_mode": "codex_responses",
+        "endpoint_digest": "a" * 64,
+        "sdk_digest": "b" * 64,
+        "reasoning_effort": "high",
+    }
+    high = sdk_workflow_resolution(native)
+    plan = compile_prompt_workflow(source(task()))
+    _, context = asyncio.run(freeze_workflow_model_routing(owner(high), plan, None))
+    persisted = json.loads(json.dumps(context))
+    restored, _ = asyncio.run(
+        freeze_workflow_model_routing(owner(high), plan, None, persisted)
+    )
+    assert restored.steps[0].model_resolution["reasoning_effort"] == "high"
+    low = sdk_workflow_resolution({**native, "reasoning_effort": "low"})
+    with pytest.raises(WorkflowSourceExecutionError) as failed:
+        asyncio.run(freeze_workflow_model_routing(owner(low), plan, None, persisted))
+    assert failed.value.code == "WORKFLOW_MODEL_CHANGED"
+
+
 def test_initial_route_is_frozen_with_integration_context_not_permission_replaced():
     plan = compile_prompt_workflow(source(task()))
     bound, context = asyncio.run(

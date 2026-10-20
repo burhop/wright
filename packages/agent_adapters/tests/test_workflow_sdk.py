@@ -28,14 +28,15 @@ def sdk(monkeypatch):
     native = {
         "provider": "configured-provider",
         "model_reference": "configured-model",
-        "api_mode": "chat_completions",
+        "api_mode": "codex_responses",
         "endpoint_digest": "a" * 64,
         "sdk_digest": "b" * 64,
+        "reasoning_effort": "high",
     }
     native["configuration_digest"] = hashlib.sha256(
         json.dumps(native, sort_keys=True).encode()
     ).hexdigest()
-    state = SimpleNamespace(native=native, calls=[], fail=False)
+    state = SimpleNamespace(native=native, calls=[], fail=False, replies=[])
 
     class Transport:
         async def probe(self):
@@ -52,7 +53,7 @@ def sdk(monkeypatch):
             if state.fail:
                 raise ValueError("synthetic unavailable SDK")
             return {
-                "text": state.text,
+                "text": state.replies.pop(0) if state.replies else state.text,
                 "response_model": "reported-provider-revision",
                 "usage": {"prompt_tokens": 17, "completion_tokens": 8},
             }
@@ -85,7 +86,14 @@ def test_sdk_probe_has_exact_route_and_round_trips_without_credentials(sdk):
 
 @pytest.mark.parametrize(
     "change",
-    ["model_reference", "sdk_digest", "endpoint_digest", "profile", "transport"],
+    [
+        "model_reference",
+        "sdk_digest",
+        "endpoint_digest",
+        "profile",
+        "transport",
+        "reasoning_effort",
+    ],
 )
 def test_changed_route_never_submits_a_decision(sdk, monkeypatch, change):
     route = asyncio.run(workflow_model_capabilities())["resolution"]
@@ -93,6 +101,8 @@ def test_changed_route_never_submits_a_decision(sdk, monkeypatch, change):
         monkeypatch.setenv("WRIGHT_HERMES_PROFILE", "different")
     elif change == "transport":
         monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-http")
+    elif change == "reasoning_effort":
+        sdk.native[change] = "low"
     else:
         sdk.native[change] = "c" * 64 if "digest" in change else "different-model"
     with pytest.raises(ModelRouteChangedError):
@@ -199,4 +209,43 @@ def test_failed_sdk_call_retains_boundary_evidence_without_http_fallback(sdk):
     assert len(sdk.calls) == 1
     assert any(
         record.get("capture_scope") == "provider_sdk_request" for record in records
+    )
+
+
+def test_translation_correction_uses_same_frozen_sdk_route_and_records_both_calls(sdk):
+    from test_hermes_openai_bridge import _request, _tool
+
+    frozen = asyncio.run(workflow_model_capabilities())["resolution"]
+    sdk.replies = [
+        "invalid decision",
+        '{"kind":"tool_call","name":"create_graph","arguments":{"title":"Verified"}}',
+    ]
+    bridge = HermesOpenAICompatibilityBridge(
+        HermesOpenAIBridgeSettings(
+            base_url="http://unused.invalid",
+            api_key="",
+            workflow_task=True,
+            expected_resolution=frozen,
+        )
+    )
+    payload = _request(tools=[_tool()])
+    result = asyncio.run(bridge.complete(payload))
+    assert len(sdk.calls) == 2
+    assert all(call["expected_resolution"] == sdk.native for call in sdk.calls)
+    assert all(
+        call["expected_resolution"]["reasoning_effort"] == "high" for call in sdk.calls
+    )
+    captures = [
+        item
+        for item in result.wright_invocations
+        if item.get("capture_scope") == "hermes_bridge_upstream_request"
+    ]
+    assert [item["operation"] for item in captures] == [
+        "hermes-bridge-translation",
+        "hermes-bridge-translation-repair",
+    ]
+    assert all(item["frozen_model_resolution"] == frozen for item in captures)
+    assert (
+        result["choices"][0]["message"]["tool_calls"][0]["function"]["name"]
+        == "create_graph"
     )

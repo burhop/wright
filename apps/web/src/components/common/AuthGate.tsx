@@ -160,8 +160,9 @@ export function AuthGate({ children }: AuthGateProps) {
                   lineHeight: 1.5,
                 }}
               >
-                Enter the access token printed when this Docker container
-                started.
+                Enter the access token for this Wright instance. Use the token
+                supplied by the person or local launcher that started Wright.
+                This is a Wright access token, not your AI provider key.
               </p>
             </div>
             <label

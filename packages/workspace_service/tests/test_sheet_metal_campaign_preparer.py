@@ -66,6 +66,11 @@ def test_prepared_case_retains_every_original_gate_and_human_input(
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text()
     plan = compile_prompt_workflow(source)
+    from packages.workspace_service.tests.engineering_workflow_template_fixtures import (
+        assert_frozen_sdk_reasoning,
+    )
+
+    assert_frozen_sdk_reasoning(plan)
     selected_cad = cad_server_id or preparer.SERVER
     cad_steps = [
         step

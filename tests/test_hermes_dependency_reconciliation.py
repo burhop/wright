@@ -16,7 +16,8 @@ MODULE_SPEC.loader.exec_module(RECONCILIATION)
 
 EXPECTED_OUTPUT = """Using Python 3.13.13 environment at: /opt/hermes/.venv
 Checked 83 packages in 3ms
-Found 3 incompatibilities
+Found 4 incompatibilities
+The package `hermes-agent` requires `certifi==2026.5.20`, but `2026.10.19` is installed
 The package `hermes-agent` requires `cryptography==46.0.7`, but `50.0.0` is installed
 The package `hermes-agent` requires `pillow==12.2.0`, but `12.3.0` is installed
 The package `hermes-agent` requires `pyjwt[crypto]==2.13.0`, but `2.15.1` is installed
@@ -34,7 +35,9 @@ def test_accepts_clean_uv_pip_check() -> None:
 @pytest.mark.parametrize(
     ("output", "exit_code"),
     [
-        (EXPECTED_OUTPUT.replace("Found 3", "Found 2"), 1),
+        (EXPECTED_OUTPUT.replace("Found 4", "Found 3"), 1),
+        (EXPECTED_OUTPUT.replace("2026.10.19", "2026.5.20"), 1),
+        (EXPECTED_OUTPUT.replace("2026.10.19", "2027.1.1"), 1),
         (EXPECTED_OUTPUT.replace("50.0.0", "51.0.0"), 1),
         (EXPECTED_OUTPUT.replace("2.15.1", "2.15.0"), 1),
         (EXPECTED_OUTPUT.replace("pyjwt[crypto]", "unrelated"), 1),

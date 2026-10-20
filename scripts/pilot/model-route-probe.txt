@@ -1,0 +1,4 @@
+This is a bounded model-routing probe, not an engineering process or tool request.
+Calculate the volume in cubic millimeters of a 2 mm by 3 mm by 4 mm rectangular
+solid. State the three dimensions, the calculation and the result. Do not use
+tools, create files, or claim measurement of a real CAD artifact.

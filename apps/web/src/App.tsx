@@ -41,18 +41,25 @@ const NativeProcessPage = lazy(
 );
 
 function AppContent() {
+  return (
+    <AuthGate>
+      <AuthenticatedAppContent />
+    </AuthGate>
+  );
+}
+
+function AuthenticatedAppContent() {
+  useEffect(() => initializeSavedTheme(), []);
   const location = useLocation();
   const desktopConversation =
     new URLSearchParams(location.search).get("host") === "openai-desktop";
   const content = (
     <ViewerPanelProvider>
       <ToolsProvider>
-        <AuthGate>
-          <AppShell>
-            <WorkspaceNavigationGuard />
-            <Outlet />
-          </AppShell>
-        </AuthGate>
+        <AppShell>
+          <WorkspaceNavigationGuard />
+          <Outlet />
+        </AppShell>
       </ToolsProvider>
     </ViewerPanelProvider>
   );
@@ -113,7 +120,6 @@ export function createAppRouter() {
 
 function App({ router }: { router: ReturnType<typeof createAppRouter> }) {
   useDesktopIntegration();
-  useEffect(() => initializeSavedTheme(), []);
   return <RouterProvider router={router} />;
 }
 

@@ -341,3 +341,55 @@ async def test_chat_preflight_reports_disconnected_llm(monkeypatch):
 
     assert error.value.status_code == 503
     assert error.value.detail == "LLM backend is not ready: Codex auth expired"
+
+
+@pytest.mark.asyncio
+async def test_manual_rebind_observes_one_retained_replacement_before_chat(
+    tmp_path, monkeypatch
+):
+    from workspace_service.agent_sync import AgentSyncManager
+
+    sync = AgentSyncManager(str(tmp_path / "absent.db"))
+    calls = []
+
+    class Refresh:
+        pending = True
+
+        async def start(self):
+            calls.append("replacement")
+
+        async def wait_ready(self):
+            calls.append("observe")
+            raise TimeoutError("Replacement still pending")
+
+    monkeypatch.setenv("WRIGHT_HERMES_GATEWAY_CONTROL", "manual")
+    monkeypatch.setattr(
+        "agent_adapters.hermes_gateway_refresh.ManualHermesGatewayRefresh", Refresh
+    )
+    monkeypatch.setattr(
+        "api.routers.agent.set_active_rivet_workflow", lambda *args: None
+    )
+    monkeypatch.setattr(
+        "api.routers.agent._restart_hermes_gateway_process",
+        lambda: pytest.fail("Manual profile must not call the service restart command"),
+    )
+    state = SimpleNamespace(agent_sync_manager=sync)
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/agent/chat",
+            "headers": [],
+            "app": SimpleNamespace(state=state),
+        }
+    )
+    for _ in range(2):
+        with pytest.raises(HTTPException) as error:
+            await chat(
+                ChatRequest(session_id="session-1", message="Continue authoring"),
+                request,
+                _DisconnectedLlmEngine(),
+            )
+        assert error.value.status_code == 503
+        assert error.value.detail == "Replacement still pending"
+    assert calls == ["replacement", "observe", "observe"]

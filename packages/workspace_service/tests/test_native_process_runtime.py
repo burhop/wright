@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
-import time
 import threading
 import uuid
 from pathlib import Path
@@ -229,18 +228,42 @@ async def test_queued_cancel_calls_no_operation(runtime, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_deadline_prevents_late_worker_artifact_publication(runtime, monkeypatch):
-    _, repository, workspace = runtime
+    owner, repository, workspace = runtime
     original = NativeArtifactStore.promote
+    operation = owner._local_operation
+    entered, release, settled = (threading.Event() for _ in range(3))
+    promoted = []
 
     def late_promotion(self, *args, **kwargs):
-        time.sleep(1.3)
-        return original(self, *args, **kwargs)
+        entered.set()
+        assert release.wait(15), "Test did not release the held artifact worker"
+        record = original(self, *args, **kwargs)
+        promoted.append(record["artifact_id"])
+        return record
+
+    def observe_operation(*args):
+        try:
+            return operation(*args)
+        finally:
+            if args[3]["operation"] == "artifact.write-text@1":
+                settled.set()
 
     monkeypatch.setattr(NativeArtifactStore, "promote", late_promotion)
+    monkeypatch.setattr(owner, "_local_operation", observe_operation)
     _, run_id = submit(runtime, definition("concept-brief"), timeout=1)
-    result = await terminal(repository, run_id)
-    assert result["state"] == "timed_out" and result["artifacts"] == []
-    await asyncio.sleep(0.6)
+    try:
+        assert await asyncio.to_thread(entered.wait, 15), (
+            "Worker never reached promotion"
+        )
+        result = await terminal(repository, run_id)
+        assert result["state"] == "timed_out" and result["artifacts"] == []
+    finally:
+        release.set()
+        assert await asyncio.to_thread(settled.wait, 15), (
+            "Artifact worker did not finish"
+        )
+    # Inspect after actual late promotion and cleanup, not a guessed disk-I/O delay.
+    assert len(promoted) == 1
     assert repository.inspect("one", run_id)["artifacts"] == []
     assert list((workspace / ".wright/native/artifacts").glob("*/*.bin")) == []
 

@@ -161,6 +161,23 @@ the explicit known floor does not replace the fresh scanner or unchanged policy.
 See the upstream [resource-exhaustion advisory](https://github.com/aio-libs/aiohttp/security/advisories/GHSA-2g87-pp6c-29x5)
 and [initial-timeout advisory](https://github.com/aio-libs/aiohttp/security/advisories/GHSA-5wr8-gcqf-gqf3).
 
+On 20 October, a newly published Critical certifi advisory
+([GHSA-6q48-6c7w-9gw2](https://github.com/advisories/GHSA-6q48-6c7w-9gw2))
+rejected the previously qualified lock. The patched candidate uses certifi
+2026.10.19 in the workspace lock, Hermes environment and pip's independently
+vendored bundle/inventory. Exact-image smoke checks all three installed bundles
+and confirms the affected emSign ECC Root CA - G3 is absent. Earlier passing
+audits remain dated evidence; they do not waive this new finding. No dependency
+audit exception is added, and live user environments are not modified by the gate.
+Hermes 0.19's exact older certifi pin prevents a combined resolver install. Apply
+the patch through the existing security-override stage; retain the raw pip check
+and reconcile only its exact 2026.5.20-to-2026.10.19 metadata conflict alongside
+the three earlier reviewed conflicts. Changed versions or extra conflicts fail.
+The separate actual-bundle smoke and vulnerability policy stay mandatory.
+When replacing pip's vendored certifi, retain its package-qualified resource
+lookups and CLI imports. The actual smoke resolves both `where()` and `contents()`
+inside that package, rejecting accidental use of another installed certifi.
+
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
 Both native gates run the workspace path-security contracts before long checks.
@@ -537,3 +554,14 @@ injection is not native Windows qualification. Both normal Python gate slices
 already collect this suite; keep the Windows backend CI tests required. These
 retries only read the same exact record and never resubmit cancellation, replay
 a tool or replace an unreadable record with a successful outcome.
+
+### Late native artifact cleanup
+
+PR #165 exposed a Windows test observing the filesystem 600 ms after the durable
+timeout while a late worker was still cleaning its unindexed artifact. The
+regression now holds promotion until the run actually times out, releases the
+worker, and waits for that worker's completion before checking both the durable
+artifact index and disk. A deliberately disabled cleanup still fails. Both
+native gates run this controlled interleaving before long suites, in addition to
+normal workspace coverage. Do not replace completion observation with a longer
+sleep or weaken the no-leftover-artifact assertions.

@@ -1,0 +1,134 @@
+{
+  "schema": "wright.windows-rebind-qualification/1",
+  "base_commit": "6a7617e532ec37c3d103428f562df862e1f715fd",
+  "host": {
+    "system": "Linux",
+    "machine": "aarch64"
+  },
+  "hermes": {
+    "source_revision": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+    "runtime_dependencies": {
+      "python": "3.11.15",
+      "openai": "2.24.0",
+      "mcp": "1.28.1"
+    }
+  },
+  "source_sha256": {
+    "packages/agent_adapters/src/agent_adapters/hermes_gateway_refresh.py": "75a8081c25f0e6c0b8f7010a92e6ed534042ab058788a458fab7f72b6ee8cdd7",
+    "packages/agent_adapters/src/agent_adapters/hermes_gateway_observer.py": "7c7c89a1c39d7858e098c173241fd12b70ea1a990265edf3d0dd6ecb406c9ae3",
+    "apps/api/src/api/services/wright_gateway_sync.py": "2447be9bdc57cc43f60def56f88a6264b42651aab42975e2b7ed5d4302da7db3",
+    "apps/api/src/api/routers/agent.py": "dd16f4dba88eecce83ca8db0aa291fcd632db970336e2171f565ba2211a62ebc",
+    "packages/workspace_service/src/workspace_service/agent_sync.py": "beb82797866e529482fe7edec2873944dbbe3d50d2fc8cf83fc63f72b18d97e9"
+  },
+  "checks": {
+    "focused_tests": {
+      "result": "passed",
+      "count": 51,
+      "log_sha256": "663ec7a9aa5af115faf3c3209dfeb5d1e8c8267bb1c64c743c2c61b0eadf0d8b"
+    },
+    "actual_runtime": {
+      "result": "passed",
+      "scope": "real pinned Hermes + Wright on Linux ARM64; controlled loopback LLM, no live inference",
+      "old_pid": 3253814,
+      "replacement_pid": 3254053,
+      "authoring_http_status": 200,
+      "tool": "mcp__wrightgateway__wright__workspace_status",
+      "returned_binding": {
+        "workspace_id": "after",
+        "session_id": "session-after"
+      },
+      "model_requests": 4,
+      "raw_report_sha256": "9641f30c547206beda7ccef0210c2fc3dbbc081157265cb5d2b6787014a29503",
+      "probe_sha256": "653d7755cb5240a5fe15deb8f37ad069e528945f3dcf582f9ce8627f119eead5"
+    },
+    "ci_correction": {
+      "result": "passed",
+      "tests": 66,
+      "log_sha256": "be9402a3f02b35916d76d9cbdba4c91164edd7e9f8d320799810afe18348479e",
+      "controlled_slow_cleanup": "passed",
+      "disabled_cleanup_negative_control": "failed_as_required",
+      "original_test_with_slow_cleanup": "failed_as_reproduced"
+    },
+    "actual_windows": {
+      "candidate": "d6eda2b4e562da5304bb92588aff81b5c70fd415",
+      "origin": "Windows pilot thread actual command outputs and FOLLOWUP.md/READINESS.md, 20 October 2026",
+      "evidence_directory": "D:/repos/wright/.local-run/windows-engineering-pilot/state/readiness/20261020-repair-d6eda2b/",
+      "receipts_sha256": "8fb63eeab1c023db8d3844b9059a037e3e044418158682ba011ff0e27b7a941a",
+      "focused_tests": 70,
+      "old_private_pid": 47380,
+      "new_private_pid": 69280,
+      "shared_pid_unchanged": 29792,
+      "passed": [
+        "Actual Astra/high SDK request and frozen reasoning drift rejection",
+        "Session-specific model lock",
+        "Hermes-native Wright workspace-status and SteveCAD api_reference after private replacement",
+        "Rebinding survives Wright API restart without another replacement",
+        "Durable wait/restart/drift rejection/restored route/completion"
+      ],
+      "durable_run": "881bc250d12b45adafc662998f9ea4ea",
+      "scope": "Actual Windows-local pilot; no GB10/share/SSH runtime dependency. Full engineering acceptance remains held."
+    },
+    "d6_integration_gates": {
+      "candidate": "d6eda2b4e562da5304bb92588aff81b5c70fd415",
+      "push_gate": "passed",
+      "push_log_sha256": "7f1495ac4c52228ce0db017cd4841f7349b01fa691ff8a1632fd384a91ac66a0",
+      "full_merge_gate": "passed with documented local WebKit missing-library limitation; 23 Chromium checks and full PR Playwright passed separately",
+      "full_merge_log_sha256": "e3c56f9416e13f2cdaeec91dc3ce6f75306e9934d2f6c1a0925032b184449ba7",
+      "ci": {
+        "success": 28,
+        "intentional_skip": 1,
+        "all_terminal": true
+      },
+      "integration": "held by subsequently published certifi advisory; old passes do not waive new finding"
+    }
+  },
+  "retained_attempts": [
+    {
+      "identity": "runtime-1792521971",
+      "result": "incomplete",
+      "reason": "Hermes child environment omitted database; MCP rejected workspace binding."
+    },
+    {
+      "identity": "runtime-1792522122",
+      "result": "incomplete",
+      "reason": "Fixture did not use actual Hermes deferred-tool search; tool availability alone did not qualify invocation."
+    }
+  ],
+  "not_verified": [
+    "Actual helper/recovery requests for all remaining Windows readiness cases",
+    "Exact-revision SteveCAD STEP delivery and bounded engineering correction loop",
+    "Roadster readiness",
+    "Current security candidate full gates/CI, dev integration and deployment",
+    "Separate desktop UI Windows usability acceptance"
+  ],
+  "local_evidence_directory": "/tmp/wright-windows-rebind-evidence-20261020",
+  "published_candidate_ci": {
+    "commit": "6a7617e532ec37c3d103428f562df862e1f715fd",
+    "all_terminal": true,
+    "failures": {
+      "windows_backend": "Late worker observed before cleanup finished; controlled test correction qualified.",
+      "linux_amd64_image": "Upstream FreeCAD partial download TLS EOF after bounded retries; actual candidate build remains required."
+    },
+    "snapshot_sha256": "2914b9517025c027e1ed1eff994542ddd3591e6b4be7f9e02ffb1cb39d4c023b"
+  },
+  "security_followup": {
+    "candidate": "5f6ade756683fa990fb6d391ca6cc8ab0c5ee920",
+    "advisory": "GHSA-6q48-6c7w-9gw2",
+    "certifi": "2026.10.19",
+    "scope": "Wright locked environment, isolated container Hermes security override, and pip-vendored package",
+    "status": "focused tests and disposable resource-path probe passed; exact image/smoke and current repository gates still required",
+    "retained_failures": [
+      "95764b8f combined Hermes resolver rejected exact older pin; corrected through existing strict security override",
+      "435718e5 exact image smoke rejected pip resource lookup; corrected qualified resource path. Incomplete push gate stopped, not passed."
+    ]
+  },
+  "provider_hold": {
+    "tool": "stevecad-mcp__generate_model",
+    "error": "name 'wait_s' is not defined",
+    "document": "40b599ff-8a70-4ae5-a717-3d7cd38f8fc7",
+    "revision": 1,
+    "successful_build": "8bb9f109-fe80-4136-b953-727e71396f42",
+    "failed_run": "1f20129a6b254135b20cb4d406384d1c",
+    "status": "Hosted provider repair/deployed version unverified; no CAD recreation, mutation or export replay by the integration agent"
+  }
+}

@@ -78,6 +78,10 @@ class AgentSyncManager:
         self._gateway_refresh_error = None
         self._gateway_restarted_revision = None
 
+    def require_gateway_refresh(self) -> None:
+        """Reconcile a provider's retained pending refresh after API restart."""
+        self._gateway_restart_required = True
+
     @property
     def gateway_refresh_in_progress(self) -> bool:
         return self._gateway_refresh_in_progress

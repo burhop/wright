@@ -23,6 +23,7 @@ class HermesRoleInvocationError(ValueError):
                 "SCOPED_MODEL_TIMEOUT",
                 "SCOPED_MODEL_AUTH_REQUIRED",
                 "SCOPED_MODEL_RATE_LIMITED",
+                "SCOPED_MODEL_REASONING_UNSUPPORTED",
                 "WORKFLOW_MODEL_CHANGED",
             }
             else "SCOPED_INVOCATION_UNAVAILABLE"

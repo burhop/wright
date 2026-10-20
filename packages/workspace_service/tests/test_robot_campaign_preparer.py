@@ -54,6 +54,11 @@ def test_original_robot_stages_and_review_survive_real_binding(tmp_path, ordinal
     result = preparer.prepare(args, directory, tools)
     source = Path(result["draft"]).read_text()
     plan = compile_prompt_workflow(source)
+    from packages.workspace_service.tests.engineering_workflow_template_fixtures import (
+        assert_frozen_sdk_reasoning,
+    )
+
+    assert_frozen_sdk_reasoning(plan)
     manifest = json.loads(
         Path(result["draft"]).with_name("staging-manifest.json").read_text()
     )
