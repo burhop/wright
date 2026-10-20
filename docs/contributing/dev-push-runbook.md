@@ -161,6 +161,15 @@ the explicit known floor does not replace the fresh scanner or unchanged policy.
 See the upstream [resource-exhaustion advisory](https://github.com/aio-libs/aiohttp/security/advisories/GHSA-2g87-pp6c-29x5)
 and [initial-timeout advisory](https://github.com/aio-libs/aiohttp/security/advisories/GHSA-5wr8-gcqf-gqf3).
 
+On 20 October, a newly published Critical certifi advisory
+([GHSA-6q48-6c7w-9gw2](https://github.com/advisories/GHSA-6q48-6c7w-9gw2))
+rejected the previously qualified lock. The patched candidate uses certifi
+2026.10.19 in the workspace lock, Hermes environment and pip's independently
+vendored bundle/inventory. Exact-image smoke checks all three installed bundles
+and confirms the affected emSign ECC Root CA - G3 is absent. Earlier passing
+audits remain dated evidence; they do not waive this new finding. No dependency
+audit exception is added, and live user environments are not modified by the gate.
+
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.
 Both native gates run the workspace path-security contracts before long checks.

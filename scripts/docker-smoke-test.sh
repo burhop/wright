@@ -76,6 +76,15 @@ assert Version(observed) >= Version("3.14.4"), f"Unpatched aiohttp runtime: {obs
 print(f"Patched aiohttp runtime: {observed}")
 '
 
+# certifi is separately installed in Wright/Hermes and vendored inside pip.
+# Qualify actual trust-store bytes, not just a lock entry or scanner database.
+for interpreter in /workspace/.venv/bin/python /opt/hermes/.venv/bin/python; do
+  docker run --rm -i --network none --entrypoint "$interpreter" "$IMAGE_TAG" - \
+    < scripts/check-certifi-trust.py
+done
+docker run --rm -i --network none --entrypoint /usr/local/bin/python3.13 "$IMAGE_TAG" - --pip-vendor \
+  < scripts/check-certifi-trust.py
+
 echo -e "Testing packaged Rivet runtime dependencies..."
 NODE_VERSION=$(docker run --rm --entrypoint node "$IMAGE_TAG" --version)
 if [[ "$NODE_VERSION" != v26.* ]]; then

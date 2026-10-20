@@ -80,31 +80,35 @@ COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a
 RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
     rm -rf /root/.cache/uv
 
-# pip 26.2.1 vendors vulnerable msgpack/urllib3 and a deprecated setuptools
+# pip 26.2.1 vendors vulnerable msgpack/urllib3/certifi and a deprecated setuptools
 # pkg_resources compatibility module. The supported pip CLI does not use that
 # module, so replace the affected libraries, remove it, and update its inventory together.
 RUN set -eux; \
     pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
     mkdir -p /tmp/pip-security-overrides; \
-    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1" "urllib3==2.8.0"; \
-    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/pkg_resources"; \
+    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1" "urllib3==2.8.0" "certifi==2026.10.19"; \
+    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/certifi" "${pip_vendor}/pkg_resources"; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
     cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
+    cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"; \
     sed -i \
       -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
       -e "s/urllib3==2.7.0/urllib3==2.8.0/" \
+      -e "s/certifi==2026.6.17/certifi==2026.10.19/" \
       -e "s/setuptools==70.3.0/setuptools==78.1.1/" \
       "${pip_vendor}/vendor.txt"; \
     sed -i \
       -e "s/msgpack@1.1.2/msgpack@1.2.1/g" \
       -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
+      -e "s/certifi@2026.6.17/certifi@2026.10.19/g" \
+      -e '/"name": "certifi"/,/}/s/"version": "2026.6.17"/"version": "2026.10.19"/' \
       -e "s/setuptools@70.3.0/setuptools@78.1.1/g" \
       "${pip_vendor}/bom.cdx.json"; \
     rm -rf /tmp/pip-security-overrides /root/.cache/uv
 
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
-        hermes-agent==0.19.0 aiohttp==3.14.4 && \
+        hermes-agent==0.19.0 aiohttp==3.14.4 certifi==2026.10.19 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv
