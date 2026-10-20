@@ -50,6 +50,7 @@ def sdk(monkeypatch, tmp_path):
         "tool_calls": None,
         "content": '{"source":"synthetic"}',
         "closed": 0,
+        "config": {"agent": {}},
     }
 
     def create(**kwargs):
@@ -102,6 +103,42 @@ def sdk(monkeypatch, tmp_path):
         "agent.auxiliary_client",
         SimpleNamespace(resolve_provider_client=resolve_client),
     )
+    monkeypatch.setitem(
+        sys.modules,
+        "hermes_cli.config",
+        SimpleNamespace(load_config_readonly=lambda: state["config"]),
+    )
+
+    def parse(effort):
+        if effort is False or effort == "none":
+            return {"enabled": False}
+        if isinstance(effort, str) and effort in {
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max",
+            "minimal",
+            "ultra",
+        }:
+            return {"enabled": True, "effort": effort}
+        return None
+
+    def reasoning(config, model):
+        agent = config["agent"]
+        return parse(
+            agent.get("reasoning_overrides", {}).get(
+                model, agent.get("reasoning_effort")
+            )
+        )
+
+    monkeypatch.setitem(
+        sys.modules,
+        "hermes_constants",
+        SimpleNamespace(
+            parse_reasoning_effort=parse, resolve_reasoning_config=reasoning
+        ),
+    )
     for name in (
         "hermes_cli/runtime_provider.py",
         "agent/auxiliary_client.py",
@@ -109,6 +146,7 @@ def sdk(monkeypatch, tmp_path):
         "agent/codex_responses_adapter.py",
         "hermes_cli/profiles.py",
         "hermes_cli/env_loader.py",
+        "hermes_cli/config.py",
         "hermes_constants.py",
     ):
         path = tmp_path / name
@@ -179,11 +217,13 @@ def request(resolution):
 def test_probe_and_generation_never_export_credentials_or_execute_tools(sdk):
     probe = invoke({"operation": "probe"}, sdk.root)
     assert sdk.calls == [] and sdk.state["closed"] == 1
+    assert "reasoning_effort" not in probe["resolution"]
     assert "synthetic-secret-never-export" not in json.dumps(probe)
     result = invoke(request(probe["resolution"]), sdk.root)
     assert len(sdk.calls) == 1
     assert sdk.calls[0]["tools"] == [] and sdk.calls[0]["tool_choice"] == "none"
     assert sdk.calls[0]["model"] == "configured-default"
+    assert "extra_body" not in sdk.calls[0]
     assert sdk.calls[0]["messages"][0]["content"] == "Prepared interface role"
     assert "synthetic-secret-never-export" not in json.dumps(result)
     assert result["response_model"] == "configured-default"
@@ -240,6 +280,65 @@ def test_workflow_worker_detects_route_change_after_parent_probe(sdk):
         invoke(body, sdk.root)
     assert failure_code(failed.value) == "WORKFLOW_MODEL_CHANGED"
     assert sdk.calls == []
+
+
+@pytest.mark.parametrize("operation", ["generate", "generate-workflow"])
+def test_explicit_reasoning_is_submitted_captured_and_frozen(sdk, operation):
+    from agent_adapters.hermes_sdk_evidence import sdk_invocation_evidence
+
+    sdk.state["config"]["agent"]["reasoning_effort"] = "high"
+    frozen = invoke({"operation": "probe"}, sdk.root)["resolution"]
+    body = request(frozen)
+    body["operation"] = operation
+    records = []
+    invoke(
+        body,
+        sdk.root,
+        sdk_observer=lambda payload, resolution: records.append(
+            sdk_invocation_evidence(payload, resolution)
+        ),
+    )
+    assert sdk.calls[0]["extra_body"]["reasoning"] == {
+        "enabled": True,
+        "effort": "high",
+    }
+    assert records[0]["request_fields"]["extra_body"] == sdk.calls[0]["extra_body"]
+    assert records[0]["resolution"]["reasoning_effort"] == "high"
+    sdk.state["config"]["agent"]["reasoning_effort"] = "low"
+    assert invoke({"operation": "probe"}, sdk.root)["resolution"] != frozen
+    with pytest.raises(ValueError):
+        invoke(body, sdk.root)
+    assert len(sdk.calls) == 1
+
+
+def test_per_model_reasoning_uses_installed_resolver_and_is_frozen(sdk):
+    sdk.state["config"]["agent"] = {
+        "reasoning_effort": "low",
+        "reasoning_overrides": {"configured-default": "high"},
+    }
+    frozen = invoke({"operation": "probe"}, sdk.root)["resolution"]
+    assert frozen["reasoning_effort"] == "high"
+    sdk.state["config"]["agent"]["reasoning_overrides"].clear()
+    with pytest.raises(ValueError):
+        invoke(request(frozen), sdk.root)
+    assert not sdk.calls
+
+
+@pytest.mark.parametrize("effort", ["typo", True, 1, {}, "minimal", "none", False])
+def test_invalid_or_unqualified_reasoning_never_silently_defaults(sdk, effort):
+    sdk.state["config"]["agent"]["reasoning_effort"] = effort
+    with pytest.raises(ValueError) as failure:
+        invoke({"operation": "probe"}, sdk.root)
+    assert failure_code(failure.value) == "SCOPED_MODEL_REASONING_UNSUPPORTED"
+    assert not sdk.calls
+
+
+def test_explicit_reasoning_requires_qualified_transport(sdk):
+    sdk.state["config"]["agent"]["reasoning_effort"] = "high"
+    sdk.runtime["api_mode"] = "chat_completions"
+    with pytest.raises(ValueError):
+        invoke({"operation": "probe"}, sdk.root)
+    assert not sdk.calls
 
 
 @pytest.mark.parametrize(

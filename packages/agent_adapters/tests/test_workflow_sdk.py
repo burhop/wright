@@ -28,9 +28,10 @@ def sdk(monkeypatch):
     native = {
         "provider": "configured-provider",
         "model_reference": "configured-model",
-        "api_mode": "chat_completions",
+        "api_mode": "codex_responses",
         "endpoint_digest": "a" * 64,
         "sdk_digest": "b" * 64,
+        "reasoning_effort": "high",
     }
     native["configuration_digest"] = hashlib.sha256(
         json.dumps(native, sort_keys=True).encode()
@@ -85,7 +86,14 @@ def test_sdk_probe_has_exact_route_and_round_trips_without_credentials(sdk):
 
 @pytest.mark.parametrize(
     "change",
-    ["model_reference", "sdk_digest", "endpoint_digest", "profile", "transport"],
+    [
+        "model_reference",
+        "sdk_digest",
+        "endpoint_digest",
+        "profile",
+        "transport",
+        "reasoning_effort",
+    ],
 )
 def test_changed_route_never_submits_a_decision(sdk, monkeypatch, change):
     route = asyncio.run(workflow_model_capabilities())["resolution"]
@@ -93,6 +101,8 @@ def test_changed_route_never_submits_a_decision(sdk, monkeypatch, change):
         monkeypatch.setenv("WRIGHT_HERMES_PROFILE", "different")
     elif change == "transport":
         monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-http")
+    elif change == "reasoning_effort":
+        sdk.native[change] = "low"
     else:
         sdk.native[change] = "c" * 64 if "digest" in change else "different-model"
     with pytest.raises(ModelRouteChangedError):
@@ -222,6 +232,9 @@ def test_translation_correction_uses_same_frozen_sdk_route_and_records_both_call
     result = asyncio.run(bridge.complete(payload))
     assert len(sdk.calls) == 2
     assert all(call["expected_resolution"] == sdk.native for call in sdk.calls)
+    assert all(
+        call["expected_resolution"]["reasoning_effort"] == "high" for call in sdk.calls
+    )
     captures = [
         item
         for item in result.wright_invocations

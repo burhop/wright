@@ -105,12 +105,25 @@ Astra for its new session through Wright's existing session model control
 (`POST /api/agent/model` with the exact `session_id`, provider and model).
 Require `session_locked=true` before authoring; inspect the installed gateway's
 lock receipt. Do not change a global/shared selection to satisfy this check.
+Chat model discovery and session selection use this HTTP service even while
+workflow execution uses the SDK. A session-specific selection does not update
+the profile default. Missing or mismatched gateway lock receipts fail explicitly.
 
 Workflow AI steps use the existing model-only SDK adapter. Its worker resolves
 the same named profile, rejects a changed model/configuration, captures actual
 SDK requests, and cannot execute engineering tools. Wright's bounded runtime
 executes declared tool proposals through its gateway. Keep HTTP and SDK route
 evidence distinct. A successful chat does not qualify workflow execution.
+
+The SDK freezes resolved reasoning effort alongside the model and sends it on
+text, repair/helper and native-image requests. The installed Hermes resolver
+applies per-model overrides before the profile's `agent.reasoning_effort`.
+Explicit reasoning is currently qualified only for `codex_responses` with
+`low`, `medium`, `high`, `xhigh` or `max`; other explicit settings fail readiness
+with `SCOPED_MODEL_REASONING_UNSUPPORTED` instead of silently defaulting.
+Absent settings do not acquire invented historical provenance. Old SDK runs
+whose frozen identity differs require restoring that runtime or a deliberate
+new run; do not rewrite their recorded routing.
 
 ## Readiness sequence
 
@@ -135,6 +148,7 @@ evidence distinct. A successful chat does not qualify workflow execution.
    ```powershell
    .venv\Scripts\python.exe scripts/qualify-pilot-model.py `
      --expected-provider openai-codex --expected-model gpt-6-astra `
+     --expected-reasoning-effort high `
      --prompt-file scripts/pilot/model-route-probe.txt `
      --output "$pilotState\readiness\astra-route-01"
    ```

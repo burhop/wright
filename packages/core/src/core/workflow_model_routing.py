@@ -7,6 +7,8 @@ from pydantic import Field, TypeAdapter, model_validator
 from .process_validation import Contract, Digest, Identifier, canonical_digest
 from .desktop_reasoning import DesktopHarnessBinding
 
+SdkReasoningEffort = Literal["low", "medium", "high", "xhigh", "max"]
+
 
 class _WorkflowTextResolution(Contract):
     provider: Identifier
@@ -33,6 +35,15 @@ class WorkflowSdkTextResolution(_WorkflowTextResolution):
     adapter: Literal["hermes-model-sdk"] = "hermes-model-sdk"
     api_mode: Literal["chat_completions", "codex_responses", "anthropic_messages"]
     sdk_digest: Digest
+    reasoning_effort: SdkReasoningEffort | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+
+    @model_validator(mode="after")
+    def qualified_reasoning_transport(self):
+        if self.reasoning_effort is not None and self.api_mode != "codex_responses":
+            raise ValueError("Reasoning is not qualified for this SDK transport")
+        return self
 
 
 class WorkflowDesktopTextResolution(Contract):
@@ -73,7 +84,7 @@ class WorkflowModelRouting(Contract):
     @model_validator(mode="after")
     def bounded_native_identity(self):
         for value in self.images.values():
-            if set(value) != {
+            if set(value) - {"reasoning_effort"} != {
                 "provider",
                 "model_reference",
                 "api_mode",
@@ -84,6 +95,14 @@ class WorkflowModelRouting(Contract):
                 raise ValueError(
                     "Native image routing identity has an unsupported shape"
                 )
+            if "reasoning_effort" in value:
+                TypeAdapter(SdkReasoningEffort).validate_python(
+                    value["reasoning_effort"]
+                )
+                if value["api_mode"] != "codex_responses":
+                    raise ValueError(
+                        "Reasoning is not qualified for this SDK transport"
+                    )
             public = {
                 key: entry
                 for key, entry in value.items()

@@ -13,13 +13,14 @@ from agent_adapters.workflow_model_routing import workflow_model_capabilities
 from core.redaction import redact_mapping
 
 
-async def qualify(*, provider, model, prompt):
+async def qualify(*, provider, model, prompt, reasoning_effort=None):
     records = []
     report = {
         "status": "blocked",
         "scope": "one model-only execution route probe; not engineering readiness",
         "requested_provider": provider,
         "requested_model": model,
+        "requested_reasoning_effort": reasoning_effort,
         "invocations": records,
     }
 
@@ -41,6 +42,10 @@ async def qualify(*, provider, model, prompt):
             or route["provider"] != provider
             or route["model_reference"] != model
             or route["profile"] != profile
+            or (
+                reasoning_effort is not None
+                and route.get("reasoning_effort") != reasoning_effort
+            )
         ):
             raise ValueError("The resolved route differs from the requested pilot")
         result = await generate_workflow_response(
@@ -70,6 +75,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--expected-provider", required=True)
     parser.add_argument("--expected-model", required=True)
+    parser.add_argument(
+        "--expected-reasoning-effort", choices=["low", "medium", "high", "xhigh", "max"]
+    )
     parser.add_argument("--prompt-file", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -80,7 +88,10 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     report = asyncio.run(
         qualify(
-            provider=args.expected_provider, model=args.expected_model, prompt=prompt
+            provider=args.expected_provider,
+            model=args.expected_model,
+            prompt=prompt,
+            reasoning_effort=args.expected_reasoning_effort,
         )
     )
     (args.output / "report.json").write_text(

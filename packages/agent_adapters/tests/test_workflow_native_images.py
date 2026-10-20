@@ -105,6 +105,20 @@ def test_native_image_can_return_jpeg_using_the_same_configured_connection(image
     assert image_sdk.calls[0]["tools"][0]["output_format"] == "jpeg"
 
 
+def test_image_reasoning_is_frozen_and_reaches_responses_boundary(image_sdk):
+    from core.workflow_model_routing import WorkflowModelRouting
+
+    image_sdk.state["config"]["agent"]["reasoning_effort"] = "high"
+    frozen = invoke({"operation": "probe-image"}, image_sdk.root)["resolution"]
+    assert WorkflowModelRouting(images={"preview": frozen}).images["preview"] == frozen
+    invoke(image_request(frozen), image_sdk.root)
+    assert image_sdk.calls[0]["reasoning"] == {"effort": "high"}
+    image_sdk.state["config"]["agent"]["reasoning_effort"] = "low"
+    with pytest.raises(ValueError):
+        invoke(image_request(frozen), image_sdk.root)
+    assert len(image_sdk.calls) == 1
+
+
 @pytest.mark.parametrize(
     "change",
     [

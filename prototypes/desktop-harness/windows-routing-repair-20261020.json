@@ -1,0 +1,25 @@
+{
+  "scope": "controlled real installed Hermes Codex adapter; network disabled; no inference or engineering claim",
+  "worker_sha256": "e6c51b4f670faa4a673a02ea105a2498c829a4eb3d459ae7eb0b6db59dc33dc1",
+  "sdk_file_sha256": "a3a644f121fb97397e3dbdc23e2f19e190d444f0540a64cc6dbc74fdd8c1e2c3",
+  "frozen_resolution": {
+    "provider": "openai-codex",
+    "model_reference": "gpt-6-astra",
+    "api_mode": "codex_responses",
+    "endpoint_digest": "ef63beff94ea498f6dd2a4d47b12da61824a0a78caefe0abc95e77503948a6d8",
+    "reasoning_effort": "high",
+    "sdk_digest": "a5f065c3ded85adff009c9d80852a7f6bb75668f9323ff7b4a2849db86a39150",
+    "configuration_digest": "cd2e09aa42a94859e37c93d2a5608b90b210a2809865647d60eeb010eb7489ca"
+  },
+  "worker_request_reasoning": {
+    "enabled": true,
+    "effort": "high"
+  },
+  "responses_request_reasoning": {
+    "effort": "high",
+    "summary": "auto"
+  },
+  "changed_effort_changes_frozen_resolution": true,
+  "changed_effort_continuation_rejected": true,
+  "responses_request_count": 1
+}
