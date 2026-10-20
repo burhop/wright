@@ -131,3 +131,27 @@ supports compact focused controls and larger surfaces for diagrams.
 keeps authoritative data on the server and widget state as presentation hints.
 These sources were fetched on 20 October 2026. They do not prove this Windows
 build's tab persistence, nor give Wright ownership of the host's outer navigation.
+
+## Pillow security qualification — 20 October
+
+PR166's second CI cycle and merged dev `89a04bf9` encountered eight newly indexed
+Pillow advisories after the earlier full gate passed. The runtime bounds and lock
+now select 13.0.0; it is the only changed locked package version. The existing
+Docker Hermes security override uses the same version, retaining exactly four
+reviewed metadata conflicts. Image smoke checks the actual Pillow floor in both
+Wright and Hermes; no vulnerability-policy exception is added.
+
+Upstream [release notes](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html)
+and all eight official advisory records identify 13.0.0 as patched. Its Python
+3.11 minimum matches Wright. The current Python audit passes (101 distributions
+including audit tooling). All 110 selected PDF/image transport, identity, limits,
+redaction and container-contract checks pass. The sandboxed first attempt stalled
+and was stopped; the host-permitted run passed in 9.85 seconds. Both are retained.
+
+Exact local index: `/tmp/wright-desktop-navigation-gates-20261020/pillow-security/qualification.json`.
+The earlier 0.19 package/image remains preserved, uninstalled, and is superseded
+for security qualification. New image/normal gates/current-head CI and the
+installed Windows walkthrough remain pending. Existing independent provider
+qualification recipes and historical receipts are outside this runtime change.
+This additional correction cycle is caused by newly indexed upstream advisories;
+it is not another partial correction of the prior browser-test failure.

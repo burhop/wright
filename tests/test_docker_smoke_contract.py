@@ -171,7 +171,9 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     smoke = read_text("scripts/docker-smoke-test.sh")
 
     assert '"cryptography==50.0.0"' in dockerfile
-    assert '"pillow==12.3.0"' in dockerfile
+    assert '"pillow==13.0.0"' in dockerfile
+    assert 'observed = version("pillow")' in smoke
+    assert 'Version(observed) >= Version("13.0.0")' in smoke
     assert '"msgpack==1.2.1"' in dockerfile
     assert '"tornado==6.5.9"' in dockerfile
     assert "aiohttp==3.14.4" in dockerfile

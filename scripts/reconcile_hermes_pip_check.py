@@ -13,7 +13,7 @@ EXPECTED_CONFLICTS = {
     "but `2026.10.19` is installed",
     "The package `hermes-agent` requires `cryptography==46.0.7`, "
     "but `50.0.0` is installed",
-    "The package `hermes-agent` requires `pillow==12.2.0`, but `12.3.0` is installed",
+    "The package `hermes-agent` requires `pillow==12.2.0`, but `13.0.0` is installed",
     "The package `hermes-agent` requires `pyjwt[crypto]==2.13.0`, "
     "but `2.15.1` is installed",
 }
