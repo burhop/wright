@@ -116,6 +116,49 @@ it("opens a selected workflow with the exact workspace and desktop session", asy
   ]);
 });
 
+it("offers the remembered exact location only in its workspace and reopens only on click", async () => {
+  const call = vi
+    .fn()
+    .mockResolvedValueOnce(result({ workspaces: [alpha, beta] }))
+    .mockResolvedValueOnce(files(alpha, "part.wflow"))
+    .mockResolvedValueOnce(files(beta, "beta.wflow"));
+  const onReopen = vi.fn().mockResolvedValue(undefined);
+  const workflow = {
+    path: "workflows/part.wflow",
+    source_digest: "a".repeat(64),
+    view: "working" as const,
+    run_id: "run-a",
+  };
+  render(
+    <NativeHomePanel
+      call={call}
+      onOpen={vi.fn()}
+      initialSelection={alpha}
+      lastLocation={{
+        schema_version: "wright.native-navigation/1",
+        workspace_id: alpha.workspace_id,
+        session_id: alpha.session_id,
+        view: "workflows",
+        workflow,
+      }}
+      onReopen={onReopen}
+    />,
+  );
+  const reopen = await screen.findByRole("button", {
+    name: "Reopen part · Run and results",
+  });
+  expect(onReopen).not.toHaveBeenCalled();
+  fireEvent.click(reopen);
+  await waitFor(() =>
+    expect(onReopen).toHaveBeenCalledExactlyOnceWith(alpha, workflow),
+  );
+  fireEvent.change(screen.getByLabelText("Workspace"), {
+    target: { value: beta.workspace_id },
+  });
+  await screen.findByRole("button", { name: "beta.wflow" });
+  expect(screen.queryByRole("button", { name: /Reopen part/ })).toBeNull();
+});
+
 it("creates once and selects only the discovered exact workspace/session", async () => {
   const call = vi
     .fn()

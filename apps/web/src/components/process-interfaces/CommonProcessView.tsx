@@ -802,6 +802,10 @@ function CommonProcessController({
               .resultId === target.result_id
           : element.dataset.resultId === target.result_id),
     );
+    const foldedProgress = destination?.closest<HTMLDetailsElement>(
+      "details.wp-run-progress",
+    );
+    if (foldedProgress) foldedProgress.open = true;
     destination?.focus();
     destination?.scrollIntoView?.({ block: "nearest" });
     if (
@@ -1026,6 +1030,11 @@ function CommonProcessController({
       : startAction.reasons,
   };
 
+  const collapseRunDetails =
+    (snapshot?.state === "completed" || snapshot?.state === "cancelled") &&
+    !snapshot.diagnostics?.length &&
+    !reasoning.error &&
+    !reasoning.wait;
   const needsResponse =
     snapshot?.state === "waiting_human" &&
     (snapshot.interactions?.some(
@@ -1317,117 +1326,126 @@ function CommonProcessController({
                   )}
                 </Section>
               )}
-              <Section title="Progress" focusId="progress">
-                {(reasoning.wait || reasoning.error) && (
-                  <div
-                    role="status"
-                    data-testid="process-desktop-reasoning-wait"
-                  >
-                    <b>
-                      {reasoning.wait?.label ?? "AI handoff status unavailable"}
-                    </b>
-                    <p>
-                      {reasoning.wait?.detail ??
-                        `${reasoning.error} Refresh the saved run before taking another action.`}
-                    </p>
-                    {reasoning.wait && (
-                      <>
-                        <small>
-                          Queued at{" "}
-                          <time dateTime={reasoning.wait.queuedAt}>
-                            {new Date(
-                              reasoning.wait.queuedAt,
-                            ).toLocaleTimeString()}
-                          </time>
-                        </small>
-                        <details>
-                          <summary>Handoff details</summary>
-                          <div>Run: {reasoning.wait.runId}</div>
-                          <div>Request: {reasoning.wait.requestId}</div>
-                        </details>
-                      </>
-                    )}
-                  </div>
-                )}
-                {(snapshot.diagnostics ?? []).map((diagnostic, index) => (
-                  <ReasonNotice
-                    key={`${diagnostic.code}:${diagnostic.step_id ?? "run"}:${index}`}
-                    reason={diagnostic}
-                    onNavigate={navigate}
-                  />
-                ))}
-                <ProgressPanel
-                  state={snapshot.state}
-                  observations={snapshot.observations ?? []}
-                  activity={activity}
-                  connection={connection}
-                  now={now}
-                />
-                {activeRun && !following && !terminal(snapshot.state) && (
-                  <p className="wp-muted">
-                    Live updates are not attached. Refresh to reconcile the
-                    saved run.
-                  </p>
-                )}
-                {activeRun && (
-                  <>
-                    <p className="wp-muted">
-                      Closing this view leaves the run with Wright.
-                    </p>
-                    <NavigationButton
-                      title="Open run details"
-                      target={{ kind: "run", run_id: activeRun }}
-                      onNavigate={navigate}
-                    />
-                    <details>
-                      <summary>Run identity</summary>
-                      <code>{activeRun}</code>
-                    </details>
-                  </>
-                )}
-                {(snapshot.actions ?? [])
-                  .filter((a) => a.operation !== "start" && !a.checkpoint_id)
-                  .map((action) => (
-                    <ActionButton
-                      key={action.action_id}
-                      action={action}
-                      readOnly={readOnly}
-                      busy={busy === "cancel"}
-                      compactReasons={
-                        action.operation === "cancel" &&
-                        (snapshot.state === "completed" ||
-                          snapshot.state === "cancelled")
-                      }
-                      onAction={
-                        action.operation === "cancel" && !busy
-                          ? () => void cancel()
-                          : undefined
-                      }
+              <details className="wp-run-progress" open={!collapseRunDetails}>
+                <summary hidden={!collapseRunDetails}>
+                  {snapshot.state === "completed" ? "Completed" : "Cancelled"} ·
+                  Run details
+                </summary>
+                <Section title="Progress" focusId="progress">
+                  {(reasoning.wait || reasoning.error) && (
+                    <div
+                      role="status"
+                      data-testid="process-desktop-reasoning-wait"
+                    >
+                      <b>
+                        {reasoning.wait?.label ??
+                          "AI handoff status unavailable"}
+                      </b>
+                      <p>
+                        {reasoning.wait?.detail ??
+                          `${reasoning.error} Refresh the saved run before taking another action.`}
+                      </p>
+                      {reasoning.wait && (
+                        <>
+                          <small>
+                            Queued at{" "}
+                            <time dateTime={reasoning.wait.queuedAt}>
+                              {new Date(
+                                reasoning.wait.queuedAt,
+                              ).toLocaleTimeString()}
+                            </time>
+                          </small>
+                          <details>
+                            <summary>Handoff details</summary>
+                            <div>Run: {reasoning.wait.runId}</div>
+                            <div>Request: {reasoning.wait.requestId}</div>
+                          </details>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {(snapshot.diagnostics ?? []).map((diagnostic, index) => (
+                    <ReasonNotice
+                      key={`${diagnostic.code}:${diagnostic.step_id ?? "run"}:${index}`}
+                      reason={diagnostic}
                       onNavigate={navigate}
                     />
                   ))}
-                {activeRun && terminal(snapshot.state) && onPrepareAnother && (
-                  <button
-                    type="button"
-                    className="wp-link"
-                    disabled={!!busy || readOnly}
-                    onClick={() => {
-                      try {
-                        if (
-                          recoveryRef.current?.start?.receipt?.run_id ===
-                          activeRun
-                        )
-                          remember(null);
-                        onPrepareAnother();
-                      } catch (error) {
-                        setReason(message(error));
-                      }
-                    }}
-                  >
-                    Prepare another run
-                  </button>
-                )}
-              </Section>
+                  <ProgressPanel
+                    state={snapshot.state}
+                    observations={snapshot.observations ?? []}
+                    activity={activity}
+                    connection={connection}
+                    now={now}
+                  />
+                  {activeRun && !following && !terminal(snapshot.state) && (
+                    <p className="wp-muted">
+                      Live updates are not attached. Refresh to reconcile the
+                      saved run.
+                    </p>
+                  )}
+                  {activeRun && (
+                    <>
+                      <p className="wp-muted">
+                        Closing this view leaves the run with Wright.
+                      </p>
+                      <NavigationButton
+                        title="Open run details"
+                        target={{ kind: "run", run_id: activeRun }}
+                        onNavigate={navigate}
+                      />
+                      <details>
+                        <summary>Run identity</summary>
+                        <code>{activeRun}</code>
+                      </details>
+                    </>
+                  )}
+                  {(snapshot.actions ?? [])
+                    .filter((a) => a.operation !== "start" && !a.checkpoint_id)
+                    .map((action) => (
+                      <ActionButton
+                        key={action.action_id}
+                        action={action}
+                        readOnly={readOnly}
+                        busy={busy === "cancel"}
+                        compactReasons={
+                          action.operation === "cancel" &&
+                          (snapshot.state === "completed" ||
+                            snapshot.state === "cancelled")
+                        }
+                        onAction={
+                          action.operation === "cancel" && !busy
+                            ? () => void cancel()
+                            : undefined
+                        }
+                        onNavigate={navigate}
+                      />
+                    ))}
+                  {activeRun &&
+                    terminal(snapshot.state) &&
+                    onPrepareAnother && (
+                      <button
+                        type="button"
+                        className="wp-link"
+                        disabled={!!busy || readOnly}
+                        onClick={() => {
+                          try {
+                            if (
+                              recoveryRef.current?.start?.receipt?.run_id ===
+                              activeRun
+                            )
+                              remember(null);
+                            onPrepareAnother();
+                          } catch (error) {
+                            setReason(message(error));
+                          }
+                        }}
+                      >
+                        Prepare another run
+                      </button>
+                    )}
+                </Section>
+              </details>
             </div>
             {!needsResponse && interactionPanel}
             <Section

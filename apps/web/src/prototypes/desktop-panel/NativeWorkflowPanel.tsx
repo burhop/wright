@@ -44,10 +44,26 @@ export function NativeWorkflowPanel({
       data-working-view={!!onOpenWorkingView}
     >
       <header className="native-workflow-panel__context">
-        <b>{workspaceName}</b>
-        <span>
-          {unsaved ? "Unsaved changes — Save to accept." : "Workflow"}
+        <span className="native-workflow-panel__workspace">
+          {workspaceName}
         </span>
+        <nav className="native-workflow-views" aria-label="Workflow views">
+          <button type="button" aria-current="page">
+            Workflow
+          </button>
+          {onOpenWorkingView && (
+            <button
+              type="button"
+              disabled={unsaved}
+              onClick={onOpenWorkingView}
+            >
+              Run and results
+            </button>
+          )}
+        </nav>
+        {unsaved && (
+          <span role="status">Unsaved changes — Save to accept.</span>
+        )}
         {onOpenTransfer && (
           <button
             type="button"
@@ -57,16 +73,11 @@ export function NativeWorkflowPanel({
             Export / import workflow
           </button>
         )}
-        {onOpenWorkingView && (
-          <button type="button" disabled={unsaved} onClick={onOpenWorkingView}>
-            Run and results
-          </button>
+        {!onOpenWorkingView && (
+          <small>
+            Run controls are not connected in this editor prototype.
+          </small>
         )}
-        <small>
-          {onOpenWorkingView
-            ? "Save your workflow, then open Run and results. AI tasks use this conversation."
-            : "Use this desktop conversation for reasoning. Run controls are not connected in this editor prototype."}
-        </small>
       </header>
       {draftClient && (
         <details className="native-editor-drafts">

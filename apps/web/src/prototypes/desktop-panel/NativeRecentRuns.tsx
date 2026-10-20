@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
 import { NativeRunEvidence } from "./NativeRunEvidence";
 
@@ -16,19 +16,31 @@ export function NativeRecentRuns({
   paths,
   call,
   onOpen,
+  initialPath,
 }: {
   readonly workspace: DesktopWorkspace;
   readonly paths: string[];
   readonly call: HomeCall;
   readonly onOpen?: (path: string, run: RecordedRun) => Promise<void>;
+  readonly initialPath?: string;
 }) {
-  const [path, setPath] = useState("");
+  const [path, setPath] = useState(
+    initialPath && paths.includes(initialPath) ? initialPath : "",
+  );
+  const restore = useRef(initialPath);
+  useEffect(() => {
+    if (restore.current && paths.includes(restore.current)) {
+      setPath(restore.current);
+      restore.current = undefined;
+    }
+  }, [paths]);
   const [runs, setRuns] = useState<RecordedRun[]>([]);
   const [loading, setLoading] = useState(false);
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
   const [selected, setSelected] = useState<RecordedRun>();
+  const selectedWorkflowOnly = paths.length === 1 && initialPath === paths[0];
   useEffect(() => {
     let active = true;
     setRuns([]);
@@ -68,24 +80,43 @@ export function NativeRecentRuns({
   }, [call, workspace.workspace_id, workspace.session_id, path, refresh]);
   return (
     <section aria-label="Recent runs">
-      <h2>Recent runs</h2>
-      <p>Choose a workflow to read its latest recorded runs.</p>
-      <label htmlFor="wright-history-source">Workflow history</label>
-      <select
-        id="wright-history-source"
-        value={path}
-        disabled={opening}
-        onChange={(event) => setPath(event.target.value)}
-      >
-        <option value="" disabled>
-          Choose a workflow
-        </option>
-        {paths.map((value) => (
-          <option key={value} value={value}>
-            {value}
-          </option>
-        ))}
-      </select>
+      <h2>{selectedWorkflowOnly ? "Run history" : "Recent runs"}</h2>
+      {selectedWorkflowOnly ? (
+        <p>
+          {initialPath
+            .split("/")
+            .at(-1)
+            ?.replace(/(?:\.workflow)?\.wflow$/, "")
+            .replace(/[-_]+/g, " ")}
+        </p>
+      ) : (
+        <>
+          <p>Choose a workflow to read its latest recorded runs.</p>
+          <label htmlFor="wright-history-source">Workflow history</label>
+          <select
+            id="wright-history-source"
+            value={path}
+            disabled={opening}
+            onChange={(event) => {
+              restore.current = undefined;
+              setPath(event.target.value);
+            }}
+          >
+            <option value="" disabled>
+              Choose a workflow
+            </option>
+            {paths.map((value) => (
+              <option key={value} value={value}>
+                {value
+                  .split("/")
+                  .at(-1)
+                  ?.replace(/(?:\.workflow)?\.wflow$/, "")
+                  .replace(/[-_]+/g, " ")}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
       <button
         disabled={!path || loading || opening}
         onClick={() => setRefresh((value) => value + 1)}

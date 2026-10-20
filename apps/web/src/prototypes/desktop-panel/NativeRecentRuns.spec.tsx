@@ -34,6 +34,37 @@ const response = (workspaceId = "w") => ({
   },
 });
 
+it("reads the remembered workflow only after workspace discovery confirms its path", async () => {
+  const call = vi.fn().mockResolvedValue(response());
+  const onOpen = vi.fn();
+  const { rerender } = render(
+    <NativeRecentRuns
+      workspace={workspace}
+      paths={[]}
+      initialPath={path}
+      call={call}
+      onOpen={onOpen}
+    />,
+  );
+  expect(call).not.toHaveBeenCalled();
+  rerender(
+    <NativeRecentRuns
+      workspace={workspace}
+      paths={[path]}
+      initialPath={path}
+      call={call}
+      onOpen={onOpen}
+    />,
+  );
+  await screen.findByText("waiting human");
+  expect(call).toHaveBeenCalledExactlyOnceWith("wright_workflow_history", {
+    workspace_id: "w",
+    session_id: "s",
+    path,
+  });
+  expect(onOpen).not.toHaveBeenCalled();
+});
+
 it("reads only on selection and opens the exact recorded run on explicit click", async () => {
   const call = vi.fn().mockResolvedValue(response());
   const onOpen = vi.fn().mockResolvedValue(undefined);

@@ -74,7 +74,7 @@ export function NativeNewWorkflow({
     }
   };
   return (
-    <div>
+    <div className="native-new-workflow">
       <button
         disabled={disabled || uncertain || !!savedPath}
         onClick={() => setVisible((value) => !value)}
