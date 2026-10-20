@@ -117,3 +117,34 @@ Exact logs: `ci-6a-windows-failed.log`, `ci-6a-amd64-failed.log`,
 local evidence directory. This is a new Windows pilot finding plus one complete
 CI correction set; no serial one-error CI pushes were made. The repair remains
 local until the repository gate passes.
+
+## Windows acceptance and subsequent security follow-up
+
+The Windows pilot subsequently qualified `d6eda2b4`: 70 focused tests; actual
+Astra/high requests and frozen reasoning drift rejection; session-specific
+selection; private Hermes replacement (47380 to 69280, shared 29792 unchanged);
+Hermes-native workspace-status and SteveCAD reference calls; and durable resume
+across API restart without another replacement. Original Windows receipts remain
+in `D:/repos/wright/.local-run/windows-engineering-pilot/state/readiness/20261020-repair-d6eda2b/`.
+The adjacent JSON distinguishes those actual Windows observations from the
+controlled Linux probe and includes their retained capture hash.
+
+The exact d6 pre-push and full merge gates passed. All PR checks finished:
+28 success, one intentional skip. Local full WebKit lacked
+`libgstcodecparsers-1.0.so.0`; separate 23 Chromium checks and full PR browser CI
+passed. A subsequently published Critical certifi advisory prevents merging the
+old dependency state. Security candidate `5f6ade75` pins 2026.10.19, preserves
+strict Hermes override reconciliation, and verifies the actual certificate
+bundles in Wright, Hermes and pip. Its fresh exact-image smoke and repository
+qualification remain required. The previous resolver and pip-resource failures
+are retained; no advisory exception or live profile update was made.
+
+The remaining engineering blocker is hosted SteveCAD `generate_model` returning
+`name 'wait_s' is not defined` with supported exact-revision export arguments.
+Preserve document `40b599ff-8a70-4ae5-a717-3d7cd38f8fc7`, revision 1, successful
+build `8bb9f109-fe80-4136-b953-727e71396f42`, and historical failed run
+`1f20129a6b254135b20cb4d406384d1c`. No hosted provider source/deployment access or
+repaired version has been established. A Wright update does not repair that
+server. Remaining independent helper/recovery and different-workflow checks may
+proceed; exact-revision STEP delivery, its bounded correction loop and Roadster
+remain held. Do not recreate the design or replay an uncertain export.
