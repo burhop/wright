@@ -174,6 +174,9 @@ the patch through the existing security-override stage; retain the raw pip check
 and reconcile only its exact 2026.5.20-to-2026.10.19 metadata conflict alongside
 the three earlier reviewed conflicts. Changed versions or extra conflicts fail.
 The separate actual-bundle smoke and vulnerability policy stay mandatory.
+When replacing pip's vendored certifi, retain its package-qualified resource
+lookups and CLI imports. The actual smoke resolves both `where()` and `contents()`
+inside that package, rejecting accidental use of another installed certifi.
 
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.

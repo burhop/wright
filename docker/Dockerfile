@@ -91,6 +91,8 @@ RUN set -eux; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
     cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
     cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"; \
+    sed -i 's/"certifi"/"pip._vendor.certifi"/g' "${pip_vendor}/certifi/core.py"; \
+    sed -i 's/from certifi import/from pip._vendor.certifi import/' "${pip_vendor}/certifi/__main__.py"; \
     sed -i \
       -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
       -e "s/urllib3==2.7.0/urllib3==2.8.0/" \

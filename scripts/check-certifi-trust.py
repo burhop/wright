@@ -2,6 +2,7 @@
 
 import ssl
 import sys
+from pathlib import Path
 
 if "--pip-vendor" in sys.argv:
     from pip._vendor import certifi
@@ -13,8 +14,13 @@ else:
 assert Version(certifi.__version__) >= Version("2026.10.19"), (
     f"Unpatched certifi: {certifi.__version__} ({certifi.__file__})"
 )
+bundle = Path(certifi.where())
+assert bundle.parent == Path(certifi.__file__).parent, (
+    f"certifi resolved a different package's bundle: {bundle}"
+)
+assert certifi.contents() == bundle.read_text(encoding="ascii")
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-context.load_verify_locations(cafile=certifi.where())
+context.load_verify_locations(cafile=str(bundle))
 roots = context.get_ca_certs()
 assert roots, "certifi bundle is empty"
 assert not any(
