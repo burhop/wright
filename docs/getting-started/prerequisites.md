@@ -45,7 +45,7 @@ supported.
 
 ## Contributors and external engineering tools
 
-Source development additionally uses Git, Python 3.11-3.14, uv, Node.js 22,
+Source development additionally uses Git, Python 3.11-3.14, uv, Node.js 22.22.2+ (22.x), 24.15.0+ (24.x), or 26+,
 npm, and Docker. FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems,
 license managers, drivers, credentials, and hardware remain selected-MCP
 prerequisites; they are not part of the base native runtime or Docker image.

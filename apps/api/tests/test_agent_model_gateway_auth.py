@@ -9,40 +9,36 @@ from api.routers import agent
 
 
 @pytest.mark.asyncio
-async def test_sdk_discovery_reports_only_actual_model_and_no_remote_selection(
+async def test_chat_discovery_uses_gateway_even_when_workflow_sdk_is_selected(
     client, monkeypatch
 ):
     from agent_adapters import workflow_sdk
 
     monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
 
-    async def capabilities():
-        return {
-            "available": True,
-            "resolution": {
-                "provider": "configured-provider",
-                "model_reference": "configured-model",
-            },
-        }
+    calls = []
 
-    async def forbidden_http(*args, **kwargs):
-        pytest.fail("SDK discovery must not fall back to unsupported HTTP endpoints")
+    async def forbidden_sdk():
+        pytest.fail("Chat selection must not depend on workflow SDK readiness")
 
-    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", capabilities)
-    monkeypatch.setattr(agent, "_hermes_json_request", forbidden_http)
+    async def chat_models(*args, **kwargs):
+        calls.append((args, kwargs))
+        return {"provider": "chat-provider", "model": "chat-model"}
+
+    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", forbidden_sdk)
+    monkeypatch.setattr(agent, "_hermes_json_request", chat_models)
     response = await client.get("/api/agent/models")
     assert response.status_code == 200
     result = response.json()
-    assert result["current_value"] == "configured-provider::configured-model"
-    assert result["selection_supported"] is False
-    assert "Model Setup" in result["selection_message"]
+    assert result["current_value"] == "chat-provider::chat-model"
+    assert result["selection_supported"] is True
+    assert calls[0][0] == ("GET", "/api/model/options")
     assert len(result["groups"]) == len(result["groups"][0]["options"]) == 1
     rejected = await client.post(
         "/api/agent/model",
         json={
             "provider": "configured-provider",
             "model": "another-model",
-            "session_id": "private-session",
         },
     )
     assert (
@@ -51,23 +47,79 @@ async def test_sdk_discovery_reports_only_actual_model_and_no_remote_selection(
 
 
 @pytest.mark.asyncio
-async def test_sdk_unavailable_has_bounded_diagnostic_and_no_http_fallback(
+async def test_chat_discovery_failure_is_explicit_without_sdk_substitution(
     client, monkeypatch
 ):
-    from agent_adapters import workflow_sdk
+    from fastapi import HTTPException
 
     monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
 
-    async def unavailable():
-        raise ValueError("fake-private-provider-response")
+    async def unavailable(*args, **kwargs):
+        raise HTTPException(503, "Chat model service unavailable")
 
-    monkeypatch.setattr(workflow_sdk, "workflow_sdk_capabilities", unavailable)
+    monkeypatch.setattr(agent, "_hermes_json_request", unavailable)
     response = await client.get("/api/agent/models")
     assert response.status_code == 503
-    assert (
-        "Model Setup" in response.text
-        and "fake-private-provider-response" not in response.text
+    assert "Chat model service unavailable" in response.text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport", ["hermes-http", "hermes-model-sdk"])
+@pytest.mark.parametrize(
+    "defect", [None, "model", "provider", "session", "lock", "object", "denied"]
+)
+async def test_exact_chat_session_lock_never_updates_profile_default(
+    client, monkeypatch, transport, defect
+):
+    from fastapi import HTTPException
+
+    monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", transport)
+    calls = []
+    receipt = {
+        "object": "hermes.session.model_lock",
+        "session_id": "pilot-session",
+        "runtime": {
+            "provider": "openai-codex",
+            "model": "gpt-6-astra",
+            "model_lock": "accepted",
+        },
+    }
+    if defect in {"provider", "model"}:
+        receipt["runtime"][defect] = "different"
+    elif defect == "session":
+        receipt["session_id"] = "another-session"
+    elif defect == "lock":
+        receipt["runtime"]["model_lock"] = "rejected"
+    elif defect == "object":
+        receipt["object"] = "other-receipt"
+
+    async def gateway(method, path, **kwargs):
+        calls.append((method, path, kwargs))
+        assert path == "/api/sessions/pilot-session/model"
+        if defect == "denied":
+            raise HTTPException(403, "Session model denied")
+        return receipt
+
+    monkeypatch.setattr(agent, "_hermes_json_request", gateway)
+    result = await client.post(
+        "/api/agent/model",
+        json={
+            "provider": "openai-codex",
+            "model": "gpt-6-astra",
+            "session_id": "pilot-session",
+        },
     )
+    assert len(calls) == 1
+    assert calls[0][2]["json_body"] == {
+        "provider": "openai-codex",
+        "model": "gpt-6-astra",
+        "require_model_lock": True,
+    }
+    if defect is None:
+        assert result.status_code == 200
+        assert result.json()["session_locked"] is True
+    else:
+        assert result.status_code == (403 if defect == "denied" else 409)
 
 
 @pytest.mark.asyncio

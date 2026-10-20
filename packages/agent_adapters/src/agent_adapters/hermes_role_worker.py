@@ -18,6 +18,44 @@ class WorkflowSdkConfigurationChangedError(ValueError):
     pass
 
 
+class SdkReasoningConfigurationError(ValueError):
+    pass
+
+
+def resolved_reasoning_effort(model, mode):
+    """Resolve profile reasoning without accepting an SDK's silent fallback."""
+    from hermes_cli.config import load_config_readonly
+    from hermes_constants import parse_reasoning_effort, resolve_reasoning_config
+
+    config = load_config_readonly()
+    agent = config.get("agent", {})
+    if not isinstance(agent, dict):
+        raise SdkReasoningConfigurationError("Invalid agent reasoning configuration")
+    overrides = agent.get("reasoning_overrides") or {}
+    if not isinstance(overrides, dict):
+        raise SdkReasoningConfigurationError("Invalid model reasoning overrides")
+    for value in [agent.get("reasoning_effort"), *overrides.values()]:
+        if value is not None and (
+            not isinstance(value, (str, bool)) or parse_reasoning_effort(value) is None
+        ):
+            raise SdkReasoningConfigurationError(
+                "Unsupported configured reasoning effort"
+            )
+    reasoning = resolve_reasoning_config(config, model)
+    if reasoning is None:
+        return None  # Preserve unconfigured/legacy identity, not invented provenance.
+    effort = reasoning.get("effort")
+    if (
+        mode != "codex_responses"
+        or reasoning.get("enabled") is not True
+        or effort not in {"low", "medium", "high", "xhigh", "max"}
+    ):
+        raise SdkReasoningConfigurationError(
+            "Configured reasoning is not qualified for this model-only transport"
+        )
+    return effort
+
+
 def initialize_sdk_profile():
     """Use the installed CLI's profile and credential loaders before SDK imports.
 
@@ -79,12 +117,16 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
             str(runtime.get("base_url", "")).encode()
         ).hexdigest(),
     }
+    effort = resolved_reasoning_effort(model, mode)
+    if effort is not None:
+        public["reasoning_effort"] = effort
     sdk_hashes = {}
     sdk_files = [
         "hermes_cli/runtime_provider.py",
         "agent/auxiliary_client.py",
         "hermes_cli/profiles.py",
         "hermes_cli/env_loader.py",
+        "hermes_cli/config.py",
         "hermes_constants.py",
     ]
     if image_request or mode == "codex_responses":
@@ -204,6 +246,10 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
             timeout=timeout_seconds,
             max_tokens=32768,
         )
+        if effort is not None:
+            sdk_payload["extra_body"] = {
+                "reasoning": {"enabled": True, "effort": effort}
+            }
         if sdk_observer is not None:
             sdk_observer(sdk_payload, public)
         response = client.chat.completions.create(**sdk_payload)
@@ -252,12 +298,16 @@ def failure_code(error):
     name = type(error).__name__
     if isinstance(error, WorkflowSdkConfigurationChangedError):
         return "WORKFLOW_MODEL_CHANGED"
+    if isinstance(error, SdkReasoningConfigurationError):
+        return "SCOPED_MODEL_REASONING_UNSUPPORTED"
     if isinstance(error, TimeoutError) or name in {
         "APITimeoutError",
         "TimeoutException",
     }:
         return "SCOPED_MODEL_TIMEOUT"
-    if name in {"AuthenticationError", "PermissionDeniedError"}:
+    if name in {"AuthenticationError", "PermissionDeniedError"} or (
+        name == "AuthError" and getattr(error, "relogin_required", False) is True
+    ):
         return "SCOPED_MODEL_AUTH_REQUIRED"
     if name == "RateLimitError":
         return "SCOPED_MODEL_RATE_LIMITED"

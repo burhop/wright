@@ -19,7 +19,11 @@ dependency required by the MCP server you are validating, following the
 
 - Python 3.11 or newer.
 - `uv` for Python workspace management.
-- Node.js 22 or newer with npm.
+- Node.js **22.22.2+ within 22.x**, **24.15.0+ within 24.x**, or **26+**, with npm.
+  These ranges follow the locked frontend/test dependencies; Node 25 is not
+  supported. Select a compatible runtime for this checkout without replacing
+  other projects' runtimes. `npm ci --engine-strict` enforces the declared
+  engine requirements instead of treating incompatibility as a warning.
 - Git.
 - A reachable OpenAI-compatible LLM endpoint if you want inference checks to be
   connected.
@@ -39,7 +43,7 @@ From the repository root:
 
 ```bash
 uv sync --all-packages --all-groups
-npm ci
+npm ci --engine-strict
 ```
 
 ## Configure Your LLM
@@ -93,6 +97,27 @@ curl http://127.0.0.1:8000/api/inference/health
 
 The inference check reports `disconnected` until the configured LLM endpoint is
 reachable from the PC.
+
+`/api/runtime/identity` is a native-manager lifecycle challenge, not a general
+health check. Direct Uvicorn launches intentionally return HTTP 503 with
+`native_lifecycle_unavailable` there. `WRIGHT_NATIVE_RUNTIME=1` selects local
+workspace paths; it does not create lifecycle-manager ownership. Do not invent
+a challenge to make that endpoint pass.
+
+### Browser access with enforced authentication
+
+Keep `WRIGHT_AUTH_MODE=enforced` and supply an instance-specific
+`WRIGHT_API_TOKEN` to the API process. The browser's **Unlock Wright** field
+expects that Wright token, never an AI provider API key. A source launch uses
+the token you supplied; it need not print it in its logs. Use your launcher's
+private token store, enter it locally, and do not put it in chat or screenshots.
+
+The Windows engineering pilot launcher retains its token at
+`state/data/api-token.txt`. In a private PowerShell terminal, copy it without
+printing it using `Get-Content -Raw <absolute-token-file> | Set-Clipboard`,
+paste into **Access Token**, unlock, then clear the clipboard with
+`Set-Clipboard -Value ''`. Keep the file accessible only to your Windows account.
+Normal tool, session and settings initialization begins after authentication.
 
 ## Run the Web UI
 

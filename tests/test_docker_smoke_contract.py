@@ -175,6 +175,12 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"msgpack==1.2.1"' in dockerfile
     assert '"tornado==6.5.9"' in dockerfile
     assert "aiohttp==3.14.4" in dockerfile
+    assert "certifi==2026.10.19" in dockerfile
+    assert (
+        'cp -a /tmp/pip-security-overrides/certifi "${pip_vendor}/certifi"'
+        in dockerfile
+    )
+    assert "certifi@2026.10.19" in dockerfile
     assert (
         "debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258"
         in dockerfile
@@ -204,6 +210,8 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "scripts/check-hermes-jwt-compatibility.py" in smoke
     assert 'version("aiohttp")' in smoke
     assert 'Version("3.14.4")' in smoke
+    assert "scripts/check-certifi-trust.py" in smoke
+    assert "--pip-vendor" in smoke
 
 
 def test_docker_smoke_checks_offline_rivet_first_run_runtime() -> None:

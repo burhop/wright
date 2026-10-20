@@ -990,15 +990,36 @@ async def chat(
             log.warn("Failed to sync workspace tools", error=str(e))
 
     if (
-        gateway_restart_required
+        (
+            gateway_restart_required
+            or os.getenv("WRIGHT_HERMES_GATEWAY_CONTROL") == "manual"
+        )
         and sync_manager
         and getattr(sync_manager, "active_agent", "") == "hermes"
     ):
         try:
-            await sync_manager.refresh_gateway_if_needed(
-                lambda: asyncio.to_thread(_restart_hermes_gateway_process),
-                wait_ready=lambda: _wait_for_hermes_gateway(engine),
-            )
+            control = os.getenv("WRIGHT_HERMES_GATEWAY_CONTROL", "service")
+            if control == "manual":
+                from agent_adapters.hermes_gateway_refresh import (
+                    ManualHermesGatewayRefresh,
+                )
+
+                refresh = getattr(request.app.state, "hermes_manual_refresh", None)
+                if refresh is None:
+                    refresh = ManualHermesGatewayRefresh()
+                    request.app.state.hermes_manual_refresh = refresh
+                if refresh.pending:
+                    sync_manager.require_gateway_refresh()
+                await sync_manager.refresh_gateway_if_needed(
+                    refresh.start, wait_ready=refresh.wait_ready
+                )
+            elif control == "service":
+                await sync_manager.refresh_gateway_if_needed(
+                    lambda: asyncio.to_thread(_restart_hermes_gateway_process),
+                    wait_ready=lambda: _wait_for_hermes_gateway(engine),
+                )
+            else:
+                raise RuntimeError("Unsupported Hermes gateway control mode")
         except Exception as exc:
             log.exception("workspace_gateway_rebind_failed", error=str(exc))
             raise HTTPException(
@@ -1083,25 +1104,7 @@ async def chat(
 @router.get("/models", response_model=HermesModelOptionsResponse)
 @traced("agent.models.list")
 async def list_hermes_models(refresh: bool = False):
-    from agent_adapters.workflow_sdk import (
-        sdk_transport_selected,
-        workflow_sdk_capabilities,
-    )
-
-    if sdk_transport_selected():
-        try:
-            route = (await workflow_sdk_capabilities())["resolution"]
-        except (ValueError, OSError, TimeoutError, KeyError) as error:
-            raise HTTPException(
-                status_code=503,
-                detail="The configured model cannot be resolved by the Hermes SDK. Check Model Setup and its qualified installation.",
-            ) from error
-        response = _build_model_options_response(
-            {"provider": route["provider"], "model": route["model_reference"]}
-        )
-        response.selection_supported = False
-        response.selection_message = "Using the configured model. Change it in Model Setup before starting a new run."
-        return response
+    # This endpoint owns authoring chat. Workflow SDK readiness has its own owner.
     payload = await _hermes_json_request(
         "GET",
         "/api/model/options",
@@ -1120,7 +1123,7 @@ async def list_hermes_models(refresh: bool = False):
 async def set_hermes_model(body: SetHermesModelRequest):
     from agent_adapters.workflow_sdk import sdk_transport_selected
 
-    if sdk_transport_selected():
+    if sdk_transport_selected() and not body.session_id:
         raise HTTPException(
             status_code=409,
             detail="Remote model selection is unavailable for the configured SDK transport. Use Model Setup before starting a new run. No session model was changed.",
@@ -1131,6 +1134,33 @@ async def set_hermes_model(body: SetHermesModelRequest):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="provider and model are required",
+        )
+
+    if body.session_id:
+        receipt = await _hermes_json_request(
+            "POST",
+            f"/api/sessions/{body.session_id}/model",
+            json_body={
+                "provider": provider,
+                "model": model,
+                "require_model_lock": True,
+            },
+        )
+        runtime = receipt.get("runtime")
+        if (
+            receipt.get("object") != "hermes.session.model_lock"
+            or receipt.get("session_id") != body.session_id
+            or not isinstance(runtime, dict)
+            or runtime.get("model_lock") != "accepted"
+            or runtime.get("provider") != provider
+            or runtime.get("model") != model
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="The chat gateway did not confirm the exact session model lock. No inference was requested; inspect the session before retrying.",
+            )
+        return SetHermesModelResponse(
+            ok=True, provider=provider, model=model, session_locked=True
         )
 
     assignment = await _hermes_json_request(
@@ -1154,24 +1184,11 @@ async def set_hermes_model(body: SetHermesModelRequest):
             confirm_message=str(assignment.get("confirm_message") or ""),
         )
 
-    session_locked = False
-    if body.session_id:
-        await _hermes_json_request(
-            "POST",
-            f"/api/sessions/{body.session_id}/model",
-            json_body={
-                "provider": provider,
-                "model": model,
-                "require_model_lock": True,
-            },
-        )
-        session_locked = True
-
     return SetHermesModelResponse(
         ok=bool(assignment.get("ok", True)),
         provider=provider,
         model=model,
-        session_locked=session_locked,
+        session_locked=False,
     )
 
 

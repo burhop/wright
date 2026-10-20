@@ -53,6 +53,18 @@ def test_enforced_mode_does_not_allow_dynamic_loopback_origins_by_default():
 
 
 @pytest.mark.asyncio
+async def test_source_launch_identity_is_intentionally_unavailable(client, monkeypatch):
+    monkeypatch.delenv("WRIGHT_RUNTIME_CHALLENGE", raising=False)
+    # Native workspace paths do not imply lifecycle-manager ownership.
+    monkeypatch.setenv("WRIGHT_NATIVE_RUNTIME", "1")
+    assert (await client.get("/api/health")).status_code == 200
+    response = await client.get("/api/runtime/identity")
+    assert response.status_code == 503
+    assert response.json()["error_code"] == "native_lifecycle_unavailable"
+    assert "challenge_hash" not in response.json()
+
+
+@pytest.mark.asyncio
 async def test_protected_api_requires_valid_bearer(client, monkeypatch):
     from api.main import app
 

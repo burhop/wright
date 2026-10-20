@@ -89,6 +89,8 @@ def generate_native_image(client, resolution, request, *, sdk_observer=None):
         stream=True,
         timeout=120,
     )
+    if resolution.get("reasoning_effort") is not None:
+        sdk_payload["reasoning"] = {"effort": resolution["reasoning_effort"]}
     if sdk_observer is not None:
         sdk_observer(sdk_payload, resolution)
     stream = client._real_client.responses.create(**sdk_payload)
