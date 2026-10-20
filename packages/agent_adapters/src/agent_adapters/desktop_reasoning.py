@@ -14,6 +14,7 @@ from uuid import uuid4
 from core.desktop_reasoning import (
     DesktopHarnessBinding,
     DesktopReasoningRequest,
+    desktop_image_url,
     decode_desktop_image as desktop_inline_image,
 )
 from core.process_validation import canonical_digest
@@ -99,6 +100,7 @@ class DesktopWorkflowReasoner:
         # desktop connection. Its composition must establish that separately.
         return {
             "available": True,
+            "supports_mcp_context_budget": False,
             "resolution": self.resolution().model_dump(mode="json"),
         }
 
@@ -285,17 +287,8 @@ class DesktopWorkflowReasoner:
                         "image",
                         "input_image",
                     }:
-                        if (
-                            set(part) != {"type", "image_url"}
-                            or part["type"] != "image_url"
-                            or not isinstance(part["image_url"], dict)
-                            or set(part["image_url"]) != {"url"}
-                        ):
-                            raise ValueError(
-                                "Desktop image parts require the exact inline image contract"
-                            )
                         desktop_inline_image(
-                            part["image_url"]["url"],
+                            desktop_image_url(part),
                             profile=self.binding.image_input_profile,
                         )
         instructions = embedded_instruction_set(instruction_set)

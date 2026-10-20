@@ -98,7 +98,7 @@
   padding: 20px;
   background: var(--native-host-bg, #202020);
   color: var(--native-host-fg, #f0f0f0);
-  font-family: var(--native-host-font, system-ui);
+  font: 14px/1.5 var(--native-host-font, system-ui, sans-serif);
 }
 .native-home header {
   display: flex;
@@ -108,9 +108,57 @@
 }
 .native-home h1 {
   font-size: 20px;
+  margin: 0;
 }
 .native-home h2 {
   font-size: 16px;
+  margin: 18px 0 10px;
+}
+.native-home > p:first-of-type {
+  color: var(--native-host-muted, #aaa);
+  font-size: 13px;
+  margin: 8px 0 18px;
+}
+.native-home > button {
+  margin: 0 6px 8px 0;
+}
+.native-home nav[aria-label="Workspace views"] {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  margin: 14px 0 18px;
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-home nav[aria-label="Workspace views"] button {
+  flex: 0 0 auto;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 4px 4px 0 0;
+  padding: 7px 9px;
+  background: transparent;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home nav[aria-label="Workspace views"] button[aria-current="page"] {
+  border-bottom-color: currentColor;
+  color: var(--native-host-fg, #f0f0f0);
+}
+.native-home .native-home__workflows li {
+  margin: 8px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-home .native-home__workflows button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+}
+.native-home .native-home__workflows small {
+  font-size: 12px;
 }
 .native-home label,
 .native-home small {
