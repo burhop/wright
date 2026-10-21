@@ -533,6 +533,51 @@ def test_kicad_aggregate_pcb_only_repeats_repository_defined_reads(
     )
 
 
+@pytest.mark.parametrize("source_url", [None, "", 17, False, {}, []])
+@pytest.mark.parametrize(
+    "annotations", [{}, {"readOnlyHint": True}, {"idempotentHint": True}]
+)
+def test_missing_source_provenance_does_not_infer_repeatability(
+    source_url, annotations
+):
+    from .test_workflow_mcp_execution import TOOL
+    from workspace_service.workflow_mcp_execution import repeatable_call
+
+    tool = replace(TOOL, provenance={"source_url": source_url}, annotations=annotations)
+    assert repeatable_call(tool, {"query": "bracket"}) is bool(annotations)
+
+
+@pytest.mark.parametrize("repeat", [False, True])
+def test_null_source_dispatches_once_but_does_not_allow_replay(tmp_path, repeat):
+    from .test_workflow_mcp_execution import TOOL
+
+    gateway, runner = runtime()
+    gateway.list_tools = lambda *_: (replace(TOOL, provenance={"source_url": None}),)
+    replies = iter([call(), call() if repeat else done("Supplied tool evidence")])
+
+    async def decide(*args, **kwargs):
+        return next(replies)
+
+    execute = execute_prompt_workflow(
+        service=service(tmp_path),
+        workspace_dir=str(tmp_path),
+        plan=plan(),
+        input_values={},
+        response_generator=None,
+        action_generator=decide,
+        tool_runtime=runner,
+    )
+    if repeat:
+        with pytest.raises(WorkflowSourceExecutionError, match="requested again"):
+            asyncio.run(execute)
+    else:
+        result = asyncio.run(execute)
+        assert (
+            tmp_path / result["output_path"]
+        ).read_text() == "Supplied tool evidence"
+    assert len(gateway.calls) == 1
+
+
 def test_cancel_interrupts_pending_decision_without_files(tmp_path):
     gateway, runner = runtime()
 

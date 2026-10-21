@@ -163,6 +163,7 @@ def test_action_upgrade_is_read_only_and_preserves_custom_policy_bodies_and_hist
         "validation.design-revision",
         "context.expected-files",
         "context.task-workspace",
+        "context.mcp-input-completion",
     }
     assert {item["path"] for item in proposal["changes"]} == {
         "action_intent_contract",
@@ -171,6 +172,7 @@ def test_action_upgrade_is_read_only_and_preserves_custom_policy_bodies_and_hist
         "assets.validation.design-revision",
         "assets.context.expected-files",
         "assets.context.task-workspace",
+        "assets.context.mcp-input-completion",
     }
     applied = settings.replace(upgraded, expected_revision=proposal["current_revision"])
     assert applied["digest"] == proposal["proposed_digest"] != historical_digest

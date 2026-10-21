@@ -1,6 +1,6 @@
 {
   "profile_id": "wright.workflow-defaults",
-  "profile_version": "1.2.1",
+  "profile_version": "1.3.0",
   "action_intent_contract": "wright.workflow-action-intent/1",
   "assets": [
     {"id": "policy.require-specified", "role": "resource-context", "file": "require-specified.md"},
@@ -17,6 +17,7 @@
     {"id": "validation.design-revision", "role": "validation", "file": "design-revision.md", "variables": ["feedback"]},
     {"id": "context.expected-files", "role": "resource-context", "file": "expected-files.md", "variables": ["files"]},
     {"id": "context.task-workspace", "role": "resource-context", "file": "task-workspace.md", "variables": ["workspace_dir"]},
+    {"id": "context.mcp-input-completion", "role": "resource-context", "file": "mcp-input-completion.md"},
     {"id": "recovery.format", "role": "recovery", "file": "format-repair.md", "variables": ["output_format"]},
     {"id": "recovery.tool-free", "role": "protocol", "file": "tool-free-recovery.md"},
     {"id": "bridge.workflow-translation", "role": "resource-context", "file": "bridge-workflow-translation.md", "variables": ["optional_notice"]},

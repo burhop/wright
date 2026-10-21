@@ -260,6 +260,37 @@ inventory. An unbound task remains editable but must be bound before running.
 Internal Wright file/validation operations remain available to the runtime;
 they are not presented as independently configured MCP servers.
 
+### Reuse supplied material before optional research
+
+An MCP task normally requires successful tool-call evidence. For analysis that
+can finish from supplied references, explicitly save
+`"mcp_completion_policy": "supplied_inputs_or_tools"` in that task's source
+settings. This is an opt-in source setting; existing tasks keep
+`tool_evidence_required`. Select only tools annotated `readOnlyHint: true` in
+`mcp_task_tools`. Unknown or changing tools block readiness, even when no call
+is expected. The selected provider must still be available.
+
+The workflow must contain the saved `context.mcp-input-completion` instruction
+asset from defaults 1.3.0 or an explicitly reviewed compatible asset. Update
+older workflow instructions visibly and save a new revision; changing installed
+defaults does not update accepted workflows. Export/import carries the saved
+setting and instruction body through the existing workflow bundle.
+
+With sufficient supplied inputs and no executed tool calls, the model may return
+`{"status":"completed","response":"...","evidence":[],"completion_basis":"supplied_inputs"}`.
+Wright records the completion basis and a digest of the actual composed task
+input, alongside its existing request, source, reference and result evidence.
+This is analysis of those inputs, not proof of their claims. If a tool runs,
+completion still requires successful call numbers; supplied-input completion
+cannot conceal failed or uncertain tool outcomes.
+
+This setting cannot replace CAD operations, design checks, application tasks,
+tool-produced files or external actions. Required measurements, declared questions,
+review, frozen routing and continuation checks retain their existing authority.
+Use an ordinary AI task when tools are never needed. PDF reading is a separately
+qualified provider capability; a downloaded PDF alone does not establish that its
+contents were read.
+
 ### Model screenshot to a rendered image
 
 For a workflow whose final deliverable is a realistic image:
