@@ -3,6 +3,7 @@ import {
   navigationState,
   readNavigationState,
   rememberNavigationState,
+  workflowLocation,
 } from "./native-navigation-state";
 const state = {
   schema_version: "wright.native-navigation/1" as const,
@@ -12,6 +13,31 @@ const state = {
 };
 afterEach(() => {
   delete (window as unknown as { openai?: unknown }).openai;
+});
+it("retains an exact workflow/run read target without status or approval authority", () => {
+  const location = {
+    path: "workflows/part__one.workflow.wflow",
+    source_digest: "a".repeat(64),
+    view: "working" as const,
+    run_id: "recorded-run",
+  };
+  expect(navigationState({ ...state, workflow: location })?.workflow).toEqual(
+    location,
+  );
+  for (const patch of [
+    { path: "workflows/../private.wflow" },
+    { path: "workflows\\part.wflow" },
+    { source_digest: "" },
+    { run_id: "../other" },
+    { status: "completed" },
+    { approved: true },
+    { view: "execute" },
+  ]) {
+    expect(workflowLocation({ ...location, ...patch })).toBeUndefined();
+    expect(
+      navigationState({ ...state, workflow: { ...location, ...patch } }),
+    ).toBeUndefined();
+  }
 });
 function host(value: unknown) {
   Object.defineProperty(window, "openai", { configurable: true, value });

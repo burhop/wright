@@ -79,6 +79,14 @@ print(f"Patched aiohttp runtime: {observed}")
 # certifi is separately installed in Wright/Hermes and vendored inside pip.
 # Qualify actual trust-store bytes, not just a lock entry or scanner database.
 for interpreter in /workspace/.venv/bin/python /opt/hermes/.venv/bin/python; do
+  docker run --rm --network none --entrypoint "$interpreter" "$IMAGE_TAG" -c '
+from importlib.metadata import version
+from packaging.version import Version
+
+observed = version("pillow")
+assert Version(observed) >= Version("13.0.0"), f"Unpatched Pillow runtime: {observed}"
+print(f"Patched Pillow runtime: {observed}")
+'
   docker run --rm -i --network none --entrypoint "$interpreter" "$IMAGE_TAG" - \
     < scripts/check-certifi-trust.py
 done

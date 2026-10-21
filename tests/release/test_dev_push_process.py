@@ -537,3 +537,17 @@ def test_native_panel_codeql_exclusion_keeps_maintained_sources_scannable() -> N
     assert "minify: true" in builder
     gate = _read("scripts/check-dev-push.sh")
     assert ".github/codeql/*" in gate
+
+
+def test_fast_gate_retains_common_working_view_journeys() -> None:
+    gate = _read("scripts/check-dev-push.sh")
+    baseline = gate[gate.index("  PLAYWRIGHT_TARGETS+=(\n") :]
+    baseline = baseline[: baseline.index("\n  )")]
+    for journey in (
+        "process-common-view.spec.ts",
+        "process-declared-interactions.spec.ts",
+        "process-two-input-recovery.spec.ts",
+        "workflow-recovery.spec.ts",
+    ):
+        assert f"tests/ui-integration/{journey}" in baseline
+    assert "PR #166" in _read(RUNBOOK)

@@ -9,7 +9,11 @@ import { NativeNewWorkflow } from "./NativeNewWorkflow";
 import { EngineeringTemplateDialog } from "../workflow-recovery/EngineeringTemplateDialog";
 import { nativeTemplateClient } from "./native-template-client";
 import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
-import type { HomeView } from "./native-navigation-state";
+import type {
+  HomeView,
+  NativeNavigationState,
+  NativeWorkflowLocation,
+} from "./native-navigation-state";
 
 export interface DesktopWorkspace {
   workspace_id: string;
@@ -85,12 +89,19 @@ export function NativeHomePanel({
   onNavigate,
   restorationNotice,
   onDirty,
+  lastLocation,
+  onReopen,
 }: {
   readonly call: HomeCall;
   readonly initialView?: HomeView;
   readonly onNavigate?: (view: HomeView) => void;
   readonly restorationNotice?: string;
   readonly onDirty?: (dirty: boolean) => void;
+  readonly lastLocation?: NativeNavigationState;
+  readonly onReopen?: (
+    workspace: DesktopWorkspace,
+    location: NativeWorkflowLocation,
+  ) => Promise<void>;
   readonly initialSelection?: Pick<
     DesktopWorkspace,
     "workspace_id" | "session_id"
@@ -132,6 +143,7 @@ export function NativeHomePanel({
     onNavigate?.(next);
   }
   const [fileQuery, setFileQuery] = useState("");
+  const [workflowQuery, setWorkflowQuery] = useState("");
   const [previewPath, setPreviewPath] = useState<string>();
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const templateService = useMemo(
@@ -143,6 +155,16 @@ export function NativeHomePanel({
       file.path.replace(/^\//, "").startsWith("workflows/") &&
       file.path.endsWith(".wflow"),
   );
+  const matchingWorkflows = workflowFiles.filter((file) =>
+    file.path
+      .toLocaleLowerCase()
+      .includes(workflowQuery.trim().toLocaleLowerCase()),
+  );
+  const recentWorkflow =
+    selected?.workspace_id === lastLocation?.workspace_id &&
+    selected?.session_id === lastLocation?.session_id
+      ? lastLocation?.workflow
+      : undefined;
   const generation = useRef(0);
   const restore = useRef(initialSelection);
   const invalidate = useCallback(() => {
@@ -186,6 +208,7 @@ export function NativeHomePanel({
       setFiles([]);
       setPreviewPath(undefined);
       setFileQuery("");
+      setWorkflowQuery("");
       setError("");
       setLoading(true);
       try {
@@ -276,8 +299,36 @@ export function NativeHomePanel({
 
   return (
     <main className="native-home" data-control-style="neutral">
-      <header>
+      <header className="native-home__workspace-bar">
         <h1>Wright</h1>
+        <div className="native-home__workspace-picker">
+          <label htmlFor="wright-workspace">Workspace</label>
+          <select
+            id="wright-workspace"
+            disabled={opening || creating || settingsDirty}
+            value={selected?.workspace_id ?? ""}
+            onChange={(event) => {
+              const workspace = items.find(
+                (item) => item.workspace_id === event.target.value,
+              );
+              if (workspace) void select(workspace);
+            }}
+          >
+            <option value="" disabled>
+              Choose a workspace
+            </option>
+            {items.map((workspace) => (
+              <option
+                key={workspace.workspace_id}
+                value={workspace.workspace_id}
+                disabled={!workspace.available}
+              >
+                {workspace.workspace_name}
+                {workspace.available ? "" : " — unavailable"}
+              </option>
+            ))}
+          </select>
+        </div>
         <button
           disabled={opening || creating || settingsDirty}
           onClick={() => {
@@ -288,42 +339,26 @@ export function NativeHomePanel({
           Refresh
         </button>
       </header>
-      <p>Engineering workflows, alongside this conversation.</p>
       {restorationNotice && <p role="status">{restorationNotice}</p>}
-      <label htmlFor="wright-workspace">Workspace</label>
-      <select
-        id="wright-workspace"
-        disabled={opening || creating || settingsDirty}
-        value={selected?.workspace_id ?? ""}
-        onChange={(event) => {
-          const workspace = items.find(
-            (item) => item.workspace_id === event.target.value,
-          );
-          if (workspace) void select(workspace);
-        }}
-      >
-        <option value="" disabled>
-          Choose a workspace
-        </option>
-        {items.map((workspace) => (
-          <option
-            key={workspace.workspace_id}
-            value={workspace.workspace_id}
-            disabled={!workspace.available}
+      <div className="native-home__workspace-actions">
+        <button
+          disabled={
+            opening || creating || loading || createUncertain || settingsDirty
+          }
+          onClick={() => setCreateVisible((value) => !value)}
+        >
+          New workspace
+        </button>
+        {selected && (
+          <button
+            disabled={opening || creating || settingsDirty}
+            onClick={() => setSettingsOpen((current) => !current)}
+            aria-expanded={settingsOpen}
           >
-            {workspace.workspace_name}
-            {workspace.available ? "" : " — unavailable"}
-          </option>
-        ))}
-      </select>
-      <button
-        disabled={
-          opening || creating || loading || createUncertain || settingsDirty
-        }
-        onClick={() => setCreateVisible((value) => !value)}
-      >
-        New workspace
-      </button>
+            {settingsOpen ? "Close workspace settings" : "Workspace settings"}
+          </button>
+        )}
+      </div>
       {createVisible && (
         <form
           onSubmit={(event) => {
@@ -360,12 +395,6 @@ export function NativeHomePanel({
       )}
       {selected && (
         <>
-          <button
-            disabled={opening || creating || settingsDirty}
-            onClick={() => setSettingsOpen((current) => !current)}
-          >
-            {settingsOpen ? "Close workspace settings" : "Workspace settings"}
-          </button>
           {settingsOpen && (
             <NativeWorkspaceSettings
               key={`${selected.workspace_id}:${selected.session_id}`}
@@ -377,6 +406,36 @@ export function NativeHomePanel({
         </>
       )}
       <div inert={settingsDirty}>
+        {recentWorkflow && selected && onReopen && (
+          <div className="native-home__return">
+            <span>Last viewed</span>
+            <button
+              disabled={loading || opening || creating}
+              onClick={() => {
+                setOpening(true);
+                setError("");
+                void onReopen(selected, recentWorkflow)
+                  .catch(() =>
+                    setError(
+                      "This saved location could not be reopened. Open the workflow from the list to inspect its current source. No run was started or resumed.",
+                    ),
+                  )
+                  .finally(() => setOpening(false));
+              }}
+            >
+              Reopen{" "}
+              {recentWorkflow.path
+                .split("/")
+                .at(-1)
+                ?.replace(/(?:\.workflow)?\.wflow$/, "")
+                .replace(/[-_]+/g, " ")}
+              {recentWorkflow.view === "working" ? " · Run and results" : ""}
+            </button>
+            {recentWorkflow.run_id && (
+              <small>Run {recentWorkflow.run_id}</small>
+            )}
+          </div>
+        )}
         {selected && (
           <nav aria-label="Workspace views">
             <button
@@ -422,6 +481,7 @@ export function NativeHomePanel({
             key={`${selected.workspace_id}:${selected.session_id}`}
             workspace={selected}
             paths={workflowFiles.map((file) => file.path.replace(/^\//, ""))}
+            initialPath={recentWorkflow?.path}
             call={call}
             onOpen={
               onOpenRun
@@ -505,13 +565,25 @@ export function NativeHomePanel({
         )}
         {selected && view === "workflows" && (
           <section aria-label="Workflows">
-            <h2>Workflows</h2>
-            <button
-              disabled={loading || creating || opening}
-              onClick={() => setTemplatesOpen(true)}
-            >
-              Use a template
-            </button>
+            <div className="native-home__section-heading">
+              <h2>Workflows</h2>
+              <div className="native-home__workflow-actions">
+                <NativeNewWorkflow
+                  key={`${selected.workspace_id}:${selected.session_id}`}
+                  workspace={selected}
+                  call={call}
+                  onOpen={onOpen}
+                  onBusy={setCreating}
+                  disabled={loading || opening || creating}
+                />
+                <button
+                  disabled={loading || creating || opening}
+                  onClick={() => setTemplatesOpen(true)}
+                >
+                  Use a template
+                </button>
+              </div>
+            </div>
             {templateService && (
               <EngineeringTemplateDialog
                 key={`${selected.workspace_id}:${selected.session_id}`}
@@ -534,22 +606,28 @@ export function NativeHomePanel({
                 }}
               />
             )}
-            <NativeNewWorkflow
-              key={`${selected.workspace_id}:${selected.session_id}`}
-              workspace={selected}
-              call={call}
-              onOpen={onOpen}
-              onBusy={setCreating}
-              disabled={loading || opening || creating}
-            />
+            {workflowFiles.length > 0 && (
+              <input
+                type="search"
+                aria-label="Find a workflow"
+                placeholder="Find a workflow…"
+                value={workflowQuery}
+                onChange={(event) => setWorkflowQuery(event.target.value)}
+              />
+            )}
             {!loading && !error && workflowFiles.length === 0 && (
               <p>
                 No saved workflows here yet. Choose New workflow or ask this
                 conversation to create one.
               </p>
             )}
+            {!loading &&
+              workflowFiles.length > 0 &&
+              matchingWorkflows.length === 0 && (
+                <p>No workflows match this search.</p>
+              )}
             <ul className="native-home__workflows">
-              {workflowFiles.map((file) => (
+              {matchingWorkflows.map((file) => (
                 <li key={file.path}>
                   <button
                     aria-label={file.name}
@@ -574,8 +652,14 @@ export function NativeHomePanel({
                     {file.name
                       .replace(/(?:\.workflow)?\.wflow$/, "")
                       .replace(/[-_]+/g, " ")}
+                    <span aria-hidden="true" className="native-home__open-hint">
+                      Open →
+                    </span>
                   </button>
-                  <small>{file.path}</small>
+                  <details className="native-home__file-location">
+                    <summary>File location</summary>
+                    <small>{file.path}</small>
+                  </details>
                 </li>
               ))}
             </ul>

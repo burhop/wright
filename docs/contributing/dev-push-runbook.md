@@ -127,6 +127,14 @@ the changes since the branch's last pushed tip, plus staged, unstaged, and
 untracked files. A new branch falls back to `origin/dev`; the full merge gate
 validates the whole pull-request diff. Outside the bounded correction modes above,
 gate or workflow changes run all slices.
+PR #166 exposed completion assertions against a deliberately collapsed progress
+section. Browser contracts must check the visible terminal summary and results,
+then expand Run details when inspecting progress. Keep exact run/result identity,
+source drafts, declared-input validation and no-replay assertions. The frontend
+fast gate includes the existing common-view, declared-interaction and two-input
+recovery journeys alongside the canonical workspace/editor baseline; component
+checks alone do not establish visibility through a native disclosure control.
+
 Frontend selection also runs the MCP onboarding Chromium suite, including its
 read-only live source-entry check against the gate's isolated API. This catches
 accessible-control regressions that component tests and editor-only coverage miss;
@@ -177,6 +185,28 @@ The separate actual-bundle smoke and vulnerability policy stay mandatory.
 When replacing pip's vendored certifi, retain its package-qualified resource
 lookups and CLI imports. The actual smoke resolves both `where()` and `contents()`
 inside that package, rejecting accidental use of another installed certifi.
+
+Later on 20 October, the dependency audit indexed eight Pillow advisories after
+the PR165 gate passed. Both merged `dev` and PR166's next CI cycle then failed.
+Wright's runtime requires Pillow 13 and the existing Hermes image override pins
+13.0.0; raw pip conflicts remain restricted to the four reviewed exact overrides.
+Image smoke checks the actual installed Pillow floor in both environments, in
+addition to the fresh advisory audit and unchanged image-scanning policy.
+The PDF preview and image transport regressions must retain byte identities,
+dimension limits, provenance and redaction. This dependency correction requires
+the normal gate, not test-only correction mode. Preserve the earlier passes and
+later failures with their timestamps; an upstream advisory change is not a CI
+rerun waiver. [Pillow's security release](https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html)
+documents the fixes and compatibility changes.
+
+The subsequent full gate exposed a newly indexed Windows `launch-editor`
+command-execution advisory bundled in Vite. Pin Vite 8.2.4 in the web workspace
+and retain its resolved toolchain dependencies in the lockfile; the npm audit,
+production build and existing frontend/browser suites remain required. Include
+this finding in the same consolidated correction before another PR push.
+[GHSA-587h-7wmj-h5pm](https://github.com/vitejs/launch-editor/security/advisories/GHSA-587h-7wmj-h5pm)
+identifies 8.2.4 as the patched Vite 8.2 release. Existing Low/Moderate findings
+are still reported under the unchanged audit policy, not silently suppressed.
 
 Windows-capable jobs enable `git config --global core.longpaths true` **before**
 checkout. Local long-path configuration does not qualify hosted runner setup.

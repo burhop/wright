@@ -580,6 +580,9 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
     tests/ui-integration/workspace-surfaces/focus-layout.spec.ts
     tests/ui-integration/workflow-composer.spec.ts
     tests/ui-integration/workflow-recovery.spec.ts
+    tests/ui-integration/process-common-view.spec.ts
+    tests/ui-integration/process-declared-interactions.spec.ts
+    tests/ui-integration/process-two-input-recovery.spec.ts
   )
   mapfile -t PLAYWRIGHT_TARGETS < <(printf '%s\n' "${PLAYWRIGHT_TARGETS[@]}" | sort -u)
   PLAYWRIGHT_PROJECT_ARGS=(--project=chromium)

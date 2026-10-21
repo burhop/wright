@@ -50,6 +50,37 @@
   opacity: 0.6;
   cursor: default;
 }
+.native-workflow-panel__workspace {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.native-workflow-views {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.native-workflow-views button {
+  padding: 7px 10px;
+  font: inherit;
+  border: 0;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+}
+.native-workflow-views button[aria-current="page"] {
+  color: var(--color-primary);
+  background: var(--color-surface-elevated, #333);
+}
+.native-workflow-views button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.native-workflow-views button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
 /* Keep the common kit, with the same surrounding neutral controls as the editor. */
 .native-process-panel .wright-process-ui {
   --color-neutral: inherit;
@@ -73,9 +104,15 @@
 .native-workflow-panel [data-testid="workflow-recovery-ai-request"] {
   display: none;
 }
-/* This resource uses the owning common view for runs, not the editor's unbound start. */
+/* The enabled common view owns readiness, run evidence and execution here.
+   These editor controls have no run client in the desktop composition. Shared
+   authoring, Check, inspectors and the other hosts' bound run controls stay intact. */
 .native-workflow-panel[data-working-view="true"]
-  [data-testid="workflow-recovery-run-start"] {
+  [data-testid="workflow-recovery-run-start"],
+.native-workflow-panel[data-working-view="true"]
+  [data-testid="workflow-recovery-run-readiness"],
+.native-workflow-panel[data-working-view="true"]
+  [data-testid="workflow-recovery-run-drawer"] {
   display: none;
 }
 
@@ -95,7 +132,7 @@
   box-sizing: border-box;
   height: 100%;
   overflow: auto;
-  padding: 20px;
+  padding: 16px;
   background: var(--native-host-bg, #202020);
   color: var(--native-host-fg, #f0f0f0);
   font: 14px/1.5 var(--native-host-font, system-ui, sans-serif);
@@ -107,26 +144,18 @@
   gap: 12px;
 }
 .native-home h1 {
-  font-size: 20px;
+  font-size: 17px;
   margin: 0;
 }
 .native-home h2 {
   font-size: 16px;
   margin: 18px 0 10px;
 }
-.native-home > p:first-of-type {
-  color: var(--native-host-muted, #aaa);
-  font-size: 13px;
-  margin: 8px 0 18px;
-}
-.native-home > button {
-  margin: 0 6px 8px 0;
-}
 .native-home nav[aria-label="Workspace views"] {
   display: flex;
   gap: 4px;
   overflow-x: auto;
-  margin: 14px 0 18px;
+  margin: 10px 0 20px;
   border-bottom: 1px solid var(--native-host-border, #414141);
 }
 .native-home nav[aria-label="Workspace views"] button {
@@ -143,16 +172,19 @@
   color: var(--native-host-fg, #f0f0f0);
 }
 .native-home .native-home__workflows li {
-  margin: 8px 0;
-  padding-bottom: 10px;
+  margin: 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--native-host-border, #414141);
 }
 .native-home .native-home__workflows button {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   width: 100%;
   text-align: left;
   overflow-wrap: anywhere;
-  padding: 8px 0;
+  padding: 5px 0;
   border: 0;
   background: transparent;
   font-weight: 600;
@@ -201,6 +233,88 @@
 }
 .native-home button:disabled {
   opacity: 0.6;
+}
+.native-home button:not(:disabled) {
+  cursor: pointer;
+}
+.native-home__workspace-picker {
+  flex: 1;
+  min-width: 0;
+}
+.native-home__workspace-picker label {
+  font-size: 11px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home .native-home__workspace-picker select {
+  margin: 2px 0 0;
+  padding: 5px 8px;
+}
+.native-home__workspace-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 8px;
+}
+.native-home__return {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid var(--native-host-border, #414141);
+  border-radius: 8px;
+}
+.native-home__return > span {
+  display: block;
+  font-size: 11px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home .native-home__return button {
+  border: 0;
+  padding: 4px 0;
+  text-align: left;
+  background: transparent;
+}
+.native-home .native-home__workspace-actions button {
+  border: 0;
+  padding: 3px 0;
+  font-size: 12px;
+  color: var(--native-host-muted, #aaa);
+  background: transparent;
+}
+.native-home__section-heading,
+.native-home__workflow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.native-home__section-heading {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.native-home__section-heading h2 {
+  margin: 0;
+}
+.native-home__workflow-actions {
+  position: relative;
+}
+.native-new-workflow form {
+  margin: 8px 0;
+}
+.native-home__open-hint {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home__file-location {
+  font-size: 11px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home__file-location summary {
+  cursor: pointer;
+}
+.native-home__workflows button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .native-home :focus-visible,
 .native-workspace-frame > nav :focus-visible {

@@ -1,0 +1,678 @@
+{
+  "boundary": "Real Wright MCP and owning services; simulated desktop host. Not Windows desktop acceptance. No engineering run started by these walkthroughs.",
+  "bundle_sha256": "2438b9711033ab13cc8589d6acc67a97b7d5cd31965e215e7b9e2ffc9608dfcb",
+  "reports": {
+    "navigation-spacer-04": {
+      "status": "passed",
+      "boundary": "Real Wright MCP/storage; simulated desktop host, not Windows acceptance",
+      "scope": {
+        "workspace_id": "e9cb10c0-4b16-41d8-924d-eea9a5d0c180",
+        "session_id": "desktop-2fb938ab-4bcd-497c-a140-d68d47f96615",
+        "path": "workflows/spacer-comparison.workflow.wflow"
+      },
+      "run_id": null,
+      "bridge": "/tmp/wright-desktop-workflow-navigation/prototypes/desktop-harness/mcp_bridge.py",
+      "bridge_sha256": "694229f8de962aeffd51d7b040189e135fb524d1bdb90259daf902073cb6437e",
+      "bundle_sha256": "2438b9711033ab13cc8589d6acc67a97b7d5cd31965e215e7b9e2ffc9608dfcb",
+      "before_digest": "cd13e94f84131c5407444499baf4a29ed54cf4d1da0cb63d79a8b66e49ce9b19",
+      "after_digest": "64ea0c2aa433b42785f8766d3cf4448e972820ead79246c7f35ac8cbfb4613ba",
+      "checks": [
+        "Workflows entry opens exact accepted source in shared editor",
+        "Dirty draft guards Home; explicit save records source/layout through actual MCP and owning service",
+        "Selected workflow history reports actual empty state without selecting another workflow",
+        "Home and supported widget remount retain exact source/run target; explicit reopen rereads owner without replay",
+        "Narrow Home fits; recorded history unchanged; zero process mutations or engineering calls"
+      ],
+      "errors": [],
+      "raw_report_path": "/tmp/wright-desktop-navigation-owner-20261020/navigation-spacer-04/report.json",
+      "raw_report_sha256": "60c8c0c3277d077446c3207003ce84f22ca77aa3a5f2ea3df1d578380d918bbe",
+      "observed_calls": [
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_history",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        }
+      ]
+    },
+    "navigation-spacer-05": {
+      "status": "passed",
+      "boundary": "Real Wright MCP/storage; simulated desktop host, not Windows acceptance",
+      "scope": {
+        "workspace_id": "e9cb10c0-4b16-41d8-924d-eea9a5d0c180",
+        "session_id": "desktop-2fb938ab-4bcd-497c-a140-d68d47f96615",
+        "path": "workflows/spacer-comparison.workflow.wflow"
+      },
+      "run_id": null,
+      "bridge": "/tmp/wright-desktop-workflow-navigation/prototypes/desktop-harness/mcp_bridge.py",
+      "bridge_sha256": "694229f8de962aeffd51d7b040189e135fb524d1bdb90259daf902073cb6437e",
+      "bundle_sha256": "2438b9711033ab13cc8589d6acc67a97b7d5cd31965e215e7b9e2ffc9608dfcb",
+      "before_digest": "64ea0c2aa433b42785f8766d3cf4448e972820ead79246c7f35ac8cbfb4613ba",
+      "after_digest": "64ea0c2aa433b42785f8766d3cf4448e972820ead79246c7f35ac8cbfb4613ba",
+      "checks": [
+        "Workflows entry opens exact accepted source in shared editor",
+        "Selected workflow history reports actual empty state without selecting another workflow",
+        "Home and supported widget remount retain exact source/run target; explicit reopen rereads owner without replay",
+        "Narrow Home fits; recorded history unchanged; zero process mutations or engineering calls"
+      ],
+      "errors": [],
+      "raw_report_path": "/tmp/wright-desktop-navigation-owner-20261020/navigation-spacer-05/report.json",
+      "raw_report_sha256": "4b4709c64b217b5a5eccb8002c47b9294fdfc0d5034bc3b021d69c5c045edabc",
+      "observed_calls": [
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_history",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        }
+      ]
+    },
+    "navigation-robot-01": {
+      "status": "passed",
+      "boundary": "Real Wright MCP/storage; simulated desktop host, not Windows acceptance",
+      "scope": {
+        "workspace_id": "e9cb10c0-4b16-41d8-924d-eea9a5d0c180",
+        "session_id": "desktop-2fb938ab-4bcd-497c-a140-d68d47f96615",
+        "path": "workflows/robot-tracking-diagnosis.workflow.wflow"
+      },
+      "run_id": null,
+      "bridge": "/tmp/wright-desktop-workflow-navigation/prototypes/desktop-harness/mcp_bridge.py",
+      "bridge_sha256": "694229f8de962aeffd51d7b040189e135fb524d1bdb90259daf902073cb6437e",
+      "bundle_sha256": "d4ebccb76361e5a314c561aaa824b8c2674080f739e17e62c82e77cbf6390f92",
+      "before_digest": "bdf7fa4d455ad3ec6fb50c9f390b749990f82c1dfc0a860237cb85e50984537d",
+      "after_digest": "b2c6864363b692f65156df03bce397f0c71fe489dfcd4a33efe96e9b943d69a5",
+      "checks": [
+        "Workflows entry opens exact accepted source in shared editor",
+        "Dirty draft guards Home; explicit save records source/layout through actual MCP and owning service",
+        "Selected workflow history reports actual empty state without selecting another workflow",
+        "Home and supported widget remount retain exact source/run target; explicit reopen rereads owner without replay",
+        "Narrow Home fits; recorded history unchanged; zero process mutations or engineering calls"
+      ],
+      "errors": [],
+      "raw_report_path": "/tmp/wright-desktop-navigation-owner-20261020/navigation-robot-01/report.json",
+      "raw_report_sha256": "9d5ee591ba56f327c69ae78d26d0c69ceb45310f05a0cae8aa9ad0e6f9223c77",
+      "observed_calls": [
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_history",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_draft_save",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        }
+      ]
+    },
+    "navigation-robot-03": {
+      "status": "passed",
+      "boundary": "Real Wright MCP/storage; simulated desktop host, not Windows acceptance",
+      "scope": {
+        "workspace_id": "e9cb10c0-4b16-41d8-924d-eea9a5d0c180",
+        "session_id": "desktop-2fb938ab-4bcd-497c-a140-d68d47f96615",
+        "path": "workflows/robot-tracking-diagnosis.workflow.wflow"
+      },
+      "run_id": null,
+      "bridge": "/tmp/wright-desktop-workflow-navigation/prototypes/desktop-harness/mcp_bridge.py",
+      "bridge_sha256": "694229f8de962aeffd51d7b040189e135fb524d1bdb90259daf902073cb6437e",
+      "bundle_sha256": "2438b9711033ab13cc8589d6acc67a97b7d5cd31965e215e7b9e2ffc9608dfcb",
+      "before_digest": "b2c6864363b692f65156df03bce397f0c71fe489dfcd4a33efe96e9b943d69a5",
+      "after_digest": "b2c6864363b692f65156df03bce397f0c71fe489dfcd4a33efe96e9b943d69a5",
+      "checks": [
+        "Workflows entry opens exact accepted source in shared editor",
+        "Selected workflow history reports actual empty state without selecting another workflow",
+        "Home and supported widget remount retain exact source/run target; explicit reopen rereads owner without replay",
+        "Narrow Home fits; recorded history unchanged; zero process mutations or engineering calls"
+      ],
+      "errors": [],
+      "raw_report_path": "/tmp/wright-desktop-navigation-owner-20261020/navigation-robot-03/report.json",
+      "raw_report_sha256": "aff2c092ca4292453b35caae2346fd3c7af41f8d75d12791975a9b0ae4950d1e",
+      "observed_calls": [
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_history",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        }
+      ]
+    },
+    "navigation-recorded-03": {
+      "status": "passed",
+      "boundary": "Real Wright MCP/storage; simulated desktop host, not Windows acceptance",
+      "scope": {
+        "workspace_id": "a59b7326-6f76-4ba5-a41f-0e78809866f3",
+        "session_id": "desktop-f8e98f29-85fe-4d5a-9367-d0eb13476584",
+        "path": "workflows/block-preview-recovery.workflow.wflow"
+      },
+      "run_id": "681a949b7b2e463dabc2d5ac97ce7651",
+      "bridge": "/tmp/wright-native018-candidate-ee9f5313-runtime-20261019/prototypes/desktop-harness/mcp_bridge.py",
+      "bridge_sha256": "694229f8de962aeffd51d7b040189e135fb524d1bdb90259daf902073cb6437e",
+      "bundle_sha256": "2438b9711033ab13cc8589d6acc67a97b7d5cd31965e215e7b9e2ffc9608dfcb",
+      "before_digest": "9c09d19fb450b662c117313e1fddf30ba50932480bd7eeb954e0330c75f3fd84",
+      "after_digest": "9c09d19fb450b662c117313e1fddf30ba50932480bd7eeb954e0330c75f3fd84",
+      "checks": [
+        "Workflows entry opens exact accepted source in shared editor",
+        "Actual retained PNG displayed with matching byte hash; result links to producing-step inspector and back to the same run",
+        "Selected workflow history reads recorded evidence and attaches only the exact runtime-confirmed run",
+        "Home and supported widget remount retain exact source/run target; explicit reopen rereads owner without replay",
+        "Narrow Home fits; recorded history unchanged; zero process mutations or engineering calls"
+      ],
+      "errors": [],
+      "raw_report_path": "/tmp/wright-desktop-navigation-owner-20261020/navigation-recorded-03/report.json",
+      "raw_report_sha256": "5c9b6dd9ae90c97bd108182d49e2181956833237e36850dd05da77e1440c6d72",
+      "observed_calls": [
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_open",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_history",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_recorded_run_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "representation",
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "navigation",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_ui_read",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_process_view",
+          "operation": "snapshot",
+          "is_error": false
+        },
+        {
+          "name": "wright_workflow_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_editor_drafts_read",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_list",
+          "operation": null,
+          "is_error": false
+        },
+        {
+          "name": "wright_workspace_files",
+          "operation": null,
+          "is_error": false
+        }
+      ]
+    }
+  },
+  "screenshots": {
+    "run-results.png": "dba2f3818db03dbbc41eabeffcf84475509eeaae5c12e7692025b8c42113d73f",
+    "recorded-image.png": "85b4906a17e454b850c9584125ecf9598b365c4d21675ac3122f14d30581eed6",
+    "home-narrow.png": "db76a418b08753fbec65bfa855cde2840b7ec28055cda5ec9115dea808debcf9",
+    "workflow.png": "a7113bce1b3dfb5e307e31f36e80d3c618ae6f59d7d8d8bf145e54a67575f844"
+  },
+  "verification_logs": {
+    "/tmp/wright-desktop-navigation-results-tests.log": "10309bfd2d0635695132cc560675ac1230d62ee55f316edd2a1dcd32390062f9",
+    "/tmp/wright-desktop-navigation-shared-editor-tests.log": "a6e080faf83da8883a3017e31af02336d4a9f1052497607b9d03cf58860f626a",
+    "/tmp/wright-desktop-navigation-results-build.log": "81d1a946aef948cc04366c95aec7a989e92ea5da1997e14198f79ce7d100dc34",
+    "/tmp/wright-desktop-navigation-results-lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "limits": [
+    "The earlier *-04/*-02 home-narrow captures showed loading, not a loaded Home. Corrected walkthrough waits for workspace, exact workflow row, and Reopen before layout measurement. Earlier source/save/results evidence remains valid at its recorded scope.",
+    "Robot save/reopen ran before the final compact-progress change; final navigation was repeated read-only with the same accepted source.",
+    "Current source pins remain enforced; initial rejected stale-pin attempts are retained in the raw evidence directory.",
+    "Host widget-state persistence depends on the desktop exposing that supported API. Unavailable state persistence is reported, not substituted with global browser storage.",
+    "Historical CAD run is inspection-only recovery from earlier work, unrelated to the Windows pocket export blocker."
+  ]
+}

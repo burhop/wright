@@ -78,6 +78,15 @@ vi.mock("./NativeWorkflowPanel", () => ({
 vi.mock("./NativeProcessPanel", () => ({
   NativeProcessPanel: (props: ComponentProps<typeof NativeProcessPanel>) => (
     <section aria-label="Working view">
+      {props.onToggleHistory && (
+        <button
+          onClick={props.onToggleHistory}
+          disabled={props.historyDisabled}
+        >
+          Run history
+        </button>
+      )}
+      {props.runHistory}
       {props.runDetails}
       <button onClick={() => props.onDirty?.(true)}>Uncertain change</button>
       <button onClick={() => props.onDirty?.(false)}>Reconciled</button>
@@ -113,6 +122,130 @@ vi.mock("./NativeProcessPanel", () => ({
   ),
 }));
 afterEach(() => cleanup());
+
+it("reads the selected workflow's history and verifies its exact runtime subject before attaching", async () => {
+  const recorded = {
+    run_id: "historical-run",
+    source_digest: original.storage_digest,
+    path: "runs/example/historical-run.json",
+    status: "failed",
+    started_at: null,
+  };
+  const readEvidence = vi.fn().mockResolvedValue({
+    content: [],
+    structuredContent: {
+      workspace_id: original.workspace_id,
+      session_id: "session",
+      workflow_path: original.path,
+      runs: [recorded],
+    },
+  });
+  const onLocationChange = vi.fn();
+  const { call } = setup({ readEvidence, onLocationChange });
+  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Run history" }));
+  await screen.findByText("failed");
+  expect(call).not.toHaveBeenCalled();
+  call.mockResolvedValueOnce({
+    content: [],
+    structuredContent: {
+      ok: true,
+      document: {
+        context: {
+          process: {
+            workspace_id: original.workspace_id,
+            source_path: original.path,
+            source_digest: original.storage_digest,
+          },
+          run_id: "another-run",
+          generated_at: "2026-10-20T12:00:00Z",
+        },
+        state: "failed",
+      },
+    },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Open working view" }));
+  await screen.findByRole("alert");
+  expect(
+    onLocationChange.mock.calls.some(([location]) => location.run_id),
+  ).toBe(false);
+  call.mockResolvedValueOnce({
+    content: [],
+    structuredContent: {
+      ok: true,
+      document: {
+        context: {
+          process: {
+            workspace_id: original.workspace_id,
+            source_path: original.path,
+            source_digest: original.storage_digest,
+          },
+          run_id: recorded.run_id,
+          generated_at: "2026-10-20T12:00:00Z",
+        },
+        state: "failed",
+      },
+    },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Open working view" }));
+  await waitFor(() =>
+    expect(onLocationChange).toHaveBeenLastCalledWith({
+      path: original.path,
+      source_digest: original.storage_digest,
+      view: "working",
+      run_id: recorded.run_id,
+    }),
+  );
+  expect(
+    call.mock.calls.map(([tool, args]) => [tool, args.operation, args.run_id]),
+  ).toEqual([
+    ["wright_process_ui_read", "snapshot", recorded.run_id],
+    ["wright_process_ui_read", "snapshot", recorded.run_id],
+  ]);
+});
+
+it("reports the exact attached run across views and removes it from changed-source hints", async () => {
+  const onLocationChange = vi.fn();
+  const { read, call } = setup({ onLocationChange });
+  expect(onLocationChange).toHaveBeenLastCalledWith({
+    path: original.path,
+    source_digest: original.storage_digest,
+    view: "editor",
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  await screen.findByRole("region", { name: "Working view" });
+  fireEvent.click(screen.getByRole("button", { name: "Attach run" }));
+  expect(onLocationChange).toHaveBeenLastCalledWith({
+    path: original.path,
+    source_digest: original.storage_digest,
+    view: "working",
+    run_id: "retained-run",
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Open workflow" }));
+  expect(onLocationChange).toHaveBeenLastCalledWith({
+    path: original.path,
+    source_digest: original.storage_digest,
+    view: "editor",
+    run_id: "retained-run",
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Accepted save" }));
+  expect(onLocationChange).toHaveBeenLastCalledWith({
+    path: original.path,
+    source_digest: saved.storage_digest,
+    view: "editor",
+  });
+  read.mockResolvedValue({ content: [], structuredContent: saved });
+  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  await screen.findByText("New preparation");
+  await waitFor(() =>
+    expect(onLocationChange).toHaveBeenLastCalledWith({
+      path: original.path,
+      source_digest: saved.storage_digest,
+      view: "working",
+    }),
+  );
+  expect(call).not.toHaveBeenCalled();
+});
 
 it("opens transfer only for a saved source and keeps editor drafts and run controls guarded", async () => {
   const transferCall = vi.fn<NativeTransferCall>();

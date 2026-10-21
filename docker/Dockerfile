@@ -215,7 +215,7 @@ RUN set -eux; \
 # independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "cryptography==50.0.0" \
-        "pillow==12.3.0" \
+        "pillow==13.0.0" \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \

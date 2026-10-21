@@ -2232,7 +2232,7 @@ describe("common process request recovery and observer lifetime", () => {
     expect(client.start).not.toHaveBeenCalled();
   });
   it.each(["completed", "cancelled"] as const)(
-    "keeps cancellation details compact after a run is %s",
+    "keeps results visible and cancellation details expandable after a run is %s",
     async (state) => {
       const { client, store } = fixture();
       const reason = `This Wright run has ${state}; there is no active execution to cancel.`;
@@ -2264,6 +2264,15 @@ describe("common process request recovery and observer lifetime", () => {
           recoveryStore={store}
         />,
       );
+      const summary = await screen.findByText(
+        `${state === "completed" ? "Completed" : "Cancelled"} · Run details`,
+      );
+      expect(summary).toBeVisible();
+      expect(
+        screen.getByRole("heading", { name: "Progress" }),
+      ).not.toBeVisible();
+      fireEvent.click(summary);
+      expect(screen.getByRole("heading", { name: "Progress" })).toBeVisible();
       expect(
         await screen.findByRole("button", { name: "Cancel this run" }),
       ).toBeDisabled();

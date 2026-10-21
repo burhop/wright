@@ -62,6 +62,18 @@
   gap: var(--space-lg);
   align-items: start;
 }
+.wp-run-progress {
+  min-width: 0;
+}
+.wp-run-progress > summary {
+  cursor: pointer;
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-weight: 600;
+}
 .wp-row {
   display: flex;
   flex-wrap: wrap;

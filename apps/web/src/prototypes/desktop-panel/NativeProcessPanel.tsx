@@ -21,6 +21,10 @@ export function NativeProcessPanel({
   onDirty,
   canNavigate = false,
   runDetails,
+  runHistory,
+  historyOpen = false,
+  historyDisabled = false,
+  onToggleHistory,
 }: {
   readonly client: ProcessClient;
   readonly sessionId: string;
@@ -36,44 +40,77 @@ export function NativeProcessPanel({
   readonly theme?: "dark" | "light";
   readonly canNavigate?: boolean;
   readonly runDetails?: ReactNode;
+  readonly runHistory?: ReactNode;
+  readonly historyOpen?: boolean;
+  readonly historyDisabled?: boolean;
+  readonly onToggleHistory?: () => void;
 }) {
   return (
     <main className="native-workflow-panel" data-control-style="neutral">
       <header className="native-workflow-panel__context">
-        <b>{workspaceName}</b>
-        <span>Run and results</span>
-        {onOpenWorkflow && (
-          <button type="button" onClick={onOpenWorkflow}>
-            Open workflow
+        <span className="native-workflow-panel__workspace">
+          {workspaceName}
+        </span>
+        <nav className="native-workflow-views" aria-label="Workflow views">
+          {onOpenWorkflow && (
+            <button
+              type="button"
+              aria-label="Open workflow"
+              onClick={onOpenWorkflow}
+            >
+              Workflow
+            </button>
+          )}
+          <button
+            type="button"
+            aria-current="page"
+            onClick={
+              historyOpen && !historyDisabled ? onToggleHistory : undefined
+            }
+          >
+            Run and results
+          </button>
+        </nav>
+        {onToggleHistory && (
+          <button
+            type="button"
+            aria-expanded={historyOpen}
+            disabled={historyDisabled}
+            onClick={onToggleHistory}
+          >
+            {historyOpen ? "Back to current view" : "Run history"}
           </button>
         )}
-        <small>
-          Progress, results and declared questions come from Wright. Use this
-          conversation for AI tasks.
-        </small>
       </header>
       <div
         className="native-process-panel"
         style={{ flex: "1 1 0", minHeight: 0, overflow: "auto" }}
       >
-        {runDetails}
-        <CommonProcessView
-          client={client}
-          sessionId={sessionId}
-          title={title}
-          runId={runId}
-          readReasoningStatus={readReasoningStatus}
-          readOnly={readOnly}
-          theme={theme}
-          canReadRepresentations
-          canNavigate={canNavigate}
-          onUpload={(file, definition) =>
-            client.uploadInput(definition.input_id, file)
-          }
-          onRunAttached={onRunAttached}
-          onPrepareAnother={onPrepareAnother}
-          onUnsavedChange={onDirty}
-        />
+        {runHistory && (
+          <div className="native-workflow-history native-home">
+            {runHistory}
+          </div>
+        )}
+        <div hidden={historyOpen}>
+          {runDetails}
+          <CommonProcessView
+            client={client}
+            sessionId={sessionId}
+            title={title}
+            runId={runId}
+            readReasoningStatus={readReasoningStatus}
+            readOnly={readOnly}
+            theme={theme}
+            canReadRepresentations
+            canNavigate={canNavigate}
+            onUpload={(file, definition) =>
+              client.uploadInput(definition.input_id, file)
+            }
+            onRunAttached={onRunAttached}
+            onPrepareAnother={onPrepareAnother}
+            onUnsavedChange={onDirty}
+          />
+        </div>
       </div>
     </main>
   );

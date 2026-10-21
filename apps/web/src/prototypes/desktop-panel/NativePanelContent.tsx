@@ -13,7 +13,9 @@ import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-autho
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
 import { NativeRunEvidence } from "./NativeRunEvidence";
+import { NativeRecentRuns, type RecordedRun } from "./NativeRecentRuns";
 import type { HomeCall } from "./NativeHomePanel";
+import type { NativeWorkflowLocation } from "./native-navigation-state";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { WorkflowBundleDialog } from "../workflow-recovery/WorkflowBundleDialog";
@@ -36,6 +38,7 @@ export function NativePanelContent({
   workspaceName,
   initialProcess,
   initialRunId,
+  initialView,
   workingViewEnabled,
   onDirty,
   theme,
@@ -43,6 +46,7 @@ export function NativePanelContent({
   onOpenTransferred,
   onAcceptedSource,
   readEvidence,
+  onLocationChange,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly sourceClient: NativeSourceClient;
@@ -52,8 +56,10 @@ export function NativePanelContent({
   readonly workspaceName: string;
   readonly initialProcess?: ProcessRef;
   readonly initialRunId?: string;
+  readonly initialView?: "editor" | "working";
   readonly workingViewEnabled: boolean;
   readonly readEvidence?: HomeCall;
+  readonly onLocationChange?: (location: NativeWorkflowLocation) => void;
   readonly onDirty: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
   readonly transferCall?: NativeTransferCall;
@@ -64,7 +70,9 @@ export function NativePanelContent({
 }) {
   const [accepted, setAccepted] = useState(initial);
   const [view, setView] = useState<"editor" | "working">(
-    initialProcess && workingViewEnabled ? "working" : "editor",
+    workingViewEnabled
+      ? (initialView ?? (initialProcess ? "working" : "editor"))
+      : "editor",
   );
   const [process, setProcess] = useState<ProcessRef>(
     initialProcess ?? {
@@ -78,6 +86,7 @@ export function NativePanelContent({
   const [sourceDirty, setSourceDirty] = useState(false);
   const [workingDirty, setWorkingDirty] = useState(false);
   const [notice, setNotice] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [transferDocument, setTransferDocument] =
     useState<WorkspaceWorkflowSourceDocument | null>(null);
   const [openingTransfer, setOpeningTransfer] = useState(false);
@@ -86,6 +95,25 @@ export function NativePanelContent({
     run_id: string;
     source_digest: string;
   }>();
+  useEffect(() => {
+    // A remembered target is reread by the host on reopening. It carries no
+    // lifecycle state and cannot attach an old run to a new source revision.
+    const digest =
+      view === "working" ? process.source_digest : accepted.storage_digest;
+    onLocationChange?.({
+      path: accepted.path,
+      source_digest: digest,
+      view,
+      ...(run && digest === process.source_digest ? { run_id: run } : {}),
+    });
+  }, [
+    accepted.path,
+    accepted.storage_digest,
+    process.source_digest,
+    run,
+    view,
+    onLocationChange,
+  ]);
   const transfer = useMemo(
     () =>
       transferCall
@@ -224,6 +252,24 @@ export function NativePanelContent({
     setNotice("");
     setView("editor");
   };
+  const openRecordedRun = async (path: string, recorded: RecordedRun) => {
+    if (
+      sourceDirty ||
+      workingDirty ||
+      transferPending ||
+      path !== process.source_path ||
+      !recorded.run_id ||
+      recorded.source_digest !== process.source_digest
+    )
+      throw new Error("Open this historical record using Read saved evidence.");
+    // The recorder row is a navigation target. Only the scoped runtime read
+    // confirms that the common view may attach to that exact recorded run.
+    await native.client.getSnapshot({ runId: recorded.run_id });
+    setRun(recorded.run_id);
+    setRunDetails(undefined);
+    setWorkingGeneration((value) => value + 1);
+    setHistoryOpen(false);
+  };
   const openTransferred = async (path: string) => {
     setTransferDocument(null);
     onDirty(sourceDirty || workingDirty);
@@ -315,6 +361,28 @@ export function NativePanelContent({
           key={`${process.source_digest}:${workingGeneration}`}
           {...native}
           canNavigate
+          historyOpen={historyOpen}
+          onToggleHistory={
+            readEvidence ? () => setHistoryOpen((value) => !value) : undefined
+          }
+          historyDisabled={sourceDirty || workingDirty || transferPending}
+          runHistory={
+            historyOpen && readEvidence ? (
+              <NativeRecentRuns
+                workspace={{
+                  workspace_id: initial.workspace_id,
+                  session_id: sessionId,
+                  workspace_name: workspaceName,
+                  available: true,
+                  reason: null,
+                }}
+                paths={[process.source_path]}
+                initialPath={process.source_path}
+                call={readEvidence}
+                onOpen={openRecordedRun}
+              />
+            ) : undefined
+          }
           runDetails={
             runDetails && readEvidence ? (
               <section aria-label="Run details">

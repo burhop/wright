@@ -266,11 +266,11 @@ for (const scenario of ["accepted", "lost", "schema", "stale"] as const) {
         .getByRole("button", { name: "Submit response", exact: true })
         .click();
       await expect(
-        common.getByText("Process completed", { exact: true }),
+        common.getByText("Completed · Run details", { exact: true }),
       ).toBeVisible();
       await page.reload();
       await expect(
-        common.getByText("Process completed", { exact: true }),
+        common.getByText("Completed · Run details", { exact: true }),
       ).toBeVisible();
       expect(recorded.size).toBe(2);
       await expect(

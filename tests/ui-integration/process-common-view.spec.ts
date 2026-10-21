@@ -65,13 +65,13 @@ end
   await walk.step({id:"S07", label:"Observe the recorded run", purpose:"Show backend-supplied activity, progress and observation provenance.", action:"Click Start process and open Observation details.", controls:["Start process","Observation details"], expected:"The returned run is attached once and the observed activity/percentage/provider are shown.", actual:"The exact run attaches; 20 percent observed completion and the controlled provider/activity are visible without guessed completion."},
     async () => {await start.click(); await common.getByText("Observation details",{exact:true}).click();},
     async () => {await expect(page.getByTestId("workspace-process-view")).toHaveAttribute("data-run-id",fixtureRunId); await expect(common.getByRole("progressbar",{name:"Observed completion"})).toHaveAttribute("value","20"); await expect(common.getByText("Preparing the controlled fixture report",{exact:true})).toBeVisible(); await expect(common.getByText("Provider: controlled-browser-fixture",{exact:true})).toBeVisible(); expect(fixture.starts()).toBe(1);});
-  await walk.step({id:"S08", label:"Inspect completion and scoped accessibility", purpose:"Present a completed recorded result while retaining evidence limits.", action:"Wait for completion, then click Refresh view.", controls:["Refresh view"], expected:"Recorded completion and the exact result appear; common controls pass the scoped automated accessibility scan.", actual:"The saved result and 100 percent last reported are shown. Scoped WCAG A/AA scanning finds zero violations."},
+  await walk.step({id:"S08", label:"Inspect completion and scoped accessibility", purpose:"Present a completed recorded result while retaining evidence limits.", action:"Wait for completion, refresh, then expand Completed · Run details.", controls:["Refresh view","Completed · Run details"], expected:"Recorded completion and the exact result appear; common controls pass the scoped automated accessibility scan.", actual:"Completion and the saved result are visible before expanding run details; 100 percent last reported remains inspectable. Scoped WCAG A/AA scanning finds zero violations."},
     async () => {fixture.complete(); await common.getByRole("button",{name:"Refresh view",exact:true}).click();},
-    async () => {await expect(common.getByText("Process completed",{exact:true})).toBeVisible(); await expect(common.locator("[data-result-id]")).toHaveAttribute("data-result-id",fixture.resultId); await expect(common.getByText("100% last reported",{exact:true})).toBeVisible(); const scan=await new AxeBuilder({page}).include('[data-testid="common-process-view"]').withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze(); expect(scan.violations).toEqual([]);});
+    async () => {await expect(common.getByText("Completed · Run details",{exact:true})).toBeVisible(); await expect(common.locator("[data-result-id]")).toBeVisible(); await expect(common.locator("[data-result-id]")).toHaveAttribute("data-result-id",fixture.resultId); await expect(common.getByText("Process completed",{exact:true})).toBeHidden(); await common.getByText("Completed · Run details",{exact:true}).click(); await expect(common.getByText("Process completed",{exact:true})).toBeVisible(); await expect(common.getByText("100% last reported",{exact:true})).toBeVisible(); const scan=await new AxeBuilder({page}).include('[data-testid="common-process-view"]').withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa"]).analyze(); expect(scan.violations).toEqual([]);});
   const savedUrl = page.url();
   await walk.step({id:"S09", label:"Reopen without replay", purpose:"Keep run authority with Wright when the tab closes.", action:"Close the working tab, then reopen its saved link.", controls:["Close working tab","Saved run link"], expected:"The same completed run reopens without a second dispatch or cancellation.", actual:"The same exact run/result reopens; one start, zero cancellations and zero accepted-source edits remain."},
     async () => {await page.getByTestId("editor-tabs-container").locator('[data-testid^="editor-tab-close-/.wright/process-views/"]').click(); await expect(common).toHaveCount(0); await page.goto(savedUrl);},
-    async () => {await expect(common.getByText("Process completed",{exact:true})).toBeVisible(); await expect(common.locator("[data-result-id]")).toHaveAttribute("data-result-id",fixture.resultId); expect(fixture.starts()).toBe(1); expect(fixture.cancellations()).toBe(0); expect(fixture.editor.updateCount()).toBe(0); expect(walk.diagnostics).toEqual([]);});
+    async () => {await expect(common.getByText("Completed · Run details",{exact:true})).toBeVisible(); await expect(common.locator("[data-result-id]")).toHaveAttribute("data-result-id",fixture.resultId); expect(fixture.starts()).toBe(1); expect(fixture.cancellations()).toBe(0); expect(fixture.editor.updateCount()).toBe(0); expect(walk.diagnostics).toEqual([]);});
 });
 
 test.afterEach(async ({ page, browser }, testInfo) => {
@@ -233,7 +233,7 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
   fixture.complete();
   await page.getByRole("button", { name: "Refresh view", exact: true }).click();
   await expect(
-    common.getByText("Process completed", { exact: true }),
+    common.getByText("Completed · Run details", { exact: true }),
   ).toBeVisible();
   const result = common.locator("[data-result-id]");
   await expect(result).toHaveAttribute("data-result-id", fixture.resultId);
@@ -290,8 +290,12 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
   await expect(
     page
       .getByTestId("common-process-view")
-      .getByText("Process completed", { exact: true }),
+      .getByText("Completed · Run details", { exact: true }),
   ).toBeVisible();
+  // Reopening keeps the result visible and details available without replay.
+  await expect(common.locator("[data-result-id]")).toBeVisible();
+  await common.getByText("Completed · Run details", { exact: true }).click();
+  await expect(common.getByText("Process completed", { exact: true })).toBeVisible();
   await expect(
     page
       .getByTestId("common-process-view")
@@ -352,7 +356,7 @@ test("reconciles a lost start acknowledgement after reload using the original re
   await expect(
     page
       .getByTestId("common-process-view")
-      .getByText("Process completed", { exact: true }),
+      .getByText("Completed · Run details", { exact: true }),
   ).toBeVisible();
   expect(fixture.editor.runCount()).toBe(0);
   await page.screenshot({

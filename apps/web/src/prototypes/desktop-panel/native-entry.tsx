@@ -23,10 +23,13 @@ import {
   navigationState,
   type NativeNavigationState,
   type HomeView,
+  type NativeWorkflowLocation,
 } from "./native-navigation-state";
 
 const root = createRoot(document.getElementById("editor")!);
 const notice = document.getElementById("notice")!;
+const pendingNavigationNotice =
+  "Your draft is kept. Save it before changing workspace.";
 const app = new App(
   { name: "wright-native-workflow-editor", version: "0.1.0" },
   {},
@@ -43,8 +46,8 @@ let restorationNotice = "";
 let contextGeneration = 0;
 let contextWrite: Promise<unknown> = Promise.resolve();
 let homeGeneration = 0;
-let openedWorkflow:
-  { path: string; source_digest: string; run_id?: string } | undefined;
+let openedWorkflow: NativeWorkflowLocation | undefined;
+let activeSurface: "home" | "workflow" = "home";
 function rememberLocation() {
   if (!selectedWorkspace) return;
   navigation = {
@@ -52,12 +55,14 @@ function rememberLocation() {
     workspace_id: selectedWorkspace.workspace_id,
     session_id: selectedWorkspace.session_id,
     view: homeView,
+    ...(openedWorkflow ? { workflow: openedWorkflow } : {}),
   };
   const widgetAccepted = rememberNavigationState(navigation);
   const version = ++contextGeneration;
   const context = {
     ...navigation,
     workspace_name: selectedWorkspace.workspace_name,
+    active_surface: activeSurface,
     ...(openedWorkflow
       ? { workflow: { ...openedWorkflow, editor_has_unsaved_changes: dirty } }
       : {}),
@@ -88,9 +93,10 @@ function rememberLocation() {
     });
 }
 const rememberWorkspace = (workspace: DesktopWorkspace) => {
+  const previous = selectedWorkspace ?? navigation;
   if (
-    selectedWorkspace?.workspace_id !== workspace.workspace_id ||
-    selectedWorkspace.session_id !== workspace.session_id
+    previous?.workspace_id !== workspace.workspace_id ||
+    previous.session_id !== workspace.session_id
   )
     openedWorkflow = undefined;
   selectedWorkspace = workspace;
@@ -98,7 +104,17 @@ const rememberWorkspace = (workspace: DesktopWorkspace) => {
 };
 const rememberView = (view: HomeView) => {
   homeView = view;
-  openedWorkflow = undefined;
+  rememberLocation();
+};
+const rememberWorkflow = (location: NativeWorkflowLocation) => {
+  if (
+    openedWorkflow?.path === location.path &&
+    openedWorkflow.source_digest === location.source_digest &&
+    openedWorkflow.run_id === location.run_id &&
+    openedWorkflow.view === location.view
+  )
+    return;
+  openedWorkflow = location;
   rememberLocation();
 };
 let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
@@ -136,12 +152,12 @@ const homeCall: HomeCall = (name, arguments_) =>
   );
 function home() {
   if (dirty) {
-    notice.textContent =
-      "Your draft is kept. Save it before changing workspace.";
+    notice.textContent = pendingNavigationNotice;
     return;
   }
   generation++;
-  openedWorkflow = undefined;
+  activeSurface = "home";
+  if (selectedWorkspace) rememberLocation();
   const homeKey = ++homeGeneration;
   notice.textContent = "";
   renderCurrent = () =>
@@ -153,6 +169,37 @@ function home() {
         initialView={homeView}
         onNavigate={rememberView}
         restorationNotice={restorationNotice}
+        lastLocation={navigation}
+        onReopen={async (workspace, location) => {
+          const request = ++generation;
+          const scope = {
+            workspace_id: workspace.workspace_id,
+            session_id: workspace.session_id,
+            path: location.path,
+          };
+          const needsProcess = location.view === "working" || !!location.run_id;
+          const target = needsProcess
+            ? {
+                ...scope,
+                operation: "snapshot",
+                expected_storage_digest: location.source_digest,
+                ...(location.run_id ? { run_id: location.run_id } : {}),
+              }
+            : scope;
+          const result = await app.callServerTool({
+            name: needsProcess ? "wright_process_view" : "wright_workflow_open",
+            arguments: needsProcess ? { request: target } : target,
+          });
+          if (request !== generation || dirty) return;
+          if (result.isError) throw new Error("Saved location is unavailable");
+          args = {
+            ...target,
+            restored_source_digest: location.source_digest,
+            restored_view: location.view,
+          };
+          pending = result;
+          await open();
+        }}
         onDirty={(pending) => {
           dirty = pending;
         }}
@@ -261,7 +308,17 @@ async function open() {
         "The requested workspace was not confirmed. No other workspace was opened.";
       return;
     }
-    const restored = explicit ?? navigation ?? readNavigationState();
+    const remembered = navigation ?? readNavigationState();
+    const restored = explicit
+      ? {
+          ...explicit,
+          ...(remembered?.workspace_id === explicit.workspace_id &&
+          remembered.session_id === explicit.session_id &&
+          remembered.workflow
+            ? { workflow: remembered.workflow }
+            : {}),
+        }
+      : remembered;
     if (
       explicit &&
       (selectedWorkspace?.workspace_id !== explicit.workspace_id ||
@@ -269,6 +326,7 @@ async function open() {
     )
       selectedWorkspace = undefined;
     navigation = restored;
+    openedWorkflow = restored?.workflow;
     homeView = restored?.view ?? "workflows";
     home();
     return;
@@ -357,6 +415,14 @@ async function open() {
         "This run's source changed. Reopen its exact accepted workflow; no action was repeated.";
       return;
     }
+    if (
+      typeof input.restored_source_digest === "string" &&
+      document.storage_digest !== input.restored_source_digest
+    ) {
+      notice.textContent =
+        "The workflow changed since this view was saved. Open it from Workflows to inspect the current source. No run was started or resumed.";
+      return;
+    }
     selectedWorkspace = {
       workspace_id: input.workspace_id,
       session_id: input.session_id,
@@ -365,9 +431,16 @@ async function open() {
       reason: null,
     };
     homeView = "workflows";
+    activeSurface = "workflow";
     openedWorkflow = {
       path: input.path,
       source_digest: document.storage_digest,
+      view:
+        input.restored_view === "editor"
+          ? "editor"
+          : process
+            ? "working"
+            : "editor",
       ...(typeof input.run_id === "string" ? { run_id: input.run_id } : {}),
     };
     rememberLocation();
@@ -395,20 +468,27 @@ async function open() {
             sessionId={String(input.session_id)}
             workspaceName={data.workspace?.workspace_name ?? "Workspace"}
             initialProcess={process}
+            initialView={
+              input.restored_view === "editor" ? "editor" : undefined
+            }
             initialRunId={
               typeof input.run_id === "string" ? input.run_id : undefined
             }
             workingViewEnabled={data.working_view_enabled === true}
+            onLocationChange={rememberWorkflow}
             theme={context?.theme}
             onDirty={(value) => {
               const changed = dirty !== value;
               dirty = value;
+              if (!value && notice.textContent === pendingNavigationNotice)
+                notice.textContent = "";
               if (changed) rememberLocation();
             }}
             onAcceptedSource={(saved) => {
               openedWorkflow = {
                 path: saved.path,
                 source_digest: saved.storage_digest,
+                view: openedWorkflow?.view ?? "editor",
                 ...(openedWorkflow?.source_digest === saved.storage_digest &&
                 openedWorkflow.run_id
                   ? { run_id: openedWorkflow.run_id }
