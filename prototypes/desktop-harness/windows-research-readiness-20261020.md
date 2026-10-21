@@ -29,12 +29,14 @@ and original successful build are separate evidence. Roadster remains held here.
       uses the binding owner; no restart, shared-profile change or new lifecycle.
 - [x] Qualify source/native bindings, unrelated settings, first dispatch and
       rejected duplicate operations with controlled fixtures.
-- [ ] Resolve optional research through a typed accepted-source contract or
+- [x] Resolve optional research through a typed accepted-source contract or
       existing declared control mechanism. Do not waive mandatory engineering
       tool evidence or force redundant searches. Preserve source/input identities,
       frozen routing, output validation, review and uncertain-outcome handling.
-- [ ] Run relevant repository gates; publish exact commits and scoped evidence
-      to the existing Windows handoff. Windows owns live requalification.
+- [x] Run the full local merge gate, exact-image smoke and packaged-artifact checks.
+- [ ] Complete the normal pre-push/browser gate and current-head PR CI; publish
+      exact commits and scoped evidence to the Windows handoff. Windows owns
+      live requalification.
 
 Reuse: `wright_gateway_sync`, atomic YAML merge, accepted source compiler,
 `WorkflowMcpRuntime`, run recorder, gateway, instruction assets and existing
@@ -74,10 +76,24 @@ passes 29 source/diagram save/reopen checks, including the explicit setting.
 Initial local failures and the sandbox API wait are retained in the evidence
 index, not discarded. The host run completed normally.
 
-**Remaining:** normal repository gates, exact GitHub commit delivery, Windows
-actual request/readiness checks. A research provider without `readOnlyHint=true`
+**Remaining:** normal pre-push/browser gate, current-head PR CI, exact GitHub
+commit delivery and Windows actual request/readiness checks. A research provider without `readOnlyHint=true`
 is not automatically reclassified; the optional path remains unavailable for
 such tools. A qualified PDF reader is separate provider work. Full engineering
 readiness and actual Windows 0.19 panel acceptance remain with their owners.
 
 Focused receipts: `.local-run/windows-research-readiness/focused-evidence.json`.
+
+## Full local qualification
+
+Product commit `3e7ef89b3e6f7ebcb3a2030520e667c7f3374b2f` passes the full
+merge gate, exact-image cold API/Hermes smoke and installed-code probe. The wheel
+and source archive contain the exact helper, manifest, runtime and binding-owner
+bytes. [Portable qualification evidence](evidence/windows-research-20261020/qualification.json)
+records source/image/artifact identities, checks and log hashes. Generated native
+outputs were archived before restoring this isolated worktree.
+
+The local WebKit library limitation is verified and retained; the normal Chromium
+push checks and full GitHub browser/Windows CI remain required. Actual Windows
+requests and desktop usability acceptance are separate. No claim of complete
+engineering readiness or new live-provider qualification is made.
