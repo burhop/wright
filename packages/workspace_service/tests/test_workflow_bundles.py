@@ -59,6 +59,39 @@ def inspect(case, raw, destination="workflows/imported.workflow.wflow"):
     return asyncio.run(case.service.inspect(str(case.target), raw, destination))
 
 
+def test_optional_research_policy_and_saved_helper_survive_portable_transfer(case):
+    from .test_workflow_ai_task import source as task_source
+    from .test_workflow_source_execution import task
+    from workspace_service.workflow_source_execution import compile_prompt_workflow
+
+    text = task_source(
+        task(
+            "research",
+            fmt="text",
+            authoring_template="mcp-task",
+            mcp_server="docs",
+            mcp_completion_policy="supplied_inputs_or_tools",
+        )
+    )
+    exported = export(case, text)
+    report = inspect(case, exported["bundle"])
+    assert report.can_import and not report.can_run
+    applied = asyncio.run(
+        case.service.apply(
+            str(case.target),
+            exported["bundle"],
+            "workflows/imported.workflow.wflow",
+            exported["bundle_digest"],
+        )
+    )
+    accepted = applied["source"]["source"]
+    assert accepted == exported["bundle"]["source"]
+    restored = compile_prompt_workflow(accepted)
+    assert restored.steps[0].mcp_completion_policy == "supplied_inputs_or_tools"
+    assert restored.instruction_set == compile_prompt_workflow(text).instruction_set
+    assert not (case.target / "runs").exists()
+
+
 def test_two_workspace_import_preserves_exact_instructions_and_no_authority(case):
     exported = export(case)
     before = profile("Changed local B")  # Local default changes cannot affect import.

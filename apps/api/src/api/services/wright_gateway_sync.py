@@ -52,6 +52,7 @@ def write_gateway_profile_config(
     config_paths: list[str],
     *,
     gateway_env: dict[str, str] | None = None,
+    preserve_binding: bool = False,
 ) -> bool:
     config_changed = False
 
@@ -63,6 +64,11 @@ def write_gateway_profile_config(
                 if not isinstance(servers, dict):
                     servers = {}
                 existing_gateway = servers.get(profile.server_name)
+                # Catalog changes refresh tool discovery, not workspace selection.
+                # Check under the atomic writer's lock so a concurrent workspace
+                # bind cannot be replaced by a stale generic profile.
+                if preserve_binding and _gateway_binding(existing_gateway):
+                    return
                 preserved_gateway = (
                     {
                         key: existing_gateway[key]
@@ -103,7 +109,7 @@ def write_static_gateway_config(
 ) -> bool:
     active_profile = profile or default_hermes_gateway_profile()
     paths = config_paths or hermes_config_paths()
-    return write_gateway_profile_config(active_profile, paths)
+    return write_gateway_profile_config(active_profile, paths, preserve_binding=True)
 
 
 def notify_gateway_tool_change() -> None:
@@ -113,14 +119,11 @@ def notify_gateway_tool_change() -> None:
     notify()
 
 
-def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
-    """Read an exact Wright gateway session/workspace binding from Hermes config."""
-    path = Path(config_path).expanduser()
+def _gateway_binding(gateway: object) -> tuple[str, str] | None:
+    """Extract an explicit binding without consulting mutable global defaults."""
+    if not isinstance(gateway, dict):
+        return None
     try:
-        if not path.exists():
-            return None
-        config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        gateway = config.get("mcp_servers", {}).get("wrightgateway", {})
         args = gateway.get("args", [])
         if not isinstance(args, list):
             return None
@@ -130,9 +133,21 @@ def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
         workspace_id = str(args[workspace_index]).strip()
         if session_id and workspace_id:
             return session_id, workspace_id
-    except (OSError, ValueError, IndexError, TypeError, AttributeError, yaml.YAMLError):
+    except (ValueError, IndexError, TypeError):
         return None
     return None
+
+
+def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
+    """Read an exact Wright gateway session/workspace binding from Hermes config."""
+    path = Path(config_path).expanduser()
+    try:
+        if not path.exists():
+            return None
+        config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        return _gateway_binding(config.get("mcp_servers", {}).get("wrightgateway", {}))
+    except (OSError, TypeError, AttributeError, yaml.YAMLError):
+        return None
 
 
 def _gateway_binding_session(

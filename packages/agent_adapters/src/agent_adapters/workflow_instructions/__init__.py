@@ -92,6 +92,7 @@ WORKFLOW_HELPER_CONTRACTS = {
     "validation.design-revision": ("validation", ("feedback",)),
     "context.expected-files": ("resource-context", ("files",)),
     "context.task-workspace": ("resource-context", ("workspace_dir",)),
+    "context.mcp-input-completion": ("resource-context", ()),
 }
 
 

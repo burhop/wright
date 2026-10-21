@@ -196,6 +196,7 @@ class PromptStep:
     mcp_image_outputs: dict = field(default_factory=dict)
     mcp_reconciliation_contracts: dict = field(default_factory=dict)
     mcp_context_budget_bytes: int | None = None
+    mcp_completion_policy: str = "tool_evidence_required"
 
 
 def _bind_expected_file_ports(step: PromptStep, produced_files: list[dict]) -> None:
@@ -902,6 +903,28 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             raise _invalid(
                 f"{title}: use a 16384–1048576 byte context budget only for an MCP task."
             )
+        completion_policy = settings.get(
+            "mcp_completion_policy", "tool_evidence_required"
+        )
+        if not isinstance(completion_policy, str) or completion_policy not in {
+            "tool_evidence_required",
+            "supplied_inputs_or_tools",
+        }:
+            raise _invalid(f"{title}: choose a supported MCP completion policy.")
+        if completion_policy == "supplied_inputs_or_tools" and (
+            not agent_task
+            or cad
+            or application
+            or design_check
+            or expected_files
+            or declared_file_ports
+            or mcp_image_outputs
+            or mcp_reconciliation_contracts
+            or settings.get("external_action")
+        ):
+            raise _invalid(
+                f"{title}: supplied-input completion is only available for read-only analysis tasks without tool-produced files or engineering actions."
+            )
         revision_policy = settings.get("revision_policy", "")
         if revision_policy not in {"", "create_new_files"} or (
             revision_policy and not (agent_task or native_image)
@@ -1163,6 +1186,7 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
                 mcp_image_outputs=mcp_image_outputs,
                 mcp_reconciliation_contracts=mcp_reconciliation_contracts,
                 mcp_context_budget_bytes=context_budget,
+                mcp_completion_policy=completion_policy,
             )
         )
     from .workflow_design_check import validate_rework
@@ -1540,6 +1564,11 @@ async def prepare_prompt_workflow(
                     )
                     for helper_id in (
                         *(("context.task-workspace",) if step.agent_task else ()),
+                        *(
+                            ("context.mcp-input-completion",)
+                            if step.mcp_completion_policy == "supplied_inputs_or_tools"
+                            else ()
+                        ),
                         *(("validation.design-check",) if step.design_check else ()),
                         *(
                             ("validation.design-revision",)

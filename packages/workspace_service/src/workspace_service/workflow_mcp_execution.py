@@ -17,6 +17,7 @@ from agent_adapters.workflow_instructions import (
     resolve_workflow_instructions,
     validate_workflow_assumptions,
     workflow_action_intent_instructions,
+    validate_workflow_helper_instructions,
 )
 from core.workflow_action_intent import (
     validate_workflow_action_intent,
@@ -263,7 +264,10 @@ def repeatable_call(tool, arguments):
     # Microsoft's browser MCP labels navigation as an action because it changes
     # the selected page. Revisiting a page is normal task navigation, not replay
     # of a completed document mutation. Keep clicks, uploads and scripts guarded.
-    source = tool.provenance.get("source_url", "").rstrip("/")
+    source = tool.provenance.get("source_url")
+    if not isinstance(source, str):
+        return False
+    source = source.rstrip("/")
     kicad_source = "https://github.com/blwfish/kicad-mcp"
     if source == kicad_source or source.startswith(kicad_source + "/tree/"):
         # The selected KiCad server exposes mixed read/write operations behind
@@ -518,6 +522,30 @@ class WorkflowMcpRuntime:
                 },
             )
             action_instructions = workflow_action_intent_instructions(instruction_set)
+            if (
+                getattr(step, "mcp_completion_policy", "tool_evidence_required")
+                == "supplied_inputs_or_tools"
+            ):
+                if getattr(step, "instruction_set", None) is None:
+                    raise ValueError(
+                        "Supplied-input completion requires saved instruction assets"
+                    )
+                supplemental = validate_workflow_helper_instructions(
+                    instruction_set, "context.mcp-input-completion"
+                )
+                text = resolved.text + "\n\n" + supplemental.render({})
+                resolved = type(resolved).model_validate(
+                    {
+                        **resolved.model_dump(),
+                        "text": text,
+                        "text_digest": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                        "asset_ids": (
+                            *resolved.asset_ids,
+                            "context.mcp-input-completion",
+                        ),
+                        "origins": (*resolved.origins, supplemental.origin),
+                    }
+                )
         except ValueError as error:
             raise _invalid(
                 f"{step.title}: saved task instructions are invalid: {error}"
@@ -527,6 +555,15 @@ class WorkflowMcpRuntime:
             for t in tools
             if not step.design_check or t.annotations.get("readOnlyHint") is True
         ]
+        if getattr(
+            step, "mcp_completion_policy", "tool_evidence_required"
+        ) == "supplied_inputs_or_tools" and any(
+            tool.annotations.get("readOnlyHint") is not True for tool in considered
+        ):
+            raise _invalid(
+                f"{step.title}: supplied-input completion requires explicitly read-only tools.",
+                "Select only tools with readOnlyHint=true, or keep mandatory tool evidence.",
+            )
         if action_instructions:
             for tool in considered:
                 model_action_schema(tool)
@@ -990,6 +1027,17 @@ class WorkflowMcpRuntime:
                 instruction_set.policy.protected_requirements
             ),
         }
+        supplied_input_completion = (
+            getattr(step, "mcp_completion_policy", "tool_evidence_required")
+            == "supplied_inputs_or_tools"
+        )
+        if supplied_input_completion:
+            request_context["completion_evidence_policy"] = "supplied_inputs_or_tools"
+        input_digest = (
+            canonical_digest({"prompt": prompt, "images": images or []})
+            if supplied_input_completion
+            else None
+        )
         contextual_prompt = (
             prompt
             + "\n\n"
@@ -1179,10 +1227,20 @@ class WorkflowMcpRuntime:
                             "Inspect the declared choices and accepted output/requirement identities before starting a new run.",
                         ) from None
                     evidence = outcome.get("evidence")
+                    from_supplied_inputs = (
+                        supplied_input_completion
+                        and not records
+                        and evidence == []
+                        and outcome.get("completion_basis") == "supplied_inputs"
+                    )
                     if (
                         outcome.get("status") != "completed"
                         or not isinstance(evidence, list)
-                        or not evidence
+                        or (not evidence and not from_supplied_inputs)
+                        or (
+                            outcome.get("completion_basis") == "supplied_inputs"
+                            and not from_supplied_inputs
+                        )
                         or any(
                             type(number) is not int
                             or not 1 <= number <= len(records)
@@ -1359,6 +1417,19 @@ class WorkflowMcpRuntime:
                             task_title=step.title,
                             assumptions=assumptions,
                         )
+                    if supplied_input_completion:
+                        await emit(
+                            "task_completion_evidence",
+                            task_id=step.id,
+                            task_title=step.title,
+                            completion_policy=step.mcp_completion_policy,
+                            basis="supplied_inputs"
+                            if from_supplied_inputs
+                            else "tool_calls",
+                            tool_call_numbers=evidence,
+                            input_digest=input_digest,
+                            capture_scope="runtime_task_input",
+                        )
                     return response, records
                 if index == step.max_tool_calls:
                     raise _error(
@@ -1383,6 +1454,13 @@ class WorkflowMcpRuntime:
                 )
                 # Re-resolve on every call: removal or authority/schema change stops the run.
                 current_tool = self.resolve(invocation)
+                if (
+                    supplied_input_completion
+                    and current_tool.annotations.get("readOnlyHint") is not True
+                ):
+                    raise _invalid(
+                        "Read-only research cannot dispatch a changing or unclassified tool."
+                    )
                 if (
                     step.design_check
                     and current_tool.annotations.get("readOnlyHint") is not True

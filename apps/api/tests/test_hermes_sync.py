@@ -1,9 +1,12 @@
 import sqlite3
 from pathlib import Path
+from types import SimpleNamespace
 
+import pytest
 import yaml
 
 from agent_adapters.openclaw import openclaw_wright_gateway_profile
+from agent_adapters.hermes_gateway import hermes_wright_gateway_profile
 from api.services import hermes_sync
 from api.services import wright_gateway_sync
 from workspace_service.adapters.runtime import associate_workspace_session
@@ -161,6 +164,73 @@ def test_gateway_config_writer_preserves_operator_runtime_fields(tmp_path):
         "timeout": 180,
         "connect_timeout": 30,
     }
+
+
+@pytest.mark.parametrize("native", [False, True])
+def test_catalog_sync_preserves_bound_profile_and_notifies(
+    tmp_path, monkeypatch, native
+):
+    config_path = tmp_path / "isolated.yaml"
+    workspace = tmp_path / "workspace"
+    config_path.write_text(
+        "# Keep operator formatting as well as settings.\n"
+        + yaml.safe_dump(
+            {
+                "model": {"default": "gpt-6-astra", "reasoning_effort": "high"},
+                "auxiliary": {"vision": {"model": "gpt-6-astra"}},
+                "mcp_servers": {"unrelated": {"url": "https://example.invalid/mcp"}},
+                "terminal": {"timeout": 17},
+            }
+        ),
+        encoding="utf-8",
+    )
+    profile = hermes_wright_gateway_profile(
+        None if native else "/wright",
+        session_id="existing-session",
+        workspace_id="existing-workspace",
+        terminal_cwd=str(workspace),
+    )
+    wright_gateway_sync.write_gateway_profile_config(profile, [str(config_path)])
+    original = config_path.read_bytes()
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_path))
+    monkeypatch.setenv("WRIGHT_NATIVE_RUNTIME", "1" if native else "0")
+    monkeypatch.setenv("WRIGHT_WORKSPACE_ROOT", str(tmp_path / "all-workspaces"))
+    # Exercise the production sync path while keeping all writes in this fixture.
+    monkeypatch.setattr(wright_gateway_sync, "sys", SimpleNamespace(modules={}))
+    notifications = []
+    monkeypatch.setattr(
+        wright_gateway_sync,
+        "notify_gateway_tool_change",
+        lambda: notifications.append(1),
+    )
+
+    wright_gateway_sync.sync_mcp_server_to_wright_gateway(SimpleNamespace())
+
+    assert config_path.read_bytes() == original
+    assert notifications == [1]
+    assert not wright_gateway_sync.write_static_gateway_config(
+        config_paths=[str(config_path)]
+    )
+    assert not hermes_sync._write_static_hermes_config()
+    assert config_path.read_bytes() == original
+
+    # An explicit workspace change remains possible through its existing owner.
+    replacement = hermes_wright_gateway_profile(
+        None if native else "/wright",
+        session_id="next-session",
+        workspace_id="next-workspace",
+        terminal_cwd=str(tmp_path / "next-workspace"),
+    )
+    assert wright_gateway_sync.write_gateway_profile_config(
+        replacement, [str(config_path)]
+    )
+    saved = yaml.safe_load(config_path.read_text())
+    assert saved["mcp_servers"]["wrightgateway"] == replacement.mcp_server_config()
+    assert saved["terminal"]["cwd"] == replacement.terminal_cwd
+    assert saved["terminal"]["timeout"] == 17
+    assert saved["model"]["reasoning_effort"] == "high"
+    assert saved["auxiliary"]["vision"]["model"] == "gpt-6-astra"
+    assert saved["mcp_servers"]["unrelated"]["url"] == "https://example.invalid/mcp"
 
 
 def test_workspace_gateway_context_uses_profile_filename(tmp_path):

@@ -31,6 +31,44 @@ function semanticBytes(workflow: RecoveryWorkflow): string {
   return canonicalDefinitionBytes(workflow, true);
 }
 
+it("preserves an explicit optional-research policy through source and diagram save/reopen", () => {
+  const source = `workflow test
+  name: "Read-only research"
+  purpose: "Analyse supplied references with optional research."
+  discipline: "engineering.analysis"
+  reviewed_ai_suggestions: false
+end
+task analyse
+  name: "Analyse supplied references"
+  purpose: "Research only missing information."
+  group: null
+  step_type: work
+  performed_by: ai_assisted
+  inputs: []
+  outputs: [{"key":"report","kind":"engineering_document","name":"Analysis","item":null,"required":true,"quantity":"one","description":"Analysis of supplied references."}]
+  prompt: "Use the supplied references; research only missing information."
+  settings: {"authoring_template":"mcp-task","mcp_server":"research-provider","mcp_completion_policy":"supplied_inputs_or_tools","mcp_task_tools":["search"],"output_format":"text","output_filename":"analysis.txt"}
+  tool: null
+  reusable_step: null
+end
+`;
+  const base = {
+    ...cloneWorkflow(initialWorkflow),
+    workflowId: "workflow.test",
+  };
+  const parsed = parseRecoveryAuthoringSource(source, base);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const saved = formatRecoveryAuthoringSource(parsed.workflow!).text;
+  expect(saved).toContain('"mcp_completion_policy":"supplied_inputs_or_tools"');
+  expect(saved).toContain('"mcp_task_tools":["search"]');
+  const reopened = parseRecoveryAuthoringSource(saved, base);
+  expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+  expect(semanticBytes(reopened.workflow!)).toBe(
+    semanticBytes(parsed.workflow!),
+  );
+  expect(formatRecoveryAuthoringSource(reopened.workflow!).text).toBe(saved);
+});
+
 it("preserves repeated and trailing underscores in source identities and typed port references", () => {
   const source = declaredInputSource
     .replaceAll("first_out", "candidate__mesh_")
