@@ -49,7 +49,7 @@ RUN VITE_WRIGHT_PROCESS_DEFINITION_VIEW="${VITE_WRIGHT_PROCESS_DEFINITION_VIEW}"
     npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.13-slim@sha256:ffb752e139c0a19692a43af8d8523b274222dd68eebad5d583b45c2201c6e30a AS hermes-base
+FROM python:3.15-slim@sha256:2da676046630d7bf14c6764ae1143dc7fa0377a53f94bf5a642f0b214aca5bce AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
