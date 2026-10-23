@@ -249,3 +249,70 @@ def test_translation_correction_uses_same_frozen_sdk_route_and_records_both_call
         result["choices"][0]["message"]["tool_calls"][0]["function"]["name"]
         == "create_graph"
     )
+
+
+@pytest.mark.parametrize("shape", ["mapping", "namespace"])
+def test_real_worker_counters_reach_workflow_response_evidence(
+    monkeypatch, tmp_path, shape
+):
+    from agent_adapters.hermes_role_worker import invoke
+    from core.redaction import redact_evidence
+    from test_hermes_role_worker import sdk as sdk_fixture
+
+    worker = sdk_fixture.__wrapped__(monkeypatch, tmp_path)
+    monkeypatch.setenv("WRIGHT_WORKFLOW_MODEL_TRANSPORT", "hermes-model-sdk")
+    monkeypatch.setenv("WRIGHT_HERMES_PROFILE", "wright")
+    worker.state["content"] = json.dumps(
+        {
+            "version": "wright.unattended-step/1",
+            "status": "completed",
+            "response": "Observed report",
+            "reason": None,
+        }
+    )
+    create = worker.client.chat.completions.create
+
+    def respond(**kwargs):
+        response = create(**kwargs)
+        values = {
+            "prompt_tokens": 11,
+            "completion_tokens": 7,
+            "api_key": "secret-extra",
+        }
+        response.usage = values if shape == "mapping" else SimpleNamespace(**values)
+        return response
+
+    worker.client.chat.completions.create = respond
+
+    class Transport:
+        async def probe(self):
+            return invoke({"operation": "probe"}, worker.root)["resolution"]
+
+        async def call(self, request, **kwargs):
+            return invoke(request, worker.root)
+
+    monkeypatch.setattr(
+        workflow_sdk.HermesRoleTransport, "from_host", lambda: Transport()
+    )
+    route = asyncio.run(workflow_model_capabilities())["resolution"]
+    result = asyncio.run(
+        report_generation.generate_workflow_response(
+            "Create an evidence report",
+            "text",
+            expected_resolution=route,
+        )
+    )
+    assert str(result) == "Observed report"
+    assert result.wright_usage["status"] == "reported"
+    assert result.wright_usage["input_tokens"] == 11
+    assert result.wright_usage["output_tokens"] == 7
+    assert (
+        result.wright_usage["total_tokens"] is None
+    )  # Not inferred from the two counts.
+    public = redact_evidence(
+        {"usage": result.wright_usage, "invocations": result.wright_invocations}
+    )
+    assert any(r.get("capture_phase") == "response" for r in public["invocations"])
+    assert public["usage"]["input_tokens"] == 11
+    assert "secret-extra" not in json.dumps(public)
+    assert len(worker.calls) == 1 and worker.calls[0]["tools"] == []
