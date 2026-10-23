@@ -44,3 +44,20 @@ retained PNG checksum and all35 original retained file hashes are unchanged.
 [Evidence index](evidence/result-readability-20261022/qualification.json) records
 rendered screenshots and exact verification boundaries. Full repository gates,
 publication and actual Windows observation remain pending.
+
+## Required dependency correction
+
+The first full gate stopped on CVE-2026-114603 in the old OpenTelemetry1.42.1
+lock. The subsequent Node preflight also rejected DOMPurify3.4.14 for
+GHSA-cg2g-xh64-v4q7 and GHSA-mrv2-3pqr-j5jr. Their upstream fixed releases are
+OpenTelemetry1.45.1 and DOMPurify3.4.17; the evidence index links the official
+advisories. Raise the existing package floors and resolve only the affected
+families. Keep the audit policy and existing exceptions unchanged.
+
+Both corrected audits pass. Nine existing tracing/correlation tests and167
+sanitizer/result/common-view checks pass. A bounded actual TraceState parser
+probe rejects100,000 spaces in under two seconds. This is a dependency control,
+not evidence of workflow execution. The native panel rebuild is byte-identical,
+so the existing rendered native screenshots remain applicable. Full current-head
+repository gates and exact-image installed smoke remain required. Existing live
+prototype packages and user configuration have not been updated.

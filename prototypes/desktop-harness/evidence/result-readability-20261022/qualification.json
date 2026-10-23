@@ -97,12 +97,41 @@
   "engineering_runs_started": 0,
   "windows_acceptance": false,
   "installed_plugin_updated": false,
-  "repository_gates": "pending",
+  "repository_gates": "First full gate stopped at dependency audit; publisher fixes locally qualified, corrected candidate gates pending.",
   "limitations": [
     "Desktop host is simulated; retained-run reads use the unchanged installed0.19 API/bridge and the candidate HTML.",
     "Normal workspace/editor and Robot source checks use current candidate source on fresh isolated API state.",
     "Copying a retained run to a different workspace location correctly returns SCOPE_DENIED. Original run ownership and evidence were retained.",
     "Earlier probe setup failures remain in the local evidence directory; none were treated as a product pass.",
     "Actual Windows0.19 desktop walkthrough and exact PR167 optional-research qualification remain unproved."
-  ]
+  ],
+  "security_correction": {
+    "reason": "Required audits now reject locked dependencies; earlier passing receipts remain dated evidence.",
+    "advisories": [
+      "https://github.com/open-telemetry/opentelemetry-python/security/advisories/GHSA-xcq7-p3pf-p88h",
+      "https://github.com/advisories/GHSA-cg2g-xh64-v4q7",
+      "https://github.com/advisories/GHSA-mrv2-3pqr-j5jr"
+    ],
+    "opentelemetry_family": "1.45.1; compatible semantic/exporter helper packages0.66b1",
+    "dompurify": "3.4.17",
+    "dependency_policy_exceptions_added": false,
+    "python_audit": "passed: no known vulnerabilities",
+    "node_audit": "passed unchanged high/critical policy; six moderate inventory findings remain outside its blocking threshold",
+    "existing_trace_tests": 9,
+    "affected_sanitizer_result_view_checks": 167,
+    "bounded_tracestate_probe": {
+      "version": "1.45.1",
+      "retained_entries": 0,
+      "status": "passed",
+      "elapsed_seconds": 0.12996851280331612,
+      "input_characters": 100000,
+      "deadline_seconds": 2,
+      "external_requests": 0
+    },
+    "qualification_receipt_sha256": "bfca2adb1ec7427b1b97e43e8ba9eabd796798317e9b9ab7ff898bdbad38a06b",
+    "failed_full_gate_receipt_sha256": "78480b9495ee6a05df2940e17852a06505afa67a6ddd063a50e3bbde6a1ea265",
+    "failed_security_preflight_receipt_sha256": "370028b032d9ce378674f4702839b094f3d341b8e04ddbb7d5de29d1e9b542c5",
+    "rebuilt_native_bundle_identical": true,
+    "repository_gates": "Full current-candidate gates still required after the dependency correction; no CI pushes yet."
+  }
 }
