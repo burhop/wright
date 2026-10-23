@@ -1,3 +1,4 @@
+import robotTemplate from "../../../../../packages/workspace_service/src/workspace_service/engineering_workflow_templates/templates/robot-tracking-diagnosis.workflow.wflow?raw";
 import {
   act,
   cleanup,
@@ -17,6 +18,7 @@ import {
   type WorkspaceWorkflowRunSummary,
 } from "../../services/workspace-service";
 
+const robotSource = robotTemplate.replaceAll("__instance__", "acceptance");
 const task = (id: string, inputs = "[]") => `task ${id}
   name: "Report ${id}"
   purpose: "Create a report"
@@ -511,4 +513,86 @@ it("keeps the owned POST and richer result ahead of older observed history", asy
     screen.getByTestId("workflow-recovery-run-details-toggle"),
   ).toHaveTextContent("owned.html");
   expect(onRun).toHaveBeenCalledOnce();
+});
+
+// A different existing workflow proves exact read-only evidence projection and
+// source invalidation without any model, provider, approval, or execution calls.
+it("attaches Robot Tracking Diagnosis evidence without a runner and retains real edited-source mismatch checks", async () => {
+  const readLatest = vi
+    .spyOn(workspaceService, "getWorkspaceWorkflowRuns")
+    .mockResolvedValue([]);
+  const record = snapshot("completed");
+  record.execution!.outputs = [
+    {
+      task_id: "align_and_measure_acceptance",
+      task_title: "Align samples and calculate tracking metrics",
+      output_path: "results/tracking-metrics.csv",
+      output_format: "csv",
+      output_bytes: 123,
+    },
+  ];
+  const shared = {
+    ...props,
+    workflowSource: robotSource,
+    workflowFilePath: "workflows/robot-tracking-diagnosis.workflow.wflow",
+  };
+  const { rerender } = render(
+    <WorkflowRecoveryConcept {...shared} readOnlyRun={record} />,
+  );
+  fireEvent.click(
+    screen.getByTestId(
+      "workflow-recovery-block-block.align-and-measure-acceptance",
+    ),
+  );
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).toHaveTextContent("tracking-metrics.csv");
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).not.toHaveTextContent("different saved workflow");
+  expect(screen.getByTestId("workflow-results-toggle")).toHaveTextContent(
+    "1/1 available",
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-view-code"));
+  const editor = screen.getByTestId("workflow-recovery-source-editor");
+  fireEvent.change(editor, {
+    target: {
+      value: robotSource.replace(
+        'name: "Robot Tracking Diagnosis"',
+        'name: "Edited diagnosis"',
+      ),
+    },
+  });
+  fireEvent.click(screen.getByTestId("workflow-recovery-source-apply"));
+  fireEvent.click(screen.getByTestId("workflow-recovery-view-diagram"));
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).toHaveTextContent("different saved workflow");
+  expect(screen.queryByText("Files produced in this run")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).not.toHaveTextContent("different saved workflow");
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).toHaveTextContent("tracking-metrics.csv");
+  rerender(
+    <WorkflowRecoveryConcept
+      {...shared}
+      readOnlyRun={{ ...record, source_digest: "f".repeat(64) }}
+    />,
+  );
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).toHaveTextContent("different saved workflow");
+  rerender(<WorkflowRecoveryConcept {...shared} />);
+  expect(
+    screen.getByTestId("workflow-engineering-step-context"),
+  ).not.toHaveTextContent("different saved workflow");
+  expect(screen.queryByText("Files produced in this run")).toBeNull();
+  expect(screen.getByTestId("workflow-results-toggle")).toHaveTextContent(
+    "0/0 available",
+  );
+  expect(readLatest).not.toHaveBeenCalled();
+  expect(screen.queryByTestId("workflow-recovery-run")).toBeNull();
 });

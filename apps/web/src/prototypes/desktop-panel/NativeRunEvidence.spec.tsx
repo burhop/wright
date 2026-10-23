@@ -23,6 +23,7 @@ const result = () => ({
     session_id: "s",
     workflow_path: path,
     record: {
+      path: "runs/demo/one.json",
       run_id: "recorded",
       source_digest: run.source_digest,
       source_matches_current: false,

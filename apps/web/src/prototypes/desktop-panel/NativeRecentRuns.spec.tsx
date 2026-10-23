@@ -138,6 +138,7 @@ it("reads a historical record without opening the current-source working view", 
       session_id: "s",
       workflow_path: path,
       record: {
+        path: "runs/demo/retained.json",
         run_id: "r",
         source_digest: run.source_digest,
         source_matches_current: false,

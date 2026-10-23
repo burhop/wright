@@ -173,12 +173,11 @@ export function NativeConnections({
   }>();
   const replacementSequence = useRef(0);
   const planView = useRef<HTMLElement>(null);
-  const signinView = useRef<HTMLElement>(null);
+
   const savedView = useRef<HTMLElement>(null);
   useEffect(() => {
     if (plan) {
-      const target =
-        plan.state === "completed" ? signinView.current : planView.current;
+      const target = planView.current;
       target?.focus();
       target?.scrollIntoView?.({ block: "start" });
     }
@@ -386,36 +385,6 @@ export function NativeConnections({
         Engineering tools for {workspace.workspace_name}. Availability here does
         not approve workflow actions.
       </p>
-      {plan?.state === "completed" && (
-        <NativeSignin
-          key={plan.plan_id}
-          scope={{
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            plan_id: plan.plan_id,
-            plan_digest: plan.plan_digest,
-          }}
-          focusRef={signinView}
-          providerName={
-            items.find((item) => item.capability_id === plan.capability_id)
-              ?.name
-          }
-          call={call}
-          openLink={openLink}
-        />
-      )}
-      {plan?.state === "completed" && (
-        <NativeCredentials
-          key={`credentials-${plan.plan_id}`}
-          scope={{
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            plan_id: plan.plan_id,
-            plan_digest: plan.plan_digest,
-          }}
-          call={call}
-        />
-      )}
       <NativeCustomConnection
         key={replacement?.sequence ?? "custom"}
         initialConfiguration={replacement?.configuration}
@@ -484,84 +453,136 @@ export function NativeConnections({
         </p>
       )}
       {plan && (
-        <section
-          aria-label="Setup plan"
-          ref={plan.state === "completed" ? undefined : planView}
-          tabIndex={-1}
-        >
-          <h3>Review setup</h3>
+        <section aria-label="Setup plan" ref={planView} tabIndex={-1}>
+          <h3>{plan.state === "completed" ? "Saved setup" : "Review setup"}</h3>
           <p>Plan state: {plan.state}.</p>
-          {plan.source?.name && <p>{plan.source.name}</p>}
-          {plan.source?.endpoint && (
-            <p className="native-connection-endpoint">{plan.source.endpoint}</p>
-          )}
-          {plan.source?.command && (
-            <div aria-label="Reviewed command on Wright host">
-              <p className="native-connection-endpoint">
-                Command on Wright host: {plan.source.command}
-              </p>
-              <p className="native-connection-endpoint">
-                Arguments: {JSON.stringify(plan.source.arguments ?? [])}
-              </p>
-            </div>
-          )}
-          {Object.entries(plan.source?.launch_env ?? {}).map(([key, value]) => (
-            <p key={key} className="native-connection-endpoint">
-              Public environment: {key} = {value}
-            </p>
-          ))}
-          {!!plan.source?.env_vars?.length && (
-            <p>
-              Private fields after setup:{" "}
-              {plan.source.env_vars.map((field) => field.name).join(", ")}
-            </p>
-          )}
-          {["blocked", "reviewable", "draft"].includes(plan.state) && (
-            <p>Nothing has been installed or approved by this plan.</p>
-          )}
           {plan.state === "completed" && (
             <p>
               Registration completed. Connection status and workspace access are
               shown below.
             </p>
           )}
-          {plan.requirements?.license?.reference && (
-            <p>{plan.requirements.license.reference}</p>
-          )}
-          {(plan.approval_gates ?? []).map((gate) => (
-            <p key={gate}>Setup permissions: {gate.replaceAll("_", " ")}</p>
-          ))}
-          {plan.capability_id.startsWith("import:") ? (
-            <p>
-              {plan.requirements?.license?.independent_completion_recorded_at
-                ? "Independent source and license review is recorded for this exact source."
-                : "Source and license review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
-            </p>
-          ) : (
-            <>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={licenseCapability === plan.capability_id}
-                  onChange={(event) =>
-                    setLicenseCapability(
-                      event.target.checked ? plan.capability_id : null,
-                    )
-                  }
-                />
-                I have independently completed the publisher account and terms
-                setup for this provider.
-              </label>
+          {plan.state === "completed" && (
+            <details>
+              <summary>Sign-in and credential options</summary>
               <p>
-                This records existing completion only; it does not purchase a
-                subscription or sign in. Review setup again to create a new
-                plan.
+                Use these only if credentials are missing or the provider
+                requires sign-in again. Expired validation alone does not mean
+                you must reconnect.
               </p>
-            </>
+              {plan?.state === "completed" && (
+                <NativeSignin
+                  key={plan.plan_id}
+                  scope={{
+                    workspace_id: workspace.workspace_id,
+                    session_id: workspace.session_id,
+                    plan_id: plan.plan_id,
+                    plan_digest: plan.plan_digest,
+                  }}
+                  providerName={
+                    items.find(
+                      (item) => item.capability_id === plan.capability_id,
+                    )?.name
+                  }
+                  call={call}
+                  openLink={openLink}
+                />
+              )}
+              {plan?.state === "completed" && (
+                <NativeCredentials
+                  key={`credentials-${plan.plan_id}`}
+                  scope={{
+                    workspace_id: workspace.workspace_id,
+                    session_id: workspace.session_id,
+                    plan_id: plan.plan_id,
+                    plan_digest: plan.plan_digest,
+                  }}
+                  call={call}
+                />
+              )}
+            </details>
           )}
-          {plan.effects.map((effect) => (
-            <p key={effect.step_id}>{effect.description}</p>
-          ))}
+          <details open={plan.state !== "completed"}>
+            <summary>
+              {plan.state === "completed"
+                ? "Recorded setup details"
+                : "Setup details"}
+            </summary>
+            {plan.source?.name && <p>{plan.source.name}</p>}
+            {plan.source?.endpoint && (
+              <p className="native-connection-endpoint">
+                {plan.source.endpoint}
+              </p>
+            )}
+            {plan.source?.command && (
+              <div aria-label="Reviewed command on Wright host">
+                <p className="native-connection-endpoint">
+                  Command on Wright host: {plan.source.command}
+                </p>
+                <p className="native-connection-endpoint">
+                  Arguments: {JSON.stringify(plan.source.arguments ?? [])}
+                </p>
+              </div>
+            )}
+            {Object.entries(plan.source?.launch_env ?? {}).map(
+              ([key, value]) => (
+                <p key={key} className="native-connection-endpoint">
+                  Public environment: {key} = {value}
+                </p>
+              ),
+            )}
+            {!!plan.source?.env_vars?.length && (
+              <p>
+                Private fields after setup:{" "}
+                {plan.source.env_vars.map((field) => field.name).join(", ")}
+              </p>
+            )}
+            {["blocked", "reviewable", "draft"].includes(plan.state) && (
+              <p>Nothing has been installed or approved by this plan.</p>
+            )}
+            {plan.requirements?.license?.reference && (
+              <p>{plan.requirements.license.reference}</p>
+            )}
+            {(plan.approval_gates ?? []).map((gate) => (
+              <p key={gate}>Setup permissions: {gate.replaceAll("_", " ")}</p>
+            ))}
+            {plan.capability_id.startsWith("import:") ? (
+              <p>
+                {plan.requirements?.license?.independent_completion_recorded_at
+                  ? "Independent source and license review is recorded for this exact source."
+                  : "Source and license review is not recorded. Use Add a custom MCP to explicitly preview and review this source again."}
+              </p>
+            ) : plan.state !== "completed" ? (
+              <>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={licenseCapability === plan.capability_id}
+                    onChange={(event) =>
+                      setLicenseCapability(
+                        event.target.checked ? plan.capability_id : null,
+                      )
+                    }
+                  />
+                  I have independently completed the publisher account and terms
+                  setup for this provider.
+                </label>
+                <p>
+                  This records existing completion only; it does not purchase a
+                  subscription or sign in. Review setup again to create a new
+                  plan.
+                </p>
+              </>
+            ) : (
+              <p>
+                Setup is complete. No new publisher account or terms
+                confirmation is requested here.
+              </p>
+            )}
+            {plan.effects.map((effect) => (
+              <p key={effect.step_id}>{effect.description}</p>
+            ))}
+          </details>
           {plan.blocking_reasons.map((reason) => (
             <p key={reason.code}>
               {reason.message} {reason.recovery}
@@ -622,6 +643,28 @@ export function NativeConnections({
                   {item.enabled_here
                     ? "Enabled in this workspace"
                     : "Not enabled in this workspace"}
+                </p>
+                <p>
+                  {item.credentials_missing
+                    ? "Authentication: credentials needed."
+                    : "Authentication: no missing credentials reported; current sign-in has not been checked here."}
+                </p>
+                <p>
+                  Current readiness:{" "}
+                  {item.local_validation?.state === "stale"
+                    ? "unverified — last check expired"
+                    : item.local_validation
+                      ? `last protocol check ${item.local_validation.state}`
+                      : "unverified — no protocol check recorded"}
+                  . Host compatibility: {item.compatibility.status}.
+                </p>
+                {item.local_validation && (
+                  <p>Last checked: {item.local_validation.observed_at}.</p>
+                )}
+                <p>
+                  Open saved setup for connection options. A current readiness
+                  check is still required before running a workflow; workspace
+                  access does not approve process actions.
                 </p>
                 <details>
                   <summary>Readiness details</summary>
