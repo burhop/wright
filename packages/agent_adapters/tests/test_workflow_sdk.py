@@ -277,7 +277,7 @@ def test_real_worker_counters_reach_workflow_response_evidence(
         values = {
             "prompt_tokens": 11,
             "completion_tokens": 7,
-            "api_key": "secret-extra",
+            "api_key": "test-secret",
         }
         response.usage = values if shape == "mapping" else SimpleNamespace(**values)
         return response
@@ -314,5 +314,5 @@ def test_real_worker_counters_reach_workflow_response_evidence(
     )
     assert any(r.get("capture_phase") == "response" for r in public["invocations"])
     assert public["usage"]["input_tokens"] == 11
-    assert "secret-extra" not in json.dumps(public)
+    assert "test-secret" not in json.dumps(public)
     assert len(worker.calls) == 1 and worker.calls[0]["tools"] == []

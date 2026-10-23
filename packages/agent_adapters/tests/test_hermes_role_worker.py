@@ -381,9 +381,9 @@ def test_workflow_usage_keeps_only_observed_public_counters(sdk, shape):
         "prompt_tokens": 11,
         "completion_tokens": 7,
         "total_tokens": 18,
-        "prompt_tokens_details": {"cached_tokens": 3, "api_key": "secret-extra"},
+        "prompt_tokens_details": {"cached_tokens": 3, "api_key": "test-secret"},
         "completion_tokens_details": {"reasoning_tokens": 2},
-        "api_key": "secret-extra",
+        "api_key": "test-secret",
     }
     if shape == "mapping":
         usage = values
@@ -433,13 +433,13 @@ def test_workflow_usage_keeps_only_observed_public_counters(sdk, shape):
                 },
                 0,
             ),
-            "api_key": "secret-extra",
+            "api_key": "test-secret",
         }
     )
     assert public["usage"]["input_tokens"] == 11
     assert public["usage"]["cached_input_tokens"] == 3
     assert public["usage"]["reasoning_output_tokens"] == 2
-    assert "secret-extra" not in json.dumps(public)
+    assert "test-secret" not in json.dumps(public)
     assert len(sdk.calls) == 1 and sdk.calls[0]["tools"] == []
 
 
@@ -453,7 +453,7 @@ def test_workflow_invalid_usage_stays_unknown_without_fabricated_totals(sdk, inv
 
     def respond(**kwargs):
         response = create(**kwargs)
-        response.usage = SimpleNamespace(prompt_tokens=invalid, api_key="secret-extra")
+        response.usage = SimpleNamespace(prompt_tokens=invalid, api_key="test-secret")
         return response
 
     sdk.client.chat.completions.create = respond
@@ -471,4 +471,4 @@ def test_workflow_invalid_usage_stays_unknown_without_fabricated_totals(sdk, inv
     public = _model_usage(result, 0)
     assert public["status"] == "unknown"
     assert public["input_tokens"] is None and public["total_tokens"] is None
-    assert "secret-extra" not in json.dumps(result)
+    assert "test-secret" not in json.dumps(result)
