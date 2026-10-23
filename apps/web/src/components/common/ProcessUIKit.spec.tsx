@@ -7,6 +7,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import {
   ProcessUI,
@@ -90,6 +91,98 @@ afterEach(() => {
 });
 
 describe("public kit presentation and authority", () => {
+  it.each([
+    ["results/run-one/mesh.stl", "results/run-one/mesh.stl", "mesh.stl"],
+    ["results\\run-one\\mesh.stl", "results\\run-one\\mesh.stl", "mesh.stl"],
+    [
+      "Stress / strain comparison",
+      "results/metrics.csv",
+      "Stress / strain comparison",
+    ],
+    ["Attempt 1: mesh.stl", "results/run-one/mesh.stl", "Attempt 1: mesh.stl"],
+    ["results/unrelated.stl", "results/mesh.stl", "results/unrelated.stl"],
+  ])(
+    "presents %s without changing its evidence target",
+    (title, path, heading) => {
+      const reference = {
+        artifact_ref: path,
+        sha256: hash,
+        result_id: output.result_id,
+      };
+      const onOpen = vi.fn();
+      const onNavigate = vi.fn();
+      render(
+        <ResultCard
+          output={{ ...output, title, representations: [reference] }}
+          onOpen={onOpen}
+          onNavigate={onNavigate}
+        />,
+      );
+      expect(screen.getByRole("heading", { name: heading })).toHaveAttribute(
+        "title",
+        title,
+      );
+      fireEvent.click(screen.getByText("File details"));
+      expect(screen.getByText(path, { selector: "code" })).toBeVisible();
+      fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+      expect(onOpen).toHaveBeenCalledWith(reference);
+      fireEvent.click(
+        screen.getByRole("button", { name: "Open producing step" }),
+      );
+      expect(onNavigate).toHaveBeenCalledWith({
+        kind: "block",
+        block_id: output.step_id,
+        result_id: output.result_id,
+      });
+    },
+  );
+  it("keeps equal filenames bound to their own result, path and hash", () => {
+    const onOpen = vi.fn();
+    const references = [
+      {
+        artifact_ref: "results/run-one/metrics.csv",
+        sha256: hash,
+        result_id: "one",
+      },
+      {
+        artifact_ref: "results/run-two/metrics.csv",
+        sha256: "b".repeat(64),
+        result_id: "two",
+      },
+    ];
+    const { container } = render(
+      <>
+        {references.map((reference) => (
+          <ResultCard
+            key={reference.result_id}
+            output={{
+              ...output,
+              result_id: reference.result_id,
+              title: reference.artifact_ref,
+              representations: [reference],
+            }}
+            onOpen={onOpen}
+          />
+        ))}
+      </>,
+    );
+    expect(
+      screen.getAllByRole("heading", { name: "metrics.csv" }),
+    ).toHaveLength(2);
+    const cards = container.querySelectorAll(".wp-result");
+    references.forEach((reference, index) => {
+      expect(cards[index]).toHaveAttribute(
+        "data-result-id",
+        reference.result_id,
+      );
+      fireEvent.click(
+        within(cards[index] as HTMLElement).getByRole("button", {
+          name: "Open file",
+        }),
+      );
+      expect(onOpen).toHaveBeenLastCalledWith(reference);
+    });
+  });
   it.each([
     ["failed", "completed", "Completed"],
     ["running", "cancelled", "Cancelled"],

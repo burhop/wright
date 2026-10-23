@@ -483,13 +483,18 @@ export function ResultCard({
   onOpen?: (reference: ArtifactRef) => void;
   children?: ReactNode;
 }) {
+  const title = output.representations?.some(
+    (reference) => reference.artifact_ref === output.title,
+  )
+    ? output.title.split(/[\\/]/).filter(Boolean).at(-1) || output.title
+    : output.title;
   return (
     <article
       className="wp-result"
       data-result-id={output.result_id}
       tabIndex={-1}
     >
-      <h3>{output.title}</h3>
+      <h3 title={output.title}>{title}</h3>
       <p className="wp-muted">{output.role === "previous_attempt" ? "Historical evidence · superseded output" : output.role}</p>
       {children}
       {(output.representations ?? []).map((reference) => (

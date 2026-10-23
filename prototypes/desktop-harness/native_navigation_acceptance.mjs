@@ -248,6 +248,37 @@ try {
       const result = frame
         .locator(".wp-result")
         .filter({ hasText: input.preview_filename });
+      await expect(
+        result.getByRole("heading", {
+          name: input.preview_filename,
+          exact: true,
+        }),
+      ).toBeVisible();
+      const recordedTitle = await result.locator("h3").getAttribute("title");
+      if (!recordedTitle?.endsWith(input.preview_filename))
+        throw Error("Result heading lost its recorded title");
+      await result.getByText("File details", { exact: true }).click();
+      await expect(result.locator(".wp-evidence code").first()).toHaveText(
+        recordedTitle,
+      );
+      await result.getByText("File details", { exact: true }).click();
+      await page.screenshot({ path: resolve(output, "readable-results.png") });
+      await page.setViewportSize({ width: 480, height: 820 });
+      await expect(
+        result.getByRole("heading", {
+          name: input.preview_filename,
+          exact: true,
+        }),
+      ).toBeVisible();
+      expect(
+        await frame
+          .locator("body")
+          .evaluate((element) => element.scrollWidth > element.clientWidth + 1),
+      ).toBe(false);
+      await page.screenshot({
+        path: resolve(output, "readable-results-narrow.png"),
+      });
+      await page.setViewportSize({ width: 1080, height: 900 });
       await result
         .getByRole("button", { name: "Open file", exact: true })
         .click();
@@ -286,6 +317,7 @@ try {
       await expect(frame.getByTestId("common-process-view")).toBeVisible();
       checks.push(
         "Actual retained PNG displayed with matching byte hash; result links to producing-step inspector and back to the same run",
+        "Filename heading fits normal/narrow panel; exact recorded path remains in File details",
       );
     }
     checks.push(
