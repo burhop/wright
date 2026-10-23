@@ -97,7 +97,23 @@
   "engineering_runs_started": 0,
   "windows_acceptance": false,
   "installed_plugin_updated": false,
-  "repository_gates": "First full gate stopped at dependency audit; publisher fixes locally qualified, corrected candidate gates pending.",
+  "repository_gates": {
+    "full_merge": {
+      "head": "488dfa3f6b227043769e9a8f8e713fb3f779f4a1",
+      "command": [
+        "bash",
+        "scripts/check-dev-merge.sh"
+      ],
+      "log": "/tmp/wright-desktop-result-readability/.local-run/result-readability-20261022/merge-488dfa3f-private.log",
+      "started_at": "2026-10-23T00:13:02.436761+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-10-23T00:44:58.894207+00:00",
+      "log_sha256": "0822ba2db6d96e86e72724fa8fc3f06ce1b9ca06ed48a5ea646f31763c40757e",
+      "host_limitation": "Verified local WebKit missing libgstcodecparsers-1.0.so.0; normal Chromium push gate and complete PR browser CI still required."
+    },
+    "normal_push": "required next; no GitHub push yet",
+    "pr_ci": "not started"
+  },
   "limitations": [
     "Desktop host is simulated; retained-run reads use the unchanged installed0.19 API/bridge and the candidate HTML.",
     "Normal workspace/editor and Robot source checks use current candidate source on fresh isolated API state.",
@@ -133,5 +149,84 @@
     "failed_security_preflight_receipt_sha256": "370028b032d9ce378674f4702839b094f3d341b8e04ddbb7d5de29d1e9b542c5",
     "rebuilt_native_bundle_identical": true,
     "repository_gates": "Full current-candidate gates still required after the dependency correction; no CI pushes yet."
+  },
+  "updated_at": "2026-10-23T00:46:19.853778+00:00",
+  "product_head": "488dfa3f6b227043769e9a8f8e713fb3f779f4a1",
+  "full_merge_suites": {
+    "api": 785,
+    "agent_adapters": 481,
+    "core": 355,
+    "data_vault": 220,
+    "model_registry": 185,
+    "tool_registry": 579,
+    "workspace_service": 2831,
+    "desktop_prototype": 311,
+    "repository": 1588,
+    "frontend": 2034,
+    "strict_docs": "passed",
+    "local_webkit": "unavailable; verified missing libgstcodecparsers-1.0.so.0; normal Chromium gate and full PR browsers required",
+    "broad_mypy": "existing warning-only policy unchanged"
+  },
+  "installed_image": {
+    "source": "488dfa3f6b227043769e9a8f8e713fb3f779f4a1",
+    "image_id": "sha256:8e29ccef8935ef309382fa3f5fbd7c69ff2a72e70d03f6f189d0b057dc3f550c",
+    "status": "passed",
+    "installed_versions": {
+      "opentelemetry-api": "1.45.1",
+      "opentelemetry-sdk": "1.45.1",
+      "dompurify_patched_marker": true
+    },
+    "browser_checks": [
+      {
+        "endpoint": "/api/health",
+        "state": "connected"
+      },
+      {
+        "endpoint": "/api/agent/health",
+        "state": "connected"
+      },
+      "Normal dashboard creates and opens isolated workspace",
+      "Normal Workflows control opens shared editor",
+      "Typed optional policy and exact tool binding survive actual save/reopen; deliberately unconfigured provider was not executed",
+      "Actual owner saves and reopens source through normal workspace"
+    ],
+    "workflow_id": "authored_5b96bbb6_5246_457a_877a_12ce57056ad6",
+    "container_stopped_state_retained": true,
+    "receipt_sha256": "4af70d4eed9bd30f0052d280885c900686d7d11363f526be018a90edab354871",
+    "no_real_model_or_engineering_calls": true,
+    "first_probe_failure": "Incorrect copied output directory; original failed receipt retained, same stopped container reused after correcting only the probe."
+  },
+  "prepared_native_package": {
+    "version": "0.20.0",
+    "source": "488dfa3f6b227043769e9a8f8e713fb3f779f4a1",
+    "dependency_count": 82,
+    "noneditable_wright_packages": 9,
+    "source_files_archive_verified": 13644,
+    "native_resource_sha256": "2566d0d1fae36246a35300e666821d18d6d86bb5e6f0862e85dca67f03cc2f29",
+    "mcp_sdk": "1.30.0",
+    "tool_count": 56,
+    "app_only_credential_controls_verified": true,
+    "original_source_copies": [
+      {
+        "path": "workflows/spacer-comparison.workflow.wflow",
+        "sha256": "699c74b1103eab0bd59475e13346fa18fb29cc0f73e4a7ab7dfafbb2d5857a0c",
+        "exact_readback": true
+      },
+      {
+        "path": "workflows/robot-tracking-diagnosis.workflow.wflow",
+        "sha256": "bdf7fa4d455ad3ec6fb50c9f390b749990f82c1dfc0a860237cb85e50984537d",
+        "exact_readback": true
+      }
+    ],
+    "native_browser_checks": [
+      "Workflows entry opens exact accepted source in shared editor",
+      "Dirty draft guards Home; explicit save records source/layout through actual MCP and owning service",
+      "Selected workflow history reports actual empty state without selecting another workflow",
+      "Home and supported widget remount retain exact source/run target; explicit reopen rereads owner without replay",
+      "Narrow Home fits; recorded history unchanged; zero process mutations or engineering calls"
+    ],
+    "package_receipt_sha256": "635de7f9effb40d2fb2d074d1677acf3662ce3c7f4032f8ca3a9532cfae46a84",
+    "environment_receipt_sha256": "7b5eae9668b57aaf5935c0045475e5f839ec29fdf60ac8b42fb094ee7537da58",
+    "installed_into_live_configuration": false
   }
 }

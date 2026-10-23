@@ -61,3 +61,26 @@ not evidence of workflow execution. The native panel rebuild is byte-identical,
 so the existing rendered native screenshots remain applicable. Full current-head
 repository gates and exact-image installed smoke remain required. Existing live
 prototype packages and user configuration have not been updated.
+
+## Qualified source checkpoint
+
+Product source `488dfa3f6b227043769e9a8f8e713fb3f779f4a1` passes the complete
+local merge gate: API785, adapters481, core355, storage220, model185, registry579,
+workspace2831, desktop-prototype311, repository1588 and frontend2034; strict docs
+also passes. Existing warning-only broad MyPy policy is unchanged. Local WebKit
+cannot launch due the verified missing shared library; normal Chromium and full
+PR browser/Windows checks remain required.
+
+The exact image verifies patched installed versions, API/Hermes health and normal
+workspace save/reopen. Its temporary container is stopped with state retained.
+The prepared0.20 native package verifies82 pinned dependencies, nine noneditable
+Wright packages,13,644 archived files,56 MCP tools, app-only credential controls,
+exact example-source save/readback and the served Robot source navigation journey.
+No existing live plugin or service has been updated. The existing saved user goal
+authorizes the tested named-plugin update after integration, fresh backup,
+immediate quiescence and scoped rollback. Actual Windows acceptance is pending.
+
+Gate-generated resources are preserved privately before restoring only their
+known generated paths. This evidence-only checkpoint changes no shipped code or
+Docker build input; retain the qualified source/image attribution. Next run the
+normal pre-push gate and collect all first-cycle CI before any correction push.
