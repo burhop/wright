@@ -370,3 +370,107 @@ def test_worker_has_no_generic_invocation_shape(sdk, extra):
     with pytest.raises(ValueError):
         invoke({"operation": "probe", **extra}, sdk.root)
     assert sdk.calls == []
+
+
+@pytest.mark.parametrize("shape", ["mapping", "namespace", "model_dump", "dump_only"])
+def test_workflow_usage_keeps_only_observed_public_counters(sdk, shape):
+    from agent_adapters.report_generation import _model_usage
+    from core.redaction import redact_evidence
+
+    values = {
+        "prompt_tokens": 11,
+        "completion_tokens": 7,
+        "total_tokens": 18,
+        "prompt_tokens_details": {"cached_tokens": 3, "api_key": "test-secret"},
+        "completion_tokens_details": {"reasoning_tokens": 2},
+        "api_key": "test-secret",
+    }
+    if shape == "mapping":
+        usage = values
+    elif shape == "namespace":
+        usage = SimpleNamespace(**values)
+    elif shape == "dump_only":
+        usage = SimpleNamespace(model_dump=lambda *, mode: values)
+    else:
+        from pydantic import BaseModel, ConfigDict
+
+        class Usage(BaseModel):
+            model_config = ConfigDict(extra="allow")
+            prompt_tokens: int
+            completion_tokens: int
+            total_tokens: int
+
+        usage = Usage(**values)
+    create = sdk.client.chat.completions.create
+
+    def respond(**kwargs):
+        response = create(**kwargs)
+        response.usage = usage
+        return response
+
+    sdk.client.chat.completions.create = respond
+    result = invoke(
+        {
+            "operation": "generate-workflow",
+            "messages": [
+                {"role": "system", "content": "Synthetic scope"},
+                {"role": "user", "content": "Synthetic task"},
+            ],
+        },
+        sdk.root,
+    )
+    assert result["usage"] == {
+        "prompt_tokens": 11,
+        "completion_tokens": 7,
+        "total_tokens": 18,
+        "prompt_tokens_details": {"cached_tokens": 3},
+        "completion_tokens_details": {"reasoning_tokens": 2},
+    }
+    public = redact_evidence(
+        {
+            "usage": _model_usage(
+                {
+                    "usage": result["usage"],
+                    "model": result["response_model"],
+                },
+                0,
+            ),
+            "api_key": "test-secret",
+        }
+    )
+    assert public["usage"]["input_tokens"] == 11
+    assert public["usage"]["cached_input_tokens"] == 3
+    assert public["usage"]["reasoning_output_tokens"] == 2
+    assert "test-secret" not in json.dumps(public)
+    assert len(sdk.calls) == 1 and sdk.calls[0]["tools"] == []
+
+
+@pytest.mark.parametrize(
+    "invalid", [None, -1, True, "11", 1.5, float("nan"), float("inf")]
+)
+def test_workflow_invalid_usage_stays_unknown_without_fabricated_totals(sdk, invalid):
+    from agent_adapters.report_generation import _model_usage
+
+    create = sdk.client.chat.completions.create
+
+    def respond(**kwargs):
+        response = create(**kwargs)
+        response.usage = SimpleNamespace(prompt_tokens=invalid, api_key="test-secret")
+        return response
+
+    sdk.client.chat.completions.create = respond
+    result = invoke(
+        {
+            "operation": "generate-workflow",
+            "messages": [
+                {"role": "system", "content": "Synthetic scope"},
+                {"role": "user", "content": "Synthetic task"},
+            ],
+        },
+        sdk.root,
+    )
+    assert result.get("usage") in (None, {})
+    public = _model_usage(result, 0)
+    assert public["status"] == "unknown"
+    assert public["input_tokens"] is None and public["total_tokens"] is None
+    assert "test-secret" not in json.dumps(result)

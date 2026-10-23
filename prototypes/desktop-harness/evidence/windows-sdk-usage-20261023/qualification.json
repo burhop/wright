@@ -1,0 +1,91 @@
+{
+  "schema_version": "wright.sdk-usage-qualification/1",
+  "recorded_at": "2026-10-23T02:01:20.934237+00:00",
+  "status": "Local product qualification passed; normal current-head pre-push, GitHub CI, dev integration and actual Windows provider observation pending",
+  "report": "https://github.com/burhop/wright/pull/165#issuecomment-6354365363",
+  "base_dev": "bfcd00c94d5f2446c2feaf3ea537ae2c1dd2d786",
+  "product_source": "4ca28b85343a0df293f72dd1cc16abc3dbff6626",
+  "worker_sha256": "83180def8c43a2a984fec704ae9e2161bbc0aaf05dca56daa2da578eb84de1e7",
+  "host": {
+    "system": "Linux",
+    "machine": "aarch64",
+    "python": "3.13.12"
+  },
+  "scope": "Confined Hermes workflow SDK usage projection only; no new executor, model routing, permission or instruction policy",
+  "response_shapes": [
+    "mapping",
+    "namespace",
+    "Pydantic",
+    "serializer_only"
+  ],
+  "public_fields": [
+    "prompt_tokens",
+    "completion_tokens",
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "prompt_tokens_details.cached_tokens",
+    "input_tokens_details.cached_tokens",
+    "completion_tokens_details.reasoning_tokens",
+    "output_tokens_details.reasoning_tokens"
+  ],
+  "behaviour": {
+    "integer_nonnegative_only": true,
+    "zero_preserved": true,
+    "invalid_counts_unknown": true,
+    "missing_total_inferred": false,
+    "arbitrary_extra_fields_exported": false,
+    "historical_usage_rewritten": false
+  },
+  "validation": {
+    "focused_worker_sdk": {
+      "passed": 60,
+      "scope": "Synthetic real-worker/SDK/response/shared-evidence-redactor path; no inference"
+    },
+    "full_merge_gate": {
+      "source": "4ca28b85343a0df293f72dd1cc16abc3dbff6626",
+      "exit_code": 0,
+      "log_sha256": "d67982a7d6029d80c1d45dc728bd280f3fd5e7fcd8bb4297c2cbc8608814e0ca",
+      "finished_at": "2026-10-23T01:58:30.894018+00:00",
+      "adapter_tests_passed": 494,
+      "adapter_tests_existing_skips": 21,
+      "api_tests_passed": 785,
+      "core_tests_passed": 355,
+      "workspace_tests_passed": 2831,
+      "frontend_tests_passed": 2034,
+      "python_audit": "passed",
+      "node_audit": "passed unchanged High/Critical policy",
+      "exact_image_scan": "passed",
+      "host_limitation": "Verified local WebKit missing libgstcodecparsers-1.0.so.0; normal Chromium push gate and complete PR browser CI still required."
+    },
+    "installed_image": {
+      "source": "4ca28b85343a0df293f72dd1cc16abc3dbff6626",
+      "image_id": "sha256:996a00dce66077857455ac3c05dff36224d6ec8f37f1cc2cd7402f0ce37a4fd0",
+      "archive_sha256": "a688df29202dbb6cd36f5c5c32c588a65eb8ccb57eae4f0ff4668611b0bf5f87",
+      "worker_sha256": "83180def8c43a2a984fec704ae9e2161bbc0aaf05dca56daa2da578eb84de1e7",
+      "normalization_and_public_redaction": "passed",
+      "network": "none",
+      "mounts": 0,
+      "container_stopped_state_retained": true,
+      "real_provider_requests": 0
+    },
+    "generated_artifacts": "All14 changed generated native outputs copied and hashed before exact restoration; source tree clean",
+    "actual_windows_usage": "unverified; Windows pilot owns fresh provider-counter observation after qualified delivery"
+  },
+  "tests": [
+    "packages/agent_adapters/tests/test_hermes_role_worker.py",
+    "packages/agent_adapters/tests/test_workflow_sdk.py",
+    "packages/agent_adapters/tests/test_hermes_sdk_invocation_evidence.py",
+    "packages/agent_adapters/tests/test_workflow_response_timeout.py"
+  ],
+  "prior_failures_preserved": [
+    "Restricted sandbox async wakeup stall; same2 cases pass natively in0.41s; stopped only owned stalled test process",
+    "Synthetic test canary flagged; changed only to established test-secret, no exception",
+    "Fresh worktree Node dependencies absent; installed committed lock in worktree with task-local cache"
+  ],
+  "limits": [
+    "Counters are SDK-reported observations, not provider billing verification",
+    "No reconstruction of historical unknown counters",
+    "No live configuration, profile, service, engineering document or protected campaign changed"
+  ]
+}

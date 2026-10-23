@@ -6,6 +6,7 @@ Credentials remain inside its official resolver/client and never enter stdout.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 import contextlib
 import hashlib
 import json
@@ -72,6 +73,48 @@ def initialize_sdk_profile():
     from hermes_cli.env_loader import load_hermes_dotenv
 
     load_hermes_dotenv(hermes_home=os.environ["HERMES_HOME"])
+
+
+def public_usage(usage):
+    """Project reported counters only; never serialize arbitrary SDK attributes."""
+    dump = getattr(usage, "model_dump", None)
+    if callable(dump):
+        usage = dump(mode="json")
+
+    def field(value, name):
+        return (
+            value.get(name)
+            if isinstance(value, Mapping)
+            else getattr(value, name, None)
+        )
+
+    def counters(value, names):
+        return {
+            name: count
+            for name in names
+            if type(count := field(value, name)) is int and count >= 0
+        }
+
+    result = counters(
+        usage,
+        (
+            "prompt_tokens",
+            "completion_tokens",
+            "input_tokens",
+            "output_tokens",
+            "total_tokens",
+        ),
+    )
+    for name, fields in (
+        ("prompt_tokens_details", ("cached_tokens",)),
+        ("input_tokens_details", ("cached_tokens",)),
+        ("completion_tokens_details", ("reasoning_tokens",)),
+        ("output_tokens_details", ("reasoning_tokens",)),
+    ):
+        details = counters(field(usage, name), fields)
+        if details:
+            result[name] = details
+    return result or None
 
 
 def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
@@ -276,11 +319,8 @@ def invoke(request: dict, runtime_root: Path, *, sdk_observer=None) -> dict:
             "text": text,
             "response_model": response_model,
             **(
-                {"usage": response.usage.model_dump(mode="json")}
+                {"usage": public_usage(getattr(response, "usage", None))}
                 if workflow_request
-                and callable(
-                    getattr(getattr(response, "usage", None), "model_dump", None)
-                )
                 else {}
             ),
             "effective_instructions_digest": hashlib.sha256(
