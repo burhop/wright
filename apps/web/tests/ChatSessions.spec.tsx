@@ -2,6 +2,7 @@ import {
   act,
   fireEvent,
   render,
+  renderHook,
   screen,
   waitFor,
 } from "@testing-library/react";
@@ -538,16 +539,7 @@ describe("ChatProvider session state", () => {
       vi.mocked(agentService.createSession).mockResolvedValue(
         makeSession({ sessionId: "new-session", workspaceId: "workspace-1" }),
       );
-      let controls: ReturnType<typeof useChat>;
-      function Harness() {
-        controls = useChat();
-        return <SessionsHarness />;
-      }
-      render(
-        <ChatProvider>
-          <Harness />
-        </ChatProvider>,
-      );
+      const { result } = renderHook(() => useChat(), { wrapper: ChatProvider });
       await act(async () => {});
 
       let resolveList!: (sessions: []) => void;
@@ -559,25 +551,24 @@ describe("ChatProvider session state", () => {
         }),
       );
       await act(async () => {
-        const refresh = controls.refreshSessions("workspace-1");
-        await controls.createSession("/home/agent/wright/test", "workspace-1");
+        const refresh = result.current.refreshSessions("workspace-1");
+        await result.current.createSession(
+          "/home/agent/wright/test",
+          "workspace-1",
+        );
         if (outcome === "empty") resolveList([]);
         else rejectList(new Error("session listing unavailable"));
         await refresh;
       });
-      expect(screen.getByTestId("active-session")).toHaveTextContent(
-        "new-session",
-      );
-      expect(screen.getAllByTestId("session-row")).toHaveLength(1);
+      expect(result.current.state.activeSessionId).toBe("new-session");
+      expect(result.current.state.sessions).toHaveLength(1);
 
       vi.mocked(agentService.listSessions).mockResolvedValueOnce([
         makeSession({ sessionId: "another-session" }),
       ]);
-      await act(async () => controls.refreshSessions("workspace-1"));
-      expect(screen.getAllByTestId("session-row")).toHaveLength(2);
-      expect(screen.getByTestId("active-session")).toHaveTextContent(
-        "new-session",
-      );
+      await act(async () => result.current.refreshSessions("workspace-1"));
+      expect(result.current.state.sessions).toHaveLength(2);
+      expect(result.current.state.activeSessionId).toBe("new-session");
     },
   );
 
@@ -585,19 +576,8 @@ describe("ChatProvider session state", () => {
     const session = makeSession({ workspaceId: "workspace-1" });
     vi.mocked(agentService.listSessions).mockResolvedValue([session]);
     vi.mocked(agentService.deleteSession).mockResolvedValue(undefined);
-    let controls: ReturnType<typeof useChat>;
-    function Harness() {
-      controls = useChat();
-      return <SessionsHarness />;
-    }
-    render(
-      <ChatProvider>
-        <Harness />
-      </ChatProvider>,
-    );
-    await waitFor(() =>
-      expect(screen.getAllByTestId("session-row")).toHaveLength(1),
-    );
+    const { result } = renderHook(() => useChat(), { wrapper: ChatProvider });
+    await waitFor(() => expect(result.current.state.sessions).toHaveLength(1));
     let resolveList!: (sessions: (typeof session)[]) => void;
     vi.mocked(agentService.listSessions).mockReturnValueOnce(
       new Promise((resolve) => {
@@ -605,13 +585,13 @@ describe("ChatProvider session state", () => {
       }),
     );
     await act(async () => {
-      const refresh = controls.refreshSessions("workspace-1");
-      await controls.deleteSession(session.sessionId);
+      const refresh = result.current.refreshSessions("workspace-1");
+      await result.current.deleteSession(session.sessionId);
       resolveList([session]);
       await refresh;
     });
-    expect(screen.queryByTestId("session-row")).not.toBeInTheDocument();
-    expect(screen.getByTestId("active-session")).toBeEmptyDOMElement();
+    expect(result.current.state.sessions).toHaveLength(0);
+    expect(result.current.state.activeSessionId).toBeNull();
   });
 
   it("coalesces concurrent create requests into one backend session", async () => {
