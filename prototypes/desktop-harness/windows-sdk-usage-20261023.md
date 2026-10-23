@@ -50,3 +50,15 @@ preflight failure. The complete corrected gate, GitHub delivery and Windows live
 acceptance remain pending.
 Private local receipts are under `.local-run/sdk-usage-20261023/` in this worktree.
 No existing user state, profile, service or engineering document changed.
+
+
+Product4ca28b85343a0df293f72dd1cc16abc3dbff6626 passed the complete local merge
+gate on GB10:494 adapter tests,785 API tests,355 core tests,2831 workspace tests,
+2034 frontend tests and the remaining repository/package/docs suites. Existing
+skip policies are retained; local WebKit lacks libgstcodecparsers-1.0.so.0, so
+normal Chromium and complete current-head GitHub browser/Windows checks remain
+required. Dependency audits and the exact image scan pass without new exceptions.
+All14 changed generated native outputs were copied/hash-verified before restoring
+the clean source tree. [The qualification receipt](evidence/windows-sdk-usage-20261023/qualification.json)
+records exact source/image/worker identity and synthetic versus live boundaries.
+The normal pre-push gate and all current-head CI remain required before delivery.
