@@ -8,6 +8,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
 import type { NativeWorkflowPanel } from "./NativeWorkflowPanel";
@@ -125,6 +126,52 @@ vi.mock("./NativeProcessPanel", () => ({
   ),
 }));
 afterEach(() => cleanup());
+
+it.each([false, true])(
+  "keeps the accepted title in workflow history only for its exact source (older=%s)",
+  async (older) => {
+    const named = {
+      ...original,
+      path: "workflows/untitled-workflow-test.workflow.wflow",
+      source: 'workflow inspection\n  name: "Inspection demo"\nend',
+    };
+    const readEvidence = vi.fn().mockResolvedValue({
+      content: [],
+      structuredContent: {
+        workspace_id: named.workspace_id,
+        session_id: "session",
+        workflow_path: named.path,
+        runs: [],
+      },
+    });
+    const { call } = setup({
+      initial: named,
+      initialProcess: {
+        workspace_id: named.workspace_id,
+        source_path: named.path,
+        source_digest: older ? "c".repeat(64) : named.storage_digest,
+      },
+      initialView: "working",
+      readEvidence,
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Run history" }));
+    const history = within(screen.getByRole("region", { name: "Recent runs" }));
+    await history.findByText("No recorded runs for this workflow.");
+    expect(
+      history.getByText(older ? "untitled workflow test" : "Inspection demo"),
+    ).toBeVisible();
+    if (older) expect(history.queryByText("Inspection demo")).toBeNull();
+    expect(readEvidence).toHaveBeenCalledExactlyOnceWith(
+      "wright_workflow_history",
+      {
+        workspace_id: named.workspace_id,
+        session_id: "session",
+        path: named.path,
+      },
+    );
+    expect(call).not.toHaveBeenCalled();
+  },
+);
 
 it("reads the selected workflow's history and verifies its exact runtime subject before attaching", async () => {
   const recorded = {

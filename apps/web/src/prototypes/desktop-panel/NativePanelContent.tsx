@@ -424,6 +424,15 @@ export function NativePanelContent({
                 }}
                 paths={[process.source_path]}
                 initialPath={process.source_path}
+                titles={
+                  process.source_digest === accepted.storage_digest
+                    ? {
+                        [process.source_path]:
+                          recoveryWorkflowSourceTitle(accepted.source) ??
+                          accepted.path,
+                      }
+                    : undefined
+                }
                 call={readEvidence}
                 onOpen={openRecordedRun}
               />
