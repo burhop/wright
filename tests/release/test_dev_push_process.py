@@ -107,6 +107,7 @@ def test_fast_gate_uses_impacted_tests_and_includes_untracked_files() -> None:
         "tests/ui-integration/*.spec.ts|tests/ui-integration/*/*.spec.ts"
     )
     assert "tests/ui-integration/navigation.spec.ts" in gate
+    assert "tests/ui-integration/agent-chat.spec.ts" in gate
     assert "tests/ui-integration/workspace-surfaces/focus-layout.spec.ts" in gate
     assert "tests/ui-integration/workflow-composer.spec.ts" in gate
     assert "tests/ui-integration/workflow-recovery.spec.ts" in gate

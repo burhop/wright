@@ -1,6 +1,7 @@
 # Windows SDK usage counter repair
 
-Status: local candidate; not yet published, integrated, deployed or Windows-qualified.
+Status: SDK repair Windows-qualified; consolidated chat-refresh correction local.
+Current-head CI, dev integration and the final desktop deployment remain pending.
 
 The Windows pilot reported that actual model requests can show usage as unknown
 because the confined Hermes worker only accepts `usage.model_dump()`. Its Codex
@@ -62,3 +63,29 @@ All14 changed generated native outputs were copied/hash-verified before restorin
 the clean source tree. [The qualification receipt](evidence/windows-sdk-usage-20261023/qualification.json)
 records exact source/image/worker identity and synthetic versus live boundaries.
 The normal pre-push gate and all current-head CI remain required before delivery.
+
+## Windows verification and consolidated CI correction
+
+[The Windows pilot report](https://github.com/burhop/wright/pull/170#issuecomment-6355973927)
+qualifies head60d7b033aaa74668c10b92392c77e2cb6fdc8394 and product4ca28b85.
+Fifteen focused Windows checks pass. One explicitly authorized isolated
+`gpt-6.1-sol`/`medium` request preserved the SDK-reported427 input,32 output and459
+total tokens through the public response and shared redactor. These observations
+are not billing verification; cached/reasoning detail counts remain unknown.
+The tested worker SHA256 is
+`83180def8c43a2a984fec704ae9e2161bbc0aaf05dca56daa2da578eb84de1e7`.
+The live pilot installation and its profile were not changed by that test.
+
+Every first-cycle CI workflow is terminal. All except the Playwright workflow
+passed; its single failed chat case exposed both an incomplete invented-workspace
+fixture and a real session-list race. A controlled React render batch reproduces
+loss of an acknowledged new session with either an older empty list or a failed
+list response. A membership generation check now rejects lists started before an
+acknowledged create/delete. Existing list caching, restoration, platform ownership
+and backend session identities remain authoritative; subsequent refreshes work.
+The browser fixture now supplies scoped list/binding endpoints and checks the
+selected exact session identity without removing streaming/workspace assertions.
+The frontend push baseline includes that existing chat suite. Both browser cases,
+20 chat-state/layout checks,38 gate-policy checks and TypeScript compilation pass
+locally. This production correction requires a new source qualification and build;
+the previous image and staged native0.20 candidate do not contain it.

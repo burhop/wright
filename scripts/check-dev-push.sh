@@ -577,6 +577,7 @@ if [[ "$CHECK_FRONTEND" == "1" ]]; then
 
   PLAYWRIGHT_TARGETS+=(
     tests/ui-integration/navigation.spec.ts
+    tests/ui-integration/agent-chat.spec.ts
     tests/ui-integration/workspace-surfaces/focus-layout.spec.ts
     tests/ui-integration/workflow-composer.spec.ts
     tests/ui-integration/workflow-recovery.spec.ts

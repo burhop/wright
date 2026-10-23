@@ -684,6 +684,7 @@ export function ChatProvider({
   const steeringSessionsRef = useRef<Set<string>>(new Set());
   const resumedStreamIdsRef = useRef<Set<string>>(new Set());
   const sessionTurnVersionsRef = useRef<Map<string, number>>(new Map());
+  const sessionMembershipVersionRef = useRef(0);
   const providerMountedRef = useRef(true);
 
   useEffect(() => {
@@ -695,8 +696,12 @@ export function ChatProvider({
   const refreshSessions = useCallback(
     async (workspaceId?: string) => {
       if (desktopConversation) return;
+      const membershipVersion = sessionMembershipVersionRef.current;
       try {
         const compactSessions = await agentService.listSessions(workspaceId);
+        // A list started before a successful create/delete cannot replace that
+        // acknowledged state, even when React has not committed its cache yet.
+        if (membershipVersion !== sessionMembershipVersionRef.current) return;
         const localSessions = readCachedSessions();
 
         const backendSessionIds = new Set(
@@ -751,6 +756,7 @@ export function ChatProvider({
           ]),
         });
       } catch (err) {
+        if (membershipVersion !== sessionMembershipVersionRef.current) return;
         console.error(
           "Failed to sync sessions with backend, falling back to localStorage",
           err,
@@ -1036,6 +1042,7 @@ export function ChatProvider({
             session.title = `${baseName} Session ${count}`;
           }
 
+          sessionMembershipVersionRef.current += 1;
           dispatch({
             type: "CREATE_SESSION",
             session: {
@@ -1066,6 +1073,7 @@ export function ChatProvider({
   const deleteSession = useCallback(async (sessionId: string) => {
     try {
       await agentService.deleteSession(sessionId);
+      sessionMembershipVersionRef.current += 1;
       dispatch({ type: "DELETE_SESSION", sessionId });
     } catch (err) {
       console.error("Failed to delete session on backend", err);

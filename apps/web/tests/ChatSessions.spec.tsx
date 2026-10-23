@@ -531,6 +531,89 @@ describe("ChatProvider session state", () => {
     expect(screen.getByTestId("active-session")).toHaveTextContent("session-1");
   });
 
+  it.each(["empty", "failed"] as const)(
+    "retains an acknowledged new session when an older %s refresh finishes in the same render batch",
+    async (outcome) => {
+      vi.mocked(agentService.listSessions).mockResolvedValue([]);
+      vi.mocked(agentService.createSession).mockResolvedValue(
+        makeSession({ sessionId: "new-session", workspaceId: "workspace-1" }),
+      );
+      let controls: ReturnType<typeof useChat>;
+      function Harness() {
+        controls = useChat();
+        return <SessionsHarness />;
+      }
+      render(
+        <ChatProvider>
+          <Harness />
+        </ChatProvider>,
+      );
+      await act(async () => {});
+
+      let resolveList!: (sessions: []) => void;
+      let rejectList!: (error: Error) => void;
+      vi.mocked(agentService.listSessions).mockReturnValueOnce(
+        new Promise((resolve, reject) => {
+          resolveList = resolve;
+          rejectList = reject;
+        }),
+      );
+      await act(async () => {
+        const refresh = controls.refreshSessions("workspace-1");
+        await controls.createSession("/home/agent/wright/test", "workspace-1");
+        if (outcome === "empty") resolveList([]);
+        else rejectList(new Error("session listing unavailable"));
+        await refresh;
+      });
+      expect(screen.getByTestId("active-session")).toHaveTextContent(
+        "new-session",
+      );
+      expect(screen.getAllByTestId("session-row")).toHaveLength(1);
+
+      vi.mocked(agentService.listSessions).mockResolvedValueOnce([
+        makeSession({ sessionId: "another-session" }),
+      ]);
+      await act(async () => controls.refreshSessions("workspace-1"));
+      expect(screen.getAllByTestId("session-row")).toHaveLength(2);
+      expect(screen.getByTestId("active-session")).toHaveTextContent(
+        "new-session",
+      );
+    },
+  );
+
+  it("does not restore a deleted session from an older list", async () => {
+    const session = makeSession({ workspaceId: "workspace-1" });
+    vi.mocked(agentService.listSessions).mockResolvedValue([session]);
+    vi.mocked(agentService.deleteSession).mockResolvedValue(undefined);
+    let controls: ReturnType<typeof useChat>;
+    function Harness() {
+      controls = useChat();
+      return <SessionsHarness />;
+    }
+    render(
+      <ChatProvider>
+        <Harness />
+      </ChatProvider>,
+    );
+    await waitFor(() =>
+      expect(screen.getAllByTestId("session-row")).toHaveLength(1),
+    );
+    let resolveList!: (sessions: (typeof session)[]) => void;
+    vi.mocked(agentService.listSessions).mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveList = resolve;
+      }),
+    );
+    await act(async () => {
+      const refresh = controls.refreshSessions("workspace-1");
+      await controls.deleteSession(session.sessionId);
+      resolveList([session]);
+      await refresh;
+    });
+    expect(screen.queryByTestId("session-row")).not.toBeInTheDocument();
+    expect(screen.getByTestId("active-session")).toBeEmptyDOMElement();
+  });
+
   it("coalesces concurrent create requests into one backend session", async () => {
     let resolveCreate: (session: ChatSession) => void = () => {};
     const createPromise = new Promise<ChatSession>((resolve) => {

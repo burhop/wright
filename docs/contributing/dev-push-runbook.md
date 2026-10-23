@@ -513,6 +513,16 @@ turn on Windows. Waiting longer for the missing diagnostic does not fix that
 ordering bug. Keep ordinary history restoration, reconnect and queued-turn checks;
 the existing full frontend suite runs the deterministic interleaving regression.
 
+PR #170 exposed an older session-list response erasing a newly acknowledged
+session before React committed its cache. The chat-state regressions control
+that render batch for both empty and failed responses. A successful membership
+change invalidates lists already in flight; a later refresh remains available.
+Invented browser workspaces must also mock their scoped session list and binding
+endpoints rather than reach a real API with a nonexistent workspace ID. The
+frontend push baseline now includes `agent-chat.spec.ts`, with its session,
+streaming and workspace assertions intact. The PowerShell entry delegates to
+this same baseline. Full browser CI remains required.
+
 - Collect every failed job and its first actionable error before editing.
 - Let the complete CI browser run report its full failure set; do not cap the run
   after an arbitrary number of failures that forces serial discovery pushes.

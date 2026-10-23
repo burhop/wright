@@ -21,17 +21,36 @@ test.describe("Agent Chat Page", () => {
       });
     });
 
-    // Mock session list
+    // Keep the invented workspace's session lifecycle within this fixture.
+    let sessionCreated = false;
+    let selectedSessionId: string | undefined;
+    const sessionList = () => ({
+      sessions: sessionCreated
+        ? [{ session_id: "session123", title: "Untitled", created_at: 1000 }]
+        : [],
+    });
     await page.route("**/api/agent/sessions*", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ sessions: [] }),
+        body: JSON.stringify(sessionList()),
       });
     });
+    await page.route("**/api/workspace/by-id/ws-1/sessions*", async (route) => {
+      await route.fulfill({ json: sessionList() });
+    });
+    await page.route(
+      "**/api/workspace/by-id/ws-1/session/select",
+      async (route) => {
+        expect(route.request().method()).toBe("POST");
+        selectedSessionId = route.request().postDataJSON().session_id;
+        await route.fulfill({ json: { session_id: selectedSessionId } });
+      },
+    );
 
     // Mock session creation
     await page.route("**/api/agent/sessions/new", async (route) => {
+      sessionCreated = true;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -220,6 +239,7 @@ test.describe("Agent Chat Page", () => {
     await createBtn.click();
 
     await expect(page.getByTestId("message-composer")).toBeVisible();
+    await expect.poll(() => selectedSessionId).toBe("session123");
 
     const composer = page.getByTestId("composer-input");
     await composer.fill("Run stiffness analysis");
