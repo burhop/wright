@@ -66,7 +66,10 @@ const before = await read("wright_workflow_read", scope);
 const opened = await read("wright_workflow_open", scope);
 const workspace = opened.workspace;
 const historyBefore = await read("wright_workflow_history", scope);
-const bundlePath = resolve("prototypes/desktop-harness/native-editor.html");
+const bundlePath = resolve(
+  process.env.WRIGHT_PROBE_BUNDLE ??
+    "prototypes/desktop-harness/native-editor.html",
+);
 const originalBundle = readFileSync(bundlePath, "utf8");
 const bundle = originalBundle.replace(
   "<head>",
@@ -133,6 +136,7 @@ const server = createServer(async (req, res) => {
     if (
       name !== "wright_workspace_list" &&
       name !== "wright_workspace_files" &&
+      name !== "wright_workflow_read" &&
       !name.startsWith("wright_workspace_file_") &&
       request.path !== scope.path
     )
@@ -177,7 +181,9 @@ const frame = page.frameLocator("#panel");
 try {
   await page.goto(`http://127.0.0.1:${server.address().port}`);
   await frame
-    .getByRole("button", { name: scope.path.split("/").at(-1), exact: true })
+    .locator(".native-home__workflows li")
+    .filter({ hasText: "/" + scope.path })
+    .getByRole("button")
     .click();
   await expect(frame.getByTestId("workflow-recovery-save")).toBeVisible();
   await frame.getByTestId("workflow-recovery-view-code").click();
@@ -310,7 +316,21 @@ try {
         frame.getByTestId("workflow-recovery-inspector"),
       ).toBeVisible();
       await expect(frame.getByTestId("workflow-recovery-save")).toBeVisible();
+      await expect(
+        frame.getByRole("button", { name: /Results · 1\/1 available/ }),
+      ).toBeVisible();
+      const inspector = frame.getByTestId("workflow-recovery-inspector");
+      await expect(
+        inspector.getByText("Files produced in this run", { exact: true }),
+      ).toBeVisible();
+      await expect(inspector).toContainText(input.preview_filename);
+      await expect(inspector).not.toContainText(
+        "different saved workflow or an edited draft",
+      );
       await page.screenshot({ path: resolve(output, "producing-step.png") });
+      checks.push(
+        "Exact selected run supplies available results and producing-step files without a false source mismatch",
+      );
       await frame
         .getByRole("button", { name: "Run and results", exact: true })
         .click();
@@ -368,10 +388,10 @@ try {
     scope.workspace_id,
   );
   await expect(
-    frame.getByRole("button", {
-      name: scope.path.split("/").at(-1),
-      exact: true,
-    }),
+    frame
+      .locator(".native-home__workflows li")
+      .filter({ hasText: "/" + scope.path })
+      .getByRole("button"),
   ).toBeVisible();
   await expect(frame.getByText("Loading...", { exact: true })).toHaveCount(0);
   await expect(reopen).toBeVisible();
@@ -436,6 +456,7 @@ try {
   throw error;
 } finally {
   await browser.close();
+  server.closeAllConnections();
   await new Promise((done) => server.close(done));
   await mcp.close();
 }

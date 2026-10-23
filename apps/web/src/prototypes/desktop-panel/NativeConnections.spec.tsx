@@ -371,10 +371,13 @@ it("reopens an existing setup through reads only", async () => {
   );
   expect(await screen.findByText("Plan state: completed.")).toBeVisible();
   await waitFor(() =>
-    expect(
-      screen.getByRole("region", { name: "Provider sign-in" }),
-    ).toHaveFocus(),
+    expect(screen.getByRole("region", { name: "Setup plan" })).toHaveFocus(),
   );
+  expect(
+    screen.getByText("Sign-in and credential options").closest("details"),
+  ).not.toHaveAttribute("open");
+  expect(screen.queryByRole("checkbox")).toBeNull();
+  expect(screen.getByText("Sign-in and credential options")).toBeVisible();
   expect(call.mock.calls.map(([name]) => name)).toEqual([
     "wright_connections_list",
     "wright_connection_plans",
@@ -537,4 +540,29 @@ it("saved local setup shows the exact executable and literal arguments before ap
         name.endsWith("_read"),
     ),
   ).toBe(true);
+});
+
+it("keeps stale validation and uncertain compatibility visible without claiming readiness", async () => {
+  const data = enabledReply();
+  Object.assign(data.structuredContent.connections[0], {
+    local_validation: {
+      state: "stale",
+      observed_at: "2026-10-20",
+      evidence_id: "v1",
+      reason_codes: ["validation_evidence_expired"],
+    },
+    compatibility: { status: "uncertain", reasons: [] },
+  });
+  const call = vi.fn().mockResolvedValue(data);
+  render(<NativeConnections workspace={workspace} call={call} />);
+  expect(
+    await screen.findByText(
+      /Current readiness: unverified — last check expired. Host compatibility: uncertain/,
+    ),
+  ).toBeVisible();
+  expect(screen.getByText("Last checked: 2026-10-20.")).toBeVisible();
+  expect(
+    screen.getByText(/Authentication: no missing credentials reported/),
+  ).toBeVisible();
+  expect(call).toHaveBeenCalledTimes(1);
 });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NativeFileDownload } from "./NativeFileDownload";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
 
@@ -14,11 +14,16 @@ export function NativeFilePreview({
   path: string;
   onClose: () => void;
 }) {
+  const panel = useRef<HTMLElement>(null);
   const [preview, setPreview] = useState<{
     content?: string;
     reason?: string;
     digest?: string;
   }>();
+  useEffect(() => {
+    panel.current?.focus();
+    panel.current?.scrollIntoView?.({ block: "start" });
+  }, [path, preview]);
   useEffect(() => {
     let active = true;
     void call("wright_workspace_file_preview", {
@@ -62,8 +67,12 @@ export function NativeFilePreview({
     };
   }, [call, workspace.workspace_id, workspace.session_id, path]);
   return (
-    <section aria-label="File preview">
-      <h3>{path}</h3>
+    <section aria-label="File preview" ref={panel} tabIndex={-1}>
+      <h3>{path.split("/").at(-1)}</h3>
+      <details>
+        <summary>File location</summary>
+        <code style={{ overflowWrap: "anywhere" }}>{path}</code>
+      </details>
       <button type="button" onClick={onClose}>
         Close preview
       </button>

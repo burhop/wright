@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
 import type { RecordedRun } from "./NativeRecentRuns";
+import {
+  readNativeRecordedRun,
+  type NativeRecordedRun,
+} from "./native-recorded-run";
 import type { WorkspaceEngineeringResult } from "../../services/workspace-service";
 import { EngineeringResults } from "../workflow-recovery/EngineeringResults";
 import { NativeFileDownload } from "./NativeFileDownload";
 
-interface SavedRecord {
-  run_id: string;
-  source_digest: string;
-  source_matches_current: boolean;
-  status: string;
-  error?: string | null;
-  results: WorkspaceEngineeringResult[];
-}
 function allResults(
   results: WorkspaceEngineeringResult[],
 ): WorkspaceEngineeringResult[] {
@@ -31,38 +27,21 @@ export function NativeRunEvidence({
   run: Pick<RecordedRun, "run_id" | "source_digest">;
   call: HomeCall;
 }) {
-  const [record, setRecord] = useState<SavedRecord>();
+  const [record, setRecord] = useState<NativeRecordedRun>();
   const [error, setError] = useState(false);
   const [refresh, setRefresh] = useState(0);
   useEffect(() => {
     let current = true;
     setRecord(undefined);
     setError(false);
-    void call("wright_recorded_run_read", {
-      request: {
-        workspace_id: workspace.workspace_id,
-        session_id: workspace.session_id,
-        path,
-        run_id: run.run_id,
-        source_digest: run.source_digest,
-      },
+    void readNativeRecordedRun(call, {
+      workspace_id: workspace.workspace_id,
+      session_id: workspace.session_id,
+      path,
+      run_id: run.run_id,
+      source_digest: run.source_digest,
     })
-      .then((result) => {
-        const data = result.structuredContent;
-        const value = data?.record as SavedRecord | undefined;
-        if (
-          result.isError ||
-          data?.workspace_id !== workspace.workspace_id ||
-          data.session_id !== workspace.session_id ||
-          data.workflow_path !== path ||
-          !value ||
-          value.run_id !== run.run_id ||
-          value.source_digest !== run.source_digest ||
-          typeof value.source_matches_current !== "boolean" ||
-          typeof value.status !== "string" ||
-          !Array.isArray(value.results)
-        )
-          throw Error("Saved run identity differs");
+      .then((value) => {
         if (current) setRecord(value);
       })
       .catch(() => {

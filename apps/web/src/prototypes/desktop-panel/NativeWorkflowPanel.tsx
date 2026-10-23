@@ -1,6 +1,9 @@
 import { useState } from "react";
 import WorkflowRecoveryConcept from "../workflow-recovery/WorkflowRecoveryConcept";
-import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
+import type {
+  WorkspaceWorkflowRunSummary,
+  WorkspaceWorkflowSourceDocument,
+} from "../../services/workspace-service";
 import { NativeSourceClient } from "./native-source-client";
 import type { NativeEditorDraftClient } from "./native-editor-draft-client";
 import type { ProcessNavigationRequest } from "../../services/process-navigation";
@@ -20,6 +23,7 @@ export function NativeWorkflowPanel({
   onOpenTransfer,
   transferDisabled = false,
   navigation,
+  readOnlyRun,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly client: NativeSourceClient;
@@ -31,6 +35,7 @@ export function NativeWorkflowPanel({
   readonly onOpenTransfer?: () => void;
   readonly transferDisabled?: boolean;
   readonly navigation?: ProcessNavigationRequest;
+  readonly readOnlyRun?: WorkspaceWorkflowRunSummary;
 }) {
   const [document, setDocument] = useState(initial);
   const [unsaved, setUnsaved] = useState(false);
@@ -150,6 +155,7 @@ export function NativeWorkflowPanel({
           storageDigest={document.storage_digest}
           workspaceId={document.workspace_id}
           navigation={navigation}
+          readOnlyRun={readOnlyRun}
           reopenRequest={reopen}
           simulationPreview={false}
           onUnsavedChange={(dirty) => {

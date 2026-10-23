@@ -8,8 +8,12 @@ import {
   createProcessNavigationDispatcher,
   type ProcessNavigationRequest,
 } from "../../services/process-navigation";
-import type { WorkspaceWorkflowSourceDocument } from "../../services/workspace-service";
+import type {
+  WorkspaceWorkflowRunSummary,
+  WorkspaceWorkflowSourceDocument,
+} from "../../services/workspace-service";
 import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-authoring";
+import { readNativeRecordedRun } from "./native-recorded-run";
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
 import { NativeRunEvidence } from "./NativeRunEvidence";
@@ -114,6 +118,40 @@ export function NativePanelContent({
     view,
     onLocationChange,
   ]);
+  const evidenceKey = JSON.stringify([
+    process.workspace_id,
+    sessionId,
+    process.source_path,
+    process.source_digest,
+    run,
+  ]);
+  const [editorEvidence, setEditorEvidence] = useState<{
+    key: string;
+    record?: WorkspaceWorkflowRunSummary;
+    error?: boolean;
+  }>();
+  useEffect(() => {
+    if (view !== "editor" || !run || !readEvidence) return;
+    let current = true;
+    void readNativeRecordedRun(readEvidence, {
+      workspace_id: process.workspace_id,
+      session_id: sessionId,
+      path: process.source_path,
+      source_digest: process.source_digest,
+      run_id: run,
+    })
+      .then((record) => {
+        if (current) setEditorEvidence({ key: evidenceKey, record });
+      })
+      .catch(() => {
+        if (current) setEditorEvidence({ key: evidenceKey, error: true });
+      });
+    return () => {
+      current = false;
+    };
+  }, [view, run, readEvidence, process, sessionId, evidenceKey]);
+  const selectedEvidence =
+    editorEvidence?.key === evidenceKey ? editorEvidence : undefined;
   const transfer = useMemo(
     () =>
       transferCall
@@ -336,11 +374,19 @@ export function NativePanelContent({
           height: "100%",
         }}
       >
+        {run && !selectedEvidence?.record && (
+          <p role="status">
+            {selectedEvidence?.error || !readEvidence
+              ? "Selected run evidence could not be read. Return to Run and results to inspect it."
+              : "Reading selected run evidence…"}
+          </p>
+        )}
         <NativeWorkflowPanel
           initial={initial}
           client={sourceClient}
           draftClient={draftClient}
           navigation={navigation}
+          readOnlyRun={selectedEvidence?.record}
           workspaceName={workspaceName}
           onOpenTransfer={
             transfer && onOpenTransferred ? openTransfer : undefined

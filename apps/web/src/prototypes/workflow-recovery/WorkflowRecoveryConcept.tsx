@@ -226,6 +226,8 @@ export interface WorkflowRecoveryConceptProps {
   readonly workflowFilePath?: string;
   readonly reopenRequest?: number;
   readonly navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
+  /** Exact host-selected recorder evidence; grants no execution capabilities. */
+  readonly readOnlyRun?: WorkspaceWorkflowRunSummary;
   readonly workflowLayout?: RecoveryLayout;
   readonly workspaceSessionId?: string;
   readonly workspaceId?: string;
@@ -1787,6 +1789,7 @@ function WorkflowRecoveryDocument({
   workflowFilePath = "workflows/mounting-bracket.workflow.wflow",
   reopenRequest = 0,
   navigation,
+  readOnlyRun,
   workflowLayout,
   workspaceSessionId,
   workspaceId,
@@ -1930,6 +1933,7 @@ function WorkflowRecoveryDocument({
       workflowFilePath={workflowFilePath}
       reopenRequest={reopenRequest}
       navigation={navigation}
+      readOnlyRun={readOnlyRun}
       workflowLayout={workflowLayout}
       workspaceSessionId={workspaceSessionId}
       workspaceId={workspaceId}
@@ -2431,6 +2435,8 @@ interface WorkflowRecoveryReadyConceptProps {
   readonly workflowFilePath: string;
   readonly reopenRequest: number;
   readonly navigation?: import("../../services/process-navigation").ProcessNavigationRequest;
+  /** Exact host-selected recorder evidence; grants no execution capabilities. */
+  readonly readOnlyRun?: WorkspaceWorkflowRunSummary;
   readonly workflowLayout?: RecoveryLayout;
   readonly workspaceSessionId?: string;
   readonly workspaceId?: string;
@@ -2470,6 +2476,7 @@ function WorkflowRecoveryReadyConcept({
   workflowFilePath,
   reopenRequest,
   navigation,
+  readOnlyRun,
   workflowLayout,
   workspaceSessionId,
   workspaceId,
@@ -2656,15 +2663,17 @@ function WorkflowRecoveryReadyConcept({
     workflowFilePath,
     `${reopenRequest}-${nativeRunCompletedAt}`,
   );
-  const observed = preferObservedRun(observer.record, {
-    pending: workflowRunPending,
-    startedAt: nativeRunStartedAt,
-    logPath: nativeRunLogPath || workflowRun?.runLogPath || "",
-    hasResult: Boolean(workflowRun),
-    status: workflowRun?.status,
-  })
-    ? observer.record
-    : null;
+  const observed =
+    (!onRun && readOnlyRun) ||
+    (preferObservedRun(observer.record, {
+      pending: workflowRunPending,
+      startedAt: nativeRunStartedAt,
+      logPath: nativeRunLogPath || workflowRun?.runLogPath || "",
+      hasResult: Boolean(workflowRun),
+      status: workflowRun?.status,
+    })
+      ? observer.record
+      : null);
   const recordedRun = useMemo<WorkflowRecoveryRunResult | null>(() => {
     if (!observed)
       return workflowRun &&
@@ -5059,13 +5068,15 @@ function WorkflowRecoveryReadyConcept({
                     observed?.execution?.outputs ?? presentedRun?.outputs ?? []
                   }
                   sourceMismatch={
-                    observedSourceMismatch ||
-                    candidateSelection ||
-                    semanticDirty ||
-                    sourceDirty ||
-                    (!observed &&
-                      nativeRunInput?.storageDigest !==
-                        persistedSubject?.storageDigest)
+                    Boolean(observed || nativeRunInput) &&
+                    (observedSourceMismatch ||
+                      candidateSelection ||
+                      semanticDirty ||
+                      sourceDirty ||
+                      (!observed &&
+                        nativeRunInput !== null &&
+                        nativeRunInput.storageDigest !==
+                          persistedSubject?.storageDigest))
                   }
                   onOpenFile={onOpenFile}
                 />

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
+import { NativeSourceClient } from "./native-source-client";
+import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-authoring";
 import { NativeFilePreview } from "./NativeFilePreview";
 import { NativeFileUpload } from "./NativeFileUpload";
 import { NativeWorkspaceSettings } from "./NativeWorkspaceSettings";
@@ -34,6 +36,7 @@ export type HomeCall = (
     | "wright_workspace_create"
     | "wright_workspace_settings_read"
     | "wright_workspace_settings_save"
+    | "wright_workflow_read"
     | "wright_workflow_create"
     | "wright_workflow_templates"
     | "wright_workflow_template_create"
@@ -127,6 +130,8 @@ export function NativeHomePanel({
   );
   const [selected, setSelected] = useState<DesktopWorkspace>();
   const [files, setFiles] = useState<FileNode[]>([]);
+  const [titles, setTitles] = useState<Record<string, string>>({});
+  const previewOpener = useRef<HTMLButtonElement | null>(null);
   const [loading, setLoading] = useState(true);
   const [opening, setOpening] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -155,11 +160,57 @@ export function NativeHomePanel({
       file.path.replace(/^\//, "").startsWith("workflows/") &&
       file.path.endsWith(".wflow"),
   );
+  const normalized = (text: string) =>
+    text.toLocaleLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+  const workflowName = (file: FileNode) =>
+    titles[file.path] ??
+    file.name.replace(/(?:\.workflow)?\.wflow$/, "").replace(/[-_]+/g, " ");
   const matchingWorkflows = workflowFiles.filter((file) =>
-    file.path
-      .toLocaleLowerCase()
-      .includes(workflowQuery.trim().toLocaleLowerCase()),
+    normalized(`${workflowName(file)} ${file.path}`).includes(
+      normalized(workflowQuery),
+    ),
   );
+  useEffect(() => {
+    if (!selected) return;
+    let active = true;
+    const workflows = files.filter(
+      (file) =>
+        file.path.replace(/^\//, "").startsWith("workflows/") &&
+        file.path.endsWith(".wflow"),
+    );
+    void (async () => {
+      for (let offset = 0; active && offset < workflows.length; offset += 4) {
+        await Promise.all(
+          workflows.slice(offset, offset + 4).map(async (file) => {
+            try {
+              const client = new NativeSourceClient(
+                {
+                  workspaceId: selected.workspace_id,
+                  sessionId: selected.session_id,
+                  path: file.path.replace(/^\//, ""),
+                },
+                (name, args) => {
+                  if (name !== "wright_workflow_read")
+                    throw Error("Title lookup is read only");
+                  return call(name, args);
+                },
+              );
+              const title = recoveryWorkflowSourceTitle(
+                (await client.read()).source,
+              );
+              if (active && title)
+                setTitles((current) => ({ ...current, [file.path]: title }));
+            } catch {
+              /* An unavailable source keeps its exact filename fallback. */
+            }
+          }),
+        );
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [files, selected, call]);
   const recentWorkflow =
     selected?.workspace_id === lastLocation?.workspace_id &&
     selected?.session_id === lastLocation?.session_id
@@ -206,6 +257,7 @@ export function NativeHomePanel({
       setSelected(workspace);
       onSelect?.(workspace);
       setFiles([]);
+      setTitles({});
       setPreviewPath(undefined);
       setFileQuery("");
       setWorkflowQuery("");
@@ -424,11 +476,13 @@ export function NativeHomePanel({
               }}
             >
               Reopen{" "}
-              {recentWorkflow.path
-                .split("/")
-                .at(-1)
-                ?.replace(/(?:\.workflow)?\.wflow$/, "")
-                .replace(/[-_]+/g, " ")}
+              {titles["/" + recentWorkflow.path] ??
+                titles[recentWorkflow.path] ??
+                recentWorkflow.path
+                  .split("/")
+                  .at(-1)
+                  ?.replace(/(?:\.workflow)?\.wflow$/, "")
+                  .replace(/[-_]+/g, " ")}
               {recentWorkflow.view === "working" ? " · Run and results" : ""}
             </button>
             {recentWorkflow.run_id && (
@@ -482,6 +536,7 @@ export function NativeHomePanel({
             workspace={selected}
             paths={workflowFiles.map((file) => file.path.replace(/^\//, ""))}
             initialPath={recentWorkflow?.path}
+            titles={titles}
             call={call}
             onOpen={
               onOpenRun
@@ -538,9 +593,10 @@ export function NativeHomePanel({
                   <li key={file.path}>
                     <button
                       type="button"
-                      onClick={() =>
-                        setPreviewPath(file.path.replace(/^\//, ""))
-                      }
+                      onClick={(event) => {
+                        previewOpener.current = event.currentTarget;
+                        setPreviewPath(file.path.replace(/^\//, ""));
+                      }}
                     >
                       {file.name}
                     </button>
@@ -558,7 +614,10 @@ export function NativeHomePanel({
                 call={call}
                 workspace={selected}
                 path={previewPath}
-                onClose={() => setPreviewPath(undefined)}
+                onClose={() => {
+                  setPreviewPath(undefined);
+                  previewOpener.current?.focus();
+                }}
               />
             )}
           </section>
@@ -630,7 +689,7 @@ export function NativeHomePanel({
               {matchingWorkflows.map((file) => (
                 <li key={file.path}>
                   <button
-                    aria-label={file.name}
+                    aria-label={titles[file.path] ?? file.name}
                     disabled={loading || creating}
                     onClick={() => {
                       setLoading(true);
@@ -649,9 +708,7 @@ export function NativeHomePanel({
                         });
                     }}
                   >
-                    {file.name
-                      .replace(/(?:\.workflow)?\.wflow$/, "")
-                      .replace(/[-_]+/g, " ")}
+                    {workflowName(file)}
                     <span aria-hidden="true" className="native-home__open-hint">
                       Open →
                     </span>

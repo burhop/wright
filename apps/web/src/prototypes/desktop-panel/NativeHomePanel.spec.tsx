@@ -8,9 +8,17 @@ import {
   waitFor,
 } from "@testing-library/react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { NativeHomePanel } from "./NativeHomePanel";
+import { NativeHomePanel, type HomeCall } from "./NativeHomePanel";
 
 afterEach(cleanup);
+// Existing navigation fixtures deliberately omit source bodies. Title reads are
+// independently tested below and must not consume sequenced navigation replies.
+const withoutTitles =
+  (call: HomeCall): HomeCall =>
+  (name, args) =>
+    name === "wright_workflow_read"
+      ? Promise.resolve({ isError: true, content: [] })
+      : call(name, args);
 const alpha = {
   workspace_id: "a",
   session_id: "a-chat",
@@ -72,7 +80,11 @@ it("lists and filters workspace files without opening or executing them", async 
     );
   const onOpen = vi.fn();
   render(
-    <NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />,
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={onOpen}
+      initialSelection={alpha}
+    />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
   expect(screen.queryByRole("button", { name: "uploaded.wflow" })).toBeNull();
@@ -101,7 +113,7 @@ it("opens a selected workflow with the exact workspace and desktop session", asy
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
     .mockResolvedValueOnce(files(alpha, "part.wflow"));
   const onOpen = vi.fn().mockResolvedValue(undefined);
-  render(<NativeHomePanel call={call} onOpen={onOpen} />);
+  render(<NativeHomePanel call={withoutTitles(call)} onOpen={onOpen} />);
   await screen.findByRole("option", { name: "Alpha" });
   fireEvent.change(screen.getByLabelText("Workspace"), {
     target: { value: "a" },
@@ -131,7 +143,7 @@ it("offers the remembered exact location only in its workspace and reopens only 
   };
   render(
     <NativeHomePanel
-      call={call}
+      call={withoutTitles(call)}
       onOpen={vi.fn()}
       initialSelection={alpha}
       lastLocation={{
@@ -167,7 +179,13 @@ it("creates once and selects only the discovered exact workspace/session", async
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
     .mockResolvedValueOnce(files(alpha, "part.wflow"));
   const onSelect = vi.fn();
-  render(<NativeHomePanel call={call} onOpen={vi.fn()} onSelect={onSelect} />);
+  render(
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={vi.fn()}
+      onSelect={onSelect}
+    />,
+  );
   await screen.findByText(/No Wright workspaces yet/);
   fireEvent.click(screen.getByRole("button", { name: "New workspace" }));
   fireEvent.change(screen.getByLabelText("Workspace name"), {
@@ -189,7 +207,7 @@ it("does not repeat uncertain creation and allows read-only discovery", async ()
     .mockResolvedValueOnce(result({ workspaces: [] }))
     .mockRejectedValueOnce(new Error("lost acknowledgement"))
     .mockResolvedValueOnce(result({ workspaces: [alpha] }));
-  render(<NativeHomePanel call={call} onOpen={vi.fn()} />);
+  render(<NativeHomePanel call={withoutTitles(call)} onOpen={vi.fn()} />);
   await screen.findByText(/No Wright workspaces yet/);
   fireEvent.click(screen.getByRole("button", { name: "New workspace" }));
   fireEvent.change(screen.getByLabelText("Workspace name"), {
@@ -220,7 +238,7 @@ it("ignores a previous workspace's late file response", async () => {
         }),
     )
     .mockResolvedValueOnce(files(beta, "beta.wflow"));
-  render(<NativeHomePanel call={call} onOpen={vi.fn()} />);
+  render(<NativeHomePanel call={withoutTitles(call)} onOpen={vi.fn()} />);
   await screen.findByRole("option", { name: "Beta" });
   fireEvent.change(screen.getByLabelText("Workspace"), {
     target: { value: "a" },
@@ -243,7 +261,7 @@ it("rejects mismatched file scope instead of displaying another workspace", asyn
     .fn()
     .mockResolvedValueOnce(result({ workspaces: [alpha] }))
     .mockResolvedValueOnce(files(beta, "private.wflow"));
-  render(<NativeHomePanel call={call} onOpen={vi.fn()} />);
+  render(<NativeHomePanel call={withoutTitles(call)} onOpen={vi.fn()} />);
   await screen.findByRole("option", { name: "Alpha" });
   fireEvent.change(screen.getByLabelText("Workspace"), {
     target: { value: "a" },
@@ -257,7 +275,7 @@ it("rejects mismatched file scope instead of displaying another workspace", asyn
 
 it("reports a failed workspace load separately from an empty catalog", async () => {
   const call = vi.fn().mockResolvedValue({ isError: true, content: [] });
-  render(<NativeHomePanel call={call} onOpen={vi.fn()} />);
+  render(<NativeHomePanel call={withoutTitles(call)} onOpen={vi.fn()} />);
   expect(await screen.findByRole("alert")).toHaveTextContent(
     "could not be refreshed",
   );
@@ -280,7 +298,7 @@ it("keeps unavailable workspaces visible and does not automatically open anythin
     }),
   );
   const onOpen = vi.fn();
-  render(<NativeHomePanel call={call} onOpen={onOpen} />);
+  render(<NativeHomePanel call={withoutTitles(call)} onOpen={onOpen} />);
   expect(
     await screen.findByRole("option", { name: "Alpha — unavailable" }),
   ).toBeDisabled();
@@ -295,7 +313,11 @@ it("restores the exact prior workspace/session without opening a workflow", asyn
     .mockResolvedValueOnce(files(beta, "part.wflow"));
   const onOpen = vi.fn();
   render(
-    <NativeHomePanel call={call} onOpen={onOpen} initialSelection={beta} />,
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={onOpen}
+      initialSelection={beta}
+    />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
   expect(screen.getByLabelText("Workspace")).toHaveValue("b");
@@ -309,7 +331,11 @@ it("does not redirect a restored selection to a replacement desktop session", as
       result({ workspaces: [{ ...alpha, session_id: "replacement" }] }),
     );
   render(
-    <NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />,
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={vi.fn()}
+      initialSelection={alpha}
+    />,
   );
   await screen.findByRole("option", { name: "Alpha" });
   expect(screen.getByLabelText("Workspace")).toHaveValue("");
@@ -325,7 +351,11 @@ it("refreshes the exact selected scope while keeping the Files view", async () =
     .mockResolvedValueOnce(files(alpha, "after.wflow"));
   const onOpen = vi.fn();
   render(
-    <NativeHomePanel call={call} onOpen={onOpen} initialSelection={alpha} />,
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={onOpen}
+      initialSelection={alpha}
+    />,
   );
   await screen.findByRole("button", { name: "before.wflow" });
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
@@ -352,7 +382,11 @@ it("does not redirect refreshed selection to a changed session", async () => {
       result({ workspaces: [{ ...alpha, session_id: "replacement" }, beta] }),
     );
   render(
-    <NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />,
+    <NativeHomePanel
+      call={withoutTitles(call)}
+      onOpen={vi.fn()}
+      initialSelection={alpha}
+    />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
   fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
@@ -374,7 +408,7 @@ it("restores the requested view only after reconciling the exact workspace/sessi
   const onNavigate = vi.fn();
   render(
     <NativeHomePanel
-      call={call}
+      call={withoutTitles(call)}
       onOpen={vi.fn()}
       initialSelection={beta}
       initialView="files"
@@ -389,4 +423,44 @@ it("restores the requested view only after reconciling the exact workspace/sessi
   });
   fireEvent.click(screen.getByRole("button", { name: "Recent runs" }));
   expect(onNavigate).toHaveBeenCalledExactlyOnceWith("runs");
+});
+
+it("displays the accepted title, searches title and normalized filename, and retains the exact path", async () => {
+  const path = "workflows/untitled-block_preview-recovery.workflow.wflow";
+  const call = vi.fn(async (name: string) =>
+    name === "wright_workspace_list"
+      ? result({ workspaces: [alpha] })
+      : name === "wright_workspace_files"
+        ? files(alpha, path.split("/").at(-1)!)
+        : result({
+            workspace_id: "a",
+            path,
+            source: 'workflow recovery\n  name: "Named inspection"\nend',
+            metadata_authority: "wright_host",
+            storage_revision: 1,
+            definition_revision: 1,
+            storage_digest: "a".repeat(64),
+          }),
+  );
+  const open = vi.fn().mockResolvedValue(undefined);
+  render(
+    <NativeHomePanel call={call} onOpen={open} initialSelection={alpha} />,
+  );
+  await screen.findByRole("button", { name: "Named inspection" });
+  for (const query of [
+    "named inspection",
+    "block preview recovery",
+    "block_preview-recovery",
+  ]) {
+    fireEvent.change(screen.getByLabelText("Find a workflow"), {
+      target: { value: query },
+    });
+    expect(
+      screen.getByRole("button", { name: "Named inspection" }),
+    ).toBeVisible();
+  }
+  fireEvent.click(screen.getByText("File location"));
+  expect(screen.getByText("/" + path)).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Named inspection" }));
+  await waitFor(() => expect(open).toHaveBeenCalledWith(alpha, path));
 });

@@ -17,12 +17,14 @@ export function NativeRecentRuns({
   call,
   onOpen,
   initialPath,
+  titles,
 }: {
   readonly workspace: DesktopWorkspace;
   readonly paths: string[];
   readonly call: HomeCall;
   readonly onOpen?: (path: string, run: RecordedRun) => Promise<void>;
   readonly initialPath?: string;
+  readonly titles?: Readonly<Record<string, string>>;
 }) {
   const [path, setPath] = useState(
     initialPath && paths.includes(initialPath) ? initialPath : "",
@@ -83,11 +85,13 @@ export function NativeRecentRuns({
       <h2>{selectedWorkflowOnly ? "Run history" : "Recent runs"}</h2>
       {selectedWorkflowOnly ? (
         <p>
-          {initialPath
-            .split("/")
-            .at(-1)
-            ?.replace(/(?:\.workflow)?\.wflow$/, "")
-            .replace(/[-_]+/g, " ")}
+          {titles?.[initialPath] ??
+            titles?.["/" + initialPath] ??
+            initialPath
+              .split("/")
+              .at(-1)
+              ?.replace(/(?:\.workflow)?\.wflow$/, "")
+              .replace(/[-_]+/g, " ")}
         </p>
       ) : (
         <>
@@ -107,11 +111,13 @@ export function NativeRecentRuns({
             </option>
             {paths.map((value) => (
               <option key={value} value={value}>
-                {value
-                  .split("/")
-                  .at(-1)
-                  ?.replace(/(?:\.workflow)?\.wflow$/, "")
-                  .replace(/[-_]+/g, " ")}
+                {titles?.[value] ??
+                  titles?.["/" + value] ??
+                  value
+                    .split("/")
+                    .at(-1)
+                    ?.replace(/(?:\.workflow)?\.wflow$/, "")
+                    .replace(/[-_]+/g, " ")}
               </option>
             ))}
           </select>

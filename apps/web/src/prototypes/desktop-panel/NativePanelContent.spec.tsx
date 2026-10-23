@@ -38,6 +38,9 @@ vi.mock("./NativeWorkflowPanel", () => ({
     const [draft, setDraft] = useState("");
     return (
       <section aria-label="Editor">
+        {props.readOnlyRun && (
+          <span>Attached evidence: {props.readOnlyRun.run_id}</span>
+        )}
         {props.navigation && (
           <span>
             Focused {props.navigation.resolution.target.block_id ?? "process"}
@@ -396,6 +399,7 @@ it("opens exact recorded run details using the existing read-only evidence view"
       session_id: "session",
       workflow_path: original.path,
       record: {
+        path: "runs/demo/retained.json",
         run_id: "retained-run",
         source_digest: original.storage_digest,
         source_matches_current: true,
@@ -484,3 +488,47 @@ it("does not enable a working view when its runtime capability is absent", () =>
   expect(call).not.toHaveBeenCalled();
   expect(read).not.toHaveBeenCalled();
 });
+
+it.each([false, true])(
+  "attaches only the exact selected recorder identity (foreign=%s), without execution",
+  async (foreign) => {
+    const readEvidence = vi.fn().mockResolvedValue({
+      content: [],
+      structuredContent: {
+        workspace_id: original.workspace_id,
+        session_id: "session",
+        workflow_path: original.path,
+        record: {
+          run_id: foreign ? "other-run" : "retained-run",
+          path: "runs/test/retained-run.json",
+          source_digest: original.storage_digest,
+          source_matches_current: true,
+          status: "completed",
+          results: [],
+        },
+      },
+    });
+    const { call } = setup({
+      initialView: "editor",
+      initialRunId: "retained-run",
+      readEvidence,
+    });
+    if (foreign) {
+      await screen.findByText(/Selected run evidence could not be read/);
+      expect(screen.queryByText(/Attached evidence:/)).toBeNull();
+    } else await screen.findByText("Attached evidence: retained-run");
+    expect(readEvidence).toHaveBeenCalledExactlyOnceWith(
+      "wright_recorded_run_read",
+      {
+        request: {
+          workspace_id: original.workspace_id,
+          session_id: "session",
+          path: original.path,
+          run_id: "retained-run",
+          source_digest: original.storage_digest,
+        },
+      },
+    );
+    expect(call).not.toHaveBeenCalled();
+  },
+);
