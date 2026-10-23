@@ -372,7 +372,7 @@ def test_worker_has_no_generic_invocation_shape(sdk, extra):
     assert sdk.calls == []
 
 
-@pytest.mark.parametrize("shape", ["mapping", "namespace", "model_dump"])
+@pytest.mark.parametrize("shape", ["mapping", "namespace", "model_dump", "dump_only"])
 def test_workflow_usage_keeps_only_observed_public_counters(sdk, shape):
     from agent_adapters.report_generation import _model_usage
     from core.redaction import redact_evidence
@@ -389,6 +389,8 @@ def test_workflow_usage_keeps_only_observed_public_counters(sdk, shape):
         usage = values
     elif shape == "namespace":
         usage = SimpleNamespace(**values)
+    elif shape == "dump_only":
+        usage = SimpleNamespace(model_dump=lambda *, mode: values)
     else:
         from pydantic import BaseModel, ConfigDict
 

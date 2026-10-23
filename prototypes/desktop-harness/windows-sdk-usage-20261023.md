@@ -35,7 +35,7 @@ The synthetic reproduction on dev3a77e1b4 failed all three response-shape cases:
 missing mapping/namespace usage and arbitrary extra fields in the Pydantic dump.
 After the repair,101 focused worker, SDK, evidence and timeout checks pass,
 including two real-worker-to-response cases with no invented total and preserved
-public counters after the shared evidence redactor. The full native adapter suite passes493 tests with21 existing skips. A restricted
+public counters after the shared evidence redactor. The initial repair's full native adapter suite passed493 tests with21 existing skips. A restricted
 sandbox stalls the existing async health wakeup test; the same two tests pass
 natively in0.41 seconds, and that stalled run/diagnostic are retained.
 
@@ -43,7 +43,10 @@ The first full merge gate passed both dependency audits and the exact image scan
 then rejected the deliberately fake credential canary in a new fixture. The
 fixture now uses the repository's established `test-secret` value; no scanner
 rule or exception changed.59 affected worker/SDK tests pass with that correction.
-The complete corrected gate, GitHub delivery and Windows live acceptance remain
-pending.
+A final compatibility case also retains the old serializer-only `model_dump`
+shape while filtering its extras;60 affected worker/SDK checks pass. Locked Node
+dependencies are installed in this isolated worktree after a missing-install
+preflight failure. The complete corrected gate, GitHub delivery and Windows live
+acceptance remain pending.
 Private local receipts are under `.local-run/sdk-usage-20261023/` in this worktree.
 No existing user state, profile, service or engineering document changed.

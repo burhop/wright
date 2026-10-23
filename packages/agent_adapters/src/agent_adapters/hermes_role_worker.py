@@ -77,6 +77,9 @@ def initialize_sdk_profile():
 
 def public_usage(usage):
     """Project reported counters only; never serialize arbitrary SDK attributes."""
+    dump = getattr(usage, "model_dump", None)
+    if callable(dump):
+        usage = dump(mode="json")
 
     def field(value, name):
         return (
