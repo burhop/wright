@@ -132,6 +132,7 @@ export function NativeHomePanel({
   const [files, setFiles] = useState<FileNode[]>([]);
   const [titles, setTitles] = useState<Record<string, string>>({});
   const [purposes, setPurposes] = useState<Record<string, string>>({});
+  const [readingWorkflowNames, setReadingWorkflowNames] = useState(false);
   const previewOpener = useRef<HTMLButtonElement | null>(null);
   const [loading, setLoading] = useState(true);
   const [opening, setOpening] = useState(false);
@@ -180,6 +181,8 @@ export function NativeHomePanel({
         file.path.endsWith(".wflow"),
     );
     void (async () => {
+      const savedTitles: Record<string, string> = {};
+      const savedPurposes: Record<string, string> = {};
       for (let offset = 0; active && offset < workflows.length; offset += 4) {
         await Promise.all(
           workflows.slice(offset, offset + 4).map(async (file) => {
@@ -201,19 +204,19 @@ export function NativeHomePanel({
               );
               if (active && summary) {
                 const { title, purpose } = summary;
-                if (title)
-                  setTitles((current) => ({ ...current, [file.path]: title }));
-                if (purpose)
-                  setPurposes((current) => ({
-                    ...current,
-                    [file.path]: purpose,
-                  }));
+                if (title) savedTitles[file.path] = title;
+                if (purpose) savedPurposes[file.path] = purpose;
               }
             } catch {
               /* An unavailable source keeps its exact filename fallback. */
             }
           }),
         );
+      }
+      if (active) {
+        setTitles(savedTitles);
+        setPurposes(savedPurposes);
+        setReadingWorkflowNames(false);
       }
     })();
     return () => {
@@ -268,6 +271,7 @@ export function NativeHomePanel({
       setFiles([]);
       setTitles({});
       setPurposes({});
+      setReadingWorkflowNames(false);
       setPreviewPath(undefined);
       setFileQuery("");
       setWorkflowQuery("");
@@ -287,7 +291,15 @@ export function NativeHomePanel({
           !data.tree
         )
           throw new Error("Workspace scope differs.");
-        setFiles(workspaceFiles(data.tree as FileNode));
+        const visibleFiles = workspaceFiles(data.tree as FileNode);
+        setReadingWorkflowNames(
+          visibleFiles.some(
+            (file) =>
+              file.path.replace(/^\//, "").startsWith("workflows/") &&
+              file.path.endsWith(".wflow"),
+          ),
+        );
+        setFiles(visibleFiles);
       } catch {
         if (request === generation.current)
           setError(
@@ -691,11 +703,25 @@ export function NativeHomePanel({
               </p>
             )}
             {!loading &&
+              !readingWorkflowNames &&
               workflowFiles.length > 0 &&
               matchingWorkflows.length === 0 && (
                 <p>No workflows match this search.</p>
               )}
-            <ul className="native-home__workflows">
+            {readingWorkflowNames && (
+              <p role="status">Reading saved workflow names…</p>
+            )}
+            {!readingWorkflowNames &&
+              workflowFiles.length > Object.keys(titles).length && (
+                <p role="status">
+                  Some saved names are unavailable. Filenames are shown; Refresh
+                  to retry.
+                </p>
+              )}
+            <ul
+              className="native-home__workflows"
+              hidden={readingWorkflowNames}
+            >
               {matchingWorkflows.map((file) => (
                 <li key={file.path}>
                   <button

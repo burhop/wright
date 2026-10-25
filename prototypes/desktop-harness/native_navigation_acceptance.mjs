@@ -22,6 +22,13 @@ const input = JSON.parse(readFileSync(process.argv[3], "utf8"));
 const deviceScaleFactor = input.device_scale_factor ?? 1;
 if (![1, 1.25, 1.5, 2].includes(deviceScaleFactor))
   throw Error("Use a supported bounded display scale");
+const nameLookupDelay = input.name_lookup_delay_ms ?? 0;
+if (
+  !Number.isInteger(nameLookupDelay) ||
+  nameLookupDelay < 0 ||
+  nameLookupDelay > 2000
+)
+  throw Error("Name lookup delay must be between zero and two seconds");
 const output = resolve(process.argv[4]);
 mkdirSync(output); // Never overwrite an earlier receipt.
 const scope = input.scope;
@@ -163,6 +170,8 @@ const server = createServer(async (req, res) => {
     }
     if (name === "wright_recorded_run_read" && request.run_id !== input.run_id)
       throw Error("Qualification saved run differs");
+    if (name === "wright_workflow_read" && nameLookupDelay)
+      await new Promise((done) => setTimeout(done, nameLookupDelay));
     const result = await mcp.callTool({ name, arguments: args });
     calls.push({ name, arguments: args, is_error: !!result.isError });
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -197,6 +206,30 @@ try {
   await expect(frame.getByLabel("Workspace", { exact: true })).toHaveValue(
     scope.workspace_id,
   );
+  if (nameLookupDelay) {
+    await expect(
+      frame.getByText("Reading saved workflow names…", { exact: true }),
+    ).toBeVisible();
+    await frame
+      .getByLabel("Find a workflow", { exact: true })
+      .fill(input.search_while_loading ?? "");
+    await expect(
+      frame.getByText("No workflows match this search.", { exact: true }),
+    ).toHaveCount(0);
+    await expect(frame.locator(".native-home__workflows")).not.toBeVisible();
+    await page.screenshot({
+      path: resolve(output, "reading-workflow-names.png"),
+    });
+    checks.push(
+      "Delayed metadata explains loading; no temporary filename or false empty search is presented",
+    );
+  }
+  await expect(
+    frame
+      .locator(".native-home__workflows li")
+      .filter({ hasText: "/" + scope.path })
+      .getByRole("button"),
+  ).toBeVisible();
   await page.screenshot({ path: resolve(output, "home.png") });
   await frame
     .locator(".native-home__workflows li")
@@ -471,6 +504,7 @@ try {
         status: "passed",
         boundary:
           "Real Wright MCP/storage; simulated desktop host, not native OpenAI desktop acceptance",
+        name_lookup_delay_ms: nameLookupDelay,
         host: {
           platform: platform(),
           architecture: arch(),

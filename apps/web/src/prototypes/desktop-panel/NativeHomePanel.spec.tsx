@@ -1,6 +1,7 @@
 // Controlled component checks; actual installed desktop rendering is separate.
 import { afterEach, expect, it, vi } from "vitest";
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -87,6 +88,11 @@ it("lists and filters workspace files without opening or executing them", async 
     />,
   );
   await screen.findByRole("button", { name: "part.wflow" });
+  expect(
+    screen.getByText(
+      "Some saved names are unavailable. Filenames are shown; Refresh to retry.",
+    ),
+  ).toBeVisible();
   expect(screen.queryByRole("button", { name: "uploaded.wflow" })).toBeNull();
   expect(screen.queryByText("plate.step")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Files" }));
@@ -468,4 +474,53 @@ it("displays the accepted title, searches title and normalized filename, and ret
   expect(screen.getByText("/" + path)).toBeVisible();
   fireEvent.click(screen.getByRole("button", { name: "Named inspection" }));
   await waitFor(() => expect(open).toHaveBeenCalledWith(alpha, path));
+});
+
+it("explains pending saved names instead of exposing a temporary filename or false empty search", async () => {
+  const path = "workflows/opaque-file.workflow.wflow";
+  let finish!: (value: CallToolResult) => void;
+  const pending = new Promise<CallToolResult>((resolve) => {
+    finish = resolve;
+  });
+  const call = vi.fn(async (name: string) =>
+    name === "wright_workspace_list"
+      ? result({ workspaces: [alpha] })
+      : name === "wright_workspace_files"
+        ? files(alpha, "opaque-file.workflow.wflow")
+        : pending,
+  );
+  render(
+    <NativeHomePanel call={call} onOpen={vi.fn()} initialSelection={alpha} />,
+  );
+  await screen.findByText("Reading saved workflow names…");
+  fireEvent.change(screen.getByLabelText("Find a workflow"), {
+    target: { value: "Inspect robot tracking" },
+  });
+  expect(
+    screen.queryByText("No workflows match this search."),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: "opaque-file.workflow.wflow" }),
+  ).not.toBeInTheDocument();
+  await act(async () =>
+    finish(
+      result({
+        workspace_id: "a",
+        path,
+        source:
+          'workflow recovery\n  name: "Inspect robot tracking"\n  purpose: "Compare measured deviations"\nend',
+        metadata_authority: "wright_host",
+        storage_revision: 1,
+        definition_revision: 1,
+        storage_digest: "a".repeat(64),
+      }),
+    ),
+  );
+  expect(
+    await screen.findByRole("button", { name: "Inspect robot tracking" }),
+  ).toBeVisible();
+  expect(screen.getByText("Compare measured deviations")).toBeVisible();
+  expect(
+    screen.queryByText("Reading saved workflow names…"),
+  ).not.toBeInTheDocument();
 });
