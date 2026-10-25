@@ -54,7 +54,7 @@ export function NativeWorkflowPanel({
         </span>
         <nav className="native-workflow-views" aria-label="Workflow views">
           <button type="button" aria-current="page">
-            Workflow
+            Edit workflow
           </button>
           {onOpenWorkingView && (
             <button
@@ -81,6 +81,14 @@ export function NativeWorkflowPanel({
         {!onOpenWorkingView && (
           <small>
             Run controls are not connected in this editor prototype.
+          </small>
+        )}
+        {onOpenWorkingView && (
+          <small className="native-workflow-panel__view-hint">
+            {readOnlyRun
+              ? `Inspecting run ${readOnlyRun.run_id ?? "record"} · ${readOnlyRun.status.replaceAll("_", " ")}. Return to Run and results for its outputs.`
+              : "Editing the workflow · no run selected. Open Run and results to check inputs or inspect run history."}
+            {unsaved && " Save your changes before switching views."}
           </small>
         )}
       </header>

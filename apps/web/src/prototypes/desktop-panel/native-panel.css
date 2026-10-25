@@ -31,6 +31,7 @@
 .native-workflow-panel__context small {
   flex-basis: 100%;
   color: var(--color-text-muted);
+  overflow-wrap: anywhere;
 }
 .native-workflow-panel__context > button {
   min-height: 32px;
@@ -92,7 +93,7 @@
   --color-text-muted: inherit;
   --color-border: inherit;
   --color-border-hover: inherit;
-  --font-ui: inherit;
+  --font-ui: var(--native-host-font, system-ui, sans-serif);
   --color-secondary: var(--color-primary);
 }
 .native-workflow-panel__editor {
@@ -191,6 +192,27 @@
 }
 .native-home .native-home__workflows small {
   font-size: 12px;
+}
+.native-home__workflow-purpose {
+  margin: 0 0 5px;
+  color: var(--native-host-muted, #aaa);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.native-connections__items > li {
+  padding: 12px;
+  border: 1px solid var(--native-host-border, #414141);
+  border-radius: 8px;
+}
+.native-connections__items > li > p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+.native-connections__items > li > button {
+  margin: 6px 6px 0 0;
+}
+.native-connections__next {
+  color: var(--native-host-muted, #aaa);
 }
 .native-home label,
 .native-home small {

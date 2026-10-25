@@ -1178,13 +1178,27 @@ function executionKindForActor(
 
 /** Display metadata only; callers must bind it to an accepted source revision. */
 export function recoveryWorkflowSourceTitle(text: string): string | undefined {
+  return recoveryWorkflowSourceSummary(text)?.title;
+}
+
+/** Accepted display metadata; never execution policy or a readiness verdict. */
+export function recoveryWorkflowSourceSummary(
+  text: string,
+): { title?: string; purpose?: string } | undefined {
   const parsed = parseSections(text.replace(/\r\n?/g, "\n"));
   const workflows = parsed.sections.filter(
     (section) => section.kind === "workflow",
   );
   if (parsed.diagnostics.length || workflows.length !== 1) return undefined;
   const name = workflows[0].fields.name;
-  return typeof name === "string" && name.trim() ? name.trim() : undefined;
+  const purpose = workflows[0].fields.purpose;
+  return {
+    title: typeof name === "string" && name.trim() ? name.trim() : undefined,
+    purpose:
+      typeof purpose === "string" && purpose.trim()
+        ? purpose.trim()
+        : undefined,
+  };
 }
 
 export function parseRecoveryAuthoringSource(

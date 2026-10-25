@@ -12,12 +12,16 @@ import {
 } from "node:fs";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
+import { platform, arch } from "node:os";
 import { chromium, expect } from "@playwright/test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 const state = resolve(process.argv[2]);
 const input = JSON.parse(readFileSync(process.argv[3], "utf8"));
+const deviceScaleFactor = input.device_scale_factor ?? 1;
+if (![1, 1.25, 1.5, 2].includes(deviceScaleFactor))
+  throw Error("Use a supported bounded display scale");
 const output = resolve(process.argv[4]);
 mkdirSync(output); // Never overwrite an earlier receipt.
 const scope = input.scope;
@@ -38,7 +42,13 @@ const bridge = resolve(
   process.env.WRIGHT_PROBE_BRIDGE ?? "prototypes/desktop-harness/mcp_bridge.py",
 );
 const transport = new StdioClientTransport({
-  command: process.env.WRIGHT_PROBE_PYTHON ?? resolve(".venv/bin/python"),
+  command:
+    process.env.WRIGHT_PROBE_PYTHON ??
+    resolve(
+      process.platform === "win32"
+        ? ".venv/Scripts/python.exe"
+        : ".venv/bin/python",
+    ),
   args: [
     bridge,
     "--state-dir",
@@ -175,17 +185,39 @@ const server = createServer(async (req, res) => {
 });
 await new Promise((done) => server.listen(0, "127.0.0.1", done));
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 1080, height: 900 } });
+const page = await browser.newPage({
+  viewport: { width: 1080, height: 900 },
+  deviceScaleFactor,
+});
+page.setDefaultTimeout(20_000);
 page.on("pageerror", (error) => errors.push(error.message));
 const frame = page.frameLocator("#panel");
 try {
   await page.goto(`http://127.0.0.1:${server.address().port}`);
+  await expect(frame.getByLabel("Workspace", { exact: true })).toHaveValue(
+    scope.workspace_id,
+  );
+  await page.screenshot({ path: resolve(output, "home.png") });
   await frame
     .locator(".native-home__workflows li")
     .filter({ hasText: "/" + scope.path })
     .getByRole("button")
     .click();
   await expect(frame.getByTestId("workflow-recovery-save")).toBeVisible();
+  if (input.assert_usability) {
+    await expect(
+      frame.getByRole("button", { name: "Edit workflow", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+    await expect(
+      frame.locator(".native-workflow-panel__view-hint"),
+    ).toContainText("no run selected");
+    await expect(
+      frame.getByRole("button", { name: "← Workspace home", exact: true }),
+    ).toBeVisible();
+    checks.push(
+      "Editor names the task and explains no run is selected; workspace return is explicit",
+    );
+  }
   await frame.getByTestId("workflow-recovery-view-code").click();
   const editor = frame.getByTestId("workflow-recovery-source-editor");
   await expect(editor).toHaveValue(before.source);
@@ -201,7 +233,7 @@ try {
     await editor.fill(revised);
     await frame.getByTestId("workflow-recovery-source-apply").click();
     await frame
-      .getByRole("button", { name: "Workspaces", exact: true })
+      .getByRole("button", { name: "← Workspace home", exact: true })
       .click();
     await expect(frame.locator("#notice")).toHaveText(/draft is kept/);
     await expect(frame.getByTestId("workflow-recovery-save")).toBeEnabled();
@@ -223,6 +255,15 @@ try {
     .getByRole("button", { name: "Run and results", exact: true })
     .click();
   await expect(frame.getByTestId("common-process-view")).toBeVisible();
+  if (input.assert_usability) {
+    const typography = await frame
+      .locator(".wright-process-ui")
+      .evaluate((el) => getComputedStyle(el).fontFamily);
+    expect(typography).toMatch(/system-ui|sans-serif|Segoe|Arial|Inter/i);
+    checks.push(
+      "Results retain host sans-serif typography rather than browser-default serif",
+    );
+  }
   await frame.getByRole("button", { name: "Run history", exact: true }).click();
   await expect
     .poll(
@@ -249,6 +290,12 @@ try {
         ),
       )
       .toBe(input.run_id);
+    await expect(
+      frame
+        .getByTestId("common-process-view")
+        .getByText("Loading the saved process state…", { exact: true }),
+    ).toHaveCount(0);
+    await expect(frame.locator(".wp-result").first()).toBeVisible();
     await page.screenshot({ path: resolve(output, "run-results.png") });
     if (input.preview_filename) {
       const result = frame
@@ -324,6 +371,10 @@ try {
         inspector.getByText("Files produced in this run", { exact: true }),
       ).toBeVisible();
       await expect(inspector).toContainText(input.preview_filename);
+      if (input.assert_usability)
+        await expect(
+          frame.locator(".native-workflow-panel__view-hint"),
+        ).toContainText(input.run_id);
       await expect(inspector).not.toContainText(
         "different saved workflow or an edited draft",
       );
@@ -355,11 +406,13 @@ try {
     );
   }
   await frame
-    .getByRole("button", { name: "Open workflow", exact: true })
+    .getByRole("button", { name: "Edit workflow", exact: true })
     .click();
   await frame.getByTestId("workflow-recovery-view-code").click();
   await expect(editor).toHaveValue(accepted.source);
-  await frame.getByRole("button", { name: "Workspaces", exact: true }).click();
+  await frame
+    .getByRole("button", { name: "← Workspace home", exact: true })
+    .click();
   const reopen = frame.getByRole("button", { name: /^Reopen / });
   await expect(reopen).toHaveCount(1);
   await page.locator("#panel").evaluate((element) => {
@@ -383,7 +436,9 @@ try {
   await frame.getByTestId("workflow-recovery-view-diagram").click();
   await page.setViewportSize({ width: 480, height: 820 });
   await page.screenshot({ path: resolve(output, "workflow-narrow.png") });
-  await frame.getByRole("button", { name: "Workspaces", exact: true }).click();
+  await frame
+    .getByRole("button", { name: "← Workspace home", exact: true })
+    .click();
   await expect(frame.getByLabel("Workspace", { exact: true })).toHaveValue(
     scope.workspace_id,
   );
@@ -415,7 +470,13 @@ try {
       {
         status: "passed",
         boundary:
-          "Real Wright MCP/storage; simulated desktop host, not Windows acceptance",
+          "Real Wright MCP/storage; simulated desktop host, not native OpenAI desktop acceptance",
+        host: {
+          platform: platform(),
+          architecture: arch(),
+          node: process.version,
+          device_scale_factor: deviceScaleFactor,
+        },
         scope,
         run_id: input.run_id ?? null,
         bridge,

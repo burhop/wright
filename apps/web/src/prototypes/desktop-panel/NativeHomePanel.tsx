@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
 import { NativeSourceClient } from "./native-source-client";
-import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-authoring";
+import { recoveryWorkflowSourceSummary } from "../workflow-recovery/recovery-authoring";
 import { NativeFilePreview } from "./NativeFilePreview";
 import { NativeFileUpload } from "./NativeFileUpload";
 import { NativeWorkspaceSettings } from "./NativeWorkspaceSettings";
@@ -131,6 +131,7 @@ export function NativeHomePanel({
   const [selected, setSelected] = useState<DesktopWorkspace>();
   const [files, setFiles] = useState<FileNode[]>([]);
   const [titles, setTitles] = useState<Record<string, string>>({});
+  const [purposes, setPurposes] = useState<Record<string, string>>({});
   const previewOpener = useRef<HTMLButtonElement | null>(null);
   const [loading, setLoading] = useState(true);
   const [opening, setOpening] = useState(false);
@@ -166,9 +167,9 @@ export function NativeHomePanel({
     titles[file.path] ??
     file.name.replace(/(?:\.workflow)?\.wflow$/, "").replace(/[-_]+/g, " ");
   const matchingWorkflows = workflowFiles.filter((file) =>
-    normalized(`${workflowName(file)} ${file.path}`).includes(
-      normalized(workflowQuery),
-    ),
+    normalized(
+      `${workflowName(file)} ${file.path} ${purposes[file.path] ?? ""}`,
+    ).includes(normalized(workflowQuery)),
   );
   useEffect(() => {
     if (!selected) return;
@@ -195,11 +196,19 @@ export function NativeHomePanel({
                   return call(name, args);
                 },
               );
-              const title = recoveryWorkflowSourceTitle(
+              const summary = recoveryWorkflowSourceSummary(
                 (await client.read()).source,
               );
-              if (active && title)
-                setTitles((current) => ({ ...current, [file.path]: title }));
+              if (active && summary) {
+                const { title, purpose } = summary;
+                if (title)
+                  setTitles((current) => ({ ...current, [file.path]: title }));
+                if (purpose)
+                  setPurposes((current) => ({
+                    ...current,
+                    [file.path]: purpose,
+                  }));
+              }
             } catch {
               /* An unavailable source keeps its exact filename fallback. */
             }
@@ -258,6 +267,7 @@ export function NativeHomePanel({
       onSelect?.(workspace);
       setFiles([]);
       setTitles({});
+      setPurposes({});
       setPreviewPath(undefined);
       setFileQuery("");
       setWorkflowQuery("");
@@ -713,6 +723,11 @@ export function NativeHomePanel({
                       Open →
                     </span>
                   </button>
+                  {purposes[file.path] && (
+                    <p className="native-home__workflow-purpose">
+                      {purposes[file.path]}
+                    </p>
+                  )}
                   <details className="native-home__file-location">
                     <summary>File location</summary>
                     <small>{file.path}</small>

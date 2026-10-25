@@ -625,7 +625,7 @@ export function NativeConnections({
       ) : (
         <>
           {!items.length && <p>No matching connections.</p>}
-          <ul>
+          <ul className="native-connections__items">
             {items.map((item) => (
               <li key={item.capability_id}>
                 <strong>{item.name}</strong>
@@ -661,10 +661,10 @@ export function NativeConnections({
                 {item.local_validation && (
                   <p>Last checked: {item.local_validation.observed_at}.</p>
                 )}
-                <p>
-                  Open saved setup for connection options. A current readiness
-                  check is still required before running a workflow; workspace
-                  access does not approve process actions.
+                <p className="native-connections__next">
+                  {item.installed
+                    ? "Open saved setup for connection options. Check current readiness before running a workflow."
+                    : "Choose Review setup to see what this connection needs before enabling it."}
                 </p>
                 <details>
                   <summary>Readiness details</summary>

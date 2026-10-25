@@ -185,11 +185,11 @@ try {
       expect(stored.source).toBe(createdWorkflow.source);
       expect(calls.filter(call=>call.name==='wright_workflow_create')).toHaveLength(1);
       await page.screenshot({path:resolve(output,'created-workflow-editor.png')});
-      await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+      await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
       await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(createdScope.workspace_id);
       await frame.getByRole('button',{name:createdWorkflow.path.split('/').at(-1),exact:true}).click();
       await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
-      await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+      await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
       passed.push('native New workflow saves once through source owner, opens shared editor and reopens from Workflows with exact digest');
     }
 
@@ -220,7 +220,7 @@ try {
     expect(stored.source).toBe(copy.source);
     expect(calls.filter(call=>call.name==='wright_workflow_template_create' && call.arguments.template_id===templateId)).toHaveLength(1);
     await page.screenshot({path:resolve(output,templateId+'-editor.png')});
-    await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+    await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
     await expect(frame.getByRole('button',{name:copy.path.split('/').at(-1),exact:true})).toBeVisible();
     passed.push(templateId+': explicit template copy, exact saved source/digest and shared editor; no execution');
   }
@@ -279,11 +279,11 @@ try {
     expect(calls.some(call=>call.name==='wright_workflow_open' && call.arguments.path===evidence.transfer_destination)).toBe(true);
     await page.screenshot({path:resolve(output,'transfer-imported-editor.png')});
     passed.push('native transfer dialog fits narrow host; real browser download, unrelated reference excluded, inspection and one import return to exact saved source; Windows delivery unverified');
-    await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+    await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
     await workflow.click();
     await expect(frame.getByTestId('workflow-recovery-save')).toBeVisible();
   }
-  await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+  await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
   await expect(frame.getByLabel('Workspace',{exact:true})).toBeVisible();
   await expect(frame.getByLabel('Workspace',{exact:true})).toHaveValue(evidence.scope.workspace_id);
   await expect(workflow).toBeVisible();
@@ -351,14 +351,14 @@ try {
     } else {
       await expect(frame.getByText('Process completed',{exact:true})).toBeVisible();
     }
-    await expect(frame.getByRole('button',{name:'Workspaces',exact:true})).toBeVisible();
+    await expect(frame.getByRole('button',{name:'← Workspace home',exact:true})).toBeVisible();
     await expect(frame.locator('.native-home')).toHaveCount(0);
     await page.screenshot({path:resolve(output,'recorded-run.png')});
     if (evidence.expected_review_decision) {
       await frame.getByRole('heading',{name:'Recorded review',exact:true}).scrollIntoViewIfNeeded();
       await page.screenshot({path:resolve(output,'recorded-review.png')});
     }
-    await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+    await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
     await expect(workflow).toBeVisible();
     passed.push('recorded run discovered and exact working view opened without execution');
     }
@@ -374,7 +374,7 @@ try {
   await frame.getByTestId('workflow-recovery-view-select').selectOption('code');
   const editor = frame.getByTestId('workflow-recovery-source-editor');
   await editor.fill((await editor.inputValue()) + '\n# unsaved navigation test\n');
-  await frame.getByRole('button',{name:'Workspaces',exact:true}).click();
+  await frame.getByRole('button',{name:'← Workspace home',exact:true}).click();
   await expect(frame.getByText('Your draft is kept. Save it before changing workspace.',{exact:true})).toBeVisible();
   await expect(editor).toHaveValue(/unsaved navigation test/);
   passed.push('narrow home fits; unsaved source draft prevents workspace navigation');

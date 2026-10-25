@@ -448,7 +448,7 @@ async function open() {
       root.render(
         <div className="native-workspace-frame">
           <nav aria-label="Wright navigation">
-            <button onClick={home}>Workspaces</button>
+            <button onClick={home}>← Workspace home</button>
           </nav>
           <NativePanelContent
             key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}

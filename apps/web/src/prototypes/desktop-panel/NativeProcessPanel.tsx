@@ -55,10 +55,10 @@ export function NativeProcessPanel({
           {onOpenWorkflow && (
             <button
               type="button"
-              aria-label="Open workflow"
+              aria-label="Edit workflow"
               onClick={onOpenWorkflow}
             >
-              Workflow
+              Edit workflow
             </button>
           )}
           <button
@@ -81,6 +81,11 @@ export function NativeProcessPanel({
             {historyOpen ? "Back to current view" : "Run history"}
           </button>
         )}
+        <small className="native-workflow-panel__view-hint">
+          {runId
+            ? `Run ${runId} · results and progress are read from Wright.`
+            : "Prepare inputs and check readiness here. Run history opens existing results without starting work."}
+        </small>
       </header>
       <div
         className="native-process-panel"

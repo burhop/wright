@@ -435,7 +435,8 @@ it("displays the accepted title, searches title and normalized filename, and ret
         : result({
             workspace_id: "a",
             path,
-            source: 'workflow recovery\n  name: "Named inspection"\nend',
+            source:
+              'workflow recovery\n  name: "Named inspection"\n  purpose: "Compare measured tracking deviations"\nend',
             metadata_authority: "wright_host",
             storage_revision: 1,
             definition_revision: 1,
@@ -447,10 +448,14 @@ it("displays the accepted title, searches title and normalized filename, and ret
     <NativeHomePanel call={call} onOpen={open} initialSelection={alpha} />,
   );
   await screen.findByRole("button", { name: "Named inspection" });
+  expect(
+    screen.getByText("Compare measured tracking deviations"),
+  ).toBeVisible();
   for (const query of [
     "named inspection",
     "block preview recovery",
     "block_preview-recovery",
+    "measured tracking deviations",
   ]) {
     fireEvent.change(screen.getByLabelText("Find a workflow"), {
       target: { value: query },
