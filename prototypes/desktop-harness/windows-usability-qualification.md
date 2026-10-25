@@ -14,6 +14,11 @@ as native OpenAI desktop acceptance.
    versions, local service/state identity and built resource SHA-256. Use the
    lockfiles and isolated dependencies. Do not silently use another checkout.
 2. Build the native resource with `node apps/web/build-native-panel.mjs`.
+   The bridge enforces the frozen `native_editor` hash. For a new presentation,
+   prepare an isolated private client-configuration directory pointing to the
+   local test API, with the same authorized binding and only the tested UI hash
+   changed. Preserve the existing backend's configuration and checks. Do not
+   transfer credentials between hosts or edit the independent pilot's pins.
 3. Supply a navigation JSON with `scope: {workspace_id, session_id, path}`.
    For read-only history, add the exact `run_id`. For an existing PNG, add
    `preview_filename` and its recorded `preview_sha256`. Use
@@ -35,8 +40,9 @@ as native OpenAI desktop acceptance.
    `export-import-disposable`, and `files-preview-upload-download`.
    The final two editing/transfer phases depend on successful disposable
    creation; file delivery requires the exact retained PNG hash. Connections
-   currently expects an existing completed SteveCAD setup and a visible
-   inspection.json; omit unavailable scenarios and report them UNVERIFIED.
+   currently expects an existing completed SteveCAD setup; file-preview phases
+   expect a visible inspection.json. Omit unavailable scenarios and report them
+   UNVERIFIED.
 6. Keep screenshots, download hashes, call identities and failures. Assert
    selected-run Results 1/1, visible producing-step files, no false mismatch,
    viewport intersection/focus for previews, and normal/narrow usability.

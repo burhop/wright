@@ -20,17 +20,21 @@ does not replay effects. Shared canvas behavior and common-view fallback stay.
 
 ## Tasks
 
-- [ ] Record source, installed resource/runtime and preservation baseline.
-- [ ] Reproduce novice journeys with visible outcomes and before screenshots.
-- [ ] Fix small batches: context/navigation; status/next action; density.
-- [ ] Regress editing, import/export, preview and Connections.
-- [ ] Exercise retained completed run and Robot Tracking Diagnosis negative cases.
-- [ ] Make the existing real-owner browser qualification portable to Windows.
+- [x] Record source, installed resource/runtime and preservation baseline.
+- [x] Reproduce novice journeys with visible outcomes and before screenshots.
+- [x] Fix small batches: context/navigation; status/next action; density.
+- [x] Regress editing, import/export, preview and Connections.
+- [x] Exercise retained completed run and Robot Tracking Diagnosis negative cases.
+- [x] Make the existing real-owner browser qualification portable to Windows.
 - [ ] Qualify Windows locally where an independent session is available.
-- [ ] Build, check and install only the named prototype candidate.
-- [ ] Verify exact installed resources and tools; record native-host limits.
-- [ ] Run final applicable local checks; make focused local commits.
-- [ ] Deliver backlog, before/after screenshots, boundary matrix and morning handoff.
+- [x] Build, check and install only the named prototype candidate.
+- [x] Verify exact installed resources and tools; record native-host limits.
+- [x] Run final applicable local checks; make focused local commits.
+- [x] Deliver backlog, before/after screenshots, boundary matrix and morning handoff.
+
+Local delivery is recorded in [the qualification note](usability-qualification-20261025.md).
+Windows execution remains queued with its independent pilot; no Windows or
+native OpenAI host acceptance is inferred from Linux proof.
 
 ## Testing decisions
 
