@@ -260,6 +260,11 @@ try {
     frame.getByRole("button", { name: "New workflow", exact: true }),
   ).toBeVisible();
   await record("workspace-list-density", async () => {
+    await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(0);
+    const normalWorkflows = frame.getByRole("region", { name: "Workflows", exact: true }).locator("ul");
+    await expect(normalWorkflows.locator("li")).not.toHaveCount(0);
+    await shot("workflow-list-density-normal");
+    expect(await normalWorkflows.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(360);
     await page.setViewportSize({ width: 480, height: 820 });
     await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(0);
     const workflows = frame.getByRole("region", { name: "Workflows", exact: true }).locator("ul");
@@ -296,6 +301,9 @@ try {
     expect(historyAfter).toEqual(historyBefore);
     observations.list_density = { workflow_height: workflowHeight, files: total, ...bounds, keyboard_last_file_visible: true, source_and_history_unchanged: true };
     await page.setViewportSize({ width: 1080, height: 900 });
+    await search.fill("");
+    await shot("file-list-density-normal");
+    expect(await files.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(360);
     await frame.getByRole("button", { name: "Workflows", exact: true }).click();
   });
   await record("friendly-search", async () => {

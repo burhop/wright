@@ -257,6 +257,7 @@
 .native-home .native-home__workflows,
 .native-home .native-home__files {
   /* The workspace is a navigator, not a document-sized stack of controls. */
+  box-sizing: border-box;
   max-height: min(45dvh, 360px);
   overflow: auto;
   overscroll-behavior: contain;

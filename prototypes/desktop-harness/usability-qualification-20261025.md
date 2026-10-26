@@ -141,3 +141,9 @@ baseline under `.local-run/native-document-tabs-20261026/connection-density/`.
 TypeScript, focused lint and resource packaging pass. Compiled UI SHA256:
 `2e4c5f7c48e0ccd44032a8173f9f86c1cca4bad5ad25416f96d899020af17553`.
 This batch remains local/uninstalled; Windows and native checks are separate.
+
+The independent Windows list check subsequently found a 364px list at normal
+size: padding was outside its 360px limit. Linux reproduces the same failure
+when the journey measures normal size as well as narrow. The list now uses
+border-box sizing; the acceptance phase measures both sizes explicitly. This
+does not relax the 360px bound or change file/keyboard/navigation contracts.
