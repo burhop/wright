@@ -254,6 +254,53 @@
   padding: 10px 0;
   border-bottom: 1px solid var(--native-host-border, #414141);
 }
+.native-home .native-home__workflows,
+.native-home .native-home__files {
+  /* The workspace is a navigator, not a document-sized stack of controls. */
+  max-height: min(45dvh, 360px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px 4px;
+}
+.native-home .native-home__files li {
+  margin: 0;
+  padding: 5px 4px;
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-home .native-home__files button {
+  display: block;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  border-radius: 2px;
+  text-align: left;
+  background: transparent;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+.native-home .native-home__files button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.native-home .native-home__files small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.native-home__list-count {
+  margin: 6px 0;
+  font-size: 11px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home__file-options {
+  margin: 12px 0;
+  font-size: 12px;
+}
+.native-home__file-options > summary {
+  cursor: pointer;
+}
 .native-home .native-home__workflows button {
   display: flex;
   align-items: center;

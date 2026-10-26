@@ -106,6 +106,10 @@ it("lists and filters workspace files without opening or executing them", async 
     target: { value: "missing" },
   });
   expect(screen.getByText("No files match this search.")).toBeVisible();
+  expect(screen.getByLabelText("Choose input file")).not.toBeVisible();
+  fireEvent.click(screen.getByText("Upload a file", { exact: true }));
+  expect(screen.getByLabelText("Choose input file")).toBeVisible();
+  fireEvent.click(screen.getByText("Preview and download details"));
   expect(
     screen.getByText(/downloads support visible files up to 16 MiB/),
   ).toBeVisible();

@@ -94,3 +94,29 @@ before any future integration authorization.
 
 Official host sources: [Computer Use](https://learn.chatgpt.com/docs/computer-use)
 and [plugin UI bridge](https://developers.openai.com/plugins/build/chatgpt-ui).
+
+## 26 October: compact workspace lists
+
+The user's long-list complaint reproduces at 480×820: the existing workflow list
+is 1,554px tall. The focused follow-up bounds file/workflow lists to 360px or
+45% of the viewport, makes file entries compact rows, and moves upload controls
+and preview limits into explicit disclosures. Search and exact file/source owners
+remain unchanged; the full file path remains in the preview's location details.
+This improves the current navigator while the user's native document-tab
+direction is being qualified. It is not a replacement navigation design or a
+claim that the host can render engineering formats.
+
+The existing actual-MCP browser harness now checks list height, overflow,
+keyboard access to the last entry, filtering, horizontal fit, and unchanged
+accepted source/history. All 39 visible files in the retained demo are available;
+the initial workflow height falls to 360px. The disposable upload/preview/exact
+PNG download journey and 33 focused regressions also pass. TypeScript, focused
+lint and whitespace checks pass. The built HTML SHA256 is
+`05584072f3f329d3d621da996125184d156c0a9e3995d879f333801f189dcf1f`.
+
+Evidence and before/after screenshots:
+`.local-run/native-document-tabs-20261026/list-density/`. The initial stale-pin
+connection rejection is preserved separately from the successful new private
+test configuration. No frozen installed or historical configuration was edited.
+This follow-up is not installed and has not yet been qualified on Windows or in
+the native desktop. The installed 0.24 native file-handler test remains stable.

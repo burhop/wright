@@ -172,6 +172,9 @@ export function NativeHomePanel({
       `${workflowName(file)} ${file.path} ${purposes[file.path] ?? ""}`,
     ).includes(normalized(workflowQuery)),
   );
+  const matchingFiles = files.filter((file) =>
+    file.path.toLowerCase().includes(fileQuery.toLowerCase()),
+  );
   useEffect(() => {
     if (!selected) return;
     let active = true;
@@ -577,19 +580,6 @@ export function NativeHomePanel({
         {selected && view === "files" && (
           <section aria-label="Files">
             <h2>Files</h2>
-            <NativeFileUpload
-              key={`${selected.workspace_id}:${selected.session_id}`}
-              call={call}
-              workspace={selected}
-              onUploaded={(path) => {
-                void select(selected);
-                setFileQuery(path.split("/").at(-1) ?? "");
-              }}
-            />
-            <p>
-              Saved workspace files. Inspect run outputs and their evidence in
-              the workflow’s working view.
-            </p>
             <label htmlFor="wright-file-search">Find a file</label>
             <input
               id="wright-file-search"
@@ -603,33 +593,51 @@ export function NativeHomePanel({
             {!loading &&
               !error &&
               files.length > 0 &&
-              !files.some((file) =>
-                file.path.toLowerCase().includes(fileQuery.toLowerCase()),
-              ) && <p>No files match this search.</p>}
-            <ul>
-              {files
-                .filter((file) =>
-                  file.path.toLowerCase().includes(fileQuery.toLowerCase()),
-                )
-                .map((file) => (
-                  <li key={file.path}>
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        previewOpener.current = event.currentTarget;
-                        setPreviewPath(file.path.replace(/^\//, ""));
-                      }}
-                    >
-                      {file.name}
-                    </button>
-                    <small>{file.path}</small>
-                  </li>
-                ))}
-            </ul>
-            <p>
-              Text previews support files up to 64 KiB; downloads support
-              visible files up to 16 MiB. Other previews are unavailable here.
+              matchingFiles.length === 0 && <p>No files match this search.</p>}
+            <p className="native-home__list-count" role="status">
+              {matchingFiles.length} of {files.length} files
             </p>
+            <ul
+              className="native-home__files"
+              aria-label="Workspace files"
+              tabIndex={0}
+            >
+              {matchingFiles.map((file) => (
+                <li key={file.path}>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      previewOpener.current = event.currentTarget;
+                      setPreviewPath(file.path.replace(/^\//, ""));
+                    }}
+                  >
+                    {file.name}
+                  </button>
+                  <small title={file.path}>{file.path}</small>
+                </li>
+              ))}
+            </ul>
+            <details className="native-home__file-options">
+              <summary>Upload a file</summary>
+              <NativeFileUpload
+                key={`${selected.workspace_id}:${selected.session_id}`}
+                call={call}
+                workspace={selected}
+                onUploaded={(path) => {
+                  void select(selected);
+                  setFileQuery(path.split("/").at(-1) ?? "");
+                }}
+              />
+            </details>
+            <details className="native-home__file-options">
+              <summary>Preview and download details</summary>
+              <p>
+                Text previews support files up to 64 KiB; downloads support
+                visible files up to 16 MiB. Other previews are unavailable here.
+                Inspect run outputs and their evidence in the workflow’s
+                working view.
+              </p>
+            </details>
             {previewPath && (
               <NativeFilePreview
                 key={`${selected.workspace_id}:${selected.session_id}:${previewPath}`}
@@ -720,6 +728,8 @@ export function NativeHomePanel({
               )}
             <ul
               className="native-home__workflows"
+              aria-label="Workspace workflows"
+              tabIndex={0}
               hidden={readingWorkflowNames}
             >
               {matchingWorkflows.map((file) => (

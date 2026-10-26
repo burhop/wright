@@ -86,7 +86,7 @@ const bundle = originalBundle.replace(
   "<head><script>window.openai={widgetState:parent.fixtureWidgetState??{},setWidgetState(value){this.widgetState=value;parent.fixtureWidgetState=value;}};</script>",
 );
 const safe = (value) => JSON.stringify(value).replaceAll("<", "\\u003c");
-const fixture = `<!doctype html><html><meta charset="utf-8"><body style="margin:0;background:#181818;color:#ddd;font:12px system-ui"><div style="height:28px;padding:0 12px;display:flex;align-items:center">Wright prototype · simulated desktop host · actual saved workflow${input.run_id ? " and recorded results · read only" : " · isolated source copy · no engineering run"}</div><iframe id="panel" title="Wright" style="border:0;width:100%;height:calc(100vh - 28px)"></iframe><script>
+const fixture = `<!doctype html><html><meta charset="utf-8"><body style="margin:0;background:#181818;color:#ddd;font:12px system-ui"><div style="height:28px;padding:0 12px;display:flex;align-items:center">Wright prototype · simulated desktop host · actual saved workflow${input.run_id ? " and recorded results · read only" : input.edit_copy ? " · isolated source copy · no engineering run" : " · read-only workspace navigation"}</div><iframe id="panel" title="Wright" style="border:0;width:100%;height:calc(100vh - 28px)"></iframe><script>
 const frame=document.getElementById('panel');
 window.addEventListener('message',async event=>{
  if(event.source!==frame.contentWindow)return;
@@ -232,7 +232,7 @@ const observations = {
     node: process.version,
   },
   boundary:
-    "Local corrected bundle over installed 0.20 owner; simulated desktop host; not native OpenAI desktop acceptance",
+    "Compiled Wright UI with actual MCP/backend/storage; simulated desktop host, not native OpenAI desktop acceptance",
   checks,
   errors,
   calls,
@@ -259,6 +259,45 @@ try {
   await expect(
     frame.getByRole("button", { name: "New workflow", exact: true }),
   ).toBeVisible();
+  await record("workspace-list-density", async () => {
+    await page.setViewportSize({ width: 480, height: 820 });
+    await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(0);
+    const workflows = frame.getByRole("region", { name: "Workflows", exact: true }).locator("ul");
+    await expect(workflows.locator("li")).not.toHaveCount(0);
+    await shot("workflow-list-density");
+    const workflowHeight = await workflows.evaluate((el) => el.clientHeight);
+    expect(workflowHeight).toBeLessThanOrEqual(360);
+    await workflows.focus();
+    await workflows.press("End");
+    await expect(workflows.locator("li").last()).toBeInViewport();
+    await frame.getByRole("button", { name: "Files", exact: true }).click();
+    const files = frame.getByRole("region", { name: "Files", exact: true }).locator(":scope > ul");
+    const total = await files.locator("li").count();
+    expect(total).toBeGreaterThan(20);
+    await expect(files.locator("li").first()).toBeInViewport({ ratio: 1 });
+    await expect(frame.getByLabel("Choose input file")).not.toBeVisible();
+    await shot("file-list-density");
+    const bounds = await files.evaluate((el) => ({ height: el.clientHeight, scrollHeight: el.scrollHeight, overflow: getComputedStyle(el).overflowY }));
+    expect(bounds.height).toBeLessThanOrEqual(360);
+    expect(bounds.scrollHeight).toBeGreaterThan(bounds.height);
+    expect(bounds.overflow).toBe("auto");
+    await files.focus();
+    await files.press("End");
+    await expect(files.locator("li").last()).toBeInViewport();
+    await shot("file-list-keyboard-end");
+    const search = frame.getByLabel("Find a file", { exact: true });
+    await search.fill("block-isometric.png");
+    await expect(files.locator("li")).not.toHaveCount(0);
+    expect(await frame.locator("body").evaluate((el) => el.scrollWidth > el.clientWidth + 1)).toBe(false);
+    await shot("file-list-filtered");
+    const unchanged = await read("wright_workflow_read", scope);
+    const historyAfter = await read("wright_workflow_history", scope);
+    expect(unchanged.storage_digest).toBe(before.storage_digest);
+    expect(historyAfter).toEqual(historyBefore);
+    observations.list_density = { workflow_height: workflowHeight, files: total, ...bounds, keyboard_last_file_visible: true, source_and_history_unchanged: true };
+    await page.setViewportSize({ width: 1080, height: 900 });
+    await frame.getByRole("button", { name: "Workflows", exact: true }).click();
+  });
   await record("friendly-search", async () => {
     const search = frame.getByLabel("Find a workflow", { exact: true });
     const nameLine = /^  name: (".*")$/m.exec(before.source);
@@ -487,6 +526,7 @@ try {
     await shot("image-download");
     const uploadPath = resolve(output, uploadFilename);
     writeFileSync(uploadPath, uploadText);
+    await frame.getByText("Upload a file", { exact: true }).click();
     await frame.getByLabel("Choose input file").setInputFiles(uploadPath);
     await frame
       .getByRole("button", { name: "Upload file", exact: true })
