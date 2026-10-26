@@ -50,6 +50,108 @@ let contextWrite: Promise<unknown> = Promise.resolve();
 let homeGeneration = 0;
 let openedWorkflow: NativeWorkflowLocation | undefined;
 let activeSurface: "home" | "workflow" = "home";
+// Opt-in native-file proof. Each host document owns its existing Wright editor.
+// Source saves and drafts still use the normal scoped Wright clients below.
+let connected = false;
+let fileInput: { name: string; resourceUri: string } | undefined;
+let fileLoading = false;
+let fileBound = false;
+const fileInstanceId = crypto.randomUUID();
+async function fileObservation(
+  stage: "opened" | "rendered" | "activated" | "draft-changed",
+) {
+  const experimental = app.getHostCapabilities()?.experimental;
+  return app.callServerTool({
+    name: "wright_workflow_file_context",
+    arguments: {
+      request: {
+        instance_id: fileInstanceId,
+        stage,
+        capabilities: {
+          files: !!experimental?.["openai/files"],
+          resources: !!experimental?.["openai/resource"],
+        },
+        ...(openedWorkflow
+          ? { observed_source_digest: openedWorkflow.source_digest }
+          : {}),
+        editor_has_unsaved_changes: dirty,
+      },
+    },
+  });
+}
+async function openNativeFile() {
+  if (!connected || !fileInput || fileLoading || fileBound) return;
+  if (!app.getHostCapabilities()?.experimental?.["openai/resource"]) {
+    notice.textContent =
+      "This host did not advertise native file-viewer support.";
+    return;
+  }
+  fileLoading = true;
+  try {
+    const result = await fileObservation("opened");
+    const data = result.structuredContent;
+    const binding = data?.native_file as Record<string, unknown> | undefined;
+    if (
+      result.isError ||
+      !binding ||
+      typeof binding.path !== "string" ||
+      binding.path.split("/").at(-1) !== fileInput.name
+    )
+      throw new Error("Native file binding unavailable");
+    args = {
+      workspace_id: binding.workspace_id,
+      session_id: binding.session_id,
+      path: binding.path,
+    };
+    pending = result;
+    const remembered = readNavigationState();
+    const previous =
+      remembered &&
+      remembered.workspace_id === binding.workspace_id &&
+      remembered.session_id === binding.session_id &&
+      remembered.workflow?.path === binding.path &&
+      remembered.workflow.source_digest === binding.source_sha256
+        ? remembered.workflow
+        : undefined;
+    const runId =
+      typeof binding.run_id === "string" ? binding.run_id : previous?.run_id;
+    if (runId || previous?.view === "working") {
+      const request = {
+        ...args,
+        operation: "snapshot",
+        expected_storage_digest: binding.source_sha256,
+        ...(runId ? { run_id: runId } : {}),
+      };
+      pending = await app.callServerTool({
+        name: "wright_process_view",
+        arguments: { request },
+      });
+      args = {
+        ...request,
+        ...(previous
+          ? {
+              restored_view: previous.view,
+              restored_source_digest: previous.source_digest,
+            }
+          : {}),
+      };
+    }
+    fileBound = true;
+    await open();
+  } catch {
+    notice.textContent =
+      "Wright could not bind this native file tab to its workspace. No file was changed.";
+  } finally {
+    fileLoading = false;
+  }
+}
+window.addEventListener("focus", () => {
+  if (fileBound) void fileObservation("activated").catch(() => {});
+});
+document.addEventListener("visibilitychange", () => {
+  if (fileBound && document.visibilityState === "visible")
+    void fileObservation("activated").catch(() => {});
+});
 const reviewEvents: ReviewEvent[] = [];
 let latestUiReport:
   { workspace_id: string; session_id: string; path: string } | undefined;
@@ -156,6 +258,8 @@ async function openSavedWorkflow(
   sessionId: string,
   path: string,
 ) {
+  if (fileBound && path !== openedWorkflow?.path)
+    throw new Error("Open the other document in its own desktop tab.");
   if (dirty)
     throw new Error("Save or reconcile the current change before navigating.");
   const request = ++generation;
@@ -221,6 +325,7 @@ createRoot(document.getElementById("ui-review")!).render(
   />,
 );
 function home() {
+  if (fileBound) return;
   if (dirty) {
     notice.textContent = pendingNavigationNotice;
     return;
@@ -524,7 +629,11 @@ async function open() {
       root.render(
         <div className="native-workspace-frame">
           <nav aria-label="Wright navigation">
-            <button onClick={home}>← Workspace home</button>
+            {fileBound ? (
+              <span>{fileInput?.name} · Native file tab test</span>
+            ) : (
+              <button onClick={home}>← Workspace home</button>
+            )}
           </nav>
           <NativePanelContent
             key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
@@ -558,7 +667,11 @@ async function open() {
               dirty = value;
               if (!value && notice.textContent === pendingNavigationNotice)
                 notice.textContent = "";
-              if (changed) rememberLocation();
+              if (changed) {
+                rememberLocation();
+                if (fileBound)
+                  void fileObservation("draft-changed").catch(() => {});
+              }
             }}
             onAcceptedSource={(saved) => {
               openedWorkflow = {
@@ -577,6 +690,10 @@ async function open() {
       );
     renderCurrent(app.getHostContext());
     requestAnimationFrame(() => theme(app.getHostContext()));
+    if (fileBound)
+      requestAnimationFrame(() => {
+        void fileObservation("rendered").catch(() => {});
+      });
     notice.textContent = "";
   } catch {
     if (openGeneration === generation)
@@ -585,10 +702,35 @@ async function open() {
   }
 }
 app.ontoolinput = (params) => {
+  const candidate = params.arguments?.file as
+    Record<string, unknown> | undefined;
+  if (
+    candidate &&
+    typeof candidate.name === "string" &&
+    typeof candidate.resourceUri === "string"
+  ) {
+    if (
+      fileInput &&
+      (candidate.name !== fileInput.name ||
+        candidate.resourceUri !== fileInput.resourceUri)
+    ) {
+      notice.textContent =
+        "The host replaced this tab's document identity. Its current editor has been retained.";
+      return;
+    }
+    fileInput = { name: candidate.name, resourceUri: candidate.resourceUri };
+    void openNativeFile();
+    return;
+  }
+  if (fileInput) return;
   args = params.arguments ?? {};
   void open();
 };
 app.ontoolresult = (result) => {
+  if (fileInput || result.structuredContent?.view === "native-workflow-file") {
+    void openNativeFile();
+    return;
+  }
   pending = result;
   void open();
 };
@@ -600,8 +742,10 @@ app.onhostcontextchanged = (context) => {
 app
   .connect()
   .then(() => {
+    connected = true;
     theme(app.getHostContext());
-    void open();
+    if (fileInput) void openNativeFile();
+    else void open();
   })
   .catch(() => {
     notice.textContent =

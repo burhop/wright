@@ -333,9 +333,14 @@ async def connection_lifespan(client):
                 await client.http.aclose()
 
 
-def server(client, *, native_editor=False, native_working_view=False):
+def server(
+    client, *, native_editor=False, native_working_view=False,
+    native_file_tab_probe: Path | None = None,
+):
     if native_working_view and not native_editor:
         raise ValueError("Native working view requires the native editor resource")
+    if native_file_tab_probe and not native_editor:
+        raise ValueError("Native file tab probe requires the native editor resource")
 
     @asynccontextmanager
     async def lifespan(_):
@@ -1330,6 +1335,13 @@ def server(client, *, native_editor=False, native_working_view=False):
             }
 
         register_native_source_tools(mcp, client)
+        if native_file_tab_probe:
+            from native_file_tab_probe import register_native_file_tab_probe
+
+            register_native_file_tab_probe(
+                mcp, client, manifest_path=native_file_tab_probe,
+                resource_uri=uri, working_view_enabled=native_working_view,
+            )
         if native_working_view:
             from native_process_tools import register_native_process_tools
 
@@ -1342,9 +1354,12 @@ if __name__ == "__main__":
     parser.add_argument("--state-dir", required=True, type=Path)
     parser.add_argument("--native-editor", action="store_true")
     parser.add_argument("--native-working-view", action="store_true")
+    parser.add_argument("--native-file-tab-probe", type=Path)
     args = parser.parse_args()
     if args.native_working_view and not args.native_editor:
         parser.error("Native working view requires the opt-in native editor")
+    if args.native_file_tab_probe and not args.native_editor:
+        parser.error("Native file tab probe requires the opt-in native editor")
     server(
         WrightDesktopClient(
             args.state_dir,
@@ -1353,4 +1368,5 @@ if __name__ == "__main__":
         ),
         native_editor=args.native_editor,
         native_working_view=args.native_working_view,
+        native_file_tab_probe=args.native_file_tab_probe,
     ).run(transport="stdio")
