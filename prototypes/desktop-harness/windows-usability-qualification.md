@@ -5,6 +5,33 @@ GB10 service or SSH. Preserve the independent engineering pilot. No engineering
 start/resume/retry, account, credential or permission changes are part of this
 walkthrough. Use disposable workflow/import/upload assets for writes.
 
+Windows private-file qualification uses the existing locked pywin32 dependency
+to inspect the credential's owner and DACL on the same read handle. Only the
+current process user, Local SYSTEM, local Administrators, and OWNER RIGHTS for
+one of those owners may receive effective grants. Null DACLs, unknown ACE kinds,
+other principals, directories and final reparse points fail closed. The handle
+does not share write/delete access. Validation never repairs existing ACLs;
+Unix retains its symlink and group/other mode checks. Disposable real-Windows
+positive and over-permissive read/write/ACL/ownership controls are in
+`tests/test_private_api_credential.py`. No account or global-policy change is
+needed. This local check is not proof of OpenAI host rendering or installation.
+The Windows check also covers the API URL, binding and pin metadata before
+constructing an HTTP client: writable routing could disclose a private token.
+These small configuration files and the credential are bounded to 4 KiB each;
+unavailable ACL inspection fails closed. The reader changes no permissions.
+
+The 26 October Windows tester qualified this reader with 45 focused checks and
+actual local MCP/browser initialization. Its fix commits were
+`18aa7f178d8725d6717342100339c7dbe4c72937` and
+`2461ceb27716d6daf3b88b6d7a526d71f901b145`. The nonsecret transfer patch is
+16,904 bytes, SHA-256
+`e79da0c31ebd3f860daa2dc1b8b1e63875e6f30135fb1278b907b2963520bbfe`.
+The integration worktree applied it cleanly alongside the opt-in native file-tab
+probe and passed 51 Linux checks; 10 real-Windows controls are explicitly skipped
+on that host. Linux results do not replace the Windows controls. A prose transfer
+was corrupted; the preserved replacement was extracted from machine output and
+passed strict base64, gzip and exact patch identity checks before application.
+
 The existing `native_navigation_acceptance.mjs` and promoted
 `native_usability_acceptance.mjs` use the actual built `native-editor.html`, MCP
 bridge and owning services. Their host is simulated. They must not be reported

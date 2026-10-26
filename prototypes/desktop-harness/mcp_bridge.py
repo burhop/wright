@@ -10,6 +10,7 @@ import hashlib
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any, Literal
@@ -190,16 +191,101 @@ WORKSPACE_PANEL_URI = (
 )
 
 
+def read_private_api_credential(path: Path) -> str:
+    """Read only a private credential; never repair an existing file's ACL.
+
+    Windows stat mode bits do not describe its DACL. Use the already required
+    Windows MCP dependency (pywin32) to validate the same open file we read.
+    Trust only the current user, SYSTEM and local Administrators; OWNER RIGHTS
+    is permitted only when the owner is one of those principals. This deliberately
+    rejects unfamiliar ACE types and grants, even if a deny might restrict them.
+    """
+    refused = "Prototype API credential must be private and not a symlink"
+    if os.name != "nt":
+        if path.is_symlink() or path.stat().st_mode & 0o077:
+            raise ValueError(refused)
+        return path.read_text()
+
+    try:
+        import win32api
+        import win32con
+        import win32file
+        import win32security
+
+        # No write/delete sharing: validate and read one object, without a
+        # path-based check/read race or following a final reparse point.
+        handle = win32file.CreateFile(
+            str(path), win32con.GENERIC_READ | win32con.READ_CONTROL,
+            win32con.FILE_SHARE_READ, None, win32con.OPEN_EXISTING,
+            win32file.FILE_FLAG_OPEN_REPARSE_POINT, None,
+        )
+        try:
+            attributes = win32file.GetFileInformationByHandle(handle)[0]
+            if attributes & (
+                win32con.FILE_ATTRIBUTE_REPARSE_POINT | win32con.FILE_ATTRIBUTE_DIRECTORY
+            ):
+                raise ValueError(refused)
+            token = win32security.OpenProcessToken(
+                win32api.GetCurrentProcess(), win32con.TOKEN_QUERY
+            )
+            try:
+                user = win32security.GetTokenInformation(token, win32security.TokenUser)[0]
+            finally:
+                token.Close()
+            trusted = {
+                win32security.ConvertSidToStringSid(user),
+                "S-1-5-18",  # Local SYSTEM
+                "S-1-5-32-544",  # Local Administrators
+            }
+            descriptor = win32security.GetSecurityInfo(
+                handle, win32security.SE_FILE_OBJECT,
+                win32security.OWNER_SECURITY_INFORMATION | win32security.DACL_SECURITY_INFORMATION,
+            )
+            owner = win32security.ConvertSidToStringSid(descriptor.GetSecurityDescriptorOwner())
+            acl = descriptor.GetSecurityDescriptorDacl()
+            if owner not in trusted or acl is None:
+                raise ValueError(refused)
+            for index in range(acl.GetAceCount()):
+                (kind, flags), mask, sid = acl.GetAce(index)
+                if flags & win32security.INHERIT_ONLY_ACE:
+                    continue
+                if kind == win32security.ACCESS_DENIED_ACE_TYPE:
+                    continue
+                if kind != win32security.ACCESS_ALLOWED_ACE_TYPE:
+                    raise ValueError(refused)
+                principal = win32security.ConvertSidToStringSid(sid)
+                if mask and principal not in trusted | {"S-1-3-4"}:  # OWNER RIGHTS
+                    raise ValueError(refused)
+            size = win32file.GetFileSize(handle)
+            if not 0 < size <= 4096:
+                raise ValueError(refused)
+            return win32file.ReadFile(handle, size)[1].decode("utf-8")
+        finally:
+            handle.Close()
+    except Exception:
+        # Fail closed without exposing credential paths or Win32 diagnostics.
+        raise ValueError(refused) from None
+
+
 class WrightDesktopClient:
     def __init__(self, state, *, native_editor=False, native_working_view=False):
         self.state = Path(state).resolve(strict=True)
-        preview = json.loads((self.state / "preview.json").read_text())
+        # Windows routing/pin metadata must have the same integrity boundary as
+        # the token: a writable API URL could otherwise disclose a private token.
+        def configuration(name):
+            path = self.state / name
+            return json.loads(
+                read_private_api_credential(path)
+                if os.name == "nt" else path.read_text(encoding="utf-8")
+            )
+
+        preview = configuration("preview.json")
         url = preview["api_url"]
         parsed = urlsplit(url)
         if parsed.scheme != "http" or parsed.hostname != "127.0.0.1" or parsed.path:
             raise ValueError("This prototype connects only to its loopback Wright API")
-        self.binding = json.loads((self.state / "desktop-binding.json").read_text())
-        versions = json.loads((self.state / "desktop-versions.json").read_text())
+        self.binding = configuration("desktop-binding.json")
+        versions = configuration("desktop-versions.json")
         if versions.get("mcp_sdk") != version("mcp"):
             raise ValueError(
                 "Pinned MCP SDK version differs; requalify before connecting"
@@ -239,13 +325,10 @@ class WrightDesktopClient:
                 )
         self.client_id = str(uuid4())
         token_file = self.state / ".preview-api-token"
-        if token_file.is_symlink() or token_file.stat().st_mode & 0o077:
-            raise ValueError(
-                "Prototype API credential must be private and not a symlink"
-            )
+        credential = read_private_api_credential(token_file)
         self.http = httpx.AsyncClient(
             base_url=url,
-            headers={"Authorization": "Bearer " + token_file.read_text()},
+            headers={"Authorization": "Bearer " + credential},
             trust_env=False,
             follow_redirects=False,
             timeout=15,
@@ -1272,7 +1355,7 @@ def server(
         )
 
     if native_editor:
-        html = Path(__file__).with_name("native-editor.html").read_text()
+        html = Path(__file__).with_name("native-editor.html").read_text(encoding="utf-8")
         uri = (
             "ui://wright/workflow/"
             + hashlib.sha256(html.encode()).hexdigest()
