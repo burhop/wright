@@ -83,9 +83,9 @@ def register_native_file_tab_probe(
     working_view_enabled: bool,
 ):
     manifest = ProbeManifest.model_validate_json(
-        _exact_path(str(manifest_path)).read_text()
+        _exact_path(str(manifest_path)).read_text(encoding="utf-8")
     )
-    launcher = _exact_path(manifest.launcher_html).read_text()
+    launcher = _exact_path(manifest.launcher_html).read_text(encoding="utf-8")
     evidence = _exact_path(manifest.evidence_path, exists=False)
     if not evidence.parent.is_dir():
         raise ValueError("Probe evidence directory must already exist")
@@ -223,5 +223,8 @@ def register_native_file_tab_probe(
             return {"observations": [], "native_visual_acceptance": "unverified"}
         if evidence.stat().st_size > 262144:
             raise ValueError("Probe evidence exceeds its bounded size")
-        observations = [json.loads(line) for line in evidence.read_text().splitlines()][-50:]
+        observations = [
+            json.loads(line)
+            for line in evidence.read_text(encoding="utf-8").splitlines()
+        ][-50:]
         return {"observations": observations, "native_visual_acceptance": "unverified"}

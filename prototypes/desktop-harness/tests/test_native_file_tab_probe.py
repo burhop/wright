@@ -18,7 +18,10 @@ def probe(tmp_path, monkeypatch):
     source.write_text("workflow { title: Test }\n")
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     html = tmp_path / "launcher.html"
-    html.write_text("<!doctype html><title>Native tab probe</title>")
+    html.write_text(
+        "<!doctype html><title>Native tab probe — Connecting…</title>",
+        encoding="utf-8",
+    )
     evidence = tmp_path / "observations.jsonl"
     manifest = tmp_path / "manifest.json"
     manifest.write_text(json.dumps({
@@ -47,7 +50,7 @@ def probe(tmp_path, monkeypatch):
     ))
     return SimpleNamespace(
         server=server, client=client, source=source, evidence=evidence,
-        digest=digest, metadata=metadata, manifest=manifest,
+        digest=digest, metadata=metadata, manifest=manifest, html=html,
     )
 
 
@@ -154,6 +157,15 @@ def test_file_entrypoint_is_separate_and_app_context_not_model_visible(probe):
     _, status = asyncio.run(probe.server.call_tool("wright_native_tabs_probe_status", {}))
     assert status["native_visual_acceptance"] == "unverified"
     assert status["observations"][0]["boundary"] == "file-entrypoint-invocation"
+
+
+def test_launcher_resource_preserves_exact_utf8_bytes_and_identity(probe):
+    tools = {tool.name: tool for tool in asyncio.run(probe.server.list_tools())}
+    uri = tools["wright_native_tabs_probe"].meta["ui"]["resourceUri"]
+    expected = probe.html.read_bytes()
+    assert hashlib.sha256(expected).hexdigest() in uri
+    resource = asyncio.run(probe.server.read_resource(uri))[0]
+    assert resource.content.encode("utf-8") == expected
 
 
 @pytest.mark.parametrize("extra", [
