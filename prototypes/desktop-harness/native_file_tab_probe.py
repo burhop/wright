@@ -85,7 +85,7 @@ def register_native_file_tab_probe(
     manifest = ProbeManifest.model_validate_json(
         _exact_path(str(manifest_path)).read_text(encoding="utf-8")
     )
-    launcher = _exact_path(manifest.launcher_html).read_text(encoding="utf-8")
+    launcher = _exact_path(manifest.launcher_html).read_bytes().decode("utf-8")
     evidence = _exact_path(manifest.evidence_path, exists=False)
     if not evidence.parent.is_dir():
         raise ValueError("Probe evidence directory must already exist")

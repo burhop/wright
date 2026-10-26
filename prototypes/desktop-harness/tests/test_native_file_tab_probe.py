@@ -10,7 +10,7 @@ from mcp.server.fastmcp import FastMCP
 
 
 @pytest.fixture
-def probe(tmp_path, monkeypatch):
+def probe(tmp_path, monkeypatch, request):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
     from native_file_tab_probe import register_native_file_tab_probe
 
@@ -18,9 +18,10 @@ def probe(tmp_path, monkeypatch):
     source.write_text("workflow { title: Test }\n")
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     html = tmp_path / "launcher.html"
-    html.write_text(
-        "<!doctype html><title>Native tab probe — Connecting…</title>",
-        encoding="utf-8",
+    newline = getattr(request, "param", "\n")
+    html.write_bytes(
+        f"<!doctype html>{newline}<title>Native tab probe — Connecting…</title>"
+        .encode("utf-8")
     )
     evidence = tmp_path / "observations.jsonl"
     manifest = tmp_path / "manifest.json"
@@ -159,6 +160,7 @@ def test_file_entrypoint_is_separate_and_app_context_not_model_visible(probe):
     assert status["observations"][0]["boundary"] == "file-entrypoint-invocation"
 
 
+@pytest.mark.parametrize("probe", ["\n", "\r\n"], indirect=True)
 def test_launcher_resource_preserves_exact_utf8_bytes_and_identity(probe):
     tools = {tool.name: tool for tool in asyncio.run(probe.server.list_tools())}
     uri = tools["wright_native_tabs_probe"].meta["ui"]["resourceUri"]
