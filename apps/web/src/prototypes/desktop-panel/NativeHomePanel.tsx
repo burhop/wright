@@ -175,6 +175,19 @@ export function NativeHomePanel({
   const matchingFiles = files.filter((file) =>
     file.path.toLowerCase().includes(fileQuery.toLowerCase()),
   );
+  async function openWorkflow(file: FileNode) {
+    if (!selected || loading || creating || opening) return;
+    setLoading(true);
+    setOpening(true);
+    try {
+      await onOpen(selected, file.path.replace(/^\//, ""));
+    } catch {
+      setError("The workflow could not be opened. Your saved source is unchanged.");
+    } finally {
+      setLoading(false);
+      setOpening(false);
+    }
+  }
   useEffect(() => {
     if (!selected) return;
     let active = true;
@@ -606,7 +619,12 @@ export function NativeHomePanel({
                 <li key={file.path}>
                   <button
                     type="button"
+                    disabled={loading || creating || opening}
                     onClick={(event) => {
+                      if (workflowFiles.includes(file)) {
+                        void openWorkflow(file);
+                        return;
+                      }
                       previewOpener.current = event.currentTarget;
                       setPreviewPath(file.path.replace(/^\//, ""));
                     }}
@@ -737,22 +755,7 @@ export function NativeHomePanel({
                   <button
                     aria-label={titles[file.path] ?? file.name}
                     disabled={loading || creating}
-                    onClick={() => {
-                      setLoading(true);
-                      setOpening(true);
-                      // File-tree paths start at the workspace root; source identities
-                      // are relative to it. Preserve every other character exactly.
-                      void onOpen(selected, file.path.replace(/^\//, ""))
-                        .catch(() =>
-                          setError(
-                            "The workflow could not be opened. Your saved source is unchanged.",
-                          ),
-                        )
-                        .finally(() => {
-                          setLoading(false);
-                          setOpening(false);
-                        });
-                    }}
+                    onClick={() => void openWorkflow(file)}
                   >
                     {workflowName(file)}
                     <span aria-hidden="true" className="native-home__open-hint">

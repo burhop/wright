@@ -147,3 +147,18 @@ size: padding was outside its 360px limit. Linux reproduces the same failure
 when the journey measures normal size as well as narrow. The list now uses
 border-box sizing; the acceptance phase measures both sizes explicitly. This
 does not relax the 360px bound or change file/keyboard/navigation contracts.
+
+## 26 October: workflow file association
+
+Completion review found that Files still sent accepted workflow files to the
+generic text preview. Those entries now use the same workflow-opening callback
+as the Workflows list, with exact workspace/session/relative-path scope. Opaque
+uploads remain previews; this does not trust a file merely for its extension.
+The callback opens Wright's existing shared viewer and adds no document tabs,
+executor or host-handler capability. Native outer-tab rendering remains separate.
+
+The prior frozen UI reproduces the defect. The corrected actual-owner browser
+journey opens the shared diagram, verifies visible nodes and a >200px canvas,
+and checks Source against the exact accepted bytes without a text-preview call.
+All34 affected Home/file/new-workflow checks, TypeScript and focused lint pass.
+Evidence: `.local-run/native-document-tabs-20261026/workflow-file-association/`.

@@ -117,6 +117,45 @@ it("lists and filters workspace files without opening or executing them", async 
   expect(onOpen).not.toHaveBeenCalled();
 });
 
+it("opens workflow files from Files through the workflow viewer, preserving opaque uploads", async () => {
+  const call = vi.fn(async (name: string) =>
+    name === "wright_workspace_list"
+      ? result({ workspaces: [alpha] })
+      : result({
+          workspace_id: "a",
+          session_id: "a-chat",
+          tree: {
+            type: "directory",
+            children: [
+              { type: "file", name: "part.wflow", path: "/workflows/part.wflow" },
+              { type: "file", name: "uploaded.wflow", path: "/uploads/opaque/uploaded.wflow" },
+            ],
+          },
+        }),
+  );
+  const onOpen = vi.fn().mockResolvedValue(undefined);
+  render(
+    <NativeHomePanel call={withoutTitles(call)} onOpen={onOpen} initialSelection={alpha} />,
+  );
+  await screen.findByRole("button", { name: "part.wflow" });
+  fireEvent.click(screen.getByRole("button", { name: "Files" }));
+  fireEvent.click(screen.getByRole("button", { name: "part.wflow" }));
+  await waitFor(() =>
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(alpha, "workflows/part.wflow"),
+  );
+  expect(call.mock.calls.some(([name]) => name === "wright_workspace_file_preview")).toBe(false);
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "uploaded.wflow" })).toBeEnabled(),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "uploaded.wflow" }));
+  await waitFor(() =>
+    expect(call).toHaveBeenCalledWith("wright_workspace_file_preview", {
+      workspace_id: "a", session_id: "a-chat", path: "uploads/opaque/uploaded.wflow",
+    }),
+  );
+  expect(onOpen).toHaveBeenCalledTimes(1);
+});
+
 it("opens a selected workflow with the exact workspace and desktop session", async () => {
   const call = vi
     .fn()

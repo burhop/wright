@@ -79,7 +79,7 @@ const before = await read("wright_workflow_read", scope);
 const opened = await read("wright_workflow_open", scope);
 const workspace = opened.workspace;
 const historyBefore = await read("wright_workflow_history", scope);
-const bundlePath = resolve("prototypes/desktop-harness/native-editor.html");
+const bundlePath = resolve(process.env.WRIGHT_PROBE_BUNDLE ?? "prototypes/desktop-harness/native-editor.html");
 const originalBundle = readFileSync(bundlePath, "utf8");
 const bundle = originalBundle.replace(
   "<head>",
@@ -327,6 +327,22 @@ try {
     }
     await shot("search-saved-title");
     await search.fill("");
+  });
+  await record("workflow-file-association", async () => {
+    await frame.getByRole("button", { name: "Files", exact: true }).click();
+    const filename = scope.path.split("/").at(-1);
+    await frame.getByLabel("Find a file", { exact: true }).fill(filename);
+    await frame.getByRole("button", { name: filename, exact: true }).click();
+    await expect(frame.getByTestId("workflow-recovery-save")).toBeVisible();
+    await frame.getByTestId("workflow-recovery-view-code").click();
+    await expect(frame.getByTestId("workflow-recovery-source-editor")).toHaveValue(before.source);
+    expect(calls.some((c) => c.name === "wright_workspace_file_preview" && c.path === scope.path)).toBe(false);
+    await frame.getByTestId("workflow-recovery-view-diagram").click();
+    await expect(frame.locator(".react-flow__node").first()).toBeVisible();
+    expect(await frame.locator(".react-flow").evaluate((el) => el.clientHeight)).toBeGreaterThan(200);
+    await shot("workflow-file-in-shared-viewer");
+    await frame.getByRole("button", { name: "← Workspace home", exact: true }).click();
+    await frame.getByRole("button", { name: "Workflows", exact: true }).click();
   });
   await record("connections", async () => {
     await frame
