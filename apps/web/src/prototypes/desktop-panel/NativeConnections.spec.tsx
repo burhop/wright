@@ -70,6 +70,7 @@ it("disables the exact workspace connection once and retains provider setup", as
     .mockResolvedValueOnce(enabledReply())
     .mockReturnValueOnce(pending);
   render(<NativeConnections workspace={workspace} call={call} />);
+  fireEvent.click(await screen.findByText("Manage connection"));
   const disable = await screen.findByRole("button", {
     name: "Disable CAD in this workspace",
   });
@@ -114,6 +115,7 @@ it.each(["lost reply", "wrong scope"])(
       )
       .mockResolvedValue(enabledReply(false));
     render(<NativeConnections workspace={workspace} call={call} />);
+    fireEvent.click(await screen.findByText("Manage connection"));
     fireEvent.click(
       await screen.findByRole("button", {
         name: "Disable CAD in this workspace",
@@ -165,6 +167,7 @@ it("shows workspace permission even when an enabled provider needs credentials",
     await screen.findByText("Sign-in or credentials needed"),
   ).toBeVisible();
   expect(screen.getByText("Enabled in this workspace")).toBeVisible();
+  fireEvent.click(screen.getByText("Manage connection"));
   expect(
     screen.getByRole("button", { name: "Disable CAD in this workspace" }),
   ).toBeEnabled();
@@ -560,6 +563,13 @@ it("keeps stale validation and uncertain compatibility visible without claiming 
       /Current readiness: unverified — last check expired. Host compatibility: uncertain/,
     ),
   ).toBeVisible();
+  expect(screen.getByText("Authentication: not checked here.")).toBeVisible();
+  expect(screen.getByText("Last checked: 2026-10-20.")).not.toBeVisible();
+  expect(screen.getByText("Design")).not.toBeVisible();
+  expect(
+    screen.getByRole("button", { name: "Disable CAD in this workspace" }),
+  ).not.toBeVisible();
+  fireEvent.click(screen.getByText("Readiness details"));
   expect(screen.getByText("Last checked: 2026-10-20.")).toBeVisible();
   expect(
     screen.getByText(/Authentication: no missing credentials reported/),

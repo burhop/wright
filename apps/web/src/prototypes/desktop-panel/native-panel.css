@@ -323,6 +323,14 @@
   font-size: 12px;
   overflow-wrap: anywhere;
 }
+.native-home .native-connections__items {
+  box-sizing: border-box;
+  max-height: min(60dvh, 520px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 2px;
+}
 .native-connections__items > li {
   padding: 12px;
   border: 1px solid var(--native-host-border, #414141);
@@ -337,6 +345,14 @@
 }
 .native-connections__next {
   color: var(--native-host-muted, #aaa);
+}
+.native-connections__items summary {
+  margin: 6px 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+.native-connections__manage[open] {
+  padding-bottom: 8px;
 }
 .native-home label,
 .native-home small {

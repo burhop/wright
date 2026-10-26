@@ -120,3 +120,24 @@ connection rejection is preserved separately from the successful new private
 test configuration. No frozen installed or historical configuration was edited.
 This follow-up is not installed and has not yet been qualified on Windows or in
 the native desktop. The installed 0.24 native file-handler test remains stable.
+
+## 26 October: Connections disclosures and bounded catalog
+
+The narrow SteveCAD entry was still 456px tall. Keep provider activity, workspace
+access, authentication uncertainty and current readiness visible; move the full
+description, validation evidence and explanation into Readiness details. Shared
+lifecycle/availability controls stay behind Manage connection. Saved setup and
+Review setup remain directly accessible with shorter visible labels and exact
+provider names for assistive technology. The catalog itself scrolls in a bounded
+area, including keyboard access to its last entry.
+
+The same actual-owner read-only journey now measures a 260px entry at 480×820,
+retains expired-validation/uncertain-compatibility warnings, opens management
+without invoking an action, and reads the existing completed setup without
+asking to reconnect or approve it. Forty focused connection/control/custom-setup
+checks pass, including uncertain disable reconciliation and exact subjects.
+The initial padding and ambiguous-locator failures are retained alongside the
+baseline under `.local-run/native-document-tabs-20261026/connection-density/`.
+TypeScript, focused lint and resource packaging pass. Compiled UI SHA256:
+`2e4c5f7c48e0ccd44032a8173f9f86c1cca4bad5ad25416f96d899020af17553`.
+This batch remains local/uninstalled; Windows and native checks are separate.

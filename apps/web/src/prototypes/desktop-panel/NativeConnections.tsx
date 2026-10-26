@@ -381,10 +381,7 @@ export function NativeConnections({
     <section aria-label="Connections">
       <h2>Connections</h2>
       {availabilityNotice && <p role="status">{availabilityNotice}</p>}
-      <p>
-        Engineering tools for {workspace.workspace_name}. Availability here does
-        not approve workflow actions.
-      </p>
+      <p>Engineering tools for {workspace.workspace_name}.</p>
       <NativeCustomConnection
         key={replacement?.sequence ?? "custom"}
         initialConfiguration={replacement?.configuration}
@@ -625,11 +622,14 @@ export function NativeConnections({
       ) : (
         <>
           {!items.length && <p>No matching connections.</p>}
-          <ul className="native-connections__items">
+          <ul
+            className="native-connections__items"
+            aria-label="Connection list"
+            tabIndex={0}
+          >
             {items.map((item) => (
               <li key={item.capability_id}>
                 <strong>{item.name}</strong>
-                <p>{item.description}</p>
                 <p>
                   {!item.installed
                     ? "Setup needed"
@@ -647,7 +647,7 @@ export function NativeConnections({
                 <p>
                   {item.credentials_missing
                     ? "Authentication: credentials needed."
-                    : "Authentication: no missing credentials reported; current sign-in has not been checked here."}
+                    : "Authentication: not checked here."}
                 </p>
                 <p>
                   Current readiness:{" "}
@@ -658,16 +658,23 @@ export function NativeConnections({
                       : "unverified — no protocol check recorded"}
                   . Host compatibility: {item.compatibility.status}.
                 </p>
-                {item.local_validation && (
-                  <p>Last checked: {item.local_validation.observed_at}.</p>
-                )}
-                <p className="native-connections__next">
-                  {item.installed
-                    ? "Open saved setup for connection options. Check current readiness before running a workflow."
-                    : "Choose Review setup to see what this connection needs before enabling it."}
-                </p>
                 <details>
                   <summary>Readiness details</summary>
+                  <p>{item.description}</p>
+                  {!item.credentials_missing && (
+                    <p>
+                      Authentication: no missing credentials reported; current
+                      sign-in has not been checked here.
+                    </p>
+                  )}
+                  {item.local_validation && (
+                    <p>Last checked: {item.local_validation.observed_at}.</p>
+                  )}
+                  <p className="native-connections__next">
+                    {item.installed
+                      ? "Open saved setup for connection options. Check current readiness before running a workflow."
+                      : "Choose Review setup to see what this connection needs before enabling it."}
+                  </p>
                   <p>
                     Host compatibility: {item.compatibility.status}. Process:{" "}
                     {item.process_status}.
@@ -703,68 +710,76 @@ export function NativeConnections({
                     </p>
                   ))}
                 </details>
-                {item.installed && item.server_id && (
-                  <NativeConnectionControls
-                    key={`${workspace.workspace_id}:${workspace.session_id}:${item.server_id}`}
-                    call={call}
-                    workspace={workspace}
-                    capabilityId={item.capability_id}
-                    serverId={item.server_id}
-                    onReplacement={(configuration) => {
-                      setReplacement({
-                        sequence: ++replacementSequence.current,
-                        configuration,
-                      });
-                      setPlan(undefined);
-                      setUncertain(false);
-                    }}
-                    onChanged={(state) =>
-                      setItems((current) =>
-                        current.map((connection) =>
-                          connection.server_id === state.server_id
-                            ? {
-                                ...connection,
-                                active: state.active,
-                                installed: state.installed,
-                                process_status: state.status,
-                                installed_version: state.installed_version,
-                              }
-                            : connection,
-                        ),
-                      )
-                    }
-                  />
-                )}
-                {item.enabled_here && item.server_id && (
-                  <button
-                    disabled={
-                      planning ||
-                      acting ||
-                      loading ||
-                      disableUncertain === item.capability_id
-                    }
-                    onClick={() => void disableConnection(item)}
-                  >
-                    Disable {item.name} in this workspace
-                  </button>
-                )}
-                {item.enabled_here && !item.server_id && (
-                  <p>
-                    Availability changes are unavailable because the registered
-                    connection could not be identified. Refresh Connections.
-                  </p>
+                {(item.installed || item.enabled_here) && (
+                  <details className="native-connections__manage">
+                    <summary>Manage connection</summary>
+                    {item.installed && item.server_id && (
+                      <NativeConnectionControls
+                        key={`${workspace.workspace_id}:${workspace.session_id}:${item.server_id}`}
+                        call={call}
+                        workspace={workspace}
+                        capabilityId={item.capability_id}
+                        serverId={item.server_id}
+                        onReplacement={(configuration) => {
+                          setReplacement({
+                            sequence: ++replacementSequence.current,
+                            configuration,
+                          });
+                          setPlan(undefined);
+                          setUncertain(false);
+                        }}
+                        onChanged={(state) =>
+                          setItems((current) =>
+                            current.map((connection) =>
+                              connection.server_id === state.server_id
+                                ? {
+                                    ...connection,
+                                    active: state.active,
+                                    installed: state.installed,
+                                    process_status: state.status,
+                                    installed_version: state.installed_version,
+                                  }
+                                : connection,
+                            ),
+                          )
+                        }
+                      />
+                    )}
+                    {item.enabled_here && item.server_id && (
+                      <button
+                        disabled={
+                          planning ||
+                          acting ||
+                          loading ||
+                          disableUncertain === item.capability_id
+                        }
+                        onClick={() => void disableConnection(item)}
+                      >
+                        Disable {item.name} in this workspace
+                      </button>
+                    )}
+                    {item.enabled_here && !item.server_id && (
+                      <p>
+                        Availability changes are unavailable because the
+                        registered connection could not be identified. Refresh
+                        Connections.
+                      </p>
+                    )}
+                  </details>
                 )}
                 <button
+                  aria-label={`Saved setup for ${item.name}`}
                   disabled={planning || acting || uncertain}
                   onClick={() => void savedPlans(item.capability_id)}
                 >
-                  Saved setup for {item.name}
+                  Saved setup
                 </button>
                 <button
+                  aria-label={`Review setup for ${item.name}`}
                   disabled={planning || acting || uncertain}
                   onClick={() => void prepare(item.capability_id)}
                 >
-                  Review setup for {item.name}
+                  Review setup
                 </button>
               </li>
             ))}

@@ -324,13 +324,34 @@ try {
     await frame
       .getByRole("button", { name: "Connections", exact: true })
       .click();
+    await expect(frame.getByText("Loading connections…")).toHaveCount(0);
+    const catalog = frame.locator(".native-connections__items");
+    await expect(catalog.locator("li").first()).toBeVisible();
+    expect(await catalog.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(520);
+    await catalog.focus();
+    await catalog.press("End");
+    await expect(catalog.locator("li").last()).toBeInViewport();
+    await shot("connections-catalog-bounded");
     await frame.getByLabel("Find an MCP").fill("SteveCAD");
     await frame
       .getByRole("button", { name: "Search / refresh", exact: true })
       .click();
     await expect(frame.getByText(/Current readiness:/)).toBeVisible();
-    await expect(frame.getByText(/Authentication:/)).toBeVisible();
+    await expect(frame.getByText(/^Authentication: (?:not checked here|credentials needed)\.$/)).toBeVisible();
+    await page.setViewportSize({ width: 480, height: 820 });
+    const card = frame.locator(".native-connections__items > li");
+    await expect(card).toHaveCount(1);
+    await shot("connections-default-narrow");
+    const cardHeight = await card.evaluate((el) => el.getBoundingClientRect().height);
+    expect(cardHeight).toBeLessThanOrEqual(380);
+    observations.connections_card_height = cardHeight;
+    await page.setViewportSize({ width: 1080, height: 900 });
     await shot("connections-current-readiness");
+    await expect(frame.getByText("Manage connection", { exact: true })).toBeVisible();
+    await expect(frame.getByRole("button", { name: /^Disable SteveCAD.* in this workspace$/i })).not.toBeVisible();
+    await frame.getByText("Manage connection", { exact: true }).click();
+    await expect(frame.getByRole("button", { name: /^Disable SteveCAD.* in this workspace$/i })).toBeVisible();
+    await frame.getByText("Manage connection", { exact: true }).click();
     await frame.getByText("Readiness details", { exact: true }).click();
     await shot("connections-readiness");
     observations.connections = await frame
