@@ -458,6 +458,23 @@ try {
         "different saved workflow or an edited draft",
       );
       await page.screenshot({ path: resolve(output, "producing-step.png") });
+      const inspectorFont = await inspector
+        .getByText("What this step does", { exact: true })
+        .evaluate((el) => getComputedStyle(el).fontFamily);
+      const typography = await inspector.locator("h2,h3,h4,p,li,b").evaluateAll(
+        (nodes) => nodes.map((el) => ({
+          text: el.textContent?.trim().slice(0, 90),
+          family: getComputedStyle(el).fontFamily,
+          size: getComputedStyle(el).fontSize,
+        })),
+      );
+      writeFileSync(
+        resolve(output, "inspector-typography.json"),
+        JSON.stringify(typography, null, 2),
+      );
+      expect(inspectorFont).toMatch(/system-ui|sans-serif/i);
+      expect(inspectorFont).not.toMatch(/Times/i);
+      checks.push("Producing-step inspector retains the native host sans-serif font");
       checks.push(
         "Exact selected run supplies available results and producing-step files without a false source mismatch",
       );

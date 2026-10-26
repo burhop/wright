@@ -162,3 +162,18 @@ journey opens the shared diagram, verifies visible nodes and a >200px canvas,
 and checks Source against the exact accepted bytes without a text-preview call.
 All34 affected Home/file/new-workflow checks, TypeScript and focused lint pass.
 Evidence: `.local-run/native-document-tabs-20261026/workflow-file-association/`.
+
+Final installed source is local commit `1baf82e7`, prototype0.26.0, resource SHA256
+`1328acdebca0ab28ef6a0cc6aea9c93039ef947a109151cd2f100db799293561`.
+All2055 frontend tests pass; independent Windows builds the identical resource,
+and its34 association checks pass. Exact installed MCP inspection preserves all60
+tool contracts. Native rendering still has no direct acceptance. The persistent
+private handoff/evidence lives under
+`/home/burhop/repos/wright/.local-run/desktop-usability-evidence-20261026/`.
+
+A screenshot raised a possible inspector-font issue. Measured title and body
+elements in the frozen baseline all use `system-ui, sans-serif`; the suspected
+defect was not confirmed. The redundant font override was discarded and the
+installed resource bytes reproduced exactly. The read-only navigation harness now
+asserts the actual heading's computed font and records descendant typography,
+rather than relying on its outer container or a visual impression.
