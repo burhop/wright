@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import WorkflowRecoveryConcept from "../workflow-recovery/WorkflowRecoveryConcept";
 import type {
   WorkspaceWorkflowRunSummary,
@@ -41,6 +41,13 @@ export function NativeWorkflowPanel({
   const [unsaved, setUnsaved] = useState(false);
   const [reopen, setReopen] = useState(0);
   const drafts = useNativeEditorDrafts(draftClient, initial, setDocument);
+  const draftChooser = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (!drafts.generation || !draftChooser.current) return;
+    // A successful restore returns the panel to editing; failed reads stay open.
+    draftChooser.current.open = false;
+    draftChooser.current.querySelector("summary")?.focus();
+  }, [drafts.generation]);
   return (
     <main
       className="native-workflow-panel"
@@ -93,7 +100,7 @@ export function NativeWorkflowPanel({
         )}
       </header>
       {draftClient && (
-        <details className="native-editor-drafts">
+        <details ref={draftChooser} className="native-editor-drafts">
           <summary>
             {drafts.message || "Editor drafts"}
             {drafts.rows.length > 0 ? ` · ${drafts.rows.length} preserved` : ""}

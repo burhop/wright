@@ -99,3 +99,21 @@ replace engineering validation or exact-output verification.
 
 The checked upstream SDK source is `@openai/mcp-extensions` 0.2.1. No SDK upgrade
 was needed for this proof: the launcher uses its documented extension method.
+
+## Narrow-panel follow-up, qualified separately
+
+Successful explicit draft recovery now closes its chooser and focuses the
+summary. Failed recovery keeps the chooser open. This uses the existing draft
+generation and owners; it changes no save, restore, permission or run contract.
+The isolated actual-owner journey verifies independent A/B drafts, accepted-source
+and history preservation, keyboard focus, a 456px canvas in a 480×850 viewport,
+and all nodes entering the viewport after the user's existing **Fit workflow to
+view** action. The simulated-host screenshots and receipts are under
+`.local-run/native-document-tabs-20261026/narrow-followup-b/`.
+
+This follow-up is not installed: 0.24 remains frozen for the fresh native test.
+The fresh chat **Wright native workflow tabs test**
+(`01a17a03-e0bd-7be3-8d1a-c155db1cc3b9`) exposes the new probe tools and queued
+the three opens, but has no file-entrypoint receipts or direct visual acceptance
+yet. Source/diagram density and native viewer behavior still need qualification;
+the focused recovery correction does not establish a finished narrow UI.
