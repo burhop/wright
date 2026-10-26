@@ -26,8 +26,8 @@ never automatic retry. Report bytes are ordinary untrusted workspace files.
 - [x] Reuse staged upload with explicit save and confirmed receipt.
 - [x] Prove known clipping and privacy/size limits with meaningful checks.
 - [x] Exercise real bridge/storage/read-back and unchanged retained run.
-- [ ] Build and qualify the named experimental plugin candidate.
-- [ ] Deliver incremental Windows source and retrieval instructions.
+- [x] Build and qualify the named experimental plugin candidate.
+- [x] Deliver incremental Windows source and retrieval instructions.
 - [ ] Observe one actual desktop-host report; keep this separate from simulation.
 
 Native capture is limited to the plugin's own measurements. It is not a
@@ -76,3 +76,25 @@ Host/context fields are reported signals; a simulated host can advertise
 
 Sources: [MCP Apps UI bridge](https://developers.openai.com/plugins/build/chatgpt-ui)
 and [host style updates](https://developers.openai.com/plugins/changelog).
+
+## Installed checkpoint
+
+Named GB10 prototype **0.23.0** is installed from source
+`ccfe4d947638f13b55e2d2a4e538d706ee94af24`. Its actual package command/resource
+and installed-runtime browser/report/chat-message journey pass. All 56 existing
+tool contracts and all unrelated desktop settings remain unchanged. The 164
+original workspace files and five original binding/configuration/credential
+files match their recorded hashes. Only explicit disposable diagnostic uploads
+were written; retained source/run history and engineering outputs are unchanged.
+
+The dedicated **Wright Windows UI qualification** task has received the verified
+incremental patch without a share, SSH or GitHub publication. Its original 0.22
+attempt exposed a genuine bridge permission-bit portability failure; the tester
+is qualifying a narrow Windows check separately and has now reached the real
+Windows-local UI. This does not establish this spike's native Windows acceptance.
+
+One direct native report remains required: open **Report UI problem**, optionally
+point to an element, enter a short comment, **Save UI report**, then **Ask chat to
+review**. No screenshot or pasted handoff is required. Existing conversations may
+retain old resources; if the action is absent, open Wright in a fresh conversation
+on the same GB10 host. A UI open receipt is not evidence of rendering.
