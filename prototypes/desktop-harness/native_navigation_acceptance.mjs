@@ -93,17 +93,44 @@ const bundle = originalBundle.replace(
   "<head><script>window.openai={widgetState:parent.fixtureWidgetState??{},setWidgetState(value){this.widgetState=value;parent.fixtureWidgetState=value;}};</script>",
 );
 const safe = (value) => JSON.stringify(value).replaceAll("<", "\\u003c");
+const fixtureHostContext = {
+  theme: "dark",
+  ...(input.ui_review
+    ? {
+        platform: "desktop",
+        styles: {
+          variables: {
+            "--font-sans": "system-ui",
+            "--color-text-primary": "#eeeeee",
+          },
+        },
+        toolInfo: {
+          id: "fixture",
+          tool: {
+            name: "wright_home",
+            inputSchema: { type: "object" },
+            _meta: {
+              ui: {
+                resourceUri: `ui://wright/workflow/${createHash("sha256").update(originalBundle).digest("hex")}.html`,
+              },
+            },
+          },
+        },
+      }
+    : {}),
+};
 const fixture = `<!doctype html><html><meta charset="utf-8"><body style="margin:0;background:#181818;color:#ddd;font:12px system-ui"><div style="height:28px;padding:0 12px;display:flex;align-items:center">Wright prototype · simulated desktop host · actual saved workflow${input.run_id ? " and recorded results · read only" : " · isolated source copy · no engineering run"}</div><iframe id="panel" title="Wright" style="border:0;width:100%;height:calc(100vh - 28px)"></iframe><script>
 const frame=document.getElementById('panel');
 window.addEventListener('message',async event=>{
  if(event.source!==frame.contentWindow)return;
  const m=event.data, send=data=>frame.contentWindow.postMessage({jsonrpc:'2.0',...data},'*');
- if(m.method==='ui/initialize')send({id:m.id,result:{protocolVersion:'2026-01-26',hostInfo:{name:'wright-navigation-fixture',version:'1'},hostCapabilities:{serverTools:{},updateModelContext:{}},hostContext:{theme:'dark'}}});
+ if(m.method==='ui/initialize')send({id:m.id,result:{protocolVersion:'2026-01-26',hostInfo:{name:'wright-navigation-fixture',version:'1'},hostCapabilities:{serverTools:{},updateModelContext:{},${input.ui_review ? "message:{text:{}}," : ""}},hostContext:${safe(fixtureHostContext)}}});
  if(m.method==='ui/notifications/initialized'){
   send({method:'ui/notifications/tool-input',params:{arguments:${safe({ workspace_id: scope.workspace_id, session_id: scope.session_id })}}});
   send({method:'ui/notifications/tool-result',params:{content:[],structuredContent:{view:'home',selection:${safe(workspace)}}}});
  }
  if(m.method==='ui/update-model-context'){window.lastContext=m.params;send({id:m.id,result:{}});}
+ if(m.method==='ui/message'){window.reviewMessages??=[];window.reviewMessages.push(m.params);send({id:m.id,result:{}});}
  if(m.method==='tools/call'){
   try {const r=await fetch('/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(m.params)});send({id:m.id,result:await r.json()});}
   catch {send({id:m.id,error:{code:-32000,message:'Qualification transport unavailable'}});}
@@ -111,6 +138,7 @@ window.addEventListener('message',async event=>{
 });frame.srcdoc=${safe(bundle)};
 </script></body></html>`;
 const allowed = new Set([
+  ...(input.ui_review ? ["wright_workspace_file_upload"] : []),
   "wright_workspace_list",
   "wright_workspace_files",
   "wright_workflow_read",
@@ -136,6 +164,24 @@ const server = createServer(async (req, res) => {
     for await (const chunk of req) body += chunk;
     const { name, arguments: args } = JSON.parse(body);
     const request = args.request ?? args;
+    if (name === "wright_workspace_file_upload") {
+      if (
+        !input.ui_review ||
+        !/^wright-ui-review-[a-f0-9-]{36}\.json$/.test(request.filename) ||
+        request.content_base64.length > 90_000
+      )
+        throw Error(
+          "Only a bounded explicitly prepared UI report may be saved",
+        );
+      const bytes = Buffer.from(request.content_base64, "base64");
+      const report = JSON.parse(bytes.toString("utf8"));
+      if (
+        report.schema_version !== "wright.ui-review/1" ||
+        report.location.navigation.workspace_id !== scope.workspace_id ||
+        createHash("sha256").update(bytes).digest("hex") !== request.sha256
+      )
+        throw Error("UI report identity differs");
+    }
     if (
       !allowed.has(name) &&
       !(
@@ -488,6 +534,139 @@ try {
     .locator("body")
     .evaluate((el) => el.scrollWidth > el.clientWidth + 1);
   expect(overflow).toBe(false);
+  if (input.ui_review) {
+    // Deliberate negative control, not a claimed user defect or native-host capture.
+    const refresh = frame.getByRole("button", { name: "Refresh", exact: true });
+    const originalStyle = await refresh.getAttribute("style");
+    await refresh.evaluate((element) => {
+      element.style.width = "700px";
+      element.style.minWidth = "700px";
+      element.style.flexShrink = "0";
+    });
+    await frame
+      .getByRole("button", { name: "Report UI problem", exact: true })
+      .click();
+    await frame
+      .getByRole("button", { name: "Point to an element", exact: true })
+      .click();
+    const callCount = calls.length;
+    // Click its currently visible part; do not auto-scroll the oversized negative control.
+    const targetBox = await refresh.boundingBox();
+    expect(targetBox).not.toBeNull();
+    await page.mouse.click(
+      Math.max(12, targetBox.x) + 12,
+      targetBox.y + targetBox.height / 2,
+    );
+    await expect(frame.getByText(/selected button/)).toBeVisible();
+    expect(calls.length).toBe(callCount); // Picking never activates the selected button.
+    await frame
+      .getByLabel("Problem description", { exact: true })
+      .fill(
+        "Controlled clipping fixture: Refresh extends past the right edge.",
+      );
+    await page.screenshot({
+      path: resolve(output, "ui-report-before-save.png"),
+    });
+    await frame
+      .getByRole("button", { name: "Save UI report", exact: true })
+      .click();
+    await expect(frame.getByText(/Report saved for the tester/)).toBeVisible();
+    const uploaded = calls.filter(
+      (item) => item.name === "wright_workspace_file_upload",
+    );
+    expect(uploaded).toHaveLength(1);
+    const request = uploaded[0].arguments.request;
+    const path = `uploads/${request.sha256}/${request.filename}`;
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => window.lastContext?.structuredContent?.ui_problem_report?.path,
+        ),
+      )
+      .toBe(path);
+    if (input.run_id)
+      expect(
+        await page.evaluate(
+          () => window.lastContext?.structuredContent?.workflow?.run_id,
+        ),
+      ).toBe(input.run_id);
+    // Independent read through the real MCP owner, not the component's in-memory copy.
+    const retained = await read("wright_workspace_file_download", {
+      workspace_id: scope.workspace_id,
+      session_id: scope.session_id,
+      path,
+    });
+    expect(retained.supported).toBe(true);
+    expect(retained.content_base64).toBe(request.content_base64);
+    const bytes = Buffer.from(retained.content_base64, "base64");
+    expect(createHash("sha256").update(bytes).digest("hex")).toBe(
+      retained.sha256,
+    );
+    const report = JSON.parse(bytes.toString("utf8"));
+    expect(report.selected_element.horizontal_clip).toBe(true);
+    expect(report.selected_element.relative_selector).toContain(
+      "button:nth-of-type",
+    );
+    expect(report.location.navigation.workspace_id).toBe(scope.workspace_id);
+    expect(report.build.resource_uri).toContain(
+      createHash("sha256").update(originalBundle).digest("hex"),
+    );
+    expect(report.build.bundle_payload_sha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(report.host.platform).toBe("desktop"); // A reported fixture signal, never native proof.
+    expect(report.viewport.width).toBe(480);
+    expect(report.comment).toContain("Controlled clipping fixture");
+    expect(bytes.length).toBeLessThan(65536);
+    writeFileSync(resolve(output, "retrieved-ui-report.json"), bytes);
+    writeFileSync(
+      resolve(output, "ui-report-receipt.json"),
+      JSON.stringify(
+        {
+          scope,
+          path,
+          sha256: retained.sha256,
+          bytes: retained.bytes,
+          retrieval: "Separate real MCP file-download call",
+          native_host: "UNVERIFIED",
+        },
+        null,
+        2,
+      ),
+    );
+    await frame
+      .getByRole("button", { name: "Ask chat to review", exact: true })
+      .click();
+    await expect(
+      frame.getByText("Review request sent to this conversation.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    const messages = await page.evaluate(() => window.reviewMessages);
+    expect(messages).toHaveLength(1);
+    expect(messages[0].content[0].text).toContain(path);
+    writeFileSync(
+      resolve(output, "ui-review-chat-receipt.json"),
+      JSON.stringify(
+        {
+          boundary:
+            "Simulated host accepted ui/message; no claim that a native chat turn ran",
+          messages,
+        },
+        null,
+        2,
+      ),
+    );
+    await page.screenshot({ path: resolve(output, "ui-report-saved.png") });
+    await frame
+      .getByRole("button", { name: "Close report", exact: true })
+      .click();
+    await refresh.evaluate((element, style) => {
+      if (style === null) element.removeAttribute("style");
+      else element.setAttribute("style", style);
+    }, originalStyle);
+    checks.push(
+      "Opt-in UI review captures a deliberately clipped Wright control, suppresses its action, saves once and is independently read back with matching bytes through actual MCP/storage; no screenshot or native-host claim",
+    );
+  }
   const after = await read("wright_workflow_read", scope);
   expect(after.storage_digest).toBe(accepted.storage_digest);
   const historyAfter = await read("wright_workflow_history", scope);

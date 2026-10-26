@@ -24,14 +24,22 @@ export function NativeFileUpload({
   call,
   workspace,
   onUploaded,
+  preparedFile,
+  actionLabel = "Upload file",
+  help = "Stage files up to 16 MiB in uploads without replacing existing files. Uploading does not run or approve a workflow.",
 }: {
   call: HomeCall;
   workspace: DesktopWorkspace;
   onUploaded: (path: string) => void;
+  preparedFile?: File | (() => File);
+  actionLabel?: string;
+  help?: string;
 }) {
   const alive = useRef(true);
   const flight = useRef(false);
-  const [file, setFile] = useState<File>();
+  const [file, setFile] = useState<File | undefined>(() =>
+    typeof preparedFile === "function" ? undefined : preparedFile,
+  );
   const [busy, setBusy] = useState(false);
   const [uncertain, setUncertain] = useState<Upload>();
   const [message, setMessage] = useState("");
@@ -63,18 +71,23 @@ export function NativeFileUpload({
     onUploaded(upload.path);
   }
   async function upload() {
-    if (!file || flight.current || uncertain) return;
+    if ((!file && !preparedFile) || flight.current || uncertain) return;
     flight.current = true;
     setBusy(true);
     setMessage("");
     let pending: Upload | undefined;
     let sent = false;
     try {
-      if (!file.size || file.size > 16 * 1024 * 1024) {
+      const chosen =
+        file ??
+        (typeof preparedFile === "function" ? preparedFile() : preparedFile);
+      if (!chosen) return;
+      setFile(chosen);
+      if (!chosen.size || chosen.size > 16 * 1024 * 1024) {
         setMessage("Choose a nonempty file up to 16 MiB.");
         return;
       }
-      const encoded = await encodeFile(file);
+      const encoded = await encodeFile(chosen);
       const bytes = Uint8Array.from(atob(encoded), (char) =>
         char.charCodeAt(0),
       );
@@ -84,11 +97,11 @@ export function NativeFileUpload({
       ).join("");
       if (!alive.current) return;
       pending = {
-        filename: file.name,
+        filename: chosen.name,
         content_base64: encoded,
         sha256,
         bytes: bytes.length,
-        path: `uploads/${sha256}/${file.name}`,
+        path: `uploads/${sha256}/${chosen.name}`,
       };
       sent = true;
       const data = document(
@@ -155,34 +168,39 @@ export function NativeFileUpload({
     }
   }
   return (
-    <section aria-label="Upload input file">
-      <label>
-        Choose input file{" "}
-        <input
-          type="file"
-          disabled={busy || !!uncertain}
-          onChange={(event) => {
-            setFile(event.target.files?.[0]);
-            setMessage("");
-          }}
-        />
-      </label>
+    <section
+      aria-label={
+        preparedFile ? "Save prepared UI report" : "Upload input file"
+      }
+    >
+      {preparedFile ? (
+        <p>Ready to save this UI report.</p>
+      ) : (
+        <label>
+          Choose input file{" "}
+          <input
+            type="file"
+            disabled={busy || !!uncertain}
+            onChange={(event) => {
+              setFile(event.target.files?.[0]);
+              setMessage("");
+            }}
+          />
+        </label>
+      )}
       <button
         type="button"
-        disabled={!file || busy || !!uncertain}
+        disabled={(!file && !preparedFile) || busy || !!uncertain}
         onClick={() => void upload()}
       >
-        {busy ? "Working…" : "Upload file"}
+        {busy ? "Working…" : actionLabel}
       </button>
       {uncertain && (
         <button type="button" disabled={busy} onClick={() => void reconcile()}>
           Check saved upload
         </button>
       )}
-      <p>
-        Stage files up to 16 MiB in uploads without replacing existing files.
-        Uploading does not run or approve a workflow.
-      </p>
+      <p>{help}</p>
       {message && <p role="status">{message}</p>}
     </section>
   );

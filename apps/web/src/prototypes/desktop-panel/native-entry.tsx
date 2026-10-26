@@ -10,6 +10,8 @@ import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import { NativeEditorDraftClient } from "./native-editor-draft-client";
+import { NativeUiReview } from "./NativeUiReview";
+import type { ReviewEvent } from "./native-ui-review";
 import type { NativeProcessCall } from "./native-process-client";
 import type { NativeTransferCall } from "./native-transfer-client";
 import {
@@ -48,6 +50,30 @@ let contextWrite: Promise<unknown> = Promise.resolve();
 let homeGeneration = 0;
 let openedWorkflow: NativeWorkflowLocation | undefined;
 let activeSurface: "home" | "workflow" = "home";
+const reviewEvents: ReviewEvent[] = [];
+let latestUiReport:
+  { workspace_id: string; session_id: string; path: string } | undefined;
+const reviewLocation = () => ({
+  ...(navigation ? { navigation } : {}),
+  active_surface: activeSurface,
+  editor_has_unsaved_changes: dirty,
+});
+function recordReviewEvent(kind: ReviewEvent["kind"]) {
+  const event: ReviewEvent = {
+    kind,
+    elapsed_ms: Math.round(performance.now()),
+    ...(kind === "navigation"
+      ? { location: structuredClone(reviewLocation()) }
+      : {}),
+  };
+  reviewEvents.push(event);
+  if (reviewEvents.length > 20) reviewEvents.shift();
+}
+window.addEventListener("resize", () => recordReviewEvent("resize"));
+window.addEventListener("error", () => recordReviewEvent("error"));
+window.addEventListener("unhandledrejection", () =>
+  recordReviewEvent("unhandled-rejection"),
+);
 function rememberLocation() {
   if (!selectedWorkspace) return;
   navigation = {
@@ -57,12 +83,14 @@ function rememberLocation() {
     view: homeView,
     ...(openedWorkflow ? { workflow: openedWorkflow } : {}),
   };
+  recordReviewEvent("navigation");
   const widgetAccepted = rememberNavigationState(navigation);
   const version = ++contextGeneration;
   const context = {
     ...navigation,
     workspace_name: selectedWorkspace.workspace_name,
     active_surface: activeSurface,
+    ...(latestUiReport ? { ui_problem_report: latestUiReport } : {}),
     ...(openedWorkflow
       ? { workflow: { ...openedWorkflow, editor_has_unsaved_changes: dirty } }
       : {}),
@@ -150,6 +178,48 @@ const homeCall: HomeCall = (name, arguments_) =>
     { name, arguments: arguments_ },
     name === "wright_connection_validate" ? { timeout: 360_000 } : undefined,
   );
+createRoot(document.getElementById("ui-review")!).render(
+  <NativeUiReview
+    root={() => document.getElementById("editor")!}
+    host={() => app.getHostContext()}
+    location={reviewLocation}
+    workspace={() => selectedWorkspace}
+    events={reviewEvents}
+    call={homeCall}
+    onSaved={(workspace, path) => {
+      latestUiReport = {
+        workspace_id: workspace.workspace_id,
+        session_id: workspace.session_id,
+        path,
+      };
+      rememberLocation();
+    }}
+    requestReview={async (workspace, path) => {
+      if (!app.getHostCapabilities()?.message?.text) return "unsupported";
+      const response = await app.sendMessage(
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text:
+                "Please review this saved Wright UI problem report. No engineering workflow should run.\n" +
+                JSON.stringify({
+                  workspace_id: workspace.workspace_id,
+                  session_id: workspace.session_id,
+                  path,
+                }),
+            },
+          ],
+        },
+        { timeout: 5000 },
+      );
+      if (response.isError)
+        throw Error("Host did not confirm message delivery");
+      return "sent";
+    }}
+  />,
+);
 function home() {
   if (dirty) {
     notice.textContent = pendingNavigationNotice;
@@ -263,6 +333,12 @@ function theme(ctx?: McpUiHostContext) {
       !/[;{}@]|url\s*\(/i.test(value)
     )
       container.style.setProperty(target, value);
+    if (
+      typeof value === "string" &&
+      value.length < 160 &&
+      !/[;{}@]|url\s*\(/i.test(value)
+    )
+      document.getElementById("ui-review")?.style.setProperty(target, value);
   }
 }
 async function open() {
@@ -517,6 +593,7 @@ app.ontoolresult = (result) => {
   void open();
 };
 app.onhostcontextchanged = (context) => {
+  recordReviewEvent("host-context");
   theme(context);
   renderCurrent?.(context);
 };

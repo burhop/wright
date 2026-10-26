@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
 import { writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import ts from "typescript";
 
 // Property calls such as client.import(...) are not dynamic module imports.
@@ -84,7 +85,12 @@ const style = output
   .map((item) => String(item.source).replace(/^[ \t]+$/gm, ""))
   .join("\n")
   .replace(/<\/style/gi, "<\\/style");
-const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wright Workflows</title><style>html,body{margin:0;height:100%;}#notice:empty{display:none}#notice{padding:12px;font:14px system-ui}#editor{height:100%;}${style}</style></head><body><p id="notice" role="status">Connecting to the desktop host…</p><div id="editor"></div><script>${script}</script></body></html>`;
+const identity = JSON.stringify({
+  bundle_payload_sha256: createHash("sha256")
+    .update(script + "\n" + style)
+    .digest("hex"),
+});
+const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wright Workflows</title><style>html,body{margin:0;height:100%;}body{display:flex;flex-direction:column;min-width:0}#notice:empty{display:none}#notice{margin:0;padding:12px;font:14px system-ui}#editor{flex:1;min-height:0;min-width:0}${style}</style></head><body><p id="notice" role="status">Connecting to the desktop host…</p><div id="ui-review"></div><div id="editor"></div><script>globalThis.__WRIGHT_NATIVE_BUILD__=${identity};${script}</script></body></html>`;
 writeFileSync(
   resolve(repository, "prototypes/desktop-harness/native-editor.html"),
   html,

@@ -5,6 +5,83 @@
   --native-host-border: var(--color-border);
 }
 
+.native-ui-review {
+  padding: 3px 12px;
+  background: var(--native-host-bg, #202020);
+  color: var(--native-host-fg, #f0f0f0);
+  font: 12px/1.4 var(--native-host-font, system-ui, sans-serif);
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-ui-review button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.native-ui-review > span {
+  pointer-events: none;
+  position: absolute;
+  z-index: 100;
+  top: 38px;
+  left: 12px;
+  right: 12px;
+  padding: 8px;
+  background: var(--native-host-bg, #202020);
+  border: 1px solid var(--native-host-border, #555);
+}
+.native-ui-review button:focus-visible,
+.native-ui-review textarea:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.native-ui-review button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.native-ui-review__form {
+  position: absolute;
+  z-index: 100;
+  top: 40px;
+  right: 12px;
+  left: 12px;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
+  padding: 14px;
+  background: var(--native-host-bg, #202020);
+  border: 1px solid var(--native-host-border, #555);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px #0006;
+}
+.native-ui-review__form h2 {
+  margin-top: 0;
+  font-size: 15px;
+}
+.native-ui-review__form label {
+  display: block;
+}
+.native-ui-review__form textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 64px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+.native-ui-review__form code {
+  overflow-wrap: anywhere;
+}
+.native-ui-review__form small {
+  display: block;
+  margin: 8px 0;
+}
+.native-ui-review__form button {
+  margin: 4px 6px 4px 0;
+}
+
 .native-workflow-panel[data-control-style] {
   --color-neutral: var(--native-host-bg, #1c1c1c);
   --color-primary: var(--native-host-fg, #eeeeee);
