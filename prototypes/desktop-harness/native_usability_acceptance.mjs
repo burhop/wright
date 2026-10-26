@@ -504,12 +504,23 @@ try {
     await expect(preview).toBeFocused();
     await shot("uploaded-text-preview");
     await page.setViewportSize({ width: 480, height: 820 });
+    await expect(preview.locator("pre")).toBeInViewport({ ratio: 1 });
+    await expect(preview).toBeFocused();
     expect(
       await frame
         .locator("body")
         .evaluate((e) => e.scrollWidth > e.clientWidth + 1),
     ).toBe(false);
     await shot("files-narrow");
+    const search = frame.getByLabel("Find a file", { exact: true });
+    await search.focus();
+    await page.setViewportSize({ width: 520, height: 820 });
+    await expect(search).toBeFocused();
+    await expect(search).toBeInViewport({ ratio: 1 });
+    observations.preview_resize = {
+      active_preview_text_visible: true,
+      preserves_file_search_focus_and_visibility: true,
+    };
     observations.upload_filename = uploadFilename;
   });
 } finally {

@@ -25,6 +25,16 @@ export function NativeFilePreview({
     panel.current?.scrollIntoView?.({ block: "start" });
   }, [path, preview]);
   useEffect(() => {
+    const keepActivePreviewVisible = () => {
+      const current = panel.current;
+      if (current?.contains(document.activeElement))
+        current.scrollIntoView?.({ block: "start" });
+    };
+    window.addEventListener("resize", keepActivePreviewVisible);
+    return () =>
+      window.removeEventListener("resize", keepActivePreviewVisible);
+  }, []);
+  useEffect(() => {
     let active = true;
     void call("wright_workspace_file_preview", {
       workspace_id: workspace.workspace_id,
