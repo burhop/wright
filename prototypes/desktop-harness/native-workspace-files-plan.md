@@ -1,8 +1,10 @@
 # Native workspace files prototype — 27 October 2026
 
-Status: file-centered UI and ordinary-file lifecycle locally qualified on Linux.
-Windows and actual desktop general-file qualification remain pending. Installed
-0.27 stays frozen.
+Status: file-centered UI and ordinary-file lifecycle qualified on Linux and an
+independent Windows simulated host. The exact resource is installed as named
+prototype 0.28 in fresh isolated preview state. Actual desktop general-file
+rendering/delivery/restoration remain unverified. Prior 0.27 packages, runtime,
+client configuration, original service/state and engineering evidence are preserved.
 
 The user selects a workspace, browses its ordinary files, and opens each in its
 associated native host tab. Reuse Wright's refined workflow editor and existing
@@ -38,7 +40,9 @@ host security. Existing backend is not restarted or changed; use isolated state.
 - [x] File-centered workspace entry: compact sorted rows and title/path search,
   contextual tools, normal creation, shared editor, and explicit preview fallback.
 - [ ] Qualify compatible existing STEP/DXF viewers; do not build CAD renderers.
-- [ ] Full visible journeys, Windows qualification, exact candidate and handoff.
+- [x] Linux and independent Windows visible journeys, exact installed package,
+  source/resource identity and concise native walkthrough/handoff.
+- [ ] Direct native general-file rendering/delivery/restoration qualification.
 
 V1–V7: engineering source/runs/reviews remain with existing owners; file viewing
 never validates engineering output or authorizes an external action. Source,
@@ -87,24 +91,51 @@ also passes the established read-only retained-run regression through the
 unchanged installed MCP/API. This preserves Results 1/1, producing-step evidence,
 return to the same run, and absence of a false mismatch.
 
-The broad prototype regression has 366 passing tests and 10 Windows-only skips;
+The final prototype regression has 368 passing tests and 10 Windows-only skips;
 52 file/probe checks cover the subsequent opaque-file distinction and 109 affected
 protocol checks cover import routing and presentation-mode continuity. The full
 frontend gate has 2072 passing tests. Type, focused lint and self-contained native
-build checks pass. Windows and actual native general-file rendering remain
-unverified. The existing installed 0.27 walkthrough still tests the fixed A/B/PNG
-proof; it does not expose this new mode.
+build checks pass. Independent Windows qualification passed ten actual-owner
+journey checks on identical resource bytes, 126 adapted prototype and 44 frontend
+checks, types/lint. Its sources/runtime remained exact, operational counts stayed
+zero and owned services/ports closed. Privileged symlink cases and actual native
+general-file rendering remain unverified. The old 0.27 fixed A/B/PNG walkthrough
+is historical; 0.28 uses the ordinary workspace file list.
 
 Current resource: `6e2c52c2464837e817e0d2d71776f05008090527d6840e5b7c5ef249d71ccd01`.
 All three thread/file entrypoints preserve the frozen file-presentation choice.
-The old fixed probe remains available separately; the installed plugin is unchanged.
+The old fixed probe remains in the preserved 0.27 package; 0.28 replaces its
+diagnostic tools with the app-only ordinary-file descriptor/context mechanism.
 
-Next: [independently qualify the exact code/resource on Windows](native-workspace-files-windows.md) using the reusable
-`native_workspace_files_setup.mjs` and `native_workspace_files_acceptance.mjs`.
-Keep API workspace state outside the checkout; Wright correctly protects code
-directories. Do not install or enable the general candidate before qualification.
-Then qualify existing compatible engineering viewers and the remaining native
-boundaries. Dynamic native tab captions are still an unverified host capability.
+Qualification reused `native_workspace_files_setup.mjs` and
+`native_workspace_files_acceptance.mjs` with state outside the checkout. Windows
+found two test-only portability issues: snapshot keys need `Path.as_posix()`;
+textarea expectations normalize CRLF only at the browser boundary. File/source,
+hash, instruction and owner comparisons remain exact. Corrections are committed
+through `2d133c4a`; the product/resource bytes are unchanged from `cb958784`.
+
+The installed 0.28 preview freezes 1867 source files from `2d133c4a`. Only the named
+plugin registration/cache changed; unrelated settings were hash-checked and
+prior named cache versions retained. New chats intentionally use **Native file
+qualification 3de8ff77** in `/tmp/wright-desktop-native028-workspace-files-state-20261027`,
+served by its owned loopback API 18153. It has no engineering runs/reviews/reasoning
+requests or personal accounts; provider autostart is off. It does not migrate or
+silently retarget the original SteveCAD workspace. The exact installed MCP command,
+resource bytes and ordinary-file flag pass; that does not establish host rendering.
+
+Current report/walkthrough and Linux/Windows receipts:
+`/home/burhop/repos/wright/.local-run/desktop-usability-evidence-20261026/native-workspace-files-installed-028-20261027/`.
+The new walkthrough replaces the removed **Open all three** diagnostic launcher.
+No push/merge/publication, engineering execution or desktop restart occurred.
+
+Next: qualify compatible existing engineering viewers and the remaining native
+boundaries. Isolated `dxf-viewer` 1.0.50 renders retained geometry/text with a local
+font and public FitView; it is not integrated. Online 3D Viewer 0.18.0's default
+STEP path requires a CDN engine blocked by the restrictive experiment policy;
+its fflate pin also has an audit finding. Qualify supported local assets and a
+clean dependency set before integrating. No CAD parser/viewer or security bypass
+was built. Dynamic native tab captions remain an unverified host capability;
+long Source instructions remain a separate focused usability item.
 
 Official extension guidance rechecked 27 October:
 https://developers.openai.com/plugins/build/extensions documents file entrypoints
