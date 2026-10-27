@@ -389,6 +389,7 @@ class DesktopBackend:
                 ("desktop_oauth", "desktop_oauth.py"),
                 ("desktop_credential_form", "desktop_credential_form.py"),
                 ("desktop_connection_template", "desktop_connection_template.py"),
+                ("native_file_contracts", "native_file_contracts.py"),
             ]
             + ([("native_editor", "native-editor.html")] if native_editor else [])
             + (
@@ -400,7 +401,6 @@ class DesktopBackend:
                 [
                     ("native_workspace_files", "native_workspace_files.py"),
                     ("native_workspace_file_tools", "native_workspace_file_tools.py"),
-                    ("native_file_contracts", "native_file_tab_probe.py"),
                 ]
                 if native_workspace_files
                 else []

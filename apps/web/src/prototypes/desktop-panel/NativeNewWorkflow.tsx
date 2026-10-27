@@ -9,12 +9,14 @@ export function NativeNewWorkflow({
   onOpen,
   onBusy,
   disabled,
+  resetAfterOpen = false,
 }: {
   readonly workspace: DesktopWorkspace;
   readonly call: HomeCall;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
   readonly onBusy: (busy: boolean) => void;
   readonly disabled: boolean;
+  readonly resetAfterOpen?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
   const [title, setTitle] = useState("");
@@ -25,6 +27,12 @@ export function NativeNewWorkflow({
   const openSaved = async (path: string) => {
     try {
       await onOpen(workspace, path);
+      if (resetAfterOpen) {
+        setVisible(false);
+        setTitle("");
+        setSavedPath(undefined);
+        setNotice("");
+      }
     } catch {
       setNotice(
         "Your workflow was saved. Opening the editor failed; try Open saved workflow.",

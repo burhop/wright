@@ -15,11 +15,8 @@ from typing import Any, Literal
 
 from mcp.server.fastmcp import Context
 from mcp.types import ToolAnnotations
-from pydantic import BaseModel, ConfigDict, Field
-
-
-class StrictModel(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
+from pydantic import Field
+from native_file_contracts import StrictModel, FileInput as FileInput, ProbeObservation as ProbeObservation, Capabilities as Capabilities
 
 
 class ProbeFile(StrictModel):
@@ -38,29 +35,6 @@ class ProbeManifest(StrictModel):
     launcher_html: str
     evidence_path: str
     files: list[ProbeFile] = Field(min_length=1, max_length=3)
-
-
-class FileInput(StrictModel):
-    name: str = Field(min_length=1, max_length=255)
-    resourceUri: str = Field(min_length=1, max_length=4096)
-
-
-class Capabilities(StrictModel):
-    files: bool
-    resources: bool
-
-
-class ProbeObservation(StrictModel):
-    instance_id: str = Field(pattern=r"^[A-Za-z0-9_-]{1,80}$")
-    stage: Literal[
-        "opened", "rendered", "activated", "hidden", "teardown", "probe",
-        "draft-changed",
-    ]
-    capabilities: Capabilities | None = None
-    observed_source_digest: str | None = Field(
-        default=None, pattern=r"^[a-f0-9]{64}$"
-    )
-    editor_has_unsaved_changes: bool | None = None
 
 
 def _exact_path(value: str, *, exists: bool = True) -> Path:
@@ -188,6 +162,13 @@ def register_native_file_tab_probe(
         if item is None or item.kind != "workflow":
             raise ValueError("Host file path is missing or outside this fixed probe")
         _pinned_file(item)
+        if request.resume is not None and (
+            request.resume.workspace_id != item.workspace_id
+            or request.resume.session_id != item.session_id
+            or request.resume.path != item.path
+            or request.resume.expected_sha256 not in (None, item.sha256)
+        ):
+            raise ValueError("Remembered scope differs from the pinned probe file")
         workspace = await client.scope(item.workspace_id, item.session_id)
         document = await client.call(
             "GET", "/api/workspace/workflow-sources",

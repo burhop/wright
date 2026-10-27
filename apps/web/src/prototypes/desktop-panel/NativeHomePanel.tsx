@@ -94,6 +94,8 @@ export function NativeHomePanel({
   onDirty,
   lastLocation,
   onReopen,
+  onOpenFile,
+  nativeFileNotice,
 }: {
   readonly call: HomeCall;
   readonly initialView?: HomeView;
@@ -116,6 +118,12 @@ export function NativeHomePanel({
     run: RecordedRun,
   ) => Promise<void>;
   readonly onOpen: (workspace: DesktopWorkspace, path: string) => Promise<void>;
+  /** Present only when the backend and host have qualified native file tabs. */
+  readonly onOpenFile?: (
+    workspace: DesktopWorkspace,
+    path: string,
+  ) => Promise<boolean>;
+  readonly nativeFileNotice?: string;
   readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [items, setItems] = useState<DesktopWorkspace[]>([]);
@@ -144,14 +152,18 @@ export function NativeHomePanel({
   const createFlight = useRef(false);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
-  const [view, setView] = useState<HomeView>(initialView);
+  const [view, setView] = useState<HomeView>(
+    onOpenFile && initialView === "workflows" ? "files" : initialView,
+  );
   function navigate(next: HomeView) {
-    setView(next);
-    onNavigate?.(next);
+    const target = onOpenFile && next === "workflows" ? "files" : next;
+    setView(target);
+    onNavigate?.(target);
   }
   const [fileQuery, setFileQuery] = useState("");
   const [workflowQuery, setWorkflowQuery] = useState("");
   const [previewPath, setPreviewPath] = useState<string>();
+  const [fileNotice, setFileNotice] = useState("");
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const templateService = useMemo(
     () => (selected ? nativeTemplateClient(call, selected) : undefined),
@@ -162,6 +174,7 @@ export function NativeHomePanel({
       file.path.replace(/^\//, "").startsWith("workflows/") &&
       file.path.endsWith(".wflow"),
   );
+  const workflowPaths = new Set(workflowFiles.map((file) => file.path));
   const normalized = (text: string) =>
     text.toLocaleLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
   const workflowName = (file: FileNode) =>
@@ -172,9 +185,50 @@ export function NativeHomePanel({
       `${workflowName(file)} ${file.path} ${purposes[file.path] ?? ""}`,
     ).includes(normalized(workflowQuery)),
   );
-  const matchingFiles = files.filter((file) =>
-    file.path.toLowerCase().includes(fileQuery.toLowerCase()),
+  const filteredFiles = files.filter((file) =>
+    normalized(`${titles[file.path] ?? ""} ${file.path}`).includes(
+      normalized(fileQuery),
+    ),
   );
+  const matchingFiles = onOpenFile
+    ? [...filteredFiles].sort(
+        (left, right) =>
+          Number(workflowPaths.has(right.path)) -
+            Number(workflowPaths.has(left.path)) ||
+          left.name.localeCompare(right.name, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          }),
+      )
+    : filteredFiles;
+  async function openFile(file: FileNode, opener: HTMLButtonElement) {
+    if (!selected || opening || loading || creating) return;
+    previewOpener.current = opener;
+    const path = file.path.replace(/^\//, "");
+    setFileNotice("");
+    if (onOpenFile) {
+      setOpening(true);
+      try {
+        if (await onOpenFile(selected, path)) {
+          setFileNotice(
+            `Open request sent for ${titles[file.path] ?? file.name}. Check the desktop tabs.`,
+          );
+          return;
+        }
+      } catch {
+        setFileNotice(
+          "The file could not be opened in a desktop tab. Check existing tabs or refresh; your saved file is unchanged.",
+        );
+        return;
+      } finally {
+        setOpening(false);
+      }
+    } else if (workflowFiles.includes(file)) {
+      await openWorkflow(file);
+      return;
+    }
+    setPreviewPath(path);
+  }
   async function openWorkflow(file: FileNode) {
     if (!selected || loading || creating || opening) return;
     setLoading(true);
@@ -182,7 +236,9 @@ export function NativeHomePanel({
     try {
       await onOpen(selected, file.path.replace(/^\//, ""));
     } catch {
-      setError("The workflow could not be opened. Your saved source is unchanged.");
+      setError(
+        "The workflow could not be opened. Your saved source is unchanged.",
+      );
     } finally {
       setLoading(false);
       setOpening(false);
@@ -289,6 +345,7 @@ export function NativeHomePanel({
       setPurposes({});
       setReadingWorkflowNames(false);
       setPreviewPath(undefined);
+      setFileNotice("");
       setFileQuery("");
       setWorkflowQuery("");
       setError("");
@@ -387,8 +444,20 @@ export function NativeHomePanel({
     }
   };
 
+  async function openCreatedWorkflow(
+    workspace: DesktopWorkspace,
+    path: string,
+  ) {
+    await onOpen(workspace, path);
+    if (onOpenFile) await select(workspace);
+  }
+
   return (
-    <main className="native-home" data-control-style="neutral">
+    <main
+      className="native-home"
+      data-control-style="neutral"
+      data-file-tabs={!!onOpenFile}
+    >
       <header className="native-home__workspace-bar">
         <h1>Wright</h1>
         <div className="native-home__workspace-picker">
@@ -430,6 +499,7 @@ export function NativeHomePanel({
         </button>
       </header>
       {restorationNotice && <p role="status">{restorationNotice}</p>}
+      {nativeFileNotice && <p role="status">{nativeFileNotice}</p>}
       <div className="native-home__workspace-actions">
         <button
           disabled={
@@ -528,7 +598,7 @@ export function NativeHomePanel({
             )}
           </div>
         )}
-        {selected && (
+        {selected && !onOpenFile && (
           <nav aria-label="Workspace views">
             <button
               aria-current={view === "workflows" ? "page" : undefined}
@@ -559,6 +629,36 @@ export function NativeHomePanel({
               Recent runs
             </button>
           </nav>
+        )}
+        {selected && onOpenFile && (
+          <div
+            className="native-home__context-tools"
+            aria-label="Workspace tools"
+          >
+            {view !== "files" && (
+              <button
+                onClick={() => navigate("files")}
+                disabled={opening || creating}
+              >
+                ← Workspace files
+              </button>
+            )}
+            <details>
+              <summary>Workspace tools</summary>
+              <button
+                onClick={() => navigate("connections")}
+                disabled={opening || creating}
+              >
+                Connections
+              </button>
+              <button
+                onClick={() => navigate("runs")}
+                disabled={opening || creating}
+              >
+                Run history
+              </button>
+            </details>
+          </div>
         )}
         {selected && view === "connections" && (
           <NativeConnections
@@ -592,7 +692,20 @@ export function NativeHomePanel({
         )}
         {selected && view === "files" && (
           <section aria-label="Files">
-            <h2>Files</h2>
+            <div className="native-home__section-heading">
+              <h2>{onOpenFile ? "Workspace files" : "Files"}</h2>
+              {onOpenFile && (
+                <NativeNewWorkflow
+                  key={`${selected.workspace_id}:${selected.session_id}`}
+                  workspace={selected}
+                  call={call}
+                  onOpen={openCreatedWorkflow}
+                  resetAfterOpen
+                  onBusy={setCreating}
+                  disabled={loading || opening || creating}
+                />
+              )}
+            </div>
             <label htmlFor="wright-file-search">Find a file</label>
             <input
               id="wright-file-search"
@@ -610,6 +723,7 @@ export function NativeHomePanel({
             <p className="native-home__list-count" role="status">
               {matchingFiles.length} of {files.length} files
             </p>
+            {fileNotice && <p role="status">{fileNotice}</p>}
             <ul
               className="native-home__files"
               aria-label="Workspace files"
@@ -620,21 +734,83 @@ export function NativeHomePanel({
                   <button
                     type="button"
                     disabled={loading || creating || opening}
-                    onClick={(event) => {
-                      if (workflowFiles.includes(file)) {
-                        void openWorkflow(file);
-                        return;
-                      }
-                      previewOpener.current = event.currentTarget;
-                      setPreviewPath(file.path.replace(/^\//, ""));
-                    }}
+                    title={file.path}
+                    aria-label={
+                      onOpenFile ? (titles[file.path] ?? file.name) : undefined
+                    }
+                    onClick={(event) =>
+                      void openFile(file, event.currentTarget)
+                    }
                   >
-                    {file.name}
+                    <span>
+                      {onOpenFile
+                        ? (titles[file.path] ?? file.name)
+                        : file.name}
+                    </span>
+                    {onOpenFile && (
+                      <span
+                        className="native-home__file-kind"
+                        aria-hidden="true"
+                      >
+                        {workflowPaths.has(file.path)
+                          ? "Workflow"
+                          : (file.name.split(".").at(-1)?.toUpperCase() ??
+                            "File")}
+                      </span>
+                    )}
                   </button>
-                  <small title={file.path}>{file.path}</small>
+                  {onOpenFile ? (
+                    <details className="native-home__file-details">
+                      <summary
+                        aria-label={`File details for ${titles[file.path] ?? file.name}`}
+                      >
+                        ⋯
+                      </summary>
+                      <code>{file.path}</code>
+                    </details>
+                  ) : (
+                    <small title={file.path}>{file.path}</small>
+                  )}
                 </li>
               ))}
             </ul>
+            {onOpenFile && (
+              <details className="native-home__file-options">
+                <summary>Templates and workflow details</summary>
+                <button
+                  disabled={loading || creating || opening}
+                  onClick={() => setTemplatesOpen(true)}
+                >
+                  Use a template
+                </button>
+                <p>
+                  Files open in desktop tabs. Exact file paths are available on
+                  hover and in each viewer’s details.
+                </p>
+              </details>
+            )}
+            {onOpenFile && templateService && (
+              <EngineeringTemplateDialog
+                key={`${selected.workspace_id}:${selected.session_id}`}
+                open={templatesOpen}
+                workspaceId={selected.workspace_id}
+                sessionId={selected.session_id}
+                workspaceName={selected.workspace_name}
+                service={templateService}
+                previewUrl={() => null}
+                onClose={() => setTemplatesOpen(false)}
+                onCreated={(path) => {
+                  setOpening(true);
+                  void openCreatedWorkflow(selected, path)
+                    .catch(() =>
+                      setFileNotice(
+                        "The template was saved. Refresh to find it; the desktop did not confirm opening its tab.",
+                      ),
+                    )
+                    .finally(() => setOpening(false));
+                }}
+              />
+            )}
             <details className="native-home__file-options">
               <summary>Upload a file</summary>
               <NativeFileUpload
@@ -652,8 +828,8 @@ export function NativeHomePanel({
               <p>
                 Text previews support files up to 64 KiB; downloads support
                 visible files up to 16 MiB. Other previews are unavailable here.
-                Inspect run outputs and their evidence in the workflow’s
-                working view.
+                Inspect run outputs and their evidence in the workflow’s working
+                view.
               </p>
             </details>
             {previewPath && (

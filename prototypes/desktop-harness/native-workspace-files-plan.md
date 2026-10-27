@@ -1,7 +1,8 @@
 # Native workspace files prototype — 27 October 2026
 
-Status: read-only backend/MCP slice locally qualified; UI integration remains
-in progress. Installed 0.27 stays frozen.
+Status: file-centered UI and ordinary-file lifecycle locally qualified on Linux.
+Windows and actual desktop general-file qualification remain pending. Installed
+0.27 stays frozen.
 
 The user selects a workspace, browses its ordinary files, and opens each in its
 associated native host tab. Reuse Wright's refined workflow editor and existing
@@ -32,10 +33,10 @@ host security. Existing backend is not restarted or changed; use isolated state.
   checks, and frozen capability/module pins. Fixed proof and general modes are
   mutually exclusive. Fresh ambiguous sessions fail closed; remembered exact
   session scope remains usable without activating another session.
-- [ ] Public file-open UI integration and ordinary-file lifecycle proof. The new
-  MCP mode is not yet selected by the Home UI; do not enable it in the installed
-  plugin simply because backend tests pass.
-- [ ] File-centered workspace entry, reusing current controls/owners and fallback.
+- [x] Public file-open UI integration and ordinary-file lifecycle proof on Linux
+  with real MCP/API/storage and a simulated host. Actual host display is separate.
+- [x] File-centered workspace entry: compact sorted rows and title/path search,
+  contextual tools, normal creation, shared editor, and explicit preview fallback.
 - [ ] Qualify compatible existing STEP/DXF viewers; do not build CAD renderers.
 - [ ] Full visible journeys, Windows qualification, exact candidate and handoff.
 
@@ -57,20 +58,53 @@ the image presentation; this does not qualify decoding or engineering fidelity.
 Other formats explicitly have no qualified native viewer. The checks observe
 bytes at reads, not a promise that a file can never change after a host open.
 
-The next coherent UI batch must connect ordinary file selection to the documented
-host-open operation and pass remembered exact session scope on continuation.
-Replace the category-tab landing layout in that opt-in mode with workspace files,
-keep setup/history available as contextual tools, and retain the existing source,
-draft, editor and exact-run fallback. Reuse current file/editor components where
-appropriate; do not reuse inaccessible click-only file rows merely for visual
-consistency. Test visible focus, keyboard navigation, bounded lists and narrow
-panels. New-workflow/template/import saves must enter the same file-open path.
+The opt-in Home mode now opens workspace files through the documented host-open
+operation. Its backend flag and advertised host capability must both be present;
+otherwise the existing editor/previews stay available with a visible explanation.
+The shared observation model passes exact remembered scope in both fixed and
+general modes, including input-only file entrypoints. A stale remembered digest
+holds before rendering; the explicit current-saved-revision action rereads that
+same file without a digest pin. It does not activate another session or replay
+work. Source saves update the existing per-file navigation/draft owners.
 
-Linux evidence: `.local-run/native-workspace-files-20261027/`. The full prototype
-regression has 364 passing tests and 10 Windows-only skips. A final focused suite
-also exercises the added cross-workspace source-reply denial. Windows and actual
-native general-file rendering remain unverified. The existing 0.27 walkthrough
-continues to test only the fixed A/B/PNG proof.
+The new landing view has no category tab strip. Workflows sort first, other files
+sort naturally, accepted titles and normalized filenames are searchable, exact
+paths remain in keyboard-accessible details, and setup/history are contextual.
+New workflow creation opens another native tab and refreshes the file list; its
+form resets only after the open request is confirmed. Opaque uploaded `.wflow`
+files keep the existing read-only text preview. Damaged canonical accepted files
+still hold; an ordinary owner read may create its normal private lock file but
+cannot create accepted source heads or history.
+
+Linux evidence: `.local-run/native-workspace-files-ui-20261027/`. Ten visible
+journey checks pass on a fresh workspace: real normal-owner creation, two different
+workflows, independent file views, edit/Undo/Redo/save/search/reopen, retained PNG,
+stale-pin hold and explicit reconciliation, unsupported STEP, and opaque-upload
+preview, and browser export plus one inspected import into another native file
+view. Original source/instructions/history are preserved. Three viewport/scale
+configurations are measured. The new compiled UI
+also passes the established read-only retained-run regression through the
+unchanged installed MCP/API. This preserves Results 1/1, producing-step evidence,
+return to the same run, and absence of a false mismatch.
+
+The broad prototype regression has 366 passing tests and 10 Windows-only skips;
+52 file/probe checks cover the subsequent opaque-file distinction and 109 affected
+protocol checks cover import routing and presentation-mode continuity. The full
+frontend gate has 2072 passing tests. Type, focused lint and self-contained native
+build checks pass. Windows and actual native general-file rendering remain
+unverified. The existing installed 0.27 walkthrough still tests the fixed A/B/PNG
+proof; it does not expose this new mode.
+
+Current resource: `6e2c52c2464837e817e0d2d71776f05008090527d6840e5b7c5ef249d71ccd01`.
+All three thread/file entrypoints preserve the frozen file-presentation choice.
+The old fixed probe remains available separately; the installed plugin is unchanged.
+
+Next: [independently qualify the exact code/resource on Windows](native-workspace-files-windows.md) using the reusable
+`native_workspace_files_setup.mjs` and `native_workspace_files_acceptance.mjs`.
+Keep API workspace state outside the checkout; Wright correctly protects code
+directories. Do not install or enable the general candidate before qualification.
+Then qualify existing compatible engineering viewers and the remaining native
+boundaries. Dynamic native tab captions are still an unverified host capability.
 
 Official extension guidance rechecked 27 October:
 https://developers.openai.com/plugins/build/extensions documents file entrypoints

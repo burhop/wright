@@ -9,17 +9,10 @@ from pathlib import Path
 
 from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
+from native_file_contracts import WorkspaceDocument
 
 from workspace_service.workspace_path import WorkspacePath
 from workspace_service.workflow_sources import WorkflowSourceStorageError
-
-
-class WorkspaceDocument(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
-    workspace_id: str = Field(min_length=1, max_length=100)
-    session_id: str = Field(min_length=1, max_length=100)
-    path: str = Field(min_length=1, max_length=4096)
-    expected_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class HostDocument(BaseModel):
@@ -88,7 +81,17 @@ class NativeWorkspaceFiles:
                 document = await self.backend.service.workflow_sources.read(
                     row["local_path"], result["path"]
                 )
-            except (WorkflowSourceStorageError, OSError, ValueError):
+            except WorkflowSourceStorageError as error:
+                if error.code == "workflow_source_path_invalid":
+                    return {
+                        **result,
+                        "supported": False,
+                        "reason": "This is an ordinary file, not an accepted workflow. Use its read-only preview or import it explicitly.",
+                    }
+                raise HTTPException(
+                    409, "This file is not an available accepted workflow"
+                ) from None
+            except (OSError, ValueError):
                 raise HTTPException(
                     409, "This file is not an available accepted workflow"
                 ) from None

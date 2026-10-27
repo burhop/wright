@@ -92,6 +92,39 @@ def test_actual_sdk_metadata_model_preserves_host_extension(probe, monkeypatch):
     assert call(probe)["native_file"]["path"] == "workflows/part.workflow.wflow"
 
 
+def test_fixed_probe_verifies_remembered_scope_before_reading_source(probe):
+    remembered = {
+        "workspace_id": "workspace",
+        "session_id": "session",
+        "path": "workflows/part.workflow.wflow",
+        "expected_sha256": probe.digest,
+    }
+    assert (
+        call(
+            probe, {"instance_id": "reopened", "stage": "opened", "resume": remembered}
+        )["native_file"]["sha256"]
+        == probe.digest
+    )
+    for patch in [
+        {"workspace_id": "other"},
+        {"session_id": "other"},
+        {"path": "workflows/other.workflow.wflow"},
+        {"expected_sha256": "a" * 64},
+    ]:
+        probe.client.scope.reset_mock()
+        probe.client.call.reset_mock()
+        with pytest.raises(Exception, match="Remembered scope differs"):
+            call(
+                probe,
+                {
+                    "instance_id": "reopened",
+                    "stage": "opened",
+                    "resume": {**remembered, **patch},
+                },
+            )
+        probe.client.scope.assert_not_awaited()
+        probe.client.call.assert_not_awaited()
+
 @pytest.mark.parametrize("metadata", [{}, {"openai/resource": {}}, {
     "openai/resource": {"path": "/tmp/unallowlisted.workflow.wflow"},
 }])

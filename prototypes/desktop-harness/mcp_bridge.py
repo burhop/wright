@@ -314,7 +314,7 @@ class WrightDesktopClient:
             ("native_process_tools", "native_process_tools.py"),
             ("native_workspace_files", "native_workspace_files.py"),
             ("native_workspace_file_tools", "native_workspace_file_tools.py"),
-            ("native_file_contracts", "native_file_tab_probe.py"),
+            ("native_file_contracts", "native_file_contracts.py"),
         ):
             if (
                 (
@@ -1409,6 +1409,7 @@ def server(
                 selection = {"workspace_id": workspace_id, "session_id": session_id}
             return {
                 "view": "home",
+                **({"native_workspace_files_enabled": True} if native_workspace_files else {}),
                 **({"selection": selection} if selection is not None else {}),
                 **await client.call("GET", "/api/desktop/workspaces"),
             }
@@ -1436,6 +1437,7 @@ def server(
                 "workspace": workspace,
                 "document": document,
                 "working_view_enabled": native_working_view,
+                **({"native_workspace_files_enabled": True} if native_workspace_files else {}),
             }
 
         register_native_source_tools(mcp, client)
@@ -1455,7 +1457,9 @@ def server(
         if native_working_view:
             from native_process_tools import register_native_process_tools
 
-            register_native_process_tools(mcp, client, resource_uri=uri)
+            register_native_process_tools(
+                mcp, client, resource_uri=uri, native_workspace_files=native_workspace_files,
+            )
     return mcp
 
 

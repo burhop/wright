@@ -4,7 +4,11 @@ import {
   applyDocumentTheme,
   type McpUiHostContext,
 } from "@modelcontextprotocol/ext-apps";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import {
+  EmptyResultSchema,
+  type CallToolResult,
+} from "@modelcontextprotocol/sdk/types.js";
+import { openNativeWorkspaceFile } from "./native-file-client";
 import "@wright/ui-kit/styles.css";
 import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
@@ -56,11 +60,25 @@ let connected = false;
 let fileInput: { name: string; resourceUri: string } | undefined;
 let fileLoading = false;
 let fileBound = false;
+let nativeWorkspaceFiles = false;
+let nativeFileNotice = "";
+function setNativeFilesMode(enabled: boolean) {
+  const available = !!app.getHostCapabilities()?.experimental?.["openai/files"];
+  nativeWorkspaceFiles = enabled && available;
+  nativeFileNotice =
+    enabled && !available
+      ? "This host does not support native file tabs. Wright's existing editor and previews remain available."
+      : "";
+}
+let reopenCurrentFile = false;
 const fileInstanceId = crypto.randomUUID();
 async function fileObservation(
   stage: "opened" | "rendered" | "activated" | "draft-changed",
 ) {
   const experimental = app.getHostCapabilities()?.experimental;
+  const remembered = navigation ?? readNavigationState();
+  const location = openedWorkflow ?? remembered?.workflow;
+  const workspace = selectedWorkspace ?? remembered;
   return app.callServerTool({
     name: "wright_workflow_file_context",
     arguments: {
@@ -75,6 +93,20 @@ async function fileObservation(
           ? { observed_source_digest: openedWorkflow.source_digest }
           : {}),
         editor_has_unsaved_changes: dirty,
+        ...(workspace &&
+        location &&
+        location.path.split("/").at(-1) === fileInput?.name
+          ? {
+              resume: {
+                workspace_id: workspace.workspace_id,
+                session_id: workspace.session_id,
+                path: location.path,
+                ...(!reopenCurrentFile
+                  ? { expected_sha256: location.source_digest }
+                  : {}),
+              },
+            }
+          : {}),
       },
     },
   });
@@ -90,6 +122,7 @@ async function openNativeFile() {
   try {
     const result = await fileObservation("opened");
     const data = result.structuredContent;
+    if (data?.native_workspace_files_enabled === true) setNativeFilesMode(true);
     const binding = data?.native_file as Record<string, unknown> | undefined;
     if (
       result.isError ||
@@ -137,10 +170,21 @@ async function openNativeFile() {
       };
     }
     fileBound = true;
+    reopenCurrentFile = false;
     await open();
   } catch {
+    fileBound = false;
     notice.textContent =
-      "Wright could not bind this native file tab to its workspace. No file was changed.";
+      "Wright could not confirm this file's saved context. No file or draft was changed.";
+    if (readNavigationState()?.workflow) {
+      const retry = document.createElement("button");
+      retry.textContent = "Open current saved revision";
+      retry.onclick = () => {
+        reopenCurrentFile = true;
+        void openNativeFile();
+      };
+      notice.append(" ", retry);
+    }
   } finally {
     fileLoading = false;
   }
@@ -282,6 +326,33 @@ const homeCall: HomeCall = (name, arguments_) =>
     { name, arguments: arguments_ },
     name === "wright_connection_validate" ? { timeout: 360_000 } : undefined,
   );
+async function openWorkspaceFile(
+  workspace: Pick<DesktopWorkspace, "workspace_id" | "session_id">,
+  path: string,
+) {
+  if (!app.getHostCapabilities()?.experimental?.["openai/files"])
+    throw new Error("Native file tabs are unavailable in this host.");
+  return openNativeWorkspaceFile(
+    {
+      workspace_id: workspace.workspace_id,
+      session_id: workspace.session_id,
+      path,
+    },
+    (name, arguments_) => app.callServerTool({ name, arguments: arguments_ }),
+    async (absolutePath) => {
+      // Public extension, matching @openai/mcp-extensions 0.2.1 createFiles.
+      // The base MCP Apps request union does not yet include this extension.
+      await app.request(
+        {
+          method: "openai/files/open",
+          params: { path: absolutePath },
+        } as unknown as Parameters<typeof app.request>[0],
+        EmptyResultSchema,
+        { timeout: 10000 },
+      );
+    },
+  );
+}
 createRoot(document.getElementById("ui-review")!).render(
   <NativeUiReview
     root={() => document.getElementById("editor")!}
@@ -342,6 +413,8 @@ function home() {
         call={homeCall}
         initialSelection={selectedWorkspace ?? navigation}
         initialView={homeView}
+        onOpenFile={nativeWorkspaceFiles ? openWorkspaceFile : undefined}
+        nativeFileNotice={nativeFileNotice}
         onNavigate={rememberView}
         restorationNotice={restorationNotice}
         lastLocation={navigation}
@@ -406,6 +479,11 @@ function home() {
             throw new Error("Host declined sign-in navigation");
         }}
         onOpen={async (workspace, path) => {
+          if (nativeWorkspaceFiles) {
+            if (!(await openWorkspaceFile(workspace, path)))
+              throw new Error("No qualified native viewer for the saved file.");
+            return;
+          }
           await openSavedWorkflow(
             workspace.workspace_id,
             workspace.session_id,
@@ -448,6 +526,8 @@ function theme(ctx?: McpUiHostContext) {
 }
 async function open() {
   const openGeneration = ++generation;
+  if (pending?.structuredContent?.native_workspace_files_enabled === true)
+    setNativeFilesMode(true);
   const input = {
     ...(args.request && typeof args.request === "object"
       ? (args.request as Record<string, unknown>)
@@ -463,6 +543,9 @@ async function open() {
     !pending.isError &&
     typeof input.path !== "string"
   ) {
+    setNativeFilesMode(
+      pending.structuredContent.native_workspace_files_enabled === true,
+    );
     if (dirty) {
       notice.textContent =
         "Your draft is kept. Save it before changing workspace.";
@@ -509,6 +592,7 @@ async function open() {
     navigation = restored;
     openedWorkflow = restored?.workflow;
     homeView = restored?.view ?? "workflows";
+    if (nativeWorkspaceFiles && homeView === "workflows") homeView = "files";
     home();
     return;
   }
@@ -641,13 +725,28 @@ async function open() {
             call={processCall}
             readEvidence={homeCall}
             transferCall={transferCall}
-            onOpenTransferred={(path) =>
-              openSavedWorkflow(
+            onOpenTransferred={async (path) => {
+              if (nativeWorkspaceFiles) {
+                if (
+                  !(await openWorkspaceFile(
+                    {
+                      workspace_id: String(input.workspace_id),
+                      session_id: String(input.session_id),
+                    },
+                    path,
+                  ))
+                )
+                  throw new Error(
+                    "The imported file has no qualified native viewer.",
+                  );
+                return;
+              }
+              await openSavedWorkflow(
                 String(input.workspace_id),
                 String(input.session_id),
                 path,
-              )
-            }
+              );
+            }}
             sessionId={String(input.session_id)}
             workspaceName={data.workspace?.workspace_name ?? "Workspace"}
             initialProcess={process}
@@ -692,7 +791,7 @@ async function open() {
       requestAnimationFrame(() => {
         void fileObservation("rendered").catch(() => {});
       });
-    notice.textContent = "";
+    notice.textContent = nativeFileNotice;
   } catch {
     if (openGeneration === generation)
       notice.textContent =
@@ -726,6 +825,10 @@ app.ontoolinput = (params) => {
 };
 app.ontoolresult = (result) => {
   if (fileInput || result.structuredContent?.view === "native-workflow-file") {
+    if (result.structuredContent?.view === "native-workflow-file") {
+      nativeWorkspaceFiles =
+        result.structuredContent.native_workspace_files_enabled === true;
+    }
     void openNativeFile();
     return;
   }

@@ -295,6 +295,64 @@
   font-size: 11px;
   color: var(--native-host-muted, #aaa);
 }
+.native-home[data-file-tabs="true"] .native-home__files {
+  max-height: min(58dvh, 520px);
+}
+.native-home[data-file-tabs="true"] .native-home__files li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 8px;
+}
+.native-home[data-file-tabs="true"] .native-home__files button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 30px;
+  padding: 3px 2px;
+}
+.native-home[data-file-tabs="true"]
+  .native-home__files
+  button
+  > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.native-home__file-kind {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--native-host-muted, #b5b5b5);
+}
+.native-home__file-details {
+  margin: 0;
+  max-width: 200px;
+}
+.native-home__file-details summary {
+  padding: 4px 6px;
+  cursor: pointer;
+  list-style: none;
+}
+.native-home__file-details code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+.native-home__context-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 4px 0 8px;
+  font-size: 12px;
+}
+.native-home__context-tools details {
+  margin: 0;
+}
+.native-home__context-tools summary {
+  cursor: pointer;
+}
 .native-home__file-options {
   margin: 12px 0;
   font-size: 12px;

@@ -246,10 +246,28 @@ async def test_size_limit_and_opaque_unaccepted_workflow_fail_closed(native_file
     with (f.root / "large.png").open("wb") as stream:
         stream.truncate(16 * 1024 * 1024 + 1)
     assert (await describe(f, "large.png")).status_code == 422
-    (f.root / "unaccepted.wflow").write_text(SOURCE)
+    (f.root / "workflows/unaccepted.workflow.wflow").write_text(SOURCE)
     before = snapshot(f.root)
-    response = await describe(f, "unaccepted.wflow")
+    response = await describe(f, "workflows/unaccepted.workflow.wflow")
     assert response.status_code == 409
+    after = snapshot(f.root)
+    lock = ".wright/workflow-sources/unaccepted/.lock"
+    assert set(after) - set(before) == {lock}
+    assert {path: digest for path, digest in after.items() if path != lock} == before
+    assert (f.root / lock).read_bytes() == b"\x00"
+
+
+@pytest.mark.asyncio
+async def test_opaque_uploaded_workflow_keeps_read_only_file_fallback(native_files):
+    f = native_files
+    content = SOURCE.encode()
+    path = await f.service.files.stage_upload(
+        str(f.root), "incoming.wflow", content, hashlib.sha256(content).hexdigest()
+    )
+    before = snapshot(f.root)
+    result = await describe(f, path)
+    assert result.status_code == 200 and result.json()["supported"] is False
+    assert "absolute_path" not in result.json()
     assert snapshot(f.root) == before
 
 
@@ -400,6 +418,9 @@ async def test_real_mcp_http_owner_path_and_continuation(native_files, monkeypat
         await bridge.call_tool("wright_workspace_file_describe", {"request": body})
     )[1]
     assert descriptor["sha256"] == f.accepted.storage_digest
+    opened = (await bridge.call_tool("wright_workflow_open", body))[1]
+    assert opened["native_workspace_files_enabled"] is True
+    assert opened["document"]["storage_digest"] == f.accepted.storage_digest
     metadata = {"openai/resource": {"path": str(f.root / f.accepted.path)}}
     monkeypatch.setattr(
         bridge,

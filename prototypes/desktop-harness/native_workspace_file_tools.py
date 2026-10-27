@@ -11,12 +11,7 @@ from typing import Any
 from mcp.server.fastmcp import Context
 from mcp.types import ToolAnnotations
 
-from native_file_tab_probe import FileInput, ProbeObservation
-from native_workspace_files import WorkspaceDocument
-
-
-class FileObservation(ProbeObservation):
-    resume: WorkspaceDocument | None = None
+from native_file_contracts import FileInput, ProbeObservation, WorkspaceDocument
 
 
 def verify_local_file(document: dict) -> None:
@@ -82,7 +77,11 @@ def register_native_workspace_file_tools(
     )
     async def wright_workflow_file(file: FileInput) -> dict[str, Any]:
         """Render the native shell; filename and opaque URI do not establish scope."""
-        return {"view": "native-workflow-file", "file": file.model_dump()}
+        return {
+            "view": "native-workflow-file",
+            "file": file.model_dump(),
+            "native_workspace_files_enabled": True,
+        }
 
     @mcp.tool(
         title="Resolve workspace workflow file",
@@ -90,7 +89,7 @@ def register_native_workspace_file_tools(
         meta={"ui": {"visibility": ["app"]}},
     )
     async def wright_workflow_file_context(
-        request: FileObservation, ctx: Context
+        request: ProbeObservation, ctx: Context
     ) -> dict[str, Any]:
         """Resolve only documented host metadata, preserving explicit continuation scope."""
         meta = ctx.request_context.meta
@@ -129,6 +128,7 @@ def register_native_workspace_file_tools(
                 "Accepted source changed while opening the file; explicitly reopen it"
             )
         return {
+            "native_workspace_files_enabled": True,
             "workspace": workspace,
             "document": source,
             "working_view_enabled": working_view_enabled,
