@@ -42,11 +42,13 @@ export function NativeWorkflowPanel({
   const [reopen, setReopen] = useState(0);
   const drafts = useNativeEditorDrafts(draftClient, initial, setDocument);
   const draftChooser = useRef<HTMLDetailsElement>(null);
+  const workflowDetails = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     if (!drafts.generation || !draftChooser.current) return;
     // A successful restore returns the panel to editing; failed reads stay open.
     draftChooser.current.open = false;
-    draftChooser.current.querySelector("summary")?.focus();
+    if (workflowDetails.current) workflowDetails.current.open = false;
+    workflowDetails.current?.querySelector("summary")?.focus();
   }, [drafts.generation]);
   const contextActions = (
     <div className="native-workflow-panel__context">
@@ -61,6 +63,7 @@ export function NativeWorkflowPanel({
         )}
       </nav>
       <details
+        ref={workflowDetails}
         className="native-workflow-details"
         onKeyDown={(event) => {
           if (event.key === "Escape") {

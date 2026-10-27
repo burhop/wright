@@ -1,5 +1,11 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeEditorDraftClient } from "./native-editor-draft-client";
@@ -7,7 +13,9 @@ import { NativeSourceClient } from "./native-source-client";
 import type WorkflowRecoveryConcept from "../workflow-recovery/WorkflowRecoveryConcept";
 
 vi.mock("../workflow-recovery/WorkflowRecoveryConcept", () => ({
-  default: (props: NonNullable<ComponentProps<typeof WorkflowRecoveryConcept>>) => (
+  default: (
+    props: NonNullable<ComponentProps<typeof WorkflowRecoveryConcept>>,
+  ) => (
     <section aria-label="Shared editor">
       {props.fileActions}
       <button onClick={() => props.onUnsavedChange?.(true)}>Edit source</button>
@@ -96,3 +104,58 @@ it("shows draft-read failures outside the closed disclosure without repeating a 
     },
   });
 });
+
+it.each([false, true])(
+  "returns to the canvas only after confirmed draft recovery (failed=%s)",
+  async (failed) => {
+    const row = {
+      draft_id: "preserved",
+      updated_at: 123,
+      base_matches_current: true,
+      base_storage_digest: initial.storage_digest,
+      matches_accepted: false,
+      accepted_checkpoint: false,
+    };
+    const read = failed
+      ? vi.fn().mockRejectedValue(new Error("Draft unavailable"))
+      : vi.fn().mockResolvedValue({
+          ...row,
+          source: "preserved draft",
+          applied_source: initial.source,
+          layout: null,
+          view: "code",
+        });
+    const save = vi.fn(),
+      resume = vi.fn();
+    const draftClient = {
+      list: vi.fn().mockResolvedValue([row]),
+      read,
+      save,
+      resume,
+      requiresRead: false,
+    } as unknown as NativeEditorDraftClient;
+    setup({ draftClient });
+    fireEvent.click(screen.getByText("Workflow details"));
+    fireEvent.click(await screen.findByText(/Saved drafts checked/));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Resume draft" }),
+    );
+    const details = screen.getByText("Workflow details").closest("details");
+    if (failed) {
+      expect(await screen.findByRole("alert")).toHaveTextContent(
+        "Draft unavailable",
+      );
+      expect(details).toHaveAttribute("open");
+      expect(resume).not.toHaveBeenCalled();
+    } else {
+      await waitFor(() =>
+        expect(
+          screen.getByText("Workflow details").closest("details"),
+        ).not.toHaveAttribute("open"),
+      );
+      expect(screen.getByText("Workflow details")).toHaveFocus();
+      expect(resume).toHaveBeenCalledOnce();
+    }
+    expect(save).not.toHaveBeenCalled();
+  },
+);

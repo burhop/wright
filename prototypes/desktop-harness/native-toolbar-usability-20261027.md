@@ -47,7 +47,7 @@ No engineering execution, account change, push, merge or publication.
 ## Current local evidence
 
 Exact tested resource SHA256:
-`62d6e6028129bde92e907c91bf7e50c0cd275e09f779ff20f231cd55273a4298`.
+`6a87c23a407dd064a9c4738d1181a2464053e0727d403995b11044dc7b4f0836`.
 Evidence: `.local-run/native-toolbar-20261027/` (private clients are not handoff
 artifacts). In the measured native-file simulation, wide/narrow diagram tops
 improve from 233/327px to 82/147px; at 800x700 and 150% display scale, 292px to
@@ -63,3 +63,18 @@ full gate mixed old/new module snapshots during the revision-display test edit;
 it is not counted as a final gate. The stable final gate is run separately.
 Independent Windows requalification is in progress. This resource is not yet
 installed and has no new actual native desktop observation.
+
+## Draft lifecycle follow-up
+
+The final actual-owner A/B close/reopen test also checks explicit recovery and
+keyboard focus. Moving the draft controls exposed the existing restore effect's
+focus on an inner summary hidden by the closed parent. The correction closes and
+focuses the visible Workflow details summary on confirmed restore; failed restore
+stays open with an alert.30 owning checks and actual draft lifecycle pass on the
+6a87 resource; accepted sources, both histories and reference PNG stay unchanged.
+
+The density preservation check must run after the disposable draft writer has
+finished: their first concurrent attempt correctly detected a neighboring draft
+write. The strict unchanged-draft assertion stays; sequential rerun passes all
+three sizes. Preserve the failure and its attribution. A real native close/reopen
+observation is still distinct from this simulated-host lifecycle evidence.
