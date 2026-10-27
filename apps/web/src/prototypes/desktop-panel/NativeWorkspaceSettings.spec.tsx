@@ -80,7 +80,7 @@ it("saves only changed nonsecret fields and never copies workspace metadata into
     changes: { workspace_prompt: "new context" },
   });
   expect(f.current().remote_hidden).toBe(true);
-  expect(dirty).toHaveBeenLastCalledWith(false);
+  await waitFor(() => expect(dirty).toHaveBeenLastCalledWith(false));
 });
 
 it("keeps an uncertain settings save locked until explicit read finds the intended values, without replay", async () => {
