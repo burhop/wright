@@ -25,7 +25,7 @@ const scope = {
   workspace_id: fixture.workspace.workspace_id,
   session_id: fixture.workspace.session_id,
 };
-const html = readFileSync(
+const localHtml = readFileSync(
   resolve(runtime.runtime, "native-editor.html"),
   "utf8",
 );
@@ -33,12 +33,12 @@ const hash = (x) => createHash("sha256").update(x).digest("hex");
 // HTML textarea values normalize line endings. Keep owner/file/hash comparisons
 // exact; adapt only expectations at this browser presentation boundary.
 const textareaSource = (source) => source.replace(/\r\n?/g, "\n");
-expect(hash(html)).toBe(runtime.native_html_sha256);
+expect(hash(localHtml)).toBe(runtime.native_html_sha256);
 const mcp = new Client({
   name: "wright-general-workspace-files-qualification",
   version: "0.1.0",
 });
-const transport = new StdioClientTransport({
+const expectedTransport = {
   command:
     process.env.WRIGHT_PROBE_PYTHON ??
     resolve(
@@ -61,9 +61,34 @@ const transport = new StdioClientTransport({
     ),
   },
   stderr: "pipe",
+};
+const packageConfigPath = process.env.WRIGHT_PROBE_MCP_CONFIG;
+const packageTransport = packageConfigPath
+  ? JSON.parse(readFileSync(packageConfigPath, "utf8")).mcpServers[
+      "wright-desktop-gb10"
+    ]
+  : undefined;
+if (packageTransport) {
+  // Reject a different service before connecting; never silently retarget a test.
+  expect(packageTransport.command).toBe(expectedTransport.command);
+  expect(packageTransport.args).toEqual(expectedTransport.args);
+  expect(packageTransport.env.PYTHONPATH).toBe(expectedTransport.env.PYTHONPATH);
+}
+const transport = new StdioClientTransport({
+  ...expectedTransport,
+  ...(packageTransport ?? {}),
+  env: { ...expectedTransport.env, ...packageTransport?.env },
 });
 transport.stderr?.on("data", () => {});
 await mcp.connect(transport);
+const homeTool = (await mcp.listTools()).tools.find(
+  (tool) => tool.name === "wright_home",
+);
+const servedResource = await mcp.readResource({
+  uri: homeTool._meta.ui.resourceUri,
+});
+const html = servedResource.contents[0].text;
+expect(html).toBe(localHtml);
 const data = (result) =>
   result.structuredContent ?? JSON.parse(result.content[0].text);
 const read = async (name, args) => {
@@ -808,6 +833,8 @@ try {
         boundary:
           "SIMULATED host; real compiled Wright UI/MCP/API/storage, not actual OpenAI desktop or Windows acceptance",
         native_html_sha256: hash(html),
+        mcp_config_path: packageConfigPath ?? null,
+        html_origin: "Actual connected MCP resource, matched to frozen build",
         checks,
         measurements,
         mounted_ui_observations: mountedObservations,
