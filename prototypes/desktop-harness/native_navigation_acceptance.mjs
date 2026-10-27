@@ -287,9 +287,14 @@ try {
     await expect(
       frame.getByRole("button", { name: "Edit workflow", exact: true }),
     ).toHaveAttribute("aria-current", "page");
+    await frame.locator(".native-workflow-details > summary").click();
+    await expect(
+      frame.locator(".native-workflow-panel__view-hint"),
+    ).toBeVisible();
     await expect(
       frame.locator(".native-workflow-panel__view-hint"),
     ).toContainText("no run selected");
+    await frame.locator(".native-workflow-details > summary").press("Escape");
     await expect(
       frame.getByRole("button", { name: "← Workspace home", exact: true }),
     ).toBeVisible();
@@ -452,7 +457,7 @@ try {
       await expect(inspector).toContainText(input.preview_filename);
       if (input.assert_usability)
         await expect(
-          frame.locator(".native-workflow-panel__view-hint"),
+          frame.locator(".native-workflow-panel__run"),
         ).toContainText(input.run_id);
       await expect(inspector).not.toContainText(
         "different saved workflow or an edited draft",
@@ -461,20 +466,24 @@ try {
       const inspectorFont = await inspector
         .getByText("What this step does", { exact: true })
         .evaluate((el) => getComputedStyle(el).fontFamily);
-      const typography = await inspector.locator("h2,h3,h4,p,li,b").evaluateAll(
-        (nodes) => nodes.map((el) => ({
-          text: el.textContent?.trim().slice(0, 90),
-          family: getComputedStyle(el).fontFamily,
-          size: getComputedStyle(el).fontSize,
-        })),
-      );
+      const typography = await inspector
+        .locator("h2,h3,h4,p,li,b")
+        .evaluateAll((nodes) =>
+          nodes.map((el) => ({
+            text: el.textContent?.trim().slice(0, 90),
+            family: getComputedStyle(el).fontFamily,
+            size: getComputedStyle(el).fontSize,
+          })),
+        );
       writeFileSync(
         resolve(output, "inspector-typography.json"),
         JSON.stringify(typography, null, 2),
       );
       expect(inspectorFont).toMatch(/system-ui|sans-serif/i);
       expect(inspectorFont).not.toMatch(/Times/i);
-      checks.push("Producing-step inspector retains the native host sans-serif font");
+      checks.push(
+        "Producing-step inspector retains the native host sans-serif font",
+      );
       checks.push(
         "Exact selected run supplies available results and producing-step files without a false source mismatch",
       );

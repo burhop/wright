@@ -79,7 +79,10 @@ const before = await read("wright_workflow_read", scope);
 const opened = await read("wright_workflow_open", scope);
 const workspace = opened.workspace;
 const historyBefore = await read("wright_workflow_history", scope);
-const bundlePath = resolve(process.env.WRIGHT_PROBE_BUNDLE ?? "prototypes/desktop-harness/native-editor.html");
+const bundlePath = resolve(
+  process.env.WRIGHT_PROBE_BUNDLE ??
+    "prototypes/desktop-harness/native-editor.html",
+);
 const originalBundle = readFileSync(bundlePath, "utf8");
 const bundle = originalBundle.replace(
   "<head>",
@@ -260,14 +263,24 @@ try {
     frame.getByRole("button", { name: "New workflow", exact: true }),
   ).toBeVisible();
   await record("workspace-list-density", async () => {
-    await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(0);
-    const normalWorkflows = frame.getByRole("region", { name: "Workflows", exact: true }).locator("ul");
+    await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(
+      0,
+    );
+    const normalWorkflows = frame
+      .getByRole("region", { name: "Workflows", exact: true })
+      .locator("ul");
     await expect(normalWorkflows.locator("li")).not.toHaveCount(0);
     await shot("workflow-list-density-normal");
-    expect(await normalWorkflows.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(360);
+    expect(
+      await normalWorkflows.evaluate((el) => el.clientHeight),
+    ).toBeLessThanOrEqual(360);
     await page.setViewportSize({ width: 480, height: 820 });
-    await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(0);
-    const workflows = frame.getByRole("region", { name: "Workflows", exact: true }).locator("ul");
+    await expect(frame.getByText("Reading saved workflow names…")).toHaveCount(
+      0,
+    );
+    const workflows = frame
+      .getByRole("region", { name: "Workflows", exact: true })
+      .locator("ul");
     await expect(workflows.locator("li")).not.toHaveCount(0);
     await shot("workflow-list-density");
     const workflowHeight = await workflows.evaluate((el) => el.clientHeight);
@@ -276,13 +289,19 @@ try {
     await workflows.press("End");
     await expect(workflows.locator("li").last()).toBeInViewport();
     await frame.getByRole("button", { name: "Files", exact: true }).click();
-    const files = frame.getByRole("region", { name: "Files", exact: true }).locator(":scope > ul");
+    const files = frame
+      .getByRole("region", { name: "Files", exact: true })
+      .locator(":scope > ul");
     const total = await files.locator("li").count();
     expect(total).toBeGreaterThan(20);
     await expect(files.locator("li").first()).toBeInViewport({ ratio: 1 });
     await expect(frame.getByLabel("Choose input file")).not.toBeVisible();
     await shot("file-list-density");
-    const bounds = await files.evaluate((el) => ({ height: el.clientHeight, scrollHeight: el.scrollHeight, overflow: getComputedStyle(el).overflowY }));
+    const bounds = await files.evaluate((el) => ({
+      height: el.clientHeight,
+      scrollHeight: el.scrollHeight,
+      overflow: getComputedStyle(el).overflowY,
+    }));
     expect(bounds.height).toBeLessThanOrEqual(360);
     expect(bounds.scrollHeight).toBeGreaterThan(bounds.height);
     expect(bounds.overflow).toBe("auto");
@@ -293,17 +312,29 @@ try {
     const search = frame.getByLabel("Find a file", { exact: true });
     await search.fill("block-isometric.png");
     await expect(files.locator("li")).not.toHaveCount(0);
-    expect(await frame.locator("body").evaluate((el) => el.scrollWidth > el.clientWidth + 1)).toBe(false);
+    expect(
+      await frame
+        .locator("body")
+        .evaluate((el) => el.scrollWidth > el.clientWidth + 1),
+    ).toBe(false);
     await shot("file-list-filtered");
     const unchanged = await read("wright_workflow_read", scope);
     const historyAfter = await read("wright_workflow_history", scope);
     expect(unchanged.storage_digest).toBe(before.storage_digest);
     expect(historyAfter).toEqual(historyBefore);
-    observations.list_density = { workflow_height: workflowHeight, files: total, ...bounds, keyboard_last_file_visible: true, source_and_history_unchanged: true };
+    observations.list_density = {
+      workflow_height: workflowHeight,
+      files: total,
+      ...bounds,
+      keyboard_last_file_visible: true,
+      source_and_history_unchanged: true,
+    };
     await page.setViewportSize({ width: 1080, height: 900 });
     await search.fill("");
     await shot("file-list-density-normal");
-    expect(await files.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(360);
+    expect(await files.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(
+      360,
+    );
     await frame.getByRole("button", { name: "Workflows", exact: true }).click();
   });
   await record("friendly-search", async () => {
@@ -335,13 +366,24 @@ try {
     await frame.getByRole("button", { name: filename, exact: true }).click();
     await expect(frame.getByTestId("workflow-recovery-save")).toBeVisible();
     await frame.getByTestId("workflow-recovery-view-code").click();
-    await expect(frame.getByTestId("workflow-recovery-source-editor")).toHaveValue(before.source);
-    expect(calls.some((c) => c.name === "wright_workspace_file_preview" && c.path === scope.path)).toBe(false);
+    await expect(
+      frame.getByTestId("workflow-recovery-source-editor"),
+    ).toHaveValue(before.source);
+    expect(
+      calls.some(
+        (c) =>
+          c.name === "wright_workspace_file_preview" && c.path === scope.path,
+      ),
+    ).toBe(false);
     await frame.getByTestId("workflow-recovery-view-diagram").click();
     await expect(frame.locator(".react-flow__node").first()).toBeVisible();
-    expect(await frame.locator(".react-flow").evaluate((el) => el.clientHeight)).toBeGreaterThan(200);
+    expect(
+      await frame.locator(".react-flow").evaluate((el) => el.clientHeight),
+    ).toBeGreaterThan(200);
     await shot("workflow-file-in-shared-viewer");
-    await frame.getByRole("button", { name: "← Workspace home", exact: true }).click();
+    await frame
+      .getByRole("button", { name: "← Workspace home", exact: true })
+      .click();
     await frame.getByRole("button", { name: "Workflows", exact: true }).click();
   });
   await record("connections", async () => {
@@ -351,7 +393,9 @@ try {
     await expect(frame.getByText("Loading connections…")).toHaveCount(0);
     const catalog = frame.locator(".native-connections__items");
     await expect(catalog.locator("li").first()).toBeVisible();
-    expect(await catalog.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(520);
+    expect(await catalog.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(
+      520,
+    );
     await catalog.focus();
     await catalog.press("End");
     await expect(catalog.locator("li").last()).toBeInViewport();
@@ -361,20 +405,36 @@ try {
       .getByRole("button", { name: "Search / refresh", exact: true })
       .click();
     await expect(frame.getByText(/Current readiness:/)).toBeVisible();
-    await expect(frame.getByText(/^Authentication: (?:not checked here|credentials needed)\.$/)).toBeVisible();
+    await expect(
+      frame.getByText(
+        /^Authentication: (?:not checked here|credentials needed)\.$/,
+      ),
+    ).toBeVisible();
     await page.setViewportSize({ width: 480, height: 820 });
     const card = frame.locator(".native-connections__items > li");
     await expect(card).toHaveCount(1);
     await shot("connections-default-narrow");
-    const cardHeight = await card.evaluate((el) => el.getBoundingClientRect().height);
+    const cardHeight = await card.evaluate(
+      (el) => el.getBoundingClientRect().height,
+    );
     expect(cardHeight).toBeLessThanOrEqual(380);
     observations.connections_card_height = cardHeight;
     await page.setViewportSize({ width: 1080, height: 900 });
     await shot("connections-current-readiness");
-    await expect(frame.getByText("Manage connection", { exact: true })).toBeVisible();
-    await expect(frame.getByRole("button", { name: /^Disable SteveCAD.* in this workspace$/i })).not.toBeVisible();
+    await expect(
+      frame.getByText("Manage connection", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole("button", {
+        name: /^Disable SteveCAD.* in this workspace$/i,
+      }),
+    ).not.toBeVisible();
     await frame.getByText("Manage connection", { exact: true }).click();
-    await expect(frame.getByRole("button", { name: /^Disable SteveCAD.* in this workspace$/i })).toBeVisible();
+    await expect(
+      frame.getByRole("button", {
+        name: /^Disable SteveCAD.* in this workspace$/i,
+      }),
+    ).toBeVisible();
     await frame.getByText("Manage connection", { exact: true }).click();
     await frame.getByText("Readiness details", { exact: true }).click();
     await shot("connections-readiness");
@@ -487,6 +547,7 @@ try {
   await record("export-import-disposable", async () => {
     if (!created?.storage_digest)
       throw Error("Creation not confirmed; skip transfer");
+    await frame.locator(".native-workflow-details > summary").click();
     await frame
       .getByRole("button", { name: "Export / import workflow", exact: true })
       .click();

@@ -24,6 +24,7 @@ export function useNativeEditorDrafts(
   const inFlight = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const alive = useRef(true);
+  const [attention, setAttention] = useState(false);
   const [rows, setRows] = useState<EditorDraftMetadata[]>([]);
   const [message, setMessage] = useState(
     client ? "Checking saved drafts…" : "",
@@ -60,6 +61,7 @@ export function useNativeEditorDrafts(
               ? [saved]
               : []),
           ]);
+        if (alive.current) setAttention(false);
         if (alive.current)
           setMessage(
             next.dirty
@@ -67,6 +69,7 @@ export function useNativeEditorDrafts(
               : "Workflow saved; no unsaved draft changes.",
           );
       } catch (error) {
+        if (alive.current) setAttention(true);
         if (alive.current)
           setMessage(
             error instanceof Error
@@ -126,6 +129,7 @@ export function useNativeEditorDrafts(
             setMessage("Saved drafts checked.");
         })
         .catch(() => {
+          if (alive.current) setAttention(true);
           if (alive.current)
             setMessage(
               "Saved drafts could not be read. Your accepted workflow is unchanged.",
@@ -140,7 +144,9 @@ export function useNativeEditorDrafts(
     if (!client || inFlight.current) return;
     try {
       setInspected(await client.read(id));
+      setAttention(false);
     } catch {
+      setAttention(true);
       setMessage(
         "This draft could not be read. Your open edits are unchanged.",
       );
@@ -153,10 +159,12 @@ export function useNativeEditorDrafts(
       client.resume(saved, accepted.current);
       onRestoreBase?.(accepted.current);
       setRestored(saved);
+      setAttention(false);
       setGeneration((value) => value + 1);
       setMessage("Draft reopened. Check and save it to accept the workflow.");
       setInspected(undefined);
     } catch (error) {
+      setAttention(true);
       setMessage(
         error instanceof Error ? error.message : "Draft cannot be resumed.",
       );
@@ -165,6 +173,7 @@ export function useNativeEditorDrafts(
   return {
     rows,
     message,
+    attention,
     restored,
     inspected,
     generation,
@@ -172,6 +181,7 @@ export function useNativeEditorDrafts(
     inspect,
     resume,
     acceptedDigest,
+    acceptedRevision: accepted.current.definition_revision,
     accepted: (document: WorkspaceWorkflowSourceDocument) => {
       accepted.current = document;
       setAcceptedDigest(document.storage_digest);
@@ -183,6 +193,7 @@ export function useNativeEditorDrafts(
         const reconciled = await client.inspectPending();
         if (reconciled) acknowledged.current = attempted.current;
         await discover();
+        setAttention(false);
         setMessage(
           reconciled
             ? "The previous draft save was found. No write was repeated."
@@ -190,6 +201,7 @@ export function useNativeEditorDrafts(
         );
         if (reconciled) void flush();
       } catch {
+        setAttention(true);
         setMessage("Draft outcome remains unconfirmed. No write was repeated.");
       }
     },
@@ -199,6 +211,7 @@ export function useNativeEditorDrafts(
         setMessage("A separate draft will preserve your current edits.");
         void flush();
       } catch {
+        setAttention(true);
         setMessage("Read the unconfirmed draft before starting another.");
       }
     },

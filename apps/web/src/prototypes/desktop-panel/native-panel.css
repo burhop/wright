@@ -571,3 +571,133 @@
 .native-workspace-settings button {
   margin: 8px 6px 0 0;
 }
+
+/* Native host owns tabs/breadcrumbs; Wright reuses the editor's file-actions slot. */
+#ui-review {
+  order: 3;
+}
+.native-ui-review {
+  text-align: right;
+  border-top: 1px solid var(--native-host-border, #414141);
+  border-bottom: 0;
+}
+.native-ui-review__form {
+  text-align: left;
+}
+.native-workspace-frame[data-native-file="true"] {
+  grid-template-rows: minmax(0, 1fr);
+}
+.native-workflow-panel .recovery-filebar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 8px;
+  padding: 6px 10px;
+}
+.native-workflow-panel .recovery-filebar__identity {
+  min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+.native-workflow-panel .recovery-toolbar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.native-workflow-panel .native-workflow-panel__context {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0;
+  border: 0;
+  gap: 4px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.native-workflow-panel__context > [role="status"],
+.native-workflow-panel__context > [role="alert"] {
+  flex-basis: 100%;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.native-workflow-panel__run {
+  color: var(--color-text-muted);
+}
+.native-workflow-views button {
+  min-height: 30px;
+  padding: 4px 7px;
+}
+.native-workflow-details {
+  position: relative;
+  font-size: 12px;
+}
+.native-workflow-details > summary {
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 5px;
+}
+.native-workflow-details > summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.native-workflow-details__content {
+  position: absolute;
+  z-index: 60;
+  right: 0;
+  top: calc(100% + 4px);
+  box-sizing: border-box;
+  width: min(380px, calc(100vw - 24px));
+  max-height: calc(100vh - 150px);
+  overflow: auto;
+  padding: 12px;
+  background: var(--native-host-bg, #202020);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px #0006;
+  font: 12px/1.5 var(--font-ui);
+}
+.native-workflow-details__content dl {
+  margin: 0;
+}
+.native-workflow-details__content dt {
+  font-weight: 600;
+}
+.native-workflow-details__content dd {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.native-workflow-details__content > button {
+  min-height: 32px;
+  padding: 5px 10px;
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .native-workflow-panel .recovery-filebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .native-workflow-panel .recovery-filebar__identity {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .native-workflow-panel .native-workflow-panel__context {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+  .native-workflow-panel .recovery-toolbar {
+    grid-row: 3;
+  }
+  .native-workflow-details__content {
+    position: fixed;
+    top: 86px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: calc(100vh - 140px);
+  }
+}

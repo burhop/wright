@@ -627,14 +627,12 @@ async function open() {
     rememberLocation();
     renderCurrent = (context) =>
       root.render(
-        <div className="native-workspace-frame">
-          <nav aria-label="Wright navigation">
-            {fileBound ? (
-              <span>{fileInput?.name} · Native file tab test</span>
-            ) : (
+        <div className="native-workspace-frame" data-native-file={fileBound}>
+          {!fileBound && (
+            <nav aria-label="Wright navigation">
               <button onClick={home}>← Workspace home</button>
-            )}
-          </nav>
+            </nav>
+          )}
           <NativePanelContent
             key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
             initial={document}
