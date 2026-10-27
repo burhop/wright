@@ -137,3 +137,29 @@ this keeps engineering declarations near the top without removing, changing or
 projecting accepted instruction bodies. Wrapping is presentation only and must
 not dirty or save a workflow. All native-host and Windows delivery claims remain
 separate from browser qualification.
+
+### Installed 0.29 checkpoint
+
+The mounted-inspection candidate is now installed as named prototype 0.29.0:
+app source `7888226a`, resource `b2a55309…7abd`. Linux 2072 frontend checks,
+types/lint and the 14-check journey pass. Independent Windows qualification
+passes 89 focused checks, types/lint and all 14 journey checks on the identical
+resource; five captures were inspected and owned services closed normally.
+
+The reusable journey now optionally takes `WRIGHT_PROBE_MCP_CONFIG`, refuses a
+different command/state/runtime before connecting, and reads its HTML from the
+actual connected MCP resource. The exact installed-config journey passes all
+14 checks. This remains a simulated host, not native desktop acceptance. A
+separate read-only installed-owner image check verifies the real retained block
+PNG (800×640 and its original SHA); the generic journey's one-pixel controlled
+image must not be mistaken for that engineering preview.
+
+Earlier named packages, services/state and unrelated settings are preserved.
+The intentionally live isolated 0.29 preview is on port 18157; engineering,
+reasoning and review counts remain zero. Actual native general-file rendering,
+frontend-tool discovery, Windows delivery and conversation restoration remain
+unverified. Existing-library CAD compatibility findings remain follow-on work;
+no CAD viewer, parser or security relaxation was shipped.
+
+Current private evidence index:
+`/home/burhop/repos/wright/.local-run/desktop-usability-evidence-20261026/LATEST.md`.
