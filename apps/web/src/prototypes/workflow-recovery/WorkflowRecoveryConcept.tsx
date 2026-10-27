@@ -2519,6 +2519,7 @@ function WorkflowRecoveryReadyConcept({
   );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>(initialDraft?.view ?? "diagram");
+  const [sourceWrap, setSourceWrap] = useState(false);
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>("overview");
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const inspectorBodyRef = useRef<HTMLDivElement>(null);
@@ -4849,13 +4850,22 @@ function WorkflowRecoveryReadyConcept({
                     commands
                   </b>
                 </div>
-                <div>
+                <div className="recovery-code__view-options">
                   {parsedSource.ok ? "✓ source valid" : "! source has issues"}
+                  <button
+                    type="button"
+                    className="recovery-button"
+                    aria-pressed={sourceWrap}
+                    onClick={() => setSourceWrap((current) => !current)}
+                  >
+                    Wrap lines
+                  </button>
                 </div>
               </header>
               <textarea
                 ref={sourceRef}
                 spellCheck={false}
+                wrap={sourceWrap ? "soft" : "off"}
                 aria-label="Workflow source"
                 data-testid="workflow-recovery-source-editor"
                 readOnly={saveState === "saving"}

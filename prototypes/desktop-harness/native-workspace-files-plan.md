@@ -137,6 +137,16 @@ clean dependency set before integrating. No CAD parser/viewer or security bypass
 was built. Dynamic native tab captions remain an unverified host capability;
 long Source instructions remain a separate focused usability item.
 
+Source readability batch in progress: the existing shared textarea defaults to
+logical unwrapped code lines, with an explicit Wrap lines toggle. No instruction
+or source text is removed, projected, rewritten or automatically saved. This is
+not a new editor or parser. Extend the actual-owner file journey to measure the
+first engineering declaration within wide/narrow viewports, preserve the entire
+source through toggles, and reject dirty/save side effects on both bracket and
+Robot workflows. The installed 0.28 preview remains frozen while this separate
+candidate is qualified; its binding includes the UI hash and must not be patched
+in place to hide configuration drift.
+
 Official extension guidance rechecked 27 October:
 https://developers.openai.com/plugins/build/extensions documents file entrypoints
 and opaque file resource input. Public host-file opening remains the previously

@@ -1190,6 +1190,16 @@
 .recovery-code header div:first-child {
   display: grid;
 }
+.recovery-code header {
+  flex-wrap: wrap;
+}
+.recovery-code__view-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--recovery-size-8);
+  margin-left: auto;
+}
 .recovery-code footer {
   border-top: var(--recovery-size-1) solid var(--color-surface-elevated);
   border-bottom: 0;
@@ -1229,6 +1239,10 @@
   color: var(--color-primary);
   font: var(--recovery-size-11)/1.55 var(--font-mono);
   tab-size: 2;
+}
+.recovery-code textarea[wrap="off"] {
+  white-space: pre;
+  overflow-wrap: normal;
 }
 .recovery-diagnostics {
   position: absolute;

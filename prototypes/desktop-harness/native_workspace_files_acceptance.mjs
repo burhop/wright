@@ -300,6 +300,82 @@ await new Promise((done) => server.listen(0, "127.0.0.1", done));
 const browser = await chromium.launch({ headless: true });
 let status = "FAIL",
   failure;
+async function checkSourcePresentation(page, frame, original, prefix) {
+  const editor = frame.getByTestId("workflow-recovery-source-editor");
+  const wrap = frame.getByRole("button", { name: "Wrap lines", exact: true });
+  const unchanged = textareaSource(original);
+  const callsBefore = calls.length;
+  await expect(editor).toHaveValue(unchanged);
+  await expect(wrap).toHaveAttribute("aria-pressed", "false");
+  await expect(frame.getByTestId("workflow-recovery-save")).toBeDisabled();
+  const unwrappedHeight = await editor.evaluate(
+    (element) => element.scrollHeight,
+  );
+  await wrap.click();
+  await expect(wrap).toHaveAttribute("aria-pressed", "true");
+  await expect(editor).toHaveValue(unchanged);
+  const wrappedHeight = await editor.evaluate(
+    (element) => element.scrollHeight,
+  );
+  expect(wrappedHeight).toBeGreaterThan(unwrappedHeight);
+  await page.screenshot({
+    path: resolve(output, `${prefix}-source-wrapped.png`),
+  });
+  await wrap.click();
+  await expect(editor).toHaveValue(unchanged);
+  for (const size of [
+    { width: 1100, height: 900 },
+    { width: 480, height: 820 },
+  ]) {
+    await page.setViewportSize(size);
+    const geometry = await editor.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const declaration = element.value.search(/^(?:item|step|task|group) /m);
+      if (declaration < 0) throw Error("No engineering declaration in source");
+      const line = element.value.slice(0, declaration).split("\n").length - 1;
+      const lineHeight = parseFloat(style.lineHeight);
+      const y =
+        parseFloat(style.paddingTop) + line * lineHeight - element.scrollTop;
+      return {
+        white_space: style.whiteSpace,
+        first_declaration_line: line + 1,
+        first_declaration_visible:
+          y >= 0 && y + lineHeight <= element.clientHeight,
+        textarea_height: element.clientHeight,
+        scroll_height: element.scrollHeight,
+        body_overflow:
+          document.body.scrollWidth > document.body.clientWidth + 2,
+      };
+    });
+    expect(geometry.white_space).toBe("pre");
+    expect(geometry.first_declaration_visible).toBe(true);
+    expect(geometry.body_overflow).toBe(false);
+    await expect(wrap).toBeInViewport();
+    await expect(frame.getByTestId("workflow-recovery-save")).toBeDisabled();
+    measurements.push({
+      source: prefix,
+      ...size,
+      ...geometry,
+      wrapped_height: wrappedHeight,
+    });
+    await page.screenshot({
+      path: resolve(output, `${prefix}-source-${size.width}.png`),
+    });
+  }
+  expect(
+    calls
+      .slice(callsBefore)
+      .filter((call) =>
+        ["wright_workflow_save", "wright_editor_draft_save"].includes(
+          call.name,
+        ),
+      ),
+  ).toEqual([]);
+  await page.setViewportSize({ width: 1100, height: 900 });
+  checks.push(
+    `${prefix}: instruction-complete Source remains unchanged through wrap toggles; the first engineering declaration is visible in wide/narrow views without dirtying or saving`,
+  );
+}
 try {
   const page = await browser.newPage({
     viewport: { width: 1100, height: 900 },
@@ -385,6 +461,7 @@ try {
   await a.getByTestId("workflow-recovery-view-code").click();
   const editor = a.getByTestId("workflow-recovery-source-editor");
   await expect(editor).toHaveValue(textareaSource(docsBefore[0].source));
+  await checkSourcePresentation(page, a, docsBefore[0].source, "bracket");
   const revised = docsBefore[0].source.replace(
     /^  name: "[^"]+"/m,
     `  name: ${JSON.stringify(firstTitle + " · native file check")}`,
@@ -412,6 +489,7 @@ try {
   await expect(b.getByTestId("workflow-recovery-source-editor")).toHaveValue(
     textareaSource(docsBefore[1].source),
   );
+  await checkSourcePresentation(page, b, docsBefore[1].source, "robot");
   await page.screenshot({ path: resolve(output, "robot-workflow-file.png") });
   expect(await read("wright_workflow_read", fixture.workflows[1])).toEqual(
     docsBefore[1],
