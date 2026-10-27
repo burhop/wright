@@ -30,6 +30,9 @@ const html = readFileSync(
   "utf8",
 );
 const hash = (x) => createHash("sha256").update(x).digest("hex");
+// HTML textarea values normalize line endings. Keep owner/file/hash comparisons
+// exact; adapt only expectations at this browser presentation boundary.
+const textareaSource = (source) => source.replace(/\r\n?/g, "\n");
 expect(hash(html)).toBe(runtime.native_html_sha256);
 const mcp = new Client({
   name: "wright-general-workspace-files-qualification",
@@ -381,7 +384,7 @@ try {
   await expect(a.getByTestId("workflow-recovery-save")).toBeVisible();
   await a.getByTestId("workflow-recovery-view-code").click();
   const editor = a.getByTestId("workflow-recovery-source-editor");
-  await expect(editor).toHaveValue(docsBefore[0].source);
+  await expect(editor).toHaveValue(textareaSource(docsBefore[0].source));
   const revised = docsBefore[0].source.replace(
     /^  name: "[^"]+"/m,
     `  name: ${JSON.stringify(firstTitle + " · native file check")}`,
@@ -407,7 +410,7 @@ try {
   await expect(b.getByTestId("workflow-recovery-save")).toBeVisible();
   await b.getByTestId("workflow-recovery-view-code").click();
   await expect(b.getByTestId("workflow-recovery-source-editor")).toHaveValue(
-    docsBefore[1].source,
+    textareaSource(docsBefore[1].source),
   );
   await page.screenshot({ path: resolve(output, "robot-workflow-file.png") });
   expect(await read("wright_workflow_read", fixture.workflows[1])).toEqual(
@@ -450,7 +453,7 @@ try {
   await reopened.getByTestId("workflow-recovery-view-code").click();
   await expect(
     reopened.getByTestId("workflow-recovery-source-editor"),
-  ).toHaveValue(saved.source);
+  ).toHaveValue(textareaSource(saved.source));
   await page.screenshot({ path: resolve(output, "saved-reopened.png") });
   checks.push(
     "Close/remount reopens current accepted revision using remembered exact scope; no fixed manifest pin prevents ordinary saves",
@@ -486,7 +489,7 @@ try {
   await stale.getByTestId("workflow-recovery-view-code").click();
   await expect(
     stale.getByTestId("workflow-recovery-source-editor"),
-  ).toHaveValue(saved.source);
+  ).toHaveValue(textareaSource(saved.source));
   expect(await read("wright_workflow_read", fixture.workflows[0])).toEqual(
     saved,
   );
@@ -610,7 +613,7 @@ try {
   await imported.getByTestId("workflow-recovery-view-code").click();
   await expect(
     imported.getByTestId("workflow-recovery-source-editor"),
-  ).toHaveValue(originalCopy.source);
+  ).toHaveValue(textareaSource(originalCopy.source));
   expect(
     await read("wright_workflow_read", { ...scope, path: documents[3].path }),
   ).toEqual(originalCopy);
