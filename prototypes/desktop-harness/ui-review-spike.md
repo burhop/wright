@@ -98,3 +98,42 @@ point to an element, enter a short comment, **Save UI report**, then **Ask chat 
 review**. No screenshot or pasted handoff is required. Existing conversations may
 retain old resources; if the action is absent, open Wright in a fresh conversation
 on the same GB10 host. A UI open receipt is not evidence of rendering.
+
+## Mounted inspection experiment — 27 October
+
+The installed checkpoint above is historical. The current installed preview is
+0.28 (`2d133c4a`, resource `6e2c52c2…cd01`), which does not yet contain this
+experiment. Preserve its frozen runtime and state while qualifying a candidate.
+
+The candidate uses the existing pinned MCP Apps SDK's public `App.registerTool`
+to offer one app-owned frontend tool, `wright_ui_inspect`. It calls the same
+bounded capture function used by explicit UI reports. Its closed empty input
+schema accepts no selector, text, action or script. It returns only the current
+Wright iframe's build, exact navigation, dirty state, theme signals and control
+geometry. It does not click controls, save reports, expose source/form values,
+take screenshots, inspect the desktop shell or grant process authority. It adds
+no backend endpoint, dependency or general automation framework.
+
+This is distinct from an MCP server tool: a host must discover and route the
+mounted app's public tools. Support in the pinned SDK and a simulated host does
+not establish that the actual desktop exposes it to the conversation. If it
+does not, record that missing capability and retain explicit UI reporting.
+The official [UI quickstart](https://developers.openai.com/plugins/build/app-quickstart)
+recommends the MCP Apps bridge and local inspection; it does not establish
+actual desktop discovery of this frontend tool. Do not use private debugging
+interfaces or Office-specific Document Control as an alternative.
+
+The actual compiled Wright/MCP/API/storage journey exercises public tools/list
+and tools/call on both mounting-bracket and Robot Tracking Diagnosis views. It
+checks scope/build, a visible report entry, unchanged full Source, no saves and
+rejection of arbitrary input. The first journey's existing assertions passed,
+but its returned geometry exposed a real defect: the Source textarea was 1134px
+wide in a 1100px frame. The follow-up fixes border-box sizing and requires the
+editor's actual bounds to fit at both 480px and 1100px. No-body-overflow alone
+was insufficient. Keep that first result and visual failure as evidence.
+
+Source also defaults to unwrapped lines with an explicit Wrap lines control;
+this keeps engineering declarations near the top without removing, changing or
+projecting accepted instruction bodies. Wrapping is presentation only and must
+not dirty or save a workflow. All native-host and Windows delivery claims remain
+separate from browser qualification.
