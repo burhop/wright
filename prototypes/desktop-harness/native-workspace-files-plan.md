@@ -147,6 +147,25 @@ Robot workflows. The installed 0.28 preview remains frozen while this separate
 candidate is qualified; its binding includes the UI hash and must not be patched
 in place to hide configuration drift.
 
+That Source candidate (`3bf847a9`, resource `bd9e8a61…73be`) passed all 12
+actual-owner journey checks, 2072 frontend tests and types/lint on Linux, and the
+same 12 checks/75 owning tests/types/lint on independent Windows. All test-owned
+services closed with zero operational counts. It remains separate from installed
+0.28 while the final small observability batch is qualified.
+
+Next bounded batch registers one read-only `wright_ui_inspect` app tool using the
+already-pinned MCP Apps 1.7.5 public API and existing `captureUiReview`. It returns
+only this Wright iframe's build, exact navigation subject and bounded geometry;
+the fixed Report UI problem control is identified without reading DOM text or
+form/source values. Empty closed input accepts no arbitrary selector or script.
+No backend, storage, process, approval or host-shell action is added. A standalone
+SDK protocol/privacy spike passes. The Office-only Document Control interface is
+not used as a workaround. Actual OpenAI-host discovery/invocation remains
+unverified until observed; SDK/browser success is not native acceptance. The
+real-owner journey will exercise both workflow frames and assert no dirty/save
+effect, source-value privacy and denied extra arguments. Source's explanatory
+header is shortened to keep its controls in one row where space permits.
+
 Official extension guidance rechecked 27 October:
 https://developers.openai.com/plugins/build/extensions documents file entrypoints
 and opaque file resource input. Public host-file opening remains the previously

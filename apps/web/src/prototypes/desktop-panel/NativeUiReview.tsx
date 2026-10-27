@@ -90,6 +90,7 @@ export function NativeUiReview({
     <aside className="native-ui-review" aria-label="Wright UI feedback">
       <button
         ref={entry}
+        data-testid="wright-ui-review-open"
         onClick={() => {
           setComment("");
           capture();

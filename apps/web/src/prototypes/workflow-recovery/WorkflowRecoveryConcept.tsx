@@ -4844,11 +4844,7 @@ function WorkflowRecoveryReadyConcept({
             <section className="recovery-code">
               <header>
                 <div>
-                  <span>ENGINEERING SOURCE</span>
-                  <b>
-                    Readable workflow script · checked changes become workflow
-                    commands
-                  </b>
+                  <span>Source</span>
                 </div>
                 <div className="recovery-code__view-options">
                   {parsedSource.ok ? "✓ source valid" : "! source has issues"}

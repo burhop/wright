@@ -8,6 +8,7 @@ import {
   EmptyResultSchema,
   type CallToolResult,
 } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
 import { openNativeWorkspaceFile } from "./native-file-client";
 import "@wright/ui-kit/styles.css";
 import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
@@ -15,7 +16,7 @@ import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { NativeUiReview } from "./NativeUiReview";
-import type { ReviewEvent } from "./native-ui-review";
+import { captureUiReview, type ReviewEvent } from "./native-ui-review";
 import type { NativeProcessCall } from "./native-process-client";
 import type { NativeTransferCall } from "./native-transfer-client";
 import {
@@ -38,7 +39,7 @@ const pendingNavigationNotice =
   "Your draft is kept. Save it before changing workspace.";
 const app = new App(
   { name: "wright-native-workflow-editor", version: "0.1.0" },
-  {},
+  { tools: { listChanged: false } },
   { autoResize: false },
 );
 let args: Record<string, unknown> = {};
@@ -353,6 +354,35 @@ async function openWorkspaceFile(
     },
   );
 }
+app.registerTool(
+  "wright_ui_inspect",
+  {
+    title: "Inspect Wright view",
+    description:
+      "Read bounded layout, build and navigation observations from this Wright iframe. No DOM text, form/source values, native screenshot, host-shell access or workflow actions.",
+    inputSchema: z.object({}).strict(),
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  },
+  () => {
+    const report = captureUiReview(
+      document.body,
+      app.getHostContext(),
+      reviewLocation(),
+      reviewEvents,
+      document.querySelector('[data-testid="wright-ui-review-open"]') ??
+        undefined,
+    );
+    return {
+      content: [{ type: "text", text: JSON.stringify(report) }],
+      structuredContent: report,
+    };
+  },
+);
 createRoot(document.getElementById("ui-review")!).render(
   <NativeUiReview
     root={() => document.getElementById("editor")!}

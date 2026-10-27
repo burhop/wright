@@ -74,7 +74,8 @@ const read = async (name, args) => {
 const calls = [],
   errors = [],
   checks = [],
-  measurements = [];
+  measurements = [],
+  mountedObservations = [];
 const docsBefore = await Promise.all(
   fixture.workflows.map((x) => read("wright_workflow_read", x)),
 );
@@ -117,15 +118,17 @@ const allowedTools = new Set([
 ]);
 const safe = (x) => JSON.stringify(x).replaceAll("<", "\\u003c");
 const host = `<!doctype html><html><meta charset="utf-8"><style>body{margin:0;background:#181818;color:#ddd;font:12px system-ui}header{padding:6px 10px;height:22px}nav{display:flex;gap:4px;height:32px;padding:0 8px}button{color:#ddd;background:#292929;border:1px solid #444;border-radius:5px;font:inherit;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}button[aria-current=page]{border-color:#aaa}iframe{border:0;width:100%;height:calc(100vh - 66px)}iframe[hidden]{display:none}</style><header>SIMULATED host tabs · real Wright UI/MCP/storage · no engineering run</header><nav aria-label="Simulated host files"><button onclick="activate('home')" data-tab="home">Workspace</button></nav><main></main><script>
-window.states={};window.openRequests=[];
+window.states={};window.openRequests=[];window.inspectionResponses={};
 const docs=${safe(documents)},scope=${safe(scope)};
 function activate(id){for(const f of document.querySelectorAll('iframe'))f.hidden=f.dataset.id!==id;for(const b of document.querySelectorAll('[data-tab]'))b.setAttribute('aria-current',b.dataset.tab===id?'page':'false');}
 function add(id,title){const f=document.createElement('iframe');f.dataset.id=id;f.title='Wright '+title;f.src='/view/'+id;document.querySelector('main').append(f);if(id!=='home'){const b=document.createElement('button');b.dataset.tab=id;b.textContent=title;b.onclick=()=>activate(id);document.querySelector('nav').append(b);}activate(id);}
 window.closeFile=id=>{document.querySelector('iframe[data-id="'+id+'"]').remove();document.querySelector('[data-tab="'+id+'"]').remove();activate('home');};
+window.inspectCommand=(frameId,id,method,params)=>{const f=document.querySelector('iframe[data-id="'+frameId+'"]');if(!f)throw Error('Missing owned frame');f.contentWindow.postMessage({jsonrpc:'2.0',id,method,params},location.origin);};
 window.addEventListener('message',async event=>{
  const frame=[...document.querySelectorAll('iframe')].find(x=>x.contentWindow===event.source);if(!frame)return;
  const id=frame.dataset.id,file=id==='home'?null:docs[Number(id)],m=event.data;
  const send=x=>frame.contentWindow.postMessage({jsonrpc:'2.0',...x},location.origin);
+ if(typeof m.id==='string'&&m.id.startsWith('wright-inspection-')&&('result' in m||'error' in m)){window.inspectionResponses[m.id]=m;return;}
  if(m.method==='ui/initialize')send({id:m.id,result:{protocolVersion:'2026-01-26',hostInfo:{name:'simulated-workspace-file-host',version:'1'},hostCapabilities:{serverTools:{},updateModelContext:{},experimental:{'openai/files':{},'openai/resource':{}}},hostContext:{theme:'dark',platform:'desktop'}}});
  if(m.method==='ui/notifications/initialized'){
   if(file){send({method:'ui/notifications/tool-input',params:{arguments:{file:{name:file.filename,resourceUri:'opaque:fixture-'+id}}}});}else{
@@ -300,7 +303,75 @@ await new Promise((done) => server.listen(0, "127.0.0.1", done));
 const browser = await chromium.launch({ headless: true });
 let status = "FAIL",
   failure;
-async function checkSourcePresentation(page, frame, original, prefix) {
+async function checkMountedInspection(page, frame, fileIndex, original) {
+  const editor = frame.getByTestId("workflow-recovery-source-editor");
+  const writes = () =>
+    calls.filter((call) =>
+      ["wright_workflow_save", "wright_editor_draft_save"].includes(call.name),
+    );
+  const beforeWrites = writes().length;
+  const command = async (suffix, method, params) => {
+    const id = `wright-inspection-${fileIndex}-${suffix}`;
+    await page.evaluate(
+      ({ frameId, id, method, params }) =>
+        window.inspectCommand(frameId, id, method, params),
+      { frameId: String(fileIndex), id, method, params },
+    );
+    await expect
+      .poll(() => page.evaluate((key) => window.inspectionResponses[key], id))
+      .toBeTruthy();
+    return page.evaluate((key) => window.inspectionResponses[key], id);
+  };
+  const listed = await command("list", "tools/list", {});
+  expect(listed.error).toBeUndefined();
+  expect(listed.result.tools).toHaveLength(1);
+  const tool = listed.result.tools[0];
+  expect(tool.name).toBe("wright_ui_inspect");
+  expect(tool.annotations.readOnlyHint).toBe(true);
+  expect(tool.inputSchema.additionalProperties).toBe(false);
+  const response = await command("read", "tools/call", {
+    name: tool.name,
+    arguments: {},
+  });
+  expect(response.error).toBeUndefined();
+  const observation = response.result.structuredContent;
+  expect(observation.schema_version).toBe("wright.ui-review/1");
+  expect(observation.location.navigation.workspace_id).toBe(scope.workspace_id);
+  expect(observation.location.navigation.session_id).toBe(scope.session_id);
+  expect(observation.location.navigation.workflow.path).toBe(
+    fixture.workflows[fileIndex].path,
+  );
+  expect(observation.location.editor_has_unsaved_changes).toBe(false);
+  expect(observation.build.bundle_payload_sha256).toMatch(/^[a-f0-9]{64}$/);
+  expect(observation.selected_element.test_id).toBe("wright-ui-review-open");
+  expect(observation.selected_element.in_viewport).toBe(true);
+  expect(
+    observation.controls.some(
+      (control) => control.test_id === "workflow-recovery-source-editor",
+    ),
+  ).toBe(true);
+  expect(original).toContain("policy.require-specified");
+  expect(JSON.stringify(observation)).not.toContain("policy.require-specified");
+  const refused = await command("invalid", "tools/call", {
+    name: tool.name,
+    arguments: { selector: "body" },
+  });
+  expect(Boolean(refused.error || refused.result?.isError)).toBe(true);
+  expect(writes().length).toBe(beforeWrites);
+  await expect(editor).toHaveValue(textareaSource(original));
+  await expect(frame.getByTestId("workflow-recovery-save")).toBeDisabled();
+  mountedObservations.push(observation);
+  checks.push(
+    `File ${fileIndex}: public app-owned inspection returns the exact mounted scope/build/geometry without source values or writes; arbitrary selectors are refused`,
+  );
+}
+async function checkSourcePresentation(
+  page,
+  frame,
+  original,
+  prefix,
+  fileIndex,
+) {
   const editor = frame.getByTestId("workflow-recovery-source-editor");
   const wrap = frame.getByRole("button", { name: "Wrap lines", exact: true });
   const unchanged = textareaSource(original);
@@ -372,6 +443,7 @@ async function checkSourcePresentation(page, frame, original, prefix) {
       ),
   ).toEqual([]);
   await page.setViewportSize({ width: 1100, height: 900 });
+  await checkMountedInspection(page, frame, fileIndex, original);
   checks.push(
     `${prefix}: instruction-complete Source remains unchanged through wrap toggles; the first engineering declaration is visible in wide/narrow views without dirtying or saving`,
   );
@@ -461,7 +533,7 @@ try {
   await a.getByTestId("workflow-recovery-view-code").click();
   const editor = a.getByTestId("workflow-recovery-source-editor");
   await expect(editor).toHaveValue(textareaSource(docsBefore[0].source));
-  await checkSourcePresentation(page, a, docsBefore[0].source, "bracket");
+  await checkSourcePresentation(page, a, docsBefore[0].source, "bracket", 0);
   const revised = docsBefore[0].source.replace(
     /^  name: "[^"]+"/m,
     `  name: ${JSON.stringify(firstTitle + " · native file check")}`,
@@ -489,7 +561,7 @@ try {
   await expect(b.getByTestId("workflow-recovery-source-editor")).toHaveValue(
     textareaSource(docsBefore[1].source),
   );
-  await checkSourcePresentation(page, b, docsBefore[1].source, "robot");
+  await checkSourcePresentation(page, b, docsBefore[1].source, "robot", 1);
   await page.screenshot({ path: resolve(output, "robot-workflow-file.png") });
   expect(await read("wright_workflow_read", fixture.workflows[1])).toEqual(
     docsBefore[1],
@@ -729,6 +801,7 @@ try {
         native_html_sha256: hash(html),
         checks,
         measurements,
+        mounted_ui_observations: mountedObservations,
         calls,
         errors,
         sources: fixture.workflows.map((x, i) => ({
