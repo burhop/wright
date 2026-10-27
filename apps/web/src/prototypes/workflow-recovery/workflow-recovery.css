@@ -1230,6 +1230,7 @@
   color: var(--recovery-muted);
 }
 .recovery-code textarea {
+  box-sizing: border-box;
   width: 100%;
   min-height: 260px;
   resize: none;

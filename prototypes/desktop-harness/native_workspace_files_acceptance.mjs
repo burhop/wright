@@ -350,6 +350,11 @@ async function checkMountedInspection(page, frame, fileIndex, original) {
       (control) => control.test_id === "workflow-recovery-source-editor",
     ),
   ).toBe(true);
+  expect(
+    observation.controls.find(
+      (control) => control.test_id === "workflow-recovery-source-editor",
+    ).horizontal_clip,
+  ).toBe(false);
   expect(original).toContain("policy.require-specified");
   expect(JSON.stringify(observation)).not.toContain("policy.require-specified");
   const refused = await command("invalid", "tools/call", {
@@ -407,6 +412,7 @@ async function checkSourcePresentation(
       const lineHeight = parseFloat(style.lineHeight);
       const y =
         parseFloat(style.paddingTop) + line * lineHeight - element.scrollTop;
+      const bounds = element.getBoundingClientRect();
       return {
         white_space: style.whiteSpace,
         first_declaration_line: line + 1,
@@ -414,6 +420,8 @@ async function checkSourcePresentation(
           y >= 0 && y + lineHeight <= element.clientHeight,
         textarea_height: element.clientHeight,
         scroll_height: element.scrollHeight,
+        editor_bounds_within_frame:
+          bounds.left >= 0 && bounds.right <= window.innerWidth,
         body_overflow:
           document.body.scrollWidth > document.body.clientWidth + 2,
       };
@@ -421,6 +429,7 @@ async function checkSourcePresentation(
     expect(geometry.white_space).toBe("pre");
     expect(geometry.first_declaration_visible).toBe(true);
     expect(geometry.body_overflow).toBe(false);
+    expect(geometry.editor_bounds_within_frame).toBe(true);
     await expect(wrap).toBeInViewport();
     await expect(frame.getByTestId("workflow-recovery-save")).toBeDisabled();
     measurements.push({
