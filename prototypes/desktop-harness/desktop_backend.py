@@ -310,6 +310,7 @@ class DesktopBackend:
         confined_inspection=False,
         native_editor=False,
         native_working_view=False,
+        native_workspace_files=False,
         image_inputs=False,
         engineering_image_inputs=False,
         enrolled_mcp_tasks=False,
@@ -321,6 +322,8 @@ class DesktopBackend:
             raise ValueError("Unsupported remote OAuth flow")
         if native_working_view and not native_editor:
             raise ValueError("Native working view requires the native editor resource")
+        if native_workspace_files and not native_editor:
+            raise ValueError("Native workspace files require the native editor resource")
         if image_inputs and engineering_image_inputs:
             raise ValueError("Choose one explicit image-input profile")
         if workspace_mcp_tasks and (enrolled_mcp_tasks or confined_inspection):
@@ -336,6 +339,7 @@ class DesktopBackend:
         self.state = Path(state).resolve(strict=True)
         self.web_port = web_port
         self.native_editor = native_editor
+        self.native_workspace_files = native_workspace_files
         self.clients = {}
         self.import_scopes = {}
         self.oauth = DesktopOAuthPresentation()
@@ -392,10 +396,21 @@ class DesktopBackend:
                 if native_working_view
                 else []
             )
+            + (
+                [
+                    ("native_workspace_files", "native_workspace_files.py"),
+                    ("native_workspace_file_tools", "native_workspace_file_tools.py"),
+                    ("native_file_contracts", "native_file_tab_probe.py"),
+                ]
+                if native_workspace_files
+                else []
+            )
         ):
             runtime["files"][name] = hashlib.sha256(
                 Path(__file__).with_name(file).read_bytes()
             ).hexdigest()
+        if native_workspace_files:
+            runtime["native_workspace_files"] = True
         self.binding = DesktopHarnessBinding(
             connection_id="wright-desktop-prototype:" + canonical_digest(runtime),
             image_input_profile=image_profile,
@@ -1487,6 +1502,10 @@ class DesktopBackend:
             except DesktopHandoffConflict as error:
                 raise HTTPException(409, str(error)) from error
 
+        if self.native_workspace_files:
+            from native_workspace_files import register_native_workspace_files
+
+            register_native_workspace_files(router, self)
         return router
 
     async def qualify_digital_source(self, body, *, operation=""):

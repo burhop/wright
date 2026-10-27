@@ -268,7 +268,10 @@ def read_private_api_credential(path: Path) -> str:
 
 
 class WrightDesktopClient:
-    def __init__(self, state, *, native_editor=False, native_working_view=False):
+    def __init__(
+        self, state, *, native_editor=False, native_working_view=False,
+        native_workspace_files=False,
+    ):
         self.state = Path(state).resolve(strict=True)
         # Windows routing/pin metadata must have the same integrity boundary as
         # the token: a writable API URL could otherwise disclose a private token.
@@ -303,15 +306,28 @@ class WrightDesktopClient:
             raise ValueError(
                 "Native working view differs from the frozen configuration"
             )
+        if bool(versions.get("native_workspace_files", False)) != native_workspace_files:
+            raise ValueError("Native workspace files differ from the frozen configuration")
         for name, file in (
             ("native_source_tools", "native_source_tools.py"),
             ("native_editor", "native-editor.html"),
             ("native_process_tools", "native_process_tools.py"),
+            ("native_workspace_files", "native_workspace_files.py"),
+            ("native_workspace_file_tools", "native_workspace_file_tools.py"),
+            ("native_file_contracts", "native_file_tab_probe.py"),
         ):
             if (
                 (
                     native_working_view
                     and name == "native_process_tools"
+                    and name not in versions["files"]
+                )
+                or (
+                    native_workspace_files
+                    and name in {
+                        "native_workspace_files", "native_workspace_file_tools",
+                        "native_file_contracts",
+                    }
                     and name not in versions["files"]
                 )
                 or name in versions["files"]
@@ -419,11 +435,16 @@ async def connection_lifespan(client):
 def server(
     client, *, native_editor=False, native_working_view=False,
     native_file_tab_probe: Path | None = None,
+    native_workspace_files=False,
 ):
     if native_working_view and not native_editor:
         raise ValueError("Native working view requires the native editor resource")
     if native_file_tab_probe and not native_editor:
         raise ValueError("Native file tab probe requires the native editor resource")
+    if native_workspace_files and not native_editor:
+        raise ValueError("Native workspace files require the native editor resource")
+    if native_workspace_files and native_file_tab_probe:
+        raise ValueError("Choose general workspace files or the fixed-file probe")
 
     @asynccontextmanager
     async def lifespan(_):
@@ -1418,6 +1439,12 @@ def server(
             }
 
         register_native_source_tools(mcp, client)
+        if native_workspace_files:
+            from native_workspace_file_tools import register_native_workspace_file_tools
+
+            register_native_workspace_file_tools(
+                mcp, client, resource_uri=uri, working_view_enabled=native_working_view,
+            )
         if native_file_tab_probe:
             from native_file_tab_probe import register_native_file_tab_probe
 
@@ -1438,18 +1465,25 @@ if __name__ == "__main__":
     parser.add_argument("--native-editor", action="store_true")
     parser.add_argument("--native-working-view", action="store_true")
     parser.add_argument("--native-file-tab-probe", type=Path)
+    parser.add_argument("--native-workspace-files", action="store_true")
     args = parser.parse_args()
     if args.native_working_view and not args.native_editor:
         parser.error("Native working view requires the opt-in native editor")
     if args.native_file_tab_probe and not args.native_editor:
         parser.error("Native file tab probe requires the opt-in native editor")
+    if args.native_workspace_files and not args.native_editor:
+        parser.error("Native workspace files require the opt-in native editor")
+    if args.native_workspace_files and args.native_file_tab_probe:
+        parser.error("Choose general workspace files or the fixed-file probe")
     server(
         WrightDesktopClient(
             args.state_dir,
             native_editor=args.native_editor,
             native_working_view=args.native_working_view,
+            native_workspace_files=args.native_workspace_files,
         ),
         native_editor=args.native_editor,
         native_working_view=args.native_working_view,
         native_file_tab_probe=args.native_file_tab_probe,
+        native_workspace_files=args.native_workspace_files,
     ).run(transport="stdio")

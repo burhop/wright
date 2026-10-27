@@ -65,6 +65,7 @@ def main():
     )
     parser.add_argument("--enable-native-editor", action="store_true")
     parser.add_argument("--enable-native-working-view", action="store_true")
+    parser.add_argument("--enable-native-workspace-files", action="store_true")
     args = parser.parse_args()
     if (
         args.enable_image_inputs or args.enable_engineering_image_inputs
@@ -74,6 +75,8 @@ def main():
         parser.error("Native editor requires the opt-in desktop bridge")
     if args.enable_native_working_view and not args.enable_native_editor:
         parser.error("Native working view requires the opt-in native editor")
+    if args.enable_native_workspace_files and not args.enable_native_editor:
+        parser.error("Native workspace files require the opt-in native editor")
     if args.enable_confined_inspection and not args.enable_desktop_bridge:
         parser.error("Confined inspection requires the opt-in desktop bridge")
     if args.enable_enrolled_mcp_tasks and not args.enable_desktop_bridge:
@@ -151,6 +154,7 @@ def main():
             local_reviews=args.enable_local_reviews,
             native_editor=args.enable_native_editor,
             native_working_view=args.enable_native_working_view,
+            native_workspace_files=args.enable_native_workspace_files,
             remote_signin_mode=args.remote_signin_mode,
         )
         app.state.agent_engine = desktop
