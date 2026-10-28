@@ -31,8 +31,7 @@ export function NativeFilePreview({
         current.scrollIntoView?.({ block: "start" });
     };
     window.addEventListener("resize", keepActivePreviewVisible);
-    return () =>
-      window.removeEventListener("resize", keepActivePreviewVisible);
+    return () => window.removeEventListener("resize", keepActivePreviewVisible);
   }, []);
   useEffect(() => {
     let active = true;

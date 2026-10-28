@@ -34,7 +34,7 @@ dispatched exactly `read_design` and `inspect_model` for the existing block at
 revision 1/build `5353ac34-e923-4dd0-83e9-85e3ae5caafc`; no CAD was created or
 changed. The conversation received the real PNG and numerical measurements, and
 Wright retained both outputs in a new durable run. See the
-[direct desktop evidence](../../../prototypes/desktop-harness/engineering-run-journey-20261028.md#connection-recovery-and-direct-desktop-reasoning--28-october-1815-utc).
+[direct desktop evidence](https://github.com/burhop/wright/blob/codex/desktop-usability-journeys/prototypes/desktop-harness/engineering-run-journey-20261028.md#connection-recovery-and-direct-desktop-reasoning--28-october-1815-utc).
 This qualifies native conversation reasoning/image transport, not Windows UI
 rendering, automatic chat wakeup or human engineering acceptance.
 
@@ -552,7 +552,7 @@ not proof of native host reconnection, Windows rendering or automatic reasoning
 handoff. No alternate model or provider-internal prompt is claimed. This bounded
 inspection does not establish physical acceptance or a multi-tool campaign.
 
-See [journey and evidence index](../../../prototypes/desktop-harness/engineering-run-journey-20261028.md).
+See [journey and evidence index](https://github.com/burhop/wright/blob/codex/desktop-usability-journeys/prototypes/desktop-harness/engineering-run-journey-20261028.md).
 Private receipts are under `.local-run/engineering-run-journey-20261028/` in the
 feature worktree: `engineering-audit.json`, `engineering-results-ui/report.json`
 and `completed-restart-proof.json`. Credentials and sign-in codes are excluded

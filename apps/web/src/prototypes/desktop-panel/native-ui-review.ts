@@ -200,26 +200,37 @@ export function captureUiObservation(
     root: {
       rect: review.root.rect,
       font: review.root.font,
-      horizontal_overflow: review.root.scroll_width > review.root.client_width + 1,
+      horizontal_overflow:
+        review.root.scroll_width > review.root.client_width + 1,
     },
     controls: {
       sampled: review.controls.length,
       sample_truncated: review.controls_truncated,
       in_viewport: visible.length,
-      disabled_in_viewport: visible.filter((control) => control.disabled).length,
-      selected_in_viewport: visible.filter((control) => control.selected).length,
+      disabled_in_viewport: visible.filter((control) => control.disabled)
+        .length,
+      selected_in_viewport: visible.filter((control) => control.selected)
+        .length,
       clipped_in_viewport: clipped.length,
-      clipped: clipped.slice(0, 8).map(({ tag, test_id, rect }) => ({ tag, test_id, rect })),
+      clipped: clipped
+        .slice(0, 8)
+        .map(({ tag, test_id, rect }) => ({ tag, test_id, rect })),
     },
     images: {
       count: images.length,
-      loaded: images.filter((image) => image.complete && image.naturalWidth > 0).length,
-      failed: images.filter((image) => image.complete && image.naturalWidth === 0).length,
+      loaded: images.filter((image) => image.complete && image.naturalWidth > 0)
+        .length,
+      failed: images.filter(
+        (image) => image.complete && image.naturalWidth === 0,
+      ).length,
       loading: images.filter((image) => !image.complete).length,
     },
-    recent_error_events: events.slice(-20).filter((event) =>
-      event.kind === "error" || event.kind === "unhandled-rejection"
-    ).length,
+    recent_error_events: events
+      .slice(-20)
+      .filter(
+        (event) =>
+          event.kind === "error" || event.kind === "unhandled-rejection",
+      ).length,
   };
 }
 

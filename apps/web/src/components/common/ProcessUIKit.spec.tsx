@@ -1742,10 +1742,7 @@ describe("bounded representation views", () => {
     });
     const blob = new Blob([text], { type: "application/json" });
     const view = render(
-      <RepresentationViewer
-        blob={blob}
-        title="Exact assessment"
-      />,
+      <RepresentationViewer blob={blob} title="Exact assessment" />,
     );
     await waitFor(() =>
       expect(view.container.querySelector("pre")?.textContent).toBe(
@@ -1761,29 +1758,49 @@ describe("bounded representation views", () => {
     ).not.toBeInTheDocument();
   });
   it.each([
-    ['{"measurement":9007199254740993}', '{\n  "measurement": 9007199254740993\n}'],
-    ['{"measurement":1.00000000000000001}', '{\n  "measurement": 1.00000000000000001\n}'],
-    ['{"measurement":1,"measurement":2}', '{\n  "measurement": 1,\n  "measurement": 2\n}'],
+    [
+      '{"measurement":9007199254740993}',
+      '{\n  "measurement": 9007199254740993\n}',
+    ],
+    [
+      '{"measurement":1.00000000000000001}',
+      '{\n  "measurement": 1.00000000000000001\n}',
+    ],
+    [
+      '{"measurement":1,"measurement":2}',
+      '{\n  "measurement": 1,\n  "measurement": 2\n}',
+    ],
     ['{"label":"\\u0061"}', '{\n  "label": "\\u0061"\n}'],
     ['{"incomplete":', '{"incomplete":'],
-    ['{"mm":[2000.0,-0.0,1e+06],"empty":{},"items":[]}', '{\n  "mm": [\n    2000.0,\n    -0.0,\n    1e+06\n  ],\n  "empty": {},\n  "items": []\n}'],
-  ])("preserves exact JSON evidence tokens when adding spacing: %s", async (text, expected) => {
-    const view = render(
-      <RepresentationViewer
-        blob={new Blob([text], { type: "application/json" })}
-        title="Exact measurements"
-      />,
-    );
-    await waitFor(() =>
-      expect(view.container.querySelector("pre")?.textContent).toBe(expected),
-    );
-  });
+    [
+      '{"mm":[2000.0,-0.0,1e+06],"empty":{},"items":[]}',
+      '{\n  "mm": [\n    2000.0,\n    -0.0,\n    1e+06\n  ],\n  "empty": {},\n  "items": []\n}',
+    ],
+  ])(
+    "preserves exact JSON evidence tokens when adding spacing: %s",
+    async (text, expected) => {
+      const view = render(
+        <RepresentationViewer
+          blob={new Blob([text], { type: "application/json" })}
+          title="Exact measurements"
+        />,
+      );
+      await waitFor(() =>
+        expect(view.container.querySelector("pre")?.textContent).toBe(expected),
+      );
+    },
+  );
   it("keeps the original bounded JSON when indentation would exceed the preview limit", async () => {
     const text = "[".repeat(1100) + "0" + "]".repeat(1100);
     const view = render(
-      <RepresentationViewer blob={new Blob([text], { type: "application/json" })} title="Nested evidence" />,
+      <RepresentationViewer
+        blob={new Blob([text], { type: "application/json" })}
+        title="Nested evidence"
+      />,
     );
-    await waitFor(() => expect(view.container.querySelector("pre")?.textContent).toBe(text));
+    await waitFor(() =>
+      expect(view.container.querySelector("pre")?.textContent).toBe(text),
+    );
   });
   it("keeps spaces and escaped quotes inside JSON strings", async () => {
     const text = '{"note":"two  spaces and \\"quoted\\"","units":"mm"}';
@@ -1820,7 +1837,10 @@ describe("bounded representation views", () => {
         title="First image"
       />,
     );
-    expect(await screen.findByAltText("First image")).toHaveAttribute("src", "data:image/png;base64," + btoa("bitmap"));
+    expect(await screen.findByAltText("First image")).toHaveAttribute(
+      "src",
+      "data:image/png;base64," + btoa("bitmap"),
+    );
     expect(objectUrl).not.toHaveBeenCalled();
     rerender(
       <ImageThumbnail
@@ -1831,28 +1851,47 @@ describe("bounded representation views", () => {
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
     unmount();
   });
-  it.each(["image/svg+xml", "text/html", "application/octet-stream"])("does not read or inline %s as an image", (type) => {
-    const blob = new Blob(["<svg onload='bad()'/>"], { type });
-    const read = vi.spyOn(blob, "arrayBuffer");
-    render(<ImageThumbnail blob={blob} title="Unsupported" />);
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
-    expect(read).not.toHaveBeenCalled();
-  });
+  it.each(["image/svg+xml", "text/html", "application/octet-stream"])(
+    "does not read or inline %s as an image",
+    (type) => {
+      const blob = new Blob(["<svg onload='bad()'/>"], { type });
+      const read = vi.spyOn(blob, "arrayBuffer");
+      render(<ImageThumbnail blob={blob} title="Unsupported" />);
+      expect(screen.queryByRole("img")).not.toBeInTheDocument();
+      expect(read).not.toHaveBeenCalled();
+    },
+  );
   it("rejects oversized raster previews before reading and reports read/decode failures", async () => {
-    const oversized = new Blob([new Uint8Array(32 * 1024 * 1024 + 1)], { type: "image/png" });
+    const oversized = new Blob([new Uint8Array(32 * 1024 * 1024 + 1)], {
+      type: "image/png",
+    });
     const read = vi.spyOn(oversized, "arrayBuffer");
     const ready = vi.fn();
-    const view = render(<ImageThumbnail blob={oversized} title="Oversized" onReady={ready} />);
+    const view = render(
+      <ImageThumbnail blob={oversized} title="Oversized" onReady={ready} />,
+    );
     expect(read).not.toHaveBeenCalled();
     expect(ready).toHaveBeenCalledOnce();
     ready.mockClear();
     const broken = new Blob(["png"], { type: "image/png" });
-    vi.spyOn(broken, "arrayBuffer").mockRejectedValue(new Error("private read error"));
-    view.rerender(<ImageThumbnail blob={broken} title="Broken" onReady={ready} />);
+    vi.spyOn(broken, "arrayBuffer").mockRejectedValue(
+      new Error("private read error"),
+    );
+    view.rerender(
+      <ImageThumbnail blob={broken} title="Broken" onReady={ready} />,
+    );
     await waitFor(() => expect(ready).toHaveBeenCalledOnce());
-    expect(screen.getByText(/This image could not be displayed/)).not.toHaveTextContent("private");
+    expect(
+      screen.getByText(/This image could not be displayed/),
+    ).not.toHaveTextContent("private");
     ready.mockClear();
-    view.rerender(<ImageThumbnail blob={new Blob(["invalid raster"], { type: "image/png" })} title="Invalid" onReady={ready} />);
+    view.rerender(
+      <ImageThumbnail
+        blob={new Blob(["invalid raster"], { type: "image/png" })}
+        title="Invalid"
+        onReady={ready}
+      />,
+    );
     fireEvent.error(await screen.findByRole("img", { name: "Invalid" }));
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
     expect(ready).toHaveBeenCalledOnce();
@@ -1860,12 +1899,24 @@ describe("bounded representation views", () => {
   it("ignores a delayed image read after switching files", async () => {
     const old = new Blob(["old"], { type: "image/png" });
     let finish: (value: ArrayBuffer) => void = () => {};
-    vi.spyOn(old, "arrayBuffer").mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    vi.spyOn(old, "arrayBuffer").mockReturnValue(
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+    );
     const view = render(<ImageThumbnail blob={old} title="Old" />);
     expect(screen.getByText("Loading image…")).toBeInTheDocument();
-    view.rerender(<ImageThumbnail blob={new Blob(["new"], { type: "image/png" })} title="Current" />);
+    view.rerender(
+      <ImageThumbnail
+        blob={new Blob(["new"], { type: "image/png" })}
+        title="Current"
+      />,
+    );
     const current = await screen.findByRole("img", { name: "Current" });
     await act(async () => finish(new TextEncoder().encode("old").buffer));
-    expect(current).toHaveAttribute("src", "data:image/png;base64," + btoa("new"));
+    expect(current).toHaveAttribute(
+      "src",
+      "data:image/png;base64," + btoa("new"),
+    );
   });
 });

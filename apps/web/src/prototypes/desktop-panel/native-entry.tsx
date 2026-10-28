@@ -18,7 +18,11 @@ import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { NativeUiReview } from "./NativeUiReview";
-import { captureUiReview, captureUiObservation, type ReviewEvent } from "./native-ui-review";
+import {
+  captureUiReview,
+  captureUiObservation,
+  type ReviewEvent,
+} from "./native-ui-review";
 import type { NativeProcessCall } from "./native-process-client";
 import type { NativeTransferCall } from "./native-transfer-client";
 import {
@@ -44,7 +48,8 @@ const app = new App(
   { tools: { listChanged: false } },
   { autoResize: false },
 );
-const requestDownload = (blob: Blob, name: string) => downloadNativeFile(app, blob, name);
+const requestDownload = (blob: Blob, name: string) =>
+  downloadNativeFile(app, blob, name);
 let args: Record<string, unknown> = {};
 let pending: CallToolResult | undefined;
 let generation = 0;
@@ -238,8 +243,12 @@ function scheduleContext() {
   }, 250);
 }
 document.getElementById("editor")!.addEventListener("click", scheduleContext);
-document.getElementById("editor")!.addEventListener("load", scheduleContext, true);
-document.getElementById("editor")!.addEventListener("error", scheduleContext, true);
+document
+  .getElementById("editor")!
+  .addEventListener("load", scheduleContext, true);
+document
+  .getElementById("editor")!
+  .addEventListener("error", scheduleContext, true);
 document.addEventListener("visibilitychange", scheduleContext);
 function rememberLocation() {
   if (!selectedWorkspace) return;
@@ -261,8 +270,11 @@ function publishContext() {
     workspace_name: selectedWorkspace.workspace_name,
     active_surface: activeSurface,
     ui_observation: captureUiObservation(
-      document.getElementById("editor")!, app.getHostContext(), reviewLocation(),
-      reviewEvents, fileInstanceId,
+      document.getElementById("editor")!,
+      app.getHostContext(),
+      reviewLocation(),
+      reviewEvents,
+      fileInstanceId,
     ),
     ...(latestUiReport ? { ui_problem_report: latestUiReport } : {}),
     ...(openedWorkflow
@@ -274,13 +286,19 @@ function publishContext() {
   contextWrite = contextWrite
     .catch(() => {})
     .then(async () => {
-      if (version !== contextGeneration || signature === lastContextSignature) return;
+      if (version !== contextGeneration || signature === lastContextSignature)
+        return;
       try {
         await app.updateModelContext(
-          { structuredContent: {
-            ...context,
-            ui_observation: { ...context.ui_observation, observed_at: new Date().toISOString() },
-          } },
+          {
+            structuredContent: {
+              ...context,
+              ui_observation: {
+                ...context.ui_observation,
+                observed_at: new Date().toISOString(),
+              },
+            },
+          },
           { timeout: 5000 },
         );
         lastContextSignature = signature;
@@ -480,89 +498,95 @@ function home() {
   renderCurrent = () =>
     root.render(
       <FileDownloadProvider request={requestDownload}>
-      <NativeHomePanel
-        key={homeKey}
-        call={homeCall}
-        initialSelection={selectedWorkspace ?? navigation}
-        initialView={homeView}
-        onOpenFile={nativeWorkspaceFiles ? openWorkspaceFile : undefined}
-        nativeFileNotice={nativeFileNotice}
-        onNavigate={rememberView}
-        restorationNotice={restorationNotice}
-        lastLocation={navigation}
-        onReopen={async (workspace, location) => {
-          const request = ++generation;
-          const scope = {
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            path: location.path,
-          };
-          const needsProcess = location.view === "working" || !!location.run_id;
-          const target = needsProcess
-            ? {
-                ...scope,
-                operation: "snapshot",
-                expected_storage_digest: location.source_digest,
-                ...(location.run_id ? { run_id: location.run_id } : {}),
-              }
-            : scope;
-          const result = await app.callServerTool({
-            name: needsProcess ? "wright_process_view" : "wright_workflow_open",
-            arguments: needsProcess ? { request: target } : target,
-          });
-          if (request !== generation || dirty) return;
-          if (result.isError) throw new Error("Saved location is unavailable");
-          args = {
-            ...target,
-            restored_source_digest: location.source_digest,
-            restored_view: location.view,
-          };
-          pending = result;
-          await open();
-        }}
-        onDirty={(pending) => {
-          dirty = pending;
-        }}
-        onSelect={rememberWorkspace}
-        onOpenRun={async (workspace, path, run) => {
-          const request = ++generation;
-          const scope = {
-            operation: "snapshot",
-            workspace_id: workspace.workspace_id,
-            session_id: workspace.session_id,
-            path,
-            expected_storage_digest: run.source_digest,
-            run_id: run.run_id,
-          };
-          const result = await app.callServerTool({
-            name: "wright_process_view",
-            arguments: { request: scope },
-          });
-          if (request !== generation || dirty) return;
-          if (result.isError || !result.structuredContent?.snapshot)
-            throw new Error("Exact run unavailable");
-          args = scope;
-          pending = result;
-          await open();
-        }}
-        openLink={async (url) => {
-          const result = await app.openLink({ url });
-          if (result.isError)
-            throw new Error("Host declined sign-in navigation");
-        }}
-        onOpen={async (workspace, path) => {
-          if (nativeWorkspaceFiles) {
-            if (!(await openWorkspaceFile(workspace, path)))
-              throw new Error("No qualified native viewer for the saved file.");
-            return;
-          }
-          await openSavedWorkflow(
-            workspace.workspace_id,
-            workspace.session_id,
-            path,
-          );
-        }}
-      />
+        <NativeHomePanel
+          key={homeKey}
+          call={homeCall}
+          initialSelection={selectedWorkspace ?? navigation}
+          initialView={homeView}
+          onOpenFile={nativeWorkspaceFiles ? openWorkspaceFile : undefined}
+          nativeFileNotice={nativeFileNotice}
+          onNavigate={rememberView}
+          restorationNotice={restorationNotice}
+          lastLocation={navigation}
+          onReopen={async (workspace, location) => {
+            const request = ++generation;
+            const scope = {
+              workspace_id: workspace.workspace_id,
+              session_id: workspace.session_id,
+              path: location.path,
+            };
+            const needsProcess =
+              location.view === "working" || !!location.run_id;
+            const target = needsProcess
+              ? {
+                  ...scope,
+                  operation: "snapshot",
+                  expected_storage_digest: location.source_digest,
+                  ...(location.run_id ? { run_id: location.run_id } : {}),
+                }
+              : scope;
+            const result = await app.callServerTool({
+              name: needsProcess
+                ? "wright_process_view"
+                : "wright_workflow_open",
+              arguments: needsProcess ? { request: target } : target,
+            });
+            if (request !== generation || dirty) return;
+            if (result.isError)
+              throw new Error("Saved location is unavailable");
+            args = {
+              ...target,
+              restored_source_digest: location.source_digest,
+              restored_view: location.view,
+            };
+            pending = result;
+            await open();
+          }}
+          onDirty={(pending) => {
+            dirty = pending;
+          }}
+          onSelect={rememberWorkspace}
+          onOpenRun={async (workspace, path, run) => {
+            const request = ++generation;
+            const scope = {
+              operation: "snapshot",
+              workspace_id: workspace.workspace_id,
+              session_id: workspace.session_id,
+              path,
+              expected_storage_digest: run.source_digest,
+              run_id: run.run_id,
+            };
+            const result = await app.callServerTool({
+              name: "wright_process_view",
+              arguments: { request: scope },
+            });
+            if (request !== generation || dirty) return;
+            if (result.isError || !result.structuredContent?.snapshot)
+              throw new Error("Exact run unavailable");
+            args = scope;
+            pending = result;
+            await open();
+          }}
+          openLink={async (url) => {
+            const result = await app.openLink({ url });
+            if (result.isError)
+              throw new Error("Host declined sign-in navigation");
+          }}
+          onOpen={async (workspace, path) => {
+            if (nativeWorkspaceFiles) {
+              if (!(await openWorkspaceFile(workspace, path)))
+                throw new Error(
+                  "No qualified native viewer for the saved file.",
+                );
+              return;
+            }
+            await openSavedWorkflow(
+              workspace.workspace_id,
+              workspace.session_id,
+              path,
+            );
+          }}
+        />
       </FileDownloadProvider>,
     );
   renderCurrent(app.getHostContext());
@@ -785,79 +809,79 @@ async function open() {
     renderCurrent = (context) =>
       root.render(
         <FileDownloadProvider request={requestDownload}>
-        <div className="native-workspace-frame" data-native-file={fileBound}>
-          {!fileBound && (
-            <nav aria-label="Wright navigation">
-              <button onClick={home}>← Workspace home</button>
-            </nav>
-          )}
-          <NativePanelContent
-            key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
-            initial={document}
-            sourceClient={client}
-            draftClient={draftClient}
-            call={processCall}
-            readEvidence={homeCall}
-            transferCall={transferCall}
-            onOpenTransferred={async (path) => {
-              if (nativeWorkspaceFiles) {
-                if (
-                  !(await openWorkspaceFile(
-                    {
-                      workspace_id: String(input.workspace_id),
-                      session_id: String(input.session_id),
-                    },
-                    path,
-                  ))
-                )
-                  throw new Error(
-                    "The imported file has no qualified native viewer.",
-                  );
-                return;
+          <div className="native-workspace-frame" data-native-file={fileBound}>
+            {!fileBound && (
+              <nav aria-label="Wright navigation">
+                <button onClick={home}>← Workspace home</button>
+              </nav>
+            )}
+            <NativePanelContent
+              key={`${input.workspace_id}:${input.path}:${document.storage_digest}:${document.layout_revision}:${input.run_id ?? "editor"}`}
+              initial={document}
+              sourceClient={client}
+              draftClient={draftClient}
+              call={processCall}
+              readEvidence={homeCall}
+              transferCall={transferCall}
+              onOpenTransferred={async (path) => {
+                if (nativeWorkspaceFiles) {
+                  if (
+                    !(await openWorkspaceFile(
+                      {
+                        workspace_id: String(input.workspace_id),
+                        session_id: String(input.session_id),
+                      },
+                      path,
+                    ))
+                  )
+                    throw new Error(
+                      "The imported file has no qualified native viewer.",
+                    );
+                  return;
+                }
+                await openSavedWorkflow(
+                  String(input.workspace_id),
+                  String(input.session_id),
+                  path,
+                );
+              }}
+              sessionId={String(input.session_id)}
+              workspaceName={data.workspace?.workspace_name ?? "Workspace"}
+              initialProcess={process}
+              initialView={
+                input.restored_view === "editor" ? "editor" : undefined
               }
-              await openSavedWorkflow(
-                String(input.workspace_id),
-                String(input.session_id),
-                path,
-              );
-            }}
-            sessionId={String(input.session_id)}
-            workspaceName={data.workspace?.workspace_name ?? "Workspace"}
-            initialProcess={process}
-            initialView={
-              input.restored_view === "editor" ? "editor" : undefined
-            }
-            initialRunId={
-              typeof input.run_id === "string" ? input.run_id : undefined
-            }
-            workingViewEnabled={data.working_view_enabled === true}
-            onLocationChange={rememberWorkflow}
-            theme={context?.theme}
-            onDirty={(value) => {
-              const changed = dirty !== value;
-              dirty = value;
-              if (!value && notice.textContent === pendingNavigationNotice)
-                notice.textContent = "";
-              if (changed) {
+              initialRunId={
+                typeof input.run_id === "string" ? input.run_id : undefined
+              }
+              workingViewEnabled={data.working_view_enabled === true}
+              onLocationChange={rememberWorkflow}
+              theme={context?.theme}
+              onDirty={(value) => {
+                const changed = dirty !== value;
+                dirty = value;
+                if (!value && notice.textContent === pendingNavigationNotice)
+                  notice.textContent = "";
+                if (changed) {
+                  rememberLocation();
+                  if (fileBound)
+                    void fileObservation("draft-changed").catch(() => {});
+                }
+              }}
+              onAcceptedSource={(saved) => {
+                openedWorkflow = {
+                  path: saved.path,
+                  source_digest: saved.storage_digest,
+                  view: openedWorkflow?.view ?? "editor",
+                  ...(openedWorkflow?.source_digest === saved.storage_digest &&
+                  openedWorkflow.run_id
+                    ? { run_id: openedWorkflow.run_id }
+                    : {}),
+                };
                 rememberLocation();
-                if (fileBound)
-                  void fileObservation("draft-changed").catch(() => {});
-              }
-            }}
-            onAcceptedSource={(saved) => {
-              openedWorkflow = {
-                path: saved.path,
-                source_digest: saved.storage_digest,
-                view: openedWorkflow?.view ?? "editor",
-                ...(openedWorkflow?.source_digest === saved.storage_digest &&
-                openedWorkflow.run_id
-                  ? { run_id: openedWorkflow.run_id }
-                  : {}),
-              };
-              rememberLocation();
-            }}
-          />
-        </div>
+              }}
+            />
+          </div>
         </FileDownloadProvider>,
       );
     renderCurrent(app.getHostContext());

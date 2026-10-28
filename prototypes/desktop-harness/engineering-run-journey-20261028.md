@@ -1,5 +1,13 @@
 # One understandable engineering run in the desktop harness
 
+**Next-direction checkpoint, 28 October:** the user requested a design reset
+around the complete Codex engineering experience. The
+[current plan](../../docs/design/codex-engineering-experience-plan.md) guides the
+next goal. Preserve the implementation and evidence below; this inspection-only
+journey is not the first-time design/analysis/printing or full-rerun journey.
+See the [preservation checkpoint](evidence/checkpoint-20261028/README.md) for open
+defects and installed-versus-uninstalled state.
+
 28 October 2026. Active bounded goal; supersedes the open-ended usability brief
 in `usability-journeys-plan.md`. Earlier evidence and unresolved findings remain
 historical, not retroactively complete. Baseline: `03d4f3b6`, clean feature

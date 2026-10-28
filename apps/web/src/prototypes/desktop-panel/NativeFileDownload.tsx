@@ -97,10 +97,19 @@ export function NativeFileDownload({
       ).join("");
       if (!alive.current) return;
       if (hash !== data.sha256) throw new Error("Digest differs");
-      const delivery = await requestDownload(new Blob([bytes], { type: "application/octet-stream" }), name);
-      if (alive.current) setMessage(fileDownloadMessage(delivery) + (delivery === "requested"
-        ? recordedEvidence ? " Bytes match this saved run." : " This is the current saved file, not verified run evidence."
-        : ""));
+      const delivery = await requestDownload(
+        new Blob([bytes], { type: "application/octet-stream" }),
+        name,
+      );
+      if (alive.current)
+        setMessage(
+          fileDownloadMessage(delivery) +
+            (delivery === "requested"
+              ? recordedEvidence
+                ? " Bytes match this saved run."
+                : " This is the current saved file, not verified run evidence."
+              : ""),
+        );
     } catch {
       if (alive.current)
         setMessage(

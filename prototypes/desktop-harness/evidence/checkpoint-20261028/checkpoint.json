@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-28",
+  "kind": "preservation checkpoint; not completion or release",
+  "source_before_checkpoint": "5b7c065ef1fbce1e23609a16d9dc0a19d28559b3",
+  "dev_observed": "1514ea25a63e8e330f86dcac3ccf05f73bc0403b",
+  "installed": {
+    "plugin_version": "0.33.0",
+    "source_commit": "290f8c12969783ce7dcd3046a0a0f3c4253921df",
+    "resource_sha256": "a12381ebc9bd75420a89f0a35fdd57e1516ff2c7cee3789cbd6cf412123ffc55",
+    "windows_image": "user screenshot confirms display",
+    "windows_download": "user reports no response"
+  },
+  "candidate": {
+    "version": "0.34.0",
+    "installed": false,
+    "source_commit": "5b7c065ef1fbce1e23609a16d9dc0a19d28559b3",
+    "resource_sha256": "d2735409e2606f9a1d2c2af67dec4894ec662790295fdd1f01157507715224c2",
+    "boundary": "real retained storage; simulated desktop host; no engineering execution",
+    "focused_checks": {
+      "focused_tests_passed": 136,
+      "typescript_exit_code": 0,
+      "build_bytes": 2498665,
+      "external_assets": 0,
+      "preexisting_lint_findings": 4,
+      "new_lint_findings": 0,
+      "full_repository_gates": "not run; focused UI correction"
+    },
+    "preflight_findings": {
+      "test_fixture_types": "Node imports in browser TypeScript rejected; replaced with existing Vite raw CSV fixture import, no typeconfig change",
+      "candidate_verifier": "Broad version replacement accidentally changed 033 inside the expected source digest; backend rejected the mismatched source with 403. Restored the exact original digest, preserved the first attempt; no run or file changed."
+    },
+    "windows_delivery": "unverified",
+    "candidate_protocol_verification": "not completed"
+  },
+  "retained_subject": {
+    "run_id": "91c3fe3f4e0c477e9d9ea0d0dde477b2",
+    "workflow": "workflows/block-preview-recovery.workflow.wflow",
+    "source_sha256": "9c09d19fb450b662c117313e1fddf30ba50932480bd7eeb954e0330c75f3fd84",
+    "image_sha256": "1a1f6ca6c17ef90e5e0e9d6f70eb8f4e867405a0f89669ecdaca5dda1d23698f",
+    "report_sha256": "5e0e02a42274e2b37f7f1f4afe6b8cf71680d2bcfa7f7c4d77ddcac710f40dd2"
+  },
+  "screenshots": {
+    "simulated-download-declined.png": "962b38ab2abd1bb0ae771774f2fe0132d4119078e2b8c4bcf7f2d57df112b291",
+    "simulated-image-480.png": "c5040047b7801f30c2029f61a649fa19b83642af201d0744d45ab4ed48e02717"
+  },
+  "windows_source_screenshot_sha256": "d778aa4fe60bb6312a124670d87841c7065a71b584cd3108db8da889becad0b3",
+  "private_evidence_backup": "/home/burhop/repos/wright/.local-run/codex-ui-preservation-20261028",
+  "qualification": "See README for current gate result. The prior focused evidence does not establish full repository or Windows acceptance."
+}

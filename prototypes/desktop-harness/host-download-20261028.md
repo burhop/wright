@@ -60,7 +60,16 @@ proof. Earlier attempts remain preserved. Nine protected source, run, output
 and backend metadata hashes are compared before and after qualification.
 Full repository/CI gates are not claimed for this focused local prototype fix.
 
-Only the named prototype is eligible for the qualified 0.34 update. Existing
-backend service, accounts, credentials, gateway permissions and unrelated plugin
-settings remain unchanged. An already-open 0.33 panel still contains its old
-download control; the new resource must be opened for the Windows check.
+The 0.34 candidate is **not installed**. Packaging preflight found that a broad
+version substitution accidentally altered the expected source digest; the
+backend correctly rejected it. The corrected verifier and failed attempt are
+preserved, but successful protocol requalification is still pending. A separate
+test-only correction replaces Node imports with the existing Vite raw CSV import;
+the affected 15 tests and TypeScript pass. Neither issue changed an engineering
+run or output.
+
+The installed prototype remains 0.33.0. Backend service, accounts, credentials,
+gateway permissions and unrelated plugin settings remain unchanged. The
+[preservation checkpoint](evidence/checkpoint-20261028/README.md) distinguishes
+these states. An already-open panel retains its own resource; installation alone
+cannot qualify a different displayed resource or Windows file delivery.

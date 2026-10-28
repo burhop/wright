@@ -13,7 +13,10 @@ import type { ReactElement } from "react";
 import { NativeFileDownload } from "./NativeFileDownload";
 
 const delivery = vi.fn().mockResolvedValue("requested");
-const render = (element: ReactElement) => renderRaw(<FileDownloadProvider request={delivery}>{element}</FileDownloadProvider>);
+const render = (element: ReactElement) =>
+  renderRaw(
+    <FileDownloadProvider request={delivery}>{element}</FileDownloadProvider>,
+  );
 
 const workspace = {
   workspace_id: "a",
@@ -153,15 +156,17 @@ it("verifies actual bytes against both response and exact recorder hash", async 
   );
   expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
   expect(delivery).toHaveBeenCalledOnce();
-  expect(screen.getByRole("status")).toHaveTextContent(
-    "Download requested",
-  );
+  expect(screen.getByRole("status")).toHaveTextContent("Download requested");
 });
 
 it("reports a missing host delivery adapter without reading bytes", async () => {
- const call=vi.fn();
- renderRaw(<NativeFileDownload call={call} workspace={workspace} path="part.step" />);
- fireEvent.click(screen.getByRole("button",{name:"Download file"}));
- expect(await screen.findByRole("status")).toHaveTextContent("does not support file downloads");
- expect(call).not.toHaveBeenCalled();
+  const call = vi.fn();
+  renderRaw(
+    <NativeFileDownload call={call} workspace={workspace} path="part.step" />,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Download file" }));
+  expect(await screen.findByRole("status")).toHaveTextContent(
+    "does not support file downloads",
+  );
+  expect(call).not.toHaveBeenCalled();
 });
