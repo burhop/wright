@@ -1494,9 +1494,12 @@ describe("common process preparation and authority", () => {
       screen.getByRole("button", { name: "Prepare and check inputs" }),
     ).toBeDisabled();
     expect(
-      screen.getByAltText("Selected reference: reference.png"),
+      await screen.findByAltText("Selected reference: reference.png"),
     ).toBeVisible();
-    expect(create).toHaveBeenCalled();
+    expect(
+      screen.getByAltText("Selected reference: reference.png"),
+    ).toHaveAttribute("src", "data:image/png;base64,aW1hZ2U=");
+    expect(create).not.toHaveBeenCalled();
     await act(async () => {
       upload.resolve({ artifact_ref: "inputs/reference.png", sha256: hash });
     });
@@ -1997,7 +2000,9 @@ describe("common process request recovery and observer lifetime", () => {
       result_id: "result-one",
       run_id: "run-one",
     });
-    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    const opener = screen.getByRole("button", { name: "Open file" });
+    opener.focus();
+    fireEvent.click(opener);
     await screen.findByText("Opening representation…");
     expect(scroll).not.toHaveBeenCalled();
     expect(
@@ -2010,7 +2015,9 @@ describe("common process request recovery and observer lifetime", () => {
     await screen.findByText("exact output");
     expect(screen.getByRole("region", { name: "Selected file" })).toHaveFocus();
     expect(screen.getByRole("heading", { name: "geometry.csv" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Close file" })).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Back to results" }),
+    ).toBeVisible();
     expect(scroll).toHaveBeenCalledExactlyOnceWith({ block: "start" });
     expect(screen.getByText("Failed")).toBeVisible();
     await act(async () => {
@@ -2024,6 +2031,20 @@ describe("common process request recovery and observer lifetime", () => {
       runId: "run-one",
       signal: expect.any(AbortSignal),
     });
+    fireEvent.click(screen.getByRole("button", { name: "Back to results" }));
+    expect(
+      screen.queryByRole("region", { name: "Selected file" }),
+    ).not.toBeInTheDocument();
+    // The refreshed snapshot removed the original output; return to results,
+    // never to a detached control or a different run.
+    expect(
+      screen
+        .getByRole("heading", { name: "Results and checks" })
+        .closest("section"),
+    ).toHaveFocus();
+    expect(scroll).toHaveBeenLastCalledWith({ block: "nearest" });
+    expect(client.start).not.toHaveBeenCalled();
+    expect(client.cancel).not.toHaveBeenCalled();
     HTMLElement.prototype.scrollIntoView = originalScroll;
   });
   it("aborts a representation read on close without cancelling the process", async () => {
@@ -2073,10 +2094,14 @@ describe("common process request recovery and observer lifetime", () => {
       />,
     );
     await screen.findByText("Exact part");
-    fireEvent.click(screen.getByRole("button", { name: "Open file" }));
+    const opener = screen.getByRole("button", { name: "Open file" });
+    opener.focus();
+    fireEvent.click(opener);
     expect(signal?.aborted).toBe(false);
-    view.unmount();
+    fireEvent.click(screen.getByRole("button", { name: "Back to results" }));
     expect(signal?.aborted).toBe(true);
+    expect(opener).toHaveFocus();
+    view.unmount();
     expect(client.cancel).not.toHaveBeenCalled();
     expect(client.start).not.toHaveBeenCalled();
   });

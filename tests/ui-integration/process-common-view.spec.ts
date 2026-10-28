@@ -252,7 +252,7 @@ test("uses the normal workspace to prepare, follow and inspect an exact run whil
     fullPage: true,
   });
   await page
-    .getByRole("button", { name: "Close file", exact: true })
+    .getByRole("button", { name: "Back to results", exact: true })
     .click();
   await result
     .getByRole("button", { name: "Open producing step", exact: true })

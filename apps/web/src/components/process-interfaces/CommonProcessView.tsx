@@ -224,6 +224,7 @@ function CommonProcessController({
   }>();
   const representationGeneration = useRef(0);
   const representationReader = useRef<HTMLDivElement | null>(null);
+  const representationOpener = useRef<HTMLElement | null>(null);
   const focusedRepresentation = useRef<number | undefined>(undefined);
   const focusReadyRepresentation = (
     selected: NonNullable<typeof representation>,
@@ -699,6 +700,11 @@ function CommonProcessController({
     : undefined;
   const requestRepresentation = useCallback(
     (reference: ArtifactRef, focusReader = true) => {
+      const focused = document.activeElement;
+      representationOpener.current =
+        focused instanceof HTMLElement && workingRoot.current?.contains(focused)
+          ? focused
+          : null;
       const generation = ++representationGeneration.current;
       representationRead.current?.abort();
       const control = new AbortController();
@@ -1254,6 +1260,7 @@ function CommonProcessController({
               {(!activeRun || !!snapshot.inputs?.length) && (
                 <Section
                   title={activeRun ? "Run inputs" : "Inputs"}
+                  focusId="inputs"
                   description={
                     activeRun
                       ? "These are the frozen inputs used by this run."
@@ -1472,6 +1479,7 @@ function CommonProcessController({
             {!needsResponse && interactionPanel}
             <Section
               title="Results and checks"
+              focusId="results"
               description="Inspect the exact output revisions and their linked assessments."
             >
               {(snapshot.outputs ?? [])
@@ -1552,9 +1560,17 @@ function CommonProcessController({
                         representationRead.current?.abort();
                         representationRead.current = undefined;
                         setRepresentation(undefined);
+                        const opener = representationOpener.current;
+                        const destination = opener?.isConnected
+                          ? opener
+                          : workingRoot.current?.querySelector<HTMLElement>(
+                              `[data-process-section="${activeRun ? "results" : "inputs"}"]`,
+                            );
+                        destination?.focus({ preventScroll: true });
+                        destination?.scrollIntoView?.({ block: "nearest" });
                       }}
                     >
-                      Close file
+                      {activeRun ? "Back to results" : "Back to inputs"}
                     </button>
                     {representation.blob && (
                       <RepresentationDownload

@@ -354,3 +354,30 @@ All nine protected workflow/run/output/backend-metadata hashes remain unchanged.
 The installed named prototype is still 0.33; no plugin update, workflow run or
 service restart occurred. The next candidate must combine the reviewed changes
 and requalify its own exact resource before installation.
+
+
+### Second local increment: return from results previews
+
+The shared common view now names the return destination (Back to results or
+Back to inputs), cancels a pending preview read, and restores focus and viewport
+to its originating control. If a refreshed output removed that control, it returns
+to the corresponding current section. Execution and durable identities are unchanged.
+
+65/65 common-view/native-process tests, TypeScript and changed-file ESLint pass.
+The newly compiled resource passed a read-only browser journey against the retained
+run on the actual isolated API/storage, including the original file control entering
+the viewport after return. All nine protected hashes remain unchanged.
+See `prototypes/desktop-harness/engineering-experience/evidence/results-return.json`.
+This uses a simulated host; Windows download, chat restoration and this build's
+Windows rendering remain unverified. Browser harness selectors were updated, but
+the full Home/usability/integration suites have not yet been rerun.
+
+The first attempt correctly rejected a stale resource pin. A private isolated copy
+of client metadata pins the new resource for qualification; installed configuration
+and the frozen backend remain unchanged. No workflow ran.
+
+Capability audit additions: desktop workspace creation currently selects only
+Wright workspace status; default selection of loaded engineering tools is a gap.
+The installed desktop profile does not enable local reviews. Existing rework
+validation admits one safe producer revision path, not the whole CAD/FEA cycle.
+Resolve these through existing owners and qualification; do not bypass their guards.

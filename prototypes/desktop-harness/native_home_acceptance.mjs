@@ -321,7 +321,8 @@ try {
   }
   if (!evidence.skip_connections) {
   await frame.getByRole('button',{name:'Connections',exact:true}).click();
-  await frame.getByLabel('Find an MCP').fill('SteveCAD');
+  await frame.getByRole('button',{name:'Browse tool catalog',exact:true}).click();
+  await frame.getByLabel('Find an engineering tool').fill('SteveCAD');
   await frame.getByRole('button',{name:'Search / refresh',exact:true}).click();
   await frame.getByRole('button',{name:/Saved setup for SteveCAD/i}).click();
   await frame.getByRole('button',{name:/Open reviewable setup/}).first().click();

@@ -391,6 +391,7 @@ try {
       .getByRole("button", { name: "Connections", exact: true })
       .click();
     await expect(frame.getByText("Loading connections…")).toHaveCount(0);
+    await frame.getByRole("button", { name: "Browse tool catalog", exact: true }).click();
     const catalog = frame.locator(".native-connections__items");
     await expect(catalog.locator("li").first()).toBeVisible();
     expect(await catalog.evaluate((el) => el.clientHeight)).toBeLessThanOrEqual(
@@ -400,7 +401,7 @@ try {
     await catalog.press("End");
     await expect(catalog.locator("li").last()).toBeInViewport();
     await shot("connections-catalog-bounded");
-    await frame.getByLabel("Find an MCP").fill("SteveCAD");
+    await frame.getByLabel("Find an engineering tool").fill("SteveCAD");
     await frame
       .getByRole("button", { name: "Search / refresh", exact: true })
       .click();
