@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { JsonValue } from "@wright/process-client";
 import { ImageThumbnail } from "./inputs";
+import { useFileDownload, fileDownloadMessage, type FileDownloadRequest } from "./file-download";
 import { ThreeDViewer, ToolpathViewer } from "./geometry";
 import { MarkdownDocument } from "./documents";
 import { PdfPageViewer } from "./pdf";
@@ -13,6 +14,49 @@ import {
 
 /** Download the exact bytes supplied by the scoped representation owner. */
 export function RepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
+  const request = useFileDownload();
+  return request
+    ? <HostRepresentationDownload key={name} blob={blob} name={name} request={request} />
+    : <BrowserRepresentationDownload blob={blob} name={name} />;
+}
+function HostRepresentationDownload({ blob, name, request }: { blob: Blob; name: string; request: FileDownloadRequest }) {
+  const pending = useRef(false);
+  const generation = useRef(0);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    const current = ++generation.current;
+    pending.current = false;
+    setBusy(false);
+    setMessage("");
+    return () => { generation.current = current + 1; };
+  }, [blob, name]);
+  async function download() {
+    if (pending.current) return;
+    pending.current = true;
+    const current = generation.current;
+    setBusy(true);
+    setMessage("");
+    try {
+      const result = await request(blob, name.replaceAll("\\", "/").split("/").at(-1) || "representation");
+      if (current === generation.current) setMessage(fileDownloadMessage(result));
+    } catch {
+      if (current === generation.current) setMessage("The download was not confirmed. Check your downloads before trying again.");
+    } finally {
+      if (current === generation.current) {
+        pending.current = false;
+        setBusy(false);
+      }
+    }
+  }
+  return <div>
+    <button type="button" className="wp-link" disabled={busy} onClick={() => void download()}>
+      {busy ? "Preparing download…" : "Download exact file"}
+    </button>
+    {message && <p role="status">{message}</p>}
+  </div>;
+}
+function BrowserRepresentationDownload({ blob, name }: { blob: Blob; name: string }) {
   const [link, setLink] = useState<{ blob: Blob; url: string }>();
   useEffect(() => {
     const url = URL.createObjectURL(blob);

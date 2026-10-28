@@ -100,3 +100,8 @@ this confusing; installing a plugin does not replace existing mounted panels.
 Both the original failure and corrected Windows evidence are preserved.
 Windows download/open, chat-switch restoration and the broader usability goal
 remain unqualified by this image-display check.
+
+The subsequent Windows check reported that **Download exact file** did nothing.
+This download failure and its separate correction are tracked in
+[host-download-20261028.md](host-download-20261028.md); image-display acceptance
+remains valid.

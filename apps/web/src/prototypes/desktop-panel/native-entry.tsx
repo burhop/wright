@@ -11,6 +11,8 @@ import {
 import { z } from "zod";
 import { openNativeWorkspaceFile } from "./native-file-client";
 import "@wright/ui-kit/styles.css";
+import { FileDownloadProvider } from "@wright/ui-kit";
+import { downloadNativeFile } from "./native-download";
 import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
@@ -42,6 +44,7 @@ const app = new App(
   { tools: { listChanged: false } },
   { autoResize: false },
 );
+const requestDownload = (blob: Blob, name: string) => downloadNativeFile(app, blob, name);
 let args: Record<string, unknown> = {};
 let pending: CallToolResult | undefined;
 let generation = 0;
@@ -476,6 +479,7 @@ function home() {
   notice.textContent = "";
   renderCurrent = () =>
     root.render(
+      <FileDownloadProvider request={requestDownload}>
       <NativeHomePanel
         key={homeKey}
         call={homeCall}
@@ -558,7 +562,8 @@ function home() {
             path,
           );
         }}
-      />,
+      />
+      </FileDownloadProvider>,
     );
   renderCurrent(app.getHostContext());
 }
@@ -779,6 +784,7 @@ async function open() {
     rememberLocation();
     renderCurrent = (context) =>
       root.render(
+        <FileDownloadProvider request={requestDownload}>
         <div className="native-workspace-frame" data-native-file={fileBound}>
           {!fileBound && (
             <nav aria-label="Wright navigation">
@@ -851,7 +857,8 @@ async function open() {
               rememberLocation();
             }}
           />
-        </div>,
+        </div>
+        </FileDownloadProvider>,
       );
     renderCurrent(app.getHostContext());
     requestAnimationFrame(() => theme(app.getHostContext()));

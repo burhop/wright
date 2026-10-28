@@ -2,13 +2,18 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import {
   cleanup,
   fireEvent,
-  render,
+  render as renderRaw,
   screen,
   waitFor,
   act,
 } from "@testing-library/react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { FileDownloadProvider } from "@wright/ui-kit";
+import type { ReactElement } from "react";
 import { NativeFileDownload } from "./NativeFileDownload";
+
+const delivery = vi.fn().mockResolvedValue("requested");
+const render = (element: ReactElement) => renderRaw(<FileDownloadProvider request={delivery}>{element}</FileDownloadProvider>);
 
 const workspace = {
   workspace_id: "a",
@@ -33,6 +38,7 @@ const result = (extra = {}): CallToolResult => ({
   },
 });
 beforeEach(() => {
+  delivery.mockReset().mockResolvedValue("requested");
   vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:verified-file");
   vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
   vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
@@ -57,11 +63,13 @@ it("requests exact current bytes once and downloads only after digest verificati
     "wright_workspace_file_download",
     { workspace_id: "a", session_id: "chat-a", path: "part.step" },
   );
-  expect(URL.createObjectURL).toHaveBeenCalledOnce();
-  const blob = vi.mocked(URL.createObjectURL).mock.calls[0][0] as Blob;
+  expect(delivery).toHaveBeenCalledOnce();
+  expect(delivery.mock.calls[0][1]).toBe("part.step");
+  const blob = delivery.mock.calls[0][0] as Blob;
   expect(blob.size).toBe(bytes.length);
   expect(blob.type).toBe("application/octet-stream");
-  expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
+  expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+  expect(delivery).toHaveBeenCalledOnce();
   expect(screen.getByText(/not verified run evidence/)).toBeVisible();
 });
 it.each([
@@ -78,6 +86,7 @@ it.each([
   fireEvent.click(screen.getByRole("button", { name: "Download file" }));
   await screen.findByText(/Download could not be verified/);
   expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(delivery).not.toHaveBeenCalled();
   expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
 });
 it("shows unsupported files without requesting host delivery", async () => {
@@ -85,6 +94,7 @@ it("shows unsupported files without requesting host delivery", async () => {
   fireEvent.click(screen.getByRole("button", { name: "Download file" }));
   await screen.findByText(/Download unavailable/);
   expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(delivery).not.toHaveBeenCalled();
 });
 it("discards a late reply after closing the selected file", async () => {
   let resolve!: (value: CallToolResult) => void;
@@ -102,6 +112,7 @@ it("discards a late reply after closing the selected file", async () => {
   });
   await waitFor(() => expect(call).toHaveBeenCalledOnce());
   expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(delivery).not.toHaveBeenCalled();
 });
 
 it("rejects current bytes that differ from the saved run's hash before requesting delivery", async () => {
@@ -119,6 +130,7 @@ it("rejects current bytes that differ from the saved run's hash before requestin
     "no longer matches this run",
   );
   expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(delivery).not.toHaveBeenCalled();
   expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
 });
 it("verifies actual bytes against both response and exact recorder hash", async () => {
@@ -139,8 +151,17 @@ it("verifies actual bytes against both response and exact recorder hash", async 
   expect(await screen.findByRole("status")).toHaveTextContent(
     "Bytes match this saved run",
   );
-  expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledOnce();
+  expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+  expect(delivery).toHaveBeenCalledOnce();
   expect(screen.getByRole("status")).toHaveTextContent(
-    "File delivery is not confirmed",
+    "Download requested",
   );
+});
+
+it("reports a missing host delivery adapter without reading bytes", async () => {
+ const call=vi.fn();
+ renderRaw(<NativeFileDownload call={call} workspace={workspace} path="part.step" />);
+ fireEvent.click(screen.getByRole("button",{name:"Download file"}));
+ expect(await screen.findByRole("status")).toHaveTextContent("does not support file downloads");
+ expect(call).not.toHaveBeenCalled();
 });

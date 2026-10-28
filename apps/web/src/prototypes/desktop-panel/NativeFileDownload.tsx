@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
+import { useFileDownload, fileDownloadMessage } from "@wright/ui-kit";
 
 /** Retrieve current bytes; optional recorder provenance must match before delivery. */
 export function NativeFileDownload({
@@ -17,6 +18,7 @@ export function NativeFileDownload({
   const pending = useRef(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const requestDownload = useFileDownload();
   useEffect(() => {
     alive.current = true;
     return () => {
@@ -29,6 +31,10 @@ export function NativeFileDownload({
     setBusy(true);
     setMessage("");
     try {
+      if (!requestDownload) {
+        setMessage(fileDownloadMessage("unavailable"));
+        return;
+      }
       const result = await call("wright_workspace_file_download", {
         workspace_id: workspace.workspace_id,
         session_id: workspace.session_id,
@@ -91,24 +97,10 @@ export function NativeFileDownload({
       ).join("");
       if (!alive.current) return;
       if (hash !== data.sha256) throw new Error("Digest differs");
-      const url = URL.createObjectURL(
-        new Blob([bytes], { type: "application/octet-stream" }),
-      );
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = name;
-      document.body.append(link);
-      try {
-        link.click();
-      } finally {
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }
-      setMessage(
-        recordedEvidence
-          ? "Download requested. Bytes match this saved run; check your downloads. File delivery is not confirmed."
-          : "Download requested. Check your downloads. This is the current saved file, not verified run evidence.",
-      );
+      const delivery = await requestDownload(new Blob([bytes], { type: "application/octet-stream" }), name);
+      if (alive.current) setMessage(fileDownloadMessage(delivery) + (delivery === "requested"
+        ? recordedEvidence ? " Bytes match this saved run." : " This is the current saved file, not verified run evidence."
+        : ""));
     } catch {
       if (alive.current)
         setMessage(
