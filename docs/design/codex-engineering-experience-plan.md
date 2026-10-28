@@ -581,3 +581,28 @@ that failed receipt remains local, and the corrected plan supplies the same
 reference that normal compilation produces. This is not CAD/FEA accuracy or
 full handle acceptance. Interrupted multi-step replay, profile negatives, exact
 design-response integration and the full real-tool chain remain to qualify.
+
+### Exact-design correction and saved-checkpoint proof
+
+The real validation registry, exact-output repository, feedback owner and
+canonical scheduler now have one combined synthetic chain test. The first
+recorded stress field fails its pinned limit; feedback names the CAD producer,
+CAD emits a new exact file, analysis consumes that new hash and the unchanged
+basis, and the second assessment passes. Every prior attempt file is retained.
+This uses synthetic STEP text/CSV fields; no engineering provider is involved.
+
+A saved checkpoint after the corrected chain is serialized and resumed with
+fresh service objects and the same run identity. No producer/analysis call is
+replayed and attempt records remain equal. Tampering with a retained failed CAD
+attempt rejects continuation without new calls. The checkpoint decision is
+explicitly synthetic and creates no real approval. Four negative profile cases
+reject missing/duplicate/unknown repair roles or assigning design checks to
+supporting evidence. All six tests pass. This proves resumption **after** the
+correction; mid-dispatch interruption and uncertain external outcomes remain
+separate qualification obligations.
+
+Evidence: `.local-run/experience-review/design-response-final.log` and
+`packages/workspace_service/tests/test_workflow_design_response_rework.py`.
+An earlier resume fixture omitted the exact prepared run ID and was correctly
+rejected; its log is retained. Full real handle/CAD/FEA acceptance, Robot
+execution regression, current cumulative gates and Windows acceptance stay open.
