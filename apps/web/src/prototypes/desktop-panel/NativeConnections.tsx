@@ -88,6 +88,7 @@ export function NativeConnections({
   readonly openLink?: (url: string) => Promise<void>;
 }) {
   const [search, setSearch] = useState("");
+  const [browsingCatalog, setBrowsingCatalog] = useState(false);
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState<string | null>(null);
   const [next, setNext] = useState<string | null>(null);
@@ -236,7 +237,7 @@ export function NativeConnections({
       availabilityReadPending.current = item.capability_id;
       setDisableUncertain(item.capability_id);
       setAvailabilityNotice(
-        "Disable outcome is not confirmed. Search / refresh to check saved availability before another attempt; no request was repeated.",
+        "Disable outcome is not confirmed. Refresh the list to check saved availability before another attempt; no request was repeated.",
       );
     } finally {
       disabling.current = false;
@@ -377,44 +378,66 @@ export function NativeConnections({
     cursor,
     refresh,
   ]);
+  const visibleItems = browsingCatalog
+    ? items
+    : items.filter((item) => item.installed || item.enabled_here);
   return (
     <section aria-label="Connections">
       <h2>Connections</h2>
       {availabilityNotice && <p role="status">{availabilityNotice}</p>}
       <p>Engineering tools for {workspace.workspace_name}.</p>
-      <NativeCustomConnection
-        key={replacement?.sequence ?? "custom"}
-        initialConfiguration={replacement?.configuration}
-        workspace={workspace}
-        call={call}
-        disabled={planning || acting || uncertain}
-        onBusy={setPlanning}
-        onPlan={setPlan}
-      />
+      <button
+        disabled={loading || planning || acting}
+        onClick={() => {
+          setBrowsingCatalog((current) => !current);
+          setSearch("");
+          setQuery("");
+          setCursor(null);
+        }}
+      >
+        {browsingCatalog ? "Back to added tools" : "Browse tool catalog"}
+      </button>
+      <div hidden={!browsingCatalog && !replacement}>
+        <NativeCustomConnection
+          key={replacement?.sequence ?? "custom"}
+          initialConfiguration={replacement?.configuration}
+          workspace={workspace}
+          call={call}
+          disabled={planning || acting || uncertain}
+          onBusy={setPlanning}
+          onPlan={setPlan}
+        />
+      </div>
       <form
         onSubmit={(event) => {
           event.preventDefault();
           setCursor(null);
           setQuery(search);
+          if (search.trim()) setBrowsingCatalog(true);
           setRefresh((value) => value + 1);
         }}
       >
-        <label htmlFor="connection-search">Find an MCP</label>
-        <input
-          id="connection-search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
+        <div hidden={!browsingCatalog}>
+          <label htmlFor="connection-search">Find an engineering tool</label>
+          <input
+            id="connection-search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </div>
         <button type="submit" disabled={loading}>
-          Search / refresh
+          {browsingCatalog ? "Search / refresh" : "Refresh status"}
         </button>
       </form>
-      <button
-        disabled={planning || acting}
-        onClick={() => void savedPlans(null)}
-      >
-        Saved setup in this workspace
-      </button>
+      <details>
+        <summary>Setup history</summary>
+        <button
+          disabled={planning || acting}
+          onClick={() => void savedPlans(null)}
+        >
+          Saved setup in this workspace
+        </button>
+      </details>
       {planning && <p role="status">Reading setup…</p>}
       {savedError && (
         <p role="alert">
@@ -616,18 +639,27 @@ export function NativeConnections({
         <p role="status">Loading connections…</p>
       ) : error ? (
         <p role="alert">
-          Connections could not be read. Search / refresh to retry; no settings
+          Connections could not be read. Refresh the list to retry; no settings
           changed.
         </p>
       ) : (
         <>
-          {!items.length && <p>No matching connections.</p>}
+          {browsingCatalog ? <h3>Tool catalog</h3> : <h3>Added tools</h3>}
+          {!visibleItems.length && (
+            <p>
+              {browsingCatalog
+                ? "No matching connections."
+                : next
+                  ? "No added tools on this page. Check the next page or search by name."
+                  : "No added tools found. Browse the tool catalog to choose one."}
+            </p>
+          )}
           <ul
             className="native-connections__items"
             aria-label="Connection list"
             tabIndex={0}
           >
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <li key={item.capability_id}>
                 <strong>{item.name}</strong>
                 <p>

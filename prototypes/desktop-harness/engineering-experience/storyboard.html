@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  /><title>Wright engineering journey — interaction study</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font: 15px/1.5 system-ui;
+      background: #191919;
+      color: #eee;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+    }
+    header,
+    main,
+    footer {
+      padding: 16px 22px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    header {
+      border-bottom: 1px solid #444;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    h1 {
+      font-size: 25px;
+      margin: 12px 0;
+    }
+    h2 {
+      font-size: 18px;
+    }
+    p {
+      max-width: 65ch;
+    }
+    .muted,
+    small {
+      color: #b6b6b6;
+    }
+    button,
+    input,
+    select {
+      font: inherit;
+      border: 1px solid #656565;
+      border-radius: 6px;
+      background: #292929;
+      color: inherit;
+      padding: 9px 13px;
+    }
+    button {
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3c3c3c;
+    }
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid #8edccc;
+      outline-offset: 3px;
+    }
+    button.primary {
+      background: #b2e4d8;
+      color: #152a24;
+      border-color: #b2e4d8;
+      font-weight: 650;
+    }
+    button.link {
+      border: 0;
+      background: none;
+      padding: 6px 0;
+      text-decoration: underline;
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    input {
+      max-width: 100%;
+      width: 360px;
+    }
+    label {
+      display: block;
+      margin: 14px 0 6px;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+    .row {
+      padding: 14px 0;
+      border-bottom: 1px solid #444;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card {
+      border: 1px solid #555;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .notice {
+      border-left: 3px solid #dfbe75;
+      padding: 10px 14px;
+      background: #28251f;
+    }
+    .badge {
+      color: #a8e1cf;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    td,
+    th {
+      text-align: left;
+      padding: 9px;
+      border-bottom: 1px solid #444;
+    }
+    details {
+      margin-top: 18px;
+    }
+    summary {
+      cursor: pointer;
+    }
+    footer {
+      border-top: 1px solid #444;
+      font-size: 13px;
+    }
+    .steps {
+      padding-left: 24px;
+    }
+    .steps li {
+      padding: 7px 0;
+    }
+    .steps button {
+      padding: 4px 8px;
+    }
+    a {
+      color: #b2e4d8;
+    }
+    @media (max-width: 520px) {
+      header,
+      main,
+      footer {
+        padding: 12px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      .row {
+        align-items: start;
+        flex-wrap: wrap;
+      }
+      td,
+      th {
+        padding: 6px;
+        font-size: 14px;
+      }
+    }
+  </style>
+  <header>
+    <strong>Wright</strong><span>Interaction study · simulated data</span>
+  </header>
+  <main id="screen" tabindex="-1"></main>
+  <footer>
+    No tools, engineering runs, saved files, approvals or downloads are
+    performed. This study tests navigation only; the existing shared workflow
+    canvas remains the editor.
+  </footer>
+  <script>
+    const root = document.querySelector("#screen");
+    let workspace = "",
+      page = "choose",
+      revision = 1,
+      authored = false,
+      requirements =
+        "Create a replacement handle from reference images; assess strength and prepare printing files.",
+      runs = [],
+      selected = null,
+      origin = "workflow";
+    const escapeText = (x) =>
+      String(x).replace(
+        /[&<>"']/g,
+        (c) =>
+          ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          })[c],
+      );
+    const btn = (label, action, primary = false) =>
+      `<button ${primary ? 'class="primary"' : ""} data-action="${action}">${label}</button>`;
+    const back = (label, action) =>
+      `<button class="link" data-action="${action}">← ${label}</button>`;
+    const context = () =>
+      `<p class="muted">${escapeText(workspace)} / Replacement handle${page === "results" || page === "step" ? " / Run " + selected : ""}</p>`;
+    function show(next) {
+      page = next;
+      render();
+      root.focus();
+      window.scrollTo(0, 0);
+    }
+    function render() {
+      let html = "";
+      switch (page) {
+        case "choose":
+          html = `<h1>Choose a workspace</h1><p>Keep the workflows, reference images and results for one job together.</p><label for="name">New workspace name</label><input id="name" placeholder="Replacement handle" value="${escapeText(workspace)}"><div class="actions">${btn("Create workspace", "create", true)}</div>${workspace ? btn("Reopen " + escapeText(workspace), "workspace") : ""}<p><button class="link" data-action="tools">Manage engineering tools</button></p>`;
+          break;
+        case "tools":
+          html = `${back(workspace ? "Workspace" : "Choose workspace", workspace ? "workspace" : "choose")}<h1>Engineering tools</h1><p>This study assumes tools were added during Wright setup. Real readiness must be checked before running.</p>${["CAD", "Strength analysis", "Print preparation"].map((t) => `<div class="row"><strong>${t}</strong><span>Selected for new workspaces · simulated</span></div>`).join("")}<details><summary>What selection means</summary><p>Selection makes a tool available to this workspace. It does not sign you in, approve a design or authorize printing.</p></details>`;
+          break;
+        case "workspace":
+          html = `${back("Workspaces", "choose")}<h1>${escapeText(workspace)}</h1><div class="actions">${btn("Create a workflow", "request", true)}${btn("Engineering tools", "tools")}</div>${authored ? `<div class="row"><strong>Replacement handle</strong>${btn("Open workflow", "workflow")}</div>` : '<p class="muted">No workflows yet.</p>'}<p>Reference images and results will appear here with their workflow.</p>`;
+          break;
+        case "request":
+          html = `${back("Workspace", "workspace")}<h1>Describe the job in Codex chat</h1><p>Your destination is <strong>${escapeText(workspace)}</strong>.</p><p>In the conversation beside this panel, describe the handle and attach your images. Wright will propose editable steps before any engineering work starts.</p><div class="card">“Create a replacement handle from these images. Check its strength and prepare it for 3D printing.”</div><p class="notice">Prototype boundary: the next button substitutes a sample chat response. It does not send a message or generate a workflow.</p><div class="actions">${btn("Preview sample workflow", "workflow", true)}</div>`;
+          break;
+        case "workflow":
+          authored = true;
+          html = `${back("Workspace", "workspace")}${context()}<h1>Replacement handle</h1><p>Workflow revision ${revision} · ${revision > 1 ? "changed; requires a new run" : "sample draft"}</p><div class="actions">${btn("Prepare new run", "prepare", true)}${btn("Edit requirements", "edit")}${runs.length ? btn("Previous runs", "history") : ""}</div><p class="muted">This outline stands in for the existing shared editable canvas.</p><ol class="steps">${["Develop specification from request and images", "Review dimensions, loads, material and assumptions", "Create CAD from approved specification", "Verify CAD against specification; correct within a limit", "Analyze strength; correct and recheck within a limit", "Prepare supports and slicing files", "Review exact print job — stop before printing"].map((s) => `<li>${s}</li>`).join("")}</ol>`;
+          break;
+        case "prepare":
+          html = `${back("Workflow", "workflow")}${context()}<h1>Prepare run ${runs.length + 1}</h1><p>Revision ${revision}. Previous runs stay unchanged.</p><div class="card"><strong>Inputs</strong><p>${escapeText(requirements)}</p><p>Reference images — sample attachments.</p><p>Missing measurements become explicit assumptions in the specification, which you review before CAD begins.</p></div><p class="notice">This study has not checked whether the CAD, analysis and slicing tools can run. This simulation cannot authorize execution.</p><div class="actions">${btn("Simulate run to design review", "review", true)}</div>`;
+          break;
+        case "review":
+          html = `${back("Workflow", "workflow")}${context()}<h1>Review the proposed specification</h1><p>Run ${runs.length + 1} · workflow revision ${revision}. Waiting for your decision before creating CAD.</p><div class="card"><strong>Your requirements</strong><p>${escapeText(requirements)}</p></div><div class="card"><strong>Sample assumptions to resolve</strong><ul><li>Check that the proposed mounting dimensions match your supplied measurements.</li><li>Check that the proposed maximum load matches your requirements.</li><li>Material and print orientation affect strength.</li></ul></div><p>In the real workflow, these values and their basis must be visible in the design document. Images alone cannot establish them.</p><div class="actions">${btn("Change requirements", "edit")}${btn("Preview later results (simulation)", "complete")}</div><p class="muted">Previewing results is not an approval. No review decision is stored.</p>`;
+          break;
+        case "results":
+          html = `${back("Workflow", "workflow")}${context()}<h1>Run ${selected} · results</h1><p>Workflow revision ${runs[selected - 1].revision} · simulated digital preparation complete</p><p class="notice">Waiting for print-job review. Nothing has been sent to a printer.</p><div class="card"><h2>What was produced</h2><div class="row"><span>CAD model and drawing</span>${btn("View CAD step", "step")}</div><div class="row"><span>Strength analysis</span>${btn("View analysis step", "analysis")}</div><div class="row"><span>Sliced print package</span><span>Review required</span></div></div><details><summary>Requirements used for this run</summary><p>${escapeText(runs[selected - 1].requirements)}</p></details><p>Production results must show measured dimensions, units, checks and limits here. This study contains no measured engineering results.</p><div class="actions">${btn("Change requirements and rerun", "edit", true)}${btn("Previous runs", "history")}</div>`;
+          break;
+        case "step":
+          html = `${back("Run " + selected + " results", "results")}${context()}<h1>${origin === "analysis" ? "Strength analysis" : "Create CAD"}</h1><p>Exact step from Run ${selected}, workflow revision ${runs[selected - 1].revision}.</p><div class="card"><h2>Inputs → work → outputs</h2><p>${origin === "analysis" ? "Verified CAD and approved load requirements → configured FEA tool → stress/displacement findings and pass/fail checks." : "Approved specification → configured CAD tool → model, STEP file and drawing."}</p></div><p>Real files open in the compatible viewer. The return control retains this run.</p><details><summary>Technical evidence</summary><p>Exact file identities, tool requests and recorded checks belong here. No synthetic verdict is evidence.</p></details>`;
+          break;
+        case "edit":
+          html = `${back("Workflow", "workflow")}${context()}<h1>Change requirements</h1><label for="change">What needs to change?</label><input id="change" placeholder="For example, increase the required load"><p>Saving creates a new workflow revision in this study. The previous run and its results remain available.</p><p class="notice">The new run must repeat verification and affected reviews. Earlier approvals do not approve the changed design.</p><div class="actions">${btn("Save revision and prepare new run", "save", true)}</div>`;
+          break;
+        case "history":
+          html = `${back("Workflow", "workflow")}${context()}<h1>Previous runs</h1>${runs.map((r, i) => `<div class="row"><span>Run ${i + 1} · revision ${r.revision} · simulated</span>${btn("View results", "run-" + (i + 1))}</div>`).join("")}`;
+          break;
+      }
+      root.innerHTML = html;
+    }
+    root.addEventListener("click", (event) => {
+      const action = event.target.closest("[data-action]")?.dataset.action;
+      if (!action) return;
+      if (action === "create") {
+        const input = document.querySelector("#name");
+        if (!input.value.trim()) {
+          input.setCustomValidity("Enter a workspace name.");
+          input.reportValidity();
+          return;
+        }
+        workspace = input.value.trim();
+        show("workspace");
+      } else if (action === "save") {
+        const input = document.querySelector("#change");
+        if (!input.value.trim()) {
+          input.setCustomValidity("Describe the change.");
+          input.reportValidity();
+          return;
+        }
+        requirements = input.value.trim();
+        revision++;
+        show("prepare");
+      } else if (action === "complete") {
+        runs.push({ revision, requirements });
+        selected = runs.length;
+        show("results");
+      } else if (action.startsWith("run-")) {
+        selected = Number(action.slice(4));
+        show("results");
+      } else if (action === "analysis" || action === "step") {
+        origin = action;
+        show("step");
+      } else show(action);
+    });
+    root.addEventListener("input", (e) => e.target.setCustomValidity?.(""));
+    render();
+  </script>
+</html>

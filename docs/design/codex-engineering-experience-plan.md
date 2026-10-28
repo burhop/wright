@@ -1,9 +1,11 @@
 # Wright engineering journeys inside the OpenAI desktop harness
 
-**Recorded:** 28 October 2026. **Status:** agreed direction and a proposed staged
-design/implementation plan. The user authorized recording this plan and preserving
-and pushing the existing work. This document does not start a new implementation
-goal, authorize an engineering run, or establish product acceptance.
+**Recorded:** 28 October 2026. **Status:** implementation goal submitted on 28 October.
+Local implementation, isolated digital qualification, focused commits, repository
+gates, feature push and draft PR are authorized. A locally qualified update to only
+the named desktop prototype is authorized. Merge, release, physical operations,
+protected campaigns and independent Windows-pilot changes are excluded. Personal
+consent and engineering reviews remain user actions. No product acceptance is claimed.
 
 **Next-session entry point:** read this document and the
 [checkpoint](https://github.com/burhop/wright/blob/codex/desktop-usability-journeys/prototypes/desktop-harness/evidence/checkpoint-20261028/README.md).
@@ -214,3 +216,141 @@ Choose the first implementation slice from the capability inventory. Decide how
 much result comparison is necessary initially. Tool defaults are already decided;
 do not ask the user to repeat that decision. No new goal prompt is submitted by
 this plan; the user intends to request it after the preservation checkpoint.
+
+
+## Current implementation ledger — 28 October 2026
+
+This section is the current backlog and evidence index; earlier sequence and
+lessons remain the design basis. Dedicated branch: `codex/desktop-engineering-experience`.
+Baseline `1838f1b4174b5ea74524fb03901b3a6c40ab0ff2` includes fetched dev
+`1514ea25a63e8e330f86dcac3ccf05f73bc0403b` (zero dev-only commits).
+The original preservation checkout and independent Feature 084 checkout remain untouched.
+The first-contact delivery brief is absent from this baseline; its current copy in
+the independent main checkout was consulted read-only for context, not imported.
+
+| Story | Existing owners to reuse | Concrete next work / qualification | Current evidence boundary |
+|---|---|---|---|
+| C01 tools | NativeConnections; existing gateway onboarding and controls | Separate installed selection, sign-in, validation and readiness; qualify default selection without authority grants | Source inspected; current-host provider readiness not yet checked |
+| C02 workspace | NativeHomePanel; workspace create/settings/files tools | Separate chooser from workspace contents; short naming form; explicit chat destination | Clickable study only |
+| C03 authoring | NativeNewWorkflow; shared recovery editor/source commands; instruction resolver | Explicit request/images handoff; retain shared editor and portable source; map existing handle example before extending it | Study outline is not a generated/accepted process |
+| C04 execution | workflow_source_execution; workflow_design_check; human-input/review owners | Verify required review and correction path support before enabling execution | Source confirms one bounded revision path only; two independent CAD/FEA correction paths remain a gap |
+| C05 step inspection | NativeWorkflowPanel; selected run context; shared process client/results | Visible exact-run inputs, work and outputs; return retains selected run | Prior retained-block evidence is regression only |
+| C06 rerun | accepted source revisions; durable run/config/evidence owners | New full run; old results remain; repeat checks/reviews for changed subjects | Study illustrates revision/history; backend invalidation still needs qualification |
+| C07 results | shared CommonProcessView/UI kit; native previews/download adapter | Engineering summary before raw records; finish carried-forward download proof; actual host observation | Installed 0.33 image previously observed; corrected download not host-qualified |
+| C08 return/recovery | native navigation; durable interaction/continuation owners | Same workspace/workflow/run restored without effect replay; clear missing versus mismatched context | Study only; actual chat-switch restoration remains unverified |
+
+**Known execution boundary:** `workflow_design_check.validate_rework` rejects more
+than one revision path. `workflow_source_execution` recognizes typed design-check
+pass/revise paths and unconditional order dependencies, not arbitrary conditional
+connections. Existing Engineer review compilation is implemented. None of these
+static findings establishes a qualified CAD → verification → FEA correction loop.
+Do not remove required reviews or verification to bypass these checks.
+
+### Early interaction study
+
+Artifact: `prototypes/desktop-harness/engineering-experience/storyboard.html`.
+This dependency-free, non-executing study labels all engineering state as simulated.
+It uses an outline instead of replacing the shared canvas, and has no backend calls,
+file writes, consent, engineering review or print action.
+
+First run: name workspace → enter job/images in the existing Codex conversation
+(explicit destination) → inspect proposed workflow → prepare run → review proposed
+specification → inspect resulting work. The simulation skips actual review and
+engineering computation using an explicitly labeled preview action.
+
+Changed run: inspect old results → change requirements → save a new revision →
+prepare a complete new run → repeat review → inspect new results or reopen the old run.
+This is not selective recomputation or approval reuse.
+
+| Screen | Task / primary action | Typing and feedback | Return / secondary controls |
+|---|---|---|---|
+| Chooser | Create or reopen a job workspace | Name field; required-name feedback | Engineering tools |
+| Workspace | Find work or create workflow | File names; current workspace heading | Workspaces; tools |
+| Request handoff | Describe job in Codex conversation | Existing chat, with named destination; sample response explicitly simulated | Workspace |
+| Workflow | Inspect steps; prepare a new run | Revision shown; real editor retained for production | Edit requirements; previous runs; workspace |
+| Prepare | Understand inputs and readiness before start | Missing readiness visible; study can only simulate | Workflow |
+| Review | Assess specification and assumptions | Missing measurements/load explicitly unresolved | Change requirements; simulated later-results preview grants no approval |
+| Results | Understand outputs and inspect producer | Run/revision and outstanding print review visible | Step view; change requirements; previous runs |
+| Step | Understand inputs, tool work and outputs | Same-run identity; technical evidence collapsed | Exact run results |
+| Change | Save revised requirements for a new full run | Required change field; new-review consequence visible | Workflow |
+| History | Open earlier results | Run and revision in each row | Workflow |
+
+Controls in the study are real navigation buttons, primary actions have stronger
+contrast, return controls name their destination, and details disclose technical
+records. No disabled-looking selected navigation or generic “Run and results”
+control is used. Workflow-title editing and real image attachment stay with the
+existing editor/chat; the study does not claim to implement them.
+
+One independent reviewer is testing task-based navigation without click coaching.
+Private local review evidence: `.local-run/experience-review/`. This is simulated
+browser observation, not Windows acceptance. Record findings here before expanding
+implementation. Actual provider qualification and required repository gates remain pending.
+
+
+### First local increment and reviewer findings
+
+The independent study review found three navigation/context defects: the changed
+requirement disappeared, design review omitted run/revision, and a pre-run draft
+disappeared from workspace navigation. All three were fixed and rechecked in the
+study. Original findings remain in
+`prototypes/desktop-harness/engineering-experience/evidence/early-review.md`.
+The study does not test actual document approval, attachments, files or execution.
+Two nonsecret study screenshots are retained beside that report; they are not
+Windows screenshots or engineering results.
+
+Production source changes so far: native file-mode Home separates chooser from
+workspace contents and preserves context on Return; Connections initially shows
+added tools, keeps unrelated catalog entries behind Browse, and moves advanced
+setup/search out of the default view. Saved/current readiness distinctions remain.
+The new-workflow form explicitly identifies the current workspace and the existing
+Codex conversation as the place to describe the job and attach references; manual
+blank-workflow authoring remains available. No second chat or executor is added.
+
+Focused local checks: 64 tests passed across Home, Connections and existing
+download paths; TypeScript and changed-file lint passed before the final small
+wording/layout refinement, whose Connections tests also pass. The compiled native
+resource was exercised with the existing SDK handshake, controlled fixture data
+and a restricted iframe: chooser/return, visible file, default added-only list,
+expired validation warning, catalog access, 480px fit all passed. Evidence in
+`.local-run/experience-review/compiled-home-recheck/`; an earlier fixture encoding
+failure is retained in `compiled-home/failure.json`. Rebuild/recheck the final
+combined increment before committing. No installed update or Windows acceptance.
+
+Read-only live connection audit: the desktop connection responds, but reports no
+attested model/app version or native-tool ceiling. Its isolated workspace has
+SteveCAD enabled, with a recorded protocol check at 2026-10-28 13:30 UTC; host
+compatibility is still uncertain. No separate FEA or slicing provider is enabled
+there. This is catalog/membership evidence, not fresh engineering readiness.
+
+Existing reference: `tests/datasets/engineering-workflows/scenarios/printed-replacement-part/02-repair-cart-bow-handle/context.md`.
+Preserve its 96 mm mounting spacing, geometry/clearance, PETG/P1S/process settings,
+orientation comparison and digital-only boundary. Its 40 N opening load is design
+intent and explicitly carries no strength claim. The requested FEA is an extension
+to a fresh accepted process, requiring explicit material, load/support and acceptance
+basis at the declared specification review; never retroactively certify the original.
+
+Next bounded work: qualify the final compiled workspace/tools increment; finish
+the carried-forward host-download delivery proof; implement the scoped chat-to-
+workflow handoff and run/result/revision experience using current owners. Audit
+required corrections against single-safe-producer rework constraints before any
+backend extension. Provider availability blocks real handoff qualification, not
+offline UI and contract work. Full repository gates and draft PR remain pending.
+
+
+Final checks for the first local increment: **250/250 desktop-panel tests**
+(27 files), TypeScript, changed-file ESLint and the standalone resource build pass.
+The final compiled fixture journey passes, including 480px layout and the visible
+expired-validation warning. Public, nonsecret evidence is in
+`prototypes/desktop-harness/engineering-experience/evidence/qualification.json`,
+with workspace/tools screenshots. The runner beside `storyboard.html` accepts a
+fresh output directory and exercises the built bundle; it uses no live tools.
+
+The preserved **uninstalled 0.34** download package now passes its exact package
+command, resource digest, app-only file handlers and retained-run/output identity
+checks against the existing isolated backend. This closes its previous protocol
+qualification gap, not Windows download acceptance or qualification of the newly
+compiled UI. Fresh receipt is under `.local-run/experience-review/prior-download-protocol/`.
+All nine protected workflow/run/output/backend-metadata hashes remain unchanged.
+The installed named prototype is still 0.33; no plugin update, workflow run or
+service restart occurred. The next candidate must combine the reviewed changes
+and requalify its own exact resource before installation.

@@ -128,6 +128,7 @@ export function NativeHomePanel({
 }) {
   const [items, setItems] = useState<DesktopWorkspace[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [choosingWorkspace, setChoosingWorkspace] = useState(false);
   const [settingsDirty, setSettingsDirty] = useState(false);
   const settingsChanged = useCallback(
     (pending: boolean) => {
@@ -339,6 +340,9 @@ export function NativeHomePanel({
       if (settingsDirty) return;
       const request = ++generation.current;
       setSelected(workspace);
+      setChoosingWorkspace(false);
+      setCreateVisible(false);
+      setSettingsOpen(false);
       onSelect?.(workspace);
       setFiles([]);
       setTitles({});
@@ -459,35 +463,48 @@ export function NativeHomePanel({
       data-file-tabs={!!onOpenFile}
     >
       <header className="native-home__workspace-bar">
-        <h1>Wright</h1>
-        <div className="native-home__workspace-picker">
-          <label htmlFor="wright-workspace">Workspace</label>
-          <select
-            id="wright-workspace"
+        <h1>
+          {onOpenFile && selected && !choosingWorkspace
+            ? selected.workspace_name
+            : "Wright"}
+        </h1>
+        {onOpenFile && selected && !choosingWorkspace ? (
+          <button
             disabled={opening || creating || settingsDirty}
-            value={selected?.workspace_id ?? ""}
-            onChange={(event) => {
-              const workspace = items.find(
-                (item) => item.workspace_id === event.target.value,
-              );
-              if (workspace) void select(workspace);
-            }}
+            onClick={() => setChoosingWorkspace(true)}
           >
-            <option value="" disabled>
-              Choose a workspace
-            </option>
-            {items.map((workspace) => (
-              <option
-                key={workspace.workspace_id}
-                value={workspace.workspace_id}
-                disabled={!workspace.available}
-              >
-                {workspace.workspace_name}
-                {workspace.available ? "" : " — unavailable"}
+            Change workspace
+          </button>
+        ) : (
+          <div className="native-home__workspace-picker">
+            <label htmlFor="wright-workspace">Workspace</label>
+            <select
+              id="wright-workspace"
+              disabled={opening || creating || settingsDirty}
+              value={selected?.workspace_id ?? ""}
+              onChange={(event) => {
+                const workspace = items.find(
+                  (item) => item.workspace_id === event.target.value,
+                );
+                if (workspace) void select(workspace);
+              }}
+            >
+              <option value="" disabled>
+                Choose a workspace
               </option>
-            ))}
-          </select>
-        </div>
+              {items.map((workspace) => (
+                <option
+                  key={workspace.workspace_id}
+                  value={workspace.workspace_id}
+                  disabled={!workspace.available}
+                >
+                  {workspace.workspace_name}
+                  {workspace.available ? "" : " — unavailable"}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <button
           disabled={opening || creating || settingsDirty}
           onClick={() => {
@@ -501,15 +518,27 @@ export function NativeHomePanel({
       {restorationNotice && <p role="status">{restorationNotice}</p>}
       {nativeFileNotice && <p role="status">{nativeFileNotice}</p>}
       <div className="native-home__workspace-actions">
-        <button
-          disabled={
-            opening || creating || loading || createUncertain || settingsDirty
-          }
-          onClick={() => setCreateVisible((value) => !value)}
-        >
-          New workspace
-        </button>
-        {selected && (
+        {(!onOpenFile || !selected || choosingWorkspace) && (
+          <button
+            disabled={
+              opening || creating || loading || createUncertain || settingsDirty
+            }
+            onClick={() => setCreateVisible((value) => !value)}
+          >
+            New workspace
+          </button>
+        )}
+        {onOpenFile && selected && choosingWorkspace && (
+          <button
+            onClick={() => {
+              setChoosingWorkspace(false);
+              setCreateVisible(false);
+            }}
+          >
+            Return to {selected.workspace_name}
+          </button>
+        )}
+        {selected && !choosingWorkspace && (
           <button
             disabled={opening || creating || settingsDirty}
             onClick={() => setSettingsOpen((current) => !current)}
@@ -553,7 +582,7 @@ export function NativeHomePanel({
       {!loading && !error && items.length === 0 && (
         <p>No Wright workspaces yet. Choose New workspace to get started.</p>
       )}
-      {selected && (
+      {selected && !choosingWorkspace && (
         <>
           {settingsOpen && (
             <NativeWorkspaceSettings
@@ -565,7 +594,7 @@ export function NativeHomePanel({
           )}
         </>
       )}
-      <div inert={settingsDirty}>
+      <div inert={settingsDirty} hidden={!!onOpenFile && choosingWorkspace}>
         {recentWorkflow && selected && onReopen && (
           <div className="native-home__return">
             <span>Last viewed</span>

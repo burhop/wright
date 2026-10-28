@@ -96,6 +96,12 @@ export function NativeNewWorkflow({
             void create();
           }}
         >
+          <p>
+            Describe your job and attach reference images in this Codex
+            conversation to plan the steps for{" "}
+            <strong>{workspace.workspace_name}</strong>. Or name a blank
+            workflow below.
+          </p>
           <label htmlFor="wright-workflow-title">Workflow name</label>
           <input
             id="wright-workflow-title"

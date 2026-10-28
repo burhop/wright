@@ -1,0 +1,54 @@
+{
+  "status": "LOCAL_INCREMENT_QUALIFIED_NOT_INSTALLED",
+  "baseline": "1838f1b4174b5ea74524fb03901b3a6c40ab0ff2",
+  "stories": [
+    "C01",
+    "C02",
+    "C03 navigation only"
+  ],
+  "tests": {
+    "files": 27,
+    "passed": 250,
+    "scope": "desktop-panel suite"
+  },
+  "typescript": "PASS",
+  "changed_file_eslint": "PASS",
+  "compiled_panel": {
+    "status": "PASS",
+    "boundary": "compiled UI, simulated host and data; not Windows acceptance",
+    "resource_sha256": "bd83b6b9e702a0e6cb6d5e31ad65767d5097242d47f58991caffc2d516a834a3",
+    "checks": [
+      "chooser hides files; return retains workspace",
+      "workspace files visible",
+      "added tools only by default",
+      "expired check remains visible",
+      "catalog reachable without mutation",
+      "480px no horizontal overflow"
+    ],
+    "dimensions": {
+      "width": 480,
+      "scroll": 480
+    },
+    "calls": [
+      "wright_workspace_list",
+      "wright_workspace_files",
+      "wright_connections_list"
+    ],
+    "errors": []
+  },
+  "prior_download_candidate_protocol": {
+    "status": "PASS",
+    "version": "0.34.0",
+    "resource_sha256": "d2735409e2606f9a1d2c2af67dec4894ec662790295fdd1f01157507715224c2",
+    "retained_run_read": "PASS",
+    "tool_count": 59,
+    "native_visual_acceptance": "UNVERIFIED"
+  },
+  "protected_subjects": {
+    "checked": 9,
+    "unchanged": 9
+  },
+  "windows_acceptance": "UNVERIFIED",
+  "engineering_chain": "UNQUALIFIED",
+  "installed_plugin_changed": false
+}

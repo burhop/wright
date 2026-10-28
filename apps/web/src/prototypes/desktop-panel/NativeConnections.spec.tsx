@@ -127,7 +127,7 @@ it.each(["lost reply", "wrong scope"])(
     expect(
       screen.getByRole("button", { name: "Disable CAD in this workspace" }),
     ).toBeDisabled();
-    fireEvent.click(screen.getByRole("button", { name: "Search / refresh" }));
+    fireEvent.click(screen.getByRole("button", { name: "Refresh status" }));
     expect(
       await screen.findByText(
         /Saved availability is confirmed: this connection is disabled/,
@@ -183,7 +183,8 @@ it("rejects mismatched scope and permits an explicit search retry", async () => 
   );
   expect(screen.queryByText("CAD")).toBeNull();
   expect(screen.queryByText("No matching connections.")).toBeNull();
-  fireEvent.change(screen.getByLabelText("Find an MCP"), {
+  fireEvent.click(screen.getByRole("button", { name: "Browse tool catalog" }));
+  fireEvent.change(screen.getByLabelText("Find an engineering tool"), {
     target: { value: "CAD" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Search / refresh" }));
@@ -428,6 +429,7 @@ it("recovers an imported setup without its provider identity and opens the exact
     });
   render(<NativeConnections workspace={workspace} call={call} />);
   await screen.findByText("CAD");
+  fireEvent.click(screen.getByText("Setup history", { selector: "summary" }));
   fireEvent.click(
     screen.getByRole("button", { name: "Saved setup in this workspace" }),
   );
@@ -467,6 +469,7 @@ it("rejects another workspace in an unfiltered saved-plan response", async () =>
     });
   render(<NativeConnections workspace={workspace} call={call} />);
   await screen.findByText("CAD");
+  fireEvent.click(screen.getByText("Setup history", { selector: "summary" }));
   fireEvent.click(
     screen.getByRole("button", { name: "Saved setup in this workspace" }),
   );
@@ -518,6 +521,7 @@ it("saved local setup shows the exact executable and literal arguments before ap
     throw Error("Unexpected mutation");
   });
   render(<NativeConnections workspace={workspace} call={call} />);
+  fireEvent.click(screen.getByText("Setup history", { selector: "summary" }));
   fireEvent.click(
     await screen.findByRole("button", {
       name: "Saved setup in this workspace",
@@ -575,4 +579,28 @@ it("keeps stale validation and uncertain compatibility visible without claiming 
     screen.getByText(/Authentication: no missing credentials reported/),
   ).toBeVisible();
   expect(call).toHaveBeenCalledTimes(1);
+});
+
+it("starts with added tools and opens the catalog without enabling or installing anything", async () => {
+  const data = enabledReply();
+  data.structuredContent.connections.push({
+    ...data.structuredContent.connections[0],
+    capability_id: "fea",
+    server_id: "fea",
+    name: "Strength analysis",
+    installed: false,
+    enabled_here: false,
+  });
+  const call = vi.fn().mockResolvedValue(data);
+  render(<NativeConnections workspace={workspace} call={call} />);
+  expect(await screen.findByText("CAD")).toBeVisible();
+  expect(screen.queryByText("Strength analysis")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Browse tool catalog" }));
+  expect(screen.getByText("Strength analysis")).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Back to added tools" }));
+  expect(screen.queryByText("Strength analysis")).not.toBeInTheDocument();
+  expect(screen.getByText("CAD")).toBeVisible();
+  expect(
+    call.mock.calls.every(([name]) => name === "wright_connections_list"),
+  ).toBe(true);
 });

@@ -698,3 +698,45 @@ it("explains pending saved names instead of exposing a temporary filename or fal
     screen.queryByText("Reading saved workflow names…"),
   ).not.toBeInTheDocument();
 });
+
+it("separates choosing a native workspace from its files and returns without changing the workspace", async () => {
+  const call = vi.fn<HomeCall>(async (name, args) => {
+    if (name === "wright_workspace_list")
+      return result({ workspaces: [alpha, beta] });
+    if (name === "wright_workspace_files")
+      return files(args.workspace_id === "a" ? alpha : beta, "reference.png");
+    throw Error("Unexpected operation: " + name);
+  });
+  const onOpen = vi.fn();
+  const onOpenFile = vi.fn();
+  render(
+    <NativeHomePanel call={call} onOpen={onOpen} onOpenFile={onOpenFile} />,
+  );
+  fireEvent.change(await screen.findByLabelText("Workspace"), {
+    target: { value: "a" },
+  });
+  await screen.findByRole("heading", { name: "Alpha" });
+  expect(screen.queryByLabelText("Workspace")).not.toBeInTheDocument();
+  expect(
+    await screen.findByRole("button", { name: "reference.png" }),
+  ).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Change workspace" }));
+  expect(screen.getByLabelText("Workspace")).toBeVisible();
+  expect(
+    screen.queryByRole("button", { name: "reference.png" }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Return to Alpha" }));
+  expect(screen.getByRole("heading", { name: "Alpha" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "reference.png" })).toBeVisible();
+  expect(
+    call.mock.calls.filter(([name]) => name === "wright_workspace_files"),
+  ).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Change workspace" }));
+  fireEvent.change(screen.getByLabelText("Workspace"), {
+    target: { value: "b" },
+  });
+  await screen.findByRole("heading", { name: "Beta" });
+  expect(screen.queryByLabelText("Workspace")).not.toBeInTheDocument();
+  expect(onOpen).not.toHaveBeenCalled();
+  expect(onOpenFile).not.toHaveBeenCalled();
+});
