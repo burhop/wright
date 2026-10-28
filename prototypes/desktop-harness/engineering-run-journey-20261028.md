@@ -319,3 +319,58 @@ MCP but did not install or qualify it. Built-in voice observation/Appshots remai
 small next tests, not demonstrated Windows access. Goal completion remains
 unproven until the native acceptance and native reasoning-delivery boundary are
 observed. The completed engineering run must not be replayed to test presentation.
+
+## Connection recovery and direct desktop reasoning — 28 October, 18:15 UTC
+
+This checkpoint supersedes the older-connection and missing native-tool findings
+above. The isolated backend had stopped. Restoring its unchanged frozen launcher
+under the existing user service manager recovered direct MCP initialization, but
+Codex retained the failed connection. The documented app-server
+`config/mcpServer/reload` operation changed the test chat's status from failed
+with zero tools to connected with 59 server tools (23 model-visible tools).
+Codex configuration hashes were unchanged; no Codex restart was required.
+The root and existing test chat subsequently called the actual exposed Wright
+tools with the intended image-enabled binding and exact workspace.
+
+The restarted backend is the transient user unit
+`wright-desktop-journey-20261028.service`, with `Restart=no` and provider autostart
+disabled. Why the original process exited was not established. This is a
+recovered prototype lifecycle failure, not a claim of automatic outage recovery.
+
+The resumed goal then qualified the actual conversation reasoning boundary with
+one new inspection-only run. A disposable source copy changes only its workflow
+ID and display title; all original instructions, dimensions, 0.01 mm comparison
+tolerance, exact CAD identity and two-call limit remain unchanged. Normal Wright
+preparation/readiness passed before one explicit start. All three decisions and
+the actual returned image used this conversation's exposed Wright MCP tools;
+there was no Python relay, alternate LLM or independent workflow executor.
+
+- Source: `workflows/block-native-conversation-check.workflow.wflow`, digest
+  `bac62bd7cac1483ff5845ffaa7d73099ff939211244d1c53bb4c127564666dbd`.
+- New completed run: `8ba0ff7d41b04b1980432eba25bad0d9`.
+- Exactly two successful gateway calls: `read_design`, then `inspect_model`.
+- Same document `48b3d987-173d-4f5e-a684-7d7864ca29ff`, revision 1, full build
+  `5353ac34-e923-4dd0-83e9-85e3ae5caafc`; no CAD creation/edit/regeneration/export.
+- Actual measurements: 2000 × 4000 × 8000 mm, one solid, six faces,
+  63999999999.99999 mm³. These are digital observations, not human acceptance.
+- The native image tool delivered the original 800 × 640 PNG for inspection.
+  Image SHA-256 `1a1f6ca6c17ef90e5e0e9d6f70eb8f4e867405a0f89669ecdaca5dda1d23698f`.
+- Seven earlier source/run/output/configuration hashes remain identical. The
+  original completed run and all historical failures are preserved.
+
+Private evidence: `presentation-polish/BACKEND-RESTORATION-20261028.md`,
+`host-mcp-discovery-20261028T175212Z.json`,
+`FRESH-NATIVE-RETRY-20261028T175231Z.md`, and `native-reasoning-check/` containing
+the plan, actual request/answer receipts, image receipt, final snapshot and
+read-only `verify.py`/`verification.json` audit. The executable content remains
+the installed 0.31 candidate; this checkpoint changes documentation only.
+The [committed qualification summary](evidence/native-reasoning-20261028/qualification.json)
+retains the run, requests, exact tool arguments, output hashes and qualification
+limits without credentials.
+
+Direct native conversation reasoning is now PASS. Automatic UI-to-chat delivery,
+Windows panel appearance/navigation, Windows download/open and chat-switch
+restoration remain unverified. Native tab-open requests returned queued and no
+mounted inspector was exposed. The existing simulated-host screenshots and
+regressions retain their original scope. Full goal completion remains unproven;
+do not repeat engineering calls to fill these visual-observation gaps.

@@ -28,6 +28,16 @@ Useful evidence:
 
 ## Discover, then build
 
+On 28 October the desktop integration additionally completed an inspection-only
+run through tools actually exposed to the OpenAI desktop conversation. Wright
+dispatched exactly `read_design` and `inspect_model` for the existing block at
+revision 1/build `5353ac34-e923-4dd0-83e9-85e3ae5caafc`; no CAD was created or
+changed. The conversation received the real PNG and numerical measurements, and
+Wright retained both outputs in a new durable run. See the
+[direct desktop evidence](../../../prototypes/desktop-harness/engineering-run-journey-20261028.md#connection-recovery-and-direct-desktop-reasoning--28-october-1815-utc).
+This qualifies native conversation reasoning/image transport, not Windows UI
+rendering, automatic chat wakeup or human engineering acceptance.
+
 Call `api_reference` without a name, then read the precise classes/methods needed.
 For specialized work, call `list_skills`, then `read_skill` with an exact returned
 name. `working-with-steve` is a documentation URL, not a discovered skill name.
