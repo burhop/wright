@@ -120,7 +120,7 @@ try {
     .getByRole("button", { name: "Plan in Codex chat", exact: true })
     .click();
   await expect(
-    f.getByRole("status").filter({ hasText: "Continue in the Codex chat" }),
+    f.getByRole("status").filter({ hasText: "Workspace context sent" }),
   ).toBeInViewport();
   const handoff = await page.evaluate(() => window.lastHandoff);
   const context = JSON.parse(handoff.content[0].text.split("\n").at(-1));

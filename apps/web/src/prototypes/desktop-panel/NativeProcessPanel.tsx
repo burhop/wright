@@ -37,7 +37,7 @@ export function NativeProcessPanel({
   readonly readOnly?: boolean;
   readonly onOpenWorkflow?: () => void;
   readonly onRunAttached?: (runId: string) => void;
-  readonly onPrepareAnother?: () => void;
+  readonly onPrepareAnother?: () => void | Promise<void>;
   readonly onDirty?: (pending: boolean) => void;
   readonly theme?: "dark" | "light";
   readonly canNavigate?: boolean;

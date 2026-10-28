@@ -105,6 +105,7 @@ vi.mock("./NativeProcessPanel", () => ({
         Read exact run
       </button>
       <span>{props.runId ?? "New preparation"}</span>
+      <button onClick={props.onPrepareAnother}>Prepare new run</button>
       <button
         onClick={() =>
           void props.client.navigate({
@@ -584,6 +585,34 @@ it.each([false, true])(
         },
       },
     );
+    expect(call).not.toHaveBeenCalled();
+  },
+);
+
+it.each(["matching", "changed", "unavailable"] as const)(
+  "rereads saved source before new preparation when source is %s",
+  async (condition) => {
+    const { read, call } = setup({
+      initialRunId: "old-run",
+      initialView: "working",
+    });
+    if (condition === "changed")
+      read.mockResolvedValue({ content: [], structuredContent: saved });
+    if (condition === "unavailable")
+      read.mockRejectedValue(new Error("offline"));
+    fireEvent.click(screen.getByRole("button", { name: "Prepare new run" }));
+    await waitFor(() => expect(read).toHaveBeenCalledTimes(1));
+    if (condition === "matching") {
+      await screen.findByText("New preparation");
+      expect(screen.queryByText("old-run")).toBeNull();
+    } else {
+      await screen.findByText(
+        condition === "changed"
+          ? /saved workflow changed/
+          : /could not read the accepted workflow/,
+      );
+      expect(screen.getByText("old-run")).toBeVisible();
+    }
     expect(call).not.toHaveBeenCalled();
   },
 );

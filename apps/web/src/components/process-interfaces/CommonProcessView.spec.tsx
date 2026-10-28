@@ -2373,6 +2373,41 @@ describe("common process request recovery and observer lifetime", () => {
       expect(client.start).not.toHaveBeenCalled();
     },
   );
+  it.each(["completed", "failed", "cancelled"] as const)(
+    "offers visible preparation after %s without starting or resuming",
+    async (state) => {
+      const { client, store } = fixture();
+      const ended: InteractionSnapshot = {
+        ...running,
+        state,
+        inputs: [],
+        actions: [],
+      };
+      vi.mocked(client.attach).mockResolvedValue(ended);
+      vi.mocked(client.follow).mockImplementation(async function* () {
+        yield { type: "snapshot", snapshot: ended };
+      });
+      const prepare = vi.fn();
+      render(
+        <CommonProcessView
+          client={client}
+          sessionId="session"
+          runId="run-one"
+          recoveryStore={store}
+          onPrepareAnother={prepare}
+        />,
+      );
+      const button = await screen.findByRole("button", {
+        name: "Prepare new run",
+      });
+      expect(button).toBeVisible();
+      expect(button.closest("details")).toBeNull();
+      fireEvent.click(button);
+      expect(prepare).toHaveBeenCalledTimes(1);
+      expect(client.start).not.toHaveBeenCalled();
+      expect(client.cancel).not.toHaveBeenCalled();
+    },
+  );
   it("retains preparation controls for a process without initial input fields", async () => {
     const { client, store } = fixture();
     vi.mocked(client.getSnapshot).mockResolvedValue({ ...initial, inputs: [] });

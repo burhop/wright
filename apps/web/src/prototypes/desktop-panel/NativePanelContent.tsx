@@ -251,14 +251,14 @@ export function NativePanelContent({
     [onDirty, sourceDirty, transferPending],
   );
   const openWorking = async () => {
-    if (sourceDirty || workingDirty || transferPending) return;
+    if (sourceDirty || workingDirty || transferPending) return false;
     try {
       const stored = await sourceClient.read();
       if (stored.storage_digest !== accepted.storage_digest) {
         setNotice(
           "The saved workflow changed. Compare or reload it before preparing another run.",
         );
-        return;
+        return false;
       }
       if (process.source_digest !== stored.storage_digest) {
         setProcess({
@@ -270,10 +270,12 @@ export function NativePanelContent({
       }
       setNotice("");
       setView("working");
+      return true;
     } catch {
       setNotice(
         "Wright could not read the accepted workflow. Your draft is kept.",
       );
+      return false;
     }
   };
   const openEditor = () => {
@@ -479,8 +481,11 @@ export function NativePanelContent({
           onDirty={workingChange}
           onOpenWorkflow={openEditor}
           onRunAttached={setRun}
-          onPrepareAnother={() => {
+          onPrepareAnother={async () => {
+            if (!(await openWorking())) return;
             setRun(undefined);
+            setRunDetails(undefined);
+            setNavigation(undefined);
             setWorkingGeneration((value) => value + 1);
           }}
         />

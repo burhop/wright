@@ -62,7 +62,7 @@ export interface CommonProcessViewProps {
   readonly canReadRepresentations?: boolean;
   readonly canNavigate?: boolean;
   readonly onRunAttached?: (runId: string, receipt?: StartReceipt) => void;
-  readonly onPrepareAnother?: () => void;
+  readonly onPrepareAnother?: () => void | Promise<void>;
   readonly navigation?: ProcessNavigationRequest;
   readonly readReasoningStatus?: WorkflowReasoningStatusReader;
 }
@@ -1450,33 +1450,45 @@ function CommonProcessController({
                         onNavigate={navigate}
                       />
                     ))}
-                  {activeRun &&
-                    terminal(snapshot.state) &&
-                    onPrepareAnother && (
-                      <button
-                        type="button"
-                        className="wp-link"
-                        disabled={!!busy || readOnly}
-                        onClick={() => {
-                          try {
-                            if (
-                              recoveryRef.current?.start?.receipt?.run_id ===
-                              activeRun
-                            )
-                              remember(null);
-                            onPrepareAnother();
-                          } catch (error) {
-                            setReason(message(error));
-                          }
-                        }}
-                      >
-                        Prepare another run
-                      </button>
-                    )}
                 </Section>
               </details>
             </div>
             {!needsResponse && interactionPanel}
+            <div className="wp-row">
+              {activeRun && terminal(snapshot.state) && onPrepareAnother && (
+                <button
+                  type="button"
+                  className="wp-button"
+                  disabled={!!busy || readOnly}
+                  onClick={async () => {
+                    if (operation.current) return;
+                    operation.current = true;
+                    setBusy("new-preparation");
+                    try {
+                      await onPrepareAnother();
+                      if (
+                        recoveryRef.current?.start?.receipt?.run_id ===
+                        activeRun
+                      )
+                        remember(null);
+                    } catch (error) {
+                      if (alive.current) setReason(message(error));
+                    } finally {
+                      operation.current = false;
+                      if (alive.current) setBusy("");
+                    }
+                  }}
+                >
+                  Prepare new run
+                </button>
+              )}
+              {activeRun && terminal(snapshot.state) && onPrepareAnother && (
+                <p className="wp-muted">
+                  Review inputs for a full new run. Previous results remain in
+                  history; required reviews apply again.
+                </p>
+              )}
+            </div>
             <Section
               title="Results and checks"
               focusId="results"

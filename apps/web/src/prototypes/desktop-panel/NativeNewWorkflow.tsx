@@ -144,8 +144,9 @@ export function NativeNewWorkflow({
           )}
           {handoff === "sent" && (
             <p role="status">
-              Continue in the Codex chat beside this panel. Describe your job
-              and attach your references there.
+              Workspace context sent. Continue in the Codex chat beside this
+              panel: describe your job and attach references to propose editable
+              workflow steps.
             </p>
           )}
           {handoff === "unsupported" && (

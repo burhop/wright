@@ -38,3 +38,15 @@ At 1100px, content, navigation and result rows are easy to scan. At 480px, resul
 Suggested screenshots for user discussion: `15-results-1100.png` (original result overview), `11-results-480.png` (same original narrow overview), `19-recheck-review-480.png` (updated requirement/review context), `21-recheck-earlier-requirements-1100.png` (updated retained prior-run requirements).
 
 Assessment: the requested simulated navigation journeys are understandable without button coaching, with the three concrete context/state issues corrected in the targeted recheck. This is usability evidence for the study only, not production UI acceptance or engineering proof.
+
+
+## Same reviewer: compiled workspace/chat follow-up
+
+The reviewer independently checked the current compiled fixture at 1100px and
+480px. The workspace handoff is understandable; it identifies chat as the typing
+location and editable steps as the next output. Blank creation is collapsed.
+No horizontal overflow was observed with that alternative expanded at 480px.
+A previously saved report referenced an older bundle; fresh exact-build receipts
+are required after code changes. This is simulated-host evidence, not actual
+Windows focus or AI authorship. Remaining minor issues are tracked in the current
+plan rather than proliferating another backlog.

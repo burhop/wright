@@ -129,7 +129,7 @@ it.each(["sent", "unsupported", "uncertain"] as const)(
     );
     expect(message).toHaveTextContent(
       outcome === "sent"
-        ? "Continue in the Codex chat"
+        ? "Workspace context sent"
         : outcome === "unsupported"
           ? "cannot send"
           : "Delivery was not confirmed",

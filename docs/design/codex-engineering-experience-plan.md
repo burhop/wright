@@ -231,11 +231,11 @@ the independent main checkout was consulted read-only for context, not imported.
 | Story | Existing owners to reuse | Concrete next work / qualification | Current evidence boundary |
 |---|---|---|---|
 | C01 tools | NativeConnections; existing gateway onboarding and controls | Separate installed selection, sign-in, validation and readiness; qualify default selection without authority grants | Source inspected; current-host provider readiness not yet checked |
-| C02 workspace | NativeHomePanel; workspace create/settings/files tools | Separate chooser from workspace contents; short naming form; explicit chat destination | Clickable study only |
-| C03 authoring | NativeNewWorkflow; shared recovery editor/source commands; instruction resolver | Explicit request/images handoff; retain shared editor and portable source; map existing handle example before extending it | Study outline is not a generated/accepted process |
+| C02 workspace | NativeHomePanel; workspace create/settings/files tools | Separate chooser from workspace contents; short naming form; explicit chat destination | Compiled chooser/return and 92 workspace/boundary tests pass locally; no installed update |
+| C03 authoring | NativeNewWorkflow; shared recovery editor/source commands; instruction resolver | Explicit request/images handoff; retain shared editor and portable source; map existing handle example before extending it | Versioned chat handoff and exact workspace transport pass; actual complete handle authorship remains pending |
 | C04 execution | workflow_source_execution; workflow_design_check; human-input/review owners | Verify required review and correction path support before enabling execution | Source confirms one bounded revision path only; two independent CAD/FEA correction paths remain a gap |
-| C05 step inspection | NativeWorkflowPanel; selected run context; shared process client/results | Visible exact-run inputs, work and outputs; return retains selected run | Prior retained-block evidence is regression only |
-| C06 rerun | accepted source revisions; durable run/config/evidence owners | New full run; old results remain; repeat checks/reviews for changed subjects | Study illustrates revision/history; backend invalidation still needs qualification |
+| C05 step inspection | NativeWorkflowPanel; selected run context; shared process client/results | Visible exact-run inputs, work and outputs; return retains selected run | Actual retained-run API/storage with simulated host passes exact step/result navigation; engineering chain remains separate |
+| C06 rerun | accepted source revisions; durable run/config/evidence owners | New full run; old results remain; repeat checks/reviews for changed subjects | New full-run preparation is visible; durable synthetic changed-input rerun requires a new review and preserves prior files |
 | C07 results | shared CommonProcessView/UI kit; native previews/download adapter | Engineering summary before raw records; finish carried-forward download proof; actual host observation | Installed 0.33 image previously observed; corrected download not host-qualified |
 | C08 return/recovery | native navigation; durable interaction/continuation owners | Same workspace/workflow/run restored without effect replay; clear missing versus mismatched context | Study only; actual chat-switch restoration remains unverified |
 
@@ -410,3 +410,39 @@ expand the saved selection. 92 workspace/discovery and desktop-boundary tests pa
 The sandbox attempt stalled in an async test; bounded diagnostics and the successful
 host test log are retained under `.local-run/experience-review/`. Final TypeScript
 and changed-file ESLint pass. No backend installed.
+
+
+### Full rerun and review identity qualification
+
+C06: Prepare new run was hidden inside collapsed completed-run details. It now
+appears beside results, explains full rerun/history/review behavior, and never
+starts work. The desktop host rereads accepted source before detaching the old
+run. Changed/unavailable source keeps the prior run visible. Pending preparation
+navigation is guarded against duplicate clicks; no approval or execution request
+is issued by this control.
+
+84 shared common-view/native-routing tests pass, including visible terminal-state
+preparation and matching/changed/unavailable source. The actual durable owner suite
+passes 26 tests, including a new full-rerun case: changed input creates a distinct
+run and exact review subject, rejects the old subject, and preserves old run/file
+bytes. Documents and decisions in this test are explicitly synthetic. This does not
+establish engineering approval, CAD/FEA correction or Windows acceptance.
+
+Independent reviewer rechecked the same workspace/chat fixture without coaching.
+Current wording clarifies that workspace context was sent and editable steps are
+the expected next output. The collapsed blank alternative fits at 480px. Remaining
+minor backlog: distinguish Create blank workflow; clarify referencing an existing
+workspace image versus attaching a new one; reduce the prominence of the host
+restoration notice. No second independent reviewer or live actions were used.
+
+Capability audit: the required FEA-to-CAD path is more than a second revision edge.
+Current validation feedback requires the repair target to own every repairable
+finding; current rework requires one immediately preceding safe producer. A
+CAD → verification → FEA → CAD loop needs explicit upstream defect ownership and
+revalidation of the affected segment, bounded attempts and preserved files. Do not
+remove either guard or report independent single-producer tests as this chain.
+Next: qualify the shared review/restart/rerun journey and map a narrowly typed
+correction contract before extending execution. Robot Tracking Diagnosis and
+full repository gates remain pending; no candidate installation or PR yet.
+
+Exact combined-build browser receipt: `prototypes/desktop-harness/engineering-experience/evidence/rerun-qualification.json`; all nine protected hashes still match. Older receipts remain evidence for their own builds.
