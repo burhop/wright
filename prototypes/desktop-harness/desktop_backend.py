@@ -1141,8 +1141,14 @@ class DesktopBackend:
                     "A workspace with this name or directory already exists. "
                     "Open the existing workspace or choose a different name.",
                 ) from None
+            # Snapshot the existing workspace owner's installed-tool defaults.
+            # Membership selects tools; it creates no credentials or action grants.
+            selected = self.service.tools.list_by_workspace(
+                workspace.workspace_id
+            ).enabled_tools
             self.service.repository.set_enabled_tools(
-                workspace.workspace_id, ["wright__workspace_status"]
+                workspace.workspace_id,
+                list(dict.fromkeys(["wright__workspace_status", *selected])),
             )
             return {
                 "workspace_id": workspace.workspace_id,

@@ -10,6 +10,7 @@ export function NativeNewWorkflow({
   onBusy,
   disabled,
   resetAfterOpen = false,
+  onPlanInChat,
 }: {
   readonly workspace: DesktopWorkspace;
   readonly call: HomeCall;
@@ -17,6 +18,9 @@ export function NativeNewWorkflow({
   readonly onBusy: (busy: boolean) => void;
   readonly disabled: boolean;
   readonly resetAfterOpen?: boolean;
+  readonly onPlanInChat?: (
+    workspace: DesktopWorkspace,
+  ) => Promise<"sent" | "unsupported">;
 }) {
   const [visible, setVisible] = useState(false);
   const [title, setTitle] = useState("");
@@ -24,6 +28,30 @@ export function NativeNewWorkflow({
   const [savedPath, setSavedPath] = useState<string>();
   const [uncertain, setUncertain] = useState(false);
   const flight = useRef(false);
+  const [handoff, setHandoff] = useState<
+    "idle" | "pending" | "sent" | "unsupported" | "uncertain"
+  >("idle");
+  const handoffFlight = useRef(false);
+  const planInChat = async () => {
+    if (
+      !onPlanInChat ||
+      disabled ||
+      handoffFlight.current ||
+      handoff !== "idle"
+    )
+      return;
+    handoffFlight.current = true;
+    setHandoff("pending");
+    onBusy(true);
+    try {
+      setHandoff(await onPlanInChat(workspace));
+    } catch {
+      setHandoff("uncertain");
+    } finally {
+      handoffFlight.current = false;
+      onBusy(false);
+    }
+  };
   const openSaved = async (path: string) => {
     try {
       await onOpen(workspace, path);
@@ -99,23 +127,56 @@ export function NativeNewWorkflow({
           <p>
             Describe your job and attach reference images in this Codex
             conversation to plan the steps for{" "}
-            <strong>{workspace.workspace_name}</strong>. Or name a blank
-            workflow below.
+            <strong>{workspace.workspace_name}</strong>.
           </p>
-          <label htmlFor="wright-workflow-title">Workflow name</label>
-          <input
-            id="wright-workflow-title"
-            value={title}
-            required
-            disabled={disabled || uncertain || !!savedPath}
-            onChange={(event) => setTitle(event.target.value)}
-          />
-          <button
-            type="submit"
-            disabled={disabled || uncertain || !!savedPath || !title.trim()}
-          >
-            Create workflow
-          </button>
+          {onPlanInChat && (
+            <button
+              type="button"
+              disabled={disabled || handoff !== "idle"}
+              onClick={() => void planInChat()}
+            >
+              {handoff === "pending"
+                ? "Sending to Codex chat…"
+                : handoff === "sent"
+                  ? "Sent to Codex chat"
+                  : "Plan in Codex chat"}
+            </button>
+          )}
+          {handoff === "sent" && (
+            <p role="status">
+              Continue in the Codex chat beside this panel. Describe your job
+              and attach your references there.
+            </p>
+          )}
+          {handoff === "unsupported" && (
+            <p role="status">
+              This host cannot send the request to chat. In this conversation,
+              ask to create a workflow in {workspace.workspace_name}.
+            </p>
+          )}
+          {handoff === "uncertain" && (
+            <p role="alert">
+              Delivery was not confirmed. Check the conversation before sending
+              another request. Nothing was run.
+            </p>
+          )}
+          <details open={!onPlanInChat}>
+            <summary>Start with a blank workflow</summary>
+            <label htmlFor="wright-workflow-title">Workflow name</label>
+            <input
+              id="wright-workflow-title"
+              value={title}
+              required
+              disabled={disabled || uncertain || !!savedPath}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <button
+              type="submit"
+              disabled={disabled || uncertain || !!savedPath || !title.trim()}
+            >
+              Create workflow
+            </button>
+          </details>
         </form>
       )}
       {notice && <p role="alert">{notice}</p>}

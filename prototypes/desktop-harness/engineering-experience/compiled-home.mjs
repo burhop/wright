@@ -73,7 +73,7 @@ const respond = (name, args) => {
   throw Error("Unexpected tool: " + name);
 };
 const safe = (x) => JSON.stringify(x).replaceAll("<", "\\u003c");
-const fixture = `<!doctype html><html><body style="margin:0;background:#181818;color:white;font:13px system-ui"><div style="height:28px">Compiled Wright UI · simulated host and data · no engineering work</div><iframe title="Wright" id="panel" sandbox="allow-scripts allow-same-origin" style="width:100%;height:calc(100vh - 28px);border:0"></iframe><script>const f=document.querySelector('#panel');window.addEventListener('message',async e=>{if(e.source!==f.contentWindow)return;const m=e.data;const send=d=>f.contentWindow.postMessage({jsonrpc:'2.0',...d},'*');if(m.method==='ui/initialize')send({id:m.id,result:{protocolVersion:'2026-01-26',hostInfo:{name:'navigation-study',version:'1'},hostCapabilities:{serverTools:{},updateModelContext:{},experimental:{'openai/files':{},'openai/resource':{}}},hostContext:{theme:'dark'}}});else if(m.method==='ui/notifications/initialized'){send({method:'ui/notifications/tool-input',params:{arguments:{}}});send({method:'ui/notifications/tool-result',params:{content:[],structuredContent:{view:'home',native_workspace_files_enabled:true}}});}else if(m.method==='tools/call'){const r=await fetch('/tool',{method:'POST',body:JSON.stringify(m.params)});send({id:m.id,result:await r.json()});}else if(m.id)send({id:m.id,result:{}});});f.srcdoc=${safe(html)};</script></body></html>`;
+const fixture = `<!doctype html><html><body style="margin:0;background:#181818;color:white;font:13px system-ui"><div style="height:28px">Compiled Wright UI · simulated host and data · no engineering work</div><iframe title="Wright" id="panel" sandbox="allow-scripts allow-same-origin" style="width:100%;height:calc(100vh - 28px);border:0"></iframe><script>const f=document.querySelector('#panel');window.addEventListener('message',async e=>{if(e.source!==f.contentWindow)return;const m=e.data;const send=d=>f.contentWindow.postMessage({jsonrpc:'2.0',...d},'*');if(m.method==='ui/initialize')send({id:m.id,result:{protocolVersion:'2026-01-26',hostInfo:{name:'navigation-study',version:'1'},hostCapabilities:{message:{text:{}},serverTools:{},updateModelContext:{},experimental:{'openai/files':{},'openai/resource':{}}},hostContext:{theme:'dark'}}});else if(m.method==='ui/notifications/initialized'){send({method:'ui/notifications/tool-input',params:{arguments:{}}});send({method:'ui/notifications/tool-result',params:{content:[],structuredContent:{view:'home',native_workspace_files_enabled:true}}});}else if(m.method==='tools/call'){const r=await fetch('/tool',{method:'POST',body:JSON.stringify(m.params)});send({id:m.id,result:await r.json()});}else if(m.method==='ui/message'){window.lastHandoff=m.params;send({id:m.id,result:{}});}else if(m.id)send({id:m.id,result:{}});});f.srcdoc=${safe(html)};</script></body></html>`;
 const server = createServer(async (req, res) => {
   if (req.method === "GET") {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -115,6 +115,19 @@ try {
     f.getByRole("button", { name: "Handle reference.png", exact: true }),
   ).toBeInViewport();
   await page.screenshot({ path: output + "/workspace-1100.png" });
+  await f.getByRole("button", { name: "New workflow", exact: true }).click();
+  await f
+    .getByRole("button", { name: "Plan in Codex chat", exact: true })
+    .click();
+  await expect(
+    f.getByRole("status").filter({ hasText: "Continue in the Codex chat" }),
+  ).toBeInViewport();
+  const handoff = await page.evaluate(() => window.lastHandoff);
+  const context = JSON.parse(handoff.content[0].text.split("\n").at(-1));
+  expect(context.workspace_id).toBe(scope.workspace_id);
+  expect(context.session_id).toBe(scope.session_id);
+  await page.screenshot({ path: output + "/chat-handoff-1100.png" });
+  await f.getByRole("button", { name: "New workflow", exact: true }).click();
   await f
     .getByRole("button", { name: "Change workspace", exact: true })
     .click();
@@ -158,6 +171,7 @@ try {
         checks: [
           "chooser hides files; return retains workspace",
           "workspace files visible",
+          "chat handoff visible and exact workspace sent through public host message",
           "added tools only by default",
           "expired check remains visible",
           "catalog reachable without mutation",

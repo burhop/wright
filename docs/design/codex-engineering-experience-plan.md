@@ -378,6 +378,35 @@ and the frozen backend remain unchanged. No workflow ran.
 
 Capability audit additions: desktop workspace creation currently selects only
 Wright workspace status; default selection of loaded engineering tools is a gap.
-The installed desktop profile does not enable local reviews. Existing rework
+The separate local_reviews-only flag is false, but code inspection confirms
+workspace_mcp_tasks permits exact local reviews; end-to-end review qualification
+remains pending. Existing rework
 validation admits one safe producer revision path, not the whole CAD/FEA cycle.
 Resolve these through existing owners and qualification; do not bypass their guards.
+
+
+### Chat handoff and workspace defaults increment
+
+User confirmed the workspace-first direction: choose/name the workspace, see its
+files, then an explicit handoff to Codex chat to describe the job.
+
+New workflow now offers Plan in Codex chat. It sends an explicit authoring-only
+request and exact workspace/session context through the existing public host
+message interface. The versioned instruction body is inspectable at
+`apps/web/src/prototypes/desktop-panel/instructions/plan-workflow.v1.json`.
+Missing host support and uncertain delivery are visible; neither retries nor
+workflow execution occurs. Manual blank creation remains under a disclosure.
+
+30 focused Home/new-workflow/transport tests passed; the final wording/disclosure
+passed its 10 affected tests. The final compiled host fixture passes exact
+message context, visible next action, tool navigation and 480px layout. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/chat-handoff.json`.
+This proves delivery to a simulated host, not actual assistant authorship or Windows.
+
+The backend increment snapshots the existing WorkspaceToolUseCases installed-tool
+defaults for a new workspace. It creates no new credential, approval or server start.
+Existing workspace selections remain untouched; new installations do not silently
+expand the saved selection. 92 workspace/discovery and desktop-boundary tests pass outside the sandbox.
+The sandbox attempt stalled in an async test; bounded diagnostics and the successful
+host test log are retained under `.local-run/experience-review/`. Final TypeScript
+and changed-file ESLint pass. No backend installed.

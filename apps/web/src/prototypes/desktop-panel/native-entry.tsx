@@ -12,6 +12,7 @@ import { z } from "zod";
 import { openNativeWorkspaceFile } from "./native-file-client";
 import "@wright/ui-kit/styles.css";
 import { FileDownloadProvider } from "@wright/ui-kit";
+import { requestWorkflowPlan } from "./native-workflow-handoff";
 import { downloadNativeFile } from "./native-download";
 import type { InteractionSnapshot, ProcessRef } from "@wright/process-client";
 import { NativePanelContent } from "./NativePanelContent";
@@ -501,6 +502,7 @@ function home() {
         <NativeHomePanel
           key={homeKey}
           call={homeCall}
+          onPlanInChat={(workspace) => requestWorkflowPlan(app, workspace)}
           initialSelection={selectedWorkspace ?? navigation}
           initialView={homeView}
           onOpenFile={nativeWorkspaceFiles ? openWorkspaceFile : undefined}

@@ -96,8 +96,12 @@ export function NativeHomePanel({
   onReopen,
   onOpenFile,
   nativeFileNotice,
+  onPlanInChat,
 }: {
   readonly call: HomeCall;
+  readonly onPlanInChat?: (
+    workspace: DesktopWorkspace,
+  ) => Promise<"sent" | "unsupported">;
   readonly initialView?: HomeView;
   readonly onNavigate?: (view: HomeView) => void;
   readonly restorationNotice?: string;
@@ -727,6 +731,7 @@ export function NativeHomePanel({
                 <NativeNewWorkflow
                   key={`${selected.workspace_id}:${selected.session_id}`}
                   workspace={selected}
+                  onPlanInChat={onPlanInChat}
                   call={call}
                   onOpen={openCreatedWorkflow}
                   resetAfterOpen
@@ -883,6 +888,7 @@ export function NativeHomePanel({
                 <NativeNewWorkflow
                   key={`${selected.workspace_id}:${selected.session_id}`}
                   workspace={selected}
+                  onPlanInChat={onPlanInChat}
                   call={call}
                   onOpen={onOpen}
                   onBusy={setCreating}
