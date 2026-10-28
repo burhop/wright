@@ -2257,3 +2257,17 @@ three-render qualification in 62.007 seconds. Evidence is under
 Attempts 001–006 and the rejected metadata probe remain. The generic main-process
 binding is separately qualified and is not established by that robot-specific
 proof. Guides preserve the successful calling conventions for future agents.
+
+## 2026-10-28 — selected OASiS native meshing prerequisite
+
+Problem: the historical selected-provider Dockerfile referenced a Python path
+absent from the pinned GB10 installation. A first build using an image ID in
+FROM was interpreted as a registry tag and failed metadata lookup.
+Solution: inspect the selected image, use its verified local tag, and copy the
+venv plus its uv-managed Python installation into the pinned native provider image.
+Result: initialization and 17-tool discovery passed. Direct and actual gateway
+jobs meshed a retained read-only STEP into identical 934-node/2,872-tetrahedron
+meshes; independent connectivity, finite-coordinate, volume and digest checks
+passed. This is meshing-only ARM64 evidence, not a provider defect, strength
+acceptance, full catalog qualification or live enrollment. See the OASiS usage
+guide and its linked exact evidence. Earlier failure logs remain private.

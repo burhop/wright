@@ -151,3 +151,25 @@ not qualify live enrollment or the desktop engineering workflow. Provider
 `prototypes/desktop-harness/oasis-arm64-gateway-evidence.json`. The initial
 sandbox attempt could not reach Docker and dispatched no provider call; its
 log is retained separately from the successful authorized host execution.
+
+## CAD-derived meshing on GB10, 28 October 2026
+
+A fresh selected composition of the retained OASiS image and pinned native
+Gmsh/CalculiX image initialized normally (17 tools). Its current Python is at
+`/selected/venv/bin/python` and targets a separate uv-managed installation;
+copy both into the selected image, rather than using the historical Dockerfile's
+hardcoded Python path. Keep generated jobs in a fresh writable mount at
+`/selected/venv/lib/python3.12/simulation_outputs` when the root is read-only.
+
+Two network-disabled, nonroot bounded jobs consumed the existing bracket STEP
+read-only: one official MCP client call and one actual Wright gateway call with
+an isolated fixture catalog/workspace. Gmsh produced identical 934-node,
+2,872-tetrahedron volume meshes. Independent ASCII parsing checked connectivity,
+finite coordinates, positive volumes and input/output digests. See the
+[recorded prerequisite](../../../prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md).
+
+This qualifies CAD-derived meshing in that environment, not strength analysis,
+live provider enrollment, complete handle execution, Windows or clean x64 catalog
+acceptance. The `skfem` Python execution backend launched native Gmsh; it did not
+perform an scikit-fem solve. `trustworthy_result` remains false and no critic
+approval was supplied. Existing CAD and historical run evidence were unchanged.

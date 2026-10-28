@@ -233,7 +233,7 @@ the independent main checkout was consulted read-only for context, not imported.
 | C01 tools | NativeConnections; existing gateway onboarding and controls | Separate installed selection, sign-in, validation and readiness; qualify default selection without authority grants | Fresh workspace catalog inspected: SteveCAD validation recorded but disabled in that workspace; required FEA/slicer not ready. Candidate defaults do not grant authority |
 | C02 workspace | NativeHomePanel; workspace create/settings/files tools | Separate chooser from workspace contents; short naming form; explicit chat destination | Compiled chooser/return and 92 workspace/boundary tests pass locally; no installed update |
 | C03 authoring | NativeNewWorkflow; shared recovery editor/source commands; instruction resolver | Explicit request/images handoff; retain shared editor and portable source; map existing handle example before extending it | Versioned chat handoff and exact workspace transport pass; actual complete handle authorship remains pending |
-| C04 execution | workflow_source_execution; workflow_design_check; human-input/review owners | Verify required review and correction path support before enabling execution | Independent bounded producer/check pairs and opt-in verified segments are implemented and synthetically tested; real handle CAD/FEA/slicing and human reviews remain unqualified |
+| C04 execution | workflow_source_execution; workflow_design_check; human-input/review owners | Verify required review and correction path support before enabling execution | Independent bounded producer/check pairs and opt-in verified segments are implemented and synthetically tested; actual retained-CAD meshing passed through an isolated MCP/gateway route; real handle strength/slicing and human reviews remain unqualified |
 | C05 step inspection | NativeWorkflowPanel; selected run context; shared process client/results | Visible exact-run inputs, work and outputs; return retains selected run | Actual retained-run API/storage with simulated host passes exact step/result navigation; engineering chain remains separate |
 | C06 rerun | accepted source revisions; durable run/config/evidence owners | New full run; old results remain; repeat checks/reviews for changed subjects | New full-run preparation is visible; durable synthetic changed-input rerun requires a new review and preserves prior files |
 | C07 results | shared CommonProcessView/UI kit; native previews/download adapter | Engineering summary before raw records; finish carried-forward download proof; actual host observation | Installed 0.33 image previously observed; corrected download not host-qualified |
@@ -692,3 +692,14 @@ findings are initial canvas ordering/crossing links, limited projected result
 cards while tools remain unbound, and competing Run/Run readiness controls.
 These remain open usability work, not acceptance. Fifteen affected frontend
 tests and the full frontend formatting check pass.
+
+### CAD-to-analysis prerequisite, 28 October
+
+The selected OASiS/Gmsh environment now consumes an actual retained STEP through
+official MCP and Wright GatewayService/StdioRunner in fresh restricted ARM64
+containers. Both jobs yielded the same mesh; independent ASCII checks and exact
+input/output hashes passed. See [evidence](../../prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md).
+This establishes a meshing prerequisite only. No strength solve, human acceptance,
+live enrollment, handle execution or protected-run resumption occurred. Next is
+the actual CAD-derived structural-analysis contract and numerical validation,
+then declared handle reviews and manufacturing preparation through existing owners.

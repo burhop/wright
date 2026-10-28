@@ -1,0 +1,27 @@
+{
+  "client_source_commit": "224f3c69",
+  "host": "Linux ARM64 GB10",
+  "oasis_source": "7c184d5b7ca5cda6086f3912d1c7923c58307780",
+  "oasis_image": "sha256:a9df706fe1be647725b5101e68adf6fce11bcb34da19200eabd1a9848abf485d",
+  "native_image_reference": "ghcr.io/casys-ai/mcp-calculix@sha256:82ce8628279e03c8f492f156bb928e5703ea1fcb2d7c465826faf38f7389a778",
+  "native_arm64_image": "sha256:55a6dad4d020b15e0981fcffe02dfe6732f166a0c567c615dfb088adc33845cc",
+  "selected_image": "sha256:9d8dbbde565bc8208a8cce03491b198b36105a1b5ceb556e82f5bdf17fa59ac4",
+  "observed_python": "3.12.12",
+  "observed_mcp": "1.28.1",
+  "observed_skfem": "12.0.2",
+  "observed_meshio": "5.3.5",
+  "runtime_network": "none",
+  "runtime_user": "1000:1000",
+  "read_only_root": true,
+  "input_read_only": true,
+  "gateway_registration": "isolated fixture catalog/workspace; actual GatewayService and StdioRunner",
+  "source_file": "artifacts/stevecad-demonstrations/prompt-to-reviewed-cad/bracket-native-001/handoff/design.step",
+  "limitations": [
+    "meshing only, no strength solve",
+    "no live provider enrollment",
+    "no human engineering review",
+    "not clean x64 catalog qualification",
+    "not Windows acceptance",
+    "initial image-ID FROM was interpreted as registry tag and failed; corrected local-tag build succeeded; build --network none does not prohibit registry metadata lookup"
+  ]
+}

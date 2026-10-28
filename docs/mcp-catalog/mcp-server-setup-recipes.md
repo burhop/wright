@@ -2896,3 +2896,15 @@ probe pass; this is not full clean-Linux-Wright catalog qualification.
 See the [usage guide](usage-guides/mcp-shell-server.md) for stdin/text ports,
 pipeline and newline constraints, false-success detection, privacy canaries and
 the successful 62-second automatic CAD export-to-three-render handoff.
+
+### OASiS ARM64 native meshing composition, 28 October 2026
+
+The [isolated composition and receipt](../../prototypes/desktop-harness/engineering-experience/evidence/cad-mesh-qualification/README.md)
+records the actual ARM64 Python installation and both pinned input images. The
+historical native-FEA Dockerfile's Python path is installation-specific. Copy the
+selected environment plus its uv-managed Python tree; use the discovered
+`/selected/venv/bin/python`. Mount a fresh provider output directory at
+`/selected/venv/lib/python3.12/simulation_outputs`, preserving a read-only root and
+read-only STEP inputs. Direct MCP and fixture-catalog gateway meshing succeeded;
+strength and live enrollment remain unqualified. Do not add these prerequisites
+to Wright's base image or claim catalog-wide validation.
