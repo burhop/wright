@@ -24,7 +24,7 @@ RUN set -eux; \
     mkdir -p /tmp/npm-security-overrides; \
     cd /tmp/npm-security-overrides; \
     npm init -y >/dev/null; \
-    npm install --omit=dev brace-expansion@5.0.11 ip-address@10.3.1 tar@7.5.22 undici@6.28.1 >/dev/null; \
+    npm install --omit=dev brace-expansion@5.0.11 ip-address@10.3.1 tar@7.5.22 undici@6.29.1 >/dev/null; \
     rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/tar /usr/local/lib/node_modules/npm/node_modules/undici; \
     cp -a node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/brace-expansion; \
     cp -a node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/ip-address; \
@@ -62,6 +62,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libexpat1=2.9.0-1~deb13u1 \
     git \
     libblkid1 \
+    libbrotli1=1.1.0-2+deb13u1 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \
@@ -77,7 +78,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a54a05ea56ed03a934d00fe9fbeded4b /uv /usr/local/bin/uv
 
-RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
+RUN uv pip install --system "msgpack==1.2.3" "setuptools==84.0.0" && \
     rm -rf /root/.cache/uv
 
 # pip 26.2.1 vendors vulnerable msgpack/urllib3/certifi and a deprecated setuptools
@@ -86,7 +87,7 @@ RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
 RUN set -eux; \
     pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
     mkdir -p /tmp/pip-security-overrides; \
-    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1" "urllib3==2.8.0" "certifi==2026.10.19"; \
+    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.3" "urllib3==2.8.0" "certifi==2026.10.19"; \
     rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/urllib3" "${pip_vendor}/certifi" "${pip_vendor}/pkg_resources"; \
     cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
     cp -a /tmp/pip-security-overrides/urllib3 "${pip_vendor}/urllib3"; \
@@ -94,13 +95,13 @@ RUN set -eux; \
     sed -i 's/"certifi"/"pip._vendor.certifi"/g' "${pip_vendor}/certifi/core.py"; \
     sed -i 's/from certifi import/from pip._vendor.certifi import/' "${pip_vendor}/certifi/__main__.py"; \
     sed -i \
-      -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
+      -e "s/msgpack==1.1.2/msgpack==1.2.3/" \
       -e "s/urllib3==2.7.0/urllib3==2.8.0/" \
       -e "s/certifi==2026.6.17/certifi==2026.10.19/" \
       -e "s/setuptools==70.3.0/setuptools==78.1.1/" \
       "${pip_vendor}/vendor.txt"; \
     sed -i \
-      -e "s/msgpack@1.1.2/msgpack@1.2.1/g" \
+      -e "s/msgpack@1.1.2/msgpack@1.2.3/g" \
       -e "s/urllib3@2.7.0/urllib3@2.8.0/g" \
       -e "s/certifi@2026.6.17/certifi@2026.10.19/g" \
       -e '/"name": "certifi"/,/}/s/"version": "2026.6.17"/"version": "2026.10.19"/' \
@@ -154,6 +155,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gzip \
     libexpat1=2.9.0-1~deb13u1 \
     libblkid1 \
+    libbrotli1=1.1.0-2+deb13u1 \
     liblastlog2-2 \
     libmount1 \
     libpcre2-8-0=10.46-1~deb13u3 \

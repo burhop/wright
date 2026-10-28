@@ -174,7 +174,7 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert '"pillow==13.0.0"' in dockerfile
     assert 'observed = version("pillow")' in smoke
     assert 'Version(observed) >= Version("13.0.0")' in smoke
-    assert '"msgpack==1.2.1"' in dockerfile
+    assert '"msgpack==1.2.3"' in dockerfile
     assert '"tornado==6.5.9"' in dockerfile
     assert "aiohttp==3.14.4" in dockerfile
     assert "certifi==2026.10.19" in dockerfile
@@ -191,7 +191,8 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "pip/_vendor" in dockerfile
     assert "setuptools@78.1.1" in dockerfile
     assert "brace-expansion@5.0.11" in dockerfile
-    assert "undici@6.28.1" in dockerfile
+    assert "undici@6.29.1" in dockerfile
+    assert "libbrotli1=1.1.0-2+deb13u1" in dockerfile
     assert (
         "cp -a node_modules/undici /usr/local/lib/node_modules/npm/node_modules/undici;"
         in dockerfile
