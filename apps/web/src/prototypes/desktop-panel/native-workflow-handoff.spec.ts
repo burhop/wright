@@ -1,6 +1,7 @@
 import { expect, it, vi } from "vitest";
 import { requestWorkflowPlan } from "./native-workflow-handoff";
 import type { App } from "@modelcontextprotocol/ext-apps";
+import instruction from "./instructions/plan-workflow.v2.json";
 const workspace = {
   workspace_id: "w1",
   session_id: "s1",
@@ -22,9 +23,10 @@ it("sends the exact workspace and versioned authoring request once through the h
   expect(sendMessage).toHaveBeenCalledTimes(1);
   const [request] = sendMessage.mock.calls[0];
   expect(request.role).toBe("user");
+  expect(request.content[0].text.slice(0, instruction.body.length)).toBe(instruction.body);
   const context = JSON.parse(request.content[0].text.split("\n").at(-1));
   expect(context).toEqual({
-    instruction: { id: "wright.desktop.plan-workflow", version: 1 },
+    instruction: { id: "wright.desktop.plan-workflow", version: 2 },
     workspace_id: "w1",
     session_id: "s1",
     workspace_name: "Handle",

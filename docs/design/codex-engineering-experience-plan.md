@@ -628,3 +628,25 @@ Evidence: `.local-run/experience-review/portable-correction.log`,
 `.local-run/experience-review/portable-correction-editor.log` and the bundle,
 validation-settings and ValidatorBlockEditor tests. This change is local and has
 not updated the installed plugin or established Windows acceptance.
+
+### New-workflow handoff: engineering deliverables are part of authoring
+
+The shared kit already recognizes exact validation records and opens the owning
+service's readable assessment report. Arbitrary provider JSON has no equivalent
+engineering meaning that the UI can safely infer. C03 must therefore declare
+readable reports and linked engineering outputs, rather than expecting C07 to
+invent dimensions, checks or strength claims from unknown data.
+
+New desktop authoring handoffs use `plan-workflow.v2.json`; v1 remains preserved.
+The versioned request covers requirements/reference inputs, documented assumptions,
+declared reviews, actual tool capability checks, downstream revalidation, and an
+engineer-readable report alongside exact supporting data and previews. It asks
+for reusable saved workflow instructions and short, explicit chat/panel handoffs.
+It grants no execution, review or physical-action authority. Existing accepted
+workflow instructions and historical results are unchanged.
+
+Three host-boundary tests pass, including exact v2 body/context delivery,
+unsupported delivery and no automatic retry after uncertainty. This proves the
+request sent, not that an LLM authored or executed the intended handle workflow.
+That end-to-end proof remains required. Evidence:
+`.local-run/experience-review/authoring-handoff-v2.log`.

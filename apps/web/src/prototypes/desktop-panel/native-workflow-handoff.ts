@@ -1,6 +1,6 @@
 import type { App } from "@modelcontextprotocol/ext-apps";
 import type { DesktopWorkspace } from "./NativeHomePanel";
-import instruction from "./instructions/plan-workflow.v1.json";
+import instruction from "./instructions/plan-workflow.v2.json";
 
 /** Sends a user-requested authoring handoff; no workflow or gateway dispatch. */
 export async function requestWorkflowPlan(
