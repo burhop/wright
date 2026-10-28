@@ -46,7 +46,7 @@ accepted-revision key; stale async replies must never enter another process/run.
 | --- | --- |
 | ProcessUI, Section | Consistent theme and composable sections; no required domain stages. |
 | InputEditor, SchemaField | Declared values, objects/arrays/local definitions, units/frames and actual configured options. |
-| ImageThumbnail | Bounded bitmap Blob preview, including uploaded references; releases local URLs. |
+| ImageThumbnail | Bounded inline raster preview from scoped Blob bytes, including uploaded references; rejects active formats and stale reads without fetching external images. |
 | ReadinessPanel, ReasonNotice | Backend readiness, later-input classifications, correction and technical detail disclosure. |
 | ProgressPanel | Distinct run states and fresh observed progress; no extrapolated time/percentage or fabricated completion. |
 | ActionButton, CheckpointCard | Explicit callbacks and exact permitted checkpoint/subject actions; no implicit approval. |

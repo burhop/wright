@@ -70,3 +70,15 @@ fields, Windows pixels, downloaded files and chat restoration remain unverified.
 Receipts are `install-step-{0,1,2}.json`, `cache-preservation.json`,
 `installed-only-protocol.json`, and `host-mcp-discovery-20261028T190109Z.json`
 in the evidence directory above.
+
+## Subsequent actual desktop evidence
+
+At 19:18:57 UTC, this conversation received a visible native panel observation
+with bundle payload `c27fce3e33c2fedf253d0d95a46a50efcf10ee4ff470e2e14304c8f44b2236ff`,
+the exact retained run, and viewport 918 × 812 at device pixel ratio 2.5. This
+confirms delivery of the added observation fields. User screenshots also establish
+actual Windows editor, workspace, history and JSON preview rendering, but reveal
+remaining usability defects. A later screenshot shows the retained PNG preview
+failing. See [image correction and qualification](bitmap-preview-20261028.md).
+Earlier simulated image passes do not override that native failure; Windows
+download delivery and chat restoration remain unverified.

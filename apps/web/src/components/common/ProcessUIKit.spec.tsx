@@ -1812,18 +1812,16 @@ describe("bounded representation views", () => {
     ).toBeInTheDocument();
     expect(read).not.toHaveBeenCalled();
   });
-  it("releases thumbnails and never reuses a bitmap for a different blob", () => {
-    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:old-image");
-    const revoke = vi
-      .spyOn(URL, "revokeObjectURL")
-      .mockImplementation(() => undefined);
+  it("uses exact inline raster bytes and never reuses a bitmap for a different blob", async () => {
+    const objectUrl = vi.spyOn(URL, "createObjectURL");
     const { rerender, unmount } = render(
       <ImageThumbnail
         blob={new Blob(["bitmap"], { type: "image/png" })}
         title="First image"
       />,
     );
-    expect(screen.getByAltText("First image")).toBeInTheDocument();
+    expect(await screen.findByAltText("First image")).toHaveAttribute("src", "data:image/png;base64," + btoa("bitmap"));
+    expect(objectUrl).not.toHaveBeenCalled();
     rerender(
       <ImageThumbnail
         blob={new Blob(["data"], { type: "application/octet-stream" })}
@@ -1831,7 +1829,43 @@ describe("bounded representation views", () => {
       />,
     );
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
-    expect(revoke).toHaveBeenCalledWith("blob:old-image");
     unmount();
+  });
+  it.each(["image/svg+xml", "text/html", "application/octet-stream"])("does not read or inline %s as an image", (type) => {
+    const blob = new Blob(["<svg onload='bad()'/>"], { type });
+    const read = vi.spyOn(blob, "arrayBuffer");
+    render(<ImageThumbnail blob={blob} title="Unsupported" />);
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(read).not.toHaveBeenCalled();
+  });
+  it("rejects oversized raster previews before reading and reports read/decode failures", async () => {
+    const oversized = new Blob([new Uint8Array(32 * 1024 * 1024 + 1)], { type: "image/png" });
+    const read = vi.spyOn(oversized, "arrayBuffer");
+    const ready = vi.fn();
+    const view = render(<ImageThumbnail blob={oversized} title="Oversized" onReady={ready} />);
+    expect(read).not.toHaveBeenCalled();
+    expect(ready).toHaveBeenCalledOnce();
+    ready.mockClear();
+    const broken = new Blob(["png"], { type: "image/png" });
+    vi.spyOn(broken, "arrayBuffer").mockRejectedValue(new Error("private read error"));
+    view.rerender(<ImageThumbnail blob={broken} title="Broken" onReady={ready} />);
+    await waitFor(() => expect(ready).toHaveBeenCalledOnce());
+    expect(screen.getByText(/This image could not be displayed/)).not.toHaveTextContent("private");
+    ready.mockClear();
+    view.rerender(<ImageThumbnail blob={new Blob(["invalid raster"], { type: "image/png" })} title="Invalid" onReady={ready} />);
+    fireEvent.error(await screen.findByRole("img", { name: "Invalid" }));
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(ready).toHaveBeenCalledOnce();
+  });
+  it("ignores a delayed image read after switching files", async () => {
+    const old = new Blob(["old"], { type: "image/png" });
+    let finish: (value: ArrayBuffer) => void = () => {};
+    vi.spyOn(old, "arrayBuffer").mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    const view = render(<ImageThumbnail blob={old} title="Old" />);
+    expect(screen.getByText("Loading image…")).toBeInTheDocument();
+    view.rerender(<ImageThumbnail blob={new Blob(["new"], { type: "image/png" })} title="Current" />);
+    const current = await screen.findByRole("img", { name: "Current" });
+    await act(async () => finish(new TextEncoder().encode("old").buffer));
+    expect(current).toHaveAttribute("src", "data:image/png;base64," + btoa("new"));
   });
 });

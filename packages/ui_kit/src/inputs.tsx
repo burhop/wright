@@ -494,10 +494,22 @@ export function ImageThumbnail({ blob, title, onReady }: { blob: Blob; title: st
       blob.size > 32 * 1024 * 1024
     )
       return;
-    const value = URL.createObjectURL(blob);
-    setStored({ blob, url: value });
+    // Embedded hosts may permit inline raster data but reject blob: resources.
+    // Use only these bounded, already-scoped bytes; never fetch an image URL or
+    // expand the host's resource policy. SVG/HTML remain excluded above.
+    let active = true;
+    void blob.arrayBuffer().then((buffer) => {
+      if (!active) return;
+      const bytes = new Uint8Array(buffer);
+      let binary = "";
+      for (let offset = 0; offset < bytes.length; offset += 8192)
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 8192));
+      setStored({ blob, url: `data:${blob.type};base64,${btoa(binary)}` });
+    }).catch(() => {
+      if (active) setFailed(blob);
+    });
     return () => {
-      URL.revokeObjectURL(value);
+      active = false;
     };
   }, [blob]);
   const url = stored?.blob === blob ? stored.url : "";
@@ -510,7 +522,9 @@ export function ImageThumbnail({ blob, title, onReady }: { blob: Blob; title: st
       onError={() => setFailed(blob)}
     />
   ) : (
-    <p className="wp-muted">A bitmap preview is unavailable.</p>
+    <p className="wp-muted">{failed === blob || blob.size > 32 * 1024 * 1024 || !["image/png", "image/jpeg", "image/webp", "image/gif"].includes(blob.type)
+      ? "This image could not be displayed. You can download the original file."
+      : "Loading image…"}</p>
   );
 }
 export function InputEditor({
