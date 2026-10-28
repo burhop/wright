@@ -6,7 +6,11 @@ import {
 import type { DraftBlock, DraftSemanticKind } from "./draft-model";
 
 export type DraftCanvasIntent =
-  | { readonly type: "select"; readonly semanticId: string | null }
+  | {
+      readonly type: "select";
+      readonly semanticId: string | null;
+      readonly inspect?: boolean;
+    }
   | {
       readonly type: "create-block";
       readonly phaseId: string;

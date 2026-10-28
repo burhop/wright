@@ -230,17 +230,18 @@ the independent main checkout was consulted read-only for context, not imported.
 
 | Story | Existing owners to reuse | Concrete next work / qualification | Current evidence boundary |
 |---|---|---|---|
-| C01 tools | NativeConnections; existing gateway onboarding and controls | Separate installed selection, sign-in, validation and readiness; qualify default selection without authority grants | Source inspected; current-host provider readiness not yet checked |
+| C01 tools | NativeConnections; existing gateway onboarding and controls | Separate installed selection, sign-in, validation and readiness; qualify default selection without authority grants | Fresh workspace catalog inspected: SteveCAD validation recorded but disabled in that workspace; required FEA/slicer not ready. Candidate defaults do not grant authority |
 | C02 workspace | NativeHomePanel; workspace create/settings/files tools | Separate chooser from workspace contents; short naming form; explicit chat destination | Compiled chooser/return and 92 workspace/boundary tests pass locally; no installed update |
 | C03 authoring | NativeNewWorkflow; shared recovery editor/source commands; instruction resolver | Explicit request/images handoff; retain shared editor and portable source; map existing handle example before extending it | Versioned chat handoff and exact workspace transport pass; actual complete handle authorship remains pending |
-| C04 execution | workflow_source_execution; workflow_design_check; human-input/review owners | Verify required review and correction path support before enabling execution | Source confirms one bounded revision path only; two independent CAD/FEA correction paths remain a gap |
+| C04 execution | workflow_source_execution; workflow_design_check; human-input/review owners | Verify required review and correction path support before enabling execution | Independent bounded producer/check pairs and opt-in verified segments are implemented and synthetically tested; real handle CAD/FEA/slicing and human reviews remain unqualified |
 | C05 step inspection | NativeWorkflowPanel; selected run context; shared process client/results | Visible exact-run inputs, work and outputs; return retains selected run | Actual retained-run API/storage with simulated host passes exact step/result navigation; engineering chain remains separate |
 | C06 rerun | accepted source revisions; durable run/config/evidence owners | New full run; old results remain; repeat checks/reviews for changed subjects | New full-run preparation is visible; durable synthetic changed-input rerun requires a new review and preserves prior files |
 | C07 results | shared CommonProcessView/UI kit; native previews/download adapter | Engineering summary before raw records; finish carried-forward download proof; actual host observation | Installed 0.33 image previously observed; corrected download not host-qualified |
 | C08 return/recovery | native navigation; durable interaction/continuation owners | Same workspace/workflow/run restored without effect replay; clear missing versus mismatched context | Study only; actual chat-switch restoration remains unverified |
 
-**Known execution boundary:** `workflow_design_check.validate_rework` rejects more
-than one revision path. `workflow_source_execution` recognizes typed design-check
+**Known execution boundary:** `workflow_design_check.validate_rework` supports
+independent bounded correction pairs and explicitly opted-in verified segments;
+unsafe crossing/replay of human answers or external actions remains rejected. `workflow_source_execution` recognizes typed design-check
 pass/revise paths and unconditional order dependencies, not arbitrary conditional
 connections. Existing Engineer review compilation is implemented. None of these
 static findings establishes a qualified CAD → verification → FEA correction loop.

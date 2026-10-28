@@ -3478,6 +3478,7 @@ function WorkflowRecoveryReadyConcept({
           ? inspectorTab
           : "overview",
       );
+      if (intent.inspect === false) setInspectorOpen(false);
       return;
     }
     if (intent.type === "move-block") {

@@ -4352,3 +4352,9 @@
 .recovery-saved-run-results .recovery-result-inspector {
   margin: 16px 0;
 }
+
+.recovery-canvas .react-flow__controls button.recovery-canvas__show-all {
+  width: auto;
+  padding: 0 10px;
+  font-size: 13px;
+}
