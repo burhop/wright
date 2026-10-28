@@ -555,3 +555,29 @@ segment extension and real CAD/FEA proof remain open.
 The broader existing engineering-reader regression passed 112 tests; 34
 external-artifact-dependent tests were skipped and are not claimed as qualified. No provider,
 installed plugin or historical engineering file was changed.
+
+### Explicit verified correction segments
+
+Validator configuration now supports opt-in `rework_scope: verified_segment`
+with explicit `repair_subjects`. Defaults retain adjacent-producer behavior.
+Every repair subject must belong to the selected producer; the pinned profile
+must assess only these subjects, with other bound inputs serving as supporting
+evidence. The existing runtime still independently rejects feedback whose
+actual finding owner differs from the correction target.
+
+The replay interval admits only existing indexed create-new file tasks with
+per-attempt output paths and read-only validators. Downstream tasks must consume
+a verified connected output from the interval. Reviews, physical/external actions,
+session edits, overwrites and unrelated work cannot enter replay. Combined
+correction budgets permit at most three revisions of any repeated producer.
+Existing scheduler invalidation, attempts, files and counters remain the owners.
+
+122 affected compiler/validation/file tests passed before the new scheduler case;
+the final file-owner suite passes 21 tests including that case. It proves a
+synthetic design and its dependent analysis both repeat after a failed check,
+receive distinct exact input hashes, and preserve all four attempt files. The
+initial manually constructed test plan omitted its explicit reference edge;
+that failed receipt remains local, and the corrected plan supplies the same
+reference that normal compilation produces. This is not CAD/FEA accuracy or
+full handle acceptance. Interrupted multi-step replay, profile negatives, exact
+design-response integration and the full real-tool chain remain to qualify.

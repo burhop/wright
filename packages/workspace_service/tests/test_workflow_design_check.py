@@ -584,3 +584,85 @@ def test_multiple_paths_do_not_allow_crossing_prior_check_or_review():
         validate_rework(
             (*first.steps[:2], later), {"check": "make", "later_check": "make"}
         )
+
+
+def verified_segment_plan():
+    from .test_workflow_process_validation_rework import mcp_file_rework_source
+    from workspace_service.workflow_source_execution import compile_prompt_workflow
+
+    original = compile_prompt_workflow(mcp_file_rework_source())
+    producer, check = original.steps
+    analysis = replace(
+        producer,
+        id="analysis",
+        title="Analyze the current geometry",
+        expected_files=tuple(
+            path.replace("/produce/", "/analysis/") for path in producer.expected_files
+        ),
+        expected_file_ports={
+            key: path.replace("/produce/", "/analysis/")
+            for key, path in producer.expected_file_ports.items()
+        },
+        file_dependencies={"produce.jig_step": {"source": "connected_output"}},
+    )
+    check = replace(
+        check,
+        validation={
+            **check.validation,
+            "rework_scope": "verified_segment",
+            "repair_subjects": ["jig_step"],
+        },
+    )
+    return (producer, analysis, check), {check.id: producer.id}
+
+
+def test_explicit_verified_segment_accepts_only_connected_create_new_producers():
+    steps, revisions = verified_segment_plan()
+    validate_rework(steps, revisions)
+    with pytest.raises(
+        WorkflowSourceExecutionError, match="one preceding safe producer"
+    ):
+        validate_rework(
+            (
+                *steps[:-1],
+                replace(
+                    steps[-1],
+                    validation={
+                        **steps[-1].validation,
+                        "rework_scope": "producer",
+                        "repair_subjects": [],
+                    },
+                ),
+            ),
+            revisions,
+        )
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "review",
+        "external_action",
+        "overwrite",
+        "unconnected",
+        "wrong_owner",
+        "too_many_revisions",
+    ],
+)
+def test_verified_segment_rejects_unsafe_or_unrelated_replay(fault):
+    steps, revisions = verified_segment_plan()
+    producer, analysis, check = steps
+    if fault == "review":
+        analysis = replace(analysis, human_review=True)
+    elif fault == "external_action":
+        analysis = replace(analysis, external_action={"action_kind": "fixture"})
+    elif fault == "overwrite":
+        analysis = replace(analysis, file_policy="overwrite")
+    elif fault == "unconnected":
+        analysis = replace(analysis, file_dependencies={})
+    elif fault == "wrong_owner":
+        check = replace(check, validation_sources=(("jig_step", "analysis.jig_step"),))
+    else:
+        check = replace(check, max_revisions=4)
+    with pytest.raises(WorkflowSourceExecutionError):
+        validate_rework((producer, analysis, check), revisions)

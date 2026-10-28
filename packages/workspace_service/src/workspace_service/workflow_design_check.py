@@ -240,6 +240,14 @@ def validate_rework(steps, revisions):
                 "A revision path must return from a design check to an earlier task."
             )
         segment = steps[order[target_id] : order[check_id]]
+        if (
+            check.validation
+            and check.validation.get("rework_scope") == "verified_segment"
+        ):
+            _validate_verified_segment(
+                steps, revisions, check, target_id, segment, order
+            )
+            continue
         target = segment[0] if len(segment) == 1 else None
         validation_sources = {
             source.split(".", 1)[0] for _, source in check.validation_sources
@@ -350,3 +358,65 @@ def validate_rework(steps, revisions):
             )
         if check.max_revisions < 1:
             raise _invalid("Set a revision limit before connecting a revision path.")
+
+
+def _validate_verified_segment(steps, revisions, check, target_id, segment, order):
+    """Only declared create-new file tasks and read-only checks may be repeated."""
+    from .process_validation.configuration import ValidatorConfiguration
+    from .workflow_run_paths import validate_attempt_paths
+
+    try:
+        config = ValidatorConfiguration.model_validate(check.validation)
+    except ValueError as error:
+        raise _invalid(
+            "Invalid verified-segment correction declaration.", str(error)
+        ) from error
+    bindings = dict(check.validation_sources)
+    target_ports = {f"{target_id}.{port}" for port, _ in segment[0].output_ports}
+    if not all(bindings.get(role) in target_ports for role in config.repair_subjects):
+        raise _invalid(
+            "Every repair subject must belong to the configured correction producer."
+        )
+    if check.max_revisions < 1:
+        raise _invalid("Set a revision limit before connecting a revision path.")
+    for candidate in segment:
+        if (
+            candidate.validation
+            and candidate.design_check
+            and not any(
+                (
+                    candidate.agent_task,
+                    candidate.tool_name,
+                    candidate.cad,
+                    candidate.application,
+                    candidate.human_review,
+                    candidate.human_interaction,
+                    candidate.external_action,
+                )
+            )
+        ):
+            continue
+        # This existing contract excludes reviews, overwrite, session edits,
+        # direct tool effects and output paths that could replace prior attempts.
+        validate_attempt_paths(candidate)
+        if candidate.id != target_id and not any(
+            source.split(".", 1)[0]
+            in {prior.id for prior in segment if order[prior.id] < order[candidate.id]}
+            for source in candidate.file_dependencies
+        ):
+            raise _invalid(
+                "Repeated analysis must consume an exact connected output from the affected segment."
+            )
+        if not candidate.expected_file_ports:
+            raise _invalid(
+                "A repeated file producer must expose exact expected file ports."
+            )
+        budget = sum(
+            steps[order[check_id]].max_revisions
+            for check_id, destination in revisions.items()
+            if order[destination] <= order[candidate.id] < order[check_id]
+        )
+        if budget > 3:
+            raise _invalid(
+                "Combined correction paths may revise a producer at most three times."
+            )

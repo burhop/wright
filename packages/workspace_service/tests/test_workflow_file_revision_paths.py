@@ -383,3 +383,85 @@ def test_review_continuation_retains_attempts_without_repeating_the_producer(
         assert final["revision_attempts"] == first["revision_attempts"]
         assert final["steps"][-1]["task_id"] == "final"
     assert writes == before
+
+
+def test_verified_segment_repeats_downstream_analysis_and_preserves_attempts(tmp_path):
+    """Synthetic file work proves scheduler replay, not CAD or FEA accuracy."""
+    original = compile_prompt_workflow(file_rework_source())
+    producer, validator_step = original.steps[:2]
+    analysis = replace(
+        producer,
+        id="analysis",
+        title="Analyze synthetic design",
+        references=(("Current design", "produce.produce_response"),),
+        save=False,
+        output_path="",
+        expected_files=tuple(
+            path.replace("/produce/", "/analysis/") for path in producer.expected_files
+        ),
+        expected_file_ports={
+            key: path.replace("/produce/", "/analysis/")
+            for key, path in producer.expected_file_ports.items()
+        },
+        file_dependencies={"produce.produce_response": {"source": "connected_output"}},
+    )
+    validator_step = replace(
+        validator_step,
+        validation={
+            **validator_step.validation,
+            "rework_scope": "verified_segment",
+            "repair_subjects": ["result"],
+        },
+    )
+    plan = bind_run_paths(
+        replace(original, steps=(producer, analysis, validator_step)), "segment-run"
+    )
+    from workspace_service.workflow_design_check import validate_rework
+
+    validate_rework(plan.steps, plan.revisions)
+    calls, written, consumed = [], [], []
+
+    async def run_task(step, prompt, *args, **kwargs):
+        calls.append(step.id)
+        if step.id == "produce":
+            data = json.dumps(
+                {"part_id": "demo-plate", "length_mm": 98 if len(written) == 0 else 100}
+            )
+        else:
+            design_path, design_bytes = written[-1]
+            digest = hashlib.sha256(design_bytes).hexdigest()
+            assert digest in prompt
+            assert design_path.relative_to(tmp_path).as_posix() in prompt
+            consumed.append(digest)
+            data = json.dumps({"synthetic_input_sha256": digest})
+        path = tmp_path / step.expected_files[0]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(data)
+        written.append((path, data.encode()))
+        return "{}", []
+
+    async def generate(*args):
+        raise AssertionError("No unrelated model call expected")
+
+    result = asyncio.run(
+        execute_prompt_workflow(
+            service=runtime_service(tmp_path),
+            workspace_dir=str(tmp_path),
+            plan=plan,
+            input_values={},
+            response_generator=generate,
+            run_id="segment-run",
+            tool_runtime=SimpleNamespace(run_task=run_task),
+            action_generator=generate,
+        )
+    )
+    assert calls == ["produce", "analysis", "produce", "analysis"]
+    assert len(set(consumed)) == 2
+    assert len({path for path, _ in written}) == 4
+    assert all(path.read_bytes() == data for path, data in written)
+    assert {record["task_id"] for record in result["revision_attempts"]} == {
+        "produce",
+        "analysis",
+        "inspect",
+    }
+    assert result["steps"][1]["verified_file_input_digests"] == [consumed[-1]]

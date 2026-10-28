@@ -41,9 +41,24 @@ class ValidatorConfiguration(Contract):
         dict[Identifier, Identifier], Field(min_length=1, max_length=32)
     ]
     budget: ResourceBudget = Field(default_factory=ResourceBudget)
+    rework_scope: Literal["producer", "verified_segment"] = "producer"
+    repair_subjects: tuple[Identifier, ...] = ()
 
     @model_validator(mode="after")
     def unique_ports(self):
+        if self.rework_scope == "verified_segment":
+            if not self.repair_subjects or len(set(self.repair_subjects)) != len(
+                self.repair_subjects
+            ):
+                raise ValueError(
+                    "Declare distinct repair subject roles for a verified segment"
+                )
+            if not set(self.repair_subjects) <= set(self.subjects):
+                raise ValueError(
+                    "Every repair subject must have an explicit input binding"
+                )
+        elif self.repair_subjects:
+            raise ValueError("Repair subject roles require verified-segment rework")
         if len(set(self.subjects.values())) != len(self.subjects):
             raise ValueError("Each subject role needs a distinct input port")
         return self
@@ -68,6 +83,12 @@ class ValidatorConfiguration(Contract):
             required_roles.update(related_roles)
         if required_roles != set(self.subjects):
             raise ValueError("Bind exactly the subject roles declared in this profile")
+        if self.rework_scope == "verified_segment" and any(
+            check.subject_role not in self.repair_subjects for check in profile.checks
+        ):
+            raise ValueError(
+                "Every segment check must assess a declared repair subject; other inputs are supporting evidence"
+            )
         return profile
 
 
