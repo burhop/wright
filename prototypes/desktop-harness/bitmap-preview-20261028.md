@@ -61,3 +61,22 @@ The previous Robot Tracking Diagnosis editor regression is retained; this change
 does not add workflow semantics. The tracked `native_image_acceptance.mjs` now
 enforces the restrictive image policy so an unrestricted test cannot conceal
 this rendering dependency again.
+
+## Installed candidate
+
+Only `wright-desktop-gb10-prototype` was updated to **0.33.0**, from local commit
+`290f8c12969783ce7dcd3046a0a0f3c4253921df`. UI resource SHA-256:
+`a12381ebc9bd75420a89f0a35fdd57e1516ff2c7cee3789cbd6cf412123ffc55`.
+The frozen candidate and installed package both pass MCP initialization,
+59-tool discovery, exact resource bytes and retained-run/output identity checks.
+Installation preserved unrelated settings, earlier named caches, and nine
+protected source/run/result/backend metadata files. The backend was not restarted.
+
+At 19:30 UTC, the documented MCP reload reconnected this conversation with no
+tool error and identical configuration hashes before/after reload. This chat then
+called the exposed connection tool and requested the exact completed run read-only.
+Receipts are `installed-only-protocol.json`, `install-step-{0,1,2}.json`,
+`preserved-state-after-install.json`, and
+`host-mcp-discovery-20261028T193050Z.json` in the evidence directory.
+Actual Windows image display remains pending a screenshot of this candidate;
+installation and a successful open request do not establish it.
