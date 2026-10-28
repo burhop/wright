@@ -227,11 +227,7 @@ def inspect_verdict(response, calls):
 
 
 def validate_rework(steps, revisions):
-    """One explicit contiguous rework segment; never infer a back-edge."""
-    if len(revisions) > 1:
-        raise _invalid(
-            "This executor supports one bounded design-check revision path per workflow."
-        )
+    """Explicit safe producer/check pairs; never infer or overlap replay scope."""
     order = {step.id: i for i, step in enumerate(steps)}
     for check_id, target_id in revisions.items():
         check = steps[order[check_id]]

@@ -487,3 +487,26 @@ Docker pins and dependency inventory were updated; all 16 smoke-contract tests
 and changed Python lint pass. The original image and failed scan remain intact
 at `test-results/docker-image-security/20261028T221957Z-2f3877ef/public`.
 A rebuilt exact image and fresh scan remain required; no exception was added.
+
+### Independent correction pairs (bounded shared prerequisite)
+
+The existing compiler now accepts multiple independent safe producer/check pairs.
+Every pair still has exactly one immediately preceding safe producer, exact
+subject ownership and its own configured revision budget. No replay segment may
+cross a check, human review or external-action step. The existing runner owns
+revision counts, preserved attempts and downstream release; no executor or
+configuration format was added.
+
+48 design-check tests pass, including actual scheduler tests with synthetic CAD:
+the first pair corrects once, the second corrects independently, earlier passing
+work is not replayed, and exhaustion of the second pair holds the final stage.
+A crossing path remains rejected. This does **not** yet implement FEA-to-CAD
+upstream correction or qualify engineering tools. All 35 related source/validator
+regressions pass. An initial test used the wrong dataclass field name;
+its failed log is retained and the fixture was corrected to `output_path`.
+
+The dependency-patched image built as
+`sha256:7d548c311b2590aa6be6a8a096f612f54a8fbcf54a84b683f2f7631573ea870d`
+at `ea516c95`. Its scan correctly rejected the concurrently changed source before
+scanning. It is not qualified. Complete this code checkpoint, then build/scan
+once against the stable source; avoid concurrent build-input edits during gates.
