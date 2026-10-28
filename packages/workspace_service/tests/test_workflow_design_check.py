@@ -514,9 +514,7 @@ def test_independent_correction_paths_preserve_prior_pass_and_each_budget(
     """Real scheduler, synthetic CAD: a later repair must not replay earlier work."""
     monkeypatch.setattr("workspace_service.workflow_cad.CadTask", FakeCad)
     first = plan()
-    second_make = replace(
-        first.steps[0], id="make_second", output_path="second.txt"
-    )
+    second_make = replace(first.steps[0], id="make_second", output_path="second.txt")
     second_check = replace(
         first.steps[1],
         id="check_second",

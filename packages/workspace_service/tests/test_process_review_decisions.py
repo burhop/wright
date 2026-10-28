@@ -375,7 +375,9 @@ async def test_declared_input_cannot_be_decided_as_an_approval(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_results(tmp_path):
+async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_results(
+    tmp_path,
+):
     """Synthetic documents/decisions exercise real durable owners, not engineering acceptance."""
     from core.process_interactions import ValueBinding
 
@@ -387,8 +389,11 @@ async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_
         prior_files = {path: path.read_bytes() for path in tmp_path.rglob("*.txt")}
         assert prior_files
         changed = await app.set_inputs(
-            review_scope(), reference,
-            bindings=(ValueBinding(input_id="brief", value="Changed handle clearance: 30 mm"),),
+            review_scope(),
+            reference,
+            bindings=(
+                ValueBinding(input_id="brief", value="Changed handle clearance: 30 mm"),
+            ),
         )
 
         async def revised_document(prompt, fmt):
@@ -397,8 +402,11 @@ async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_
             return "Synthetic revised design document: clearance 30 mm."
 
         second = await app.runs.start(
-            review_scope(), reference, changed.snapshot.snapshot_id,
-            "start-full-rerun", expected_input_digest=changed.snapshot.digest,
+            review_scope(),
+            reference,
+            changed.snapshot.snapshot_id,
+            "start-full-rerun",
+            expected_input_digest=changed.snapshot.digest,
             response_generator=revised_document,
         )
         view = await app.runs.wait(review_scope(), reference, second.run_id)
@@ -409,8 +417,12 @@ async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_
         assert second_review["package_digest"] != first_digest
         with pytest.raises(ProcessInterfaceError):
             await app.reviews.decide(
-                review_scope(), reference, second_review["review_id"], "old-review-does-not-transfer",
-                expected_subject_digest=first_digest, decision="approved",
+                review_scope(),
+                reference,
+                second_review["review_id"],
+                "old-review-does-not-transfer",
+                expected_subject_digest=first_digest,
+                decision="approved",
                 reason="Synthetic stale approval rejection check",
             )
         still_pending = await app.workspace.workflow_artifact_reviews.get(
@@ -419,6 +431,8 @@ async def test_full_rerun_with_changed_inputs_requires_new_review_and_keeps_old_
         assert still_pending["state"] == "pending"
         assert len(calls) == 2
         assert (tmp_path / first.run_log_path).read_bytes() == first_record
-        assert all(path.read_bytes() == contents for path, contents in prior_files.items())
+        assert all(
+            path.read_bytes() == contents for path, contents in prior_files.items()
+        )
     finally:
         await app.close()

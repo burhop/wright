@@ -273,6 +273,53 @@ def test_downstream_mcp_receives_verified_latest_file_without_guessing_attempt(
         consumer["references"][0]["path"]
         == writes[-1][0].relative_to(tmp_path).as_posix()
     )
+    from workspace_service.process_validation.application import ValidationApplication
+    from workspace_service.process_validation.process import output_id, register_outputs
+
+    digest = hashlib.sha256(writes[-1][0].read_bytes()).hexdigest()
+    assert consumer["verified_file_input_digests"] == [digest]
+    application = ValidationApplication(
+        str(tmp_path / "validation.db"), "workspace", str(tmp_path)
+    )
+    identity = output_id("file-repair-run", "consume", 1, "consume_response")
+    subject = application.repository.output("workspace", identity)
+    assert subject.input_digests == (digest,)
+    assert (
+        hashlib.sha256(writes[0][0].read_bytes()).hexdigest()
+        not in subject.input_digests
+    )
+
+    # Re-register a durable record after a JSON round trip, without a tool call.
+    restored = json.loads(json.dumps(consumer))
+    register_outputs(
+        application,
+        plan.steps[-1],
+        restored,
+        "file-repair-run",
+        {"consume.consume_response": consumer["response"]},
+        {},
+        [],
+    )
+    assert application.repository.output("workspace", identity) == subject
+
+    # Legacy records retain absent evidence even if their reference list exists.
+    legacy = {
+        key: value
+        for key, value in restored.items()
+        if key != "verified_file_input_digests"
+    }
+    register_outputs(
+        application,
+        plan.steps[-1],
+        legacy,
+        "legacy-run",
+        {"consume.consume_response": consumer["response"]},
+        {},
+        [],
+    )
+    assert not application.repository.output(
+        "workspace", output_id("legacy-run", "consume", 1, "consume_response")
+    ).input_digests
 
 
 @pytest.mark.parametrize("tamper", [False, True])

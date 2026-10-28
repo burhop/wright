@@ -3463,6 +3463,18 @@ async def execute_prompt_workflow(
                     else "deliverable",
                 )
             )
+        # Retain only file dependencies verified by Wright before dispatch.
+        # This records submitted inputs, not provider-internal consumption.
+        # Persist on the new record so continuation never infers evidence for
+        # older outputs from current files or newly installed code.
+        record["verified_file_input_digests"] = sorted(
+            {
+                item["sha256"]
+                for item in record.get("references", [])
+                if item.get("kind") == "workspace_file"
+                and item.get("source_port") in step.file_dependencies
+            }
+        )
         if validation_application:
             from .process_validation.process import register_outputs
 

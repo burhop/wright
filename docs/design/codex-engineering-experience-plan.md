@@ -510,3 +510,26 @@ The dependency-patched image built as
 at `ea516c95`. Its scan correctly rejected the concurrently changed source before
 scanning. It is not qualified. Complete this code checkpoint, then build/scan
 once against the stable source; avoid concurrent build-input edits during gates.
+
+### Verified connected-file input identity
+
+The stable `4ddbd581` candidate passed the current image policy and full reachable
+Git-history leak scan. Its cumulative gate then stopped on Ruff formatting in
+two test files; both are corrected. This was not a full-gate pass. The exact image
+receipt is `test-results/docker-image-security/20261028T222614Z-153cfee9/public/scan.json`;
+retain the full log `.local-run/experience-review/full-gate-4ddbd581.log`.
+
+The runner now records hashes from its existing verified connected-file dependency
+receipts on newly completed step records. The validation output owner carries
+those hashes into the existing SubjectBinding.input_digests field. They establish
+inputs Wright supplied at its observable boundary, not solver-internal consumption
+or analysis correctness. No UI or prompt can grant new authority through them.
+
+141 affected file/rework/validation/review/design-check tests pass. The new
+assertions cover the corrected input rather than the failed prior attempt,
+durable JSON round-trip/re-registration with unchanged identity, and legacy
+records with no retroactively inferred linkage. Existing changed-file/review
+checks remain intact. This prerequisite does not yet enable FEA-to-CAD replay.
+Further contract notes are retained locally in
+`.local-run/experience-review/upstream-correction-contract.md`; source changes
+remain governed by the single C01–C08 plan.
