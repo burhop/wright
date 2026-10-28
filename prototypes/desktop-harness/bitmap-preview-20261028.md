@@ -45,7 +45,7 @@ Evidence directory:
 | Shared image viewer, different historical coupon image, malformed-image fallback | PASS | `shared-viewer-csp/report.json`; controlled transport, real browser decoding |
 | Native process client / UI kit checks | PASS | 130 tests; includes stale reads, active-format/size rejection, failure and readiness |
 | TypeScript, changed-source lint, native resource build | PASS | `local-checks.json`; zero external assets; not full repository gates |
-| Corrected actual Windows image preview | UNVERIFIED | Requires observing this new candidate |
+| Corrected actual Windows image preview | PASS | User screenshot and confirmation of 0.33 below |
 | Windows file delivery/open, chat-switch restoration | UNVERIFIED | No substituted Linux claim |
 
 The read-only journey uses workspace `4bcda80f-0afe-44d7-a8ef-33b2395300b0`,
@@ -80,3 +80,23 @@ Receipts are `installed-only-protocol.json`, `install-step-{0,1,2}.json`,
 `host-mcp-discovery-20261028T193050Z.json` in the evidence directory.
 Actual Windows image display remains pending a screenshot of this candidate;
 installation and a successful open request do not establish it.
+
+## Actual Windows confirmation
+
+The user subsequently confirmed **“Ah. oK. it works then.”** and supplied a
+Windows desktop screenshot showing `block-isometric.png` rendered in the right
+panel. The screenshot is retained at
+`/home/burhop/.codex/attachments/739dc2c2-074f-44a8-b5ba-08e599dadc6d/codex-clipboard-d453d7e3-14e3-41c4-8a9d-dc500461b8e8.png`.
+The current panel also reported one loaded image, no failed images, the exact
+retained run and 0.33 bundle payload
+`6dd04511a34bd998487693b0e57a3007769811ca9ea3668ad65c4ead467b54ea`
+at 19:33:52 UTC. The screenshot and user's observation establish actual native
+image display; telemetry corroborates the build/run but is not a screenshot.
+
+An already-open 0.32 panel remained alongside the new 0.33 view and initially
+reproduced the old failure after installation. Its old error wording and payload
+identity distinguished it from the corrected view. Identical tab labels made
+this confusing; installing a plugin does not replace existing mounted panels.
+Both the original failure and corrected Windows evidence are preserved.
+Windows download/open, chat-switch restoration and the broader usability goal
+remain unqualified by this image-display check.
