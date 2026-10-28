@@ -115,3 +115,42 @@ and sign-in codes are not part of the tracked handoff.
 The installed 0.29 plugin is unchanged at this checkpoint. Candidate packaging,
 installed-byte verification, actual run/results navigation and native acceptance
 are still required. This checkpoint is implementation progress, not goal completion.
+
+## Installed 0.30 and sign-in checkpoint
+
+The user completed a renewed device sign-in. Existing normal validation passed:
+`validation-1ddd18610c144ecba1ec8f20f5c976d2`. Normal workspace enablement then
+passed for the isolated engineering workspace. No engineering tool call, CAD
+change or process approval occurred. The expired earlier attempt remains failed.
+The refreshed credential is retained only in this isolated instance.
+
+Installed **0.30.0** freezes commit
+`b1563881d7703b80f87d9ecb0cd463380e1bdd1b`, native resource
+`a59a0e4cf2dbb9424f81a951a18a412e716731e59121bef9650cdb2ddd222c40`.
+Candidate and installed MCP/resource checks passed, including native file
+entrypoints and the explicitly selected engineering image profile. Only the
+named plugin was updated; unrelated settings and previous named cache versions,
+services and state were preserved. An initial automatic approval-review timeout
+occurred before execution; the permitted single retry succeeded.
+
+The owned candidate service was switched to identical frozen files only after
+confirming zero engineering runs/model requests and terminal completed sign-in.
+It uses the same new isolated state at loopback port 18328. Preparation through
+the installed public MCP tools froze the original declared defaults successfully;
+this is not a claim that execution readiness or tool-schema qualification passed.
+No engineering run has started.
+
+Receipts: `signin-renewal-20261028T133029Z.json`,
+`stevecad-workspace-enablement.json`, `candidate.json`,
+`frozen-source-sha256.json`, `frozen-service-switch-preflight.json`,
+`candidate-only-protocol.json`, `installed-only-protocol.json`,
+`install-step-{0,1,2}.json`, `cache-preservation.json`,
+`installed-readiness.json`. Short native check: `NATIVE-CHECK.md` in the private
+evidence directory. Public handoffs contain no sign-in code or credentials.
+
+This existing desktop conversation still reports the older unavailable-image
+profile. Installation did not reload its tool connection. A fresh conversation
+is needed to exercise the installed profile; no actual native-renderer or
+Windows acceptance is inferred from the protocol checks. The supported start,
+engineering run, results/producing-step return and native acceptance remain
+open. This checkpoint does not complete the goal.
