@@ -286,3 +286,36 @@ the older unavailable-image binding. Neither observation proves Windows pixels
 or automatic root-chat refresh. No supported scoped reload was found; no daemon
 restart or hidden host API was used. Native rendering, Windows file delivery,
 chat restoration and automatic native reasoning handoff remain unverified.
+
+
+## Installed 0.31 presentation candidate
+
+The scoped update is complete. Installed named plugin **0.31.0** freezes source
+`47067f9a7d72cc46237a59be06ccc7d3f9e6a9ac` and resource
+`67544884b46d983b02e9231caa994ae831f1ef63ffe76cc5d63606ce149ac810`.
+Only presentation/client state changes; the existing backend source `b1563881`,
+port 18328, model binding and run remain unchanged. All frozen Python files are
+byte-identical to 0.30. Candidate/installed MCP resource and retained-run reads
+pass. Seven original configuration/source/run/output hashes are unchanged.
+Other parsed settings and all previous named cache versions are preserved.
+
+Evidence under `presentation-polish/`: `candidate.json`,
+`candidate-only-protocol.json`, `installed-only-protocol.json`,
+`install-step-{0,1,2}.json`, `cache-preservation.json`,
+`preserved-state-after-install.json`, `CANDIDATE-031.md` and the final
+`results-ui-r5/` screenshots/report. The original verifier's ambiguous service
+field was corrected to identify the retained 0.30 backend explicitly; the original
+receipt is retained as `candidate-only-protocol-initial.json`.
+
+The root conversation still exposes the older connection after installation.
+Opening the exact workflow through the supported native file tool returned
+`queued`; no mounted `wright_ui_inspect` became available. This does not establish
+rendering. The revised `NATIVE-CHECK.md` preserves the same conversation when its
+file view works and explains exact connection mismatch without substituting
+another workspace. No new chat, host restart or hidden reload mechanism was used.
+
+The earlier screenshot investigation identified a possible Windows capture-only
+MCP but did not install or qualify it. Built-in voice observation/Appshots remain
+small next tests, not demonstrated Windows access. Goal completion remains
+unproven until the native acceptance and native reasoning-delivery boundary are
+observed. The completed engineering run must not be replayed to test presentation.
