@@ -1,0 +1,10 @@
+{
+  "client_source_commit": "e12c9694",
+  "provider_job": "80f2f335",
+  "host": "Linux ARM64 GB10",
+  "selected_image": "sha256:9d8dbbde565bc8208a8cce03491b198b36105a1b5ceb556e82f5bdf17fa59ac4",
+  "gateway_registration": "isolated fixture catalog/workspace; actual GatewayService and StdioRunner",
+  "archive_sha256": "3f8780b20a4635357fb3f60e6451812bcd726d46615e4e26c5444ded01dd7cdf",
+  "provider_trustworthy_result": false,
+  "critic_approved": false
+}

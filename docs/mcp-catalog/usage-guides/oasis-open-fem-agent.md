@@ -173,3 +173,9 @@ live provider enrollment, complete handle execution, Windows or clean x64 catalo
 acceptance. The `skfem` Python execution backend launched native Gmsh; it did not
 perform an scikit-fem solve. `trustworthy_result` remains false and no critic
 approval was supplied. Existing CAD and historical run evidence were unchanged.
+
+### CAD-derived structural fields (28 October follow-on)
+
+Fresh gateway job `80f2f335` used the same selected environment and retained mesh for synthetic 1 N and 2 N linear-elastic cases. Independent recorded-field checks passed force balance, supports, energy, pointwise load scaling and Wright structural-reader compatibility. Exact requests, field archive and offline checker are in [structural qualification](../../../prototypes/desktop-harness/engineering-experience/evidence/cad-structural-qualification/README.md).
+
+This does not qualify mesh convergence, an approved material/support model, handle strength or complete workflow execution. OASiS retained `trustworthy_result:false` and no critic approval. No live enrollment or CAD changes occurred.
