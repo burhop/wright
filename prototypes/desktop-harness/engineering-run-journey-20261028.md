@@ -26,16 +26,16 @@ are unsupported by this execution path; retain those paths and explain the limit
 - [x] Recheck current branch/clean worktree and actual goal. User screenshots
   confirm native workflow rendering, and expose confusing language, selection
   styling and no clear start action.
-- [ ] Qualify the selected existing workflow and current prerequisites. Stop
+- [x] Qualify the selected existing workflow and current prerequisites. Stop
   dependent execution for missing capabilities; continue independent UI work.
 - [x] Make Run workflow / Start workflow and unavailable reasons clear; selected
   is distinct from disabled. Keep previous-run navigation exact.
 - [x] Explain instructions to engineers; retain full saved instruction bodies,
   version identifiers and explicit upgrade review under inspectable details.
-- [ ] Exercise complete journey plus missing inputs/tools, unsupported source,
+- [x] Exercise the simulated-host journey plus automated missing inputs/tools, unsupported source,
   cancellation, reconnect/reopen, stale source and uncertain outcomes using
   existing test owners. Regress a substantially different existing workflow.
-- [ ] Capture before/after at realistic narrow/wide sizes, qualify one built
+- [x] Capture before/after at realistic narrow/wide sizes, qualify one built
   candidate and update only the named prototype. Verify actual installed bytes.
 - [ ] Complete a short native acceptance check, separating actual desktop
   observations from simulated-host proof; record limitations and local commits.
@@ -93,7 +93,7 @@ initial state location correctly rejected under the source checkout; sandboxed
 asyncio tests stalled (same tests pass on host); the browser test exposed and
 led to correction of an actual navigation-text color error.
 
-### Engineering prerequisites still open
+### Historical checkpoint before successful sign-in
 
 The existing inspection workflow was staged byte-for-byte through the normal
 source owner in fresh workspace `4bcda80f-0afe-44d7-a8ef-33b2395300b0`.
@@ -154,3 +154,89 @@ is needed to exercise the installed profile; no actual native-renderer or
 Windows acceptance is inferred from the protocol checks. The supported start,
 engineering run, results/producing-step return and native acceptance remain
 open. This checkpoint does not complete the goal.
+
+## Completed engineering inspection and retained results
+
+After successful sign-in, the installed 0.30 UI showed **Ready to start** and an
+enabled **Start workflow**. One explicit UI start created run
+`91c3fe3f4e0c477e9d9ea0d0dde477b2`, which completed on 28 October 2026.
+The original accepted source and declared two-call budget were unchanged.
+The normal Wright gateway invoked only `read_design` and `inspect_model` against
+existing document `48b3d987-173d-4f5e-a684-7d7864ca29ff`, revision 1, build
+`5353ac34-e923-4dd0-83e9-85e3ae5caafc`. No creation, modification, rebuild or
+export occurred; historical runs were preserved.
+
+The returned measurements were 2000 × 4000 × 8000 mm, one solid, six faces and
+63999999999.99999 mm³ (approximately 64 m³). The independent audit checks the
+original 0.01 mm digital dimension tolerance. The retained isometric PNG was
+decoded and inspected. This is digital inspection, not physical acceptance or
+a full multi-tool engineering demonstration.
+
+### Observable execution boundary
+
+The browser simulated native file hosting on Linux; it loaded the exact installed
+resource and used the actual MCP/API/runtime/gateway/provider/storage. This
+desktop assistant authored each of three reasoning responses. A narrow official
+MCP client relayed those responses through the installed public reasoning tools
+because this conversation's host-managed connection still exposed the older
+profile. The relay had no model, workflow-start or direct provider-call capability.
+No alternate LLM or harness was substituted. This proves the public reasoning
+path, but **does not prove automatic native-host tool discovery or conversation
+wakeup**. Actual model/provider revision remains unreported.
+
+The recorded instruction digest is
+`bb44f9086313de16ad8d313055e722ada7fcbf50fd88a4df95527dfba71ef522`;
+the frozen desktop binding digest is
+`85b1f1234619cc166aa64ee7b19201464d56bfede8166dea789d0957462a4cd2`.
+Provider-internal prompts are unobserved. A returned report is an output;
+the UI correctly does not invent a linked backend assessment from that report.
+
+### Combined qualification matrix
+
+| Check | Result | Evidence and limit |
+| --- | --- | --- |
+| Personal sign-in, current schemas, normal workspace enablement | PASS | Actual provider/setup owners, isolated state |
+| Installed candidate identity | PASS | 0.30.0, source `b1563881`, native resource hash recorded above |
+| Prepare, explicit Start, progress, exact outputs | PASS | Actual installed UI/owners and engineering tools; simulated Linux host and public reasoning relay |
+| Image visible at 480/1100 px, exact bytes | PASS | `engineering-results-ui/report.json`; PNG SHA `1a1f6ca6c17ef90e5e0e9d6f70eb8f4e867405a0f89669ecdaca5dda1d23698f` |
+| Producing step, Results 1/1, no false mismatch, same-run return/reopen | PASS | Actual completed run, source/history unchanged |
+| Idle service restart | PASS | Same completed run and five exact file hashes; two total provider calls, zero replay |
+| Editing, save/reopen, import/export, genuine source drift | PASS | 15 simulated-host journey checks; disposable copies |
+| Robot Tracking Diagnosis shared regression | PASS | Same editor/native-file path; no live Robot execution claim |
+| Missing configuration, denial, cancellation, uncertain outcomes and continuation guards | PASS | Existing automated suites: 2,075 frontend, 21 source-owner, 178 focused adapter/OAuth tests; no claim of every case on Windows |
+| Conditional/control execution in bracket example | UNSUPPORTED | Correctly blocked; original decisions/reviews retained and editing remains available |
+| Native Windows rendering, file download/open, chat-switch restoration | UNVERIFIED | Requires actual host observation |
+| Native conversation tool refresh and automatic reasoning handoff | UNVERIFIED | Current chat remains on older connection; relay is not host acceptance |
+
+Focused adapter tests initially had a launcher import-path failure. The retained
+retry adds the repository root to the private launcher and passes all 178 tests;
+no product contract or assertion was relaxed.
+
+Remaining presentation findings: the generic JSON output uses a raw-text fallback,
+and long filenames wrap poorly in the producing-step inspector. These are visible
+usability limitations, not evidence corruption. Do not describe this candidate
+as fully accepted or add a bespoke report/viewer framework to close the goal.
+
+### New evidence and handoff
+
+Under the same private evidence root:
+
+- `engineering-audit.json`: exact identity, numeric checks, two provider calls,
+  three recorded reasoning requests and output identities.
+- `engineering-preparation-ui/report.json`, `engineering-run-ui/report.json`,
+  `engineering-results-ui/report.json`: installed UI/owner journey and assertions.
+- `decision-{1,2,3}.json` and receipts; `image-receipt.json`: public reasoning
+  boundary and exact image delivery. `gateway-audit-public.json` retains the
+  discovery and invocation evidence.
+- `completed-restart-proof.json`: completed canonical filesystem run, source,
+  desktop binding and both outputs unchanged after the owned service restart.
+- `adapter-tests-r2.xml` and `.log`: 178 passing focused tests; initial failures
+  retained separately.
+- Screenshots: `engineering-preparation-ui/readiness-480.png`,
+  `engineering-run-ui/run-outcome-1100.png`,
+  `engineering-results-ui/image-480.png`,
+  `engineering-results-ui/producing-step-1100.png` and `report-480.png`.
+- Updated `NATIVE-CHECK.md`: brief read-only observation of the completed run;
+  no repeat sign-in or CAD execution required.
+
+No push, merge or publication. The remaining native acceptance is still open.
