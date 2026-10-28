@@ -240,3 +240,49 @@ Under the same private evidence root:
   no repeat sign-in or CAD execution required.
 
 No push, merge or publication. The remaining native acceptance is still open.
+
+
+## Presentation corrections after the completed run
+
+Two observed problems are corrected in the shared presentation owners. Generic
+JSON reports gain readable indentation without parsing/stringifying their values:
+number spelling and precision, duplicate keys, escapes and key order remain exact.
+Invalid JSON stays verbatim; expanded previews retain the existing 1 MiB bound.
+Typed assessment/toolpath viewers and original downloadable bytes are unchanged.
+The producing-step inspector wraps full paths below filenames rather than
+squeezing the filename into a column of fragments. No engineering source,
+instructions, recorded output, run or backend lifecycle changes are involved.
+
+The final native resource is
+`67544884b46d983b02e9231caa994ae831f1ef63ffe76cc5d63606ce149ac810`.
+115 focused UI-kit/observer tests, TypeScript and native build pass. The read-only
+retained-result journey (`presentation-polish/results-ui-r5/report.json`) passes
+at 480/1100 px with this exact resource: visible PNG and report, original PNG
+and JSON download-object hashes, intact numeric tokens, readable producing-step
+filename, Results 1/1, no false mismatch and same-run return/reopen. This checks
+browser download bytes, not delivery into the Windows filesystem.
+
+Earlier failed attempts remain: an exact-pin mismatch correctly refused the
+changed resource; the first formatting attempt still showed minified JSON when
+serialization would change `2000.0` to `2000`. The corrected implementation adds
+whitespace to original tokens. The actual report assertion checks its recorded
+`observed_dimensions_mm`; it does not invent a missing `observations` field.
+Independent focused review found no blocking defects. Four existing React
+compiler lint diagnostics are identical to baseline; this is not a clean global
+lint claim. Broad unchanged-backend gates were not repeated.
+
+Before/after screenshots are respectively `engineering-results-ui/` and
+`presentation-polish/results-ui-r5/`: `report-480.png` and
+`producing-step-1100.png`. All show simulated Linux hosting, not Windows.
+
+A prospective 0.31 presentation client keeps the existing 0.30 backend on port
+18328 and its frozen connection binding unchanged. Its separate client metadata
+pins the new HTML. Packaging/installation receipts must distinguish those two
+identities. At this source checkpoint, installed 0.30 remains selected.
+
+Native tool discovery also differs by conversation: a fresh audit subagent can
+read the 0.30 binding and exact completed run; the root conversation still reports
+the older unavailable-image binding. Neither observation proves Windows pixels
+or automatic root-chat refresh. No supported scoped reload was found; no daemon
+restart or hidden host API was used. Native rendering, Windows file delivery,
+chat restoration and automatic native reasoning handoff remain unverified.

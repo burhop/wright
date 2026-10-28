@@ -1733,28 +1733,71 @@ describe("bounded representation views", () => {
     fireEvent.load(image);
     expect(ready).toHaveBeenCalledTimes(1);
   });
-  it("shows exact assessment-sized JSON as inert text without the smaller prose limit", async () => {
+  it("shows assessment-sized JSON with readable spacing and preserves its source Blob", async () => {
     const text = JSON.stringify({
       schema_version: "wright.process-validation/1",
       summary: { counts: { pass: 25, blocked: 1 } },
       evidence: "x".repeat(80_000),
       note: "<script>window.bad=true</script>",
     });
+    const blob = new Blob([text], { type: "application/json" });
     const view = render(
       <RepresentationViewer
-        blob={new Blob([text], { type: "application/json" })}
+        blob={blob}
         title="Exact assessment"
       />,
     );
     await waitFor(() =>
-      expect(view.container.querySelector("pre")?.textContent).toBe(text),
+      expect(view.container.querySelector("pre")?.textContent).toBe(
+        JSON.stringify(JSON.parse(text), null, 2),
+      ),
     );
+    expect(await blob.text()).toBe(text);
     expect(
       view.container.querySelector("script, iframe, object, embed"),
     ).toBeNull();
     expect(
       screen.queryByText(/exceeds the supported preview size/),
     ).not.toBeInTheDocument();
+  });
+  it.each([
+    ['{"measurement":9007199254740993}', '{\n  "measurement": 9007199254740993\n}'],
+    ['{"measurement":1.00000000000000001}', '{\n  "measurement": 1.00000000000000001\n}'],
+    ['{"measurement":1,"measurement":2}', '{\n  "measurement": 1,\n  "measurement": 2\n}'],
+    ['{"label":"\\u0061"}', '{\n  "label": "\\u0061"\n}'],
+    ['{"incomplete":', '{"incomplete":'],
+    ['{"mm":[2000.0,-0.0,1e+06],"empty":{},"items":[]}', '{\n  "mm": [\n    2000.0,\n    -0.0,\n    1e+06\n  ],\n  "empty": {},\n  "items": []\n}'],
+  ])("preserves exact JSON evidence tokens when adding spacing: %s", async (text, expected) => {
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob([text], { type: "application/json" })}
+        title="Exact measurements"
+      />,
+    );
+    await waitFor(() =>
+      expect(view.container.querySelector("pre")?.textContent).toBe(expected),
+    );
+  });
+  it("keeps the original bounded JSON when indentation would exceed the preview limit", async () => {
+    const text = "[".repeat(1100) + "0" + "]".repeat(1100);
+    const view = render(
+      <RepresentationViewer blob={new Blob([text], { type: "application/json" })} title="Nested evidence" />,
+    );
+    await waitFor(() => expect(view.container.querySelector("pre")?.textContent).toBe(text));
+  });
+  it("keeps spaces and escaped quotes inside JSON strings", async () => {
+    const text = '{"note":"two  spaces and \\"quoted\\"","units":"mm"}';
+    const view = render(
+      <RepresentationViewer
+        blob={new Blob([text], { type: "application/json" })}
+        title="Measurement note"
+      />,
+    );
+    await waitFor(() =>
+      expect(view.container.querySelector("pre")?.textContent).toBe(
+        '{\n  "note": "two  spaces and \\"quoted\\"",\n  "units": "mm"\n}',
+      ),
+    );
   });
   it.each([
     ["application/json", 16 * 1024 * 1024 + 1],

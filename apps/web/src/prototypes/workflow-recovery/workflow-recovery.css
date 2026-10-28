@@ -3002,6 +3002,16 @@
 }
 .recovery-engineering-files li > span {
   min-width: 0;
+  flex: 1 1 160px;
+}
+.recovery-engineering-files li {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.recovery-engineering-files li > code {
+  flex: 1 1 100%;
+  min-width: 0;
+  white-space: normal;
 }
 .recovery-engineering-files small {
   display: block;

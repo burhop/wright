@@ -363,6 +363,38 @@ export function ScalarFieldPlot({
     </figure>
   );
 }
+/** Add whitespace without reserializing numbers, duplicate keys or string escapes. */
+function readableJson(text: string): string {
+  const tokens = text.match(/"(?:\\.|[^"\\])*"|[{}\[\],:]|[^\s{}\[\],:]+/g) ?? [];
+  const parts: string[] = [];
+  let depth = 0;
+  let size = 0;
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    let part = token;
+    if (token === "{" || token === "[") {
+      depth += 1;
+      if (tokens[index + 1] !== (token === "{" ? "}" : "]"))
+        part += "\n" + "  ".repeat(depth);
+    } else if (token === "}" || token === "]") {
+      depth -= 1;
+      if (tokens[index - 1] !== (token === "}" ? "{" : "["))
+        part = "\n" + "  ".repeat(depth) + token;
+    } else if (token === ",") {
+      part += "\n" + "  ".repeat(depth);
+    } else if (token === ":") {
+      part += " ";
+    }
+    size += part.length;
+    if (size > 1024 * 1024) return text;
+    parts.push(part);
+  }
+  const formatted = parts.join("");
+  return new TextEncoder().encode(formatted).length <= 1024 * 1024
+    ? formatted
+    : text;
+}
+
 export function RepresentationViewer({
   blob,
   title,
@@ -466,6 +498,8 @@ export function RepresentationViewer({
                   message:
                     "This representation exceeds the supported text preview size. Download it to inspect the complete file.",
                 };
+              // Undefined means parsing failed; malformed evidence stays verbatim.
+              if (record !== undefined) return { text: readableJson(text) };
             }
             return { text };
           })
