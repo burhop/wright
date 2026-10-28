@@ -387,7 +387,7 @@ try {
     await page.reload();
     await frame.getByLabel('Workspace',{exact:true}).selectOption(evidence.scope.workspace_id);
     await workflow.click();
-    const working = frame.getByRole('button',{name:'Run and results',exact:true});
+    const working = frame.getByRole('button',{name:/^(Run workflow|View run|Run and results)$/,exact:true});
     await expect(working).toBeEnabled();
     await working.click();
     const picker = frame.getByLabel(evidence.input_upload.label,{exact:true});

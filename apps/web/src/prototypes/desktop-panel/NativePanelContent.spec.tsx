@@ -73,7 +73,7 @@ vi.mock("./NativeWorkflowPanel", () => ({
           onClick={props.onOpenWorkingView}
           disabled={!props.onOpenWorkingView}
         >
-          Run and results
+          Run workflow
         </button>
       </section>
     );
@@ -82,12 +82,13 @@ vi.mock("./NativeWorkflowPanel", () => ({
 vi.mock("./NativeProcessPanel", () => ({
   NativeProcessPanel: (props: ComponentProps<typeof NativeProcessPanel>) => (
     <section aria-label="Working view">
+      {props.description && <p>{props.description}</p>}
       {props.onToggleHistory && (
         <button
           onClick={props.onToggleHistory}
           disabled={props.historyDisabled}
         >
-          Run history
+          Previous runs
         </button>
       )}
       {props.runHistory}
@@ -133,7 +134,8 @@ it.each([false, true])(
     const named = {
       ...original,
       path: "workflows/untitled-workflow-test.workflow.wflow",
-      source: 'workflow inspection\n  name: "Inspection demo"\nend',
+      source:
+        'workflow inspection\n  name: "Inspection demo"\n  purpose: "Measure the saved design before release."\nend',
     };
     const readEvidence = vi.fn().mockResolvedValue({
       content: [],
@@ -154,7 +156,15 @@ it.each([false, true])(
       initialView: "working",
       readEvidence,
     });
-    fireEvent.click(screen.getByRole("button", { name: "Run history" }));
+    if (older)
+      expect(
+        screen.queryByText("Measure the saved design before release."),
+      ).toBeNull();
+    else
+      expect(
+        screen.getByText("Measure the saved design before release."),
+      ).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Previous runs" }));
     const history = within(screen.getByRole("region", { name: "Recent runs" }));
     await history.findByText("No recorded runs for this workflow.");
     expect(
@@ -192,8 +202,8 @@ it("reads the selected workflow's history and verifies its exact runtime subject
   });
   const onLocationChange = vi.fn();
   const { call } = setup({ readEvidence, onLocationChange });
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
-  fireEvent.click(await screen.findByRole("button", { name: "Run history" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Previous runs" }));
   await screen.findByText("failed");
   expect(call).not.toHaveBeenCalled();
   call.mockResolvedValueOnce({
@@ -262,7 +272,7 @@ it("reports the exact attached run across views and removes it from changed-sour
     source_digest: original.storage_digest,
     view: "editor",
   });
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByRole("region", { name: "Working view" });
   fireEvent.click(screen.getByRole("button", { name: "Attach run" }));
   expect(onLocationChange).toHaveBeenLastCalledWith({
@@ -285,7 +295,7 @@ it("reports the exact attached run across views and removes it from changed-sour
     view: "editor",
   });
   read.mockResolvedValue({ content: [], structuredContent: saved });
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByText("New preparation");
   await waitFor(() =>
     expect(onLocationChange).toHaveBeenLastCalledWith({
@@ -315,7 +325,7 @@ it("opens transfer only for a saved source and keeps editor drafts and run contr
   );
   await screen.findByRole("dialog", { name: "Export or import a workflow" });
   expect(onDirty).toHaveBeenLastCalledWith(true);
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   expect(screen.queryByRole("region", { name: "Working view" })).toBeNull();
   expect(call).not.toHaveBeenCalled();
   expect(transferCall).not.toHaveBeenCalled();
@@ -386,14 +396,14 @@ it("preserves editor state and attaches the same run after switching views", asy
   fireEvent.change(screen.getByLabelText("Retained editor state"), {
     target: { value: "undo history marker" },
   });
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByRole("region", { name: "Working view" });
   fireEvent.click(screen.getByRole("button", { name: "Attach run" }));
   fireEvent.click(screen.getByRole("button", { name: "Open workflow" }));
   expect(screen.getByLabelText("Retained editor state")).toHaveValue(
     "undo history marker",
   );
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByText("retained-run");
   expect(call).not.toHaveBeenCalled();
 });
@@ -429,7 +439,7 @@ it("opens the owner-resolved producing block while retaining the exact run and e
     }),
     undefined,
   );
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByText("retained-run");
   expect(call).toHaveBeenCalledOnce();
 });
@@ -491,12 +501,12 @@ it("opens exact recorded run details using the existing read-only evidence view"
 it("keeps drafts and uncertain effects in their current surface", async () => {
   const { read, call, onDirty } = setup();
   fireEvent.click(screen.getByRole("button", { name: "Unsaved source" }));
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   expect(read).not.toHaveBeenCalled();
   expect(onDirty).toHaveBeenLastCalledWith(true);
   fireEvent.click(screen.getByRole("button", { name: "Accepted save" }));
   read.mockResolvedValue({ content: [], structuredContent: saved });
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByRole("region", { name: "Working view" });
   fireEvent.click(screen.getByRole("button", { name: "Uncertain change" }));
   fireEvent.click(screen.getByRole("button", { name: "Open workflow" }));
@@ -507,7 +517,7 @@ it("keeps drafts and uncertain effects in their current surface", async () => {
 it("refuses a changed source without rebasing the editor or preparing a run", async () => {
   const { read, call } = setup();
   read.mockResolvedValue({ content: [], structuredContent: saved });
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByText(/saved workflow changed/);
   expect(screen.queryByRole("region", { name: "Working view" })).toBeNull();
   expect(call).not.toHaveBeenCalled();
@@ -516,7 +526,7 @@ it("binds a fresh preparation to the explicitly saved revision", async () => {
   const { read, call } = setup();
   read.mockResolvedValue({ content: [], structuredContent: saved });
   fireEvent.click(screen.getByRole("button", { name: "Accepted save" }));
-  fireEvent.click(screen.getByRole("button", { name: "Run and results" }));
+  fireEvent.click(screen.getByRole("button", { name: "Run workflow" }));
   await screen.findByText("New preparation");
   fireEvent.click(screen.getByRole("button", { name: "Read exact run" }));
   await waitFor(() => expect(call).toHaveBeenCalledTimes(1));
@@ -529,9 +539,7 @@ it("binds a fresh preparation to the explicitly saved revision", async () => {
 });
 it("does not enable a working view when its runtime capability is absent", () => {
   const { call, read } = setup({ workingViewEnabled: false });
-  expect(
-    screen.getByRole("button", { name: "Run and results" }),
-  ).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Run workflow" })).toBeDisabled();
   expect(call).not.toHaveBeenCalled();
   expect(read).not.toHaveBeenCalled();
 });

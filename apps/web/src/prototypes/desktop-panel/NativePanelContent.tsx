@@ -12,7 +12,10 @@ import type {
   WorkspaceWorkflowRunSummary,
   WorkspaceWorkflowSourceDocument,
 } from "../../services/workspace-service";
-import { recoveryWorkflowSourceTitle } from "../workflow-recovery/recovery-authoring";
+import {
+  recoveryWorkflowSourceTitle,
+  recoveryWorkflowSourceSummary,
+} from "../workflow-recovery/recovery-authoring";
 import { readNativeRecordedRun } from "./native-recorded-run";
 import { NativeWorkflowPanel } from "./NativeWorkflowPanel";
 import { NativeProcessPanel } from "./NativeProcessPanel";
@@ -202,8 +205,7 @@ export function NativePanelContent({
         throw new ProcessClientError({
           code: "CAPABILITY_UNAVAILABLE",
           message: "This native panel cannot open that navigation target yet.",
-          correction:
-            "Inspect the recorded result in Run and results or Files.",
+          correction: "Inspect the recorded result in View run or Files.",
         });
       }
     },
@@ -377,7 +379,7 @@ export function NativePanelContent({
         {run && !selectedEvidence?.record && (
           <p role="status">
             {selectedEvidence?.error || !readEvidence
-              ? "Selected run evidence could not be read. Return to Run and results to inspect it."
+              ? "Selected run evidence could not be read. Choose View run to inspect it."
               : "Reading selected run evidence…"}
           </p>
         )}
@@ -387,6 +389,7 @@ export function NativePanelContent({
           draftClient={draftClient}
           navigation={navigation}
           readOnlyRun={selectedEvidence?.record}
+          selectedRunId={run}
           workspaceName={workspaceName}
           onOpenTransfer={
             transfer && onOpenTransferred ? openTransfer : undefined
@@ -465,6 +468,11 @@ export function NativePanelContent({
             process.source_digest === accepted.storage_digest
               ? (recoveryWorkflowSourceTitle(accepted.source) ?? accepted.path)
               : process.source_path
+          }
+          description={
+            process.source_digest === accepted.storage_digest
+              ? recoveryWorkflowSourceSummary(accepted.source)?.purpose
+              : undefined
           }
           runId={run}
           theme={theme}

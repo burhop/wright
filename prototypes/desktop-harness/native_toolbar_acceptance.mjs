@@ -38,8 +38,9 @@ const transport = new StdioClientTransport({
     resolve(state),
     "--native-editor",
     "--native-working-view",
-    "--native-file-tab-probe",
-    resolve(manifestPath),
+    ...(manifest.native_workspace_files
+      ? ["--native-workspace-files"]
+      : ["--native-file-tab-probe", resolve(manifestPath)]),
   ],
   stderr: "pipe",
 });
@@ -175,7 +176,7 @@ try {
         frame.getByText("Native file tab test", { exact: false }),
       ).toHaveCount(0);
       await expect(
-        frame.getByRole("button", { name: "Run and results", exact: true }),
+        frame.getByRole("button", { name: /^(Run workflow|View run|Run and results)$/, exact: true }),
       ).toBeVisible();
       await frame.locator(".native-workflow-details > summary").click();
       await expect(
@@ -203,6 +204,17 @@ try {
       await expect(
         frame.locator(".native-workflow-details > summary"),
       ).toBeFocused();
+      if (mode === "instructions") {
+        await frame.getByTestId("workflow-recovery-instructions").click();
+        await expect(frame.getByRole("dialog", { name: "Workflow instructions" })).toBeVisible();
+        await expect(frame.getByText(/Choose how AI handles missing design choices/)).toBeInViewport();
+        await expect(frame.getByTestId("workflow-instructions-action-intent")).not.toBeVisible();
+        await page.screenshot({ path: resolve(output, `instructions-${size.width}-${size.scale}.png`) });
+        await frame.getByText("Instruction version and compatibility", { exact: true }).click();
+        await expect(frame.getByTestId("workflow-instructions-action-intent")).toBeVisible();
+        await frame.getByTestId("workflow-recovery-modal-close").click();
+        await expect(frame.getByTestId("workflow-recovery-save")).toBeDisabled();
+      }
     }
     const select = frame.getByTestId("workflow-recovery-view-select");
     if (await select.isVisible()) await select.selectOption("code");

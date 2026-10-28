@@ -59,7 +59,7 @@ function setup(
 
 it("keeps source identity and transfer accessible on demand, with keyboard return", () => {
   const { onOpenTransfer } = setup();
-  expect(screen.getByRole("button", { name: "Run and results" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Run workflow" })).toBeVisible();
   expect(screen.getByText(initial.path)).not.toBeVisible();
   fireEvent.click(screen.getByText("Workflow details"));
   expect(screen.getByText(initial.path)).toBeVisible();
@@ -77,15 +77,24 @@ it("retains edit guards when transfer is behind a disclosure", () => {
     transferDisabled: true,
   });
   fireEvent.click(screen.getByRole("button", { name: "Edit source" }));
-  expect(
-    screen.getByRole("button", { name: "Run and results" }),
-  ).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Run workflow" })).toBeDisabled();
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "Save your changes before opening the run view",
+  );
+  expect(screen.getByRole("status")).toBeVisible();
   fireEvent.click(screen.getByText("Workflow details"));
   expect(
     screen.getByRole("button", { name: "Export / import workflow" }),
   ).toBeDisabled();
   expect(onOpenWorkingView).not.toHaveBeenCalled();
   expect(onOpenTransfer).not.toHaveBeenCalled();
+});
+
+it("offers return to the selected run even when its evidence has not loaded", () => {
+  const { onOpenWorkingView } = setup({ selectedRunId: "retained-run" });
+  expect(screen.queryByRole("button", { name: "Run workflow" })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "View run" }));
+  expect(onOpenWorkingView).toHaveBeenCalledOnce();
 });
 
 it("shows draft-read failures outside the closed disclosure without repeating a write", async () => {
@@ -137,9 +146,7 @@ it.each([false, true])(
     setup({ draftClient });
     fireEvent.click(screen.getByText("Workflow details"));
     fireEvent.click(await screen.findByText(/Saved drafts checked/));
-    fireEvent.click(
-      screen.getByRole("button", { name: "Resume draft" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Resume draft" }));
     const details = screen.getByText("Workflow details").closest("details");
     if (failed) {
       expect(await screen.findByRole("alert")).toHaveTextContent(

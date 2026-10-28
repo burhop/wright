@@ -92,7 +92,7 @@ it("uses workspace files as the native-tab landing view with accepted names and 
   ).toBeVisible();
   fireEvent.click(screen.getByText("Workspace tools", { selector: "summary" }));
   expect(screen.getByRole("button", { name: "Connections" })).toBeVisible();
-  expect(screen.getByRole("button", { name: "Run history" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Previous runs" })).toBeVisible();
 });
 
 it("keeps a native-open failure visible without losing file navigation or retrying", async () => {
@@ -337,7 +337,7 @@ it("offers the remembered exact location only in its workspace and reopens only 
     />,
   );
   const reopen = await screen.findByRole("button", {
-    name: "Reopen part · Run and results",
+    name: "Reopen part · Run view",
   });
   expect(onReopen).not.toHaveBeenCalled();
   fireEvent.click(reopen);

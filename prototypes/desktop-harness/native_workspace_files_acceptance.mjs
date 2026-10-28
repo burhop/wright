@@ -130,6 +130,7 @@ const allowedTools = new Set([
   "wright_workflow_open",
   "wright_workspace_file_describe",
   "wright_workflow_file_context",
+  "wright_process_ui_read",
   "wright_workflow_history",
   "wright_editor_drafts_read",
   "wright_editor_draft_save",
@@ -236,6 +237,8 @@ const server = createServer(async (req, res) => {
         body.session_id !== scope.session_id
       )
         throw Error("Foreign workspace/session");
+      if (name === "wright_process_ui_read" && body.operation !== "snapshot")
+        throw Error("Only read-only preparation snapshots are allowed in this file journey");
       if (name === "wright_workflow_create") {
         if (
           documents.length !== 3 ||
@@ -564,6 +567,36 @@ try {
   await home.getByRole("button", { name: firstTitle, exact: true }).click();
   const a = page.frameLocator('iframe[data-id="0"]');
   await expect(a.getByTestId("workflow-recovery-save")).toBeVisible();
+  // An editing example must not imply that its unsupported conditional paths can run.
+  await a.getByRole("button", { name: "Run workflow", exact: true }).click();
+  await expect(a.getByRole("heading", { name: "Cannot start this workflow" })).toBeVisible();
+  await expect(a.getByText(/This version of Wright cannot run one of the connections/)).toBeVisible();
+  await expect(a.getByText(/keep its required decisions and reviews/)).toBeVisible();
+  const start = a.getByRole("button", { name: "Start workflow", exact: true });
+  await expect(start).toBeDisabled();
+  await page.mouse.move(2, 2);
+  const selected = a.locator('.native-workflow-views button[aria-current="page"]:visible');
+  const selectionStyle = await selected.evaluate((element) => {
+    const s = getComputedStyle(element);
+    return { opacity: s.opacity, underline: s.borderBottomWidth, background: s.backgroundColor, color: s.color, surface: getComputedStyle(element.closest("main")).backgroundColor };
+  });
+  expect(selectionStyle).toMatchObject({ opacity: "1", underline: "2px", background: "rgba(0, 0, 0, 0)" });
+  const luminance = (color) => color.match(/[\d.]+/g).slice(0, 3).reduce((sum, value, i) => {
+    const v = Number(value) / 255;
+    return sum + [0.2126, 0.7152, 0.0722][i] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  }, 0);
+  const fg = luminance(selectionStyle.color), bg = luminance(selectionStyle.surface);
+  expect((Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05)).toBeGreaterThanOrEqual(4.5);
+  for (const width of [1100, 480]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(start).toBeInViewport();
+    expect(await a.locator("body").evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+    await page.screenshot({ path: resolve(output, `unsupported-workflow-${width}.png`) });
+  }
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await a.getByRole("button", { name: "Edit workflow", exact: true }).click();
+  await expect(a.getByTestId("workflow-recovery-save")).toBeVisible();
+  checks.push("Native workflow file → Run workflow clearly explains unsupported conditions, keeps reviews, shows a disabled Start in the viewport at 480/1100 px, and returns to the same editable source; selected views stay legible");
   await a.getByTestId("workflow-recovery-view-code").click();
   const editor = a.getByTestId("workflow-recovery-source-editor");
   await expect(editor).toHaveValue(textareaSource(docsBefore[0].source));
@@ -820,6 +853,7 @@ try {
   status = "PASS";
 } catch (error) {
   failure = String(error);
+  await browser.contexts()[0]?.pages()[0]?.screenshot({ path: resolve(output, "failure.png") }).catch(() => {});
 } finally {
   const after = await Promise.all(
     fixture.workflows.map((x) => read("wright_workflow_read", x)),

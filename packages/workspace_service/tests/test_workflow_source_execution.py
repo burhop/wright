@@ -299,6 +299,18 @@ def test_invalid_settings_rejected_before_generation(settings):
         compile_prompt_workflow(source(task(**settings)))
 
 
+def test_unsupported_conditional_path_explains_limit_without_removing_reviews():
+    accepted = source(task("first"), task("second"), links=[("first", "second")])
+    conditional = accepted.replace("when: null", 'when: "decision.accepted"')
+    # Preserve graph semantics: supported data handoff compiles, conditional handoff does not.
+    compile_prompt_workflow(accepted)
+    with pytest.raises(WorkflowSourceExecutionError) as error:
+        compile_prompt_workflow(conditional)
+    assert "This version of Wright cannot run" in str(error.value)
+    assert "still inspect and edit the diagram" in error.value.correction
+    assert "keep its required decisions and reviews" in error.value.correction
+
+
 def test_cycle_and_shared_overwrite_rejected():
     with pytest.raises(WorkflowSourceExecutionError, match="cycle"):
         compile_prompt_workflow(

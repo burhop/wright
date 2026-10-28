@@ -336,7 +336,7 @@ try {
   await frame.getByTestId("workflow-recovery-view-diagram").click();
   await page.screenshot({ path: resolve(output, "workflow.png") });
   await frame
-    .getByRole("button", { name: "Run and results", exact: true })
+    .getByRole("button", { name: /^(Run workflow|View run|Run and results)$/, exact: true })
     .click();
   await expect(frame.getByTestId("common-process-view")).toBeVisible();
   if (input.assert_usability) {
@@ -348,7 +348,7 @@ try {
       "Results retain host sans-serif typography rather than browser-default serif",
     );
   }
-  await frame.getByRole("button", { name: "Run history", exact: true }).click();
+  await frame.getByRole("button", { name: /^(Previous runs|Run history)$/, exact: true }).click();
   await expect
     .poll(
       () => calls.filter((c) => c.name === "wright_workflow_history").length,
@@ -488,7 +488,7 @@ try {
         "Exact selected run supplies available results and producing-step files without a false source mismatch",
       );
       await frame
-        .getByRole("button", { name: "Run and results", exact: true })
+        .getByRole("button", { name: /^(Run workflow|View run|Run and results)$/, exact: true })
         .click();
       await expect(frame.getByTestId("common-process-view")).toBeVisible();
       checks.push(

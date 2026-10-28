@@ -591,7 +591,7 @@ export function NativeHomePanel({
                   .at(-1)
                   ?.replace(/(?:\.workflow)?\.wflow$/, "")
                   .replace(/[-_]+/g, " ")}
-              {recentWorkflow.view === "working" ? " · Run and results" : ""}
+              {recentWorkflow.view === "working" ? " · Run view" : ""}
             </button>
             {recentWorkflow.run_id && (
               <small>Run {recentWorkflow.run_id}</small>
@@ -655,7 +655,7 @@ export function NativeHomePanel({
                 onClick={() => navigate("runs")}
                 disabled={opening || creating}
               >
-                Run history
+                Previous runs
               </button>
             </details>
           </div>

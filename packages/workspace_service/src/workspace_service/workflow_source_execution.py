@@ -472,8 +472,10 @@ def compile_prompt_workflow(source: str) -> PromptWorkflow:
             continue
         if fields.get("type") != "item" or fields.get("when") is not None:
             raise _invalid(
-                "This run contains a conditional or control connection.",
-                "Use data connections between AI prompts and text inputs for this run.",
+                "This version of Wright cannot run one of the connections "
+                "that controls which step happens next.",
+                "You can still inspect and edit the diagram. Running this workflow "
+                "needs support for that connection; keep its required decisions and reviews.",
             )
         source_port, target_port = fields.get("from"), fields.get("to")
         if (

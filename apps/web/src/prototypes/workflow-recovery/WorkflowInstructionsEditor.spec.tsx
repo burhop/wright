@@ -54,6 +54,13 @@ describe("visible portable workflow instructions", () => {
     );
     expect(
       screen.getByTestId("workflow-instructions-action-intent"),
+    ).not.toBeVisible();
+    fireEvent.click(screen.getByText("Instruction version and compatibility"));
+    expect(
+      screen.getByTestId("workflow-instructions-action-intent"),
+    ).toBeVisible();
+    expect(
+      screen.getByTestId("workflow-instructions-action-intent"),
     ).toHaveTextContent("wright.workflow-action-intent/1");
     fireEvent.change(screen.getByLabelText("Additional workflow guidance"), {
       target: { value: "Keep exact dimensions." },
@@ -65,6 +72,7 @@ describe("visible portable workflow instructions", () => {
     expect(onApply.mock.calls[0]![0].action_intent_contract).toBe(
       "wright.workflow-action-intent/1",
     );
+    expect(onApply.mock.calls[0]![0].assets).toEqual(instructions.assets);
   });
 
   it("shows a contract migration proposal without changing legacy instructions until reviewed apply", async () => {
@@ -129,7 +137,9 @@ describe("visible portable workflow instructions", () => {
     );
     expect(onLoadDefaults).not.toHaveBeenCalled();
     expect(onApply).not.toHaveBeenCalled();
-    expect(screen.getByText(/legacy workflow has no embedded/)).toBeTruthy();
+    expect(
+      screen.getByText(/older workflow uses this installation/),
+    ).toBeTruthy();
     expect(
       screen.getByRole("button", { name: "Export saved workflow source" }),
     ).toBeDisabled();
@@ -372,9 +382,10 @@ describe("server-backed instruction defaults", () => {
     fireEvent.change(screen.getByLabelText("Additional workflow guidance"), {
       target: { value: "Keep my global customization." },
     });
+    fireEvent.click(screen.getByText("Instruction version and compatibility"));
     fireEvent.click(
       screen.getByRole("button", {
-        name: "Review instruction compatibility upgrade…",
+        name: "Review instruction update…",
       }),
     );
     await screen.findByTestId("workflow-instructions-action-intent-diff");

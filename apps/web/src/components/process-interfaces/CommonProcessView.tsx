@@ -49,6 +49,7 @@ export interface CommonProcessViewProps {
   readonly client: ProcessClient;
   readonly sessionId: string;
   readonly title?: string;
+  readonly description?: string;
   readonly runId?: string;
   readonly readOnly?: boolean;
   readonly onUnsavedChange?: (pending: boolean) => void;
@@ -158,6 +159,7 @@ function CommonProcessController({
   client,
   sessionId,
   title,
+  description,
   runId,
   readOnly = false,
   onUnsavedChange,
@@ -1018,6 +1020,7 @@ function CommonProcessController({
   const startAction = snapshot?.actions?.find((a) => a.operation === "start");
   const permittedStart: Action | undefined = startAction && {
     ...startAction,
+    title: "Start workflow",
     enabled:
       startAction.enabled &&
       !activeRun &&
@@ -1181,7 +1184,7 @@ function CommonProcessController({
               "Process"}
           </h1>
           <NavigationButton
-            title="Open process"
+            title="View workflow diagram"
             target={{
               kind: "process",
               ...(activeRun ? { run_id: activeRun } : {}),
@@ -1197,13 +1200,17 @@ function CommonProcessController({
             Refresh view
           </button>
         </header>
+        {description && <p className="wp-muted">{description}</p>}
         {readOnly && <p className="wp-muted">This view is read-only.</p>}
-        {loading && <p role="status">Loading the saved process state…</p>}
+        {loading && <p role="status">Loading workflow…</p>}
         {storageReason && (
           <ReasonNotice reason={storageReason} onNavigate={navigate} />
         )}
         {navigationReason && (
           <ReasonNotice reason={navigationReason} onNavigate={navigate} />
+        )}
+        {!activeRun && !snapshot && !loading && reason && (
+          <h2>Cannot start this workflow</h2>
         )}
         {reason && (
           <ReasonNotice
@@ -1211,6 +1218,11 @@ function CommonProcessController({
             tone={reason.code === "CANCELLATION_REQUESTED" ? "info" : "error"}
             onNavigate={navigate}
           />
+        )}
+        {!activeRun && !snapshot && !loading && reason && (
+          <button type="button" className="wp-button" disabled>
+            Start workflow
+          </button>
         )}
         {busy === "start" && (
           <p role="status">Sending the prepared run to Wright…</p>
@@ -1310,7 +1322,7 @@ function CommonProcessController({
                         onNavigate={navigate}
                         now={now}
                       />
-                      {permittedStart && (
+                      {permittedStart ? (
                         <ActionButton
                           action={permittedStart}
                           readOnly={readOnly}
@@ -1321,6 +1333,16 @@ function CommonProcessController({
                           onAction={!busy ? () => void start() : undefined}
                           onNavigate={navigate}
                         />
+                      ) : (
+                        <div>
+                          <button type="button" className="wp-button" disabled>
+                            Start workflow
+                          </button>
+                          <p className="wp-muted">
+                            Starting is unavailable. Check the inputs and tool
+                            readiness for the next action.
+                          </p>
+                        </div>
                       )}
                     </>
                   )}

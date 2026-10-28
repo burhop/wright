@@ -24,6 +24,7 @@ export function NativeWorkflowPanel({
   transferDisabled = false,
   navigation,
   readOnlyRun,
+  selectedRunId,
 }: {
   readonly initial: WorkspaceWorkflowSourceDocument;
   readonly client: NativeSourceClient;
@@ -36,6 +37,7 @@ export function NativeWorkflowPanel({
   readonly transferDisabled?: boolean;
   readonly navigation?: ProcessNavigationRequest;
   readonly readOnlyRun?: WorkspaceWorkflowRunSummary;
+  readonly selectedRunId?: string;
 }) {
   const [document, setDocument] = useState(initial);
   const [unsaved, setUnsaved] = useState(false);
@@ -58,7 +60,7 @@ export function NativeWorkflowPanel({
         </button>
         {onOpenWorkingView && (
           <button type="button" disabled={unsaved} onClick={onOpenWorkingView}>
-            Run and results
+            {readOnlyRun || selectedRunId ? "View run" : "Run workflow"}
           </button>
         )}
       </nav>
@@ -85,8 +87,10 @@ export function NativeWorkflowPanel({
           </dl>
           <p className="native-workflow-panel__view-hint">
             {readOnlyRun
-              ? `Inspecting run ${readOnlyRun.run_id ?? "record"} · ${readOnlyRun.status.replaceAll("_", " ")}. Return to Run and results for its outputs.`
-              : "Editing the workflow · no run selected. Open Run and results to check inputs or inspect run history."}
+              ? `Inspecting run ${readOnlyRun.run_id ?? "record"} · ${readOnlyRun.status.replaceAll("_", " ")}. Choose View run to return to its outputs.`
+              : selectedRunId
+                ? `Viewing the workflow for run ${selectedRunId}. Choose View run to read its progress and outputs.`
+                : "Choose Run workflow to review inputs and check tools before starting. Previous runs are available there too."}
             {unsaved && " Save your changes before switching views."}
           </p>
           {onOpenTransfer && (
@@ -170,7 +174,11 @@ export function NativeWorkflowPanel({
           {readOnlyRun.status.replaceAll("_", " ")}
         </span>
       )}
-      {unsaved && <span role="status">Unsaved changes — Save to accept.</span>}
+      {unsaved && (
+        <span role="status">
+          Save your changes before opening the run view.
+        </span>
+      )}
       {(drafts.attention || draftClient?.requiresRead) && (
         <span role="alert">
           {drafts.message} Open Workflow details to inspect saved drafts.
