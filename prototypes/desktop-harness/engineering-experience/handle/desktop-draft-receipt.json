@@ -1,0 +1,47 @@
+{
+  "status": "Draft saved; not executable or engineering-qualified",
+  "workspace_id": "540d9175-cdc7-4816-a1a1-661b8998a0f7",
+  "session_id": "desktop-df149141-a687-445f-9524-25d732a8257e",
+  "path": "workflows/replacement-handle.workflow.wflow",
+  "storage_revision": 1,
+  "storage_digest": "a2c65bdfecdd1574872fc786c352d50fc6fdc98b6c2af7f9ac42df5767aa0b12",
+  "installed_backend": "existing 0.30; no lifecycle change",
+  "installed_presentation": "0.33; no update",
+  "actual_windows_rendering": "unverified",
+  "runs_started": 0,
+  "connections": [
+    {
+      "id": "stevecad-mcp",
+      "installed": true,
+      "enabled_here": false,
+      "validation": {
+        "evidence_id": "validation-1ddd18610c144ecba1ec8f20f5c976d2",
+        "state": "passed",
+        "observed_at": "2026-10-28T13:30:30.304713+00:00",
+        "reason_codes": []
+      },
+      "compatibility": "uncertain"
+    },
+    {
+      "id": "oasis-open-fem-agent",
+      "installed": false,
+      "enabled_here": false,
+      "validation": null,
+      "compatibility": "uncertain"
+    },
+    {
+      "id": "bambu-p1s-mcp-marctheshark3",
+      "installed": false,
+      "enabled_here": false,
+      "validation": null,
+      "compatibility": "uncertain"
+    }
+  ],
+  "limitations": [
+    "Reference image has not been uploaded into this desktop workspace.",
+    "CAD/FEA/slicer bindings and exact validation profiles remain unqualified.",
+    "Bounded correction is specified in stage instructions but its executable edges require qualified bindings and profiles.",
+    "Strength basis requires a real declared human review.",
+    "No physical operation is included."
+  ]
+}

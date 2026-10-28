@@ -650,3 +650,21 @@ unsupported delivery and no automatic retry after uncertainty. This proves the
 request sent, not that an LLM authored or executed the intended handle workflow.
 That end-to-end proof remains required. Evidence:
 `.local-run/experience-review/authoring-handoff-v2.log`.
+
+### First concrete handle draft in the desktop workspace
+
+The desktop connection was rechecked and a fresh workspace created through its
+exposed tool. The actual catalog reports SteveCAD installed but not selected in
+this workspace, with OASiS and the catalog slicer not installed. This is the old
+installed backend; it does not prove the candidate's default-tool-selection fix.
+No permissions or server lifecycle changed.
+
+The saved handle draft now lives at
+`prototypes/desktop-harness/engineering-experience/handle/` and in the fresh
+desktop workspace. Its README and receipt distinguish saved source, open request,
+missing image upload, unbound tools/profiles/correction edges and unverified
+Windows rendering. Local and desktop source digests match; complete original
+Printed02 prompt/context text is preserved. Current readiness correctly rejects
+the unbound CAD step. This is a concrete authoring artifact for C03, not C04/C07
+execution acceptance. No process has been started. The handle's original
+no-strength-claim limits remain; the added FEA basis requires its declared review.
