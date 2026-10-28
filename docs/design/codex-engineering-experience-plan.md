@@ -533,3 +533,25 @@ checks remain intact. This prerequisite does not yet enable FEA-to-CAD replay.
 Further contract notes are retained locally in
 `.local-run/experience-review/upstream-correction-contract.md`; source changes
 remain governed by the single C01–C08 plan.
+
+### Exact-design analysis field reader
+
+A new versioned `design-response` reader reuses the existing structural CSV
+measurement functions and validation registry, keeping the old structural reader
+identity and behavior unchanged. Its primary subject is the CAD file; its
+explicit related roles supply an analysis field and a nonempty analysis basis.
+Only a same-run, different-producer field with verified input digests matching
+that exact design and every declared basis file can yield a measurement.
+Units are explicit (MPa stress or mm displacement). Missing, stale, malformed
+or nonfinite analysis blocks as an evidence problem, never a CAD repair.
+
+This measures recorded fields and observed input linkage. It does not establish
+solver correctness, mesh convergence, material suitability, approved loads or
+physical safety; the accepted profile/process must retain those separate checks
+and reviews. No workflow has been enabled to use this reader yet. The replay
+segment extension and real CAD/FEA proof remain open.
+
+15 structural-reader tests pass, including nine negative design-linkage controls.
+The broader existing engineering-reader regression passed 112 tests; 34
+external-artifact-dependent tests were skipped and are not claimed as qualified. No provider,
+installed plugin or historical engineering file was changed.
