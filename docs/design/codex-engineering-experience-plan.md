@@ -668,3 +668,26 @@ Printed02 prompt/context text is preserved. Current readiness correctly rejects
 the unbound CAD step. This is a concrete authoring artifact for C03, not C04/C07
 execution acceptance. No process has been started. The handle's original
 no-strength-claim limits remain; the added FEA basis requires its declared review.
+
+### Independent draft review and editor regression
+
+Source storage alone did not establish editor compatibility: the compiled editor
+rejected missing purpose fields, then duplicate global port identities. Both
+failed observations remain preserved. The reviewed local draft supplies the
+required fields and unique identities; its actual source now passes editor
+parse/save/reopen while retaining all relationships, ports and configurations.
+The original desktop revision 1 remains unchanged and its receipt is historical.
+The reviewed draft also carries current reviewed requirements through CAD, checks
+manufacturing changes against analysis, and puts a readable report before the
+print-package review. No provider execution or engineering approval is claimed.
+
+The full gate at 6dc8cd7a passed dependency/image/history security and Python
+checks, then stopped on five frontend formatting failures. Those are corrected
+locally; a complete current gate pass is still outstanding.
+
+Independent compiled-editor recheck now displays the draft at 1100×900 and
+480×900 and preserves exact source. This is simulated-host evidence. Remaining
+findings are initial canvas ordering/crossing links, limited projected result
+cards while tools remain unbound, and competing Run/Run readiness controls.
+These remain open usability work, not acceptance. Fifteen affected frontend
+tests and the full frontend formatting check pass.

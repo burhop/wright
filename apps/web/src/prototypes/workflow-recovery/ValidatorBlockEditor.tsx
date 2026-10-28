@@ -163,11 +163,19 @@ export function ValidatorBlockEditor({
               }
             >
               <option value="">Hold the process and report findings</option>
-              {segmentCorrection && revision && !revisionTargets.some((item) => item.id === revision.targetId) && (
-                <option value={revision.targetId}>
-                  Correct {workflow.blocks.find((item) => item.id === revision.targetId)?.title ?? "the designated step"} and repeat connected checks
-                </option>
-              )}
+              {segmentCorrection &&
+                revision &&
+                !revisionTargets.some(
+                  (item) => item.id === revision.targetId,
+                ) && (
+                  <option value={revision.targetId}>
+                    Correct{" "}
+                    {workflow.blocks.find(
+                      (item) => item.id === revision.targetId,
+                    )?.title ?? "the designated step"}{" "}
+                    and repeat connected checks
+                  </option>
+                )}
               {revisionTargets.map((item) => (
                 <option key={item.id} value={item.id}>
                   Return findings to {item.title}

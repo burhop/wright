@@ -62,10 +62,20 @@ it("preserves the running/read-only authoring boundary", () => {
 });
 
 it("explains source-configured grouped correction without offering a silent profile replacement", () => {
-  const add = createAuthoringObject("process-validator", initialWorkflow, initialLayout);
-  const profile = validationProfiles.find((item) => item.name === "structured-demo")!;
+  const add = createAuthoringObject(
+    "process-validator",
+    initialWorkflow,
+    initialLayout,
+  );
+  const profile = validationProfiles.find(
+    (item) => item.name === "structured-demo",
+  )!;
   add.block.configuration.validation = JSON.stringify({
-    profile: { source: "packaged", name: profile.name, reference: profile.profile_ref },
+    profile: {
+      source: "packaged",
+      name: profile.name,
+      reference: profile.profile_ref,
+    },
     baseline: profile.baseline_ref,
     subjects: { result: "result" },
     rework_scope: "verified_segment",
@@ -74,16 +84,33 @@ it("explains source-configured grouped correction without offering a silent prof
   const workflow = cloneWorkflow(initialWorkflow);
   workflow.blocks.push(add.block);
   workflow.relationships.push({
-    id: "rel.saved-correction", kind: "feedback", sourceId: add.block.id,
-    targetId: workflow.blocks[0]!.id, label: "Correct design", condition: "revise",
+    id: "rel.saved-correction",
+    kind: "feedback",
+    sourceId: add.block.id,
+    targetId: workflow.blocks[0]!.id,
+    label: "Correct design",
+    condition: "revise",
   });
   const apply = vi.fn();
-  render(<ValidatorBlockEditor block={add.block} workflow={workflow} readOnly={false} onApply={apply} />);
-  expect(screen.getByRole("combobox", { name: "Validation profile" })).toBeDisabled();
-  const correction = screen.getByRole("combobox", { name: "Validation revision target" });
+  render(
+    <ValidatorBlockEditor
+      block={add.block}
+      workflow={workflow}
+      readOnly={false}
+      onApply={apply}
+    />,
+  );
+  expect(
+    screen.getByRole("combobox", { name: "Validation profile" }),
+  ).toBeDisabled();
+  const correction = screen.getByRole("combobox", {
+    name: "Validation revision target",
+  });
   expect(correction).toBeDisabled();
   expect(correction).toHaveValue(workflow.blocks[0]!.id);
-  expect(screen.getByText(/These settings are defined in Source/)).toBeVisible();
+  expect(
+    screen.getByText(/These settings are defined in Source/),
+  ).toBeVisible();
   expect(apply).not.toHaveBeenCalled();
 });
 

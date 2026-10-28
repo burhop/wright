@@ -56,19 +56,39 @@ export function validatorSettings(
       new Set(Object.values(value.subjects)).size !==
         Object.keys(value.subjects).length ||
       Object.keys(value).some(
-        (key) => !["profile", "baseline", "subjects", "budget", "rework_scope", "repair_subjects"].includes(key),
+        (key) =>
+          ![
+            "profile",
+            "baseline",
+            "subjects",
+            "budget",
+            "rework_scope",
+            "repair_subjects",
+          ].includes(key),
       )
     )
       return null;
     if (
       value.rework_scope !== undefined &&
       !["producer", "verified_segment"].includes(value.rework_scope)
-    ) return null;
+    )
+      return null;
     const repairs = value.repair_subjects ?? [];
-    if (!Array.isArray(repairs) || repairs.some((role) =>
-      typeof role !== "string" || !Object.hasOwn(value.subjects, role)
-    ) || new Set(repairs).size !== repairs.length) return null;
-    if (value.rework_scope === "verified_segment" ? !repairs.length : repairs.length) return null;
+    if (
+      !Array.isArray(repairs) ||
+      repairs.some(
+        (role) =>
+          typeof role !== "string" || !Object.hasOwn(value.subjects, role),
+      ) ||
+      new Set(repairs).size !== repairs.length
+    )
+      return null;
+    if (
+      value.rework_scope === "verified_segment"
+        ? !repairs.length
+        : repairs.length
+    )
+      return null;
     return value;
   } catch {
     return null;
@@ -84,7 +104,9 @@ export function validationProfileCommands(
   if (!profile) throw new Error("Choose an available validation profile.");
   const existing = validatorSettings(block);
   if (existing?.rework_scope === "verified_segment")
-    throw new Error("This check repeats a group of steps. Edit its requirements and correction settings together in Source.");
+    throw new Error(
+      "This check repeats a group of steps. Edit its requirements and correction settings together in Source.",
+    );
   const roles = profile.roles;
   const reuse =
     existing &&

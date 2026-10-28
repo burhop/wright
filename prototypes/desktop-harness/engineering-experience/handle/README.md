@@ -12,7 +12,8 @@ transfer or simulated success is performed.
 
 The graph connects the specification and its review to CAD, exact geometry
 checking, strength analysis and checking, repair/orientation/slicing, print-package
-review and a readable final report. Review blocks use Wright's existing durable
+a final manufacturing-applicability check, a readable report before print-package
+review, and an explicitly simulated receipt stage. Review blocks use Wright's existing durable
 manual review mechanism. Order edges express dependency, not approval authority.
 No check is replaced with an AI assertion of success.
 
@@ -24,8 +25,12 @@ No check is replaced with an AI assertion of success.
 - Saved through the actual desktop MCP in the fresh workspace named
   **Replacement handle — desktop engineering qualification**, revision 1.
   Exact identity is in `desktop-draft-receipt.json`. The saved digest matches
-  the local source-store digest.
-- An editor-open request succeeded. Actual Windows rendering is unverified.
+  the original local source-store digest. That receipt is historical: the
+  reviewed local draft has since changed and has not replaced desktop revision 1.
+- An editor-open request succeeded, but compiled-editor review subsequently
+  found missing required fields and duplicate port identities in that original
+  draft. The revised local source fixes both; its parse/save/reopen regression
+  passes. Actual Windows rendering remains unverified.
 - No process was prepared, started, resumed or approved. Historical subjects and
   the independent Windows pilot were untouched.
 
@@ -50,3 +55,13 @@ The initial local draft used an unsupported approval edge for manual review and
 was rejected. The corrected draft uses the existing order dependency; the review
 step itself still owns the durable wait. Both local readiness receipts remain in
 `.local-run/experience-review/handle-draft-readiness*.json`.
+
+## Reviewed local revision
+
+The current local draft follows reviewed dimensions rather than fixing downstream
+CAD instructions to the initial 96 mm spacing. It carries editable model identity
+into the report, checks whether manufacturing changes invalidate analysis, and
+places the report before package review. The simulated receipt remains unbound
+and cannot authorize a real printer transfer. All task bindings and independent
+engineering checks still require qualification. The desktop revision-1 receipt
+is preserved as evidence, not rewritten to claim these local changes are live.

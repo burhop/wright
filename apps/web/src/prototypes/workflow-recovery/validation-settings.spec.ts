@@ -81,10 +81,16 @@ describe("validator authoring uses the accepted command/source model", () => {
     expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
     const reopened = parsed.workflow!.blocks.find((b) => b.id === selected.id)!;
     expect(validatorSettings(reopened)).toEqual(settings);
-    expect(() => validationProfileCommands(reopened, parsed.workflow!, "structured-demo"))
-      .toThrow("Edit its requirements and correction settings together in Source");
+    expect(() =>
+      validationProfileCommands(reopened, parsed.workflow!, "structured-demo"),
+    ).toThrow(
+      "Edit its requirements and correction settings together in Source",
+    );
     for (const repair_subjects of [[], ["missing"], ["result", "result"]]) {
-      block.configuration.validation = JSON.stringify({ ...settings, repair_subjects });
+      block.configuration.validation = JSON.stringify({
+        ...settings,
+        repair_subjects,
+      });
       expect(validatorSettings(block)).toBeNull();
     }
   });

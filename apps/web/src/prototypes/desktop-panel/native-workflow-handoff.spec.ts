@@ -23,7 +23,9 @@ it("sends the exact workspace and versioned authoring request once through the h
   expect(sendMessage).toHaveBeenCalledTimes(1);
   const [request] = sendMessage.mock.calls[0];
   expect(request.role).toBe("user");
-  expect(request.content[0].text.slice(0, instruction.body.length)).toBe(instruction.body);
+  expect(request.content[0].text.slice(0, instruction.body.length)).toBe(
+    instruction.body,
+  );
   const context = JSON.parse(request.content[0].text.split("\n").at(-1));
   expect(context).toEqual({
     instruction: { id: "wright.desktop.plan-workflow", version: 2 },
