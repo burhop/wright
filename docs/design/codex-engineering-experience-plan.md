@@ -606,3 +606,25 @@ Evidence: `.local-run/experience-review/design-response-final.log` and
 An earlier resume fixture omitted the exact prepared run ID and was correctly
 rejected; its log is retained. Full real handle/CAD/FEA acceptance, Robot
 execution regression, current cumulative gates and Windows acceptance stay open.
+
+### Portable correction settings and editor compatibility
+
+Saved ordinary and explicit grouped correction configurations now have a real
+source → bundle → second workspace → reopened source → compiler regression.
+Both preserve exact source, correction targets, profile pins and baseline; import
+still reports that execution requires readiness and transfers no run authority.
+The complete bundle suite passes 19 tests.
+
+The editor audit found that its validator inspector rejected the new typed keys,
+despite retaining them in source. It now recognizes them, preserves them through
+diagram/source save/reopen, and explains that grouped correction is currently
+configured in Source. The profile and correction-target selectors cannot silently
+replace that configuration; the saved target remains visibly selected. Invalid
+repair roles remain rejected. This is a deliberate authoring limitation, not a
+claim that the graphical inspector can create a safe multi-step replay interval.
+Backend readiness remains authoritative. Eleven affected editor tests pass.
+
+Evidence: `.local-run/experience-review/portable-correction.log`,
+`.local-run/experience-review/portable-correction-editor.log` and the bundle,
+validation-settings and ValidatorBlockEditor tests. This change is local and has
+not updated the installed plugin or established Windows acceptance.

@@ -66,6 +66,29 @@ function configured() {
 }
 
 describe("validator authoring uses the accepted command/source model", () => {
+  it("retains source-configured correction subjects through diagram save/reopen", () => {
+    const selected = configured();
+    const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
+    const settings = {
+      ...validatorSettings(block)!,
+      rework_scope: "verified_segment",
+      repair_subjects: ["result"],
+    };
+    block.configuration.validation = JSON.stringify(settings);
+    expect(validatorSettings(block)).toEqual(settings);
+    const source = formatRecoveryAuthoringSource(selected.workflow).text;
+    const parsed = parseRecoveryAuthoringSource(source, initialWorkflow);
+    expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+    const reopened = parsed.workflow!.blocks.find((b) => b.id === selected.id)!;
+    expect(validatorSettings(reopened)).toEqual(settings);
+    expect(() => validationProfileCommands(reopened, parsed.workflow!, "structured-demo"))
+      .toThrow("Edit its requirements and correction settings together in Source");
+    for (const repair_subjects of [[], ["missing"], ["result", "result"]]) {
+      block.configuration.validation = JSON.stringify({ ...settings, repair_subjects });
+      expect(validatorSettings(block)).toBeNull();
+    }
+  });
+
   it("adds an ordinary validator and saves/reopens pins and subject roles without an MCP binding", () => {
     const selected = configured();
     const block = selected.workflow.blocks.find((b) => b.id === selected.id)!;
