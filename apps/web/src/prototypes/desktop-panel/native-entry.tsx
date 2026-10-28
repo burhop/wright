@@ -16,7 +16,7 @@ import { NativePanelContent } from "./NativePanelContent";
 import { NativeSourceClient } from "./native-source-client";
 import { NativeEditorDraftClient } from "./native-editor-draft-client";
 import { NativeUiReview } from "./NativeUiReview";
-import { captureUiReview, type ReviewEvent } from "./native-ui-review";
+import { captureUiReview, captureUiObservation, type ReviewEvent } from "./native-ui-review";
 import type { NativeProcessCall } from "./native-process-client";
 import type { NativeTransferCall } from "./native-transfer-client";
 import {
@@ -52,6 +52,9 @@ let homeView: HomeView = "workflows";
 let restorationNotice = "";
 let contextGeneration = 0;
 let contextWrite: Promise<unknown> = Promise.resolve();
+let contextTimer: ReturnType<typeof setTimeout> | undefined;
+let lastContextSignature = "";
+let widgetAccepted = false;
 let homeGeneration = 0;
 let openedWorkflow: NativeWorkflowLocation | undefined;
 let activeSurface: "home" | "workflow" = "home";
@@ -215,12 +218,26 @@ function recordReviewEvent(kind: ReviewEvent["kind"]) {
   };
   reviewEvents.push(event);
   if (reviewEvents.length > 20) reviewEvents.shift();
+  scheduleContext();
 }
 window.addEventListener("resize", () => recordReviewEvent("resize"));
 window.addEventListener("error", () => recordReviewEvent("error"));
 window.addEventListener("unhandledrejection", () =>
   recordReviewEvent("unhandled-rejection"),
 );
+// Observe only our iframe. Coalesce normal interactions and sample after paint;
+// no polling, saved reports, model turns, or workflow actions are introduced.
+function scheduleContext() {
+  contextGeneration++;
+  clearTimeout(contextTimer);
+  contextTimer = setTimeout(() => {
+    requestAnimationFrame(() => requestAnimationFrame(publishContext));
+  }, 250);
+}
+document.getElementById("editor")!.addEventListener("click", scheduleContext);
+document.getElementById("editor")!.addEventListener("load", scheduleContext, true);
+document.getElementById("editor")!.addEventListener("error", scheduleContext, true);
+document.addEventListener("visibilitychange", scheduleContext);
 function rememberLocation() {
   if (!selectedWorkspace) return;
   navigation = {
@@ -231,31 +248,47 @@ function rememberLocation() {
     ...(openedWorkflow ? { workflow: openedWorkflow } : {}),
   };
   recordReviewEvent("navigation");
-  const widgetAccepted = rememberNavigationState(navigation);
-  const version = ++contextGeneration;
+  widgetAccepted = rememberNavigationState(navigation);
+}
+function publishContext() {
+  if (!selectedWorkspace || !navigation) return;
+  const version = contextGeneration;
   const context = {
     ...navigation,
     workspace_name: selectedWorkspace.workspace_name,
     active_surface: activeSurface,
+    ui_observation: captureUiObservation(
+      document.getElementById("editor")!, app.getHostContext(), reviewLocation(),
+      reviewEvents, fileInstanceId,
+    ),
     ...(latestUiReport ? { ui_problem_report: latestUiReport } : {}),
     ...(openedWorkflow
       ? { workflow: { ...openedWorkflow, editor_has_unsaved_changes: dirty } }
       : {}),
   };
+  const signature = JSON.stringify(context);
+  if (signature === lastContextSignature) return;
   contextWrite = contextWrite
     .catch(() => {})
     .then(async () => {
-      if (version !== contextGeneration) return;
+      if (version !== contextGeneration || signature === lastContextSignature) return;
       try {
         await app.updateModelContext(
-          { structuredContent: context },
+          { structuredContent: {
+            ...context,
+            ui_observation: { ...context.ui_observation, observed_at: new Date().toISOString() },
+          } },
           { timeout: 5000 },
         );
+        lastContextSignature = signature;
         if (version === contextGeneration) {
-          restorationNotice = widgetAccepted
+          const nextNotice = widgetAccepted
             ? ""
             : "Workspace context is available to this conversation, but this host does not save panel navigation. Ask the conversation to reopen this workspace.";
-          renderCurrent?.(app.getHostContext());
+          if (restorationNotice !== nextNotice) {
+            restorationNotice = nextNotice;
+            renderCurrent?.(app.getHostContext());
+          }
         }
       } catch {
         if (version === contextGeneration) {
@@ -293,8 +326,13 @@ const rememberWorkflow = (location: NativeWorkflowLocation) => {
   rememberLocation();
 };
 let renderCurrent: ((context?: McpUiHostContext) => void) | undefined;
-const processCall: NativeProcessCall = (name, request) =>
-  app.callServerTool({ name, arguments: { request } });
+const processCall: NativeProcessCall = async (name, request) => {
+  try {
+    return await app.callServerTool({ name, arguments: { request } });
+  } finally {
+    scheduleContext();
+  }
+};
 const transferCall: NativeTransferCall = (name, arguments_) =>
   app.callServerTool({ name, arguments: arguments_ });
 

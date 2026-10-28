@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import type { McpUiHostContext } from "@modelcontextprotocol/ext-apps";
 import {
   captureUiReview,
+  captureUiObservation,
   uiReviewFile,
   type ReviewEvent,
 } from "./native-ui-review";
@@ -109,4 +110,37 @@ it("bounds control sampling and report bytes", () => {
   expect(() =>
     uiReviewFile({ ...report, limits: ["a".repeat(65536)] }, ""),
   ).toThrow(/bounded/);
+});
+
+it("reports layout and image failures without copying private content or URLs", () => {
+  const root = surface();
+  root.insertAdjacentHTML("beforeend", '<img alt="private-image-description" src="https://private.invalid/secret"><img>');
+  const [failed, loaded] = root.querySelectorAll("img");
+  Object.defineProperties(failed, { complete: { value: true }, naturalWidth: { value: 0 } });
+  Object.defineProperties(loaded, { complete: { value: true }, naturalWidth: { value: 800 } });
+  Object.defineProperties(root, { scrollWidth: { value: 1200 }, clientWidth: { value: 1024 } });
+  root.querySelector("button")!.setAttribute("aria-selected", "true");
+  root.querySelector("input")!.disabled = true;
+  const observed = captureUiObservation(root, undefined, location, [
+    { kind: "error", elapsed_ms: 1 }, { kind: "navigation", elapsed_ms: 2 },
+  ], "panel-instance-a");
+  expect(observed).toMatchObject({
+    instance_id: "panel-instance-a",
+    root: { horizontal_overflow: true },
+    controls: { clipped_in_viewport: 1, selected_in_viewport: 1, disabled_in_viewport: 1 },
+    images: { count: 2, loaded: 1, failed: 1, loading: 0 },
+    recent_error_events: 1,
+  });
+  expect(JSON.stringify(observed)).not.toMatch(/private-image|private.invalid|secret|Private document title|private-source-body/);
+});
+
+it("keeps automatic observations compact and does not mistake offscreen controls for visible clipping", () => {
+  const root = surface();
+  root.innerHTML = '<button data-testid="large-fixture">secret</button>'.repeat(100);
+  const observed = captureUiObservation(root, undefined, location, [], "panel-instance-b");
+  expect(observed.controls).toMatchObject({ sampled: 80, sample_truncated: true, clipped_in_viewport: 80 });
+  expect(observed.controls.clipped).toHaveLength(8);
+  expect(JSON.stringify(observed).length).toBeLessThan(4000);
+  vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(new DOMRect(1100, 0, 200, 30));
+  expect(captureUiObservation(root, undefined, location, [], "panel-instance-b").controls.clipped_in_viewport).toBe(0);
 });

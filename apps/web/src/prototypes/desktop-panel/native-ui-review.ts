@@ -54,6 +54,8 @@ function elementGeometry(element: Element) {
       rect.left < innerWidth &&
       rect.top < innerHeight,
     horizontal_clip: rect.left < -1 || rect.right > innerWidth + 1,
+    disabled: element.matches(":disabled,[aria-disabled=true]"),
+    selected: element.matches("[aria-selected=true],[aria-pressed=true]"),
   };
 }
 
@@ -175,6 +177,51 @@ export function captureUiReview(
   };
 }
 export type UiReview = ReturnType<typeof captureUiReview>;
+
+/** Compact ambient diagnostics. Never transmit text, image URLs or input values. */
+export function captureUiObservation(
+  root: HTMLElement,
+  host: McpUiHostContext | undefined,
+  location: ReviewLocation,
+  events: readonly ReviewEvent[],
+  instanceId: string,
+) {
+  const review = captureUiReview(root, host, location, events);
+  const visible = review.controls.filter((control) => control.in_viewport);
+  const clipped = visible.filter((control) => control.horizontal_clip);
+  const images = Array.from(root.querySelectorAll("img"));
+  return {
+    schema_version: "wright.ui-observation/1",
+    instance_id: instanceId,
+    evidence_boundary: review.evidence_boundary,
+    build: review.build,
+    document_visibility: document.visibilityState,
+    viewport: review.viewport,
+    root: {
+      rect: review.root.rect,
+      font: review.root.font,
+      horizontal_overflow: review.root.scroll_width > review.root.client_width + 1,
+    },
+    controls: {
+      sampled: review.controls.length,
+      sample_truncated: review.controls_truncated,
+      in_viewport: visible.length,
+      disabled_in_viewport: visible.filter((control) => control.disabled).length,
+      selected_in_viewport: visible.filter((control) => control.selected).length,
+      clipped_in_viewport: clipped.length,
+      clipped: clipped.slice(0, 8).map(({ tag, test_id, rect }) => ({ tag, test_id, rect })),
+    },
+    images: {
+      count: images.length,
+      loaded: images.filter((image) => image.complete && image.naturalWidth > 0).length,
+      failed: images.filter((image) => image.complete && image.naturalWidth === 0).length,
+      loading: images.filter((image) => !image.complete).length,
+    },
+    recent_error_events: events.slice(-20).filter((event) =>
+      event.kind === "error" || event.kind === "unhandled-rejection"
+    ).length,
+  };
+}
 
 export function uiReviewFile(report: UiReview, comment: string) {
   // Comments are deliberate user input, not ambient collection. Mask common accidental secrets.
