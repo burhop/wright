@@ -50,3 +50,23 @@ Windows desktop remains unverified until observed in this conversation.
 The earlier Robot Tracking Diagnosis shared-editor regressions remain valid;
 this change introduces no workflow-specific dispatch, instructions or runtime
 behavior. Historical CAD documents, runs, outputs and reviews remain untouched.
+
+## Installed candidate
+
+Named prototype **0.32.0** was installed from commit
+`ce783d69dd94db5f3f6c2b346e73a6fd4115dbb9`. Its UI resource SHA-256 is
+`284339991694a7a9511ffe21155267d31280d59f104515d10ad8adf0baf19551`.
+The exact installed package passed MCP initialization, 59-tool discovery,
+resource-byte verification and the retained completed-run/image/report checks.
+Only the named marketplace/plugin changed; the prior named caches were retained
+and unrelated configuration matched before and after each installation step.
+
+The documented MCP reload returned connected for the current integration chat
+at 19:01 UTC, with no tools error and identical configuration hashes across the
+reload. This chat subsequently called the actual exposed connection and opened
+the exact retained run read-only. No new chat or desktop restart was required.
+The backend was not restarted. Native delivery of the additional observation
+fields, Windows pixels, downloaded files and chat restoration remain unverified.
+Receipts are `install-step-{0,1,2}.json`, `cache-preservation.json`,
+`installed-only-protocol.json`, and `host-mcp-discovery-20261028T190109Z.json`
+in the evidence directory above.
