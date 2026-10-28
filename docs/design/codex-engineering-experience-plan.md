@@ -446,3 +446,44 @@ correction contract before extending execution. Robot Tracking Diagnosis and
 full repository gates remain pending; no candidate installation or PR yet.
 
 Exact combined-build browser receipt: `prototypes/desktop-harness/engineering-experience/evidence/rerun-qualification.json`; all nine protected hashes still match. Older receipts remain evidence for their own builds.
+
+### Cumulative gate prerequisite — 28 October
+
+The first full gate at `ccfd3514` stopped at OCI qualification because no
+`WRIGHT_GATE_DOCKER_IMAGE` was supplied. Dependency audits and the initial
+security/path/deadline contract checks passed; this is not a full-gate pass.
+The failure receipt remains in
+`test-results/docker-image-security/20261028T221549Z-9b0ebf16/public`, with
+the full local log at `.local-run/experience-review/full-gate-ccfd3514.log`.
+
+An isolated ARM64 candidate built successfully from a clean Git archive of that
+exact commit, tagged `wright-desktop-experience:ccfd3514`, image ID
+`sha256:8f31c532060ea8ca0a6993c29ff9aa1a545c80c1e2da1fd35ab9cbb47f16774f`. Build output is retained at
+`.local-run/experience-review/image-build-ccfd3514.log`. No image publication,
+installed-plugin update or live service change is part of this gate. Supply the
+completed image to the existing scanner/gate; do not bypass its policy.
+
+The full gate was relaunched with that exact image; its separate log is
+`.local-run/experience-review/full-gate-ccfd3514-with-image.log`. It failed the current vulnerability policy; see the dated findings below.
+
+### Fresh handle/Robot readiness and image findings
+
+Fresh isolated original handle (Printed02) and Robot aisle-floor-seam scenario
+copies preserve every input hash. Both templates remain declarative references:
+the current executor rejects their unbound substantive tool steps. No workflow
+ran, and no campaign state, credentials or approvals were copied. This is a
+readiness finding, not shared execution qualification. See
+`prototypes/desktop-harness/engineering-experience/evidence/handle-robot-readiness.json`.
+The existing probe now accepts the original Printed02 scenario explicitly; its
+default remains the original focus-wheel case. The initial sandbox attempt stalled
+and was terminated by exact PID; its partial state was reconciled outside the
+sandbox using the existing resume mechanism. Both logs remain local.
+
+The exact candidate image scan failed on 28 October: libbrotli1
+CVE-2026-111497, undici CVE-2026-109383/109869/87018, and msgpack
+CVE-2026-114613 (two installed copies). Scanner-reported fixed versions are
+libbrotli1 1.1.0-2+deb13u1, undici 6.29.1 and msgpack 1.2.3. The focused
+Docker pins and dependency inventory were updated; all 16 smoke-contract tests
+and changed Python lint pass. The original image and failed scan remain intact
+at `test-results/docker-image-security/20261028T221957Z-2f3877ef/public`.
+A rebuilt exact image and fresh scan remain required; no exception was added.

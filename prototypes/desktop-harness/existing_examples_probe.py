@@ -20,7 +20,7 @@ from workspace_service.workflow_source_execution import compile_prompt_workflow
 from reasoning_probe import DesktopConnectionMetadata
 
 
-async def main(state, *, resume=False):
+async def main(state, *, resume=False, printed_scenario="01-observatory-focus-wheel"):
     state.mkdir(mode=0o700, parents=True, exist_ok=resume)
     if (state / "existing-examples.json").exists():
         raise RuntimeError(
@@ -40,7 +40,7 @@ async def main(state, *, resume=False):
     datasets = repository / "tests/datasets/engineering-workflows"
     try:
         for template, scenario in (
-            ("printed-replacement-part", "01-observatory-focus-wheel"),
+            ("printed-replacement-part", printed_scenario),
             ("robot-tracking-diagnosis", "01-aisle-floor-seam"),
         ):
             name = "Desktop original " + template
@@ -167,5 +167,17 @@ if __name__ == "__main__":
         action="store_true",
         help="Reconcile a partial isolated copy using its existing template request identities",
     )
+    parser.add_argument(
+        "--printed-scenario",
+        choices=("01-observatory-focus-wheel", "02-repair-cart-bow-handle"),
+        default="01-observatory-focus-wheel",
+        help="Copy the original scenario without changing its engineering requirements",
+    )
     options = parser.parse_args()
-    asyncio.run(main(options.state_dir.resolve(), resume=options.resume))
+    asyncio.run(
+        main(
+            options.state_dir.resolve(),
+            resume=options.resume,
+            printed_scenario=options.printed_scenario,
+        )
+    )
