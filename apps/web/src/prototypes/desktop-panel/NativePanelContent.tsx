@@ -1,3 +1,5 @@
+import { WorkflowToolDiscovery } from "../workflow-recovery/workflow-tool-discovery";
+import { createNativeToolDiscovery } from "./native-tool-discovery";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ProcessClientError,
@@ -165,6 +167,17 @@ export function NativePanelContent({
           )
         : undefined,
     [initial.workspace_id, sessionId, transferCall],
+  );
+  const discoverTools = useMemo(
+    () => ({
+      read: createNativeToolDiscovery(
+        initial.workspace_id,
+        sessionId,
+        readEvidence,
+      ),
+      sessionId,
+    }),
+    [initial.workspace_id, sessionId, readEvidence],
   );
   const transferPending = openingTransfer || !!transferDocument;
   const dispatcher = useMemo(() => createProcessNavigationDispatcher(), []);
@@ -385,27 +398,29 @@ export function NativePanelContent({
               : "Reading selected run evidence…"}
           </p>
         )}
-        <NativeWorkflowPanel
-          initial={initial}
-          client={sourceClient}
-          draftClient={draftClient}
-          navigation={navigation}
-          readOnlyRun={selectedEvidence?.record}
-          selectedRunId={run}
-          workspaceName={workspaceName}
-          onOpenTransfer={
-            transfer && onOpenTransferred ? openTransfer : undefined
-          }
-          transferDisabled={sourceDirty || workingDirty || transferPending}
-          onDirty={sourceChange}
-          onAccepted={(document) => {
-            setAccepted(document);
-            onAcceptedSource?.(document);
-          }}
-          onOpenWorkingView={
-            workingViewEnabled ? () => void openWorking() : undefined
-          }
-        />
+        <WorkflowToolDiscovery.Provider value={discoverTools}>
+          <NativeWorkflowPanel
+            initial={initial}
+            client={sourceClient}
+            draftClient={draftClient}
+            navigation={navigation}
+            readOnlyRun={selectedEvidence?.record}
+            selectedRunId={run}
+            workspaceName={workspaceName}
+            onOpenTransfer={
+              transfer && onOpenTransferred ? openTransfer : undefined
+            }
+            transferDisabled={sourceDirty || workingDirty || transferPending}
+            onDirty={sourceChange}
+            onAccepted={(document) => {
+              setAccepted(document);
+              onAcceptedSource?.(document);
+            }}
+            onOpenWorkingView={
+              workingViewEnabled ? () => void openWorking() : undefined
+            }
+          />
+        </WorkflowToolDiscovery.Provider>
       </div>
       {view === "working" && workingViewEnabled && (
         <NativeProcessPanel

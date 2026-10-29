@@ -56,6 +56,25 @@ const calls = [];
 const respond = (name, args) => {
   calls.push({ name, args });
   if (name === "wright_workflow_read") return document;
+  if (name === "wright_workflow_editor_tools")
+    return {
+      workspace_id: scope.workspace_id,
+      session_id: scope.session_id,
+      tools: [
+        {
+          name: "study.inspect",
+          server_id: "study-cad",
+          server_name: "Study CAD",
+          workspace_server: true,
+          tool_name: "inspect",
+          title: "Inspect geometry",
+          description: "Fixture only",
+          input_schema: { type: "object" },
+          output_schema: null,
+          schema_digest: "a".repeat(64),
+        },
+      ],
+    };
   if (name === "wright_editor_drafts_read") return { ...scope, drafts: [] };
   if (name === "wright_process_ui_read") {
     const r = args.request;
@@ -100,6 +119,14 @@ try {
   await page.goto("http://127.0.0.1:" + server.address().port);
   const f = page.frameLocator("#panel");
   await expect(f.getByTestId("workflow-recovery-save")).toBeVisible();
+  await f.getByRole("button", { name: "Add step", exact: true }).click();
+  await f.getByRole("button", { name: "MCP servers", exact: true }).click();
+  await expect(
+    f.getByTestId("workflow-recovery-create-server-study-cad"),
+  ).toBeInViewport();
+  await page.screenshot({ path: output + "/tool-discovery.png" });
+  await f.getByRole("button", { name: "Add step", exact: true }).click();
+
   await f.getByRole("button", { name: "Run workflow", exact: true }).click();
   await expect(f.getByText(reason.message, { exact: true })).toBeVisible();
   await expect(
@@ -136,6 +163,7 @@ try {
       [
         "wright_workflow_read",
         "wright_editor_drafts_read",
+        "wright_workflow_editor_tools",
         "wright_process_ui_read",
       ].includes(c.name),
     ),

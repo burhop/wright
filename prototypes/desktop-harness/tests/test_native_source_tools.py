@@ -134,7 +134,14 @@ def test_editor_tool_discovery_is_app_only_scoped_and_read_only(native_save):
         "output_schema": None,
         "schema_digest": "b" * 64,
     }
-    client.call.return_value = {"tools": [tool]}
+    client.call.side_effect = [
+        {"tools": [tool]},
+        {
+            "servers": [
+                {"server_id": "cad", "name": "Study CAD", "private_config": "omitted"}
+            ]
+        },
+    ]
     _, result = asyncio.run(
         server.call_tool(
             "wright_workflow_editor_tools",
@@ -146,14 +153,16 @@ def test_editor_tool_discovery_is_app_only_scoped_and_read_only(native_save):
     assert result == {
         "workspace_id": "workspace",
         "session_id": "session",
-        "tools": [tool],
+        "tools": [{**tool, "server_name": "Study CAD", "workspace_server": True}],
     }
     client.scope.assert_awaited_once_with("workspace", "session")
-    client.call.assert_awaited_once_with(
+    assert client.call.await_count == 2
+    assert client.call.call_args_list[0].args == (
         "GET",
         "/api/workspace/workflow-sources/tools",
-        params={"session_id": "session"},
     )
+    assert client.call.call_args_list[0].kwargs == {"params": {"session_id": "session"}}
+    assert client.call.call_args_list[1].args == ("GET", "/api/mcp/servers")
     registered = next(
         t
         for t in asyncio.run(server.list_tools())

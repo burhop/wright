@@ -122,10 +122,28 @@ def register_native_source_tools(mcp, client):
                 )
             ):
                 raise ValueError("Wright returned invalid workflow tool metadata")
+        registry = await client.call("GET", "/api/mcp/servers")
+        servers = registry.get("servers")
+        if not isinstance(servers, list):
+            raise ValueError("Wright returned invalid server names")
+        names = {
+            server["server_id"]: server["name"]
+            for server in servers
+            if isinstance(server, dict)
+            and isinstance(server.get("server_id"), str)
+            and isinstance(server.get("name"), str)
+        }
         return {
             "workspace_id": request.workspace_id,
             "session_id": request.session_id,
-            "tools": tools,
+            "tools": [
+                {
+                    **tool,
+                    "server_name": names.get(tool["server_id"], "MCP server"),
+                    "workspace_server": tool["server_id"] in names,
+                }
+                for tool in tools
+            ],
         }
 
     @mcp.tool(

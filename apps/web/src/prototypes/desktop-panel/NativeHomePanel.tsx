@@ -39,6 +39,7 @@ export type HomeCall = (
     | "wright_workspace_settings_read"
     | "wright_workspace_settings_save"
     | "wright_workflow_read"
+    | "wright_workflow_editor_tools"
     | "wright_workflow_create"
     | "wright_workflow_templates"
     | "wright_workflow_template_create"

@@ -1,3 +1,7 @@
+import {
+  useWorkflowToolDiscovery,
+  useWorkflowToolSession,
+} from "./workflow-tool-discovery";
 import { useEffect, useRef, useState, type RefObject } from "react";
 
 import {
@@ -7,7 +11,7 @@ import {
   authoringInputState,
   authoringReadiness,
 } from "./authoring-objects";
-import { listWorkflowMcpTools, type WorkflowMcpTool } from "./mcp-settings";
+import { type WorkflowMcpTool } from "./mcp-settings";
 import { mcpServerChoices, type McpServerChoice } from "./mcp-server-blocks";
 import type { RecoveryCommand } from "./command-system";
 import {
@@ -65,7 +69,7 @@ export function AuthoringRunReadiness({
   saved,
   executionConnected,
   templateReadiness,
-  sessionId,
+  sessionId: hostSessionId,
   onRefreshTemplateReadiness,
   onSelect,
 }: {
@@ -78,6 +82,8 @@ export function AuthoringRunReadiness({
   readonly onRefreshTemplateReadiness?: () => void;
   readonly onSelect: (id: string) => void;
 }) {
+  const sessionId = useWorkflowToolSession(hostSessionId);
+  const discoverTools = useWorkflowToolDiscovery();
   const inputs = authoringReadiness(workflow);
   const processIssue = disconnectedProcessDiagnostic(workflow);
   const tasks = workflow.blocks.filter(
@@ -109,7 +115,7 @@ export function AuthoringRunReadiness({
     setMcpTools(null);
     setMcpCheckError("");
     if (!sessionId || mcpTasks.length === 0) return;
-    void listWorkflowMcpTools(sessionId)
+    void discoverTools(sessionId)
       .then((tools) => {
         if (current) setMcpTools(tools);
       })
@@ -119,7 +125,7 @@ export function AuthoringRunReadiness({
     return () => {
       current = false;
     };
-  }, [mcpCheckKey, mcpCheckVersion, mcpTasks.length, sessionId]);
+  }, [mcpCheckKey, mcpCheckVersion, mcpTasks.length, sessionId, discoverTools]);
   const mcpStatus = (block: RecoveryBlock) => {
     if (!mcpTools) return mcpCheckError ? "check unavailable" : "checking";
     return mcpTaskIsAvailable(block, mcpTools) ? "available" : "unavailable";
@@ -396,7 +402,7 @@ function ReadinessItem({
 export function AuthoringCreateRail({
   onCreate,
   disabled,
-  sessionId,
+  sessionId: hostSessionId,
   onCreateServer,
 }: {
   readonly onCreate: (templateId: string) => void;
@@ -404,6 +410,8 @@ export function AuthoringCreateRail({
   sessionId?: string;
   onCreateServer?: (server: McpServerChoice) => void;
 }) {
+  const sessionId = useWorkflowToolSession(hostSessionId);
+  const discoverTools = useWorkflowToolDiscovery();
   const [open, setOpen] = useState(false);
   const [group, setGroup] = useState<string | null>(null);
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
@@ -418,7 +426,7 @@ export function AuthoringCreateRail({
     }
     let current = true;
     setToolMessage("Loading available servers…");
-    void listWorkflowMcpTools(sessionId)
+    void discoverTools(sessionId)
       .then((value) => {
         if (current) {
           setTools(value);
@@ -438,7 +446,7 @@ export function AuthoringCreateRail({
     return () => {
       current = false;
     };
-  }, [group, sessionId, serverReload]);
+  }, [group, sessionId, serverReload, discoverTools]);
   const rootRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;

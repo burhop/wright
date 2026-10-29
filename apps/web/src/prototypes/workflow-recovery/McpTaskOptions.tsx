@@ -1,15 +1,19 @@
+import {
+  useWorkflowToolDiscovery,
+  useWorkflowToolSession,
+} from "./workflow-tool-discovery";
 import { cadModelTypes, mcpServerChoices } from "./mcp-server-blocks";
 import { useEffect, useState } from "react";
 import type { RecoveryBlock, RecoveryWorkflow } from "./model";
 import { CadTaskOptions } from "./CadTaskOptions";
 import { ApplicationTaskOptions } from "./ApplicationTaskOptions";
 import type { RecoveryCommand } from "./command-system";
-import { listWorkflowMcpTools, type WorkflowMcpTool } from "./mcp-settings";
+import { type WorkflowMcpTool } from "./mcp-settings";
 
 export function McpTaskOptions({
   block,
   workflow,
-  sessionId,
+  sessionId: hostSessionId,
   readOnly,
   onApply,
 }: {
@@ -19,6 +23,8 @@ export function McpTaskOptions({
   readOnly: boolean;
   onApply: (commands: RecoveryCommand[]) => boolean;
 }) {
+  const sessionId = useWorkflowToolSession(hostSessionId);
+  const discoverTools = useWorkflowToolDiscovery();
   const [tools, setTools] = useState<WorkflowMcpTool[]>([]);
   const [loading, setLoading] = useState(Boolean(sessionId));
   const [error, setError] = useState("");
@@ -29,7 +35,7 @@ export function McpTaskOptions({
     setError("");
     setLoading(Boolean(sessionId));
     if (sessionId)
-      void listWorkflowMcpTools(sessionId)
+      void discoverTools(sessionId)
         .then((value) => {
           if (active) setTools(value);
         })
@@ -45,7 +51,7 @@ export function McpTaskOptions({
     return () => {
       active = false;
     };
-  }, [sessionId, retry]);
+  }, [sessionId, retry, discoverTools]);
   const config = (key: string, value: string | number) =>
     onApply([
       { kind: "set_block_configuration", blockId: block.id, key, value },

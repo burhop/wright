@@ -1293,3 +1293,17 @@ changing Hermes HTTP discovery; preserve meaningful server names and exact
 schema identities; provide an explicit, reviewed way to configure an unbound
 step without silently replacing its ports/dependencies; qualify save, readiness
 recheck and return. Do not claim an inspector link solves these missing actions.
+
+Native editor discovery is now wired to the existing shared palette, readiness
+reader and MCP configuration controls through a small host-supplied reader.
+Hermes retains its existing HTTP implementation. Native discovery supplies its
+session only to these readers, not to unrelated HTTP-only editor actions. The
+bridge adds matching server names without returning registry configuration.
+No automatic invocation, enablement, validation, source save or permission grant
+is introduced. 40 frontend and 16 bridge tests pass; TypeScript, native build and
+compiled fixture rendering pass. Evidence: `engineering-experience/evidence/native-tool-discovery/`
+under `prototypes/desktop-harness`. Nothing installed.
+
+Still open: generic unbound-step configuration preserving ports, native Connections
+return instead of the palette's legacy registry link, actual saved correction and
+readiness recheck, cumulative gates and the original engineering/Windows acceptance.
