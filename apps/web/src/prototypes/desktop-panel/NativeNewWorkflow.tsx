@@ -125,9 +125,9 @@ export function NativeNewWorkflow({
           }}
         >
           <p>
-            Describe your job and attach reference images in this Codex
-            conversation to plan the steps for{" "}
-            <strong>{workspace.workspace_name}</strong>.
+            Describe the job for <strong>{workspace.workspace_name}</strong> in
+            Codex chat. Attach new references there, or name existing workspace
+            files to include as workflow inputs.
           </p>
           {onPlanInChat && (
             <button
@@ -145,8 +145,8 @@ export function NativeNewWorkflow({
           {handoff === "sent" && (
             <p role="status">
               Workspace context sent. Continue in the Codex chat beside this
-              panel: describe your job and attach references to propose editable
-              workflow steps.
+              panel. After chat confirms saving your workflow, return here,
+              choose Refresh, and open it from Workspace files.
             </p>
           )}
           {handoff === "unsupported" && (

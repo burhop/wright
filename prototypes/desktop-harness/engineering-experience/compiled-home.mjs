@@ -7,7 +7,7 @@ const output = process.argv[2];
 if (!output) throw Error("Supply a fresh evidence directory");
 mkdirSync(output);
 const html = readFileSync(
-  "prototypes/desktop-harness/native-editor.html",
+  process.argv[3] ?? "prototypes/desktop-harness/native-editor.html",
   "utf8",
 );
 const scope = { workspace_id: "study-workspace", session_id: "study-session" };
@@ -114,6 +114,9 @@ try {
   await expect(
     f.getByRole("button", { name: "Handle reference.png", exact: true }),
   ).toBeInViewport();
+  await expect(
+    f.getByRole("button", { name: "Previous runs", exact: true }),
+  ).toBeInViewport();
   await page.screenshot({ path: output + "/workspace-1100.png" });
   await f.getByRole("button", { name: "New workflow", exact: true }).click();
   await f
@@ -126,7 +129,17 @@ try {
   const context = JSON.parse(handoff.content[0].text.split("\n").at(-1));
   expect(context.workspace_id).toBe(scope.workspace_id);
   expect(context.session_id).toBe(scope.session_id);
+  await expect(
+    f.getByRole("status").filter({ hasText: "Workspace context sent" }),
+  ).toContainText("After chat confirms saving");
+  await expect(f.getByText(/name existing workspace files/)).toBeVisible();
   await page.screenshot({ path: output + "/chat-handoff-1100.png" });
+  await page.setViewportSize({ width: 480, height: 900 });
+  await expect(
+    f.getByRole("status").filter({ hasText: "Workspace context sent" }),
+  ).toBeInViewport();
+  await page.screenshot({ path: output + "/chat-handoff-480.png" });
+  await page.setViewportSize({ width: 1100, height: 900 });
   await f.getByRole("button", { name: "New workflow", exact: true }).click();
   await f
     .getByRole("button", { name: "Change workspace", exact: true })
@@ -137,7 +150,6 @@ try {
   await f
     .getByRole("button", { name: "Return to Replacement handle", exact: true })
     .click();
-  await f.locator("summary").filter({ hasText: "Workspace tools" }).click();
   await f.getByRole("button", { name: "Connections", exact: true }).click();
   await expect(
     f.getByRole("heading", { name: "Added tools", exact: true }),

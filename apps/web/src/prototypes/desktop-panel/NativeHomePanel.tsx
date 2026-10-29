@@ -676,21 +676,18 @@ export function NativeHomePanel({
                 ← Workspace files
               </button>
             )}
-            <details>
-              <summary>Workspace tools</summary>
-              <button
-                onClick={() => navigate("connections")}
-                disabled={opening || creating}
-              >
-                Connections
-              </button>
-              <button
-                onClick={() => navigate("runs")}
-                disabled={opening || creating}
-              >
-                Previous runs
-              </button>
-            </details>
+            <button
+              onClick={() => navigate("connections")}
+              disabled={opening || creating}
+            >
+              Connections
+            </button>
+            <button
+              onClick={() => navigate("runs")}
+              disabled={opening || creating}
+            >
+              Previous runs
+            </button>
           </div>
         )}
         {selected && view === "connections" && (

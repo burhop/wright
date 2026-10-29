@@ -90,7 +90,6 @@ it("uses workspace files as the native-tab landing view with accepted names and 
   expect(
     await screen.findByText(/Open request sent for Block preview recovery/),
   ).toBeVisible();
-  fireEvent.click(screen.getByText("Workspace tools", { selector: "summary" }));
   expect(screen.getByRole("button", { name: "Connections" })).toBeVisible();
   expect(screen.getByRole("button", { name: "Previous runs" })).toBeVisible();
 });
