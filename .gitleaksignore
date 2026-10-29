@@ -9,3 +9,8 @@ ea4e67186bac84fcffd9f424e0a23b4da6b5b761:prototypes/desktop-harness/engineering-
 95b45535c6f72e557140ddc6c3e7a2eba014a852:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-mesh-setup/mesh-validate.json:generic-api-key:29
 237a0faf09370512ce1df5cdeb2190e699093f63:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-provider-setup/providers.json:generic-api-key:16
 237a0faf09370512ce1df5cdeb2190e699093f63:prototypes/desktop-harness/engineering-experience/evidence/candidate-036-provider-setup/providers.json:generic-api-key:53
+
+# Two exact Robot provider receipt findings: SHA-256 of empty credential-status map ({}).
+# Verified from introducing commit; API hashes boolean configuration status, not secrets.
+764619df0a018adbfafbece81f5727bdfd8660fb:prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json:generic-api-key:30
+764619df0a018adbfafbece81f5727bdfd8660fb:prototypes/desktop-harness/engineering-experience/evidence/robot-provider-current/workspace-setup-receipt.json:generic-api-key:70
