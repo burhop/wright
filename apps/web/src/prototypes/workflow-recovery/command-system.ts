@@ -42,6 +42,11 @@ export type RecoveryCommand =
       >;
     }
   | { kind: "set_phase_name"; phaseId: string; name: string }
+  | {
+      kind: "set_block_execution_kind";
+      blockId: string;
+      value: RecoveryBlock["executionKind"];
+    }
   | { kind: "set_block_title"; blockId: string; title: string }
   | { kind: "set_block_kind"; blockId: string; value: RecoveryBlock["kind"] }
   | {
@@ -244,6 +249,16 @@ function applyCommand(
     if (!command.title.trim())
       throw new Error(`WFR-COMMAND-TITLE-INVALID:${command.blockId}`);
     block(workflow, command.blockId).title = command.title.trim();
+    return;
+  }
+  if (command.kind === "set_block_execution_kind") {
+    const target = block(workflow, command.blockId);
+    if (
+      recoveryAuthoringSectionKind(target) !== "task" ||
+      !["human", "deterministic", "ai_capable"].includes(command.value)
+    )
+      throw new Error(`WFR-COMMAND-EXECUTION-KIND-INVALID:${command.blockId}`);
+    target.executionKind = command.value;
     return;
   }
   if (command.kind === "set_block_kind") {

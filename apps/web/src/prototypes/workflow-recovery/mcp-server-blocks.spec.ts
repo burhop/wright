@@ -1,3 +1,5 @@
+import { hydrateAuthoringLayout } from "./authoring-positioning";
+import handleSource from "../../../../../prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow?raw";
 import { expect, it } from "vitest";
 import { initialWorkflow, initialLayout } from "./model";
 import {
@@ -6,6 +8,7 @@ import {
   acceptRecoveryResult,
 } from "./command-system";
 import {
+  parseRecoverySourceDocument,
   formatRecoveryAuthoringSource,
   parseRecoveryAuthoringSource,
 } from "./recovery-authoring";
@@ -135,4 +138,52 @@ it("treats server-scoped AI tasks and exact MCP calls as different binding contr
   exact.configuration.mcp_tool = tools[0]!.name;
   expect(mcpTaskHasRequiredBinding(exact)).toBe(true);
   expect(mcpTaskIsAvailable(exact, tools)).toBe(true);
+});
+
+it("configures an existing unbound task without replacing engineering ports or dependencies", async () => {
+  const { canConfigureUnboundTask, configureUnboundMcpTask } =
+    await import("./mcp-server-blocks");
+  const parsed = parseRecoverySourceDocument(handleSource, 1);
+  expect(parsed.ok, JSON.stringify(parsed.diagnostics)).toBe(true);
+  const workflow = parsed.workflow!;
+  const layout = hydrateAuthoringLayout(workflow);
+  const block = workflow.blocks.find(
+    (b) => b.title === "Create the editable handle and exports",
+  )!;
+  expect(canConfigureUnboundTask(block)).toBe(true);
+  const commands = configureUnboundMcpTask(block, mcpServerChoices(tools)[0]!);
+  const result = applyRecoveryBatch(
+    workflow,
+    layout,
+    recoveryCommandBatch(workflow.revision, "form", commands),
+  );
+  expect(result.ok, JSON.stringify(result.diagnostics)).toBe(true);
+  const accepted = acceptRecoveryResult(workflow, layout, result)!;
+  expect(accepted.workflow.ports).toEqual(workflow.ports);
+  expect(accepted.workflow.relationships).toEqual(workflow.relationships);
+  const configured = accepted.workflow.blocks.find((b) => b.id === block.id)!;
+  expect(configured).toMatchObject({
+    title: block.title,
+    purpose: block.purpose,
+    instructions: block.instructions,
+    inputPortIds: block.inputPortIds,
+    outputPortIds: block.outputPortIds,
+    executionKind: "ai_capable",
+    configuration: {
+      authoring_template: "mcp-task",
+      mcp_server: tools[0]!.server_id,
+    },
+  });
+  const reopened = parseRecoveryAuthoringSource(
+    formatRecoveryAuthoringSource(accepted.workflow).text,
+    workflow,
+  );
+  expect(reopened.ok, JSON.stringify(reopened.diagnostics)).toBe(true);
+  const again = reopened.workflow!.blocks.find((b) => b.id === block.id)!;
+  expect(again.instructions).toBe(block.instructions);
+  expect(again.outputPortIds).toEqual(block.outputPortIds);
+  expect(canConfigureUnboundTask(again)).toBe(false);
+  expect(() =>
+    configureUnboundMcpTask(again, mcpServerChoices(tools)[0]!),
+  ).toThrow();
 });

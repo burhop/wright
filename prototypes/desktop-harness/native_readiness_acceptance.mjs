@@ -140,7 +140,26 @@ try {
     "Create the editable handle and exports",
   );
   await expect(f.getByTestId("workflow-recovery-inspector")).toBeInViewport();
+  await expect(
+    f.getByRole("region", { name: "Configure this step" }),
+  ).toBeInViewport();
+  await expect(f.getByLabel("Engineering server")).toBeInViewport();
+  await expect(
+    f.getByRole("button", { name: "Use AI with this server" }),
+  ).toBeInViewport();
+  await expect(
+    f.getByRole("button", { name: "Use AI with this server" }),
+  ).toBeDisabled();
+
   await page.screenshot({ path: output + "/affected-step.png" });
+  await page.setViewportSize({ width: 480, height: 900 });
+  await expect(f.getByLabel("Engineering server")).toBeInViewport();
+  await expect(
+    f.getByRole("button", { name: "Use AI with this server" }),
+  ).toBeInViewport();
+  await page.screenshot({ path: output + "/setup-narrow.png" });
+  await page.setViewportSize({ width: 1100, height: 900 });
+
   const nav = calls.find(
     (c) =>
       c.name === "wright_process_ui_read" &&

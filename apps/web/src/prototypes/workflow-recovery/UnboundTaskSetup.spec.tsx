@@ -1,0 +1,86 @@
+import { afterEach, expect, it, vi } from "vitest";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { WorkflowRecoveryConcept as Editor } from "./WorkflowRecoveryConcept";
+import { WorkflowToolDiscovery } from "./workflow-tool-discovery";
+import { parseRecoverySourceDocument } from "./recovery-authoring";
+import source from "../../../../../prototypes/desktop-harness/engineering-experience/handle/replacement-handle-draft.workflow.wflow?raw";
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+it("assigns a server explicitly, undoes/redoes and saves without replacing the step connections", async () => {
+  vi.stubGlobal(
+    "ResizeObserver",
+    class {
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    },
+  );
+  const read = vi.fn(async () => [
+    {
+      name: "cad.inspect",
+      server_id: "cad",
+      server_name: "Study CAD",
+      workspace_server: true,
+      tool_name: "inspect",
+      title: "Inspect",
+      description: "",
+      input_schema: {},
+      schema_digest: "a".repeat(64),
+    },
+  ]);
+  const save = vi.fn(async (text: string) => ({
+    source: text,
+    definition_revision: 2,
+    storage_digest: "b".repeat(64),
+  }));
+  render(
+    <WorkflowToolDiscovery.Provider value={{ read, sessionId: "session" }}>
+      <Editor
+        workflowSource={source}
+        definitionRevision={1}
+        storageDigest={"a".repeat(64)}
+        simulationPreview={false}
+        onSave={save}
+      />
+    </WorkflowToolDiscovery.Provider>,
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-block-block.cad"));
+  const select = await screen.findByLabelText("Engineering server");
+  await screen.findByRole("option", { name: "Study CAD" });
+  expect(save).not.toHaveBeenCalled();
+  fireEvent.change(select, { target: { value: "cad" } });
+  fireEvent.click(
+    screen.getByRole("button", { name: "Use AI with this server" }),
+  );
+  await waitFor(() =>
+    expect(screen.queryByLabelText("Engineering server")).toBeNull(),
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-undo"));
+  await screen.findByLabelText("Engineering server");
+  fireEvent.click(screen.getByTestId("workflow-recovery-redo"));
+  await waitFor(() =>
+    expect(screen.queryByLabelText("Engineering server")).toBeNull(),
+  );
+  fireEvent.click(screen.getByTestId("workflow-recovery-save"));
+  await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+  const before = parseRecoverySourceDocument(source, 1).workflow!;
+  const after = parseRecoverySourceDocument(
+    save.mock.calls[0]![0],
+    2,
+  ).workflow!;
+  expect(after.ports).toEqual(before.ports);
+  expect(after.relationships).toEqual(before.relationships);
+  expect(after.blocks.find((b) => b.id === "block.cad")).toMatchObject({
+    executionKind: "ai_capable",
+    configuration: { mcp_server: "cad", authoring_template: "mcp-task" },
+  });
+});

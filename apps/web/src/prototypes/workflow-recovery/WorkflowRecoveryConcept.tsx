@@ -1,3 +1,5 @@
+import { UnboundTaskSetup } from "./UnboundTaskSetup";
+import { canConfigureUnboundTask } from "./mcp-server-blocks";
 import { createMcpServerBlock } from "./mcp-server-blocks";
 import { WorkflowInstructionsEditor } from "./WorkflowInstructionsEditor";
 import { StepInstructionsEditor } from "./StepInstructionsEditor";
@@ -5065,6 +5067,15 @@ function WorkflowRecoveryReadyConcept({
                   onOpenFile={onOpenFile}
                   onSelectProducer={(id) => selectObject(id)}
                   onShowRunDetails={showRunDetails}
+                />
+              )}
+              {selectedBlock && canConfigureUnboundTask(selectedBlock) && (
+                <UnboundTaskSetup
+                  key={selectedBlock.id}
+                  block={selectedBlock}
+                  sessionId={workspaceSessionId}
+                  readOnly={blockEditorReadOnly}
+                  onApply={(commands) => applyCommands("form", commands)}
                 />
               )}
               {selectedBlock && (

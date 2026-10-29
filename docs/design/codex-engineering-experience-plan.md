@@ -1307,3 +1307,17 @@ under `prototypes/desktop-harness`. Nothing installed.
 Still open: generic unbound-step configuration preserving ports, native Connections
 return instead of the palette's legacy registry link, actual saved correction and
 readiness recheck, cumulative gates and the original engineering/Windows acceptance.
+
+Unbound step setup now offers an explicit **Use AI with this server** authoring
+action at the top of the inspector. It applies the existing MCP-task defaults
+through one undoable command batch while retaining engineering instructions,
+ports, dependencies and outputs. It refuses already configured steps and does
+not convert human review steps. The choice changes the step to AI-assisted work
+visibly; it is not a silent substitute for an exact deterministic tool call.
+
+29 command/editor tests pass, including Undo/Redo and saved-source reparse of
+the real handle draft. TypeScript/build pass. Compiled fixture checks show the
+selector/action in the viewport at 1100px and 480px, with no tool execution.
+Evidence: `prototypes/desktop-harness/engineering-experience/evidence/unbound-step-setup/`.
+Actual backend readiness and engineering output compatibility remain unverified;
+this authoring affordance does not satisfy those gates. Nothing installed.
