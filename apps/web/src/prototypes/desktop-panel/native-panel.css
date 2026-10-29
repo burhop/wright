@@ -511,6 +511,32 @@
   color: var(--native-host-muted, #aaa);
   background: transparent;
 }
+/* Compact navigation to recorded questions/reviews, never a second run controller. */
+.native-home__attention {
+  margin: 12px 0 18px;
+}
+.native-home__attention-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--native-host-border, #414141);
+}
+.native-home__attention-row > strong,
+.native-home__attention-row > span {
+  grid-column: 1;
+  overflow-wrap: anywhere;
+}
+.native-home__attention-row > span {
+  font-size: 12px;
+  color: var(--native-host-muted, #aaa);
+}
+.native-home__attention-row > button,
+.native-home__attention-row > small {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
 .native-home__section-heading,
 .native-home__workflow-actions {
   display: flex;

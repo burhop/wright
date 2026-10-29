@@ -96,6 +96,10 @@ class WorkflowExternalActionService:
     def __init__(self, repository: WorkflowContinuationRepository) -> None:
         self._repository = repository
 
+    def pending_navigation(self, workspace_id: str, *, after: str = "") -> dict:
+        """Recorded waits only; lookup/get retain current decision authority."""
+        return self._repository.pending_navigation(workspace_id, after=after)
+
     def request(
         self,
         *,

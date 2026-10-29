@@ -1109,6 +1109,65 @@ def server(
             },
         )
 
+    @mcp.tool(annotations=read, meta={"ui": {"visibility": ["app"]}})
+    async def wright_workspace_pending(
+        workspace_id: str,
+        session_id: str,
+        checkpoint_after: str = "",
+        review_after: str = "",
+    ) -> dict[str, Any]:
+        """Read workspace attention items; never approve, resume or start work."""
+        await client.scope(workspace_id, session_id)
+        document = await client.call(
+            "GET",
+            "/api/workspace/workflow-sources/pending",
+            params={
+                "session_id": session_id,
+                "checkpoint_after": checkpoint_after,
+                "review_after": review_after,
+            },
+        )
+        if document.get("workspace_id") != workspace_id:
+            raise ValueError("Pending work scope differs")
+        for key in ("checkpoints", "reviews"):
+            page = document.get(key)
+            if (
+                not isinstance(page, dict)
+                or not isinstance(page.get("items"), list)
+                or len(page["items"]) > 20
+                or any(not isinstance(row, dict) for row in page["items"])
+                or not isinstance(page.get("next_cursor"), (str, type(None)))
+            ):
+                raise ValueError("Pending work page is unavailable")
+        fields = (
+            "checkpoint_id",
+            "review_id",
+            "workflow_path",
+            "run_id",
+            "path",
+            "source_digest",
+            "step_title",
+            "state",
+            "action_kind",
+            "checkpoint_kind",
+            "response_id",
+            "expires_at",
+        )
+        return {
+            "workspace_id": workspace_id,
+            "session_id": session_id,
+            **{
+                key: {
+                    "items": [
+                        {field: row.get(field) for field in fields}
+                        for row in document[key]["items"]
+                    ],
+                    "next_cursor": document[key]["next_cursor"],
+                }
+                for key in ("checkpoints", "reviews")
+            },
+        }
+
     @mcp.tool(annotations=read, structured_output=True)
     async def wright_workflow_history(
         workspace_id: str, session_id: str, path: str

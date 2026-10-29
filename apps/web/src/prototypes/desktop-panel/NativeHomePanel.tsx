@@ -1,3 +1,4 @@
+import { NativePendingWork } from "./NativePendingWork";
 import { NativeActionForm } from "./NativeActionForm";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -45,6 +46,7 @@ export type HomeCall = (
     | "wright_workspace_file_preview"
     | "wright_workspace_file_download"
     | "wright_workspace_file_upload"
+    | "wright_workspace_pending"
     | "wright_workflow_history"
     | "wright_recorded_run_read"
     | "wright_connection_replacement"
@@ -718,6 +720,23 @@ export function NativeHomePanel({
                   }
                 : undefined
             }
+          />
+        )}
+        {selected && view === "files" && onOpenRun && (
+          <NativePendingWork
+            key={`${selected.workspace_id}:${selected.session_id}:${refresh}`}
+            workspace={selected}
+            call={call}
+            titles={titles}
+            disabled={loading || opening || creating}
+            onOpen={async (path, run) => {
+              setOpening(true);
+              try {
+                await onOpenRun(selected, path, run);
+              } finally {
+                setOpening(false);
+              }
+            }}
           />
         )}
         {selected && view === "files" && (

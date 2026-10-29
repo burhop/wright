@@ -298,7 +298,7 @@ and export through Wright's gateway. Native STL import removed the duplicate;
 the guarded repair sequence retained a closed mesh and exact 10 × 8 × 6 mm bounds.
 An independent reader checked topology and 480 mm³ volume. The exact exported
 bytes then passed to the independent offline slicer and produced a checked 3MF
-with a native PNG. [Evidence](../../../prototypes/desktop-harness/engineering-experience/evidence/mesh-repair-slice-handoff/README.md).
+with a native PNG. [Evidence](https://github.com/burhop/wright/blob/642e5330bab50dd46a7e04d4b67225e0cc0b12c8/prototypes/desktop-harness/engineering-experience/evidence/mesh-repair-slice-handoff/README.md).
 
 The selected image is `sha256:4fa54f2eecd99edbbd1daac1ff6adad2d280013e4bcf606c3b3b0aa27cb3b3af`.
 Override its default entrypoint; it contains older Wright services which this
