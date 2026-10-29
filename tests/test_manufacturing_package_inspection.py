@@ -124,6 +124,7 @@ def test_actual_recorded_paths_and_hashes_are_retained(handoff, enveloped):
         ("source", "different-mesh"),
         ("output", "different-package"),
         ("plate", 2),
+        ("plate", True),
     ],
 )
 def test_unsuccessful_or_mismatched_response_cannot_publish(handoff, field, value):
@@ -210,7 +211,9 @@ def test_explicit_nominal_layer_section_retains_full_package_identity(handoff):
     assert view["layers"][0]["support"]
 
 
-@pytest.mark.parametrize("preview", ["valid", "missing", "invalid", "duplicate", "existing"])
+@pytest.mark.parametrize(
+    "preview", ["valid", "missing", "invalid", "duplicate", "existing"]
+)
 def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, preview):
     root, config, _ = handoff
     source_package = root / config["slice_package"]
@@ -221,7 +224,9 @@ def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, prev
     with zipfile.ZipFile(archive_bytes, "w") as archive:
         archive.writestr(config["gcode_entry"], gcode)
         if preview != "missing":
-            archive.writestr("Metadata/plate_1.png", b"invalid!" if preview == "invalid" else png)
+            archive.writestr(
+                "Metadata/plate_1.png", b"invalid!" if preview == "invalid" else png
+            )
         if preview == "duplicate":
             with pytest.warns(UserWarning, match="Duplicate"):
                 archive.writestr("Metadata/plate_1.png", png)
@@ -245,3 +250,142 @@ def test_legacy_preview_uses_actual_package_and_same_passive_paths(handoff, prev
     a, b, c, d = segment
     assert f"M{a:.3f},{-b:.3f}L{c:.3f},{-d:.3f}" in svg
     assert "256" not in svg and "<script" not in svg
+
+
+def observed_response(root, config, response, *, calls=None):
+    from workspace_service.workflow_tool_observations import response_from_observations
+
+    selector = {
+        "server_id": "fixture-slicer",
+        "tool": "fixture-slicer__slice",
+        "schema_digest": "a" * 64,
+        "arguments": {
+            "source": response["source"],
+            "output": response["output"],
+            "plate": 1,
+        },
+    }
+    config["provider_observation"] = selector
+    if calls is None:
+        calls = [
+            {
+                "tool": selector["tool"],
+                "schema_digest": selector["schema_digest"],
+                "arguments": selector["arguments"],
+                "status": "succeeded",
+                "result": response,
+                "text": json.dumps(response),
+            }
+        ]
+    envelope = json.loads(response_from_observations(selector["server_id"], calls))
+    (root / config["provider_response"]).write_text(json.dumps(envelope))
+    return envelope
+
+
+def test_recorded_observation_to_passive_package_inspection(handoff):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    result = operation.run(config, read_3mf_toolpaths)
+    evidence = json.loads((root / result["slice_evidence"]["path"]).read_text())
+    assert evidence["provider_observation"]["call_number"] == 1
+    assert (
+        evidence["provider_observation"]["projection_sha256"]
+        == envelope["observations"]["digest"]
+    )
+    assert (
+        evidence["package_sha256"]
+        == hashlib.sha256((root / config["slice_package"]).read_bytes()).hexdigest()
+    )
+    assert evidence["engineering_acceptance"] is False
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        "server",
+        "tool",
+        "arguments",
+        "schema",
+        "incomplete",
+        "redacted",
+        "digest",
+        "count",
+        "missing",
+    ],
+)
+def test_observation_mismatch_never_publishes(handoff, change):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    if change == "server":
+        config["provider_observation"]["server_id"] = "different"
+    elif change == "tool":
+        config["provider_observation"]["tool"] = "different"
+    elif change == "arguments":
+        config["provider_observation"]["arguments"]["output"] = "different"
+    elif change == "schema":
+        config["provider_observation"]["schema_digest"] = "b" * 64
+    elif change == "incomplete":
+        envelope["observations"]["complete"] = False
+    elif change == "redacted":
+        envelope["observations"]["redaction_count"] = 1
+    elif change == "digest":
+        envelope["observations"]["digest"] = "b" * 64
+    elif change == "count":
+        envelope["call_count"] += 1
+    elif change == "missing":
+        envelope = response
+    (root / config["provider_response"]).write_text(json.dumps(envelope))
+    with pytest.raises(ValueError):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+@pytest.mark.parametrize("kind", ["duplicate", "failed", "warning"])
+def test_ambiguous_failed_or_qualified_observation_blocks_inspection(handoff, kind):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    call = envelope["observations"]["value"][0]
+    if kind == "failed":
+        call["status"] = "failed"
+    if kind == "warning":
+        call["text"] = "Warning: support geometry incomplete"
+    observed_response(
+        root, config, response, calls=[call, call] if kind == "duplicate" else [call]
+    )
+    with pytest.raises(ValueError):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+def test_selects_exact_orientation_among_multiple_calls(handoff):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    selected = envelope["observations"]["value"][0]
+    alternate = json.loads(json.dumps(selected))
+    alternate["arguments"]["source"] = "configured-host/side.stl"
+    alternate["arguments"]["output"] = "configured-host/side.3mf"
+    alternate["result"].update(alternate["arguments"])
+    observed_response(root, config, response, calls=[alternate, selected])
+    result = operation.run(config, read_3mf_toolpaths)
+    evidence = json.loads((root / result["slice_evidence"]["path"]).read_text())
+    assert evidence["provider_observation"]["call_number"] == 2
+
+
+def test_argument_identity_does_not_equate_boolean_with_integer(handoff):
+    root, config, response = handoff
+    observed_response(root, config, response)
+    config["provider_observation"]["arguments"]["plate"] = True
+    with pytest.raises(ValueError, match="unambiguous"):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())
+
+
+def test_supplementary_response_equality_is_type_exact(handoff):
+    root, config, response = handoff
+    envelope = observed_response(root, config, response)
+    call = envelope["observations"]["value"][0]
+    call["text"] = json.dumps({**response, "ok": 1, "plate": True})
+    observed_response(root, config, response, calls=[call])
+    with pytest.raises(ValueError):
+        operation.run(config, read_3mf_toolpaths)
+    assert not list((root / "outputs").iterdir())

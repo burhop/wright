@@ -55,9 +55,9 @@ def response_from_observations(server_id: str, calls: list[dict]) -> str:
         text = call.get("text")
         if text:
             try:
-                duplicate = len(text) <= 262_144 and json.loads(text) == call.get(
-                    "result"
-                )
+                duplicate = len(text) <= 262_144 and json.dumps(
+                    json.loads(text), sort_keys=True, allow_nan=False
+                ) == json.dumps(call.get("result"), sort_keys=True, allow_nan=False)
             except (ValueError, TypeError):
                 duplicate = False
             if not duplicate:

@@ -984,3 +984,23 @@ completeness defects before enablement. Final affected suite: 170 passed; Ruff
 and diff checks pass. The independent reviewer found no remaining blocker in
 this narrow contract. Actual provider qualification and Windows acceptance are
 still separate and unverified.
+
+### Passive package inspection consumes exact recorded observations
+
+The existing inspector now selects an explicit server/tool/schema/full-arguments
+operation from the recorded-response envelope, requires unique success and complete
+unredacted evidence, and retains the exact call/projection identity. Existing
+provider response forms and package/profile/preview ownership remain intact.
+Typed JSON comparison prevents boolean/integer identity confusion in arguments,
+supplementary responses and expected fields. Final affected suite: 176 passed.
+
+A passive fresh-copy check of the retained real repaired coupon response/package
+also passes nominal toolpaths and native PNG; every original file hash is unchanged.
+Its selector schema is explicitly a compatibility fixture, not reconstructed
+historical authority or a new canonical run. Evidence:
+`prototypes/desktop-harness/engineering-experience/evidence/observation-package-inspection/`.
+Candidate revision 6 and installed runtime remain unchanged. Next binding work
+must supply the accepted current schema, exact response/file dependencies, both
+orientation inputs and selection criteria; it must preserve original package
+lineage and human reviews. Full handle, real Robot regression, Windows acceptance,
+coherent candidate and delivery gates remain required.
