@@ -424,7 +424,7 @@ it("declares two package inputs for comparison and retains exact final-check/rep
   const sliceSection = formatted.match(
     /task slice_orientations\n([\s\S]*?)\nend/,
   )![1];
-  const settings = JSON.parse(sliceSection.match(/^  settings: (.*)$/m)![1]);
+  const settings = JSON.parse(sliceSection.match(/^ {2}settings: (.*)$/m)![1]);
   expect(settings.mcp_task_tools).toEqual(["slice_model_file"]);
   expect(settings.mcp_response_source).toBe("tool_observations");
   const outputs = settings.expected_file_ports as Record<string, string>;
@@ -455,11 +455,11 @@ it("preserves runtime hash checks for each connected binary input in bound engin
     const section = formatted.match(
       new RegExp(`task ${id}\\n([\\s\\S]*?)\\nend`),
     )![1];
-    const inputs = JSON.parse(section.match(/^  inputs: (.*)$/m)![1]) as {
+    const inputs = JSON.parse(section.match(/^ {2}inputs: (.*)$/m)![1]) as {
       key: string;
       kind: string;
     }[];
-    const settings = JSON.parse(section.match(/^  settings: (.*)$/m)![1]);
+    const settings = JSON.parse(section.match(/^ {2}settings: (.*)$/m)![1]);
     const binary = inputs.filter((p) => p.kind === "workspace_file");
     expect(binary.length).toBeGreaterThan(0);
     expect(settings.mcp_file_dependencies).toEqual(
@@ -476,7 +476,7 @@ it("retains slice observations through the existing exact document tool before i
   const section = formatted.match(
     /task retain_slice_observations\n([\s\S]*?)\nend/,
   )![1];
-  const settings = JSON.parse(section.match(/^  settings: (.*)$/m)![1]);
+  const settings = JSON.parse(section.match(/^ {2}settings: (.*)$/m)![1]);
   expect(settings.mcp_tool).toBe("wright-workspace-files__write_text_document");
   expect(JSON.parse(settings.mcp_argument_ports)).toEqual({
     retention_observations: "content",

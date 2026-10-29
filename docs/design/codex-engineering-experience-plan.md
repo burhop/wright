@@ -1182,3 +1182,8 @@ regressions pass. The history scan finished with exactly those four findings
 across 1,709 commits; the corrected cumulative gate remains pending.
 Evidence: `prototypes/desktop-harness/engineering-experience/evidence/repository-gate-qualification/`.
 No installed candidate or engineering acceptance claim changes.
+
+The corrected full history scan now passes with no findings. Python lint and
+formatting pass. Four test-only regex lint failures were corrected without
+changing assertions; 13 handle regressions, focused lint and complete frontend
+formatting pass. The remainder of the cumulative gate is not yet qualified.
