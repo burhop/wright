@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import { useEffect, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { DesktopWorkspace } from "./NativeHomePanel";
@@ -408,9 +409,8 @@ export function NativeConnections({
           onPlan={setPlan}
         />
       </div>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
+      <NativeActionForm
+        onAction={() => {
           setCursor(null);
           setQuery(search);
           if (search.trim()) setBrowsingCatalog(true);
@@ -428,7 +428,7 @@ export function NativeConnections({
         <button type="submit" disabled={loading}>
           {browsingCatalog ? "Search / refresh" : "Refresh status"}
         </button>
-      </form>
+      </NativeActionForm>
       <details>
         <summary>Setup history</summary>
         <button

@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import "./native-panel.css";
@@ -553,9 +554,8 @@ export function NativeHomePanel({
         )}
       </div>
       {createVisible && (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
+        <NativeActionForm
+          onAction={() => {
             void createWorkspace();
           }}
         >
@@ -578,7 +578,7 @@ export function NativeHomePanel({
           >
             {creating ? "Creating workspace…" : "Create workspace"}
           </button>
-        </form>
+        </NativeActionForm>
       )}
       {createNotice && <p role="alert">{createNotice}</p>}
       {error && <p role="alert">{error}</p>}

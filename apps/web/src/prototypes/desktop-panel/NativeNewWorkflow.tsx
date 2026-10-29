@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import { useRef, useState } from "react";
 import { blankWorkflowSource } from "../../services/blank-workflow";
 import type { DesktopWorkspace, HomeCall } from "./NativeHomePanel";
@@ -118,9 +119,8 @@ export function NativeNewWorkflow({
         New workflow
       </button>
       {visible && (
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
+        <NativeActionForm
+          onAction={() => {
             void create();
           }}
         >
@@ -178,7 +178,7 @@ export function NativeNewWorkflow({
               Create workflow
             </button>
           </details>
-        </form>
+        </NativeActionForm>
       )}
       {notice && <p role="alert">{notice}</p>}
       {savedPath && (

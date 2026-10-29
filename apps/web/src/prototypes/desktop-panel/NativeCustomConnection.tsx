@@ -1,3 +1,4 @@
+import { NativeActionForm } from "./NativeActionForm";
 import {
   importConnectionConfiguration,
   type ImportedConnection,
@@ -393,9 +394,8 @@ export function NativeCustomConnection({
           ))}
         </div>
       ) : null}
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
+      <NativeActionForm
+        onAction={() => {
           void prepare();
         }}
       >
@@ -487,7 +487,7 @@ export function NativeCustomConnection({
         >
           Preview connection
         </button>
-      </form>
+      </NativeActionForm>
       {error && <p role="alert">{error}</p>}
       {preview && (
         <section aria-label="Custom connection preview">
